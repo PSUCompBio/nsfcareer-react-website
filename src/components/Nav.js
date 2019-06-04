@@ -15,6 +15,9 @@ const Navigation = styled.header`
   height: 140px;
   margin-bottom: 60px;
   background: #f8f8f8;
+	position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+
 
   .logo a {
     padding-top: 33px;
@@ -23,10 +26,13 @@ const Navigation = styled.header`
     clear: both;
     padding-bottom: 30px;
     text-decoration: none;
+		font-size: 35px;
+		font-weight: bold;
 
     p {
       width: 500px;
       display: block;
+			color: #153ACE;
     }
     em {
       font-size: 0.5em;
@@ -50,7 +56,6 @@ const Navigation = styled.header`
   }
   a {
     color: #222;
-    opacity: 0.55;
     transition: all 0.6s;
     color: #222;
     font-size: 1em;
@@ -90,6 +95,9 @@ const Navigation = styled.header`
     .logo {
       padding-left: 15px;
       padding-top: 0px !important;
+			a {
+				font-size: 30px;
+			}
     }
   }
   @media only screen and (max-width: 600px) {
@@ -105,6 +113,7 @@ const Navigation = styled.header`
       margin-left: -5px;
       a {
         padding: 20px 0px;
+				font-size: 25px;
       }
     }
     .fa-bars {
@@ -173,13 +182,7 @@ class Nav extends Component {
       <Navigation>
         <div className="logo">
           <Link to="/">
-            <p>React Responsive Navigation</p>
-            <em>
-              <div className="letterhead">
-                <span className="name">kentorry</span>
-                <span className="gray">.io</span>
-              </div>
-            </em>
+            <p>NSFCAREER.IO</p>
           </Link>
         </div>
         <nav className="nav">

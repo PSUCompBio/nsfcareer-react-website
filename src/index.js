@@ -10,6 +10,7 @@ import About from "./pages/About/AboutPage";
 import Contact from "./pages/Contact/ContactPage";
 
 import "./index.css";
+import "./pages/Home/HomePage.css";
 
 const App = () => (
   <div>

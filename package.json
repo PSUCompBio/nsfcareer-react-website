@@ -1,8 +1,7 @@
 {
   "name": "react-responsive-navigation",
   "version": "1.0.0",
-  "description":
-    "A simple React.JS Responsive  Navigation with React Router and Styled Components.",
+  "description": "A simple React.JS Responsive  Navigation with React Router and Styled Components.",
   "keywords": [
     "responsive  nav",
     "styled components",
