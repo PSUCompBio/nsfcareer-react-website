@@ -27,6 +27,11 @@ body {
   font-size: 1.3rem;
   background: #fefefe;
 }
+.text1 {
+	font-size: 15px;
+	line-height: 25px;
+}
+
 
 .container {
   width: 80%;
@@ -35,4 +40,45 @@ body {
 h1 {
   font-size: 3em;
   font-weight: 600;
+}
+
+.topspace {
+  margin-top: 150px;
+ }
+
+.topspace2 {
+	margin-top: 50px;
+}
+
+
+
+@media only screen and (min-width: 600px) {
+	.topspace {
+	     margin-top:170px;
+	  }
+		h1 {
+		  font-size: 30px;
+		  font-weight: 450;
+		}
+		h2 {
+			font-size: 1em;
+		}
+		.topspace2 {
+			margin-top: 40px;
+		}
+}
+@media only screen and (max-width: 600px) {
+	.topspace {
+	     margin-top: -30px;
+	  }
+		h1 {
+		  font-size: 25px;
+		  font-weight: 450;
+		}
+		h2 {
+			font-size: 1em;
+		}
+		.topspace2 {
+			margin-top: 40px;
+		}
 }
