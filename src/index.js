@@ -7,6 +7,8 @@ import Nav from "./components/Nav";
 // PAGES
 import Home from "./pages/Home/HomePage";
 import About from "./pages/About/AboutPage";
+import Sports from "./pages/Sports/SportsPage";
+import Military from "./pages/Military/MilitaryPage";
 import Contact from "./pages/Contact/ContactPage";
 
 import "./index.css";
@@ -18,6 +20,8 @@ const App = () => (
     <div className="container">
       <Route exact={true} path="/" component={Home} />
       <Route exaxt path="/about" component={About} />
+			<Route exaxt path="/sports" component={Sports} />
+ 			<Route exact path="/military" component={Military} />
       <Route exact path="/contact" component={Contact} />
     </div>
   </div>
