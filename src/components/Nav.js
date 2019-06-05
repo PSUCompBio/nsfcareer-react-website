@@ -198,6 +198,12 @@ class Nav extends Component {
             <NavLink activeClassName="active" to="/about">
               <li>about</li>
             </NavLink>
+						<NavLink activeClassName="active" to="/sports">
+              <li>sports</li>
+            </NavLink>
+						<NavLink activeClassName="active" to="/military">
+              <li>military</li>
+            </NavLink>
             <NavLink activeClassName="active" to="/contact">
               <li>contact</li>
             </NavLink>
