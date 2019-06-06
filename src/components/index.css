@@ -1,0 +1,83 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css");
+@import url("https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700");
+/* ==========================================================================
+   Responsive images and box padding
+   ========================================================================== */
+
+img,
+object {
+  display: block;
+  border: 0;
+  max-width: 100%;
+  height: auto;
+}
+
+* {
+  -moz-box-sizing: border-box;
+  -webkit-kit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.3rem;
+  background: #fefefe;
+}
+.text1 {
+	font-size: 15px;
+	line-height: 25px;
+}
+
+
+.container {
+  width: 80%;
+  margin: 60px auto;
+}
+h1 {
+  font-size: 3em;
+  font-weight: 600;
+}
+
+.topspace {
+  margin-top: 150px;
+ }
+
+.topspace2 {
+	margin-top: 50px;
+}
+
+
+@media only screen and (min-width: 600px) {
+	.topspace {
+	     margin-top:170px;
+	  }
+		h1 {
+		  font-size: 30px;
+		  font-weight: 450;
+		}
+		h2 {
+			font-size: 1em;
+		}
+		.topspace2 {
+			margin-top: 40px;
+		}
+}
+@media only screen and (max-width: 600px) {
+	.topspace {
+	     margin-top: -30px;
+	  }
+		h1 {
+		  font-size: 25px;
+		  font-weight: 450;
+		}
+		h2 {
+			font-size: 1em;
+		}
+		.topspace2 {
+			margin-top: 40px;
+		}
+}

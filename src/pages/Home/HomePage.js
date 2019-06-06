@@ -11,16 +11,16 @@ for civilian and military populations. This Faculty Early Career Development Pro
  project will contribute to the understanding of brain trauma by developing advanced computer
 models that link neuroimaging results, biomechanical assessments, and computational modeling of
 the brain. More broadly, the continued pursuit of the development and validation of numerical diagnostics
- is anticipated to advance the emerging field of computational medicine. 
+ is anticipated to advance the emerging field of computational medicine.
  < /p>
 
 
  <div class="row">
    <div class="column nsf-img left">
-     <img src="/img/NSF_4-Color_bitmap_Logo-sm.png" />
+     <img src="/img/NSF_4-Color_bitmap_Logo-sm.png" alt="nsf-img" />
    </div>
    <div class="column  right">
-     <img src="/img/PSU_ENG_RGB_287_284-01_1.png" />
+     <img src="/img/PSU_ENG_RGB_287_284-01_1.png" alt="psu-img" />
    </div>
  </div>
 
