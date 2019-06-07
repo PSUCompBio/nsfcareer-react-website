@@ -1,0 +1,42 @@
+.main-container {
+	width: 100%; 
+	margin-top: 140px;
+	display: inline-block;
+}
+.left-container {
+	width: 70%;
+	height: 480px;
+	float: left; 
+	position: relative;
+}
+.right-container {
+	width: 30%;
+	float: right;
+}
+.canvas-Container {
+	width: 640px;
+	display: block;
+}
+.graph1 {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.graph2 {
+	position: absolute;
+	bottom: 10%;
+	right: 0;
+}
+.graph3 {
+	position: absolute;
+	top: 40%;
+	left: 0;
+}
+.hidden {
+	display: none;
+}
+.generate-graph-section {
+	margin-left: 50px;
+	cursor:pointer;
+}
+
