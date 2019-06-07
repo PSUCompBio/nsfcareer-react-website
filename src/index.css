@@ -36,6 +36,7 @@ body {
 .container {
   width: 80%;
   margin: 60px auto;
+  min-height: 318px;
 }
 h1 {
   font-size: 3em;
