@@ -1,11 +1,6 @@
-.container-width {
-	width: 90%;
-	max-width: 1150px;
-	margin: 0 auto;
-}
 .main-container {
-	width: 100%;
-	margin-top: 25px;
+	width: 100%; 
+	margin-top: 170px;
 }
 .left-container {
 	width: 70%;
