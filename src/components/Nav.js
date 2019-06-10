@@ -32,7 +32,7 @@ const Navigation = styled.header`
     p {
       width: 500px;
       display: block;
-			color: #153ACE;
+			color: #0d47a1;
     }
     em {
       font-size: 0.5em;

@@ -14,7 +14,6 @@ import Military from "./pages/Military/MilitaryPage";
 import Contact from "./pages/Contact/ContactPage";
 
 import "./index.css";
-import "./pages/Home/HomePage.css";
 
 // MDReact css
 import '@fortawesome/fontawesome-free/css/all.min.css';

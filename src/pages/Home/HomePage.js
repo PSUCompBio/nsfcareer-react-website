@@ -1,5 +1,7 @@
 import React, { Fragment } from "react";
 
+import "./HomePage.css";
+
 const HomePage = () => (
   <Fragment>
 
@@ -15,7 +17,7 @@ the brain. More broadly, the continued pursuit of the development and validation
  < /p>
 
 
- <div class="row">
+ <div class="row2">
    <div class="column nsf-img left">
      <img src="/img/NSF_4-Color_bitmap_Logo-sm.png" alt="nsf-img" />
    </div>
