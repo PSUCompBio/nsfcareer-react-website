@@ -685,18 +685,62 @@ class Military extends Component {
 		//ctx.font = "40px Courier";
 	}
 
+	// generateGraphs() {
+	// 	//const dataPoints1 = pointArray[Math.floor(Math.random() * pointArray.length)];
+	// 	const dataPoints1 = Math.multiply(pointArray[0],2.0);
+	// 	const dataPoints2 = pointArray[Math.floor(Math.random() * pointArray.length)];
+	// 	const dataPoints3 = pointArray[Math.floor(Math.random() * pointArray.length)];
+	//
+	// 	this.setState({
+	// 		dataPoints1: dataPoints1,
+	// 		dataPoints2: dataPoints2,
+	// 		dataPoints3: dataPoints3
+	// 	});
+	// }
+
 	generateGraphs() {
-		//const dataPoints1 = pointArray[Math.floor(Math.random() * pointArray.length)];
-		const dataPoints1 = Math.multiply(pointArray[0],2.0);
-		const dataPoints2 = pointArray[Math.floor(Math.random() * pointArray.length)];
-		const dataPoints3 = pointArray[Math.floor(Math.random() * pointArray.length)];
+	//const dataPoints1 = pointArray[Math.floor(Math.random() * pointArray.length)];
+	//const dataPoints1 = Math.multiply(pointArray[0],2.0);
+		pointArray[0] = pointArray[0].map(function(element) {
+			return element = element.map(function(element1) {
+				if (!isNaN(element1))
+				return element1*1.01;
+				else
+				return element1;
+			});
+		});
+		pointArray[1] = pointArray[1].map(function(element) {
+			return element = element.map(function(element1) {
+				if (!isNaN(element1))
+				return element1*1.01;
+				else
+				return element1;
+			});
+		});
+		pointArray[2] = pointArray[2].map(function(element) {
+			return element = element.map(function(element1) {
+				if (!isNaN(element1))
+				return element1*1.01;
+				else
+				return element1;
+			});
+		});
+		const dataPoints1 = pointArray[0];
+		const dataPoints2 = pointArray[1];
+		const dataPoints3 = pointArray[2];
+		console.log(dataPoints1);
+		console.log(dataPoints1);
+		console.log(dataPoints1);
+		//const dataPoints2 = pointArray[Math.floor(Math.random() * pointArray.length)];
+		//const dataPoints3 = pointArray[Math.floor(Math.random() * pointArray.length)];
 
 		this.setState({
-			dataPoints1: dataPoints1,
-			dataPoints2: dataPoints2,
-			dataPoints3: dataPoints3
+		dataPoints1: dataPoints1,
+		dataPoints2: dataPoints2,
+		dataPoints3: dataPoints3
 		});
 	}
+
 
     render() {
 
