@@ -102,7 +102,7 @@ app.post(`${apiPrefix}getNumbers`, (req, res) => {
 app.post(`${apiPrefix}putNumbers`, (req, res) => {
 	console.log("API CAlled put",req.body);
 	
-	fetchNumbers(req.body).then((data) => {
+	putNumbers(req.body).then((data) => {
 		res.send({
 			message: successMessage
 		})

@@ -15,7 +15,7 @@ export const getNumbersFromDb = () =>{
 }
 export const putNumbersToDb = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}getNumbers`, request)
+      axios.post(`${ENDPOINT}putNumbers`, request)
       .then(function (response) {
         resolve(response);
       })

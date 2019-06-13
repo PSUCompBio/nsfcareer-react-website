@@ -14,7 +14,7 @@ class NumberTableComponent extends React.Component {
     e.preventDefault();
     
     const data = new FormData(e.target);
-    console.log(data);
+    console.log(data,e);
     
     //
     putNumbersToDb(data).then((data)=>{
@@ -25,32 +25,33 @@ class NumberTableComponent extends React.Component {
   }
 
   render() {
+      
     if(this.state.isLoading){
      return <h1>Loading...</h1>   
     }
     return (
 
 <React.Fragment>
-<form method="POST" onSubmit={this.handleSubmit}>
+<form onSubmit={this.handleSubmit}>
     <div className="row">
     <input type="hidden" name="id" class="form-control" placeholder="Number 1" value={uuidv1()}/>
         <div className="col">
-            <input type="text" name="number_1" class="form-control" placeholder="Number 1"/>
+            <input type="text" name="number_1" class="form-control" placeholder="Number 1" value=""/>
         </div>
         <div className="col">
-            <input type="text" name="number_2" class="form-control" placeholder="Number 2"/>
+            <input type="text" name="number_2" class="form-control" placeholder="Number 2" value=""/>
         </div>
         <div className="col">
-            <input type="text" name="number_3" class="form-control" placeholder="Number 3"/>
+            <input type="text" name="number_3" class="form-control" placeholder="Number 3" value=""/>
         </div>
         <div className="col">
-            <input type="text" name="number_4" class="form-control" placeholder="Number 4"/>
+            <input type="text" name="number_4" class="form-control" placeholder="Number 4" value=""/>
         </div>
         <div className="col">
-            <input type="text" name="number_5" class="form-control" placeholder="Number 5"/>
+            <input type="text" name="number_5" class="form-control" placeholder="Number 5" value=""/>
         </div>
     </div>
-    <button type="submit" className="btn btn-primary">+</button>
+    <button className="btn btn-primary">+</button>
 </form>
 <table className="table table-bordered">
     <HeaderComponent></HeaderComponent>
