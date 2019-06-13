@@ -13,3 +13,14 @@ export const getNumbersFromDb = () =>{
         });
     })
 }
+export const putNumbersToDb = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}getNumbers`, request)
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

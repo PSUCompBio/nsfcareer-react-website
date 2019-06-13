@@ -59,6 +59,24 @@ const fetchNumbers = () => {
 	})
 }
 
+const putNumbers = (numbersData) => {
+	return new Promise(function (resolve, reject) {
+		let param = {
+			TableName: "numbers",
+			Item: numbersData
+		};
+		docClient.put(param,function(err,data){
+			if(err){
+				console.log("ERROR IN TABLE_UPDATE=======\n",err);
+				reject(err)
+			}
+			else{
+				resolve(data)
+			}
+		})
+	})
+	}
+
 // ============================================
 //     				ROUTES
 // ============================================
@@ -76,6 +94,22 @@ app.post(`${apiPrefix}getNumbers`, (req, res) => {
 		res.send({
 			message: failureMessage,
 			data: [],
+			error: err
+		})
+	})
+});
+
+app.post(`${apiPrefix}putNumbers`, (req, res) => {
+	console.log("API CAlled put",req.body);
+	
+	fetchNumbers(req.body).then((data) => {
+		res.send({
+			message: successMessage
+		})
+	}).catch((err) => {
+		
+		res.send({
+			message: failureMessage,
 			error: err
 		})
 	})
