@@ -1,13 +1,25 @@
 import React from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBInput, MDBCard, MDBCardBody } from 'mdbreact';
+import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBInput, MDBCard, MDBCardBody, MDBCardFooter } from 'mdbreact';
+import LoginComponent from './LoginComponent'
 
 class SignUpComponent extends React.Component {
   constructor() {
     super();
-    
+    this.state = {
+      toLogIn : false
+    }
+    this.handleClick = this.handleClick.bind(this);
   }
 
+  handleClick() {
+    this.setState({
+      toLogIn: true
+    });
+  }
   render() {
+    if(this.state.toLogIn){
+     return  <LoginComponent></LoginComponent>
+    }
     return (
       <MDBContainer>
         <MDBRow>
@@ -59,6 +71,11 @@ class SignUpComponent extends React.Component {
                 </div>
               </form>
             </MDBCardBody>
+            <MDBCardFooter>
+            <div className="text-center grey-text">
+              Already have an account ? <a className="cyan-text" onClick={this.handleClick}>Log In</a>
+            </div>
+            </MDBCardFooter>
           </MDBCard>
           </MDBCol>
         </MDBRow>
