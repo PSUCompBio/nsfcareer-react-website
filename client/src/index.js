@@ -12,6 +12,7 @@ import About from "./pages/About/AboutPage";
 import Sports from "./pages/Sports/SportsPage";
 import Military from "./pages/Military/MilitaryPage";
 import Contact from "./pages/Contact/ContactPage";
+import Login from "./pages/Login/Login";
 
 import "./index.css";
 
@@ -29,6 +30,7 @@ const App = () => (
 			<Route exaxt path="/sports" component={Sports} />
  			<Route exact path="/military" component={Military} />
       <Route exact path="/contact" component={Contact} />
+      <Route exact path="/login" component={Login} />
     </div>
 		<Footer />
   </div>

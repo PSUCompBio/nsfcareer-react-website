@@ -207,6 +207,9 @@ class Nav extends Component {
             <NavLink activeClassName="active" to="/contact">
               <li>contact</li>
             </NavLink>
+            <NavLink activeClassName="active" to="/login">
+              <li>login</li>
+            </NavLink>
           </ul>
         </nav>
       </Navigation>
