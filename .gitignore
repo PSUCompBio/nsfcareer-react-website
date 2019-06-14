@@ -6,4 +6,5 @@ build/
 .vscode
 *.swp
 config/AWSConfig.json
-
+config/*
+config/
