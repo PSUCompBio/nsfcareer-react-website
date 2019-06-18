@@ -15,8 +15,12 @@
     "concurrently": "^4.1.0"
   },
   "scripts": {
-    "init": "cd client ;  npm install ; cd .. ; npm install ",
+    "init": "concurrently \"npm run server-init\" \"npm run client-init\"",
+    "server-init": "npm install",
+    "client-init": "cd client &&  npm install",
     "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start-dev": "concurrently \"npm run server-dev\" \"npm run client\"",
+    "server-dev": "nodemon server.js",
     "server": "node server.js",
     "client": "node start-client.js"
   },
