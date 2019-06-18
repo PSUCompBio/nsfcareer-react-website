@@ -15,5 +15,5 @@ $ npm run init
 # To Run the Application locally:
 $ npm start
 # To Run the Application in Dev mode:
-$ npm start-dev
+$ npm run start-dev
 ```
