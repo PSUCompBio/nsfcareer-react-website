@@ -5,3 +5,6 @@ build/
 *.log*
 .vscode
 *.swp
+config/AWSConfig.json
+config/*
+config/
