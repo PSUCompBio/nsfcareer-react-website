@@ -626,7 +626,7 @@ class Military extends Component {
 	};
 
 	handleMouseDown = event => {
-
+        event.preventDefault();
 		this.setState({
 			dragging: true,
 			dragStart: event.screenX,
