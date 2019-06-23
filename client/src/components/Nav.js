@@ -207,9 +207,20 @@ class Nav extends Component {
             <NavLink activeClassName="active" to="/contact">
               <li>contact</li>
             </NavLink>
+            {!this.props.isAuthenticated ?
             <NavLink activeClassName="active" to="/login">
               <li>login</li>
             </NavLink>
+            : 
+            this.props.isAdmin? <NavLink activeClassName="active" to="/listUsers">
+            <li>users</li>
+          </NavLink>
+          :null
+            }
+            {this.props.isAuthenticated ?           <NavLink activeClassName="active" to="/profile">
+            <li>profile</li>
+          </NavLink> : null}
+            
           </ul>
         </nav>
       </Navigation>

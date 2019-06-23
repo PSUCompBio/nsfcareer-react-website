@@ -24,3 +24,37 @@ export const putNumbersToDb = (request) =>{
       });
   })
 }
+export const signUp = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}signUp`, JSON.parse(request))
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const logIn = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}logIn`, JSON.parse(request))
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+export const logInFirstTime = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}logInFirstTime`, JSON.parse(request))
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
