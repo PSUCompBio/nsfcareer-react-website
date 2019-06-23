@@ -6,14 +6,14 @@ import styled from "styled-components";
 
 const Navigation = styled.header`
   width: 100%;
-  border-bottom: 10px solid #222;
+  border-bottom: 10px solid #0D47A1;
   z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0px 100px 0;
-  height: 140px;
-  margin-bottom: 60px;
+  height: 90px;
+  margin-bottom: 0px;
   background: #f8f8f8;
 	position: fixed; /* Set the navbar to fixed position */
   top: 0; /* Position the navbar at the top of the page */

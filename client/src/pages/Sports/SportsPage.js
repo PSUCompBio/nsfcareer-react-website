@@ -6,15 +6,15 @@ class SportsPage extends React.Component {
   render() {
     return (
       <Fragment>
-<h1 class="topspace">Sports</h1>
+		<h1 class="topspace">Sports Results</h1>
     <div className="container">
       <NumberTableComponent></NumberTableComponent>
-    </div>  
+    </div>
     </Fragment>
- ); 
+ );
 }
 
- 
+
 }
 
 export default SportsPage;
