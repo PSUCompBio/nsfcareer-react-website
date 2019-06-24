@@ -198,18 +198,38 @@ class Nav extends Component {
             <NavLink activeClassName="active" to="/about">
               <li>about</li>
             </NavLink>
-						<NavLink activeClassName="active" to="/sports">
+            {this.props.isAuthenticated ?
+              <NavLink activeClassName="active" to="/sports">
               <li>sports</li>
             </NavLink>
+             :null}
+						
 						<NavLink activeClassName="active" to="/military">
               <li>military</li>
             </NavLink>
             <NavLink activeClassName="active" to="/contact">
               <li>contact</li>
             </NavLink>
+            {!this.props.isAuthenticated ?
             <NavLink activeClassName="active" to="/login">
               <li>login</li>
             </NavLink>
+            : 
+            this.props.isAdmin? <NavLink activeClassName="active" to="/listUsers">
+            <li>users</li>
+          </NavLink>
+          :null
+            }
+            {this.props.isAuthenticated ?           
+            <React.Fragment><NavLink activeClassName="active" to="/profile">
+            <li>profile</li>
+          </NavLink>
+          <NavLink activeClassName="active" to="/logout">
+          <li>logout</li>
+        </NavLink>
+        </React.Fragment>
+         : null}
+            
           </ul>
         </nav>
       </Navigation>

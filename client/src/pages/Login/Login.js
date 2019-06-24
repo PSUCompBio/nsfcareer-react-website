@@ -14,8 +14,6 @@ class Login extends React.Component {
     return (
         <React.Fragment>
             <div className="container topspace ">
-        
-
                     <LoginComponent></LoginComponent>
             </div>
 

@@ -5,7 +5,12 @@
    the file residing in /config/AWSConfig.example.json
 
  - Rename the AWSConfig.example.json to AWSConfig.json
+ 
+ - Update your AWS Cognito Credentials like : userPoolId, region & ClientId in 
+   the file residing in /config/cognito_configuration.example.json.
+   - Set  apiVersion as "2016-04-19" 
 
+ - Rename the cognito_configuration.example.json to cognito_configuration.json
 
  - IMPORTANT: do not upload Access keys to web (e.g. github, google drive)
 ```sh
