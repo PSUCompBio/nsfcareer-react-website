@@ -3,6 +3,7 @@ import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBInput, MDBAlert,  MDBCard, MDB
 import LoginComponent from './LoginComponent'
 import { formDataToJson } from '../../utilities/utility'
 import { signUp } from '../../apis';
+import "../../mixed_style.css";
 
 class SignUpComponent extends React.Component {
   constructor() {
@@ -12,7 +13,8 @@ class SignUpComponent extends React.Component {
       isSignUpConfirmed : false,
       isSignUpConfirmed : false,
       isSignUpError : false,
-      signUpError : ""
+      signUpError : "",
+      isLoading : false
     }
     
     this.handleClick = this.handleClick.bind(this);
@@ -31,7 +33,8 @@ class SignUpComponent extends React.Component {
     const formData = new FormData(e.target);
     this.setState({
           isSignUpError : false,
-          isSignUpConfirmed : false
+          isSignUpConfirmed : false,
+          isLoading : true
     })
     // converting formData to JSON 
     const formJsonData = formDataToJson(formData)
@@ -42,13 +45,15 @@ class SignUpComponent extends React.Component {
 // show alert
 this.setState({
   isSignUpError : false,
-  isSignUpConfirmed : true
+  isSignUpConfirmed : true,
+  isLoading : false
 })  
       }
       else{
         this.setState({
           isSignUpError : true,
           isSignUpConfirmed : false,
+          isLoading : false,
           signUpError : response.data.error
     })
       }
@@ -95,10 +100,11 @@ this.setState({
                   />
                     <MDBInput
                     label="Age"
-                    icon="user"
+                    icon="user-circle"
                     name="age"
+                    min="0"
                     group
-                    type="text"
+                    type="number"
                     validate
                     error="wrong"
                     success="right"
@@ -123,17 +129,7 @@ this.setState({
                     error="wrong"
                     success="right"
                   />
-                  <MDBInput
-                    label="Confirm your email"
-                    icon="exclamation-triangle"
-                    name="email"
-                    group
-                    type="text"
-                    validate
-                    error="wrong"
-                    success="right"
-                  />
-                                    <MDBInput
+                <MDBInput
                     name="user_type"
                     group
                     type="hidden"
@@ -142,12 +138,28 @@ this.setState({
                     error="wrong"
                     success="right"
                   />
+                  <div class="form-group">
+    <label className="">Gender</label>
+    <select className="form-control" name="gender">
+      <option value="male">Male</option>
+      <option value="female" >Female</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
                 </div>
                 <div className="text-center py-4 mt-3">
                   <MDBBtn color="cyan" type="submit">
                     Register
                   </MDBBtn>
                 </div>
+                {
+                    this.state.isLoading ? 
+                    <div className="d-flex justify-content-center center-spinner">
+                         <div class="spinner-border text-primary" role="status" >
+        <span class="sr-only">Loading...</span>
+      </div>
+             </div>:null
+                  }
                 {this.state.isSignUpConfirmed ?
                     <MDBAlert color="success" dismiss>
                       <strong>Account created Successfully! </strong> Check your mail for temporary password .

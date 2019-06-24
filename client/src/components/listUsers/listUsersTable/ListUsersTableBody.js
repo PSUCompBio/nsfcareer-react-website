@@ -2,7 +2,7 @@ import React from 'react';
 import ListUserTableRow from './ListUserTableRow'
 
 class ListUsersTableBody extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     
   }
@@ -10,7 +10,10 @@ class ListUsersTableBody extends React.Component {
   render() {
     return <React.Fragment>
       
-      <ListUserTableRow userDetail={true}/>
+      {this.props.usersList.map((user, i) => (    
+      <ListUserTableRow key={i} userDetail={user} index={i}/>
+    ))}
+      
 
       
       

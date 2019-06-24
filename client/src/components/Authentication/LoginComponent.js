@@ -10,6 +10,8 @@ import { formDataToJson } from '../../utilities/utility'
 import SignUpComponent from './SignUpComponent';
 import { logIn, logInFirstTime } from '../../apis';
 
+import "../../mixed_style.css";
+
 class Login extends React.Component {
   constructor() {
     super();
@@ -17,7 +19,8 @@ class Login extends React.Component {
       toSignUp: true,
       tempPasswordRequired: false,
       isLoginError: false,
-      loginErrorCode: ""
+      loginErrorCode: "",
+      isLoading : false
     }
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -42,7 +45,8 @@ class Login extends React.Component {
     const formData = new FormData(e.target);
     this.setState({
 
-      isLoginError : false
+      isLoginError : false,
+      isLoading : true
     })
     // converting formData to JSON 
     const formJsonData = formDataToJson(formData)
@@ -65,7 +69,8 @@ class Login extends React.Component {
           // show error
           this.setState({
             loginError: response.data.error,
-            isLoginError : true
+            isLoginError : true,
+            isLoading : false
           })
 
         }
@@ -81,7 +86,8 @@ class Login extends React.Component {
         if (response.data.message == "success") {
           if (response.data.status == "FORCE_CHANGE_PASSWORD") {
             this.setState({
-              tempPasswordRequired: true
+              tempPasswordRequired: true,
+              isLoading : false
             })
           }
           else {
@@ -100,6 +106,7 @@ class Login extends React.Component {
 
           this.setState({
             isLoginError : true,
+            isLoading : false,
             loginError: response.data.error
           })
 
@@ -162,6 +169,15 @@ class Login extends React.Component {
                   <div className="text-center">
                     <MDBBtn color="light-green" type="submit">Login</MDBBtn>
                   </div>
+                  
+                  {
+                    this.state.isLoading ? 
+                    <div className="d-flex justify-content-center center-spinner">
+                         <div className="spinner-border text-primary" role="status" >
+        <span className="sr-only">Loading...</span>
+      </div>
+             </div>:null
+                  }
                   {this.state.isLoginError ?
                     <MDBAlert color="warning" dismiss>
                       <strong>Failed! </strong> {this.state.loginError}.

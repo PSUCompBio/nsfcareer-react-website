@@ -43,9 +43,8 @@ class Index extends React.Component {
 			<Route exaxt path="/sports" component={Sports} />
  			<Route exact path="/military" component={Military} />
       <Route exact path="/contact" component={Contact} />
-      <Route exact path="/listUsers" component={ListUsers} /> 
-      <Route exact path="/profile" component={Profile} /> 
-      <Route exact path="/login" component={Login} /> 
+      {this.props.isAdmin?<Route exact path="/listUsers" component={ListUsers} /> :null}
+      {this.props.isAuthenticated?<Route exact path="/profile" component={Profile} /> :<Route exact path="/login" component={Login} /> }     
       {this.props.isAuthenticated?<Redirect push to="/" />:null}
     </div>
 		<Footer />
@@ -54,7 +53,7 @@ class Index extends React.Component {
 }
 ReactDOM.render(   
   <Router>
-  <Index isAuthenticated={true} isAdmin={true}/>
+  <Index isAuthenticated={false} isAdmin={false}/>
 </Router>  
   ,
   document.getElementById('root')        

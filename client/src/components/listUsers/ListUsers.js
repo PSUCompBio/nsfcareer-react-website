@@ -13,9 +13,6 @@ class ListUsers extends React.Component {
     </React.Fragment>
   }
 
-  componentDidMount() {
-    this.setState({ someKey: 'otherValue' });
-  }
 }
 
 export default ListUsers;

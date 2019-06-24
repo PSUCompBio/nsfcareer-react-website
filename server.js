@@ -8,7 +8,9 @@ const express = require('express');
 	AWS = require('aws-sdk'),
 	cors = require('cors'),
 	AmazonCognitoIdentity = require('amazon-cognito-identity-js'),
-	utility = require('./utilities/utility');
+    utility = require('./utilities/utility'),
+    VerifyToken = require('./verify_user'),
+    cookieParser = require('cookie-parser'),
 	global.fetch = require('node-fetch');
 
 // ================================================
@@ -17,6 +19,7 @@ const express = require('express');
 
 
 global.navigator = () => null;
+const BUCKET_NAME = "nsfcareer-users-data"
 
 // ======================================
 //         	GLOBAL VARIABLES
@@ -44,6 +47,7 @@ var cognito = require("./config/cognito_configuration.js");
 // AWS S3 & Other Controllers Configuration
 const awsWorker = require('./controllers/aws.controller.js');
 
+
 var s3 = new AWS.S3();
 
 // Cognito client who initializes the AWS Credentials to invoke
@@ -62,7 +66,13 @@ const docClient = new AWS.DynamoDB.DocumentClient({
 // xxx-url encoded (form type)  & json type
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cookieParser());
+app.use(cors(
+    {
+        origin: ["http://localhost:2000", "http://localhost:3000"],
+        credentials: true
+       }
+));
 // ============================================
 //     FUNCTIONS OR IMPLEMENTATIONS
 // ============================================
@@ -94,7 +104,7 @@ function listAllUsers(user_attributes, cb) {
             if (data.PaginationToken == undefined) {
                 users.push(data.Users);
                 paginationToken = "";
-                cb("", concatArrays(users)); // successful response
+                cb("", utility.concatArrays(users)); // successful response
                 users = [];
             } else {
                 paginationToken = data.PaginationToken;
@@ -157,6 +167,20 @@ function getListGroupForUser(user_name, cb) {
     });
 }
 
+function getFileSignedUrl(key, cb) {
+
+    var params = {
+        Bucket: BUCKET_NAME,
+        Key: key
+    };
+    s3.getSignedUrl('getObject', params, function (err, url) {
+        if (err) {
+            cb(err, "");
+        } else {
+            cb("", url);
+        }
+    });
+}
 
 
 // Get user details & all his attributes
@@ -200,6 +224,26 @@ function createUserDbEntry(event, callback) {
             callback(null, event);
         }
     });
+}
+
+
+function getUploadedFileList(user_name, cb) {
+    const s3Params = {
+        Bucket: BUCKET_NAME,
+        Delimiter: '/',
+        Prefix: user_name + '/profile/'
+        // Key: req.query.key + ''
+    };
+
+    s3.listObjectsV2(s3Params, (err, data) => {
+        if (err) {
+            //   console.log(err);
+            cb(err, "");
+        }
+        console.log(data);
+        cb("", data.Contents);
+    });
+
 }
 
 // Function to authenticate user credentials
@@ -502,7 +546,8 @@ app.post(`${apiPrefix}signUp`,(req,res)=>{
 	console.log(req.body);
 
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
-    req.body["name"] = req.body.first_name + req.body.last_name ;  
+    req.body["name"] = req.body.first_name + req.body.last_name ; 
+    req.body["email"] = req.body.user_name ; 
     adminCreateUser(req.body, function (err, data) {
         if (err) {
             console.log("COGNITO CREATE USER ERROR =========\n", err);
@@ -647,8 +692,6 @@ console.log("Log In API Called!");
                                 })
                             } else {
 
-
-
                     // Now checking is user is ADMIN or not
                     var userType = "StandardUser";
                     groupData.forEach(element => {
@@ -658,13 +701,19 @@ console.log("Log In API Called!");
                     });
                     // Here call the login function then 
                                 login(req.body.user_name,req.body.password,userType,function(err,result){
+                                    // TODO : REfactor code here
                                     if(err){
+                                        res.cookie("token", "");
                                         res.send({
                                             message : "failure",
                                             error : err
                                         })
                                     }
                                     else{
+                                        
+                                        
+                                        res.cookie("token", result.getIdToken().getJwtToken());
+
                                         res.send({
                                             message : "success",
                                             user_type : userType
@@ -680,7 +729,7 @@ console.log("Log In API Called!");
 
 // Login first time with temporary password
 app.post(`${apiPrefix}logInFirstTime`,(req,res)=>{
-    loginFirstTime(req.body,function(err,data){
+    loginFirstTime(req.body,function(err,result){
         if(err){
             res.send({
                 message : "failure",
@@ -709,20 +758,18 @@ app.post(`${apiPrefix}logInFirstTime`,(req,res)=>{
 
                     // Now checking is user is ADMIN or not
                     var userType = "StandardUser";
-                    group_data.forEach(element => {
+                    groupData.forEach(element => {
                         if (element.GroupName == "Admin") {
                             userType = "Admin";
                         }
                     });
-
+                    res.cookie("token", result.getIdToken().getJwtToken());
                             res.send({
                                 message : "success",
                                 user_type : userType
                             })
 
                         }
-
-
                     });
 
                 }
@@ -734,6 +781,244 @@ app.post(`${apiPrefix}logInFirstTime`,(req,res)=>{
     
 })
 
+app.post(`${apiPrefix}enableUser`,(req,res)=>{
+    enableUser(req.body.user_name,function(err,data){
+        if(err){
+            res.send({
+                message : "failure",
+                error  : err
+            })
+        }
+        else{
+            res.send({
+                message : "success"
+            })
+        }
+    })
+})
+
+app.post(`${apiPrefix}disableUser`,(req,res)=>{
+    disableUser(req.body.user_name,function(err,data){
+        if(err){
+            res.send({
+                message : "failure",
+                error  : err
+            })
+        }
+        else{
+            res.send({
+                message : "success"
+            })
+        }
+    })
+})
+
+app.post(`${apiPrefix}getUserDetails`,VerifyToken,(req,res)=>{
+    getUserDbData(req.user_cognito_id,function(err,data){
+        if(err){
+            res.send({
+                message : "failure",
+                error  : err
+            })
+        }
+        else{
+            userData = data.Item;
+                getUploadedFileList(req.user_cognito_id,function(err,list){
+                    if(err){
+                        console.log(err);
+                        
+                    }
+                    else{
+                        // Fetches the latest profile pic
+                        var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                            return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                          }, {});
+                        console.log("OUPTUT ---->\n",latestProfilePic);
+                        // Now get the signed URL link  from S3
+            // if no S3 link is found then send empty data link
+            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ; 
+            // No file is uploaded
+            var key
+            if(list.length!=0){
+                key = latestProfilePic.Key ; 
+            }
+            else{
+                key = req.user_cognito_id + "/profile/" + req.user_cognito_id ; 
+            }
+            
+            getFileSignedUrl(key,function(err,url){
+                if(err){
+                    console.log(err);
+                    userData["profile_picture_url"] = "";
+                    res.send({
+                        message : "success",
+                        data : userData
+                    })
+                }
+                else{
+                    if(list.length == 0){
+                        userData["profile_picture_url"] = "";    
+                    }
+                    else{
+                        userData["profile_picture_url"] = url;
+                    }
+                    res.send({
+                        message : "success",
+                        data : userData
+                    })
+                }
+
+            })
+                    }
+                });
+            
+            
+        }
+    })
+})
+
+app.post(`${apiPrefix}getProfilePicLink`,VerifyToken,(req,res)=>{
+
+    getUploadedFileList(req.body.user_cognito_id,function(err,list){
+        if(err){
+            console.log(err);
+        res.send({
+            message : 'failure',
+            error : err
+        })            
+        }
+        else{
+            console.log("OUPTUT ---->\n",list);
+            // Now get the signed URL link  from S3
+// if no S3 link is found then send empty data link
+// KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ; 
+// No file is uploaded
+
+var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+    return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+  }, {});
+
+var key
+if(list.length!=0){
+    key = latestProfilePic.Key ; 
+}
+else{
+    key = req.user_cognito_id + "/profile/" + req.user_cognito_id ; 
+}
+
+getFileSignedUrl(key,function(err,url){
+    if(err){
+        console.log(err);
+        
+        res.send({
+            message : "success",
+            profile_picture_url : ""
+        })
+
+    }
+    else{
+        var link = "";
+        if(list.length == 0){
+            link = "";    
+        }
+        else{
+            link = url;
+        }
+        res.send({
+            message : "success",
+            profile_picture_url : link
+        })
+    }
+
+})
+        }
+    });
+
+
+
+})
+
+
+app.post(`${apiPrefix}listUsers`,(req,res)=>{
+    var attributes = ["name", "phone_number","email"];
+    listAllUsers(attributes,function(err,data){
+            if(err){
+                res.send({
+                    message : "failure",
+                    error : err
+                })
+            }
+            else{
+                let users = utility.concatArrays(data);
+                
+                let count = 0;
+    var tempArray = [];
+                for (let i = 0; i < users.length; i++) {
+
+                    setTimeout(() => {
+                        getUser(users[i].Username, function (err, userData) {
+                            if (err) {
+                                console.log(err);
+                    
+                                res.send({
+                                    message: "failed",
+                                    error : err
+                                });
+                            } else {
+                                getUserDbData(users[i].Username, function(err,userDbData){
+
+                                    getListGroupForUser(users[i].Username, function (err, groupData) {
+
+                                        if (err) {
+                                            console.log("List group for user ", err);
+                                        }
+            
+                                        count++;
+    
+                                        // Now checking is user is ADMIN or not
+                                        var flag = false;
+                                        groupData.forEach(element => {
+                                            if (element.GroupName == "Admin") {
+                                        flag = true;
+                                        }
+                                        });
+                                        // var temp = {};
+                                        userDbData = userDbData.Item;
+                                        userDbData["Enabled"] = userData.Enabled;
+                                        
+                                        if(flag){
+                                            userDbData.user_type = "Admin"
+                                        }
+                                        else{
+                                            userDbData.user_type = "Standard"
+                                        }
+                                        tempArray.push(userDbData);
+                                        if (count == users.length) {
+                                            // console.log(data);
+            
+                                            res.send(
+                                                {
+                                                    message : "success",
+                                                    data : tempArray
+                                                });
+                                        }
+            
+                                    });
+
+                                })
+                                        
+                            
+                            }
+                        });
+                        
+                    }, 20*i);
+                
+                }   
+            }
+    })
+})
+
+app.post(`${apiPrefix}uploadProfilePic`,VerifyToken, upload.single("profile_pic"), awsWorker.doUpload);
 
 // Configuring port for APP
 const port = 3001;
