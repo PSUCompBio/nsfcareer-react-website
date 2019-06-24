@@ -74,7 +74,7 @@ function VerifyToken(req, res, next) {
                                 })
                             }
                             // and the Audience (use claims.client_id if verifying an access token)
-                            if (claims.aud != app_client_id) {
+                            else if (claims.aud != app_client_id) {
                                 console.log('Token was not issued for this audience');
                                 res.send({
                                     message : "failure",
@@ -82,11 +82,12 @@ function VerifyToken(req, res, next) {
                                     error : "Token not issued for this audience"
                                 })
                             }
-                            
-                            req["user_cognito_id"] = claims.sub;
-                            
+                            else{
 
-                            next();
+                                req["user_cognito_id"] = claims.sub;
+                                next();
+                            }
+                            
                         }).
                         catch(function () {
                             console.log('Signature verification failed');

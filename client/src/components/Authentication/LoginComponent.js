@@ -155,6 +155,7 @@ class Login extends React.Component {
                     />
                     {
                       this.state.tempPasswordRequired ?
+                        <React.Fragment>
                         <MDBInput
                           label="Enter New Password"
                           name="new_password"
@@ -163,6 +164,8 @@ class Login extends React.Component {
                           type="password"
                           validate
                         />
+                        <p className="grey-text">* Min. 8 digit password</p>
+                        </React.Fragment>
                         : null
                     }
                   </div>

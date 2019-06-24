@@ -220,9 +220,15 @@ class Nav extends Component {
           </NavLink>
           :null
             }
-            {this.props.isAuthenticated ?           <NavLink activeClassName="active" to="/profile">
+            {this.props.isAuthenticated ?           
+            <React.Fragment><NavLink activeClassName="active" to="/profile">
             <li>profile</li>
-          </NavLink> : null}
+          </NavLink>
+          <NavLink activeClassName="active" to="/logout">
+          <li>logout</li>
+        </NavLink>
+        </React.Fragment>
+         : null}
             
           </ul>
         </nav>

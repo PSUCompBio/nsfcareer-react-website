@@ -125,3 +125,27 @@ export const getProfilePicLink = (request) =>{
       });
   })
 }
+
+export const verifyUser = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}verifyUser`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const logOut = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}logOut`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

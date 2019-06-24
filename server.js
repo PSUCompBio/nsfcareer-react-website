@@ -674,7 +674,7 @@ console.log("Log In API Called!");
     
                 // Now getting the list of Groups of user
                 getListGroupForUser(data.Username, function (error, groupData) {
-                    if (err) {
+                    if (error) {
     
                         res.send({
                             message: "failure",
@@ -1018,7 +1018,40 @@ app.post(`${apiPrefix}listUsers`,(req,res)=>{
     })
 })
 
+// API To upload profile pic to S3 
 app.post(`${apiPrefix}uploadProfilePic`,VerifyToken, upload.single("profile_pic"), awsWorker.doUpload);
+
+app.post(`${apiPrefix}verifyUser`,VerifyToken,(req,res)=>{
+    // Fetch user group data and check if he is Admin or not
+    getListGroupForUser(req.user_cognito_id, function (err, groupData) {
+        if (err) {
+
+            res.send({
+                message: "failure",
+                error  : error
+            });
+        } else {
+        // Now checking is user is ADMIN or not
+        var flag = false;
+        groupData.forEach(element => {
+            if (element.GroupName == "Admin") {
+                flag = true;
+            }
+        });
+        res.send({
+            message : "success",
+            isAdmin : flag
+        })
+        }});
+})
+
+// Clearing the cookies
+app.post(`${apiPrefix}logOut`,(req,res)=>{
+    res.cookie("token","");
+    res.send({
+        message : "success"
+    });
+})
 
 // Configuring port for APP
 const port = 3001;
