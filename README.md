@@ -11,8 +11,6 @@
    - Set  apiVersion as "2016-04-19" 
 
  - Rename the cognito_configuration.example.json to cognito_configuration.json
- 
- - Rename the AWSConfig.example.json to AWSConfig.json
 
  - IMPORTANT: do not upload Access keys to web (e.g. github, google drive)
 ```sh
