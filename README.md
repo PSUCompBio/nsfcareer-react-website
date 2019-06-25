@@ -4,8 +4,8 @@
  - Duplicate the /config/AWSConfig.example.json to config/AWSConfig.json
 
 - Update your AWS Access key ID , Secret Key & Region in
-   /config/AWSConfig.json (this files is included in .
-	 gitignore so it will not be committed on future pushes to github)
+   /config/AWSConfig.json (this files is included in
+	 .gitignore so it will not be committed on future pushes to github)
 
  ------
  - Duplicate the config/cognito_configuration.example.js to config/cognito_configuration.js
