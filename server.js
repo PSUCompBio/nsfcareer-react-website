@@ -11,6 +11,10 @@ const express = require('express');
     utility = require('./utilities/utility'),
     VerifyToken = require('./verify_user'),
     cookieParser = require('cookie-parser'),
+	archiver = require("archiver"),
+	fs = require("fs"),
+	path = require("path"),
+	uploadFile = require("./upload.js"),
 	global.fetch = require('node-fetch');
 
 // ================================================
@@ -1044,6 +1048,73 @@ app.post(`${apiPrefix}verifyUser`,VerifyToken,(req,res)=>{
         })
         }});
 })
+
+// Create Avatar 3D
+app.post(`${apiPrefix}createAvatar`, (req, res) => {
+	console.log("API CAlled createAvatar",req.body);
+
+	const spawn = require("child_process").spawn;
+	const pythonProcess = spawn("python", [
+		"./AvatarTest.py",
+		req.body.image
+	]);
+	
+	pythonProcess.stdout.on("data", async data => {
+		console.log(data.toString());  
+		try {  
+			//archive zip
+			var output = fs.createWriteStream(data.toString() + ".zip");
+			var archive = archiver("zip");
+			
+			output.on("close", async function() {
+				console.log(archive.pointer() + " total bytes");
+				console.log(
+					"archiver has been finalized and the output file descriptor has closed."
+				);
+				console.log("zip file uploading");
+				let filePath = path.join(
+				__dirname,
+				"./" + data.toString() + ".zip"
+				);
+				let zipBuffer = fs.readFileSync(filePath);
+				returnedData = await uploadFile("zip", zipBuffer, data.toString(), {
+					ext: "zip",
+					mime: "application/zip"
+				});  
+
+				let rData = {};
+				rData.plyPath = returnedData.Location;
+				return res.status(200).send(rData);
+			});
+			archive.on("error", function(err) {
+				console.log(err);
+				res.status(400).send(err);
+				throw err;
+			});
+			archive.pipe(output);
+			let file = fs.createReadStream(
+				path.join(__dirname, "/./" + data.toString() + "/model.ply")
+			);
+			archive.append(file, { name: "model.ply" });
+			file = fs.createReadStream(
+				path.join(__dirname, "/./" + data.toString() + "/model.jpg")
+			);
+			archive.append(file, { name: "model.jpg" });
+			archive.finalize();
+
+		} catch (error) {
+			console.log(error);
+			return res.status(400).send(error);
+		}
+	});
+	
+	pythonProcess.stderr.on("data", async data => {
+		console.log(`error:${data}`);
+	});
+	pythonProcess.on("close", async data => {
+		console.log(`child process close with ${data}`);
+	}); 
+});
 
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`,(req,res)=>{
