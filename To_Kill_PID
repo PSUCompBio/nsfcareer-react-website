@@ -1,5 +1,5 @@
 # on windows:
 
-netstat -ano | findstr :3000
+netstat -ano | findstr :300*
 
-tskill typeyourPIDhere 
+tskill typeyourPIDhere
