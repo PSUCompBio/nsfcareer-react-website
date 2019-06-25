@@ -149,3 +149,15 @@ export const logOut = (request) =>{
       });
   })
 }
+
+export const createAvatar = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}createAvatar`, request)
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
