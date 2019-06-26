@@ -12,6 +12,10 @@ from PIL import Image
 from io import BytesIO
 from time import gmtime, strftime
 
+# note: client_id and client_secret below is from the
+# the Avatar3d SDK website. There are IDs created for
+# "Developer Access" and "Client Access". The information
+# below is from the "Client Access" section.
 AUTH_FORM = {
     'grant_type': 'client_credentials',
     'client_id': 'XXXXX',
