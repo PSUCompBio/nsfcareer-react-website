@@ -11,3 +11,5 @@ AvatarTest.py
 .env
 2019*
 *.zip
+oauth.json
+player.json
