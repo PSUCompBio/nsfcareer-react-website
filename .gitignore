@@ -9,4 +9,5 @@ config/AWSConfig.json
 config/cognito_configuration.js
 AvatarTest.py
 .env
-oauth.json
+2019*
+*.zip
