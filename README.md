@@ -4,7 +4,9 @@
  - Duplicate the /config/AWSConfig.example.json to config/AWSConfig.json
 
 - Update your AWS Access key ID , Secret Key & Region in
-   /config/AWSConfig.json (this files is included in .gitignore so it will not be committed on future pushes to github). To do this, In AWS Management Console, Search and open IAM service, Then Select Users from Left-hand Side Pane. Select your user-name listed in Table. Then click on Security Credentials Tab, there you can access & view your all AWS Access Key IDs. If the user does not have a user account, then create one.
+   /config/AWSConfig.json (this files is included in .gitignore so it will not be committed on future pushes to github). 
+ 
+  - To do this, In AWS Management Console, Search and open IAM service, Then Select Users from Left-hand Side Pane. Select your user-name listed in Table. Then click on Security Credentials Tab, there you can access & view your all AWS Access Key IDs. If the user does not have a user account, then create one.
 
  ------
  - Duplicate the config/cognito_configuration.example.js to config/cognito_configuration.js
