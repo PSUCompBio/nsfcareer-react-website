@@ -1,18 +1,39 @@
 # nsfcareer-react-application
 
 ## Steps to run the application
- - Update your AWS Access key ID , Secret Key & Region in 
-   the file residing in /config/AWSConfig.example.json
+ - Duplicate the /config/AWSConfig.example.json to config/AWSConfig.json
 
- - Rename the AWSConfig.example.json to AWSConfig.json
- 
- - Update your AWS Cognito Credentials like : userPoolId, region & ClientId in 
-   the file residing in /config/cognito_configuration.example.json.
-   - Set  apiVersion as "2016-04-19" 
+- Update your AWS Access key ID , Secret Key & Region in
+   /config/AWSConfig.json (this files is included in
+	 .gitignore so it will not be committed on future pushes to github)
 
- - Rename the cognito_configuration.example.json to cognito_configuration.json
+ ------
+ - Duplicate the config/cognito_configuration.example.js to config/cognito_configuration.js
 
- - IMPORTANT: do not upload Access keys to web (e.g. github, google drive)
+ - Update your AWS Cognito Credentials including: userPoolId, region & ClientId in
+   the file residing in /config/cognito_configuration.example.js.
+
+   - Set  apiVersion as "2016-04-19"
+
+------
+- Duplicate the AvatarTest.example.py to AvatarTest.py
+
+- Add ClientId and client secret of "Client Access" in AvatarTest.py file.
+
+------
+
+- Duplicate the .env_example to .env
+
+- Add AWS Access Key ID and AWS Secret Access Key ID to .env file.
+
+------
+- Duplicate the oauth.example.json to oauth.json
+
+- Update access token: and expiration date code
+
+------
+
+## IMPORTANT: do not upload Access keys to web (e.g. github, google drive)
 ```sh
 
 # Pre-Requisite dependencies
