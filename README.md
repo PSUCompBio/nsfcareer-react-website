@@ -14,7 +14,7 @@
  - Update your AWS Cognito Credentials including: userPoolId, region & ClientId in
    the file residing in /config/cognito_configuration.example.js.
    
-    -You can find these in AWS Cognito service page. The userPooolID can be found under General settings, "Pool Id". The ClientID is under App integration, then App client settings, then there is a title for the App client, and under that there is "ID", this is the ID to use.
+  - You can find these in AWS Cognito service page. The userPooolID can be found under General settings, "Pool Id". The ClientID is under App integration, then App client settings, then there is a title for the App client, and under that there is "ID", this is the ID to use.
 
    - Set  apiVersion as "2016-04-19"
 
