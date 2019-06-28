@@ -1055,7 +1055,7 @@ app.post(`${apiPrefix}createAvatar`, (req, res) => {
 
 	const spawn = require("child_process").spawn;
 	const pythonProcess = spawn("python", [
-		"./AvatarTest.py",
+		"./avatarConfig/AvatarTest.py",
 		req.body.image
 	]);
 	
