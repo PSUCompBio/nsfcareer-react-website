@@ -19,24 +19,19 @@
    - Set  apiVersion as "2016-04-19"
 
 ------
-- Duplicate the AvatarTest.example.py to AvatarTest.py
+- Duplicate the avatarConfig/AvatarTest.example.py to AvatarTest.py
 
 - Add client_id and client_secret of "Client Access" in AvatarTest.py file. Note: client_id and client_secret from the the Avatar3d SDK website. There are IDs created for "Developer Access"  and "Client Access". This information is from the "Client Access" section.
 
 ------
 
-- Duplicate the .env_example to .env
+- Duplicate the avatarConfig/AWSConfig.example.js to AWSConfig.js
 
-- Add AWS Access Key ID and AWS Secret Access Key ID to .env file.
+- Add AWS Access Key ID and AWS Secret Access Key ID and ASW Bucket name in AWSConfig.js.
 
   - To do this, In AWS Management Console, Search and open IAM service, Then Select Users from Left-hand Side Pane. Select your user-name listed in Table. Then click on Security Credentials Tab, there you can access & view your all AWS Access Key IDs. If the user does not have a user account, then create one.
 
 ------
-
-- Duplicate oauth.example.json to oauth.json. Remove any ID from the "access_token" entry in oauth.json. Should just be "".
-------
-
-- Duplicate player.example.json to player.json. Remove any ID from the "code" entry in player.json. Should just be "".
 
 ## IMPORTANT: do not upload Access keys to web (e.g. github, google drive)
 ```sh

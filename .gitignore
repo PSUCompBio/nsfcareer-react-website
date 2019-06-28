@@ -7,9 +7,10 @@ build/
 *.swp
 config/AWSConfig.json
 config/cognito_configuration.js
-AvatarTest.py
-.env
-2019*
-*.zip
-oauth.json
-player.json
+avatarConfig/AvatarTest.py
+avatarConfig/oauth.json
+avatarConfig/player.json
+avatarConfig/AWSConfig.js
+avatarConfig/2019*
+avatarConfig/*.zip
+
