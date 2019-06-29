@@ -53,10 +53,20 @@ class Avatar extends React.Component {
 		   this.setState({ users: user_arr });
 		   
         }).catch((err) => {
+			
+			let user_arr = this.state.users;
+			let user;
+			
+			for (user in user_arr) {
+				if (user_arr[user]['id'] === id){
+					user_arr[user]['isLoading'] = false;
+				}
+			}	 
+			
+		   this.setState({ users: user_arr });
            
             // catch error 
             alert("error : ", err);
-			this.setState({ isLoading: false});
         })
     }
 	

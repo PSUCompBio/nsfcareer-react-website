@@ -36,6 +36,9 @@ const apiPrefix = "/api/"
 //       CONFIGURING AWS SDK & EXPESS
 // ======================================
 
+// Avatar Configuration
+var config = require("./config/configuation_keys");
+
 // AWS Credentials loaded
 AWS.config.loadFromPath('./config/AWSConfig.json');
 
@@ -1055,8 +1058,10 @@ app.post(`${apiPrefix}createAvatar`, (req, res) => {
 
 	const spawn = require("child_process").spawn;
 	const pythonProcess = spawn("python", [
-		"./avatarConfig/AvatarTest.py",
-		req.body.image
+		"./config/AvatarTest.py",
+		req.body.image,
+		config.avatar3dClientId,
+		config.avatar3dclientSecret
 	]);
 	
 	pythonProcess.stdout.on("data", async data => {

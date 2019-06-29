@@ -6,12 +6,12 @@ const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 
 // AWS Configuration
-var aws = require("./avatarConfig/AWSConfig");
+var config = require("./config/configuation_keys");
 
 // configure the keys for accessing AWS
 AWS.config.update({
-  accessKeyId: aws.accessKeyId,
-  secretAccessKey: aws.secretAccessKey
+  accessKeyId: config.awsAccessKeyId,
+  secretAccessKey: config.awsSecretAccessKey
 });
 
 // configure AWS to work with promises
@@ -24,7 +24,7 @@ const uploadFile = (folder, buffer, name, type) => {
   const params = {
     ACL: "public-read",
     Body: buffer,
-    Bucket: aws.bucket + '/' + folder,
+    Bucket: config.awsBucket + '/' + folder,
     ContentType: type.mime,
     Key: `${name}.${type.ext}`
   };

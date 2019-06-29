@@ -19,17 +19,13 @@
    - Set  apiVersion as "2016-04-19"
 
 ------
-- Duplicate the avatarConfig/AvatarTest.example.py to AvatarTest.py
+- Duplicate the config/configuation_keys.example.js to configuation_keys.js
 
-- Add client_id and client_secret of "Client Access" in AvatarTest.py file. Note: client_id and client_secret from the the Avatar3d SDK website. There are IDs created for "Developer Access"  and "Client Access". This information is from the "Client Access" section.
-
-------
-
-- Duplicate the avatarConfig/AWSConfig.example.js to AWSConfig.js
-
-- Add AWS Access Key ID and AWS Secret Access Key ID and ASW Bucket name in AWSConfig.js.
+- Add AWS Access Key ID and AWS Secret Access Key ID and ASW Bucket name in configuation_keys.js.
 
   - To do this, In AWS Management Console, Search and open IAM service, Then Select Users from Left-hand Side Pane. Select your user-name listed in Table. Then click on Security Credentials Tab, there you can access & view your all AWS Access Key IDs. If the user does not have a user account, then create one.
+
+- Add client_id and client_secret of "Client Access" in configuation_keys.js file. Note: client_id and client_secret from the the Avatar3d SDK website. There are IDs created for "Developer Access"  and "Client Access". This information is from the "Client Access" section.
 
 ------
 

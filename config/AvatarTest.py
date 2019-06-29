@@ -18,13 +18,13 @@ from time import gmtime, strftime
 # below is from the "Client Access" section.
 AUTH_FORM = {
     'grant_type': 'client_credentials',
-    'client_id': 'XXX',
-    'client_secret': 'XXX',
+    'client_id': sys.argv[2],
+    'client_secret': sys.argv[3],
 }
 
 
-AUTH_FILE = 'avatarConfig/oauth.json'
-PLAYER_FILE = 'avatarConfig/player.json'
+AUTH_FILE = 'config/oauth.json'
+PLAYER_FILE = 'config/player.json'
 
 
 def get_auth_header():
@@ -148,7 +148,7 @@ def main(selfie):
     texture = requests.get(rsp['texture'], headers=headers)
 
     #print('Saving avatar model to a ply file...')
-    directoryName = 'avatarConfig/' + strftime("%Y%m%d%H%M%S",gmtime())
+    directoryName = 'avatars/' + strftime("%Y%m%d%H%M%S",gmtime())
     with io.BytesIO(mesh.content) as zipmemory:
         with zipfile.ZipFile(zipmemory) as archive:
             archive.extractall(directoryName)
@@ -177,5 +177,8 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Specify selfie file')
         sys.exit(1)
+    if len(sys.argv) < 4:
+        print('Specify Client ID and Client Secret')
+        sys.exit(1)    
     dName = main(sys.argv[1])
     sys.stdout.write(dName)
