@@ -18,8 +18,8 @@ from time import gmtime, strftime
 # below is from the "Client Access" section.
 AUTH_FORM = {
     'grant_type': 'client_credentials',
-    'client_id': 'XXXXX',
-    'client_secret': 'XXXXXX',
+    'client_id': 'aUfdv4SvvSeZWGlxfNlsCorF6DVtCuvempGI3OKy',
+    'client_secret': 'CMa02qLJpiFvdpFZCTaxAxRqudc1zLn27kXiIxRIP2jVWaNFUI0UBNCzVMu4EC5J77StomNDxIpOPZn7v8cwvfFXrz21VeTWTwFzGtb92crGvGCGihvFuK3SaeBG9FrX',
 }
 
 
@@ -148,7 +148,7 @@ def main(selfie):
     texture = requests.get(rsp['texture'], headers=headers)
 
     #print('Saving avatar model to a ply file...')
-    directoryName = strftime("%Y%m%d%H%M%S",gmtime())
+    directoryName = "tmp/" + strftime("%Y%m%d%H%M%S",gmtime())
     with io.BytesIO(mesh.content) as zipmemory:
         with zipfile.ZipFile(zipmemory) as archive:
             archive.extractall(directoryName)

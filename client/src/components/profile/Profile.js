@@ -1,5 +1,5 @@
 import React from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBAlert, MDBInput, MDBCard, MDBCardBody, MDBCardFooter } from 'mdbreact';
+import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBAlert, MDBInput, MDBCard, MDBCardBody,MDBIcon, MDBCardFooter } from 'mdbreact';
 import './Profile.css'
 import {uploadProfilePic,getUserDetails,getProfilePicLink} from '../../apis'
 
@@ -39,6 +39,11 @@ onClickHandler = () => {
         this.setState(prevState => {
           prevState = JSON.parse(JSON.stringify(this.state.user));
           prevState.profile_picture_url = res.data.profile_picture_url;
+          if(res.data.avatar_url != undefined && res.data.avatar_url.length !=0){
+            prevState.avatar_url = res.data.avatar_url;
+            prevState.is_selfie_image_uploaded = true;
+            prevState.is_selfie_model_uploaded = true;
+          }
           return {user: prevState}
        })
 
@@ -125,6 +130,12 @@ return <React.Fragment>
                             <i className="glyphicon glyphicon-globe"></i>Sex : {this.state.user.gender}
                             <br />
                             <i className="glyphicon glyphicon-gift"></i>{this.state.user.phone_number}</p>
+                            <br />
+                            <span>Selfie Uploaded </span>{this.state.user.is_selfie_image_uploaded? <MDBIcon icon="check-circle" className="green-text pr-3"/> :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
+                            <br />
+                            <span>3D Avatar Generated </span>{this.state.user.is_selfie_model_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment> 
+                            
+                            :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
                     </div>
                 </div>
             </div>

@@ -13,3 +13,4 @@ AvatarTest.py
 *.zip
 oauth.json
 player.json
+tmp/*
