@@ -37,7 +37,7 @@ const apiPrefix = "/api/"
 // ======================================
 
 // Avatar Configuration
-var config = require("./config/configuation_keys");
+var config = require("./config/configuration_keys");
 
 // AWS Credentials loaded
 AWS.config.loadFromPath('./config/AWSConfig.json');

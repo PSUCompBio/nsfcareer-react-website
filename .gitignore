@@ -7,7 +7,7 @@ build/
 *.swp
 config/AWSConfig.json
 config/cognito_configuration.js
-config/configuation_keys.js
+config/configuration_keys.js
 config/oauth.json
 config/player.json
 avatars
