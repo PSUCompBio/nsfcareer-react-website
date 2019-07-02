@@ -73,10 +73,11 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors(
     {
-        origin: ["http://localhost:2000", "http://localhost:3000"],
+        origin: ["http://localhost:2000", "http://localhost:3000","http://localhost:80/","http://digitalbraininjury.com/"],
         credentials: true
     }
 ));
+
 // ============================================
 //     FUNCTIONS OR IMPLEMENTATIONS
 // ============================================
@@ -530,6 +531,10 @@ const putNumbers = (numbersData) => {
 // ============================================
 //     				ROUTES
 // ============================================
+
+app.get(`${apiPrefix}`,(req,res)=>{
+    res.send("NSFCareeIO");
+})
 
 app.post(`${apiPrefix}getNumbers`, (req, res) => {
     console.log("API CAlled");
