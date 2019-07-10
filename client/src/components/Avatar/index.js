@@ -18,7 +18,7 @@ class Avatar extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 	
-	handleClick(id, image) {
+	handleClick(id, firstname, image) {
         
 		let user_arr = this.state.users;
 		let user;
@@ -31,7 +31,7 @@ class Avatar extends React.Component {
 		
 		this.setState({ users: user_arr });
 
-        const formJsonData = {image : image};
+        const formJsonData = {user: firstname + '-' + id, image : image};
         createAvatar(formJsonData).then((data) => {
 			
 			//console.log(data.data.plyPath);
@@ -109,7 +109,7 @@ class Avatar extends React.Component {
 								<div className="spinner-border text-primary" role="status" >
 								<span className="sr-only">Loading...</span>
 								</div>
-								</div>: <div><button className="btn btn-primary" style={{ display: user.createAvatar }} onClick={() => this.handleClick(user.id, user.originalImagePath)}>Create Avatar</button>
+								</div>: <div><button className="btn btn-primary" style={{ display: user.createAvatar }} onClick={() => this.handleClick(user.id, user.firstname, user.originalImagePath)}>Create Avatar</button>
 							<button className="btn btn-primary" style={{ display: user.download }} onClick={() => this.urlOpen(user.plyPath)}>Download Avatar</button> </div>
 							}
                           </div>
