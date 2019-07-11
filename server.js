@@ -73,7 +73,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors(
     {
-        origin: ["http://localhost:2000", "http://localhost:3000","http://localhost:80/","http://digitalbraininjury.com/"],
+    origin: ["http://localhost:2000", "http://localhost:3000","http://localhost:80/","http://digitalbraininjury.com","http://www.digitalbraininjury.com"],
         credentials: true
     }
 ));
@@ -1163,7 +1163,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, upload.single("profile_pic"), awsWorker.doUpload);
 
     app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
-        // Fetch user group data and check if he is Admin or not
+	    // Fetch user group data and check if he is Admin or not
         getListGroupForUser(req.user_cognito_id, function (err, groupData) {
             if (err) {
 
