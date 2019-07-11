@@ -18,13 +18,13 @@ from time import gmtime, strftime
 # below is from the "Client Access" section.
 AUTH_FORM = {
     'grant_type': 'client_credentials',
-    'client_id': 'aUfdv4SvvSeZWGlxfNlsCorF6DVtCuvempGI3OKy',
-    'client_secret': 'CMa02qLJpiFvdpFZCTaxAxRqudc1zLn27kXiIxRIP2jVWaNFUI0UBNCzVMu4EC5J77StomNDxIpOPZn7v8cwvfFXrz21VeTWTwFzGtb92crGvGCGihvFuK3SaeBG9FrX',
+    'client_id': sys.argv[2],
+    'client_secret': sys.argv[3],
 }
 
 
-AUTH_FILE = 'oauth.json'
-PLAYER_FILE = 'player.json'
+AUTH_FILE = 'config/oauth.json'
+PLAYER_FILE = 'config/player.json'
 
 
 def get_auth_header():
@@ -104,25 +104,9 @@ def main(selfie):
     headers.update(
         get_player_uid_header(headers)
     )
-
-    #print('Retrieving available resources for `animated_face` pipeline...')
-    rsp = requests.get(
-        'https://api.avatarsdk.com/resources/available/animated_face/',
-        headers=headers
-    ).json()
-
-    pipeline_subtype = list(rsp.keys())[0]
-    available_resources = rsp[pipeline_subtype]
-    resources = {}
-
-    #print('Using only first resource from each resource group in available resources for `{}` pipeline subtype of `animated_face` pipeline'.format(pipeline_subtype))
-    for category, category_value in available_resources.items():
-        resources[category] = resources.get(category, {})
-        for group, resource_names in category_value.items():
-            resources[category][group] = [resource_names[0]]
-
+  
     #print('Uploading image...')
-    data = {'name': 'test', 'pipeline': 'animated_face', 'resources': json.dumps(resources)}
+    data = {'name': 'test', 'pipeline': 'head_1.2'}
     files = {'photo': BytesIO(requests.get(selfie).content)}
     rsp = requests.post(
         'https://api.avatarsdk.com/avatars/',
@@ -148,17 +132,54 @@ def main(selfie):
     texture = requests.get(rsp['texture'], headers=headers)
 
     #print('Saving avatar model to a ply file...')
-    directoryName = "tmp/" + strftime("%Y%m%d%H%M%S",gmtime())
+    directoryName = 'avatars/' + sys.argv[4] + '/head'
     with io.BytesIO(mesh.content) as zipmemory:
         with zipfile.ZipFile(zipmemory) as archive:
             archive.extractall(directoryName)
 
     #print('Saving texture to a jpg file')
-    with open(directoryName+'/model.jpg', 'wb') as texture_file:
+    with open(directoryName + '/model.jpg', 'wb') as texture_file:
         texture_file.write(texture.content)
+		
+		
+	#print('Uploading image...')
+    data = {'name': 'test', 'pipeline': 'static'}
+    files = {'photo': BytesIO(requests.get(selfie).content)}
+    rsp = requests.post(
+        'https://api.avatarsdk.com/avatars/',
+        headers=headers, data=data, files=files
+    ).json()
+
+    avatar_status_url = rsp['url']
+
+    #print('Waiting for avatar to compute...', end='', flush=True)
+    while True:
+        rsp = requests.get(avatar_status_url, headers=headers).json()
+
+        #print('.', end='', flush=True)
+
+        if rsp['status'] == 'Completed':
+            #print('Completed!')
+            break
+
+        time.sleep(3)
+
+    #print('Downloading avatar...')
+    mesh = requests.get(rsp['mesh'], headers=headers)
+    texture = requests.get(rsp['texture'], headers=headers)
+
+    #print('Saving avatar model to a ply file...')
+    directoryName = 'avatars/' + sys.argv[4] + '/face'
+    with io.BytesIO(mesh.content) as zipmemory:
+        with zipfile.ZipFile(zipmemory) as archive:
+            archive.extractall(directoryName)
+
+    #print('Saving texture to a jpg file')
+    with open(directoryName + '/model.jpg', 'wb') as texture_file:
+        texture_file.write(texture.content)	
 
     #print('Ready! Look for model.ply and model.jpg in your current folder!')
-    return directoryName
+    return 'avatars/' + sys.argv[4]
 
 
 if __name__ == '__main__':
@@ -177,5 +198,8 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Specify selfie file')
         sys.exit(1)
+    if len(sys.argv) < 4:
+        print('Specify Client ID and Client Secret')
+        sys.exit(1)    
     dName = main(sys.argv[1])
     sys.stdout.write(dName)

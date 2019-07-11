@@ -5,12 +5,13 @@ dotenv.config();
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 
-const S3_BUCKET = "avatar3d/";
+// AWS Configuration
+var config = require("./config/configuration_keys");
 
 // configure the keys for accessing AWS
 AWS.config.update({
-  accessKeyId: AWS_ACCESS_KEY_ID,
-  secretAccessKey: AWS_SECRET_ACCESS_KEY
+  accessKeyId: config.awsAccessKeyId,
+  secretAccessKey: config.awsSecretAccessKey
 });
 
 // configure AWS to work with promises
@@ -23,7 +24,7 @@ const uploadFile = (folder, buffer, name, type) => {
   const params = {
     ACL: "public-read",
     Body: buffer,
-    Bucket: S3_BUCKET + folder,
+    Bucket: config.awsBucket + '/' + folder,
     ContentType: type.mime,
     Key: `${name}.${type.ext}`
   };

@@ -15,7 +15,9 @@ app = express(),
     fs = require("fs"),
     path = require("path"),
     uploadFile = require("./upload.js"),
-    global.fetch = require('node-fetch');
+    global.fetch = require('node-fetch'),
+    config_env = require("./config/configuration_keys");
+    multer = require('multer');
 
 // ================================================
 //            SERVER CONFIGURATION
@@ -36,17 +38,45 @@ const apiPrefix = "/api/"
 //       CONFIGURING AWS SDK & EXPESS
 // ======================================
 
-// AWS Credentials loaded
-AWS.config.loadFromPath('./config/AWSConfig.json');
+// Avatar Configuration
+var config = require("./config/configuration_keys");
 
+// AWS Credentials loaded
+AWS.Config({
+    accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region
+  });
 // Cognito Configuration
-var cognito = require("./config/cognito_configuration");
+var cognito = {
+    userPoolId: config_env.userPoolId,
+    region: config_env.region,
+    apiVersion : config_env.apiVersion,
+    ClientId : config_env.ClientId
+}
 
 // Multer Configuration
-let upload = require('./config/multer.config.js');
 
-// Cognito Configuration
-var cognito = require("./config/cognito_configuration.js");
+
+var storage = multer.memoryStorage()
+var upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        //var ext = path.extname(file.originalname);
+        console.log(file.originalname);
+
+        let jpgFile = new RegExp(".jpg").test(file.originalname);
+        let jpegFile = new RegExp(".jpeg").test(file.originalname);
+        let pngFile = new RegExp(".png").test(file.originalname);
+
+        if (!jpgFile && !jpegFile && !pngFile) {
+            // res.send({message : "FAILURE"});
+            req.body["file_error"] = "Only jpeg,jpg are allowed"
+        }
+        callback(null, true)
+    }
+    // limits:{
+    //     fileSize: 1024 * 1024
+    // }
+});
 
 // AWS S3 & Other Controllers Configuration
 const awsWorker = require('./controllers/aws.controller.js');
@@ -1187,72 +1217,119 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         });
     })
 
-    // Create Avatar 3D
-    app.post(`${apiPrefix}createAvatar`, (req, res) => {
-        console.log("API CAlled createAvatar", req.body);
+// Create Avatar 3D
+app.post(`${apiPrefix}createAvatar`, (req, res) => {
+	console.log("API CAlled createAvatar",req.body);
+	
+	// Delete user previous Avatar Directory
+	deleteDirectory(path.join(
+		__dirname,
+		"./avatars/" + req.body.user
+		), function() {
+			//console.log('Directory deleted');
+		}
+	);
+		
+	const spawn = require("child_process").spawn;
+	const pythonProcess = spawn("python", [
+		"./config/AvatarTest.py",
+		req.body.image,
+		config.avatar3dClientId,
+		config.avatar3dclientSecret,
+		req.body.user
+	]);
+	
+	pythonProcess.stdout.on("data", async data => {
+		console.log(data.toString());  
+		try {
+			//archive zip
+			var output = fs.createWriteStream(data.toString() + ".zip");
+			var archive = archiver("zip");
+			
+			output.on("close", async function() {
+				console.log(archive.pointer() + " total bytes");
+				console.log(
+					"archiver has been finalized and the output file descriptor has closed."
+				);
+				console.log("zip file uploading");
+				let filePath = path.join(
+				__dirname,
+				"./" + data.toString() + ".zip"
+				);
+				let zipBuffer = fs.readFileSync(filePath);
+				returnedData = await uploadFile("zip", zipBuffer, data.toString(), {
+					ext: "zip",
+					mime: "application/zip"
+				});
 
-        const spawn = require("child_process").spawn;
-        const pythonProcess = spawn("python", [
-            "./AvatarTest.py",
-            req.body.image
-        ]);
+				let rData = {};
+				rData.plyPath = returnedData.Location;
+				return res.status(200).send(rData);
+			});
+			archive.on("error", function(err) {
+				console.log(err);
+				res.status(400).send(err);
+				throw err;
+			});
+			archive.pipe(output);
+			archive.directory(path.join(__dirname, "/./" + data.toString() + "/"), false);
+			archive.finalize();
 
-        pythonProcess.stdout.on("data", async data => {
-            console.log(data.toString());
-            try {
-                //archive zip
-                var output = fs.createWriteStream(data.toString() + ".zip");
-                var archive = archiver("zip");
+		} catch (error) {
+			console.log(error);
+			return res.status(400).send(error);
+		}
+	});
+	
+	pythonProcess.stderr.on("data", async data => {
+		console.log(`error:${data}`);
+	});
+	pythonProcess.on("close", async data => {
+		console.log(`child process close with ${data}`);
+	}); 
+});
 
-                output.on("close", async function () {
-                    console.log(archive.pointer() + " total bytes");
-                    console.log(
-                        "archiver has been finalized and the output file descriptor has closed."
-                    );
-                    console.log("zip file uploading");
-                    let filePath = path.join(
-                        __dirname,
-                        "./" + data.toString() + ".zip"
-                    );
-                    let zipBuffer = fs.readFileSync(filePath);
-                    returnedData = await uploadFile("zip", zipBuffer, data.toString(), {
-                        ext: "zip",
-                        mime: "application/zip"
-                    });
-
-                    let rData = {};
-                    rData.plyPath = returnedData.Location;
-                    return res.status(200).send(rData);
-                });
-                archive.on("error", function (err) {
-                    console.log(err);
-                    res.status(400).send(err);
-                    throw err;
-                });
-                archive.pipe(output);
-                let file = fs.createReadStream(
-                    path.join(__dirname, "/./" + data.toString() + "/model.ply")
-                );
-                archive.append(file, { name: "model.ply" });
-                file = fs.createReadStream(
-                    path.join(__dirname, "/./" + data.toString() + "/model.jpg")
-                );
-                archive.append(file, { name: "model.jpg" });
-                archive.finalize();
-
-            } catch (error) {
-                console.log(error);
-                return res.status(400).send(error);
-            }
-        });
-
-        pythonProcess.stderr.on("data", async data => {
-            console.log(`error:${data}`);
-        });
-        pythonProcess.on("close", async data => {
-            console.log(`child process close with ${data}`);
-        });
-    });
+// Delete Directory  
+var deleteDirectory = function(path, callback) {
+	fs.readdir(path, function(err, files) {
+		if(err) {
+			// Pass the error on to callback
+			callback(err, []);
+			return;
+		}
+		var wait = files.length,
+			count = 0,
+			folderDone = function(err) {
+			count++;
+			// If we cleaned out all the files, continue
+			if( count >= wait || err) {
+				fs.rmdir(path,callback);
+			}
+		};
+		// Empty directory to bail early
+		if(!wait) {
+			folderDone();
+			return;
+		}
+		
+		// Remove one or more trailing slash to keep from doubling up
+		path = path.replace(/\/+$/,"");
+		files.forEach(function(file) {
+			var curPath = path + "/" + file;
+			fs.lstat(curPath, function(err, stats) {
+				if( err ) {
+					callback(err, []);
+					return;
+				}
+				if( stats.isDirectory() ) {
+					deleteDirectory(curPath, folderDone);
+				} else {
+					fs.unlink(curPath, folderDone);
+				}
+			});
+		});
+	});
+};	
 
     // Clearing the cookies
     app.post(`${apiPrefix}logOut`, (req, res) => {

@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import Chart from 'react-google-charts';
 import "./military.css";
+
+import { MDBBtn } from "mdbreact";
 
 let stage = 0;
 let oldx = 0;
@@ -764,106 +766,108 @@ class Military extends Component {
 		};
 
 	    return (
-		    <div className="main-container">
-				<div className="left-container" id="left-container">
-					<div id="canvas-Container">
-						<div className="chart-container">
-							<div className="graph1">
-								<Chart
-									width={'300px'}
-									height={'200px'}
-									chartType="LineChart"
-									loader={<div>Loading Chart</div>}
-									data={this.state.dataPoints1}
-									options={options}
-									rootProps={{ 'data-testid': '1' }}
-								/>
-							</div>
-							<div className="graph2">
-								<Chart
-									width={'300px'}
-									height={'200px'}
-									chartType="LineChart"
-									loader={<div>Loading Chart</div>}
-									data={this.state.dataPoints2}
-									options={options}
-									rootProps={{ 'data-testid': '2' }}
-								/>
+			<Fragment>
+				<h1 className="topspace">Military</h1>
+				<div className="main-container">
+					<div className="left-container" id="left-container">
+						<div id="canvas-Container">
+							<div className="chart-container">
+								<div className="graph1">
+									<Chart
+										width={'300px'}
+										height={'200px'}
+										chartType="LineChart"
+										loader={<div>Loading Chart</div>}
+										data={this.state.dataPoints1}
+										options={options}
+										rootProps={{ 'data-testid': '1' }}
+									/>
+								</div>
+								<div className="graph2">
+									<Chart
+										width={'300px'}
+										height={'200px'}
+										chartType="LineChart"
+										loader={<div>Loading Chart</div>}
+										data={this.state.dataPoints2}
+										options={options}
+										rootProps={{ 'data-testid': '2' }}
+									/>
+
+								</div>
+								<div className="graph3">
+									<Chart
+										width={'300px'}
+										height={'200px'}
+										chartType="LineChart"
+										loader={<div>Loading Chart</div>}
+										data={this.state.dataPoints3}
+										options={options}
+										rootProps={{ 'data-testid': '3' }}
+									/>
+								</div>
 
 							</div>
-							<div className="graph3">
-								<Chart
-									width={'300px'}
-									height={'200px'}
-									chartType="LineChart"
-									loader={<div>Loading Chart</div>}
-									data={this.state.dataPoints3}
-									options={options}
-									rootProps={{ 'data-testid': '3' }}
-								/>
-							</div>
-
+							<canvas ref="canvas" onMouseDown={this.handleMouseDown} />
 						</div>
-						<canvas ref="canvas" onMouseDown={this.handleMouseDown} />
+
+						<div className="hidden">
+							<img id="image0" alt="img" src='360images/Render_00000.png' />
+							<img id="image1" alt="img" src='360images/Render_00001.png' />
+							<img id="image2" alt="img" src='360images/Render_00002.png' />
+							<img id="image3" alt="img" src='360images/Render_00003.png' />
+							<img id="image4" alt="img" src='360images/Render_00004.png' />
+							<img id="image5" alt="img" src='360images/Render_00005.png' />
+							<img id="image6" alt="img" src='360images/Render_00006.png' />
+							<img id="image7" alt="img" src='360images/Render_00007.png' />
+							<img id="image8" alt="img" src='360images/Render_00008.png' />
+							<img id="image9" alt="img" src='360images/Render_00009.png' />
+							<img id="image10" alt="img" src='360images/Render_00010.png' />
+							<img id="image11" alt="img" src='360images/Render_00011.png' />
+							<img id="image12" alt="img" src='360images/Render_00012.png' />
+							<img id="image13" alt="img" src='360images/Render_00013.png' />
+							<img id="image14" alt="img" src='360images/Render_00014.png' />
+							<img id="image15" alt="img" src='360images/Render_00015.png' />
+							<img id="image16" alt="img" src='360images/Render_00016.png' />
+							<img id="image17" alt="img" src='360images/Render_00017.png' />
+							<img id="image18" alt="img" src='360images/Render_00018.png' />
+							<img id="image19" alt="img" src='360images/Render_00019.png' />
+							<img id="image20" alt="img" src='360images/Render_00020.png' />
+							<img id="image21" alt="img" src='360images/Render_00021.png' />
+							<img id="image22" alt="img" src='360images/Render_00022.png' />
+							<img id="image23" alt="img" src='360images/Render_00023.png' />
+							<img id="image24" alt="img" src='360images/Render_00024.png' />
+							<img id="image25" alt="img" src='360images/Render_00025.png' />
+							<img id="image26" alt="img" src='360images/Render_00026.png' />
+							<img id="image27" alt="img" src='360images/Render_00027.png' />
+							<img id="image28" alt="img" src='360images/Render_00028.png' />
+							<img id="image29" alt="img" src='360images/Render_00029.png' />
+							<img id="image30" alt="img" src='360images/Render_00030.png' />
+							<img id="image31" alt="img" src='360images/Render_00031.png' />
+							<img id="image32" alt="img" src='360images/Render_00032.png' />
+							<img id="image33" alt="img" src='360images/Render_00033.png' />
+							<img id="image34" alt="img" src='360images/Render_00034.png' />
+							<img id="image35" alt="img" src='360images/Render_00035.png' />
+							<img id="image36" alt="img" src='360images/Render_00036.png' />
+							<img id="image37" alt="img" src='360images/Render_00037.png' />
+							<img id="image38" alt="img" src='360images/Render_00038.png' />
+							<img id="image39" alt="img" src='360images/Render_00039.png' />
+							<img id="image40" alt="img" src='360images/Render_00040.png' />
+							<img id="image41" alt="img" src='360images/Render_00041.png' />
+							<img id="image42" alt="img" src='360images/Render_00042.png' />
+							<img id="image43" alt="img" src='360images/Render_00043.png' />
+							<img id="image44" alt="img" src='360images/Render_00044.png' />
+							<img id="image45" alt="img" src='360images/Render_00045.png' />
+							<img id="image46" alt="img" src='360images/Render_00046.png' />
+							<img id="image47" alt="img" src='360images/Render_00047.png' />
+						</div>
+
 					</div>
-
-					<div className="hidden">
-						<img id="image0" alt="img" src='360images/Render_00000.png' />
-						<img id="image1" alt="img" src='360images/Render_00001.png' />
-						<img id="image2" alt="img" src='360images/Render_00002.png' />
-						<img id="image3" alt="img" src='360images/Render_00003.png' />
-						<img id="image4" alt="img" src='360images/Render_00004.png' />
-						<img id="image5" alt="img" src='360images/Render_00005.png' />
-						<img id="image6" alt="img" src='360images/Render_00006.png' />
-						<img id="image7" alt="img" src='360images/Render_00007.png' />
-						<img id="image8" alt="img" src='360images/Render_00008.png' />
-						<img id="image9" alt="img" src='360images/Render_00009.png' />
-						<img id="image10" alt="img" src='360images/Render_00010.png' />
-						<img id="image11" alt="img" src='360images/Render_00011.png' />
-						<img id="image12" alt="img" src='360images/Render_00012.png' />
-						<img id="image13" alt="img" src='360images/Render_00013.png' />
-						<img id="image14" alt="img" src='360images/Render_00014.png' />
-						<img id="image15" alt="img" src='360images/Render_00015.png' />
-						<img id="image16" alt="img" src='360images/Render_00016.png' />
-						<img id="image17" alt="img" src='360images/Render_00017.png' />
-						<img id="image18" alt="img" src='360images/Render_00018.png' />
-						<img id="image19" alt="img" src='360images/Render_00019.png' />
-						<img id="image20" alt="img" src='360images/Render_00020.png' />
-						<img id="image21" alt="img" src='360images/Render_00021.png' />
-						<img id="image22" alt="img" src='360images/Render_00022.png' />
-						<img id="image23" alt="img" src='360images/Render_00023.png' />
-						<img id="image24" alt="img" src='360images/Render_00024.png' />
-						<img id="image25" alt="img" src='360images/Render_00025.png' />
-						<img id="image26" alt="img" src='360images/Render_00026.png' />
-						<img id="image27" alt="img" src='360images/Render_00027.png' />
-						<img id="image28" alt="img" src='360images/Render_00028.png' />
-						<img id="image29" alt="img" src='360images/Render_00029.png' />
-						<img id="image30" alt="img" src='360images/Render_00030.png' />
-						<img id="image31" alt="img" src='360images/Render_00031.png' />
-						<img id="image32" alt="img" src='360images/Render_00032.png' />
-						<img id="image33" alt="img" src='360images/Render_00033.png' />
-						<img id="image34" alt="img" src='360images/Render_00034.png' />
-						<img id="image35" alt="img" src='360images/Render_00035.png' />
-						<img id="image36" alt="img" src='360images/Render_00036.png' />
-						<img id="image37" alt="img" src='360images/Render_00037.png' />
-						<img id="image38" alt="img" src='360images/Render_00038.png' />
-						<img id="image39" alt="img" src='360images/Render_00039.png' />
-						<img id="image40" alt="img" src='360images/Render_00040.png' />
-						<img id="image41" alt="img" src='360images/Render_00041.png' />
-						<img id="image42" alt="img" src='360images/Render_00042.png' />
-						<img id="image43" alt="img" src='360images/Render_00043.png' />
-						<img id="image44" alt="img" src='360images/Render_00044.png' />
-						<img id="image45" alt="img" src='360images/Render_00045.png' />
-						<img id="image46" alt="img" src='360images/Render_00046.png' />
-						<img id="image47" alt="img" src='360images/Render_00047.png' />
+					<div className="right-container">
+						<MDBBtn color="light-green" className="generate-graph-section" title="Generate Graph" onClick={this.generateGraphs} >Generate Graph</MDBBtn>
 					</div>
-
 				</div>
-				<div className="right-container">
-					<button className="generate-graph-section" title="Generate Graph" onClick={this.generateGraphs} >Generate Graph</button>
-				</div>
-			</div>
-
+			</Fragment>
 	    )
     }
 }

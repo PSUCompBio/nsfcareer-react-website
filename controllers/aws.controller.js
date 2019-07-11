@@ -3,17 +3,28 @@ var AWS = require('aws-sdk');
 var fs = require('fs');
 var archive = archiver("zip");
 const spawn = require("child_process").spawn;
+var config = require('../config/configuration_keys')
 
-// AWS Credentials loaded
-AWS.config.loadFromPath('./config/AWSConfig.json');
+// AWS.config.loadFromPath("./config/AWSConfig.json");
+AWS.Config({
+    accessKeyId: config.awsAccessKeyId, secretAccessKey: config.awsSecretAccessKey, region: config.region
+  });
 
+var s3Client = new AWS.S3();
+
+var uploadParams = {
+         Bucket: config.usersbucket, 
+         Key: '', // pass key
+         Body: null, // pass file body
+};
+
+var s3 = {};
+s3.s3Client = s3Client;
+s3.uploadParams = uploadParams;
 
 const docClient = new AWS.DynamoDB.DocumentClient({
     convertEmptyValues: true
 });
-
-const s3 = require('../config/s3.config.js');
-
 
 
 exports.doUpload = (req, res) => {
@@ -64,7 +75,10 @@ exports.doUpload = (req, res) => {
                     
                     const pythonProcess = spawn("python", [
                         "./AvatarTest.py",
-                        url
+                            url,
+		                    config.avatar3dClientId,
+		                    config.avatar3dclientSecret,
+		                    req.user_cognito_id
                     ]);
 
                     pythonProcess.stdout.on("data", async data => {

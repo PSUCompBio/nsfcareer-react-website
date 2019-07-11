@@ -1,16 +1,15 @@
 .main-container {
 	width: 100%;
-	margin-top: 140px;
 	display: inline-block;
 }
 .left-container {
-	width: 70%;
+	width: 75%;
 	height: 480px;
 	float: left; 
 	position: relative;
 }
 .right-container {
-	width: 30%;
+	width: 25%;
 	float: right;
 }
 .canvas-Container {
@@ -36,7 +35,8 @@
 	display: none;
 }
 .generate-graph-section {
-	margin-left: 50px;
-	cursor:pointer;
+	margin-left: 50px !important;
+	margin-top: 0px !important;
 }
+
 
