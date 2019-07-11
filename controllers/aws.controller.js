@@ -3,10 +3,12 @@ var AWS = require('aws-sdk');
 var fs = require('fs');
 var archive = archiver("zip");
 const spawn = require("child_process").spawn;
-var config = require('../config/configuration_keys')
+var config = require('./../config/configuration_keys')
 
-AWS.config.loadFromPath('./config/configuration_keys.json');
-
+//AWS.config.loadFromPath('./config/configuration_keys.json');
+var myconfig = AWS.config.update({
+    accessKeyId: config.awsAccessKeyId, secretAccessKey: config.awsSecretAccessKey, region: config.region
+  });
 var s3Client = new AWS.S3();
 
 var uploadParams = {

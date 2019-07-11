@@ -40,13 +40,13 @@ const apiPrefix = "/api/"
 
 // Avatar Configuration
 var config = require("./config/configuration_keys");
-AWS.config.loadFromPath('./config/configuration_keys.json');
+//AWS.config.loadFromPath('./config/configuration_keys.json');
 const BUCKET_NAME = config_env.usersbucket;
 
 // AWS Credentials loaded
-// var myconfig = AWS.config.update({
-//     accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region
-//   });
+var myconfig = AWS.config.update({
+    accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region
+  });
 // Cognito Configurationo
 var cognito = {
     userPoolId: config_env.userPoolId,
