@@ -27,3 +27,8 @@ $ npm start
 # To Run the Application in Dev mode:
 $ npm run start-dev
 ```
+# For Local testing : 
+ - Please add entries given below in /etc/hosts
+```
+127.0.0.1       www.digitalbraininjury.com
+```
