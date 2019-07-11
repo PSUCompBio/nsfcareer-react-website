@@ -1,1 +1,1 @@
-export const ENDPOINT = "http://www.digitalbraininjury.com/api/" ;
+export const ENDPOINT = "http://digitalbraininjury.com/api/" ;
