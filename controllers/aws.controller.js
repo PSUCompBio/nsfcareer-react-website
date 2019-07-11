@@ -73,7 +73,7 @@ exports.doUpload = (req, res) => {
 
                     
                     const pythonProcess = spawn("python", [
-                        "./AvatarTest.py",
+                       __dirname +  "/../config/AvatarTest.py",
                             url,
 		                    config.avatar3dClientId,
 		                    config.avatar3dclientSecret,
@@ -159,16 +159,8 @@ exports.doUpload = (req, res) => {
                                 throw err;
                             });
                             archive.pipe(output);
-                            console.log("PATH IS ", path.join(__dirname, "/../" + data.toString() + "/model.ply"))
-                            let file = fs.createReadStream(
-                                path.join(__dirname, "/../" + data.toString() + "/model.ply")
-
-                            );
-                            archive.append(file, { name: "model.ply" });
-                            file = fs.createReadStream(
-                                path.join(__dirname, "/../" + data.toString() + "/model.jpg")
-                            );
-                            archive.append(file, { name: "model.jpg" });
+                            
+archive.directory(path.join(__dirname, "/../" + data.toString() + "/"), false);
                             archive.finalize();
 
                         } catch (error) {
