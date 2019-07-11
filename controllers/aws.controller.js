@@ -5,10 +5,7 @@ var archive = archiver("zip");
 const spawn = require("child_process").spawn;
 var config = require('../config/configuration_keys')
 
-// AWS.config.loadFromPath("./config/AWSConfig.json");
-AWS.Config({
-    accessKeyId: config.awsAccessKeyId, secretAccessKey: config.awsSecretAccessKey, region: config.region
-  });
+AWS.config.loadFromPath('./config/configuration_keys.json');
 
 var s3Client = new AWS.S3();
 
@@ -100,6 +97,8 @@ exports.doUpload = (req, res) => {
                                     "../" + data.toString() + ".zip"
                                 );
 
+                                console.log("ZIP FILE PATH",filePath);
+                                
                                 
                                 fs.readFile(filePath,function(err,zipBuffer){
                                     if(err){
@@ -169,7 +168,6 @@ exports.doUpload = (req, res) => {
                             );
                             archive.append(file, { name: "model.jpg" });
                             archive.finalize();
-
 
                         } catch (error) {
                             console.log(error);

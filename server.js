@@ -25,7 +25,7 @@ app = express(),
 
 
 global.navigator = () => null;
-const BUCKET_NAME = "nsfcareer-users-data"
+
 
 // ======================================
 //         	GLOBAL VARIABLES
@@ -40,18 +40,22 @@ const apiPrefix = "/api/"
 
 // Avatar Configuration
 var config = require("./config/configuration_keys");
+AWS.config.loadFromPath('./config/configuration_keys.json');
+const BUCKET_NAME = config_env.usersbucket;
 
 // AWS Credentials loaded
-AWS.Config({
-    accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region
-  });
-// Cognito Configuration
+// var myconfig = AWS.config.update({
+//     accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region
+//   });
+// Cognito Configurationo
 var cognito = {
     userPoolId: config_env.userPoolId,
     region: config_env.region,
     apiVersion : config_env.apiVersion,
     ClientId : config_env.ClientId
 }
+console.log(cognito);
+
 
 // Multer Configuration
 
@@ -725,7 +729,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
             console.log(err);
 
             res.send({
-                message: "failed",
+                message: "failure",
                 error: err
             });
         } else {

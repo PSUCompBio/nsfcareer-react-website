@@ -1,7 +1,7 @@
 // Middle-ware to verify the idToken retrieved from cookie
 var https = require('https');
 var jose = require('node-jose');
-var cognito = require("./config/cognito_configuration");
+var cognito = require("./config/configuration_keys");
 
 // ================================================
 //            MIDDLEWARE CONFIGURATION
