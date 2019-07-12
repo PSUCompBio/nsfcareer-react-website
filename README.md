@@ -36,5 +36,5 @@ $ node server.js
 # For Local testing : 
  - Please add entries given below in /etc/hosts
 ```
-127.0.0.1       digitalbraininjury.com
+127.0.0.1       nsfcareer.io
 ```

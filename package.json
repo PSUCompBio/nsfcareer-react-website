@@ -29,8 +29,8 @@
     "client-init": "cd client &&  npm install",
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "start-dev": "concurrently \"npm run server-dev\" \"npm run client\"",
-    "server-dev": "nodemon server.js",
-    "server": "node server.js",
+    "server-dev": "DOMAIN=http://nsfcareer.io nodemon server.js",
+    "server": "DOMAIN=http://nsfcareer.io node server.js",
     "client": "node start-client.js"
   },
   "repository": {
