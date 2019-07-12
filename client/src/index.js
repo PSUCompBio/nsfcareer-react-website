@@ -77,7 +77,7 @@ else{
 }
 }).catch((err)=>{
 
-
+console.log(err);
   ReactDOM.render(   
 <h1>Internal Service Error </h1> 
     ,

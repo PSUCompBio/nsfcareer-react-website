@@ -1,7 +1,7 @@
 // Middle-ware to verify the idToken retrieved from cookie
 var https = require('https');
 var jose = require('node-jose');
-var cognito = require("./config/cognito_configuration");
+var cognito = require("./config/configuration_keys");
 
 // ================================================
 //            MIDDLEWARE CONFIGURATION
@@ -22,7 +22,9 @@ function VerifyToken(req, res, next) {
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
   )
+  res.header("Access-Control-Allow-Origin", "http://nsfcareer.io/");
 
+ // res.header("Access-Control-Allow-Origin", "*");
     console.log("Verify Token is called");
     
     try {

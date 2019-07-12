@@ -3,19 +3,21 @@
 //         INITIALIZING DEPENDENCIES
 // ======================================
 const express = require('express');
-	app = express(),
-	bodyParser = require("body-parser"),
-	AWS = require('aws-sdk'),
-	cors = require('cors'),
-	AmazonCognitoIdentity = require('amazon-cognito-identity-js'),
+app = express(),
+    bodyParser = require("body-parser"),
+    AWS = require('aws-sdk'),
+    cors = require('cors'),
+    AmazonCognitoIdentity = require('amazon-cognito-identity-js'),
     utility = require('./utilities/utility'),
     VerifyToken = require('./verify_user'),
     cookieParser = require('cookie-parser'),
-	archiver = require("archiver"),
-	fs = require("fs"),
-	path = require("path"),
-	uploadFile = require("./upload.js"),
-	global.fetch = require('node-fetch');
+    archiver = require("archiver"),
+    fs = require("fs"),
+    path = require("path"),
+    uploadFile = require("./upload.js"),
+    global.fetch = require('node-fetch'),
+    config_env = require("./config/configuration_keys");
+    multer = require('multer');
 
 // ================================================
 //            SERVER CONFIGURATION
@@ -23,7 +25,7 @@ const express = require('express');
 
 
 global.navigator = () => null;
-const BUCKET_NAME = "nsfcareer-users-data"
+
 
 // ======================================
 //         	GLOBAL VARIABLES
@@ -38,18 +40,47 @@ const apiPrefix = "/api/"
 
 // Avatar Configuration
 var config = require("./config/configuration_keys");
+//AWS.config.loadFromPath('./config/configuration_keys.json');
+const BUCKET_NAME = config_env.usersbucket;
 
 // AWS Credentials loaded
-AWS.config.loadFromPath('./config/AWSConfig.json');
+var myconfig = AWS.config.update({
+    accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region
+  });
+// Cognito Configurationo
+var cognito = {
+    userPoolId: config_env.userPoolId,
+    region: config_env.region,
+    apiVersion : config_env.apiVersion,
+    ClientId : config_env.ClientId
+}
+console.log(cognito);
 
-// Cognito Configuration
-var cognito = require("./config/cognito_configuration");
 
 // Multer Configuration
-let upload = require('./config/multer.config.js');
 
-// Cognito Configuration
-var cognito = require("./config/cognito_configuration.js");
+
+var storage = multer.memoryStorage()
+var upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        //var ext = path.extname(file.originalname);
+        console.log(file.originalname);
+
+        let jpgFile = new RegExp(".jpg").test(file.originalname);
+        let jpegFile = new RegExp(".jpeg").test(file.originalname);
+        let pngFile = new RegExp(".png").test(file.originalname);
+
+        if (!jpgFile && !jpegFile && !pngFile) {
+            // res.send({message : "FAILURE"});
+            req.body["file_error"] = "Only jpeg,jpg are allowed"
+        }
+        callback(null, true)
+    }
+    // limits:{
+    //     fileSize: 1024 * 1024
+    // }
+});
 
 // AWS S3 & Other Controllers Configuration
 const awsWorker = require('./controllers/aws.controller.js');
@@ -66,7 +97,7 @@ var COGNITO_CLIENT = new AWS.CognitoIdentityServiceProvider({
 
 // DynamoDB Object created to do SCAN , PUT , UPDATE operations
 const docClient = new AWS.DynamoDB.DocumentClient({
-	convertEmptyValues: true
+    convertEmptyValues: true
 });
 
 // Express configured for POST Request handling of multiple types
@@ -76,10 +107,11 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors(
     {
-        origin: ["http://localhost:2000", "http://localhost:3000"],
+	    origin: ["http://ec2-18-204-217-160.compute-1.amazonaws.com","http://nsfcareer.io","http://www.nsfcareer.io","http://localhost:2000", "http://localhost:3000","http://localhost:80/","http://digitalbraininjury.com","http://www.digitalbraininjury.com"],
         credentials: true
-       }
+    }
 ));
+
 // ============================================
 //     FUNCTIONS OR IMPLEMENTATIONS
 // ============================================
@@ -214,11 +246,11 @@ function createUserDbEntry(event, callback) {
     // adding key with name user_cognito_id
     // deleting the key from parameter from "user_name"
     event["user_cognito_id"] = event.user_name;
-    delete event.user_name ;
-        dbInsert = {
-            TableName: "users",
-            Item: event
-        }
+    delete event.user_name;
+    dbInsert = {
+        TableName: "users",
+        Item: event
+    }
 
 
     docClient.put(dbInsert, function (dbErr, dbData) {
@@ -234,11 +266,30 @@ function createUserDbEntry(event, callback) {
 }
 
 
-function getUploadedFileList(user_name, cb) {
+function getUploadedImageFileList(user_name, cb) {
     const s3Params = {
         Bucket: BUCKET_NAME,
         Delimiter: '/',
-        Prefix: user_name + '/profile/'
+        Prefix: user_name + '/profile/image/'
+        // Key: req.query.key + ''
+    };
+
+    s3.listObjectsV2(s3Params, (err, data) => {
+        if (err) {
+            //   console.log(err);
+            cb(err, "");
+        }
+        console.log(data);
+        cb("", data.Contents);
+    });
+
+}
+
+function getUploadedModelFileList(user_name, cb) {
+    const s3Params = {
+        Bucket: BUCKET_NAME,
+        Delimiter: '/',
+        Prefix: user_name + '/profile/model/'
         // Key: req.query.key + ''
     };
 
@@ -254,7 +305,7 @@ function getUploadedFileList(user_name, cb) {
 }
 
 // Function to authenticate user credentials
-function login(user_name, password, user_type,cb) {
+function login(user_name, password, user_type, cb) {
 
     const poolData = {
         UserPoolId: cognito.userPoolId, // Your user pool id here
@@ -473,88 +524,94 @@ function addUserToGroup(event, callback) {
 
 // Function to fetch all the items of the table 'numbers' from DynamoDB
 const fetchNumbers = () => {
-	return new Promise(function (resolve, reject) {
-		var params = {
-			TableName: 'numbers'
-		};
-		//   var items
-		var items = [];
-		docClient.scan(params).eachPage((err, data, done) => {
-			if (err) {
-				reject(err);
-			}
-			if (data == null) {
-				resolve(utility.concatArrays(items));
-			} else {
-				items.push(data.Items);
-			}
-			done();
-		});
-	})
+    return new Promise(function (resolve, reject) {
+        var params = {
+            TableName: 'numbers'
+        };
+        //   var items
+        var items = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(utility.concatArrays(items));
+            } else {
+                items.push(data.Items);
+            }
+            done();
+        });
+    })
 }
 
 const putNumbers = (numbersData) => {
-	return new Promise(function (resolve, reject) {
-		let param = {
-			TableName: "numbers",
-			Item: numbersData
-		};
-		docClient.put(param,function(err,data){
-			if(err){
-				console.log("ERROR IN TABLE_UPDATE=======\n",err);
-				reject(err)
-			}
-			else{
-				resolve(data)
-			}
-		})
-	})
-	}
+    return new Promise(function (resolve, reject) {
+        let param = {
+            TableName: "numbers",
+            Item: numbersData
+        };
+        docClient.put(param, function (err, data) {
+            if (err) {
+                console.log("ERROR IN TABLE_UPDATE=======\n", err);
+                reject(err)
+            }
+            else {
+                resolve(data)
+            }
+        })
+    })
+}
 
 // ============================================
 //     				ROUTES
 // ============================================
 
-app.post(`${apiPrefix}getNumbers`, (req, res) => {
-	console.log("API CAlled");
+app.get(`${apiPrefix}`,(req,res)=>{
+    res.send("NSFCareeIO");
+})
 
-	fetchNumbers().then((numbers) => {
-		res.send({
-			message: successMessage,
-			data: numbers
-		})
-	}).catch((err) => {
-		console.log("Error while fetching numbers", err)
-		res.send({
-			message: failureMessage,
-			data: [],
-			error: err
-		})
-	})
+app.post(`${apiPrefix}getNumbers`, (req, res) => {
+    console.log("API CAlled");
+
+    fetchNumbers().then((numbers) => {
+        res.send({
+            message: successMessage,
+            data: numbers
+        })
+    }).catch((err) => {
+        console.log("Error while fetching numbers", err)
+        res.send({
+            message: failureMessage,
+            data: [],
+            error: err
+        })
+    })
 });
 
 app.post(`${apiPrefix}putNumbers`, (req, res) => {
-	console.log("API CAlled put",req.body);
+    console.log("API CAlled put", req.body);
 
-	putNumbers(req.body).then((data) => {
-		res.send({
-			message: successMessage
-		})
-	}).catch((err) => {
+    putNumbers(req.body).then((data) => {
+        res.send({
+            message: successMessage
+        })
+    }).catch((err) => {
 
-		res.send({
-			message: failureMessage,
-			error: err
-		})
-	})
+        res.send({
+            message: failureMessage,
+            error: err
+        })
+    })
 });
-app.post(`${apiPrefix}signUp`,(req,res)=>{
+app.post(`${apiPrefix}signUp`, (req, res) => {
 
-	console.log(req.body);
+    console.log(req.body);
 
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
-    req.body["name"] = req.body.first_name + req.body.last_name ;
-    req.body["email"] = req.body.user_name ;
+    req.body["name"] = req.body.first_name + req.body.last_name;
+    req.body["email"] = req.body.user_name;
+    req.body["is_selfie_image_uploaded"] = false;
+    req.body["is_selfie_model_uploaded"] = false;
     adminCreateUser(req.body, function (err, data) {
         if (err) {
             console.log("COGNITO CREATE USER ERROR =========\n", err);
@@ -573,7 +630,7 @@ app.post(`${apiPrefix}signUp`,(req,res)=>{
             // userName
             var tempData = {};
             tempData["user_name"] = UserData.Username;
-			tempData["userName"] = UserData.Username;
+            tempData["userName"] = UserData.Username;
 
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
@@ -583,7 +640,7 @@ app.post(`${apiPrefix}signUp`,(req,res)=>{
                 // Admin User
                 var mergedObject = { ...req.body, ...tempData };
                 delete mergedObject.userName;
-                delete mergedObject.name ;
+                delete mergedObject.name;
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
                     if (err) {
                         console.log("DB ERRRRRR =============================== \n", err);
@@ -623,7 +680,7 @@ app.post(`${apiPrefix}signUp`,(req,res)=>{
                 var mergedObject = { ...req.body, ...tempData };
 
                 delete mergedObject.userName;
-                delete mergedObject.name ;
+                delete mergedObject.name;
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
                     if (err) {
                         console.log("DB ERRRRRR =============================== \n", err);
@@ -649,7 +706,7 @@ app.post(`${apiPrefix}signUp`,(req,res)=>{
                             }
                             else {
                                 res.send({
-                                    message : "success"
+                                    message: "success"
                                 })
 
                             }
@@ -664,86 +721,86 @@ app.post(`${apiPrefix}signUp`,(req,res)=>{
     })
 });
 
-app.post(`${apiPrefix}logIn`,(req,res)=>{
-console.log("Log In API Called!");
-        // Getting user data of that user
-        getUser(req.body.user_name, function (err, data) {
-            if (err) {
-                console.log(err);
+app.post(`${apiPrefix}logIn`, (req, res) => {
+    console.log("Log In API Called!");
+    // Getting user data of that user
+    getUser(req.body.user_name, function (err, data) {
+        if (err) {
+            console.log(err);
 
-                res.send({
-                    message: "failed",
-                    error : err
-                });
-            } else {
+            res.send({
+                message: "failure",
+                error: err
+            });
+        } else {
 
-                console.log(data);
+            console.log(data);
 
-                // Now getting the list of Groups of user
-                getListGroupForUser(data.Username, function (error, groupData) {
-                    if (error) {
+            // Now getting the list of Groups of user
+            getListGroupForUser(data.Username, function (error, groupData) {
+                if (error) {
 
-                        res.send({
-                            message: "failure",
-                            error  : error
-                        });
-                    } else {
-                        // Now checking is user is ADMIN or not
-
-                            if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
-                                // Sends the user to first login page
-                                // respond with status of FORCE_CHANGE_PASSWORD
-                                res.send({
-                                    message : "success",
-                                    status : "FORCE_CHANGE_PASSWORD"
-                                })
-                            } else {
-
-                    // Now checking is user is ADMIN or not
-                    var userType = "StandardUser";
-                    groupData.forEach(element => {
-                        if (element.GroupName == "Admin") {
-                            userType = "Admin";
-                        }
+                    res.send({
+                        message: "failure",
+                        error: error
                     });
-                    // Here call the login function then
-                                login(req.body.user_name,req.body.password,userType,function(err,result){
-                                    // TODO : REfactor code here
-                                    if(err){
-                                        res.cookie("token", "");
-                                        res.send({
-                                            message : "failure",
-                                            error : err
-                                        })
-                                    }
-                                    else{
+                } else {
+                    // Now checking is user is ADMIN or not
 
+                    if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                        // Sends the user to first login page
+                        // respond with status of FORCE_CHANGE_PASSWORD
+                        res.send({
+                            message: "success",
+                            status: "FORCE_CHANGE_PASSWORD"
+                        })
+                    } else {
 
-                                        res.cookie("token", result.getIdToken().getJwtToken());
-
-                                        res.send({
-                                            message : "success",
-                                            user_type : userType
-                                        });
-                                    }
+                        // Now checking is user is ADMIN or not
+                        var userType = "StandardUser";
+                        groupData.forEach(element => {
+                            if (element.GroupName == "Admin") {
+                                userType = "Admin";
+                            }
+                        });
+                        // Here call the login function then
+                        login(req.body.user_name, req.body.password, userType, function (err, result) {
+                            // TODO : REfactor code here
+                            if (err) {
+                                res.cookie("token", "");
+                                res.send({
+                                    message: "failure",
+                                    error: err
                                 })
                             }
+                            else {
+
+
+                                res.cookie("token", result.getIdToken().getJwtToken());
+
+                                res.send({
+                                    message: "success",
+                                    user_type: userType
+                                });
+                            }
+                        })
                     }
-                })
-            }
-        })
+                }
+            })
+        }
+    })
 })
 
 // Login first time with temporary password
-app.post(`${apiPrefix}logInFirstTime`,(req,res)=>{
-    loginFirstTime(req.body,function(err,result){
-        if(err){
+app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
+    loginFirstTime(req.body, function (err, result) {
+        if (err) {
             res.send({
-                message : "failure",
-                error : err
+                message: "failure",
+                error: err
             })
         }
-        else{
+        else {
 
             getUser(req.body.user_name, function (err, data) {
                 if (err) {
@@ -751,29 +808,29 @@ app.post(`${apiPrefix}logInFirstTime`,(req,res)=>{
 
                     res.send({
                         message: "failed",
-                        error : err
+                        error: err
                     });
                 } else {
                     getListGroupForUser(data.Username, function (err, groupData) {
-                        if(err){
+                        if (err) {
                             res.send({
-                                message : "failure",
-                                error : err
+                                message: "failure",
+                                error: err
                             })
                         }
-                        else{
+                        else {
 
-                    // Now checking is user is ADMIN or not
-                    var userType = "StandardUser";
-                    groupData.forEach(element => {
-                        if (element.GroupName == "Admin") {
-                            userType = "Admin";
-                        }
-                    });
-                    res.cookie("token", result.getIdToken().getJwtToken());
+                            // Now checking if user is ADMIN or not
+                            var userType = "StandardUser";
+                            groupData.forEach(element => {
+                                if (element.GroupName == "Admin") {
+                                    userType = "Admin";
+                                }
+                            });
+                            res.cookie("token", result.getIdToken().getJwtToken());
                             res.send({
-                                message : "success",
-                                user_type : userType
+                                message: "success",
+                                user_type: userType
                             })
 
                         }
@@ -781,185 +838,296 @@ app.post(`${apiPrefix}logInFirstTime`,(req,res)=>{
 
                 }
             }
-                );
+            );
 
         }
     })
 
 })
 
-app.post(`${apiPrefix}enableUser`,(req,res)=>{
-    enableUser(req.body.user_name,function(err,data){
-        if(err){
+app.post(`${apiPrefix}enableUser`, (req, res) => {
+    enableUser(req.body.user_name, function (err, data) {
+        if (err) {
             res.send({
-                message : "failure",
-                error  : err
+                message: "failure",
+                error: err
             })
         }
-        else{
+        else {
             res.send({
-                message : "success"
-            })
-        }
-    })
-})
-
-app.post(`${apiPrefix}disableUser`,(req,res)=>{
-    disableUser(req.body.user_name,function(err,data){
-        if(err){
-            res.send({
-                message : "failure",
-                error  : err
-            })
-        }
-        else{
-            res.send({
-                message : "success"
+                message: "success"
             })
         }
     })
 })
 
-app.post(`${apiPrefix}getUserDetails`,VerifyToken,(req,res)=>{
-    getUserDbData(req.user_cognito_id,function(err,data){
-        if(err){
+app.post(`${apiPrefix}disableUser`, (req, res) => {
+    disableUser(req.body.user_name, function (err, data) {
+        if (err) {
             res.send({
-                message : "failure",
-                error  : err
+                message: "failure",
+                error: err
             })
         }
-        else{
+        else {
+            res.send({
+                message: "success"
+            })
+        }
+    })
+})
+
+app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
+    getUserDbData(req.user_cognito_id, function (err, data) {
+        if (err) {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }
+        else {
             userData = data.Item;
-                getUploadedFileList(req.user_cognito_id,function(err,list){
-                    if(err){
-                        console.log(err);
-
-                    }
-                    else{
-                        // Fetches the latest profile pic
-                        var latestProfilePic = list.reduce(function (oldest, profile_pic) {
-                            return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
-                          }, {});
-                        console.log("OUPTUT ---->\n",latestProfilePic);
-                        // Now get the signed URL link  from S3
-            // if no S3 link is found then send empty data link
-            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-            // No file is uploaded
-            var key
-            if(list.length!=0){
-                key = latestProfilePic.Key ;
-            }
-            else{
-                key = req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-            }
-
-            getFileSignedUrl(key,function(err,url){
-                if(err){
+            getUploadedImageFileList(req.user_cognito_id, function (err, list) {
+                if (err) {
                     console.log(err);
-                    userData["profile_picture_url"] = "";
-                    res.send({
-                        message : "success",
-                        data : userData
-                    })
-                }
-                else{
-                    if(list.length == 0){
-                        userData["profile_picture_url"] = "";
-                    }
-                    else{
-                        userData["profile_picture_url"] = url;
-                    }
-                    res.send({
-                        message : "success",
-                        data : userData
-                    })
-                }
 
+                }
+                else {
+                    // Fetches the latest profile pic
+                    var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                        return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                    }, {});
+                    // Now get the signed URL link  from S3
+                    // if no S3 link is found then send empty data link
+                    // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                    // No file is uploaded
+                    var key
+                    if (list.length != 0) {
+                        key = latestProfilePic.Key;
+                    }
+                    else {
+                        key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
+                    }
+
+                    getFileSignedUrl(key, function (err, url) {
+                        if (err) {
+                            console.log(err);
+                            userData["profile_picture_url"] = "";
+                            userData["avatar_url"] = "";
+                            res.send({
+                                message: "success",
+                                data: userData
+                            })
+                        }
+                        else {
+                            if (list.length == 0) {
+                                userData["profile_picture_url"] = "";
+                            }
+                            else {
+                                userData["profile_picture_url"] = url;
+                            }
+
+                            // Getting Avatar URL 
+                            getUploadedModelFileList(req.user_cognito_id, function (err, list) {
+
+                                userData["avatar_url"] = "";
+                                if (err) {
+                                    console.log(err);
+                                    res.send({
+                                        message: "failure",
+                                        data: userData
+                                    })
+
+                                }
+                                else {
+
+
+                                    // Fetches the latest profile pic
+                                    var latestModel = list.reduce(function (oldest, latest_model) {
+                                        return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                    }, {});
+                                    // Now get the signed URL link  from S3
+                                    // if no S3 link is found then send empty data link
+                                    // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                    // No file is uploaded
+                                    var model_key
+                                    if (list.length != 0) {
+                                        model_key = latestModel.Key;
+                                    }
+                                    else {
+                                        model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                                    }
+
+
+
+                                    getFileSignedUrl(model_key, function (err, url) {
+                                        if (err) {
+                                            console.log(err);
+                                            userData["avatar_url"] = "";
+                                            res.send({
+                                                message: "failure",
+                                                data: userData
+                                            })
+                                        }
+                                        else {
+                                            if (list.length == 0) {
+                                                userData["avatar_url"] = "";
+                                            }
+                                            else {
+                                                userData["avatar_url"] = url;
+                                            }
+                                            res.send({
+                                                    message : "success",
+                                                    data : userData
+                                            })
+                                        }
+
+                                    })
+
+                                }
+
+                            })
+                        }
+                    });
+
+                
+                }
             })
-                    }
-                });
-
-
         }
     })
-})
+});
+    app.post(`${apiPrefix}getProfilePicLink`, VerifyToken, (req, res) => {
 
-app.post(`${apiPrefix}getProfilePicLink`,VerifyToken,(req,res)=>{
-
-    getUploadedFileList(req.body.user_cognito_id,function(err,list){
-        if(err){
-            console.log(err);
-        res.send({
-            message : 'failure',
-            error : err
-        })
-        }
-        else{
-            console.log("OUPTUT ---->\n",list);
-            // Now get the signed URL link  from S3
-// if no S3 link is found then send empty data link
-// KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-// No file is uploaded
-
-var latestProfilePic = list.reduce(function (oldest, profile_pic) {
-    return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
-  }, {});
-
-var key
-if(list.length!=0){
-    key = latestProfilePic.Key ;
-}
-else{
-    key = req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-}
-
-getFileSignedUrl(key,function(err,url){
-    if(err){
-        console.log(err);
-
-        res.send({
-            message : "success",
-            profile_picture_url : ""
-        })
-
-    }
-    else{
-        var link = "";
-        if(list.length == 0){
-            link = "";
-        }
-        else{
-            link = url;
-        }
-        res.send({
-            message : "success",
-            profile_picture_url : link
-        })
-    }
-
-})
-        }
-    });
-
-
-
-})
-
-
-app.post(`${apiPrefix}listUsers`,(req,res)=>{
-    var attributes = ["name", "phone_number","email"];
-    listAllUsers(attributes,function(err,data){
-            if(err){
+        getUploadedImageFileList(req.body.user_cognito_id, function (err, list) {
+            if (err) {
+                console.log(err);
                 res.send({
-                    message : "failure",
-                    error : err
+                    message: 'failure',
+                    error: err
                 })
             }
-            else{
+            else {
+
+                // Now get the signed URL link  from S3
+                // if no S3 link is found then send empty data link
+                // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                // No file is uploaded
+
+                var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                    return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                }, {});
+
+                var key
+                if (list.length != 0) {
+                    key = latestProfilePic.Key;
+                }
+                else {
+                    key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(key, function (err, url) {
+                    if (err) {
+                        console.log(err);
+
+                        res.send({
+                            message: "success",
+                            profile_picture_url: ""
+                        })
+
+                    }
+                    else {
+                        var link = "";
+                        if (list.length == 0) {
+                            link = "";
+                        }
+                        else {
+                            link = url;
+                        }
+                        var profile_link = url ;
+                        var model_link = "";
+                        // Getting Avatar URL 
+                        getUploadedModelFileList(req.user_cognito_id, function (err, list) {
+
+                            if (err) {
+                                console.log(err);
+                                res.send({
+                                    message: "failure",
+                                    data: userData
+                                })
+
+                            }
+                            else {
+
+
+                                // Fetches the latest profile pic
+                                var latestModel = list.reduce(function (oldest, latest_model) {
+                                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                }, {});
+                                // Now get the signed URL link  from S3
+                                // if no S3 link is found then send empty data link
+                                // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                // No file is uploaded
+
+                                if (list.length != 0) {
+                                    model_key = latestModel.Key;
+                                }
+                                else {
+                                    model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                                }
+
+                                getFileSignedUrl(model_key, function (err, model_link) {
+                                    if (err) {
+                                        console.log(err);
+                                        res.send({
+                                            message: "failure",
+                                            profile_picture_url: profile_link,
+                                        })
+                                    }
+                                    else {
+                                        if (list.length == 0) {
+                                            model_link = "";
+                                        }
+                                        else {
+                                            model_link = url;
+                                        }
+                                        res.send({
+                                            message: "success",
+                                            profile_picture_url: profile_link,
+                                            avatar_url : model_link
+                                        })
+                                    }
+
+                                })
+
+                            }
+
+                        })
+                        
+                    }
+
+                })
+            }
+        });
+
+
+
+    })
+
+
+    app.post(`${apiPrefix}listUsers`, (req, res) => {
+        var attributes = ["name", "phone_number", "email"];
+        listAllUsers(attributes, function (err, data) {
+            if (err) {
+                res.send({
+                    message: "failure",
+                    error: err
+                })
+            }
+            else {
                 let users = utility.concatArrays(data);
 
                 let count = 0;
-    var tempArray = [];
+                var tempArray = [];
                 for (let i = 0; i < users.length; i++) {
 
                     setTimeout(() => {
@@ -969,10 +1137,10 @@ app.post(`${apiPrefix}listUsers`,(req,res)=>{
 
                                 res.send({
                                     message: "failed",
-                                    error : err
+                                    error: err
                                 });
                             } else {
-                                getUserDbData(users[i].Username, function(err,userDbData){
+                                getUserDbData(users[i].Username, function (err, userDbData) {
 
                                     getListGroupForUser(users[i].Username, function (err, groupData) {
 
@@ -986,17 +1154,17 @@ app.post(`${apiPrefix}listUsers`,(req,res)=>{
                                         var flag = false;
                                         groupData.forEach(element => {
                                             if (element.GroupName == "Admin") {
-                                        flag = true;
-                                        }
+                                                flag = true;
+                                            }
                                         });
                                         // var temp = {};
                                         userDbData = userDbData.Item;
                                         userDbData["Enabled"] = userData.Enabled;
 
-                                        if(flag){
+                                        if (flag) {
                                             userDbData.user_type = "Admin"
                                         }
-                                        else{
+                                        else {
                                             userDbData.user_type = "Standard"
                                         }
                                         tempArray.push(userDbData);
@@ -1005,8 +1173,8 @@ app.post(`${apiPrefix}listUsers`,(req,res)=>{
 
                                             res.send(
                                                 {
-                                                    message : "success",
-                                                    data : tempArray
+                                                    message: "success",
+                                                    data: tempArray
                                                 });
                                         }
 
@@ -1018,39 +1186,40 @@ app.post(`${apiPrefix}listUsers`,(req,res)=>{
                             }
                         });
 
-                    }, 20*i);
+                    }, 20 * i);
 
                 }
             }
+        })
     })
-})
 
-// API To upload profile pic to S3
-app.post(`${apiPrefix}uploadProfilePic`,VerifyToken, upload.single("profile_pic"), awsWorker.doUpload);
+    // API To upload profile pic to S3
+    app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, upload.single("profile_pic"), awsWorker.doUpload);
 
-app.post(`${apiPrefix}verifyUser`,VerifyToken,(req,res)=>{
-    // Fetch user group data and check if he is Admin or not
-    getListGroupForUser(req.user_cognito_id, function (err, groupData) {
-        if (err) {
+    app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
+	    // Fetch user group data and check if he is Admin or not
+        getListGroupForUser(req.user_cognito_id, function (err, groupData) {
+            if (err) {
 
-            res.send({
-                message: "failure",
-                error  : error
-            });
-        } else {
-        // Now checking is user is ADMIN or not
-        var flag = false;
-        groupData.forEach(element => {
-            if (element.GroupName == "Admin") {
-                flag = true;
+                res.send({
+                    message: "failure",
+                    error: err
+                });
+            } else {
+                // Now checking is user is ADMIN or not
+                var flag = false;
+                groupData.forEach(element => {
+                    if (element.GroupName == "Admin") {
+                        flag = true;
+                    }
+                });
+                res.send({
+                    message: "success",
+                    isAdmin: flag
+                })
             }
         });
-        res.send({
-            message : "success",
-            isAdmin : flag
-        })
-        }});
-})
+    })
 
 // Create Avatar 3D
 app.post(`${apiPrefix}createAvatar`, (req, res) => {
@@ -1165,17 +1334,17 @@ var deleteDirectory = function(path, callback) {
 		});
 	});
 };	
-	
-// Clearing the cookies
-app.post(`${apiPrefix}logOut`,(req,res)=>{
-    res.cookie("token","");
-    res.send({
-        message : "success"
-    });
-})
 
-// Configuring port for APP
-const port = 3001;
-const server = app.listen(port, function () {
-	console.log('Magic happens on ' + port);
-});
+    // Clearing the cookies
+    app.post(`${apiPrefix}logOut`, (req, res) => {
+        res.cookie("token", "");
+        res.send({
+            message: "success"
+        });
+    })
+
+    // Configuring port for APP
+    const port = 3001;
+    const server = app.listen(port, function () {
+        console.log('Magic happens on ' + port);
+    });

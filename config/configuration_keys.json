@@ -1,0 +1,12 @@
+{
+    "awsAccessKeyId": "XXXXX", 
+    "awsSecretAccessKey":"XXXX",  
+	"sportModelBucket":"XXXX", 
+	"avatar3dClientId":"XXXX", 
+	"avatar3dclientSecret":"XXXX",
+	"region" : "XXXX", 
+	"usersbucket": "XXXX", 
+    "userPoolId": "XXXX", 
+    "apiVersion" :"2016-04-19",
+    "ClientId" : "XXXX" 
+}
