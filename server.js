@@ -107,7 +107,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors(
     {
-    origin: ["http://ec2-18-204-217-160.compute-1.amazonaws.com","http://localhost:2000", "http://localhost:3000","http://localhost:80/","http://digitalbraininjury.com","http://www.digitalbraininjury.com"],
+	    origin: ["http://ec2-18-204-217-160.compute-1.amazonaws.com","http://nsfcareer.io","http://www.nsfcareer.io","http://localhost:2000", "http://localhost:3000","http://localhost:80/","http://digitalbraininjury.com","http://www.digitalbraininjury.com"],
         credentials: true
     }
 ));
