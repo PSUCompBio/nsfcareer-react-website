@@ -22,7 +22,8 @@ function VerifyToken(req, res, next) {
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
   )
-  res.header("Access-Control-Allow-Origin", "http://nsfcareer.io/");
+	console.log("IN Verify user CORS Allowed for DOMAIN ", `${process.env.DOMAIN}/`);
+  res.header("Access-Control-Allow-Origin", `${process.env.DOMAIN}/`);
 
  // res.header("Access-Control-Allow-Origin", "*");
     console.log("Verify Token is called");
