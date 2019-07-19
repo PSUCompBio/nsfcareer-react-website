@@ -7,7 +7,6 @@ build/
 *.swp
 config/AWSConfig.json
 config/cognito_configuration.js
-AvatarTest.py
 .env
 2019*
 *.zip
