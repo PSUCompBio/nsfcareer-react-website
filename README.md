@@ -42,7 +42,7 @@ $ npm run start-dev
 #### Step 4 : Access application on URL -> http://localhost:3000 in your browser.
 ### To Deploy Application for Production Build :
 - Clone this repository https://github.com/vradars/react-website-bash-script.git
-- Open the repository .And follow the instructions from README.md to execute the scripts in above repository.
+- Open the repository .And follow the instructions from README.md to execute the scripts.
 - Follow the on-console instructions & successfully deploy your application.
 
 ### Major Dependencies
