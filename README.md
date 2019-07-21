@@ -19,7 +19,7 @@ $ sudo npm install -g nodemon
 
 # To install Project's dependencies
 # Then in project root's directory run the following commands :
-$ npm run init
+$ sudo npm run init
 
 ```
 
