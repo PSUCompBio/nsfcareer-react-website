@@ -9,7 +9,8 @@
     - A Debian based Linux System (Ubuntu)
     - Nodejs (min version >= 10.X)
 ```
-# If on linux : sudo is required with -g based npm commands (They are global dependencies being installed in System)
+# If on Windows : Use Power-Shell to execute below commands
+# If on Linux : sudo is required with -g based npm commands (They are global dependencies being installed in System)
 
 # To run npm commands concurrently
 $ sudo npm install -g concurrently
@@ -33,6 +34,7 @@ $ sudo npm run init
     - You can find these in AWS Cognito service page. The userPooolID can be found under General settings, "Pool Id". The ClientID is under App integration, then App client settings, then there is a title for the App client, and under that there is "ID", this is the ID to use. 
 #### Step 3 : Run Application locally :
 ```
+# If on Windows : Use Power-Shell to execute below commands
 # To run application normally 
 $ npm start
 
