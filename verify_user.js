@@ -22,8 +22,16 @@ function VerifyToken(req, res, next) {
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
   )
-  res.header("Access-Control-Allow-Origin", "http://nsfcareer.io/");
+	console.log("IN Verify user CORS Allowed for DOMAIN ", `${process.env.DOMAIN}/`);
+	// Check to allow for CORS if ran locally using localhost for testing
+	// CORS is allowed 
+	// Else one have to add header for it 
+	console.log(req.headers.origin);
+	if(process.env.DOMAIN!= "http://localhost:3000"){
+	res.header("Access-Control-Allow-Origin", `${process.env.DOMAIN}/`);
+	}
 
+ // res.header("Access-Control-Allow-Origin", "*");
  // res.header("Access-Control-Allow-Origin", "*");
     console.log("Verify Token is called");
     
