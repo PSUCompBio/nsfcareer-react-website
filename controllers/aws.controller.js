@@ -200,7 +200,6 @@ exports.doUpload = (req, res) => {
                             archive.on("error", function (err) {
                                 console.log(err);
                                 res.status(400).send({message : "failure",error : err});
-                                throw err;
                             });
                             archive.pipe(output);
                             
