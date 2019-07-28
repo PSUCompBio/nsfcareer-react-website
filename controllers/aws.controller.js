@@ -4,7 +4,7 @@ var fs = require('fs');
 var archive = archiver("zip");
 const spawn = require("child_process").spawn;
 var config = require('./../config/configuration_keys')
-
+const exec = require('child_process').exec;
 //AWS.config.loadFromPath('./config/configuration_keys.json');
 var myconfig = AWS.config.update({
     accessKeyId: config.awsAccessKeyId, secretAccessKey: config.awsSecretAccessKey, region: config.region
@@ -99,6 +99,10 @@ exports.doUpload = (req, res) => {
                                     "../" + data.toString() + ".zip"
                                 );
 
+                                let headFilePath = path.join(__dirname,
+                                    "../" + data.toString() +"/face/");
+                                    
+
                                 console.log("ZIP FILE PATH",filePath);
                                 
                                 
@@ -109,6 +113,7 @@ exports.doUpload = (req, res) => {
                                         })
                                     }
                                     else{
+                                        file_name = Date.now();
                                         params.Key = req.user_cognito_id + "/profile/model/" + file_name + ".zip";
                                         params.Body = zipBuffer;
                                         s3Client.upload(params, (err, data) => {
@@ -140,7 +145,46 @@ exports.doUpload = (req, res) => {
                                                     } else {
                                                         // Delete both folder and zip file
                                                         // after uploading 
-                                                        return res.send({ message: 'success' });
+                                                        // Here call functions to generate & Upload selife
+                                                        // TODO : CREATE FILE
+                                                        exec(`xvfb-run ${__dirname}/../config/ProjectedTexture ${headFilePath}model.ply ${headFilePath}model.jpg ${headFilePath}../${req.user_cognito_id}.png`, (err, stdout, stderr) => {
+                                                            if (err) {
+                                                              // node couldn't execute the command
+                                                              return res.send({message : "failure"});
+                                                            }
+                                                            else{
+                                                            // the *entire* stdout and stderr (buffered)
+                                                            
+                                                            // console.log(`stdout: ${stdout}`);
+                                                            // console.log(`stderr: ${stderr}`);
+                                                            
+                                                            // ReadFile 
+                                                            fs.readFile(`${headFilePath}../${req.user_cognito_id}.png`,function(err,headBuffer){
+                                                                if(err){
+                                                                    return res.send({ message: 'failure' });
+                                                                }
+                                                                else{
+                                                                    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + req.file.originalname.split(".")[1];
+                                                                    params.Body = headBuffer;
+                                                                    // Call S3 Upload
+                                                                    s3Client.upload(params, (err, data) => {
+                                                                        if(err){
+                                                                            return res.send({ message: 'failure' });
+                                                                        }
+                                                                        else{
+                                                                            return res.send({ message: 'success' });
+                                                                        }
+                                                                    }) ;
+
+                                                                }
+                                                            })
+                                                            
+                                                           
+                                                            }
+                                                          
+
+                                                          });
+                                                        
                                                     }
                                                 });
                                     }
