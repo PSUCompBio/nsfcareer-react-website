@@ -16,4 +16,3 @@ tmp/*
 config/configuration_keys.js
 config/oauth.json
 config/player.json
-avatars/*
