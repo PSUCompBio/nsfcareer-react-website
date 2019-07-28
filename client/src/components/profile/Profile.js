@@ -10,7 +10,8 @@ class Profile extends React.Component {
       selectedFile: null,
       isLoading : true,
       user : {},
-      isFileBeingUploaded : false
+      isFileBeingUploaded : false,
+      isUploading : false
     }
   }
   onChangeHandler=(event)=>{
@@ -25,6 +26,7 @@ class Profile extends React.Component {
 onClickHandler = () => {
   const data = new FormData() 
   this.setState({isFileBeingUploaded : true});
+  this.setState({isUploading : true});
   data.append('profile_pic', this.state.selectedFile)
   uploadProfilePic(data).then((response)=>{
     console.log(response);
@@ -35,7 +37,7 @@ onClickHandler = () => {
         console.log(res.data);
         // this.setState({...this.state.user, profile_picture_url: res.data.profile_picture_url});  
         // this.setState({profile_picture_url : res.data.profile_picture_url})
-      
+        this.setState({isUploading : false});
         this.setState(prevState => {
           prevState = JSON.parse(JSON.stringify(this.state.user));
           prevState.profile_picture_url = res.data.profile_picture_url;
@@ -113,7 +115,18 @@ return <React.Fragment>
                       name="profile_pic"
                       icon="file"
                       type="file"
-                      onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>  <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn></div>
+                      onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>  
+                      {
+                    this.state.isUploading ? 
+                    <div className="d-flex justify-content-center center-spinner">
+                         <div className="spinner-border text-primary" role="status" >
+        <span className="sr-only">Uploading...</span>
+      </div>
+             </div>:null
+                  }
+                      <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn>
+                      
+                      </div>
                     
                       }
                         
