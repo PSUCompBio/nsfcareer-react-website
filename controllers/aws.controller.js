@@ -107,7 +107,7 @@ exports.doUpload = (req, res) => {
                                 );
 
                                 let headFilePath = path.join(__dirname,
-                                    "../" + data.toString() + "/face/");
+                                    "../" + data.toString() + "/head/");
 
 
                                 console.log("ZIP FILE PATH", filePath);
