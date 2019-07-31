@@ -1,20 +1,20 @@
 var stream = require('stream');
 var AWS = require('aws-sdk');
 var fs = require('fs');
-var archive = archiver("zip");
+
 const spawn = require("child_process").spawn;
 var config = require('./../config/configuration_keys')
 const exec = require('child_process').exec;
 //AWS.config.loadFromPath('./config/configuration_keys.json');
 var myconfig = AWS.config.update({
     accessKeyId: config.awsAccessKeyId, secretAccessKey: config.awsSecretAccessKey, region: config.region
-  });
+});
 var s3Client = new AWS.S3();
 
 var uploadParams = {
-         Bucket: config.usersbucket, 
-         Key: '', // pass key
-         Body: null, // pass file body
+    Bucket: config.usersbucket,
+    Key: '', // pass key
+    Body: null, // pass file body
 };
 
 var s3 = {};
@@ -32,6 +32,8 @@ exports.doUpload = (req, res) => {
     const s3Client = s3.s3Client;
     const params = s3.uploadParams;
     var ts = new Date();
+    var archiver = require('archiver');
+    var archive = archiver("zip");
     // var month = ts.getMonth() + 1;
     // var milliSeconds = ts.getMilliseconds() + 1;
     // var hours = ts.getHours();
@@ -71,28 +73,33 @@ exports.doUpload = (req, res) => {
                     console.log("-> FOUND URL TO parse the image", url);
                     // Now create the Avatar of the url passes
 
-                    
+
                     const pythonProcess = spawn("python", [
-                       __dirname +  "/../config/AvatarTest.py",
-                            url,
-		                    config.avatar3dClientId,
-		                    config.avatar3dclientSecret,
-		                    req.user_cognito_id
+                        __dirname + "/../config/AvatarTest.py",
+                        url,
+                        config.avatar3dClientId,
+                        config.avatar3dclientSecret,
+                        req.user_cognito_id
                     ]);
 
                     pythonProcess.stdout.on("data", async data => {
                         console.log(data.toString());
                         try {
                             //archive zip
-                            
+
                             var output = fs.createWriteStream(data.toString() + ".zip");
-                            
+
+                            archive.on("error", function (err) {
+                                console.log(err);
+                                return res.status(400).send({ message: "failure", error: err });
+                            });
+                            archive.pipe(output);
+
+                            archive.directory(path.join(__dirname, "/../" + data.toString() + "/"), false);
+                            archive.finalize();
 
                             output.on("close", async function () {
                                 console.log(archive.pointer() + " total bytes");
-                                console.log(
-                                    "archiver has been finalized and the output file descriptor has closed."
-                                );
                                 console.log("zip file uploading");
                                 let filePath = path.join(
                                     __dirname,
@@ -100,19 +107,19 @@ exports.doUpload = (req, res) => {
                                 );
 
                                 let headFilePath = path.join(__dirname,
-                                    "../" + data.toString() +"/face/");
-                                    
+                                    "../" + data.toString() + "/face/");
 
-                                console.log("ZIP FILE PATH",filePath);
-                                
-                                
-                                fs.readFile(filePath,function(err,zipBuffer){
-                                    if(err){
+
+                                console.log("ZIP FILE PATH", filePath);
+
+
+                                fs.readFile(filePath, function (err, zipBuffer) {
+                                    if (err) {
                                         return res.send({
-                                            message : "failure"
+                                            message: "failure"
                                         })
                                     }
-                                    else{
+                                    else {
                                         file_name = Date.now();
                                         params.Key = req.user_cognito_id + "/profile/model/" + file_name + ".zip";
                                         params.Body = zipBuffer;
@@ -125,7 +132,7 @@ exports.doUpload = (req, res) => {
                                                 // Updating user's attribute 
                                                 // "is_selfie_image_uploaded" -> true 
                                                 // "is_selfie_model_uploaded" -> false 
-        
+                                                console.log("Uploaded the zip files!");
                                                 var userParams = {
                                                     TableName: "users",
                                                     Key: {
@@ -147,49 +154,55 @@ exports.doUpload = (req, res) => {
                                                         // after uploading 
                                                         // Here call functions to generate & Upload selife
                                                         // TODO : CREATE FILE
+                                                        console.log("Generating the Image from PLY file!");
                                                         exec(`xvfb-run ${__dirname}/../config/ProjectedTexture ${headFilePath}model.ply ${headFilePath}model.jpg ${headFilePath}../${req.user_cognito_id}.png`, (err, stdout, stderr) => {
                                                             if (err) {
-                                                              // node couldn't execute the command
-                                                              return res.send({message : "failure"});
+                                                                // node couldn't execute the command
+                                                                return res.send({ message: "failure" });
                                                             }
-                                                            else{
-                                                            // the *entire* stdout and stderr (buffered)
-                                                            
-                                                            // console.log(`stdout: ${stdout}`);
-                                                            // console.log(`stderr: ${stderr}`);
-                                                            
-                                                            // ReadFile 
-                                                            fs.readFile(`${headFilePath}../${req.user_cognito_id}.png`,function(err,headBuffer){
-                                                                if(err){
-                                                                    return res.send({ message: 'failure' });
-                                                                }
-                                                                else{
-                                                                    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + req.file.originalname.split(".")[1];
-                                                                    params.Body = headBuffer;
-                                                                    // Call S3 Upload
-                                                                    s3Client.upload(params, (err, data) => {
-                                                                        if(err){
-                                                                            return res.send({ message: 'failure' });
-                                                                        }
-                                                                        else{
-                                                                            return res.send({ message: 'success' });
-                                                                        }
-                                                                    }) ;
-
-                                                                }
-                                                            })
-                                                            
-                                                           
+                                                            else if (stderr) {
+                                                                console.log("Error in generating the image");
+                                                                return res.send({ message: "failure" });
                                                             }
-                                                          
+                                                            else {
+                                                                console.log("Uploaded Generated PNG File");
+                                                                // the *entire* stdout and stderr (buffered)
 
-                                                          });
-                                                        
+                                                                // console.log(`stdout: ${stdout}`);
+                                                                // console.log(`stderr: ${stderr}`);
+
+                                                                // ReadFile 
+                                                                fs.readFile(`${headFilePath}../${req.user_cognito_id}.png`, function (err, headBuffer) {
+                                                                    if (err) {
+                                                                        return res.send({ message: 'failure' });
+                                                                    }
+                                                                    else {
+                                                                        params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + req.file.originalname.split(".")[1];
+                                                                        params.Body = headBuffer;
+                                                                        // Call S3 Upload
+                                                                        s3Client.upload(params, (err, data) => {
+                                                                            if (err) {
+                                                                                return res.send({ message: 'failure' });
+                                                                            }
+                                                                            else {
+                                                                                return res.send({ message: 'success' });
+                                                                            }
+                                                                        });
+
+                                                                    }
+                                                                })
+
+
+                                                            }
+
+
+                                                        });
+
                                                     }
                                                 });
-                                    }
-                                })
-                                
+                                            }
+                                        })
+
                                     }
                                 });
 
@@ -197,14 +210,7 @@ exports.doUpload = (req, res) => {
 
 
                             });
-                            archive.on("error", function (err) {
-                                console.log(err);
-                                res.status(400).send({message : "failure",error : err});
-                            });
-                            archive.pipe(output);
-                            
-archive.directory(path.join(__dirname, "/../" + data.toString() + "/"), false);
-                            archive.finalize();
+                            // HERE :///
 
                         } catch (error) {
                             console.log(error);
@@ -214,9 +220,15 @@ archive.directory(path.join(__dirname, "/../" + data.toString() + "/"), false);
 
                     pythonProcess.stderr.on("data", async data => {
                         console.log(`error:${data}`);
-                        
+                        return res.send({ message: "failure", error : data });
+
                     });
                     pythonProcess.on("close", async data => {
+                        if(data == "1" || data == 1){
+                            return res.send({
+                                message : "failure"
+                            });
+                        }
                         console.log(`child process close with ${data}`)
                     });
 
