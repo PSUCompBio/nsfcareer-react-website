@@ -24,21 +24,21 @@ $ sudo npm run init
 
 ```
 
-### To Run Application Locally : 
+### To Run Application Locally: 
 #### Step 0 : Install Dependencies by following above steps.
 #### Step 1 : Update config file in config/configuration_keys.json
   - ###### Add AWS Access Key ID and AWS Secret Access Key ID and AWS Buckets name in configuration_keys.json.
     - To do this, In AWS Management Console, Search and open IAM service, Then Select Users from Left-hand Side Pane. Select your user-name listed in Table. Then click on Security Credentials Tab, there you can access & view your all AWS Access Key IDs. If the user does not have a user account, then create one.
 - ###### Update avatar3dClientId & avatar3dclientSecret in configuration_keys.json file. Note: avatar3dClientId and avatar3dclientSecret from the the Avatar3d SDK website. There are IDs created for "Developer Access"  and "Client Access". This information is from the "Client Access" section.
 - ###### Update your AWS Cognito Credentials including: userPoolId, region & ClientId in configuration_keys.json.
-    - You can find these in AWS Cognito service page. The userPooolID can be found under General settings, "Pool Id". The ClientID is under App integration, then App client settings, then there is a title for the App client, and under that there is "ID", this is the ID to use. 
+    - You can find these in AWS Cognito service page. The userPooolID can be found under General settings, "Pool Id". The ClientID is under App integration, then App client settings, then there is a title for the App client, and under that there is "ID", this is the ID to use.
 #### Step 3 : Run Application locally :
 ```
 # If on Windows : Use Power-Shell to execute below commands
-# To run application normally 
+# To run application normally
 $ npm start
 
-# To run application in dev-mode 
+# To run application in dev-mode
 $ npm run start-dev
 ```
 #### Step 4 : Access application on URL -> http://localhost:3000 in your browser.
