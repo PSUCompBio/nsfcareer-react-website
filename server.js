@@ -617,8 +617,8 @@ function getINPFile(user_id){
                     model_key = latestModel.Key;
                 }
                 else {
-                    model_key = "";
-                }
+                    model_key = user_id + "/profile/rbf/" ;
+		}
                 // Generate SignedURL of the image
                 getFileSignedUrl(model_key,(err, url)=> {
                     if(err){
@@ -1127,12 +1127,6 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                         })
                     }
                     else {
-                        if (list.length == 0) {
-                            model_link = "";
-                        }
-                        else {
-                            model_link = url;
-                        }
                         res.send({
                             message: "success",
                             avatar_url : model_link
