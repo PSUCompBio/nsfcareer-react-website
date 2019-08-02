@@ -16,7 +16,8 @@ app = express(),
     path = require("path"),
     uploadFile = require("./upload.js"),
     global.fetch = require('node-fetch'),
-    config_env = require("./config/configuration_keys");
+    config_env = require("./config/configuration_keys"),
+    ms = require("ms"),
     multer = require('multer');
 
 // ================================================
@@ -111,6 +112,18 @@ app.use(cors(
         credentials: true
     }
 ));
+
+
+function setConnectionTimeout(time) {
+    var delay = typeof time === 'string'
+      ? ms(time)
+      : Number(time || 5000);
+  
+    return function (req, res, next) {
+      res.connection.setTimeout(delay);
+      next();
+    }
+  }
 
 // ============================================
 //     FUNCTIONS OR IMPLEMENTATIONS
@@ -1081,7 +1094,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     })
 
     app.post(`${apiPrefix}getModelFileLink`, (req,res) =>{
-        getUploadedModelFileList(req.user_cognito_id, function (err, list) {
+        getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
 
             if (err) {
                 console.log(err);
@@ -1330,8 +1343,8 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         })
     })
 
-    // API To upload profile pic to S3
-    app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, upload.single("profile_pic"), awsWorker.doUpload);
+    // API To upload profile pic to S310m
+    app.post(`${apiPrefix}uploadProfilePic`, VerifyToken,setConnectionTimeout('10m') ,upload.single("profile_pic"), awsWorker.doUpload);
 
     app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
 	    // Fetch user group data and check if he is Admin or not
