@@ -1036,10 +1036,20 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                             else {
                                                 userData["avatar_url"] = url;
                                             }
-                                            res.send({
+                                            // fetch inf url also here
+                                            getINPFile(req.user_cognito_id).then((url)=>{
+                                                userData["inp_file_url"] = url ;
+                                                res.send({
                                                     message : "success",
                                                     data : userData
                                             })
+                                            })
+                                            .catch((err)=>{
+                                                res.send({
+                                                    message : "failure"
+                                            })
+                                            })
+                                            
                                         }
 
                                     })
@@ -1067,6 +1077,59 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
             res.send({
                 message : "failure"
             })
+        })
+    })
+
+    app.post(`${apiPrefix}getModelFileLink`, (req,res) =>{
+        getUploadedModelFileList(req.user_cognito_id, function (err, list) {
+
+            if (err) {
+                console.log(err);
+                res.send({
+                    message: "failure",
+                })
+            }
+            else {
+
+
+                // Fetches the latest profile pic
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+                var model_key = "";
+
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
+                }
+                else {
+                    model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(model_key, function (err, model_link) {
+                    if (err) {
+                        console.log(err);
+                        res.send({
+                            message: "failure",
+                            avatar_url: "",
+                        })
+                    }
+                    else {
+                        if (list.length == 0) {
+                            model_link = "";
+                        }
+                        else {
+                            model_link = url;
+                        }
+                        res.send({
+                            message: "success",
+                            avatar_url : model_link
+                        })
+                    }
+
+                })
+
+            }
+
         })
     })
 

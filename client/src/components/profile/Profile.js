@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBAlert, MDBInput, MDBCard, MDBCardBody,MDBIcon, MDBCardFooter } from 'mdbreact';
 import './Profile.css'
-import {uploadProfilePic, getUserDetails, getProfilePicLink, getInpFileLink} from '../../apis'
+import {uploadProfilePic, getUserDetails, getProfilePicLink, getInpFileLink, getModelLink} from '../../apis'
 
 class Profile extends React.Component {
   constructor() {
@@ -12,8 +12,7 @@ class Profile extends React.Component {
       user : {},
       isFileBeingUploaded : false,
       isUploading : false,
-      foundInpLink : false,
-      inpFileLink : ''
+      foundInpLink : false
     }
   }
   onChangeHandler=(event)=>{
@@ -58,9 +57,26 @@ onClickHandler = () => {
           this.setState(prevState => {
             prevState = JSON.parse(JSON.stringify(this.state.user));
             prevState.is_selfie_inp_uploaded = true ; 
+            prevState.inp_file_url = response.data.inp_file_link ;
             return {user: prevState}
          })
-          this.setState({inpFileLink : response.data.inp_file_link});
+         getModelLink(JSON.stringify({user_cognito_id : this.state.user.user_cognito_id}))
+         .then((response)=>{
+          if(response.data.message=="success"){         
+            this.setState(prevState => {
+              prevState = JSON.parse(JSON.stringify(this.state.user));
+              prevState.avatar_url = response.data.avatar_url;
+              return {user: prevState}
+           })
+          }
+          else{
+            alert("failed to find the model link");
+          }
+         })
+         .catch((err)=>{
+           alert("Failed to find the model link");
+         })
+
         }
         else{
           alert("Failed to get Inp File Link!");
@@ -179,7 +195,7 @@ return <React.Fragment>
                             <br />
                             <span>Mesh File Generated </span>
                             {this.state.user.is_selfie_inp_uploaded? 
-                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.inpFileLink} className="btn btn-info">Download FE Mesh</a> </React.Fragment> 
+                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.inp_file_url} className="btn btn-info">Download FE Mesh</a> </React.Fragment> 
                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> 
                             } 
                     </div>
