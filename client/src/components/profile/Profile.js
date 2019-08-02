@@ -163,13 +163,21 @@ return <React.Fragment>
                             <br />
                             <i className="glyphicon glyphicon-gift"></i>{this.state.user.phone_number}</p>
                             <br />
-                            <span>Selfie Uploaded </span>{this.state.user.is_selfie_image_uploaded? <MDBIcon icon="check-circle" className="green-text pr-3"/> :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
+                            <span>Selfie Uploaded </span>
+                            {this.state.user.is_selfie_image_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.profile_picture_url} className="btn btn-warning">Download 3D Selfie Image</a> </React.Fragment> 
+                            :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
                             <br />
-                            <span>3D Avatar Generated </span>{this.state.user.is_selfie_model_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment> :<MDBIcon icon="times-circle" className="red-text pr-3"/>}
+                            <span>3D Avatar Generated </span>
+                            {this.state.user.is_selfie_model_uploaded? 
+                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment> 
+                            :<MDBIcon icon="times-circle" className="red-text pr-3"/>
+                            }
                             <br />
-                            <span>Inp File Generated </span>{this.state.foundInpLink? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.inpFileLink} className="btn btn-info">Download INP</a> </React.Fragment> :<MDBIcon icon="times-circle" className="red-text pr-3"/> }
-                          
-                          } 
+                            <span>Mesh File Generated </span>
+                            {this.state.foundInpLink? 
+                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.inpFileLink} className="btn btn-info">Download FE Mesh</a> </React.Fragment> 
+                            :<MDBIcon icon="times-circle" className="red-text pr-3"/> 
+                            } 
                     </div>
                 </div>
             </div>
