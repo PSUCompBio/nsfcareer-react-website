@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBAlert, MDBInput, MDBCard, MDBCardBody,MDBIcon, MDBCardFooter } from 'mdbreact';
 import './Profile.css'
-import {uploadProfilePic,getUserDetails,getProfilePicLink} from '../../apis'
+import {uploadProfilePic, getUserDetails, getProfilePicLink, getInpFileLink} from '../../apis'
 
 class Profile extends React.Component {
   constructor() {
@@ -11,7 +11,9 @@ class Profile extends React.Component {
       isLoading : true,
       user : {},
       isFileBeingUploaded : false,
-      isUploading : false
+      isUploading : false,
+      foundInpLink : false,
+      inpFileLink : ''
     }
   }
   onChangeHandler=(event)=>{
@@ -38,6 +40,7 @@ onClickHandler = () => {
         // this.setState({...this.state.user, profile_picture_url: res.data.profile_picture_url});  
         // this.setState({profile_picture_url : res.data.profile_picture_url})
         this.setState({isUploading : false});
+        
         this.setState(prevState => {
           prevState = JSON.parse(JSON.stringify(this.state.user));
           prevState.profile_picture_url = res.data.profile_picture_url;
@@ -45,23 +48,39 @@ onClickHandler = () => {
             prevState.avatar_url = res.data.avatar_url;
             prevState.is_selfie_image_uploaded = true;
             prevState.is_selfie_model_uploaded = true;
+            prevState.is_selfie_inp_uploaded = true ;
           }
           return {user: prevState}
        })
+       this.setState({foundInpLink : false});
+       getInpFileLink(JSON.stringify({user_cognito_id : this.state.user.user_cognito_id})).then((response)=>{
+        if(response.data.message=="success"){
+          this.setState({foundInpLink : true});
+          this.setState({inpFileLink : response.data.inp_file_link});
+        }
+        else{
+          alert("Failed to get Inp File Link!");
+        }
+       })
+       .catch((err)=>{
+          alert("Internal service error while fetching Inp Link!");
+       })
 
-      
       }).catch((err)=>{
         console.log(err);
-        
+        alert("Failed to fetch Inp Link");
       })
     }
     else{
+      alert("Failed to upload Selfie !");
+      this.setState({isUploading : false});
 console.log(response);
 
     }  
   }).catch((err)=>{
     console.log(err);
-    
+    alert("Internal Server Error : Failed to upload Selfie !");
+    this.setState({isUploading : false});
   })
 }
 
@@ -146,9 +165,11 @@ return <React.Fragment>
                             <br />
                             <span>Selfie Uploaded </span>{this.state.user.is_selfie_image_uploaded? <MDBIcon icon="check-circle" className="green-text pr-3"/> :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
                             <br />
-                            <span>3D Avatar Generated </span>{this.state.user.is_selfie_model_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment> 
-                            
-                            :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
+                            <span>3D Avatar Generated </span>{this.state.user.is_selfie_model_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment> :<MDBIcon icon="times-circle" className="red-text pr-3"/>}
+                            <br />
+                            <span>Inp File Generated </span>{this.state.foundInpLink? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.inpFileLink} className="btn btn-info">Download INP</a> </React.Fragment> :<MDBIcon icon="times-circle" className="red-text pr-3"/> }
+                          
+                          } 
                     </div>
                 </div>
             </div>
