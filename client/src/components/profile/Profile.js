@@ -48,14 +48,18 @@ onClickHandler = () => {
             prevState.avatar_url = res.data.avatar_url;
             prevState.is_selfie_image_uploaded = true;
             prevState.is_selfie_model_uploaded = true;
-            prevState.is_selfie_inp_uploaded = true ;
           }
           return {user: prevState}
        })
        this.setState({foundInpLink : false});
        getInpFileLink(JSON.stringify({user_cognito_id : this.state.user.user_cognito_id})).then((response)=>{
-        if(response.data.message=="success"){
-          this.setState({foundInpLink : true});
+        if(response.data.message=="success"){         
+          // Updating status for inp file
+          this.setState(prevState => {
+            prevState = JSON.parse(JSON.stringify(this.state.user));
+            prevState.is_selfie_inp_uploaded = true ; 
+            return {user: prevState}
+         })
           this.setState({inpFileLink : response.data.inp_file_link});
         }
         else{
@@ -164,7 +168,7 @@ return <React.Fragment>
                             <i className="glyphicon glyphicon-gift"></i>{this.state.user.phone_number}</p>
                             <br />
                             <span>Selfie Uploaded </span>
-                            {this.state.user.is_selfie_image_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.profile_picture_url} className="btn btn-warning">Download 3D Selfie Image</a> </React.Fragment> 
+                            {this.state.user.is_selfie_image_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.profile_picture_url} className="btn btn-warning">Download 3D Selfie</a> </React.Fragment> 
                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
                             <br />
                             <span>3D Avatar Generated </span>
@@ -174,7 +178,7 @@ return <React.Fragment>
                             }
                             <br />
                             <span>Mesh File Generated </span>
-                            {this.state.foundInpLink? 
+                            {this.state.user.is_selfie_inp_uploaded? 
                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.inpFileLink} className="btn btn-info">Download FE Mesh</a> </React.Fragment> 
                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> 
                             } 

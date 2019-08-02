@@ -51,6 +51,8 @@ exports.doUpload = (req, res) => {
     var ts = new Date();
     var archiver = require('archiver');
     var archive = archiver("zip");
+    var file_extension = req.file.originalname.split(".");
+    file_extension = file_extension[ file_extension.length - 1 ] ;
     // var month = ts.getMonth() + 1;
     // var milliSeconds = ts.getMilliseconds() + 1;
     // var hours = ts.getHours();
@@ -60,7 +62,8 @@ exports.doUpload = (req, res) => {
 
     // params.Key = req.file.originalname;
     var file_name = Date.now();
-    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + req.file.originalname.split(".")[1];
+    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + file_extension;
+    console.log("NAME OF THE FILE ",params.Key);
     params.Body = req.file.buffer;
     if (req.body.file_error) {
         console.log(req.body.file_error);
@@ -194,7 +197,7 @@ exports.doUpload = (req, res) => {
                                                                         return res.send({ message: 'failure' });
                                                                     }
                                                                     else {
-                                                                        params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + req.file.originalname.split(".")[1];
+                                                                        params.Key = req.user_cognito_id + "/profile/image/" + file_name + ".png" ;
                                                                         params.Body = headBuffer;
                                                                         // Call S3 Upload
                                                                         s3Client.upload(params, (err, data) => {
@@ -236,24 +239,15 @@ exports.doUpload = (req, res) => {
 
                                                                     }
                                                                 })
-
-
                                                             }
-
-
                                                         });
 
                                                     }
                                                 });
                                             }
                                         })
-
                                     }
                                 });
-
-
-
-
                             });
                             // HERE :///
 
