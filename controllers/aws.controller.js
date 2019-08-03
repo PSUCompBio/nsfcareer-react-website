@@ -35,8 +35,8 @@ function generateINPFile(cognito_user_id,cb){
             cb(err,'');
         }
         else{
-            console.log("Ressponse is ",httpResponse)
-            cb('',httpResponse);
+            console.log("Ressponse is ",httpResponse.body)
+            cb('',httpResponse.body);
         }
      })
 }
