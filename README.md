@@ -32,6 +32,8 @@ $ sudo npm run init
 - ###### Update avatar3dClientId & avatar3dclientSecret in configuration_keys.json file. Note: avatar3dClientId and avatar3dclientSecret from the the Avatar3d SDK website. There are IDs created for "Developer Access"  and "Client Access". This information is from the "Client Access" section.
 - ###### Update your AWS Cognito Credentials including: userPoolId, region & ClientId in configuration_keys.json.
     - You can find these in AWS Cognito service page. The userPooolID can be found under General settings, "Pool Id". The ClientID is under App integration, then App client settings, then there is a title for the App client, and under that there is "ID", this is the ID to use.
+- ###### Update variable ( ComputeInstanceEndpoint ) with the endpoint of Compute Instance ( Docker Image deployed with NodeJS Service ) in below given format to generate Mesh Data : 
+    - E.g http://yourcomputeinstance.com/api/
 #### Step 3 : Run Application locally :
 ```
 # If on Windows : Use Power-Shell to execute below commands

@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBAlert, MDBInput, MDBCard, MDBCardBody,MDBIcon, MDBCardFooter } from 'mdbreact';
 import './Profile.css'
-import {uploadProfilePic,getUserDetails,getProfilePicLink} from '../../apis'
+import {uploadProfilePic, getUserDetails, getProfilePicLink, getInpFileLink, getModelLink} from '../../apis'
 
 class Profile extends React.Component {
   constructor() {
@@ -11,7 +11,8 @@ class Profile extends React.Component {
       isLoading : true,
       user : {},
       isFileBeingUploaded : false,
-      isUploading : false
+      isUploading : false,
+      foundInpLink : false
     }
   }
   onChangeHandler=(event)=>{
@@ -38,6 +39,7 @@ onClickHandler = () => {
         // this.setState({...this.state.user, profile_picture_url: res.data.profile_picture_url});  
         // this.setState({profile_picture_url : res.data.profile_picture_url})
         this.setState({isUploading : false});
+        
         this.setState(prevState => {
           prevState = JSON.parse(JSON.stringify(this.state.user));
           prevState.profile_picture_url = res.data.profile_picture_url;
@@ -48,20 +50,57 @@ onClickHandler = () => {
           }
           return {user: prevState}
        })
+       this.setState({foundInpLink : false});
+       getInpFileLink(JSON.stringify({user_cognito_id : this.state.user.user_cognito_id})).then((response)=>{
+        if(response.data.message=="success"){         
+          // Updating status for inp file
+          this.setState(prevState => {
+            prevState = JSON.parse(JSON.stringify(this.state.user));
+            prevState.is_selfie_inp_uploaded = true ; 
+            prevState.inp_file_url = response.data.inp_file_link ;
+            return {user: prevState}
+         })
+         getModelLink(JSON.stringify({user_cognito_id : this.state.user.user_cognito_id}))
+         .then((response)=>{
+          if(response.data.message=="success"){         
+            this.setState(prevState => {
+              prevState = JSON.parse(JSON.stringify(this.state.user));
+              prevState.avatar_url = response.data.avatar_url;
+              return {user: prevState}
+           })
+          }
+          else{
+            alert("failed to find the model link");
+          }
+         })
+         .catch((err)=>{
+           alert("Failed to find the model link");
+         })
 
-      
+        }
+        else{
+          alert("Failed to get Inp File Link!");
+        }
+       })
+       .catch((err)=>{
+          alert("Internal service error while fetching Inp Link!");
+       })
+
       }).catch((err)=>{
         console.log(err);
-        
+        alert("Failed to fetch Inp Link");
       })
     }
     else{
+      alert("Failed to upload Selfie !");
+      this.setState({isUploading : false});
 console.log(response);
 
     }  
   }).catch((err)=>{
     console.log(err);
-    
+    alert("Internal Server Error : Failed to upload Selfie !");
+    this.setState({isUploading : false});
   })
 }
 
@@ -107,7 +146,16 @@ return <React.Fragment>
                       name="profile_pic"
                       icon="file"
                       type="file"
-                      onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p> <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn></div>
+                      onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p> 
+                                            {
+                    this.state.isUploading ? 
+                    <div className="d-flex justify-content-center center-spinner">
+                         <div className="spinner-border text-primary" role="status" >
+        <span className="sr-only">Uploading...</span>
+      </div>
+             </div>:null
+                  }
+                  <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn></div>
                     :
                     <div>
                       <img src={this.state.user.profile_picture_url} alt="" className="img-rounded img-responsive" />
@@ -144,11 +192,21 @@ return <React.Fragment>
                             <br />
                             <i className="glyphicon glyphicon-gift"></i>{this.state.user.phone_number}</p>
                             <br />
-                            <span>Selfie Uploaded </span>{this.state.user.is_selfie_image_uploaded? <MDBIcon icon="check-circle" className="green-text pr-3"/> :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
-                            <br />
-                            <span>3D Avatar Generated </span>{this.state.user.is_selfie_model_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment> 
-                            
+                            <span>Selfie Uploaded </span>
+                            {this.state.user.is_selfie_image_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.profile_picture_url} className="btn btn-warning">Download 3D Selfie</a> </React.Fragment> 
                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> } 
+                            <br />
+                            <span>3D Avatar Generated </span>
+                            {this.state.user.is_selfie_model_uploaded? 
+                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment> 
+                            :<MDBIcon icon="times-circle" className="red-text pr-3"/>
+                            }
+                            <br />
+                            <span>Mesh File Generated </span>
+                            {this.state.user.is_selfie_inp_uploaded? 
+                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.inp_file_url} className="btn btn-info">Download FE Mesh</a> </React.Fragment> 
+                            :<MDBIcon icon="times-circle" className="red-text pr-3"/> 
+                            } 
                     </div>
                 </div>
             </div>

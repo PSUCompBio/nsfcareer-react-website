@@ -8,5 +8,6 @@
     "usersbucket": "XXXX",
     "userPoolId": "XXXX", 
     "apiVersion" :"2016-04-19",
-    "ClientId" : "XXXX"
+    "ClientId" : "XXXX",
+    "ComputeInstanceEndpoint" : "XXXX" 
 }
