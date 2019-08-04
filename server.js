@@ -16,7 +16,8 @@ app = express(),
     path = require("path"),
     uploadFile = require("./upload.js"),
     global.fetch = require('node-fetch'),
-    config_env = require("./config/configuration_keys");
+    config_env = require("./config/configuration_keys"),
+    ms = require("ms"),
     multer = require('multer');
 
 // ================================================
@@ -111,6 +112,18 @@ app.use(cors(
         credentials: true
     }
 ));
+
+
+function setConnectionTimeout(time) {
+    var delay = typeof time === 'string'
+      ? ms(time)
+      : Number(time || 5000);
+  
+    return function (req, res, next) {
+      res.connection.setTimeout(delay);
+      next();
+    }
+  }
 
 // ============================================
 //     FUNCTIONS OR IMPLEMENTATIONS
@@ -290,6 +303,25 @@ function getUploadedModelFileList(user_name, cb) {
         Bucket: BUCKET_NAME,
         Delimiter: '/',
         Prefix: user_name + '/profile/model/'
+        // Key: req.query.key + ''
+    };
+
+    s3.listObjectsV2(s3Params, (err, data) => {
+        if (err) {
+            //   console.log(err);
+            cb(err, "");
+        }
+        console.log(data);
+        cb("", data.Contents);
+    });
+
+}
+
+function getUploadedInpFileList(user_name, cb) {
+    const s3Params = {
+        Bucket: BUCKET_NAME,
+        Delimiter: '/',
+        Prefix: user_name + '/profile/rbf/'
         // Key: req.query.key + ''
     };
 
@@ -562,6 +594,46 @@ const putNumbers = (numbersData) => {
     })
 }
 
+function getINPFile(user_id){
+    return new Promise((resolve,reject)=>{
+        // 1. Get Uploaded model list from user
+        // 2. Generate SignedURL of the image
+        // 3. Pass the signedURL to download the zip file
+        // 4. Generate the INF File
+        // 5. Store the INF File in /radio_basis_function/inf file
+        getUploadedInpFileList(user_id,(err,list)=>{
+            if(err){
+                reject(err);
+            }
+            else{
+                                    // Fetches the latest Model
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+
+                // Getting the model key
+                var model_key ;
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
+                }
+                else {
+                    model_key = user_id + "/profile/rbf/" ;
+		}
+                // Generate SignedURL of the image
+                getFileSignedUrl(model_key,(err, url)=> {
+                    if(err){
+                        reject(err);
+                    }
+                    else{
+                        resolve(url);
+                    }
+                })
+            }
+        })
+
+    })
+}
+
 // ============================================
 //     				ROUTES
 // ============================================
@@ -612,6 +684,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["email"] = req.body.user_name;
     req.body["is_selfie_image_uploaded"] = false;
     req.body["is_selfie_model_uploaded"] = false;
+    req.body["is_selfie_inp_uploaded"] = false;
     adminCreateUser(req.body, function (err, data) {
         if (err) {
             console.log("COGNITO CREATE USER ERROR =========\n", err);
@@ -976,10 +1049,20 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                             else {
                                                 userData["avatar_url"] = url;
                                             }
-                                            res.send({
+                                            // fetch inf url also here
+                                            getINPFile(req.user_cognito_id).then((url)=>{
+                                                userData["inp_file_url"] = url ;
+                                                res.send({
                                                     message : "success",
                                                     data : userData
                                             })
+                                            })
+                                            .catch((err)=>{
+                                                res.send({
+                                                    message : "failure"
+                                            })
+                                            })
+                                            
                                         }
 
                                     })
@@ -996,6 +1079,67 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
     })
 });
+
+    app.post(`${apiPrefix}getInpFileLink`, (req,res) =>{
+        getINPFile(req.body.user_cognito_id).then((url)=>{
+            res.send({
+                message : "success",
+                inp_file_link : url
+            })
+        }).catch((err)=>{
+            res.send({
+                message : "failure"
+            })
+        })
+    })
+
+    app.post(`${apiPrefix}getModelFileLink`, (req,res) =>{
+        getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
+
+            if (err) {
+                console.log(err);
+                res.send({
+                    message: "failure",
+                })
+            }
+            else {
+
+
+                // Fetches the latest profile pic
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+                var model_key = "";
+
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
+                }
+                else {
+                    model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(model_key, function (err, model_link) {
+                    if (err) {
+                        console.log(err);
+                        res.send({
+                            message: "failure",
+                            avatar_url: "",
+                        })
+                    }
+                    else {
+                        res.send({
+                            message: "success",
+                            avatar_url : model_link
+                        })
+                    }
+
+                })
+
+            }
+
+        })
+    })
+
     app.post(`${apiPrefix}getProfilePicLink`, VerifyToken, (req, res) => {
 
         getUploadedImageFileList(req.body.user_cognito_id, function (err, list) {
@@ -1193,8 +1337,8 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         })
     })
 
-    // API To upload profile pic to S3
-    app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, upload.single("profile_pic"), awsWorker.doUpload);
+    // API To upload profile pic to S310m
+    app.post(`${apiPrefix}uploadProfilePic`, VerifyToken,setConnectionTimeout('10m') ,upload.single("profile_pic"), awsWorker.doUpload);
 
     app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
 	    // Fetch user group data and check if he is Admin or not

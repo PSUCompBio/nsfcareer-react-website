@@ -5,6 +5,8 @@ var fs = require('fs');
 const spawn = require("child_process").spawn;
 var config = require('./../config/configuration_keys')
 const exec = require('child_process').exec;
+var request = require('request');
+
 //AWS.config.loadFromPath('./config/configuration_keys.json');
 var myconfig = AWS.config.update({
     accessKeyId: config.awsAccessKeyId, secretAccessKey: config.awsSecretAccessKey, region: config.region
@@ -25,6 +27,21 @@ const docClient = new AWS.DynamoDB.DocumentClient({
     convertEmptyValues: true
 });
 
+function generateINPFile(cognito_user_id,cb){
+    request.post({url:config.ComputeInstanceEndpoint + "generateINF", json: {user_id:cognito_user_id}}, function(err,httpResponse,body)
+    { 
+        if(err){
+            console.log("ERROR in Generating INP File");
+            cb(err,'');
+        }
+        else{
+            console.log("Ressponse is ",httpResponse.body)
+            cb('',httpResponse.body);
+        }
+     })
+}
+
+
 
 exports.doUpload = (req, res) => {
     console.log("FILE UPLOAD CALLED");
@@ -34,6 +51,8 @@ exports.doUpload = (req, res) => {
     var ts = new Date();
     var archiver = require('archiver');
     var archive = archiver("zip");
+    var file_extension = req.file.originalname.split(".");
+    file_extension = file_extension[ file_extension.length - 1 ] ;
     // var month = ts.getMonth() + 1;
     // var milliSeconds = ts.getMilliseconds() + 1;
     // var hours = ts.getHours();
@@ -43,7 +62,8 @@ exports.doUpload = (req, res) => {
 
     // params.Key = req.file.originalname;
     var file_name = Date.now();
-    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + req.file.originalname.split(".")[1];
+    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + file_extension;
+    console.log("NAME OF THE FILE ",params.Key);
     params.Body = req.file.buffer;
     if (req.body.file_error) {
         console.log(req.body.file_error);
@@ -177,38 +197,57 @@ exports.doUpload = (req, res) => {
                                                                         return res.send({ message: 'failure' });
                                                                     }
                                                                     else {
-                                                                        params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + req.file.originalname.split(".")[1];
+                                                                        params.Key = req.user_cognito_id + "/profile/image/" + file_name + ".png" ;
                                                                         params.Body = headBuffer;
                                                                         // Call S3 Upload
                                                                         s3Client.upload(params, (err, data) => {
                                                                             if (err) {
-                                                                                return res.send({ message: 'failure' });
+                                                                                return res.send({ message: 'failure' , error : err });
                                                                             }
                                                                             else {
-                                                                                return res.send({ message: 'success' });
+                                                                                generateINPFile(req.user_cognito_id,(err,response)=>{
+                                                                                    if(err){
+                                                                                        return res.send({ message: 'failure' , error : err });
+                                                                                    }
+                                                                                    else{
+                                                                                        // Update the status of user in dynamodb
+                                                                                        var userParams = {
+                                                                                            TableName: "users",
+                                                                                            Key: {
+                                                                                                "user_cognito_id": req.user_cognito_id
+                                                                                            },
+                                                                                            UpdateExpression: "set is_selfie_inp_uploaded = :is_selfie_inp_uploaded",
+                                                                                            ExpressionAttributeValues: {
+                                                                                                ":is_selfie_inp_uploaded": true
+                                                                                            },
+                                                                                            ReturnValues: "UPDATED_NEW"
+                                                                                        };
+                                                                                        docClient.update(userParams,(err,data)=>{
+                                                                                          if(err){
+                                                                                            return res.send({ message: 'failure', error : err });
+                                                                                          }  
+                                                                                          else{
+                                                                                            return res.send({ message: 'success' });
+                                                                                          }
+                                                                                        })
+                                                                                        
+                                                                                    }
+                                                                                })
+                                                                                
                                                                             }
                                                                         });
 
                                                                     }
                                                                 })
-
-
                                                             }
-
-
                                                         });
 
                                                     }
                                                 });
                                             }
                                         })
-
                                     }
                                 });
-
-
-
-
                             });
                             // HERE :///
 
