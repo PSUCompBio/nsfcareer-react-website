@@ -7,8 +7,6 @@ import { Redirect } from 'react-router';
 // NAVIGATION
 // import Nav from "./components/Nav";
 // import Footer from "./components/Footer";
-import FirstComponent from './components/Banner/Banner'
-
 
 // PAGES
 // import Home from "./pages/Home/HomePage";
@@ -18,12 +16,13 @@ import FirstComponent from './components/Banner/Banner'
 // import Contact from "./pages/Contact/ContactPage";
 // import Login from "./pages/Login/Login";
 // import LogOutComponent from "./components/Authentication/LogOutComponent"
+import HomePage from './pages/Home/HomePage';
 
 // // Components
 // import ListUsers from "./components/listUsers/ListUsers"
 // import Profile from "./components/profile/Profile"
 
-// import "./index.css";
+import "./index.css";
 
 // MDReact css
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -33,7 +32,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 // API
 // import { verifyUser } from './apis.js'
-import ComponentContainer from './components/ComponentContainer'
+
 class Index extends React.Component {
   constructor(props) {
     super();
@@ -41,9 +40,7 @@ class Index extends React.Component {
   }
   render() {
     return <div>
-      {/* <FirstComponent/> */}
-      <ComponentContainer />
-      {/* <Footer /> */}
+      <HomePage />
     </div>
   }
 }

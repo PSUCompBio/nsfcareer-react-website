@@ -1,27 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import BrainImg from './BannerImg/Brain.jpg';
-import Nsf from './BannerImg/NSF.png';
-import Penstate from './BannerImg/penState.png';
-import Ibm from './BannerImg/ibm.png';
-import AmazonImg from './BannerImg/amazon.png';
-import CyberScienceImg from './BannerImg/cyberscience.png'
 
 class Banner extends React.Component{
     
     render() {
         return (
             <div>
-              <ul className="scroll-indicator">
-                <li className="active-indicator" />
-                <li />
-                <li />
-                <li />
-              </ul>
               <div className="section-one-container">
                 <div className="container-fluid pl-0 pr-0">
                   <div className="section-one">
-                    <img src={BrainImg} alt="" />
+                    <img src="/img/BannerImg/Brain.jpg" alt="" />
                     <div className="header-navbar">
                       <nav className="navbar navbar-light navbar-expand-lg navbar-padding">
                         <a className="navbar-brand" href="#">NSFCARRIER.IO</a>
@@ -36,19 +23,19 @@ class Banner extends React.Component{
                             </li>
                             <li className="nav-item make-active active">
                               <a className="nav-link" href="#">About <span className="sr-only">(current)</span></a>
-                              <div className />
+                              <div className="" />
                             </li>
                             <li className="nav-item make-active">
                               <a className="nav-link" href="#">Military</a>
-                              <div className />
+                              <div className=""  />
                             </li>
                             <li className="nav-item make-active">
                               <a className="nav-link" href="#">Contact</a>
-                              <div className />
+                              <div className=""  />
                             </li>
                             <li className="nav-item make-active">
                               <a className="nav-link" href="#">Login</a>
-                              <div className />
+                              <div className=""  />
                             </li>
                           </ul>
                         </div>
@@ -66,15 +53,15 @@ class Banner extends React.Component{
                         </div>
                         <div className="row">
                           <div className="col-md-12 col-lg-12 image-padding">
-                            <img className="img-fluid" src={Nsf} alt="" />
-                            <img className="img-fluid" src={Penstate} alt="" />
-                            <img className="img-fluid" src={Ibm} alt="" />
+                            <img className="img-fluid" src="/img/BannerImg/NSF.png" alt="" />
+                            <img className="img-fluid" src="/img/BannerImg/penState.png" alt="" />
+                            <img className="img-fluid" src="/img/BannerImg/ibm.png" alt="" />
                           </div>
                         </div>
                         <div className="row pt-5 mt-5">
                           <div className="col-md-12 col-lg-12 image-padding">
-                            <img className="img-fluid" src={AmazonImg} alt="" />
-                            <img className="img-fluid" src={CyberScienceImg} alt="" />
+                            <img className="img-fluid" src="/img/BannerImg/amazon.png" alt="" />
+                            <img className="img-fluid" src="/img/BannerImg/cyberscience.png" alt="" />
                           </div>
                         </div>
                       </div>

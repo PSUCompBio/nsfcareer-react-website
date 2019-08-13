@@ -1,23 +1,15 @@
 import React from 'react';
-import terminology from './TechnologiesWeUseImg/terminology.png';
-import FacebookIcon from './TechnologiesWeUseImg/facebook-logo.svg';
-import TwinnerIcon from './TechnologiesWeUseImg/twitter-logo-silhouette.svg';
-import InstagramIcon from './TechnologiesWeUseImg/icon.svg';
-import WirelessIcon from './TechnologiesWeUseImg/noun_Wireless_1210449.svg';
-import LaptopIcon from './TechnologiesWeUseImg/laptop.svg'
 
-class TechnologiesWeUse extends React.Component{
+class Footer extends React.Component{
     render() {
 
             return (
 
                 <div className="section-four-container">
                   <div className="container-fluid pl-0 pr-0">
-                    <div className="container no-gutter">
+                    {/* <div className="container no-gutter">
                       <div className="section-four text-center">
-                        <h1 className="font-weight-bold pt-5">TECHNOLOGIES WE USE</h1>
-                        <hr />
-                        <div className="row py-5 pt-5">
+                        <div className="row">
                           <div className="col-md-4 col-lg-4 text-left">
                             <img className="py-3" src={WirelessIcon} alt="" />
                             <h4 className="font-weight-bold">Wireless Wearable Sensors</h4>
@@ -28,7 +20,7 @@ class TechnologiesWeUse extends React.Component{
                             </p>
                           </div>
                           <div className="col-md-4 col-lg-4 pt-5 ">
-                            <img className="mb-5 img-fluid terminology-img" src={terminology} alt="" />
+                            <img className="mb-5 img-fluid terminology-img" src="/img/FooterImg/terminology.png" alt="" />
                           </div>
                           <div className="col-md-4 col-lg-4 text-right">
                             <img className="py-3" src={LaptopIcon} alt="" />
@@ -47,7 +39,7 @@ class TechnologiesWeUse extends React.Component{
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                     <footer>
                       <div className="container">
                         <div className="row pt-4">
@@ -68,14 +60,14 @@ class TechnologiesWeUse extends React.Component{
                           </div>
                           <div className="col-sm-3 col-md-6 col-lg-6">
                             <div className="icon-container">
-                              <a href>
-                                <img className="px-2" src={FacebookIcon} alt="" />
+                              <a href="">
+                                <img className="px-2" src="/img/FooterImg/facebook-logo.svg" alt="" />
                               </a>
-                              <a href>
-                                <img className="px-2" src={TwinnerIcon} alt="" />
+                              <a href="">
+                                <img className="px-2" src="/img/FooterImg/twitter-logo-silhouette.svg" alt="" />
                               </a>
-                              <a href>
-                                <img className="px-2" src={InstagramIcon} alt="" />
+                              <a href="">
+                                <img className="px-2" src="/img/FooterImg/noun_Wireless_1210449.svg" alt="" />
                               </a>
                             </div>
                           </div>
@@ -92,4 +84,4 @@ class TechnologiesWeUse extends React.Component{
     }
 }
 
-export default TechnologiesWeUse;
+export default Footer;

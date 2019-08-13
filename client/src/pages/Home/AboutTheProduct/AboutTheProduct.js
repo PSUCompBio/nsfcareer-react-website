@@ -1,7 +1,5 @@
 import React from 'react';
-import Cloud from './AboutTheProductImg/Cloud_white.svg'
-import Analysis from './AboutTheProductImg/Analysis_White.svg'
-import Monitor from './AboutTheProductImg/Moniter_white.svg'
+
 
 class AboutTheProduct extends React.Component{
     render() {
@@ -51,18 +49,18 @@ class AboutTheProduct extends React.Component{
                     </div>
                     <div className="row text-center shift-top">
                       <div className="col-md-4 col-lg-4">
-                        <img src={Cloud} alt="" />
+                        <img src="/img/AboutTheProductImg/Cloud_white.svg" alt="" />
                         <h4>SENSOR ENABLED <br />
                           CLOUD-BASED BRAIN <br />
                           MODELING</h4>
                       </div>
                       <div className="col-md-4 col-lg-4">
-                        <img src={Monitor} alt="" />
+                        <img src="/img/AboutTheProductImg/Moniter_white.svg" alt="" />
                         <h4>MONITOR AND TRACK BRAIN <br />
                           RESPONSE OVER TIME</h4>
                       </div>
                       <div className="col-md-4 col-lg-4">
-                        <img src={Analysis} alt="" />
+                        <img src="/img/AboutTheProductImg/Analysis_White.svg" alt="" />
                         <h4>TURN YOUR SENSOR DATA <br />
                           INTO MEANINGFUL BRAIN <br />
                           INJURY ANALYSIS</h4>
