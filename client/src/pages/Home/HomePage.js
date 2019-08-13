@@ -2,17 +2,23 @@ import React from 'react';
 import ReactPageScroller from 'react-page-scroller';
 
 import Banner from './Banner/Banner';
+import Footer from './Footer/Footer'
 import AboutTheProduct from './AboutTheProduct/AboutTheProduct'
 import ResearchArea from './ResearchArea/ReseachArea';
 import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse'
-import Footer from './Footer/Footer'
+import ScrollIndicator from './ScrollIndicator';
+import Nav from './Nav';
 import './HomePage.css'
 import './Script'
 
- class HomePage extends React.Component {
+class HomePage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {currentPage: 1, blockScrollDown: false};
+        this.state = {
+            currentPage: 1,
+            blockScrollDown: false,
+            scrollY:0
+        };
         this._pageScroller = null;
     }
 
@@ -21,8 +27,12 @@ import './Script'
     };
 
     pageOnChange = (number) => {
-        this.setState({currentPage: number});
+        this.setState({ currentPage: number });
     };
+
+    resetPage = () => {
+        setTimeout(() => this.pageOnChange(1), 500);
+    }
 
     getPagesNumbers = () => {
 
@@ -36,26 +46,32 @@ import './Script'
 
         return [...pageNumbers];
     };
-     
+
+
+    onFooterScroll = (e) => {
+        this.setState({ scrollY: e.deltaY })    
+        console.log(this.state.scrollY)
+    }
+
     render() {
-        console.log(this.state.currentPage);
         const pagesNumbers = this.getPagesNumbers();
-
-
+        
         return <React.Fragment>
-            <ul className="scroll-indicator">
-                <li className="active-indicator" />
-                <li />
-                <li />
-                <li />
-              </ul>
-            <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
+            <ScrollIndicator currentPage={this.state.currentPage} />
+            <Nav currentPage={this.state.currentPage} />
+           {/* {(this.state.currentPage > 4)?
+                
+                <Footer onWheel={this.onFooterScroll}/>
+                            : */}
+                <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
                 <Banner />
-                <AboutTheProduct/>
+                <AboutTheProduct />
                 <ResearchArea />
-                <TechnologiesWeUse  />
+                <TechnologiesWeUse onWheel ={this.onFooterScroll} getValue={this.state.scrollY} />
                 {/* <Footer/> */}
             </ReactPageScroller>
+               
+            {/* } */}
         </React.Fragment>
     }
 }

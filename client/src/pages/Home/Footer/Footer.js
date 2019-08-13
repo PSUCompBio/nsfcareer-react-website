@@ -3,15 +3,15 @@ import React from 'react';
 class Footer extends React.Component{
     render() {
 
-            return (
+      return (
 
-                <div className="section-four-container">
+        <div className="section-four-container" onWheel={this.props.onWheel}>
                   <div className="container-fluid pl-0 pr-0">
-                    {/* <div className="container no-gutter">
+                    <div className="container no-gutter">
                       <div className="section-four text-center">
                         <div className="row">
                           <div className="col-md-4 col-lg-4 text-left">
-                            <img className="py-3" src={WirelessIcon} alt="" />
+                            <img className="py-3" src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg" alt="" />
                             <h4 className="font-weight-bold">Wireless Wearable Sensors</h4>
                             <p>
                               We partner with leading impact and blast <br /> sensor companies to provide real-time <br /> brain response
@@ -23,7 +23,7 @@ class Footer extends React.Component{
                             <img className="mb-5 img-fluid terminology-img" src="/img/FooterImg/terminology.png" alt="" />
                           </div>
                           <div className="col-md-4 col-lg-4 text-right">
-                            <img className="py-3" src={LaptopIcon} alt="" />
+                            <img className="py-3" src="/img/TechnologiesWeUseImg/laptop.svg" alt="" />
                             <h4 className="font-weight-bold">Computational Brain Medicine</h4>
                             <p>
                               Computational Brain Medicine (CBM) is a transformative and emerging discipline that <br /> uses computers to
@@ -39,7 +39,7 @@ class Footer extends React.Component{
                           </div>
                         </div>
                       </div>
-                    </div> */}
+                    </div>
                     <footer>
                       <div className="container">
                         <div className="row pt-4">
@@ -67,7 +67,7 @@ class Footer extends React.Component{
                                 <img className="px-2" src="/img/FooterImg/twitter-logo-silhouette.svg" alt="" />
                               </a>
                               <a href="">
-                                <img className="px-2" src="/img/FooterImg/noun_Wireless_1210449.svg" alt="" />
+                                <img className="px-2" src="/img/FooterImg/icon.svg" alt="" />
                               </a>
                             </div>
                           </div>
