@@ -1,32 +1,69 @@
-import React, { Fragment } from "react";
+import React from 'react';
+import ReactPageScroller from 'react-page-scroller';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Banner from './Banner/Banner';
+import AboutTheProduct from './AboutTheProduct/AboutTheProduct'
+import ResearchArea from './ResearchArea/ReseachArea';
+import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse'
+import ScrollIndicator from './ScrollIndicator';
+import Nav from './Nav';
+import './HomePage.css'
+import './Script'
 
-import "./HomePage.css";
+class HomePage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            currentPage: 1,
+            blockScrollDown: false,
+            scrollY: 0
+        };
+        this._pageScroller = null;
+    }
 
-const HomePage = () => (
-  <Fragment>
+    goToPage = (eventKey) => {
+        this._pageScroller.goToPage(eventKey);
+    };
 
-		<h1 className="topspace">CAREER: Multiscale Modeling of Axonal Fiber Bundles in the Brain</h1>
-		<h2 className="topspace2">NSF CAREER Project, PI: Reuben H. Kraft, Ph.D., Award Number: 1846059</h2>
+    pageOnChange = (number) => {
+        this.props.onPageChange(number);
+    };
 
-		<p className="text1 topspace2"> Brain injuries are a significant health concern
-for civilian and military populations. This Faculty Early Career Development Program (CAREER)
- project will contribute to the understanding of brain trauma by developing advanced computer
-models that link neuroimaging results, biomechanical assessments, and computational modeling of
-the brain. More broadly, the continued pursuit of the development and validation of numerical diagnostics
- is anticipated to advance the emerging field of computational medicine.
- < /p>
+    resetPage = () => {
+        setTimeout(() => this.pageOnChange(1), 500);
+    }
+
+    getPagesNumbers = () => {
+
+        const pageNumbers = [];
+
+        for (let i = 1; i <= 5; i++) {
+            pageNumbers.push(
+                // <Pager.Item key={i} eventKey={i - 1} onSelect={this.goToPage}>{i}</Pager.Item>
+            )
+        }
+
+        return [...pageNumbers];
+    };
 
 
- <div className="row2">
-   <div className="column nsf-img left">
-     <img src="/img/NSF_4-Color_bitmap_Logo-sm.png" alt="nsf-img" />
-   </div>
-   <div className="column  right">
-     <img src="/img/PSU_ENG_RGB_287_284-01_1.png" alt="psu-img" />
-   </div>
- </div>
+    onFooterScroll = (e) => {
+        this.setState({ scrollY: e.deltaY })
+    }
 
-  </Fragment>
-);
+    render() {
+        const pagesNumbers = this.getPagesNumbers();
+
+        return <React.Fragment>
+            
+            <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
+                <Banner />
+                <AboutTheProduct />
+                <ResearchArea />
+                <TechnologiesWeUse onWheel={this.onFooterScroll} mouseScroll={this.state.scrollY} />
+            </ReactPageScroller>
+        </React.Fragment>
+    }
+}
 
 export default HomePage;

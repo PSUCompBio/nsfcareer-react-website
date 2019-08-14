@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18.231" height="22.098" viewBox="0 0 18.231 22.098">
+    <defs>
+        <style>
+            .cls-1{fill:#0f81dc;fill-rule:evenodd}
+        </style>
+    </defs>
+    <g id="noun_password_1095737" transform="translate(31 101.779)">
+        <g id="Group_2792" data-name="Group 2792" transform="translate(-31 -101.779)">
+            <path id="Path_16115" d="M18.122 33.723v10.506a.552.552 0 0 0 .554.548h14.913a.547.547 0 0 0 .554-.547V33.724a.552.552 0 0 0-.554-.547H18.675a.547.547 0 0 0-.554.547zm-1.1 0a1.652 1.652 0 0 1 1.659-1.652H33.59a1.658 1.658 0 0 1 1.659 1.652v10.506a1.652 1.652 0 0 1-1.659 1.653H18.675a1.657 1.657 0 0 1-1.658-1.652V33.724z" class="cls-1" data-name="Path 16115" transform="translate(-17.017 -23.785)"/>
+            <path id="Path_16116" d="M27.637 12.981a3.6 3.6 0 0 1 3.592-3.591h1.933a3.592 3.592 0 0 1 3.591 3.591v1.975a.645.645 0 0 0 .588.379.509.509 0 0 0 .517-.379v-1.975a4.7 4.7 0 0 0-4.7-4.7h-1.929a4.7 4.7 0 0 0-4.7 4.7v4.144l1.105-.212v-3.932z" class="cls-1" data-name="Path 16116" transform="translate(-23.218 -8.285)"/>
+            <path id="Path_16117" d="M42.445 42.984v5.2a.552.552 0 1 0 1.1 0v-5.2a.552.552 0 1 0-1.1 0z" class="cls-1" data-name="Path 16117" transform="translate(-33.587 -30.536)"/>
+        </g>
+    </g>
+</svg>

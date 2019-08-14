@@ -1,5 +1,5 @@
 import React from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBAlert, MDBInput, MDBCard, MDBCardBody, MDBCardFooter } from 'mdbreact';
+import { MDBContainer, MDBRow,MDBIcon, MDBCol, MDBBtn, MDBAlert,  MDBInputGroup, MDBInput, MDBCard, MDBCardBody, MDBCardFooter } from 'mdbreact';
 
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route } from "react-router-dom";
@@ -128,27 +128,33 @@ class Login extends React.Component {
 
     if (this.state.toSignUp) {
       return <MDBContainer>
-        <MDBRow >
-          <MDBCol middle md="6" className="offset-md-3">
-            <MDBCard>
+        <MDBRow>
+          <MDBCol middle md="8" className="offset-md-2">
+            <MDBCard className="rounded border-0  card-padding card-box-shadow">
               <MDBCardBody>
                 <form onSubmit={this.handleSubmit} ref="signInForm">
                   <p className="h5 text-center mb-4">Sign in</p>
                   <div className="grey-text">
-                    <MDBInput
+                    <img className="user-icon" src="img/icon/user.svg" alt="" />
+                    
+                    <MDBInput className=" rounded-0 input-border"
+                      hint="Username"
                       label="Your registered email"
                       name="user_name"
-                      icon="envelope"
+                      far
+                      icon="far user"
                       group
                       type="email"
                       validate
                       error="wrong"
                       success="right"
                     />
-                    <MDBInput
+
+                    
+
+                    <MDBInput className=" rounded-0 input-border"
                       label="Type your password"
                       name="password"
-                      icon="lock"
                       group
                       type="password"
                       validate
