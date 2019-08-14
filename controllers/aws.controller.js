@@ -41,6 +41,19 @@ function generateINPFile(cognito_user_id,cb){
      })
 }
 
+function generateSimulation(cognito_user_id,cb){
+    request.post({url:config.ComputeInstanceEndpoint + "generateSimulation", json: {user_id:cognito_user_id}}, function(err,httpResponse,body)
+    { 
+        if(err){
+            console.log("ERROR in Generating INP File");
+            cb(err,'');
+        }
+        else{
+            console.log("Ressponse is ",httpResponse.body)
+            cb('',httpResponse.body);
+        }
+     })
+}
 
 
 exports.doUpload = (req, res) => {
@@ -206,11 +219,29 @@ exports.doUpload = (req, res) => {
                                                                             }
                                                                             else {
                                                                                 generateINPFile(req.user_cognito_id,(err,response)=>{
-                                                                                    if(err){
-                                                                                        return res.send({ message: 'failure' , error : err });
+                                                                                    if(err || response.message == "failure"){
+                                                                                        if(err){
+                                                                                        return res.send({ message: 'failure' , error : err });                                                                                                
+
+                                                                                        }
+                                                                                        else{
+                                                                                            return res.send({ message: 'failure'});
+                                                                                        }
                                                                                     }
                                                                                     else{
-                                                                                        // Update the status of user in dynamodb
+                                                                                        generateSimulation(req.user_cognito_id,(err,response)=>{
+                                                                                            if(err || response.message == "failure"){
+                                                                                                if(err){
+                                                                                                return res.send({ message: 'failure' , error : err });                                                                                                
+
+                                                                                                }
+                                                                                                else{
+                                                                                                    return res.send({ message: 'failure'});
+                                                                                                }
+                                                                                                
+                                                                                            }
+                                                                                            else{
+                                                                                                // Update the status of user in dynamodb
                                                                                         var userParams = {
                                                                                             TableName: "users",
                                                                                             Key: {
@@ -230,6 +261,9 @@ exports.doUpload = (req, res) => {
                                                                                             return res.send({ message: 'success' });
                                                                                           }
                                                                                         })
+                                                                                            }
+                                                                                        })
+                                                                                        
                                                                                         
                                                                                     }
                                                                                 })
