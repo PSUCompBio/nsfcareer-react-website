@@ -1,4 +1,20 @@
-/* Aligning Login Dialog in Center */
-/* .login{
-    text-align: center
-} */
+.card-box-shadow{
+    box-shadow: 0 0 10px -1px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+.card-padding{
+    padding: 0 15% 0 15%;
+}
+.input-border{
+   border-top: 0!important;
+   border-left: 0!important;
+   border-right:0!important;
+    border-bottom: 1px solid black!important;
+    padding-left: 40px!important;
+}
+
+
+.user-icon{
+    position: absolute;
+    margin-top: 4%;
+}

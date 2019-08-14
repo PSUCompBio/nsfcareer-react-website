@@ -17,6 +17,7 @@ import { Redirect } from 'react-router';
 // import Login from "./pages/Login/Login";
 // import LogOutComponent from "./components/Authentication/LogOutComponent"
 import HomePage from './pages/Home/HomePage';
+import HomePage2 from './pages/Home/HomePage2'
 
 // // Components
 // import ListUsers from "./components/listUsers/ListUsers"
@@ -39,9 +40,9 @@ class Index extends React.Component {
     console.log(props);
   }
   render() {
-    return <div>
-      <HomePage />
-    </div>
+    return <Router>
+      <HomePage2 />
+    </Router>
   }
 }
 // Here we call fetch API to check if user is authenticted or not
@@ -77,9 +78,8 @@ class Index extends React.Component {
 
 
 ReactDOM.render(
-  <Router>
+
     <Index isAuthenticated={true} isAdmin={true} />
-  </Router>
   ,
   document.getElementById('root')
 );

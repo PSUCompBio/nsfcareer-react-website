@@ -2,7 +2,7 @@ import React from 'react';
 
 
 class AboutTheProduct extends React.Component{
-    render() {
+  render() {
         return (
 
             <div className="section-two-container">
@@ -10,7 +10,7 @@ class AboutTheProduct extends React.Component{
                 <div className="section-two pt-2 ">
                   <div className="row">
                     <div className="col-md-12 col-lg-12 pt-5 text-center">
-                      <h1 className="font-weight-bold">ABOUT THE PROJECT</h1>
+                      <h1 className="font-weight-bold pt-2">ABOUT THE PROJECT</h1>
                       <hr />
                       <p className="pt-5 mt-5">Brain injuries are a significant health concern for civilian and military populations.
                         This Faculty Early Career Development Program (CAREER) project will contribute to the understanding of brain

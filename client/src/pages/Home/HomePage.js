@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactPageScroller from 'react-page-scroller';
-
+import { BrowserRouter as Router } from 'react-router-dom';
 import Banner from './Banner/Banner';
-import Footer from './Footer/Footer'
 import AboutTheProduct from './AboutTheProduct/AboutTheProduct'
 import ResearchArea from './ResearchArea/ReseachArea';
 import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse'
@@ -17,7 +16,7 @@ class HomePage extends React.Component {
         this.state = {
             currentPage: 1,
             blockScrollDown: false,
-            scrollY:0
+            scrollY: 0
         };
         this._pageScroller = null;
     }
@@ -27,7 +26,7 @@ class HomePage extends React.Component {
     };
 
     pageOnChange = (number) => {
-        this.setState({ currentPage: number });
+        this.props.onPageChange(number);
     };
 
     resetPage = () => {
@@ -49,29 +48,20 @@ class HomePage extends React.Component {
 
 
     onFooterScroll = (e) => {
-        this.setState({ scrollY: e.deltaY })    
-        console.log(this.state.scrollY)
+        this.setState({ scrollY: e.deltaY })
     }
 
     render() {
         const pagesNumbers = this.getPagesNumbers();
-        
+
         return <React.Fragment>
-            <ScrollIndicator currentPage={this.state.currentPage} />
-            <Nav currentPage={this.state.currentPage} />
-           {/* {(this.state.currentPage > 4)?
-                
-                <Footer onWheel={this.onFooterScroll}/>
-                            : */}
-                <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
+            
+            <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
                 <Banner />
                 <AboutTheProduct />
                 <ResearchArea />
-                <TechnologiesWeUse onWheel ={this.onFooterScroll} getValue={this.state.scrollY} />
-                {/* <Footer/> */}
+                <TechnologiesWeUse onWheel={this.onFooterScroll} mouseScroll={this.state.scrollY} />
             </ReactPageScroller>
-               
-            {/* } */}
         </React.Fragment>
     }
 }

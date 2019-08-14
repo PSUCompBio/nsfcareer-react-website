@@ -1,5 +1,11 @@
 import React from 'react';
+import WebFont from 'webfontloader';
 
+WebFont.load({
+  google: {
+    families: ['Roboto', 'sans-serif']
+  }
+});
 class Banner extends React.Component{
     
     render() {
@@ -8,9 +14,8 @@ class Banner extends React.Component{
               <div className="section-one-container">
                 <div className="container-fluid pl-0 pr-0">
                   <div className="section-one">
-                    <img src="/img/BannerImg/Brain.jpg" alt="" />
+                    <img src="/img/BannerImg/Brain.png" alt="" />
                     <div className="header-navbar">
-                      
                       <div className="container-fluid heading-container">
                         <div className="row">
                           <div className="col-md-10 col-lg-10 header-heading">
