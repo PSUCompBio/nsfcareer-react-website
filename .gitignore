@@ -15,4 +15,3 @@ config/configuration_keys.json
 package-lock.json
 client/package-lock.json
 avatars/*
-config/configuration_keys.json
