@@ -20,11 +20,11 @@ $ sudo npm install -g nodemon
 
 # To install Project's dependencies
 # Then in project root's directory run the following commands :
-$ sudo npm run init
+$ sudo npm run init 
 
 ```
 
-### To Run Application Locally: 
+### To Run Application Locally:
 #### Step 0 : Install Dependencies by following above steps.
 #### Step 1 : Update config file in config/configuration_keys.json
   - ###### Add AWS Access Key ID and AWS Secret Access Key ID and AWS Buckets name in configuration_keys.json.
@@ -32,7 +32,7 @@ $ sudo npm run init
 - ###### Update avatar3dClientId & avatar3dclientSecret in configuration_keys.json file. Note: avatar3dClientId and avatar3dclientSecret from the the Avatar3d SDK website. There are IDs created for "Developer Access"  and "Client Access". This information is from the "Client Access" section.
 - ###### Update your AWS Cognito Credentials including: userPoolId, region & ClientId in configuration_keys.json.
     - You can find these in AWS Cognito service page. The userPooolID can be found under General settings, "Pool Id". The ClientID is under App integration, then App client settings, then there is a title for the App client, and under that there is "ID", this is the ID to use.
-- ###### Update variable ( ComputeInstanceEndpoint ) with the endpoint of Compute Instance ( Docker Image deployed with NodeJS Service ) in below given format to generate Mesh Data : 
+- ###### Update variable ( ComputeInstanceEndpoint ) with the endpoint of Compute Instance ( Docker Image deployed with NodeJS Service ) in below given format to generate Mesh Data :
     - E.g http://yourcomputeinstance.com/api/
 #### Step 3 : Run Application locally :
 ```
