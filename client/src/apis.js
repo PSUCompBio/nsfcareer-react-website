@@ -148,6 +148,17 @@ export const getModelLink = (request) =>{
       });
   })
 }
+export const getSimulationFile = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}getSimulationFileLink`, JSON.parse(request),{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 
 export const verifyUser = (request) =>{
   return new Promise((resolve,reject)=>{
