@@ -1115,12 +1115,11 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                                 }
                                                                 else {
                                                                     userData["simulation_file_url"] = url;
-                                                                    
-                                                                    res.send({
-                                                                        message: "success",
-                                                                        data: userData
-                                                                    })
                                                                 }
+                                                                res.send({
+                                                                    message: "success",
+                                                                    data: userData
+                                                                })
                                                             
                                                             }})
                                                     }
