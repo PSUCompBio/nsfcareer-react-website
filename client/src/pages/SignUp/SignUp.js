@@ -1,9 +1,9 @@
 import React from 'react';
-import LoginComponent from '../../components/Authentication/LoginComponent';
+import SignUpComponent from '../../components/Authentication/SignUpComponent';
 import { withRouter } from 'react-router-dom';
-import "./Login.css";
+import "./SignUp.css";
 
-class Login extends React.Component {
+class SignUp extends React.Component {
   constructor(props) {
     super();
     this.state = { someKey: 'someValue' };
@@ -13,10 +13,10 @@ class Login extends React.Component {
     return (
       <React.Fragment>
 
-          <LoginComponent/>
+          <SignUpComponent/>
         </React.Fragment>
     );
   }
 }
 
-export default withRouter(Login);
+export default withRouter(SignUp);

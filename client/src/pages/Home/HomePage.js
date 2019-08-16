@@ -8,7 +8,6 @@ import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse'
 import ScrollIndicator from './ScrollIndicator';
 import Nav from './Nav';
 import './HomePage.css'
-import './Script'
 
 class HomePage extends React.Component {
     constructor(props) {

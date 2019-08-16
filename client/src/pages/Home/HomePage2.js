@@ -5,6 +5,7 @@ import { Route } from 'react-router-dom';
 import Nav from './Nav';
 import HomePage from './HomePage';
 import Login from '../Login/Login';
+import SignUp from '../SignUp/SignUp'
 class HomePage2 extends React.Component {
 
     constructor(props) {
@@ -31,7 +32,8 @@ class HomePage2 extends React.Component {
                 <Nav currentPage={this.state.currentPage} />
                 <Route exact path='/' render={(props) => <HomePage {...props} onPageChange={this.onPageChange} />} />
                 <Route exact path='/Home' render={(props) => <HomePage {...props} onPageChange={this.onPageChange} />} />
-                <Route  path='/Login' component={Login} />
+                <Route exact path='/Login' component={Login} />
+                <Route exact path='/SignUp' component={SignUp} />
             </React.Fragment>
         )
     }

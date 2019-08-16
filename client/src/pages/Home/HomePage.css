@@ -372,3 +372,6 @@ footer p{
   background-image: linear-gradient(to bottom, #3e3e3e, rgba(23, 23, 23, 0)), linear-gradient(269deg, #0f81dc, #08416e);
   position: relative!important;
 }
+nav{
+  height: 10vh;
+}

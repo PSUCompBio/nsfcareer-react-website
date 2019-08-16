@@ -6,6 +6,7 @@ p{
     border:none!important;
     border-bottom: 1px solid black!important;
     border-radius: 0!important;
+    padding: 0!important;
   }
   input{
     border:none!important;
@@ -24,6 +25,9 @@ p{
     font-size: 14px!important;
     line-height: 2.64!important;
     color: #000000!important;
+  }
+  .age{
+      width: 84%;
   }
   .card-border{
     padding: 1% 15% 1% 15%!important;
@@ -73,7 +77,6 @@ p{
 
 .footer{
     background: #183c57;
-    height: 27vh;
 }
 .footer h4{
   color: #fff;
@@ -99,6 +102,35 @@ input:-webkit-autofill {
     -webkit-animation-name: autofill;
     -webkit-animation-fill-mode: both;
 }
+
+
+.country-code {
+    padding: 0!important;
+    margin: 0!important;
+    border: none!important;
+    -webkit-appearance: none!important;
+    -moz-appearance: none!important;
+    text-indent: 1px;
+    text-overflow: '';
+    height: 20px!important;
+    color: #0f81dc!important;
+    border-right: 1.5px solid #0f81dc!important;
+    padding-right: 2px!important;
+    border-radius: 0!important;
+}
+.country-code{
+    background: none!important;
+}
+input[type="checkbox"]{
+    height: 10px;
+    width: 10px;
+    background: #fff!important;
+}
+.singup{
+    padding: 10% 0 10% 0;
+}
+
+
 
 @media (max-width:575px){
     .brain-icon-container{
