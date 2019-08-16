@@ -27,32 +27,30 @@ const docClient = new AWS.DynamoDB.DocumentClient({
     convertEmptyValues: true
 });
 
-function generateINPFile(cognito_user_id,cb){
-    request.post({url:config.ComputeInstanceEndpoint + "generateINF", json: {user_id:cognito_user_id}}, function(err,httpResponse,body)
-    { 
-        if(err){
+function generateINPFile(cognito_user_id, cb) {
+    request.post({ url: config.ComputeInstanceEndpoint + "generateINF", json: { user_id: cognito_user_id } }, function (err, httpResponse, body) {
+        if (err) {
             console.log("ERROR in Generating INP File");
-            cb(err,'');
+            cb(err, '');
         }
-        else{
-            console.log("Ressponse is ",httpResponse.body)
-            cb('',httpResponse.body);
+        else {
+            console.log("Ressponse is ", httpResponse.body)
+            cb('', httpResponse.body);
         }
-     })
+    })
 }
 
-function generateSimulation(cognito_user_id,cb){
-    request.post({url:config.ComputeInstanceEndpoint + "generateSimulation", json: {user_id:cognito_user_id}}, function(err,httpResponse,body)
-    { 
-        if(err){
+function generateSimulation(cognito_user_id, cb) {
+    request.post({ url: config.ComputeInstanceEndpoint + "generateSimulation", json: { user_id: cognito_user_id } }, function (err, httpResponse, body) {
+        if (err) {
             console.log("ERROR in Generating INP File");
-            cb(err,'');
+            cb(err, '');
         }
-        else{
-            console.log("Ressponse is ",httpResponse.body)
-            cb('',httpResponse.body);
+        else {
+            console.log("Ressponse is ", httpResponse.body)
+            cb('', httpResponse.body);
         }
-     })
+    })
 }
 
 
@@ -65,7 +63,7 @@ exports.doUpload = (req, res) => {
     var archiver = require('archiver');
     var archive = archiver("zip");
     var file_extension = req.file.originalname.split(".");
-    file_extension = file_extension[ file_extension.length - 1 ] ;
+    file_extension = file_extension[file_extension.length - 1];
     // var month = ts.getMonth() + 1;
     // var milliSeconds = ts.getMilliseconds() + 1;
     // var hours = ts.getHours();
@@ -76,7 +74,7 @@ exports.doUpload = (req, res) => {
     // params.Key = req.file.originalname;
     var file_name = Date.now();
     params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + file_extension;
-    console.log("NAME OF THE FILE ",params.Key);
+    console.log("NAME OF THE FILE ", params.Key);
     params.Body = req.file.buffer;
     if (req.body.file_error) {
         console.log(req.body.file_error);
@@ -210,64 +208,65 @@ exports.doUpload = (req, res) => {
                                                                         return res.send({ message: 'failure' });
                                                                     }
                                                                     else {
-                                                                        params.Key = req.user_cognito_id + "/profile/image/" + file_name + ".png" ;
+                                                                        params.Key = req.user_cognito_id + "/profile/image/" + file_name + ".png";
                                                                         params.Body = headBuffer;
                                                                         // Call S3 Upload
                                                                         s3Client.upload(params, (err, data) => {
                                                                             if (err) {
-                                                                                return res.send({ message: 'failure' , error : err });
+                                                                                return res.send({ message: 'failure', error: err });
                                                                             }
                                                                             else {
-                                                                                generateINPFile(req.user_cognito_id,(err,response)=>{
-                                                                                    if(err || response.message == "failure"){
-                                                                                        if(err){
-                                                                                        return res.send({ message: 'failure' , error : err });                                                                                                
+                                                                                generateINPFile(req.user_cognito_id, (err, response) => {
+                                                                                    if (err || response.message == "failure") {
+                                                                                        if (err) {
+                                                                                            return res.send({ message: 'failure', error: err });
 
                                                                                         }
-                                                                                        else{
-                                                                                            return res.send({ message: 'failure'});
+                                                                                        else {
+                                                                                            return res.send({ message: 'failure' });
                                                                                         }
                                                                                     }
-                                                                                    else{
-                                                                                        generateSimulation(req.user_cognito_id,(err,response)=>{
-                                                                                            if(err || response.message == "failure"){
-                                                                                                if(err){
-                                                                                                return res.send({ message: 'failure' , error : err });                                                                                                
+                                                                                    else {
+                                                                                        generateSimulation(req.user_cognito_id, (err, response) => {
+                                                                                            if (err || response.message == "failure") {
+                                                                                                if (err) {
+                                                                                                    return res.send({ message: 'failure', error: err });
 
                                                                                                 }
-                                                                                                else{
-                                                                                                    return res.send({ message: 'failure'});
+                                                                                                else {
+                                                                                                    return res.send({ message: 'failure' });
                                                                                                 }
-                                                                                                
+
                                                                                             }
-                                                                                            else{
+                                                                                            else {
                                                                                                 // Update the status of user in dynamodb
-                                                                                        var userParams = {
-                                                                                            TableName: "users",
-                                                                                            Key: {
-                                                                                                "user_cognito_id": req.user_cognito_id
-                                                                                            },
-                                                                                            UpdateExpression: "set is_selfie_inp_uploaded = :is_selfie_inp_uploaded",
-                                                                                            ExpressionAttributeValues: {
-                                                                                                ":is_selfie_inp_uploaded": true
-                                                                                            },
-                                                                                            ReturnValues: "UPDATED_NEW"
-                                                                                        };
-                                                                                        docClient.update(userParams,(err,data)=>{
-                                                                                          if(err){
-                                                                                            return res.send({ message: 'failure', error : err });
-                                                                                          }  
-                                                                                          else{
-                                                                                            return res.send({ message: 'success' });
-                                                                                          }
-                                                                                        })
+                                                                                                var userParams = {
+                                                                                                    TableName: "users",
+                                                                                                    Key: {
+                                                                                                        "user_cognito_id": req.user_cognito_id
+                                                                                                    },
+                                                                                                    UpdateExpression: "set is_selfie_inp_uploaded = :is_selfie_inp_uploaded , is_selfie_simulation_file_uploaded = :is_selfie_simulation_file_uploaded",
+                                                                                                    ExpressionAttributeValues: {
+                                                                                                        ":is_selfie_inp_uploaded": true,
+                                                                                                        ":is_selfie_simulation_file_uploaded" : true
+                                                                                                    },
+                                                                                                    ReturnValues: "UPDATED_NEW"
+                                                                                                };
+                                                                                                docClient.update(userParams, (err, data) => {
+                                                                                                    if (err) {
+                                                                                                        return res.send({ message: 'failure', error: err });
+                                                                                                    }
+                                                                                                    else {
+                                                                                                        return res.send({ message: 'success' });
+                                                                                                    }
+                                                                                                })
                                                                                             }
                                                                                         })
-                                                                                        
-                                                                                        
+
+
                                                                                     }
                                                                                 })
-                                                                                
+
                                                                             }
                                                                         });
 
@@ -293,13 +292,13 @@ exports.doUpload = (req, res) => {
 
                     pythonProcess.stderr.on("data", async data => {
                         console.log(`error:${data}`);
-                        return res.send({ message: "failure", error : data });
+                        return res.send({ message: "failure", error: data });
 
                     });
                     pythonProcess.on("close", async data => {
-                        if(data == "1" || data == 1){
+                        if (data == "1" || data == 1) {
                             return res.send({
-                                message : "failure"
+                                message: "failure"
                             });
                         }
                         console.log(`child process close with ${data}`)

@@ -73,6 +73,7 @@ onClickHandler = () => {
             if(response.data.message == "success"){
               this.setState(prevState => {
                 prevState = JSON.parse(JSON.stringify(this.state.user));
+                prevState["is_selfie_simulation_file_uploaded"] = true ;
                 prevState.simulation_file_url = response.data.simulation_file_url;
                 return {user: prevState}
              })
@@ -226,7 +227,7 @@ return <React.Fragment>
                             <br />
                             <span>Simulation File Generated </span>
                             {this.state.user.is_selfie_simulation_file_uploaded? 
-                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.simulation_file_url} className="btn btn-info">Download Simulation File</a> </React.Fragment> 
+                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.simulation_file_url} className="btn btn-secondary">Download Simulation File</a> </React.Fragment> 
                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> 
                             } 
                     </div>
