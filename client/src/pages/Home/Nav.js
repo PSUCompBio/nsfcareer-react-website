@@ -10,7 +10,7 @@ class Nav extends React.Component {
     }
     render() {
         return (
-                <nav  className={`navbar navbar-light  navbar-expand-lg navbar-padding ${(this.props.currentPage > 1) ? this.state.onScrollChangeBackground : ''}${ (this.props.location.pathname!='/Home')? 'navbar-bg-change': ''}`}>
+                <nav  className={`navbar navbar-light  navbar-expand-lg navbar-padding ${(this.props.currentPage > 1) ? this.state.onScrollChangeBackground : ''} ${ (this.props.location.pathname!='/Home')? 'navbar-bg-change': ''}`}>
                     <Link className="navbar-brand" to={'/Home'}><img src="img/BannerImg/logo.png" alt="" /></Link>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon" />
@@ -33,10 +33,17 @@ class Nav extends React.Component {
                                 <Link className="nav-link" to={'/Contact'}>Contact</Link>
                                 <div className={(this.props.location.pathname=='/Contact')?'active-link':''} />
                             </li>
+                        {this.props.location.pathname != '/SignUp' ?
                             <li className="nav-item make-active">
                                 <Link className="nav-link" to={'/Login'}>Login</Link>
-                                <div className={(this.props.location.pathname=='/Login')?'active-link':''} />
+                                <div className={(this.props.location.pathname == '/Login') ? 'active-link' : ''} />
                             </li>
+                            :
+                            <li className="nav-item make-active">
+                                <Link className="nav-link" to={'/SignUp'}>Sign up</Link>
+                                <div className={(this.props.location.pathname == '/SignUp') ? 'active-link' : ''} />
+                            </li>
+                        }
                         </ul>
                 </div>
                 </nav>

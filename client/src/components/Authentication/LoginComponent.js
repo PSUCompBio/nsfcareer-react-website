@@ -133,11 +133,9 @@ class Login extends React.Component {
             <div className="card card-border">
               <div className="card-body">
                   <div className="text-center brain-icon-container">
-                    <table className="text-center brain-icon">
-                      <tr>
-                        <td><img src="img/icon/brain.png" alt="" /></td>
-                      </tr>
-                    </table>
+                    <div className="text-center brain-icon">
+                      <img src="img/icon/brain.png" alt="" />
+                    </div>
                   </div>
                   <div className="input-group mb-5">
                     <div className="input-group-prepend">
@@ -156,7 +154,7 @@ class Login extends React.Component {
                   </div>
                   <button type="button" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
                   <div className="text-center">
-                    <p className="mt-4">Don't have an account? <Link className="sign-up" to='SignUp' > Sign Up </Link></p>
+                    <p className="mt-4 sign-up-link">Don't have an account? <Link className="sign-up" to='SignUp' > Sign Up </Link></p>
                   </div>
               </div>
             </div>

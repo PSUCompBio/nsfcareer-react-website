@@ -26,7 +26,7 @@ import HomePage2 from './pages/Home/HomePage2'
 import "./index.css";
 
 // MDReact css
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'font-awesome/css/font-awesome.min.css';
 // import 'bootstrap-css-only/css/bootstrap.min.css';
 // import 'mdbreact/dist/css/mdb.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -37,12 +37,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 class Index extends React.Component {
   constructor(props) {
     super();
-    console.log(props);
   }
   render() {
-    return <Router>
-      <HomePage2 />
-    </Router>
+    return (
+      <Router>
+        <HomePage2 />
+      </Router>
+    )
   }
 }
 // Here we call fetch API to check if user is authenticted or not
@@ -78,9 +79,7 @@ class Index extends React.Component {
 
 
 ReactDOM.render(
-
-    <Index isAuthenticated={true} isAdmin={true} />
-  ,
+  <Index isAuthenticated={true} isAdmin={true} />,
   document.getElementById('root')
 );
 

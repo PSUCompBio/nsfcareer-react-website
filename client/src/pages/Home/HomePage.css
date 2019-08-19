@@ -273,14 +273,14 @@ footer{
     margin-top: 51.4%;
     position: sticky;
     bottom: 0;
-    display: none!important;
+    display: none;
 }
 .show-footer{
   display: block!important;
   animation: fadeIn 1s ;
 }
 .shift-technology-section{
-  margin-top: -20%;
+  margin-top: -18.5%;
   animation: smoth 0.2s ease-in;
 }
 @keyframes smoth{
@@ -366,12 +366,66 @@ footer p{
   float: right;
 }
 .navbar-bg{
-  background: #000;
+  background:url('/img/BannerImg/navbg.png') no-repeat center center ;
+  background-size: cover
 }
 .navbar-bg-change{
-  background-image: linear-gradient(to bottom, #3e3e3e, rgba(23, 23, 23, 0)), linear-gradient(269deg, #0f81dc, #08416e);
-  position: relative!important;
+  background:url('/img/BannerImg/navbg.png') no-repeat center center ;
+  position: fixed!important;
+  top: 0;
+  background-size: cover;
 }
+.navbar-container {
+  height: 10vh;
+}
+
 nav{
   height: 10vh;
+}
+
+/* ======making responsive to navbar========= */
+
+@media (max-width:575px){
+  .navbar-brand{
+    width:70%;
+  }
+  .section-two hr, .section-three hr, .section-four hr {
+    width: 40%;
+    margin-left: 30%;
+  }
+  .bashed-border ul{
+    display: none
+  }
+  .shift-top{
+    margin-top: 10%;
+    margin-bottom: 20%;
+  }
+}
+
+@media (min-width:576px) and (max-width: 767px){
+ .navbar-brand{
+   width:auto;
+ }
+ .section-two p {
+  font-size: 18px;
+}
+}
+@media (min-width: 768px) and (max-width: 991px){
+
+  .navbar-brand{
+    width:auto;
+  }
+  .section-two p {
+   
+    font-size: 18px;
+  }
+  footer{
+    display: none!important;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px){
+  .login{
+      padding-top: 1%;
+  }
 }

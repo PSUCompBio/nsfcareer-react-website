@@ -8,6 +8,8 @@ import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse'
 import ScrollIndicator from './ScrollIndicator';
 import Nav from './Nav';
 import './HomePage.css'
+import 'jquery';
+import 'bootstrap/dist/js/bootstrap.bundle'
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -52,16 +54,26 @@ class HomePage extends React.Component {
 
     render() {
         const pagesNumbers = this.getPagesNumbers();
+        if (window.innerWidth >= 725) {
+            return <React.Fragment>
 
-        return <React.Fragment>
-            
-            <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
+                <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
+                    <Banner />
+                    <AboutTheProduct />
+                    <ResearchArea />
+                    <TechnologiesWeUse onWheel={this.onFooterScroll} mouseScroll={this.state.scrollY} />
+                </ReactPageScroller>
+            </React.Fragment>
+        } else {
+            return(
+            <React.Fragment>
                 <Banner />
                 <AboutTheProduct />
                 <ResearchArea />
                 <TechnologiesWeUse onWheel={this.onFooterScroll} mouseScroll={this.state.scrollY} />
-            </ReactPageScroller>
-        </React.Fragment>
+                </React.Fragment>
+            )
+        }
     }
 }
 

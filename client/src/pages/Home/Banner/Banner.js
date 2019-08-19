@@ -18,7 +18,7 @@ class Banner extends React.Component{
                     <div className="header-navbar">
                       <div className="container-fluid heading-container">
                         <div className="row">
-                          <div className="col-md-10 col-lg-10 header-heading">
+                        <div className={`col-md-10 col-lg-10 header-heading ${window.innerWidth<725? 'pt-4':''}`}>
                             <h1>TRANSFORM YOUR SENSOR DATA</h1>
                             <h4>Accurate brain simulations help extend your </h4>
                             <h4>sensor data research. </h4>
@@ -34,7 +34,7 @@ class Banner extends React.Component{
                             <img className="img-fluid" src="/img/BannerImg/ibm.png" alt="" />
                           </div>
                         </div>
-                        <div className="row pt-5 mt-5">
+                        <div className="row pt-5">
                           <div className="col-md-12 col-lg-12 image-padding">
                             <img className="img-fluid" src="/img/BannerImg/amazon.png" alt="" />
                             <img className="img-fluid" src="/img/BannerImg/cyberscience.png" alt="" />

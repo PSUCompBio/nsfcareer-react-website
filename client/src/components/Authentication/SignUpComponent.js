@@ -6,7 +6,7 @@ import { formDataToJson } from '../../utilities/utility'
 import { signUp } from '../../apis';
 import "../../mixed_style.css";
 import Footer from '../Footer';
-import CountryCode from '../../config/CountryCode.json'
+import CountryCode from '../../config/CountryCode.json';
 class SignUpComponent extends React.Component {
   constructor() {
     super();
@@ -17,7 +17,7 @@ class SignUpComponent extends React.Component {
       isSignUpError: false,
       signUpError: "",
       isLoading: false,
-      CountryCode: [CountryCode]
+      CountryCode: [CountryCode],
     }
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -78,11 +78,9 @@ class SignUpComponent extends React.Component {
             <div className="card card-border">
               <div className="card-body">
                 <div className="text-center brain-icon-container">
-                  <table className="text-center brain-icon">
-                    <tr>
-                      <td><img src="img/icon/brain.png" alt="" /></td>
-                    </tr>
-                  </table>
+                  <div className="text-center brain-icon">
+                  <img src="img/icon/brain.png" alt="" />
+                  </div>
                 </div>
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
@@ -105,65 +103,77 @@ class SignUpComponent extends React.Component {
                 </div>
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
-                    <span className="input-group-text" id="basic-addon1">
-                      <select class="custom-select country-code" name="" id="">
+                    <span   className="input-group-text country-code-container" id="basic-addon1">
+
+                      <select  className="custom-select country-code" name="" id="">
                         {this.state.CountryCode.map(function (index) {
                           return (
                             index.countries.map(function (key, value) {
-                              return <option value="">{key.code}</option>
+                              if(key.code=='+91')
+                                return <option defaultValue value="">{key.code}</option>
+                              else {
+                                return <option value="">{key.code}</option>
+                                
+                              }
                             }))
                         })}
                       </select>
                     </span>
+                    
                   </div>
-                  <input type="text" className="form-control" placeholder="Contact number" aria-label="contact number" aria-describedby="basic-addon1" />
+                  <input type="text" className="form-control contact-number" placeholder="Contact number" aria-label="contact number" aria-describedby="basic-addon1" />
                 </div>
                 <div className="form-row">
-                  <div className="col">
+                  <div className="col-7">
                     <div className="input-group mb-5">
                       <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1"><img src="img/icon/user.svg" alt="" /></span>
+                        <span className="input-group-text" id="basic-addon1"><img src="img/icon/envelop.svg" alt="" /></span>
                       </div>
-                      <input type="text" className="form-control" placeholder="Last name" aria-label="Username" aria-describedby="basic-addon1" />
+                      <input type="text" className="form-control" placeholder="XYZ@nsf.com" aria-label="Username" aria-describedby="basic-addon1" />
                     </div>
                   </div>
-                  <div className="col">
-                    <button type="button" className="btn float-right btn-primary">Verification code sent</button>
+                  <div className="col-5">
+                    <button type="button" className="btn float-right sign-up-btn verification-btn-bg btn-primary">Verification code sent</button>
                   </div>
                 </div>
 
                 <div className="form-row">
-                  <div className="col">
+                  <div className="col-7">
                     <div className="input-group mb-5">
                       <div className="input-group-prepend">
                         <span className="input-group-text" id="basic-addon1"><img src="img/icon/lock.svg" alt="" /></span>
                       </div>
-                      <input type="text" className="form-control" placeholder="Last name" aria-label="Username" aria-describedby="basic-addon1" />
+                      <input type="text" className="form-control" placeholder="Verification code" aria-label="Username" aria-describedby="basic-addon1" />
                     </div>
                   </div>
-                  <div className="col pl-3">
-                    <button type="button" className="btn float-right btn-primary">Send again</button>
-                    <button type="button" className="btn float-right mr-2 btn-primary">Verify</button>
+                  <div className="col-5 pl-3">
+                    <button type="button" className="btn float-right send-again-btn sign-up-btn btn-primary">Send again</button>
+                    <button type="button" className="btn float-right  sign-up-btn mr-2 btn-primary">Verify</button>
                   </div>
                 </div>
-                <div className="form-row mb-3">
-                  <select class="form-control" id="exampleFormControlSelect1">
-                    <option>Male</option>
-                    <option>Female</option>
+                <div className="form-row">
+                <div className="input-group mb-3">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="basic-addon1"><img  src="img/icon/gender.svg" alt="" /></span>
+                  </div>
+                    <select type="text" className="custom-select select-gender"  aria-label="age" aria-describedby="basic-addon1" >
+                      <option defaultValue>Select your gender</option>
+                      <option value="male"> Male</option>
+                      <option value="male"> Female</option>
                   </select>
+                </div>
                 </div>
               
                 <div className="form-row">
-                  <div className="col">
-                    <input type="checkbox"/>
+                  <div className="col pl-0">
+                  <input id="checkbox-1" className="checkbox-custom" name="checkbox-3" type="checkbox"/>
+                  <label htmlFor="checkbox-1"className="checkbox-custom-label">I agree to the <a className="sign-up">Terms and conditions</a> </label> 
                   </div>
                 </div>
-                <div>
-                  <a className="float-right forgot-pswd" >Forgot password?</a>
-                </div>
-                <button type="button" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
+                
+                <button type="button" className="btn btn-primary sign-up-btn btn-block mt-5">Register</button>
                 <div className="text-center">
-                  <p className="mt-4">Don't have an account? <Link className="sign-up" to='SignUp' > Sign Up </Link></p>
+                  <p className="mt-4 already-account">Already have an account? <Link className="sign-up" to='Login' > Log in </Link></p>
                 </div>
               </div>
             </div>

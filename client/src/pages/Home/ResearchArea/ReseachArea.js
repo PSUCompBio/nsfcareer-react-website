@@ -2,17 +2,20 @@ import React from 'react';
 
 
 class ResearchArea extends React.Component{
-    render() {
+  render() {
+    const resetHeight = {
+      height: 'auto'
+    }
         return (
-
+              
             <div className="section-three-container">
-              <div className="research-area-bg">
+            <div className="research-area-bg" style={window.innerWidth < 725 ? resetHeight : { }}>
                 <div className="container">
                   <div className="section-three text-center py-5">
                     <h1 className="font-weight-bold pt-5">RESEARCH AREAS</h1>
                     <hr />
                     <div className="row text-center  ">
-                      <div className="col-md-6 col-lg-6 px-5 py-5">
+                    <div className={`col-md-6 col-lg-6 ${window.innerWidth>425 && window.innerWidth<769?'':'px-5 py-5'}`} >
                         <div className="card mx-4 rounded-img">
                           <img className="card-img-top" src="/img/ResearchAreaImg/Group-2491.svg" alt="Card image cap" />
                           <div className="card-body">
@@ -22,7 +25,7 @@ class ResearchArea extends React.Component{
                           </div>
                         </div>
                       </div>
-                      <div className="col-md-6 col-lg-6 px-5 py-5">
+                      <div className={`col-md-6 col-lg-6 ${window.innerWidth>425 && window.innerWidth<769?'':'px-5 py-5'}`}>
                         <div className="card mx-4 rounded-img">
                           <img className="card-img-top" src="/img/ResearchAreaImg/Group-2492.svg" alt="Card image cap" />
                           <div className="card-body">

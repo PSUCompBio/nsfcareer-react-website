@@ -34,6 +34,7 @@ p{
   .login{
       height: 63vh;
       padding-top: 5%;
+      margin-top: 10vh;
   }
   .log-in-btn{
     background-color: #0f81dc!important;
@@ -41,6 +42,10 @@ p{
   .sign-up{
       color: #0f81dc!important;
       text-decoration: underline!important;
+  }
+  .sign-up-link{
+      font-size: 14px;
+      font-family: 'Segoe UI Regular';
   }
   .forgot-pswd{
     opacity: 0.44;

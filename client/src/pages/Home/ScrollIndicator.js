@@ -12,7 +12,7 @@ class scrollIndicator extends React.Component {
     render() {
         
         return (
-            <ul className={(this.props.currentPage>1)?'change-scroll-indicator': 'scroll-indicator'}>
+            <ul style={window.innerWidth < 725 ? { display: 'none' } : {}} className={(this.props.currentPage>1)?'change-scroll-indicator': 'scroll-indicator'}>
                 <li className={(this.props.currentPage === 1) ? this.state.changeActiveIndicator : ''} />
                 <li className={(this.props.currentPage === 2) ? 'active-change-scroll-indicator': ''} />
                 <li className={(this.props.currentPage === 3) ? 'active-change-scroll-indicator': ''} />
