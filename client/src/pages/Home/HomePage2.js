@@ -1,6 +1,6 @@
 import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
-import { Route, withRouter } from 'react-router-dom';
+import { Route, withRouter, Redirect } from 'react-router-dom';
 
 import Nav from './Nav';
 import HomePage from './HomePage';
@@ -32,7 +32,7 @@ class HomePage2 extends React.Component {
                     ''
                 }
                 <Nav currentPage={this.state.currentPage} />
-                <Route exact path='/' render={(props) => <HomePage {...props} onPageChange={this.onPageChange} />} />
+                <Redirect exact path='/' to='/Home'></Redirect>
                 <Route exact path='/Home' render={(props) => <HomePage {...props} onPageChange={this.onPageChange} />} />
                 <Route exact path='/Login' component={Login} />
                 <Route exact path='/SignUp' component={SignUp} />
