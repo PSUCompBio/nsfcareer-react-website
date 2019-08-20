@@ -1,10 +1,13 @@
 import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
-import { Route } from 'react-router-dom';
+import { Route, withRouter, Redirect } from 'react-router-dom';
 
 import Nav from './Nav';
 import HomePage from './HomePage';
 import Login from '../Login/Login';
+import SignUp from '../SignUp/SignUp';
+
+
 class HomePage2 extends React.Component {
 
     constructor(props) {
@@ -21,20 +24,21 @@ class HomePage2 extends React.Component {
     }
 
     render() {
-
-        console.log("this.state.currentPage", this.state.currentPage);
-        
-
         return (
             <React.Fragment>
-                <ScrollIndicator currentPage={this.state.currentPage} />
+                {(this.props.location.pathname == '/Home') ?
+                    <ScrollIndicator currentPage={this.state.currentPage} />
+                    :
+                    ''
+                }
                 <Nav currentPage={this.state.currentPage} />
-                <Route exact path='/' render={(props) => <HomePage {...props} onPageChange={this.onPageChange} />} />
+                <Redirect exact path='/' to='/Home'></Redirect>
                 <Route exact path='/Home' render={(props) => <HomePage {...props} onPageChange={this.onPageChange} />} />
-                <Route  path='/Login' component={Login} />
+                <Route exact path='/Login' component={Login} />
+                <Route exact path='/SignUp' component={SignUp} />
             </React.Fragment>
         )
     }
 }
 
-export default HomePage2;
+export default withRouter(HomePage2);

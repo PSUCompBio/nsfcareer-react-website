@@ -8,7 +8,8 @@ import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse'
 import ScrollIndicator from './ScrollIndicator';
 import Nav from './Nav';
 import './HomePage.css'
-import './Script'
+import 'jquery';
+import 'bootstrap/dist/js/bootstrap.bundle'
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -16,7 +17,8 @@ class HomePage extends React.Component {
         this.state = {
             currentPage: 1,
             blockScrollDown: false,
-            scrollY: 0
+            scrollY: 0,
+            windowWidth:0
         };
         this._pageScroller = null;
     }
@@ -51,18 +53,40 @@ class HomePage extends React.Component {
         this.setState({ scrollY: e.deltaY })
     }
 
+
+  updateDimensions = () => {
+    this.setState({ windowWidth: window.innerWidth });
+  }
+  componentWillUpdate() {
+    window.addEventListener("resize", this.updateDimensions);
+  }
+    componentWillMount() {
+        this.setState({ windowWidth:window.innerWidth})
+  }
+    
+
     render() {
         const pagesNumbers = this.getPagesNumbers();
+        if (this.state.windowWidth >= 725) {
+            return <React.Fragment>
 
-        return <React.Fragment>
-            
-            <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
-                <Banner />
-                <AboutTheProduct />
-                <ResearchArea />
-                <TechnologiesWeUse onWheel={this.onFooterScroll} mouseScroll={this.state.scrollY} />
-            </ReactPageScroller>
-        </React.Fragment>
+                <ReactPageScroller ref={c => this._pageScroller = c} pageOnChange={this.pageOnChange} scrollUnavailable={this.lastSlide} blockScrollDown={this.state.blockScrollDown}>
+                    <Banner screenWidth={this.state.windowWidth}/>
+                    <AboutTheProduct screenWidth={this.state.windowWidth}/>
+                    <ResearchArea screenWidth={this.state.windowWidth}/>
+                    <TechnologiesWeUse screenWidth={this.state.windowWidth} onWheel={this.onFooterScroll} mouseScroll={this.state.scrollY} />
+                </ReactPageScroller>
+            </React.Fragment>
+        } else {
+            return (
+                <React.Fragment>
+                    <Banner screenWidth={this.state.windowWidth} />
+                    <AboutTheProduct screenWidth={this.state.windowWidth}/>
+                    <ResearchArea screenWidth={this.state.windowWidth}/>
+                    <TechnologiesWeUse screenWidth={this.state.windowWidth} onWheel={this.onFooterScroll} mouseScroll={this.state.scrollY} />
+                </React.Fragment>
+            )
+        }
     }
 }
 
