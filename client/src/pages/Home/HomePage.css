@@ -280,7 +280,7 @@ body {
 }
 
 footer {
-  background: #183c57;
+  background-image: linear-gradient(to right, #183c57 , #0F73D0);
 }
 .footer-height {
   height: 100vh;
@@ -346,6 +346,7 @@ footer p {
   border: 1px solid #2679ce !important;
   margin-top: 5px;
   cursor: pointer;
+  transition: border 1s;
 }
 .active-change-scroll-indicator {
   background: #2679ce;
@@ -366,6 +367,7 @@ footer p {
   border: 1px solid rgb(255, 255, 255);
   margin-top: 5px;
   cursor: pointer;
+  transition: border 1s;
 }
 .scroll-indicator li:hover {
   background: #0f81dc;
