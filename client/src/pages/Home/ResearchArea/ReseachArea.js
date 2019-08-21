@@ -24,7 +24,7 @@ class ResearchArea extends React.Component {
                     <div className="card-body">
                       <h5>For Soldiers</h5>
                       <p className="card-text px-4 mt-3 color">We use sensor-enabled, cloud-based platform for individualized
-                              brain modeling of <br /> Soldiers. <a href=""> Read More</a> </p>
+                              brain modeling of <br /> Soldiers. <a href="">Read More</a> </p>
                     </div>
                   </div>
                 </div>
@@ -34,7 +34,7 @@ class ResearchArea extends React.Component {
                     <div className="card-body">
                       <h5>For Athletes</h5>
                       <p className="card-text px-4 mt-3 color">We utilize data from the customized computer models to approximate
-                              an Athlete's brain’s response to injuries.<a href=""> Read More</a> </p>
+                              an Athlete's brain’s response to injuries. <a href="">Read More</a> </p>
                     </div>
                   </div>
                 </div>
