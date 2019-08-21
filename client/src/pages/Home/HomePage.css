@@ -544,3 +544,15 @@ nav {
     max-height: 70px;
   }
 }
+
+.icon:hover > div :first-child {
+  display: none;
+}
+
+.icon:hover > div :last-child {
+  display: unset;
+}
+
+.icon > div :last-child {
+  display: none;
+}

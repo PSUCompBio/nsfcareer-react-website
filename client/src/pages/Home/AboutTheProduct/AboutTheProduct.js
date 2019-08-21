@@ -5,7 +5,6 @@ class AboutTheProduct extends React.Component {
 
   render() {
     return (
-
       <div className="section-two-container">
         <div className="container">
           <div className={`section-two ${this.props.screenWidth >= 2560 ? 'pt-4' : 'pt-4'}`}>
@@ -49,22 +48,49 @@ class AboutTheProduct extends React.Component {
                 </div>
               </div>
               <div className="row text-center shift-top">
-                <div className="col-md-4 col-lg-4">
-                  <img src="/img/AboutTheProductImg/Cloud_white.svg" alt="" />
-                  <h4>SENSOR ENABLED <br />
+                <div className="col-md-4 col-lg-4 icon">
+                  <div>
+                    <img src="/img/AboutTheProductImg/Cloud_White.svg" alt="" />
+                    <img src="/img/AboutTheProductImg/Cloud_Blue.svg" alt="" />
+                  </div>
+                  <h4>
+                    SENSOR ENABLED <br />
                     CLOUD-BASED BRAIN <br />
-                    MODELING</h4>
+                    MODELING
+                  </h4>
                 </div>
-                <div className="col-md-4 col-lg-4">
-                  <img src="/img/AboutTheProductImg/Moniter_white.svg" alt="" />
-                  <h4>MONITOR AND TRACK BRAIN <br />
-                    RESPONSE OVER TIME</h4>
+                <div className="col-md-4 col-lg-4 icon">
+                  <div>
+                    <img
+                      src="/img/AboutTheProductImg/Monitor_White.svg"
+                      alt=""
+                    />
+                    <img
+                      src="/img/AboutTheProductImg/Monitor_Blue.svg"
+                      alt=""
+                    />
+                  </div>
+                  <h4>
+                    MONITOR AND TRACK BRAIN <br />
+                    RESPONSE OVER TIME
+                  </h4>
                 </div>
-                <div className="col-md-4 col-lg-4">
-                  <img src="/img/AboutTheProductImg/Analysis_White.svg" alt="" />
-                  <h4>TURN YOUR SENSOR DATA <br />
+                <div className="col-md-4 col-lg-4 icon">
+                  <div>
+                    <img
+                      src="/img/AboutTheProductImg/Analysis_White.svg"
+                      alt=""
+                    />
+                    <img
+                      src="/img/AboutTheProductImg/Analysis_Blue.svg"
+                      alt=""
+                    />
+                </div>
+                  <h4>
+                    TURN YOUR SENSOR DATA <br />
                     INTO MEANINGFUL BRAIN <br />
-                    INJURY ANALYSIS</h4>
+                    INJURY ANALYSIS
+                  </h4>
                 </div>
               </div>
             </div>
