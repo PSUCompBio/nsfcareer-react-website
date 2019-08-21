@@ -269,6 +269,12 @@ body {
   color: #0f81dc !important;
   border-radius: 10px !important;
 }
+
+.btn-outline-blue:hover {
+  background: #0f81dc !important;
+  color: #fff !important;
+}
+
 .copyright {
   font-family: 'Segoe UI Regular';
 }
