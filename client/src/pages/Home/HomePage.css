@@ -184,7 +184,7 @@ body {
 }
 
 .heading-container {
-  margin-top: 7%;
+  margin-top: 15%;
 }
 
 .header-heading hr {
@@ -337,12 +337,12 @@ footer p {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  border: 1px solid rgb(0, 0, 0) !important;
+  border: 1px solid #2679ce !important;
   margin-top: 5px;
   cursor: pointer;
 }
 .active-change-scroll-indicator {
-  background: #000;
+  background: #2679ce;
 }
 .change-scroll-indicator {
   position: fixed;
@@ -360,6 +360,12 @@ footer p {
   border: 1px solid rgb(255, 255, 255);
   margin-top: 5px;
   cursor: pointer;
+}
+.scroll-indicator li:hover {
+  background: #0f81dc;
+}
+.change-scroll-indicator li:hover {
+  background: #0f81dc;
 }
 .section-three-container {
   background: #f5f5f5;
@@ -403,6 +409,10 @@ nav {
   color: #fff;
   float: right;
   cursor: pointer;
+}
+
+.ptf-laptop{
+  padding-top: 0%;
 }
 
 /* ======making responsive to navbar========= */

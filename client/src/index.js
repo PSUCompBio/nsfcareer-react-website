@@ -1,8 +1,7 @@
 import React from "react";
 
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import { Redirect } from 'react-router';
+import { BrowserRouter as Router } from "react-router-dom";
 
 // NAVIGATION
 // import Nav from "./components/Nav";
@@ -16,8 +15,7 @@ import { Redirect } from 'react-router';
 // import Contact from "./pages/Contact/ContactPage";
 // import Login from "./pages/Login/Login";
 // import LogOutComponent from "./components/Authentication/LogOutComponent"
-import HomePage from './pages/Home/HomePage';
-import HomePage2 from './pages/Home/HomePage2'
+import Routing from './pages/Home/Routing'
 
 // // Components
 // import ListUsers from "./components/listUsers/ListUsers"
@@ -38,10 +36,11 @@ class Index extends React.Component {
   constructor(props) {
     super();
   }
+
   render() {
     return (
       <Router>
-        <HomePage2 />
+        <Routing />
       </Router>
     )
   }

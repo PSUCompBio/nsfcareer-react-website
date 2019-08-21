@@ -2,17 +2,21 @@ import $ from 'jquery';
 
 $(document).ready(function () {
     $('.menu-toggler').on('click', function () {
-        $('.mobile-menu').css({ "display": "block" }).animate({ left: '40%' }, 500);
-       
+        $('.mobile-menu').show().animate({ left: '40%' }, 500);
+        $('body').css({"overflow": "hidden"})
     }); 
     $('.close-btn').on('click', function () {
-        $('.mobile-menu').css({ "display": "none!important" }).animate({ left: '100%' }, 500, hideMenu);
-        $('mobile-menu').css({ "display": "none!important" });
+        $('.mobile-menu').animate({ left: '100%' }, 500)
+        setTimeout(() => {
+            $('.mobile-menu').hide();
+            $('body').css({"overflow": "auto"})
+        }, 500);
     }) 
     $('.nav-item').on('click', function () {
-        $('.mobile-menu').animate({ left: '100%' },500,hideMenu);
+        $('.mobile-menu').animate({ left: '100%' }, 500);
+        $('.mobile-menu').animate({ left: '100%' }, 500)
+        setTimeout(() => {
+            $('.mobile-menu').hide();
+        }, 500);
     })
-    function hideMenu() {
-        $('mobile-menu').css({ "display": "none" });
-    }
 });

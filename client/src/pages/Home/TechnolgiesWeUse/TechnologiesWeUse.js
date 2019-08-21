@@ -1,26 +1,18 @@
 import React from 'react';
-import Footer from '../Footer/Footer';
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
     super();
     this.state = {
       showAndHideFooter: '',
-      windowWidth: 0
     }
   }
 
-  updateDimensions = () => {
-    this.setState({ windowWidth: window.innerWidth });
-}
-// componentWillUpdate() {
-//     window.addEventListener("resize", this.updateDimensions);
-// }
-  
+
   render = (props) => {
     const makeFooterVisibeForSmallDevice = {
       reset: {
-        'margin-top': 10 + '%',
+        marginTop: 10 + '%',
         position: 'relative',
         bottom: 0,
         display: 'block'
@@ -28,26 +20,26 @@ class TechnologiesWeUse extends React.Component {
     }
     return (
       <React.Fragment>
-        <div className="section-four-container" onWheel={this.props.onWheel}>
+        <div  className={`section-four-container ${this.props.screenWidth >= 1024 ? 'ptf-laptop' : ''}`} onWheel={this.props.onWheel}>
           <div className="container-fluid pl-0 pr-0">
             <div className="container no-gutter">
-              <div className={`section-four text-center pt-2 ${this.state.windowWidth >= 725 ? (this.props.mouseScroll > 0 ? 'shift-technology-section' : '') : ''}`}>
+              <div className={`section-four text-center pt-2 ${this.props.screenWidth >= 725 ? (this.props.mouseScroll > 0 && this.props.currentPage===4 ? 'shift-technology-section' : '') : ''}`}>
                 <h1 className="font-weight-bold mt-4 pt-5">TECHNOLOGIES WE USE</h1>
                 <hr />
-                <div className={`row ${this.state.windowWidth > 425 && this.state.windowWidth < 769 ? '' : ' py-5'}`}>
-                  <div className={`col-md-4   ${this.state.windowWidth <= 768 ? 'text-center' : 'text-left'}`}>
+                <div className={`row ${this.props.screenWidth > 425 && this.props.screenWidth < 769 ? '' : ' py-5'}`}>
+                  <div className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-left'}`}>
                     <img className="py-3" src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg" alt="" />
                     <h4 className="font-weight-bold">Wireless Wearable Sensors</h4>
                     <p>
                       We partner with leading impact and blast  sensor companies to provide real-time  brain response
                               analytics. We help  transform their data into
-                      meaningful brain health monitoring.  Looking for a sensor? See our {this.state.windowWidth > 1024 ? '' : ''} recommended providers here.
+                      meaningful brain health monitoring.  Looking for a sensor? See our {this.props.screenWidth > 1024 ? '' : ''} recommended providers here.
                             </p>
                   </div>
-                  <div className={`col-md-4   pt-5 ${this.state.windowWidth < 768 ? 'order-first' : ''}`}>
+                  <div className={`col-md-4   pt-5 ${this.props.screenWidth < 768 ? 'order-first' : ''}`}>
                     <img className="mb-5 img-fluid terminology-img" src="/img/TechnologiesWeUseImg/terminology.png" alt="" />
                   </div>
-                  <div className={`col-md-4   ${this.state.windowWidth <= 768 ? 'text-center' : 'text-right'}`}>
+                  <div className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-right'}`}>
                     <img className="py-3" src="/img/TechnologiesWeUseImg/laptop.svg" alt="" />
                     <h4 className="font-weight-bold">Computational Brain Medicine</h4>
                     <p>
@@ -65,7 +57,7 @@ class TechnologiesWeUse extends React.Component {
                 </div>
               </div>
             </div>
-            <footer style={this.state.windowWidth < 725 ? makeFooterVisibeForSmallDevice.reset : {}} className={`show-footer-mobile ${(this.props.mouseScroll > 0 && this.state.windowWidth >= 725) ? 'show-footer footer-height' : 'hide-footer'}`}>
+            <footer style={this.props.screenWidth < 725 ? makeFooterVisibeForSmallDevice.reset : {}} className={`show-footer-mobile ${(this.props.mouseScroll > 0 && this.props.screenWidth >= 725) ? 'show-footer footer-height' : 'hide-footer'}`}>
               <div className="container">
                 <div className="row pt-4">
                   <div className="col-sm-6 col-md-6 ">
