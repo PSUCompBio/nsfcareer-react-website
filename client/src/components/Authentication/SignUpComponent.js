@@ -155,7 +155,7 @@ class SignUpComponent extends React.Component {
                       <span className="input-group-text" id="basic-addon1"><img src="img/icon/gender.svg" alt="" /></span>
                     </div>
                     <select type="text" className="custom-select select-gender" aria-label="age" aria-describedby="basic-addon1" >
-                      <option defaultValue>Select your gender</option>
+                      <option defaultValue>Select your sex</option>
                       <option value="male"> Male</option>
                       <option value="male"> Female</option>
                     </select>
