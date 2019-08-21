@@ -45,7 +45,7 @@ class Routing extends React.Component {
 
     return (
       <React.Fragment>
-        {(this.props.location.pathname === '/Home') ?
+        {(this.props.location.pathname === '/Home' || this.props.location.pathname === '/') ?
           <ScrollIndicator screenWidth={this.state.windowWidth} gotoPage={this.gotoPage} currentPage={this.state.currentPage} />
           :
           ''
