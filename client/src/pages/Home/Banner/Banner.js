@@ -7,12 +7,6 @@ WebFont.load({
   }
 });
 class Banner extends React.Component {
-  constructor(props) {
-    super();
-    this.state = {
-      windowWidth: 0
-    }
-  }
 
 
   render() {
@@ -25,7 +19,7 @@ class Banner extends React.Component {
               <div className="header-navbar">
                 <div className="container-fluid heading-container">
                   <div className="row">
-                    <div className={`col-md-10 col-lg-10 header-heading ${this.state.windowWidth < 725 ? 'pt-4' : ''}`}>
+                    <div className={`col-md-10 col-lg-10 header-heading ${this.props.screenWidth < 725 ? 'pt-4' : ''}`}>
                       <h1>TRANSFORM YOUR SENSOR DATA</h1>
                       <h4>Accurate brain simulations help extend your </h4>
                       <h4>sensor data research. </h4>

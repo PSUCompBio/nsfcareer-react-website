@@ -1,13 +1,10 @@
 import React from 'react';
-import { MDBContainer, MDBRow, MDBIcon, MDBCol, MDBBtn, MDBAlert, MDBInputGroup, MDBInput, MDBCard, MDBCardBody, MDBCardFooter } from 'mdbreact';
-
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Link, withRouter } from "react-router-dom";
+import { BrowserRouter as Router, Link, withRouter } from "react-router-dom";
 import Index from "../../index"
 import Footer from '../Footer'
 
 import { formDataToJson } from '../../utilities/utility'
-import SignUpComponent from './SignUpComponent';
 import { logIn, logInFirstTime } from '../../apis';
 
 import "../../mixed_style.css";
@@ -30,14 +27,16 @@ class Login extends React.Component {
       toSignUp: false
     }));
   }
+
   isAdminType = (userType) => {
-    if (userType == "Admin") {
+    if (userType === "Admin") {
       return true;
     }
     else {
       return false;
     }
   }
+  
   handleSubmit(e) {
     e.preventDefault();
     e.persist()
@@ -53,7 +52,7 @@ class Login extends React.Component {
     if (this.state.tempPasswordRequired) {
       // call API of first Time Login with Temporary Password
       logInFirstTime(formJsonData).then((response) => {
-        if (response.data.message == "success") {
+        if (response.data.message === "success") {
           // login user
           ReactDOM.render(
 
@@ -83,8 +82,8 @@ class Login extends React.Component {
       logIn(formJsonData).then((response) => {
         this.refs.signInForm.reset();
         console.log("Login ", response);
-        if (response.data.message == "success") {
-          if (response.data.status == "FORCE_CHANGE_PASSWORD") {
+        if (response.data.message === "success") {
+          if (response.data.status === "FORCE_CHANGE_PASSWORD") {
             this.setState({
               tempPasswordRequired: true,
               isLoading: false
@@ -132,30 +131,30 @@ class Login extends React.Component {
           <div className="col-md-6 col-lg-6 offset-md-3 mt-10">
             <div className="card card-border">
               <div className="card-body">
-                  <div className="text-center brain-icon-container">
-                    <div className="text-center brain-icon">
-                      <img src="img/icon/brain.png" alt="" />
-                    </div>
+                <div className="text-center brain-icon-container">
+                  <div className="text-center brain-icon">
+                    <img src="img/icon/brain.png" alt="" />
                   </div>
-                  <div className="input-group mb-5">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text" id="basic-addon1"><img src="img/icon/user.svg" alt="" /></span>
-                    </div>
-                    <input type="text" className="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" />
+                </div>
+                <div className="input-group mb-5">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="basic-addon1"><img src="img/icon/user.svg" alt="" /></span>
                   </div>
-                  <div className="input-group mb-1">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text" id="basic-addon1"><img src="img/icon/lock.svg" alt="" /></span>
-                    </div>
-                    <input type="password" className="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" />
+                  <input type="text" className="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" />
+                </div>
+                <div className="input-group mb-1">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="basic-addon1"><img src="img/icon/lock.svg" alt="" /></span>
                   </div>
-                  <div>
-                    <a className="float-right forgot-pswd" >Forgot password?</a>
-                  </div>
-                  <button type="button" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
-                  <div className="text-center">
-                    <p className="mt-4 sign-up-link">Don't have an account? <Link className="sign-up" to='SignUp' > Sign Up </Link></p>
-                  </div>
+                  <input type="password" className="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" />
+                </div>
+                <div>
+                  <a className="float-right forgot-pswd" >Forgot password?</a>
+                </div>
+                <button type="button" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
+                <div className="text-center">
+                  <p className="mt-4 sign-up-link">Don't have an account? <Link className="sign-up" to='SignUp' > Sign Up </Link></p>
+                </div>
               </div>
             </div>
           </div>

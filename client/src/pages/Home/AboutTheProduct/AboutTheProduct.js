@@ -2,34 +2,18 @@ import React from 'react';
 
 
 class AboutTheProduct extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      windowWidth: 0
-    }
-  }
-
-
-  updateDimensions = () => {
-    this.setState({ windowWidth: window.innerWidth });
-  }
-  // componentWillUpdate() {
-  //   window.addEventListener("resize", this.updateDimensions);
-  // }
-
-
 
   render() {
     return (
 
       <div className="section-two-container">
         <div className="container">
-          <div className="section-two pt-4 ">
+          <div className={`section-two ${this.props.screenWidth >= 2560 ? 'pt-4' : 'pt-4'}`}>
             <div className="row">
-              <div className={`col-md-12 col-lg-12 pt-5 text-center ${this.state.windowWidth <= 768 ? 'mb-5' : ''}`}>
+              <div className={`col-md-12 col-lg-12 pt-5 text-center ${this.props.screenWidth <= 768 ? 'mb-5' : ''}`}>
                 <h1 className="font-weight-bold pt-2">ABOUT THE PROJECT</h1>
                 <hr />
-                <p className={`${this.state.windowWidth > 425 && this.state.windowWidth < 768 ? 'pt-5 mt-5' : ''}`}>Brain injuries are a significant health concern for civilian and military populations.
+                <p className={`${this.props.screenWidth > 425 && this.props.screenWidth < 768 ? 'pt-5 mt-5' : ''}`}>Brain injuries are a significant health concern for civilian and military populations.
                   This Faculty Early Career Development Program (CAREER) project will contribute to the understanding of brain
                   trauma by developing advanced computer models that link neuroimaging results, biomechanical assessments, and
                   computational modeling of the brain. More broadly, the continued pursuit of the development and validation

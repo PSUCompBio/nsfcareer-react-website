@@ -1,5 +1,4 @@
 import React from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBInput, MDBAlert, MDBCard, MDBCardBody, MDBCardFooter } from 'mdbreact';
 import LoginComponent from './LoginComponent';
 import { Link } from 'react-router-dom';
 import { formDataToJson } from '../../utilities/utility'
@@ -7,12 +6,12 @@ import { signUp } from '../../apis';
 import "../../mixed_style.css";
 import Footer from '../Footer';
 import CountryCode from '../../config/CountryCode.json';
+
 class SignUpComponent extends React.Component {
   constructor() {
     super();
     this.state = {
       toLogIn: false,
-      isSignUpConfirmed: false,
       isSignUpConfirmed: false,
       isSignUpError: false,
       signUpError: "",
@@ -43,7 +42,7 @@ class SignUpComponent extends React.Component {
     signUp(formJsonData).then((response) => {
       this.refs.signUpForm.reset();
       // Now update the state with data that we added
-      if (response.data.message == "success") {
+      if (response.data.message === "success") {
         // show alert
         this.setState({
           isSignUpError: false,
@@ -79,7 +78,7 @@ class SignUpComponent extends React.Component {
               <div className="card-body">
                 <div className="text-center brain-icon-container">
                   <div className="text-center brain-icon">
-                  <img src="img/icon/brain.png" alt="" />
+                    <img src="img/icon/brain.png" alt="" />
                   </div>
                 </div>
                 <div className="input-group mb-5">
@@ -103,23 +102,22 @@ class SignUpComponent extends React.Component {
                 </div>
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
-                    <span   className="input-group-text country-code-container" id="basic-addon1">
+                    <span className="input-group-text country-code-container" id="basic-addon1">
 
-                      <select  className="custom-select country-code" name="" id="">
+                      <select className="custom-select country-code" name="" id="">
                         {this.state.CountryCode.map(function (index) {
+                          let i = 0;
                           return (
                             index.countries.map(function (key, value) {
-                              if(key.code=='+91')
-                                return <option defaultValue value="">{key.code}</option>
-                              else {
-                                return <option value="">{key.code}</option>
-                                
-                              }
+                              if (key.code === '+91')
+                                return <option key={i++ } defaultValue value="">{key.code}</option>
+                              else 
+                                return <option key={i++ } value="">{key.code}</option>
                             }))
                         })}
                       </select>
                     </span>
-                    
+
                   </div>
                   <input type="text" className="form-control contact-number" placeholder="Contact number" aria-label="contact number" aria-describedby="basic-addon1" />
                 </div>
@@ -133,7 +131,7 @@ class SignUpComponent extends React.Component {
                     </div>
                   </div>
                   <div className="col-5">
-                    <button type="button" className="btn float-right sign-up-btn verification-btn-bg btn-primary">Verification code sent</button>
+                    <button type="button" className="btn float-right sign-up-btn verification-btn-bg btn-primary">Send verification code</button>
                   </div>
                 </div>
 
@@ -152,25 +150,25 @@ class SignUpComponent extends React.Component {
                   </div>
                 </div>
                 <div className="form-row">
-                <div className="input-group mb-3">
-                  <div className="input-group-prepend">
-                    <span className="input-group-text" id="basic-addon1"><img  src="img/icon/gender.svg" alt="" /></span>
-                  </div>
-                    <select type="text" className="custom-select select-gender"  aria-label="age" aria-describedby="basic-addon1" >
+                  <div className="input-group mb-3">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text" id="basic-addon1"><img src="img/icon/gender.svg" alt="" /></span>
+                    </div>
+                    <select type="text" className="custom-select select-gender" aria-label="age" aria-describedby="basic-addon1" >
                       <option defaultValue>Select your gender</option>
                       <option value="male"> Male</option>
                       <option value="male"> Female</option>
-                  </select>
-                </div>
-                </div>
-              
-                <div className="form-row">
-                  <div className="col pl-0">
-                  <input id="checkbox-1" className="checkbox-custom" name="checkbox-3" type="checkbox"/>
-                  <label htmlFor="checkbox-1"className="checkbox-custom-label">I agree to the <a className="sign-up">Terms and conditions</a> </label> 
+                    </select>
                   </div>
                 </div>
-                
+
+                <div className="form-row">
+                  <div className="col pl-0">
+                    <input id="checkbox-1" className="checkbox-custom" name="checkbox-3" type="checkbox" />
+                    <label htmlFor="checkbox-1" className="checkbox-custom-label">I agree to the <a className="sign-up">Terms and conditions</a> </label>
+                  </div>
+                </div>
+
                 <button type="button" className="btn btn-primary sign-up-btn btn-block mt-5">Register</button>
                 <div className="text-center">
                   <p className="mt-4 already-account">Already have an account? <Link className="sign-up" to='Login' > Log in </Link></p>
