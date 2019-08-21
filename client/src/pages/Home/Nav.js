@@ -36,10 +36,6 @@ class Nav extends React.Component {
               <div className={(this.props.location.pathname === '/About') ? 'active-link' : ''} />
             </li>
             <li className="nav-item make-active">
-              <Link className="nav-link" to={'/Military'}>Military</Link>
-              <div className={(this.props.location.pathname === '/Military') ? 'active-link' : ''} />
-            </li>
-            <li className="nav-item make-active">
               <Link className="nav-link" to={'/Contact'}>Contact</Link>
               <div className={(this.props.location.pathname === '/Contact') ? 'active-link' : ''} />
             </li>
