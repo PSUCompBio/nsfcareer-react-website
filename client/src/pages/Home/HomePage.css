@@ -530,3 +530,9 @@ nav {
     margin-top: -15%;
   }
 }
+
+@media (min-width: 725px) {
+  .navbar {
+    max-height: 70px;
+  }
+}
