@@ -8,7 +8,7 @@ class AboutTheProduct extends React.Component {
 
       <div className="section-two-container">
         <div className="container">
-          <div className={`section-two ${this.props.screenWidth >= 2560 ? 'pt-4' : 'pt-4'}`}>
+          <div id="ptf-laptop" className={`section-two pt-4 `}>
             <div className="row">
               <div className={`col-md-12 col-lg-12 pt-5 text-center ${this.props.screenWidth <= 768 ? 'mb-5' : ''}`}>
                 <h1 className="font-weight-bold pt-2">ABOUT THE PROJECT</h1>
@@ -50,18 +50,18 @@ class AboutTheProduct extends React.Component {
               </div>
               <div className="row text-center shift-top">
                 <div className="col-md-4 col-lg-4">
-                  <img src="/img/AboutTheProductImg/Cloud_white.svg" alt="" />
+                  <img className="svg hvr-bounce-in" src="/img/AboutTheProductImg/Cloud_white.svg" alt="" />
                   <h4>SENSOR ENABLED <br />
                     CLOUD-BASED BRAIN <br />
                     MODELING</h4>
                 </div>
                 <div className="col-md-4 col-lg-4">
-                  <img src="/img/AboutTheProductImg/Moniter_white.svg" alt="" />
+                  <img className="svg hvr-bounce-in" src="/img/AboutTheProductImg/Moniter_white.svg" alt="" />
                   <h4>MONITOR AND TRACK BRAIN <br />
                     RESPONSE OVER TIME</h4>
                 </div>
                 <div className="col-md-4 col-lg-4">
-                  <img src="/img/AboutTheProductImg/Analysis_White.svg" alt="" />
+                  <img className="svg hvr-bounce-in" src="/img/AboutTheProductImg/Analysis_White.svg" alt="" />
                   <h4>TURN YOUR SENSOR DATA <br />
                     INTO MEANINGFUL BRAIN <br />
                     INJURY ANALYSIS</h4>

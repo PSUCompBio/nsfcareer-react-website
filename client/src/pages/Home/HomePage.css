@@ -237,6 +237,20 @@ body {
 .shift-top {
   margin-top: -110px;
 }
+path, circle{
+  transition: fill 1s;
+  -webkit-transition: fill 1.5s;
+}
+.svg{
+  cursor: pointer;
+}
+.svg:hover .cls-2{
+  fill: #fff;
+}
+.svg:hover .cls-1{
+  fill: #0f81dc;
+}
+
 .shift-top h4 {
   font-weight: 900;
   color: #707070;
@@ -255,6 +269,8 @@ body {
 
 .section-three a {
   text-decoration: underline;
+  width: 77px;
+  display: inline-block;
 }
 .section-four p {
   color: #848484;
@@ -268,13 +284,22 @@ body {
   border: 1px solid #0f81dc !important;
   color: #0f81dc !important;
   border-radius: 10px !important;
+  transition: background, color 1s;
 }
+.btn-outline-blue:hover{
+  background: #0f81dc;
+  color: #fff!important;
+}
+
+
 .copyright {
   font-family: 'Segoe UI Regular';
 }
 
 footer {
-  background: #183c57;
+  background: url('/img/BannerImg/navbg.png') no-repeat center;
+  background-size: cover;
+  
 }
 .footer-height {
   height: 100vh;
@@ -329,6 +354,12 @@ footer p {
   margin-top: -100px;
   list-style: none;
   z-index: 2;
+}
+.hvr-grow{
+  display: block!important;
+}
+.hvr-grow:hover{
+  transform: scale(1.5)!important;
 }
 .active-indicator {
   background: rgb(255, 255, 255);
@@ -394,15 +425,17 @@ nav {
 .close-btn-box {
   height: 55px;
   padding: 10px;
+  list-style: none;
 }
 .mobile-menu {
   width: 60%;
   height: 100vh;
-  background: #000;
+  background: #13568d;
   position: absolute;
   top: 0;
   left: 100%;
   display: none;
+  box-shadow: -38px 0 40px -11px rgba(0, 0, 0, 0.4);
 }
 .close-btn {
   font-size: 40px !important;
@@ -411,9 +444,7 @@ nav {
   cursor: pointer;
 }
 
-.ptf-laptop{
-  padding-top: 0%;
-}
+
 
 /* ======making responsive to navbar========= */
 
@@ -460,6 +491,10 @@ nav {
     width: 40%;
     margin-left: 30%;
   }
+  /* .shift-top img:hover{
+    transform: scale(2);
+    cursor: pointer!important;
+  } */
   .bashed-border ul {
     display: none;
   }
@@ -525,8 +560,35 @@ nav {
     margin-top: -33.5%;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1200px) and (max-width: 1440px) {
   .shift-technology-section {
     margin-top: -15%;
+  }
+}
+
+@media (min-width: 1500px) and (max-width: 2560px) {
+  .shift-technology-section {
+    margin-top: -15%;
+  }
+  .header-heading h1 {
+    font-size: 70px;
+  }
+  .header-heading h4 {
+    font-size: 30px;
+  }
+  .header-heading p {
+    font-size: 24px;
+  }
+  #ptf-laptop {
+    padding-top: 6%!important;
+  }
+  #ptf-sol-laptop{
+    padding-top: 1%!important;
+  }
+  .center-card{
+    padding-top: 20%;
+  }
+  #ptf-tech-section{
+    padding-top: 5%!important;
   }
 }
