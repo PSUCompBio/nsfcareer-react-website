@@ -5,7 +5,7 @@ $(document).ready(function () {
         $('.mobile-menu').show().animate({ left: '40%' }, 500);
         $('body').css({"overflow": "hidden"})
     }); 
-    $('.close-btn').on('click', function () {
+    $(document).on('click','.close-btn', function () {
         $('.mobile-menu').animate({ left: '100%' }, 500)
         setTimeout(() => {
             $('.mobile-menu').hide();

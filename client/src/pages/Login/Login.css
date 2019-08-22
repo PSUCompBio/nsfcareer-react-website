@@ -77,7 +77,8 @@ input::placeholder {
 }
 
 .footer {
-  background: #183c57;
+  background: url('/img/BannerImg/navbg.png') no-repeat center;
+  background-size: cover;
   height: 27vh;
 }
 .footer h4 {

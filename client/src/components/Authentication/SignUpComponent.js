@@ -17,6 +17,8 @@ class SignUpComponent extends React.Component {
       signUpError: "",
       isLoading: false,
       CountryCode: [CountryCode],
+      selectedCountryCode: '+1',
+      slectedCountryName:'USA'
     }
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,6 +30,17 @@ class SignUpComponent extends React.Component {
     });
 
   }
+
+  handeChange = (e) => {
+    const eventValue = e.target.value.split(' ');
+    this.setState({ selectedCountryCode: eventValue[0],slectedCountryName:eventValue[1] });
+  }
+
+
+  getCountryName = (e) => {
+    
+  }
+
   handleSubmit(e) {
     e.preventDefault();
 
@@ -98,26 +111,30 @@ class SignUpComponent extends React.Component {
                   <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon1"><img className="age" src="img/icon/age.svg" alt="" /></span>
                   </div>
-                  <input type="text" className="form-control" placeholder="Age" aria-label="age" aria-describedby="basic-addon1" />
+                  <input type="text" className="form-control" placeholder="Birthdate" aria-label="age" aria-describedby="basic-addon1" />
                 </div>
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
                     <span className="input-group-text country-code-container" id="basic-addon1">
 
-                      <select className="custom-select country-code" name="" id="">
+                      <select className="custom-select country-code"  value={this.state.selectedCountryCode} onChange={this.handeChange} name="" id="">
                         {this.state.CountryCode.map(function (index) {
-                          let i = 0;
                           return (
                             index.countries.map(function (key, value) {
-                              if (key.code === '+91')
-                                return <option key={i++ } defaultValue value="">{key.code}</option>
-                              else 
-                                return <option key={i++ } value="">{key.code}</option>
+                              if (key.code === '+1')
+                                return <option key={value}  defaultValue={key.code+' USA'}   >{key.code}</option>
+                              else
+                                return <option  key={value} value={key.code+' '+key.name}>{key.code }</option>
                             }))
                         })}
                       </select>
                     </span>
 
+                    <span className="input-group-text" id="basic-addon1">
+                        <span className="country-name">{this.state.slectedCountryName}</span>
+                    </span>
+
+                    
                   </div>
                   <input type="text" className="form-control contact-number" placeholder="Contact number" aria-label="contact number" aria-describedby="basic-addon1" />
                 </div>
@@ -155,7 +172,7 @@ class SignUpComponent extends React.Component {
                       <span className="input-group-text" id="basic-addon1"><img src="img/icon/gender.svg" alt="" /></span>
                     </div>
                     <select type="text" className="custom-select select-gender" aria-label="age" aria-describedby="basic-addon1" >
-                      <option defaultValue>Select your gender</option>
+                      <option defaultValue>Select your sex</option>
                       <option value="male"> Male</option>
                       <option value="male"> Female</option>
                     </select>
