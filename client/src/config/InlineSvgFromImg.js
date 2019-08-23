@@ -3,9 +3,6 @@ import $ from 'jquery';
 /*
   * Replace all SVG images with inline SVG
   */
-const getEventListener = () => {
-    //  if(window.addEventListener("wheel"))
- }
 
 const svgToInline = () => {
     return (

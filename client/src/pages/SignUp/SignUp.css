@@ -232,7 +232,31 @@ input:-webkit-autofill {
 .radio-custom:focus + .radio-custom-label {
   outline: 1px solid #ddd; /* focus style */
 }
+.datepicker-style{
+  float: left!important;
+}
+.react-datepicker__input-container{
+  display: block!important;
+}
+.react-datepicker-wrapper {
+  display: block!important;
+  width: calc(100% - 27px);
+}
+.react-datepicker__header{
+  background: url('/img/BannerImg/navbg.png') ;
+}
+.react-datepicker__day-name {
+  color: #fff;
+}
+.react-datepicker__current-month{
+  color: #fff;
+}
+.react-datepicker {  
+  border:none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 5px rgba(0,0,0,0.1);
 
+}
 @media (max-width: 575px) {
   .brain-icon-container {
     margin-top: -11%;
