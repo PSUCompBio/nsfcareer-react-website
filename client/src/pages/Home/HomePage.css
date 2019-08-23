@@ -148,6 +148,17 @@ body {
   background: #fff;
   margin-left: 25%;
 }
+.active-link-hover{
+  transition: border, border-radius, width, background, margin-left 2s;
+}
+.nav-link:hover .active-link-hover{
+  border: 1px solid white;
+  border-radius: 5px;
+  width: 50%;
+  background: #fff;
+  margin-left: 25%;
+}
+
 .navbar-brand {
   font-weight: 600;
   font-size: 30px;
@@ -189,7 +200,7 @@ body {
 
 .header-heading hr {
   display: inline-block;
-  width: 70px;
+  width: 21%;
   border: 1px solid white;
   border-radius: 10px;
   margin-top: 1px;
@@ -251,6 +262,7 @@ path, circle{
   fill: #0f81dc;
 }
 
+
 .shift-top h4 {
   font-weight: 900;
   color: #707070;
@@ -269,7 +281,8 @@ path, circle{
 
 .section-three a {
   text-decoration: underline;
-  width: 77px;
+  width: auto;
+  text-align: left;
   display: inline-block;
 }
 .section-four p {
@@ -457,9 +470,15 @@ nav {
   .image-padding img:nth-child(1) {
     width: 40px !important;
   }
+  .header-heading hr{
+    width:21%!important;
+  }
 }
 
 @media (max-width: 575px) {
+  .header-heading hr{
+    width:16%;
+  }
   .navbar-brand {
     width: 70%;
   }
@@ -556,22 +575,31 @@ nav {
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
+  .header-heading hr{
+    width: 16%;
+  }
   .shift-technology-section {
     margin-top: -33.5%;
   }
 }
 @media (min-width: 1200px) and (max-width: 1440px) {
+  .header-heading hr{
+    width: 11.5%;
+  }
   .shift-technology-section {
     margin-top: -15%;
   }
 }
 
 @media (min-width: 1500px) and (max-width: 2560px) {
+  .header-heading hr{
+    width:7.5%;
+  }
   .shift-technology-section {
     margin-top: -15%;
   }
   .header-heading h1 {
-    font-size: 70px;
+    font-size: 58px;
   }
   .header-heading h4 {
     font-size: 30px;
@@ -586,7 +614,7 @@ nav {
     padding-top: 1%!important;
   }
   .center-card{
-    padding-top: 20%;
+    padding-top: 15%;
   }
   #ptf-tech-section{
     padding-top: 5%!important;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { InView } from 'react-intersection-observer';
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
@@ -25,7 +26,13 @@ class TechnologiesWeUse extends React.Component {
             <div className="container no-gutter">
               <div id="ptf-tech-section" className={`section-four text-center pt-2 ${this.props.screenWidth >= 725 ? (this.props.mouseScroll > 0 && this.props.currentPage===4 ? 'shift-technology-section' : '') : ''}`}>
                 <h1 className="font-weight-bold mt-4 pt-5">TECHNOLOGIES WE USE</h1>
-                <hr />
+                <InView>
+                {({ inView, ref, entry }) => (
+                  <div ref={ref}>
+                    <hr className={`animated ${inView?'zoomIn':''}`}/>
+                  </div>
+                )}
+              </InView>
                 <div className={`row ${this.props.screenWidth > 425 && this.props.screenWidth < 769 ? '' : ' py-5'}`}>
                   <div className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-left'}`}>
                     <img className="py-3" src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg" alt="" />
@@ -61,7 +68,7 @@ class TechnologiesWeUse extends React.Component {
               <div className="container">
                 <div className="row pt-4">
                   <div className="col-sm-6 col-md-6 ">
-                    <img className="logo" src="/img/BannerImg/logo.png" alt="" />
+                    <img className="logo" src="/img/icon/logo.png" alt="" />
                   </div>
                   <div className="col-sm-6  col-md-6 ">
                     <button type="button" className="btn btn-primary float-right">Get Updates</button>

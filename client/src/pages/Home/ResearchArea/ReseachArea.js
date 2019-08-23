@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { InView } from 'react-intersection-observer';
 
 class ResearchArea extends React.Component {
  
@@ -16,7 +16,13 @@ class ResearchArea extends React.Component {
           <div className="container">
             <div className="section-three text-center py-5">
               <h1 className="font-weight-bold pt-5">RESEARCH AREAS</h1>
-              <hr />
+              <InView>
+                {({ inView, ref, entry }) => (
+                  <div ref={ref}>
+                    <hr className={`animated ${inView?'zoomIn':''}`}/>
+                  </div>
+                )}
+              </InView>
               <div className="row text-center center-card  ">
                 <div className={`col-md-6 col-lg-6 ${this.props.screenWidth < 769 ? 'px-2 py-2' : 'px-5'}`} >
                   <div className="card mx-4 rounded-img">

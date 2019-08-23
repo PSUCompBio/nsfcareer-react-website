@@ -5,8 +5,9 @@ import AboutTheProduct from './AboutTheProduct/AboutTheProduct'
 import ResearchArea from './ResearchArea/ReseachArea';
 import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse';
 import '../../config/InlineSvgFromImg';
-import './HomePage.css'
-import 'hover.css/css/hover.css'
+import './HomePage.css';
+import 'hover.css/css/hover.css';
+import 'animate.css/animate.min.css';
 import 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle'
 
@@ -29,7 +30,10 @@ class HomePage extends React.Component {
       this.goToPage(nextProps.gotoPage)
     }
   }
-  
+
+  componentWillUnmount() {
+    this.resetPage();
+  }
 
   goToPage = (eventKey) => {
     this._pageScroller.goToPage(eventKey);

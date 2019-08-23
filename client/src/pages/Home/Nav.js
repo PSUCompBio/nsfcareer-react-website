@@ -13,8 +13,8 @@ class Nav extends React.Component {
 
   render() {
     return (
-      <nav className={`navbar navbar-light  navbar-expand-lg navbar-padding ${(this.props.currentPage > 1) ? this.state.onScrollChangeBackground : ''} ${(this.props.location.pathname !== '/Home' && this.props.location.pathname !== '/') ? 'navbar-bg-change' : ''}`}>
-        <Link className="navbar-brand" to={'/Home'}><img src="img/BannerImg/logo.png" alt="" /></Link>
+      <nav className={`navbar navbar-light  navbar-expand-lg navbar-padding ${((this.props.location.pathname !== '/Home' && this.props.location.pathname !== '/') || this.props.currentPage!==1) ? 'navbar-bg-change' : ''}`}>
+        <Link className="navbar-brand" to={'/Home'}><img src="img/icon/logo.png" alt="" /></Link>
         <button className="navbar-toggler menu-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon" />
         </button>
@@ -34,10 +34,6 @@ class Nav extends React.Component {
             <li className="nav-item make-active active">
               <Link className="nav-link" to={'/About'}>About <span className="sr-only">(current)</span></Link>
               <div className={(this.props.location.pathname === '/About') ? 'active-link' : ''} />
-            </li>
-            <li className="nav-item make-active">
-              <Link className="nav-link" to={'/Military'}>Military</Link>
-              <div className={(this.props.location.pathname === '/Military') ? 'active-link' : ''} />
             </li>
             <li className="nav-item make-active">
               <Link className="nav-link" to={'/Contact'}>Contact</Link>

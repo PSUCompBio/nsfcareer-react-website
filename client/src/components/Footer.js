@@ -6,7 +6,7 @@ const Footer = () => {
     <div className="container">
       <div className="row pt-4">
         <div className="col-sm-6 col-md-6 col-lg-6">
-        <img className="logo" src="/img/BannerImg/logo.png" alt="" />                    
+        <img className="logo" src="/img/icon/logo.png" alt="" />                    
         </div>
         <div className="col-sm-6  col-md-6 col-lg-6">
           <button type="button" className="btn btn-primary float-right">Get Updates</button>

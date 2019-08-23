@@ -6,6 +6,8 @@ import { signUp } from '../../apis';
 import "../../mixed_style.css";
 import Footer from '../Footer';
 import CountryCode from '../../config/CountryCode.json';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css'
 
 class SignUpComponent extends React.Component {
   constructor() {
@@ -18,8 +20,10 @@ class SignUpComponent extends React.Component {
       isLoading: false,
       CountryCode: [CountryCode],
       selectedCountryCode: '+1',
-      slectedCountryName:'USA'
+      slectedCountryName: 'USA',
+      startDate: ''
     }
+    this.handleDateChange = this.handleDateChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -33,12 +37,18 @@ class SignUpComponent extends React.Component {
 
   handeChange = (e) => {
     const eventValue = e.target.value.split(' ');
-    this.setState({ selectedCountryCode: eventValue[0],slectedCountryName:eventValue[1] });
+    this.setState({ selectedCountryCode: eventValue[0], slectedCountryName: eventValue[1] });
+  }
+
+  handleDateChange = (date) => {
+    this.setState({
+      startDate: date
+    });
   }
 
 
   getCountryName = (e) => {
-    
+
   }
 
   handleSubmit(e) {
@@ -111,30 +121,30 @@ class SignUpComponent extends React.Component {
                   <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon1"><img className="age" src="img/icon/age.svg" alt="" /></span>
                   </div>
-                  <input type="text" className="form-control" placeholder="Birthdate" aria-label="age" aria-describedby="basic-addon1" />
+                  <DatePicker className="form-control datepicker-style" selected={this.state.startDate} onChange={this.handleDateChange} placeholderText="Birthdate" />                
                 </div>
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
                     <span className="input-group-text country-code-container" id="basic-addon1">
 
-                      <select className="custom-select country-code"  value={this.state.selectedCountryCode} onChange={this.handeChange} name="" id="">
+                      <select className="custom-select country-code" value={this.state.selectedCountryCode} onChange={this.handeChange} name="" id="">
                         {this.state.CountryCode.map(function (index) {
                           return (
                             index.countries.map(function (key, value) {
                               if (key.code === '+1')
-                                return <option key={value}  defaultValue={key.code+' USA'}   >{key.code}</option>
+                                return <option key={value} defaultValue={key.code + ' USA'}   >{key.code}</option>
                               else
-                                return <option  key={value} value={key.code+' '+key.name}>{key.code }</option>
+                                return <option key={value} value={key.code + ' ' + key.name}>{key.code}</option>
                             }))
                         })}
                       </select>
                     </span>
 
                     <span className="input-group-text" id="basic-addon1">
-                        <span className="country-name">{this.state.slectedCountryName}</span>
+                      <span className="country-name">{this.state.slectedCountryName}</span>
                     </span>
 
-                    
+
                   </div>
                   <input type="text" className="form-control contact-number" placeholder="Contact number" aria-label="contact number" aria-describedby="basic-addon1" />
                 </div>
