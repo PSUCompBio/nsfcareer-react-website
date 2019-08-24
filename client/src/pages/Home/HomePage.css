@@ -279,13 +279,6 @@ path, circle{
 .color {
   color: #848484;
 }
-
-.section-three a {
-  text-decoration: underline;
-  width: auto;
-  text-align: left;
-  display: inline-block;
-}
 .section-four p {
   color: #848484;
 }
@@ -600,10 +593,21 @@ nav {
   #ptf-sol-laptop{
     padding-top: 1%!important;
   }
-  .center-card{
-    padding-top: 15%;
-  }
   #ptf-tech-section{
     padding-top: 5%!important;
   }
+}
+
+.card {
+  text-decoration: unset;
+  color: unset;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  transition: transform 200ms;
+  transition-timing-function: ease-out;
+  cursor: pointer;
+  text-decoration: unset !important;
+  color: unset !important;
 }
