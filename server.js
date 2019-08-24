@@ -696,7 +696,7 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
 });
 app.post(`${apiPrefix}signUp`, (req, res) => {
 
-    console.log(req.body);
+
 
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
     req.body["name"] = req.body.first_name + req.body.last_name;
@@ -704,6 +704,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_image_uploaded"] = false;
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
+    req.body.phone_number = req.body.country_code + req.body.phone_number ;
+    console.log("-----------------------------\n",req.body,"----------------------------------------\n");
     adminCreateUser(req.body, function (err, data) {
         if (err) {
             console.log("COGNITO CREATE USER ERROR =========\n", err);
@@ -814,7 +816,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 });
 
 app.post(`${apiPrefix}logIn`, (req, res) => {
-    console.log("Log In API Called!");
+    console.log("Log In API Called!",req.body);
     // Getting user data of that user
     getUser(req.body.user_name, function (err, data) {
         if (err) {
@@ -881,6 +883,15 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
             })
         }
     })
+})
+
+app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
+    if(req.user_cognito_id){
+        res.send({
+            message : "success",
+            user_cognito_id : req.user_cognito_id
+        })
+    }
 })
 
 // Login first time with temporary password
@@ -1019,7 +1030,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                 userData["profile_picture_url"] = url;
                             }
 
-                            // Getting Avatar URL 
+                            // Getting Avatar URL
                             getUploadedModelFileList(req.user_cognito_id, function (err, list) {
 
                                 userData["avatar_url"] = "";
@@ -1071,7 +1082,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                             // fetch inf url also here
                                             getINPFile(req.user_cognito_id).then((url) => {
                                                 userData["inp_file_url"] = url;
-                                                
+
                                                 getSimulationFile(req.user_cognito_id,function(err,list){
                                                     userData["simulation_file_url"] = "";
                                                     if (err) {
@@ -1080,11 +1091,11 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                             message: "failure",
                                                             data: userData
                                                         })
-                    
+
                                                     }
                                                     else {
-                    
-                    
+
+
                                                         // Fetches the latest profile pic
                                                         var latestModel = list.reduce(function (oldest, latest_model) {
                                                             return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
@@ -1120,7 +1131,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                                     message: "success",
                                                                     data: userData
                                                                 })
-                                                            
+
                                                             }})
                                                     }
                                                 })
@@ -1296,7 +1307,7 @@ app.post(`${apiPrefix}getProfilePicLink`, VerifyToken, (req, res) => {
                     }
                     var profile_link = url;
                     var model_link = "";
-                    // Getting Avatar URL 
+                    // Getting Avatar URL
                     getUploadedModelFileList(req.user_cognito_id, function (err, list) {
 
                         if (err) {
@@ -1544,7 +1555,7 @@ app.post(`${apiPrefix}createAvatar`, (req, res) => {
     });
 });
 
-// Delete Directory  
+// Delete Directory
 var deleteDirectory = function (path, callback) {
     fs.readdir(path, function (err, files) {
         if (err) {
