@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Link, withRouter } from "react-router-dom";
+import { BrowserRouter as Router, Link, Redirect, withRouter } from "react-router-dom";
 import Index from "../../index"
 import Footer from '../Footer'
 
@@ -13,20 +13,16 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      toSignUp: true,
+
       tempPasswordRequired: false,
       isLoginError: false,
       loginErrorCode: "",
-      isLoading: false
+      isLoading: false,
+      isSignInSuccessed : false
     }
-    this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleClick() {
-    this.setState(state => ({
-      toSignUp: false
-    }));
-  }
+
 
   isAdminType = (userType) => {
     if (userType === "Admin") {
@@ -36,8 +32,9 @@ class Login extends React.Component {
       return false;
     }
   }
-  
+
   handleSubmit(e) {
+      console.log("SIGNIN IN CLICKED");
     e.preventDefault();
     e.persist()
     console.log("LOGIN API CALLED");
@@ -47,22 +44,26 @@ class Login extends React.Component {
       isLoginError: false,
       isLoading: true
     })
-    // converting formData to JSON 
+    // converting formData to JSON
     const formJsonData = formDataToJson(formData)
     if (this.state.tempPasswordRequired) {
       // call API of first Time Login with Temporary Password
       logInFirstTime(formJsonData).then((response) => {
         if (response.data.message === "success") {
+            this.setState({
+              isLoading: false,
+              isSignInSuccessed : true
+            })
           // login user
-          ReactDOM.render(
-
-            <Router>
-
-              <Index isAuthenticated={true} isAdmin={this.isAdminType(response.data.user_type)} />
-            </Router>
-            ,
-            document.getElementById('root')
-          );
+          // ReactDOM.render(
+          //
+          //   <Router>
+          //
+          //     <Index isAuthenticated={true} isAdmin={this.isAdminType(response.data.user_type)} />
+          //   </Router>
+          //   ,
+          //   document.getElementById('root')
+          // );
         }
         else {
           // show error
@@ -80,7 +81,7 @@ class Login extends React.Component {
     }
     else {
       logIn(formJsonData).then((response) => {
-        this.refs.signInForm.reset();
+        // this.refs.signInForm.reset();
         console.log("Login ", response);
         if (response.data.message === "success") {
           if (response.data.status === "FORCE_CHANGE_PASSWORD") {
@@ -91,14 +92,18 @@ class Login extends React.Component {
           }
           else {
             // login redirect code here
+            this.setState({
+              isLoading: false,
+              isSignInSuccessed : true
+            })
 
-            ReactDOM.render(
-              <Router>
-                <Index isAuthenticated={true} isAdmin={this.isAdminType(response.data.user_type)} />
-              </Router>
-              ,
-              document.getElementById('root')
-            );
+            // ReactDOM.render(
+            //   <Router>
+            //     <Index isAuthenticated={true} isAdmin={this.isAdminType(response.data.user_type)} />
+            //   </Router>
+            //   ,
+            //   document.getElementById('root')
+            // );
           }
         }
         else {
@@ -116,7 +121,7 @@ class Login extends React.Component {
 
       }).catch((err) => {
         e.target.reset();
-        // catch error 
+        // catch error
         console.log("error : ", err);
 
       })
@@ -126,7 +131,12 @@ class Login extends React.Component {
 
   render() {
     return (
+
       <div className="container-fluid pl-0 pr-0 overflow-hidden">
+      {this.state.isSignInSuccessed?
+          <Redirect to="/"/>
+          :null
+      }
         <div className="row login">
           <div className="col-md-6 col-lg-6 offset-md-3 mt-10">
             <div className="card card-border">
@@ -136,22 +146,50 @@ class Login extends React.Component {
                     <img src="img/icon/brain.png" alt="" />
                   </div>
                 </div>
+                 <form onSubmit={this.handleSubmit} ref="signInForm">
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon1"><img src="img/icon/user.svg" alt="" /></span>
                   </div>
-                  <input type="text" className="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" />
+                  <input type="text" className="form-control" name="user_name" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" />
                 </div>
-                <div className="input-group mb-1">
+                <div className="input-group mb-5">
                   <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon1"><img src="img/icon/lock.svg" alt="" /></span>
                   </div>
-                  <input type="password" className="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" />
+                  <input type="password" className="form-control" name="password" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" />
                 </div>
+
+                {
+                      this.state.tempPasswordRequired ?
+                        <div className="input-group mb-1">
+                          <div className="input-group-prepend">
+                            <span className="input-group-text" id="basic-addon1"><img src="img/icon/lock.svg" alt="" /></span>
+                          </div>
+                          <input type="password" className="form-control" name="new_password" placeholder="New Password (Min. 8 digit password)" aria-label="Password" aria-describedby="basic-addon1" />
+                        </div>
+                        : null
+                }
+
                 <div>
                   <a className="float-right forgot-pswd" >Forgot password?</a>
                 </div>
-                <button type="button" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
+                <button type="submit" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
+                </form>
+                {
+                    this.state.isLoading ?
+                    <div className="d-flex justify-content-center center-spinner">
+                         <div className="spinner-border text-primary" role="status" >
+        <span className="sr-only">Loading...</span>
+      </div>
+             </div>:null
+                  }
+                  {this.state.isLoginError ?
+                      <div class="alert alert-info api-response-alert" role="alert">
+                    <strong>Failed! </strong> {this.state.loginError}.
+</div>
+                    : null
+                    }
                 <div className="text-center">
                   <p className="mt-4 sign-up-link">Don't have an account? <Link className="sign-up" to='SignUp' > Sign Up </Link></p>
                 </div>
