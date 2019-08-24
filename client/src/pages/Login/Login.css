@@ -1,4 +1,188 @@
-/* Aligning Login Dialog in Center */
-/* .login{
-    text-align: center
-} */
+p {
+  margin-bottom: 0 !important;
+}
+.input-group-text {
+  background-color: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid black !important;
+  border-radius: 0 !important;
+}
+input {
+  border: none !important;
+  border-bottom: 1px solid black !important;
+  border-radius: 0 !important;
+}
+input:focus {
+  color: #495057 !important;
+  background-color: transparent !important;
+  border-color: #80bdff !important;
+
+  box-shadow: none !important;
+}
+input::placeholder {
+  opacity: 0.44 !important;
+  font-size: 14px !important;
+  line-height: 2.64 !important;
+  color: #000000 !important;
+}
+.card-border {
+  padding: 1% 15% 1% 15% !important;
+  border: none !important;
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 12px !important;
+}
+.login {
+  height: 63vh;
+  padding-top: 5%;
+  margin-top: 10vh;
+}
+.log-in-btn {
+  background-color: #0f81dc !important;
+}
+.sign-up {
+  color: #0f81dc !important;
+  text-decoration: underline !important;
+}
+.sign-up-link {
+  font-size: 14px;
+  font-family: 'Segoe UI Regular';
+}
+.forgot-pswd {
+  opacity: 0.44;
+  font-size: 14px;
+  line-height: 2.64;
+  color: #000000;
+}
+.brain-icon-container {
+  position: relative;
+  margin-bottom: 15%;
+  margin-top: -7%;
+}
+.brain-icon {
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  background: #0f81dc;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -45px;
+  margin-top: -45px;
+}
+.brain-icon img {
+  width: 50%;
+}
+.mt-10 {
+  margin-top: 5%;
+}
+
+.footer {
+  background: url('/img/BannerImg/navbg.png') no-repeat center;
+  background-size: cover;
+  height: 27vh;
+}
+.footer h4 {
+  color: #fff;
+}
+.footer hr {
+  border: 1px solid #fff;
+  width: 100%;
+  border-radius: 10px;
+  background: #fff;
+}
+.footer p {
+  color: #fff;
+}
+
+@-webkit-keyframes autofill {
+  to {
+    color: #666;
+    background: transparent;
+  }
+}
+
+input:-webkit-autofill {
+  -webkit-animation-name: autofill;
+  -webkit-animation-fill-mode: both;
+}
+
+@media (max-width: 575px) {
+  .brain-icon-container {
+    margin-top: -11%;
+  }
+  .brain-icon {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background: #0f81dc;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -25px;
+    margin-top: -25px;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+  .brain-icon-container {
+    margin-top: -11%;
+  }
+  .brain-icon {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background: #0f81dc;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -25px;
+    margin-top: -25px;
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .brain-icon-container {
+    margin-top: -11%;
+  }
+  .brain-icon {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background: #0f81dc;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -25px;
+    margin-top: -25px;
+  }
+  .login {
+    padding-top: 0;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .login {
+    padding-top: 1%;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1440px) {
+  .login {
+    padding-top: 7%;
+  }
+  .brain-icon-container {
+    margin-top: -4%;
+  }
+  .mt-10 {
+    margin-top: -3%;
+  }
+}
+@media (min-width: 2560px) {
+  .login {
+    padding-top: 9%;
+  }
+  .brain-icon-container {
+    margin-top: -4%;
+  }
+  .mt-10 {
+    margin-top: -3%;
+  }
+}

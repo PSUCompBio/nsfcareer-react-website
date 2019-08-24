@@ -1,45 +1,46 @@
 import React from 'react';
-import { MDBCol, MDBContainer, MDBRow, MDBFooter } from "mdbreact";
 
 const Footer = () => {
   return (
-    <MDBFooter color="blue darken-4" className="font-small pt-4 mt-4">
-      <MDBContainer fluid className="text-center text-md-left">
-        <MDBRow>
-          <MDBCol md="6">
-            <h5 className="title">NSFCAREER.IO</h5>
-            <p>
-              Multiscale Modelng of Axonal Fiber Tracts in the Brain.
-            </p>
-          </MDBCol>
-          <MDBCol md="6">
-            <h5 className="title">Links</h5>
-            <ul>
-						<li className="list-unstyled">
-							<a href="/home">home</a>
-						</li>
-              <li className="list-unstyled">
-                <a href="/about">about</a>
-              </li>
-              <li className="list-unstyled">
-                <a href="/sports">sports</a>
-              </li>
-              <li className="list-unstyled">
-                <a href="/military">military</a>
-              </li>
-              <li className="list-unstyled">
-                <a href="/contact">contact</a>
-              </li>
-            </ul>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-      <div className="footer-copyright text-center py-3">
-        <MDBContainer fluid>
-          &copy; {new Date().getFullYear()} Copyright: <a href="https://www.PSUCompBio.org"> Penn State Computational Biomechanics Group </a>
-        </MDBContainer>
+    <div className="footer" >
+    <div className="container">
+      <div className="row pt-4">
+        <div className="col-sm-6 col-md-6 col-lg-6">
+        <img className="logo" src="/img/icon/logo.png" alt="" />                    
+        </div>
+        <div className="col-sm-6  col-md-6 col-lg-6">
+          <button type="button" className="btn btn-primary float-right">Get Updates</button>
+        </div>
+        <hr />
       </div>
-    </MDBFooter>
+      <div className="row">
+        <div className="col-sm-9 col-md-6 col-lg-6">
+          <p>
+            Contact Us: info@NSFCAREER.IO <br />
+            IP | Privacy Policy &amp; IRB | Collaborate
+                  </p>
+        </div>
+        <div className="col-sm-3 col-md-6 col-lg-6">
+          <div className="icon-container">
+            <a href="">
+              <img className="px-2" src="/img/FooterImg/facebook-logo.svg" alt="" />
+            </a>
+            <a href="">
+              <img className="px-2" src="/img/FooterImg/twitter-logo-silhouette.svg" alt="" />
+            </a>
+            <a href="">
+              <img className="px-2" src="/img/FooterImg/icon.svg" alt="" />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="row text-center">
+        <div className="col-md-12 col-lg-12">
+          <p className="copyright">© 2019 Copyright: Penn State Computational Biomechanics Group</p>
+        </div>
+      </div>
+    </div>
+  </div>
   );
 }
 

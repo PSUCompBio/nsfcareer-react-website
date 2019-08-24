@@ -6,15 +6,13 @@ import styled from "styled-components";
 
 const Navigation = styled.header`
   width: 100%;
-  border-bottom: 10px solid #0D47A1;
-  z-index: 1;
+  z-index: 4;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0px 100px 0;
   height: 90px;
   margin-bottom: 0px;
-  background: #f8f8f8;
 	position: fixed; /* Set the navbar to fixed position */
   top: 0; /* Position the navbar at the top of the page */
 
@@ -55,10 +53,11 @@ const Navigation = styled.header`
     color: #ccc;
   }
   a {
-    color: #222;
+    color: #fff;
     transition: all 0.6s;
-    color: #222;
+    color: #fff;
     font-size: 1em;
+    position:relative;
   }
   a:hover {
     opacity: 1;
@@ -67,6 +66,18 @@ const Navigation = styled.header`
     display: none;
     color: #222;
     font-size: 2rem;
+  }
+  .border-rounded{
+    background: #fff;
+    height: 1px;
+    border: 2px solid white;
+    border-radius: 5px;
+    width: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -15px;
+    margin-top: 20px;
   }
   nav {
     ul {
@@ -81,12 +92,14 @@ const Navigation = styled.header`
     a {
       font-size: 1em;
       text-decoration: none;
+      text-transform: capitalize;
+      font-weight: 400;
       .active {
         color: tomato;
       }
     }
     a.active {
-      color: #222;
+      color: #fff;
     }
   }
 
@@ -192,27 +205,38 @@ class Nav extends Component {
             onClick={e => this.handleToggle(e)}
           />
           <ul className={`collapsed ${isExpanded ? "is-expanded" : ""}`}>
-            <NavLink activeClassName="active" to="/">
+            <NavLink  activeClassName="active" to="/">
               <li>home</li>
+              <div className="border-rounded"></div>
             </NavLink>
             <NavLink activeClassName="active" to="/about">
               <li>about</li>
+              <div className=""></div>
+
             </NavLink>
             {this.props.isAuthenticated ?
               <NavLink activeClassName="active" to="/sports">
-              <li>sports</li>
+                <li>sports</li>
+              <div className=""></div>
+                
             </NavLink>
              :null}
 						
 						<NavLink activeClassName="active" to="/military">
               <li>military</li>
+              <div className=""></div>
+
             </NavLink>
             <NavLink activeClassName="active" to="/contact">
               <li>contact</li>
+              <div className=""></div>
+
             </NavLink>
             {!this.props.isAuthenticated ?
             <NavLink activeClassName="active" to="/login">
               <li>login</li>
+              <div className=""></div>
+
             </NavLink>
             : 
             this.props.isAdmin? <NavLink activeClassName="active" to="/listUsers">

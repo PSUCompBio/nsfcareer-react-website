@@ -7,7 +7,7 @@ class SportsPage extends React.Component {
   render() {
     return (
       <Fragment>
-		<h1 class="topspace">Sports Results</h1>
+		<h1 className="topspace">Sports Results</h1>
     <div className="container">
 	  <Avatar></Avatar>	
       <NumberTableComponent></NumberTableComponent>
