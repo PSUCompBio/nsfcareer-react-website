@@ -16,7 +16,7 @@ class AboutTheProduct extends React.Component {
                   <div ref={ref}>
                     <h1 className="font-weight-bold pt-2">ABOUT THE PROJECT</h1>
                     <hr className={`animated ${inView ? 'zoomIn' : ''}`} />
-                    <p className={` animated ${inView?'pulse':''} ${this.props.screenWidth > 425 && this.props.screenWidth < 768 ? 'pt-5 mt-5' : ''}`}>Brain injuries are a significant health concern for civilian and military populations.
+                    <p className={` animated ${inView?'pulse':''} `}>Brain injuries are a significant health concern for civilian and military populations.
                         This Faculty Early Career Development Program (CAREER) project will contribute to the understanding of brain
                         trauma by developing advanced computer models that link neuroimaging results, biomechanical assessments, and
                         computational modeling of the brain. More broadly, the continued pursuit of the development and validation
