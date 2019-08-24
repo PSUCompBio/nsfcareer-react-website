@@ -378,6 +378,7 @@ footer p {
   border: 1px solid #2679ce !important;
   margin-top: 5px;
   cursor: pointer;
+  transition: border 1s;
 }
 .active-change-scroll-indicator {
   background: #2679ce;
@@ -396,6 +397,7 @@ footer p {
   height: 15px;
   border-radius: 50%;
   border: 1px solid rgb(255, 255, 255);
+  transition: border 1s;
   margin-top: 5px;
   cursor: pointer;
 }
