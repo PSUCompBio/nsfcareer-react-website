@@ -21,9 +21,6 @@
         position: absolute;
         z-index: 2;
     }
-    .header-heading {
-        margin-top: 50px;
-    }
     .navbar-brand{
         padding-right: 32px
     }
@@ -61,9 +58,6 @@
         position: absolute;
         z-index: 2;
     }
-    .header-heading {
-        margin-top: 50px;
-    }
     .navbar-brand{
         padding-right: 86px;
     }
@@ -100,9 +94,6 @@
     .navbar{
         position: absolute;
         z-index: 2;
-    }
-    .header-heading {
-        margin-top: 50px;
     }
     .navbar-brand{
         padding-right: 86px;
