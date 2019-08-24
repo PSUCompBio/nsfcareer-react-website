@@ -54,12 +54,6 @@ select {
   color: #0f81dc !important;
   text-decoration: underline !important;
 }
-.verification-btn-bg {
-  background: #aaaaaa !important;
-  border: none !important;
-  font-family: 'Myriad Pro Regular';
-  font-size: 14px !important;
-}
 .send-again-btn {
   background: #fff !important;
   color: #0f81dc !important;

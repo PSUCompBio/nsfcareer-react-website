@@ -158,7 +158,7 @@ class SignUpComponent extends React.Component {
                     </div>
                   </div>
                   <div className="col-5">
-                    <button type="button" className="btn float-right sign-up-btn verification-btn-bg btn-primary">Send verification code</button>
+                    <button type="button" className="btn float-right sign-up-btn btn-primary">Send verification code</button>
                   </div>
                 </div>
 
