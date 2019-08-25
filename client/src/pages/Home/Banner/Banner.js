@@ -23,8 +23,10 @@ class Banner extends React.Component {
                       <h1>TRANSFORM YOUR SENSOR DATA</h1>
                       <h4>Accurate brain simulations help extend your </h4>
                       <h4>sensor data research. </h4>
-                      <p>Supported By</p>
-                      <hr />
+                      <div className="underlined-text">
+                        <p>Supported By</p>
+                        <hr />
+                      </div>
                     </div>
                     <div className="col-md-2 " />
                   </div>
