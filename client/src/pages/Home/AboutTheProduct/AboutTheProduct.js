@@ -1,12 +1,14 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
 
-function AboutTheProduct() {
+function AboutTheProduct(props) {
   const dashes = [];
-  // For 
+  // For
   for (let i = 0; i < 19; i += 1) {
     dashes.push(<li key={i} />);
   }
+  const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
+
   return (
     <div className="container section">
       <div className="section-two">
@@ -47,7 +49,7 @@ function AboutTheProduct() {
             <div className="row text-center shift-top">
               <div className="col-md-4 animated">
                 <img
-                  className="svg hvr-bounce-in"
+                  className={`svg ${animateOnDesktop}`}
                   src="/img/AboutTheProductImg/Cloud_white.svg"
                   alt=""
                 />
@@ -59,7 +61,7 @@ function AboutTheProduct() {
               </div>
               <div className="col-md-4 animated">
                 <img
-                  className="svg hvr-bounce-in"
+                  className={`svg ${animateOnDesktop}`}
                   src="/img/AboutTheProductImg/Moniter_white.svg"
                   alt=""
                 />
@@ -70,7 +72,7 @@ function AboutTheProduct() {
               </div>
               <div className="col-md-4 animated">
                 <img
-                  className="svg hvr-bounce-in"
+                  className={`svg ${animateOnDesktop}`}
                   src="/img/AboutTheProductImg/Analysis_White.svg"
                   alt=""
                 />

@@ -1,7 +1,9 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
 
-function ResearchArea() {
+function ResearchArea(props) {
+  const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
+
   return (
     <div className="research-area-bg">
       <div className="container section">

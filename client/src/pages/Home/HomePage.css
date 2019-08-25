@@ -578,14 +578,18 @@ nav {
 .research-card {
   margin-bottom: 1em;
 }
-
 .research-card:hover {
-  transform: scale(1.05);
-  transition: transform 200ms;
-  transition-timing-function: ease-out;
   cursor: pointer;
   text-decoration: unset !important;
   color: unset !important;
+}
+
+@media (min-width: 726px) {
+  .research-card:hover {
+    transform: scale(1.05);
+    transition: transform 200ms;
+    transition-timing-function: ease-out;
+  }
 }
 
 @media (max-width: 767px) {
