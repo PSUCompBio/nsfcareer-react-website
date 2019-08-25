@@ -195,10 +195,6 @@ body {
   width: fit-content;
 }
 
-.heading-container {
-  margin-top: 15%;
-}
-
 .header-heading hr {
   display: inline-block;
   border: 1px solid white;
@@ -602,6 +598,10 @@ nav {
   .section {
     padding-top: 10vh;
   }
+
+  .heading-container {
+    margin-top: 15%;
+  }
   
   .research-area-bg {
     height: 100vh;
@@ -628,4 +628,89 @@ nav {
   transform: translate(-50%);
   -webkit-transition: all 1s;
   transition: all 1s;
+}
+
+/* Push to Left Navigation Menu */
+
+.cbp-spmenu {
+	background: #13568d;
+	position: fixed;
+}
+
+.cbp-spmenu h3 {
+	color: #afdefa;
+	font-size: 1.9em;
+	padding: 20px;
+	margin: 0;
+	font-weight: 300;
+	background: #0d77b6;
+}
+
+.cbp-spmenu a {
+	display: block;
+	color: #fff;
+	font-size: 1.1em;
+	font-weight: 300;
+}
+
+.cbp-spmenu a:hover {
+	background: #258ecd;
+}
+
+.cbp-spmenu a:active {
+	background: #afdefa;
+	color: #47a3da;
+}
+
+.cbp-spmenu-vertical {
+	width: 240px;
+	height: 100%;
+	top: 0;
+  z-index: 1000;
+  right: 0;
+}
+
+.cbp-spmenu-vertical a {
+	border-bottom: 1px solid #258ecd;
+	padding: 1em;
+}
+
+.cbp-spmenu-right {
+	right: -240px;
+}
+
+.cbp-spmenu-right.cbp-spmenu-open {
+	right: 0px;
+}
+
+.cbp-spmenu-push {
+	overflow-x: hidden;
+	position: relative;
+	left: 0;
+}
+
+.cbp-spmenu-push-toleft {
+	left: -240px;
+}
+
+.cbp-spmenu,
+.cbp-spmenu-push {
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+@media screen and (max-height: 26.375em){
+
+	.cbp-spmenu-vertical {
+		font-size: 90%;
+		width: 190px;
+	}
+	.cbp-spmenu-push-toleft {
+		left: -190px;
+	}
+
+	.cbp-spmenu-right {
+		right: -190px;
+	}
 }
