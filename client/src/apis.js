@@ -58,6 +58,19 @@ export const logInFirstTime = (request) =>{
       });
   })
 }
+
+export const isAuthenticated = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`${ENDPOINT}isAuthenticated`, JSON.parse(request),{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const listUsers = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`${ENDPOINT}listUsers`, {})

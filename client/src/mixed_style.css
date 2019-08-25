@@ -1,4 +1,19 @@
 
 .center-spinner {
-margin-top: 10px;
+margin-top: .75em;
+}
+
+.api-response-alert {
+    margin-top: .75rem;
+    color: #f8f9fa !important;
+    background-color: #dc3545 !important;
+    border-color: #e1e1e1 !important;
+}
+
+
+.api-response-alert-success {
+    margin-top: .75rem;
+    color: #f8f9fa !important;
+    background-color: #28a745 !important;
+    border-color: #e1e1e1 !important;
 }
