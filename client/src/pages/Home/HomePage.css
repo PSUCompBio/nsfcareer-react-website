@@ -186,37 +186,23 @@ body {
   font-weight: 900;
   color: #fff;
 }
-.header-heading p {
+.header-heading .underlined-text {
   font-weight: 400;
   color: #fff;
   margin-top: 7%;
   font-size: 20px;
   margin-bottom: 0;
-}
-
-.heading-container {
-  margin-top: 15%;
+  width: fit-content;
 }
 
 .header-heading hr {
   display: inline-block;
-  width: 21%;
   border: 1px solid white;
   border-radius: 10px;
   margin-top: 1px;
-  background: #fff;
+  width: fill-available;
 }
 
-.section-two hr,
-.section-three hr,
-.section-four hr {
-  width: 100px;
-  border-radius: 10px;
-  border: 2px solid #4293f5;
-  margin-left: 45%;
-}
-
-.section-two h1,
 .section-two h1,
 .section-three h1,
 .section-four h1 {
@@ -235,10 +221,10 @@ body {
   font-size: 20px;
   font-weight: 300;
 }
-.bashed-border {
+.dashed-border {
   margin-top: 10%;
 }
-.bashed-border ul li {
+.dashed-border ul li {
   width: 3%;
   border: 2px solid #eaeaea;
   display: inline-block;
@@ -278,20 +264,13 @@ path, circle{
 .color {
   color: #848484;
 }
-
-.section-three a {
-  text-decoration: underline;
-  width: auto;
-  text-align: left;
-  display: inline-block;
-}
 .section-four p {
   color: #848484;
 }
 .research-area-bg {
   background: #f5f5f5;
-  height: 100vh;
 }
+
 .btn-outline-blue {
   outline: #0f81dc !important;
   border: 1px solid #0f81dc !important;
@@ -323,6 +302,7 @@ footer {
 .show-footer {
   display: block !important;
   animation: fadeIn 1s;
+  max-height: 200px; /* temporary */
 }
 .shift-technology-section {
   margin-top: -10vh;
@@ -384,6 +364,7 @@ footer p {
   border: 1px solid #2679ce !important;
   margin-top: 5px;
   cursor: pointer;
+  transition: border 1s;
 }
 .active-change-scroll-indicator {
   background: #2679ce;
@@ -402,6 +383,7 @@ footer p {
   height: 15px;
   border-radius: 50%;
   border: 1px solid rgb(255, 255, 255);
+  transition: border 1s;
   margin-top: 5px;
   cursor: pointer;
 }
@@ -411,10 +393,6 @@ footer p {
 .change-scroll-indicator li:hover {
   background: #0f81dc;
 }
-.section-three-container {
-  background: #f5f5f5;
-}
-
 .icon-container {
   float: right;
 }
@@ -470,15 +448,10 @@ nav {
   .image-padding img:nth-child(1) {
     width: 40px !important;
   }
-  .header-heading hr{
-    width:21%!important;
   }
-}
 
 @media (max-width: 575px) {
-  .header-heading hr{
-    width:16%;
-  }
+  
   .navbar-brand {
     width: 70%;
   }
@@ -488,7 +461,7 @@ nav {
   .header-heading h4 {
     font-size: 12px;
   }
-  .header-heading p {
+  .header-heading .underlined-text {
     font-size: 10px;
     margin-top: 2px;
   }
@@ -504,17 +477,12 @@ nav {
     height: 45vh;
   }
 
-  .section-two hr,
-  .section-three hr,
-  .section-four hr {
-    width: 40%;
-    margin-left: 30%;
-  }
   /* .shift-top img:hover{
     transform: scale(2);
     cursor: pointer!important;
   } */
-  .bashed-border ul {
+
+  .dashed-border ul {
     display: none;
   }
   .shift-top {
@@ -524,7 +492,6 @@ nav {
   .show-footer-mobile {
     display: block !important;
   }
-  .section-two h1,
   .section-two h1,
   .section-three h1,
   .section-four h1 {
@@ -575,48 +542,176 @@ nav {
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
-  .header-heading hr{
-    width: 16%;
-  }
   .shift-technology-section {
     margin-top: -33.5%;
   }
 }
 @media (min-width: 1200px) and (max-width: 1440px) {
-  .header-heading hr{
-    width: 11.5%;
-  }
   .shift-technology-section {
     margin-top: -15%;
   }
 }
 
 @media (min-width: 1500px) and (max-width: 2560px) {
-  .header-heading hr{
-    width:7.5%;
-  }
   .shift-technology-section {
     margin-top: -15%;
   }
   .header-heading h1 {
-    font-size: 58px;
+    font-size: 50px;
   }
   .header-heading h4 {
     font-size: 30px;
   }
-  .header-heading p {
+  .header-heading .underlined-text {
     font-size: 24px;
   }
-  #ptf-laptop {
-    padding-top: 6%!important;
+}
+
+.card {
+  text-decoration: unset;
+  color: unset;
+}
+
+.research-card {
+  margin-bottom: 1em;
+}
+.research-card:hover {
+  cursor: pointer;
+  text-decoration: unset !important;
+  color: unset !important;
+}
+
+@media (min-width: 726px) {
+  .research-card:hover {
+    transform: scale(1.05);
+    transition: transform 200ms;
+    transition-timing-function: ease-out;
   }
-  #ptf-sol-laptop{
-    padding-top: 1%!important;
+}
+
+@media (max-width: 767px) {
+  .dashed-border {
+    visibility: hidden;
   }
-  .center-card{
-    padding-top: 15%;
+}
+
+@media (min-width: 725px) {
+  .section {
+    padding-top: 10vh;
   }
-  #ptf-tech-section{
-    padding-top: 5%!important;
+
+  .heading-container {
+    margin-top: 15%;
   }
+  
+  .research-area-bg {
+    height: 100vh;
+  }
+}
+
+.section-title {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.section-title h1 {
+  display: inline-block;
+  position: relative;
+}
+
+.section-title h1::after {
+  content: "";
+  height: 1px;
+  width: 80%;
+  position: absolute;
+  border: 2px solid #4293f5;
+  bottom: -.1em;
+  left: 50%;
+  transform: translate(-50%);
+  -webkit-transition: all 1s;
+  transition: all 1s;
+}
+
+/* Push to Left Navigation Menu */
+
+.cbp-spmenu {
+	background: #13568d;
+	position: fixed;
+}
+
+.cbp-spmenu h3 {
+	color: #afdefa;
+	font-size: 1.9em;
+	padding: 20px;
+	margin: 0;
+	font-weight: 300;
+	background: #0d77b6;
+}
+
+.cbp-spmenu a {
+	display: block;
+	color: #fff;
+	font-size: 1.1em;
+	font-weight: 300;
+}
+
+.cbp-spmenu a:hover {
+	background: #258ecd;
+}
+
+.cbp-spmenu a:active {
+	background: #afdefa;
+	color: #47a3da;
+}
+
+.cbp-spmenu-vertical {
+	width: 240px;
+	height: 100%;
+	top: 0;
+  z-index: 1000;
+  right: 0;
+}
+
+.cbp-spmenu-vertical a {
+	border-bottom: 1px solid #258ecd;
+	padding: 1em;
+}
+
+.cbp-spmenu-right {
+	right: -240px;
+}
+
+.cbp-spmenu-right.cbp-spmenu-open {
+	right: 0px;
+}
+
+.cbp-spmenu-push {
+	overflow-x: hidden;
+	position: relative;
+	left: 0;
+}
+
+.cbp-spmenu-push-toleft {
+	left: -240px;
+}
+
+.cbp-spmenu,
+.cbp-spmenu-push {
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+@media screen and (max-height: 26.375em){
+
+	.cbp-spmenu-vertical {
+		font-size: 90%;
+		width: 190px;
+	}
+	.cbp-spmenu-push-toleft {
+		left: -190px;
+	}
+
+	.cbp-spmenu-right {
+		right: -190px;
+	}
 }
