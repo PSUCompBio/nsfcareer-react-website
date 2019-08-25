@@ -28,9 +28,6 @@ input::placeholder {
   font-size: 16px !important;
   font-family: 'Segoe UI Regular' !important;
 }
-select {
-  color: #a0a0a0 !important;
-}
 .age {
   width: 84%;
 }
@@ -226,9 +223,6 @@ input:-webkit-autofill {
 .radio-custom:focus + .radio-custom-label {
   outline: 1px solid #ddd; /* focus style */
 }
-.datepicker-style{
-  float: left!important;
-}
 .react-datepicker__input-container{
   display: block!important;
 }
@@ -237,7 +231,10 @@ input:-webkit-autofill {
   width: calc(100% - 27px);
 }
 .react-datepicker__header{
-  background: url('/img/BannerImg/navbg.png') ;
+  background: rgba(0, 89, 149, 1);
+}
+.react-datepicker__current-month {
+  display: none;
 }
 .react-datepicker__day-name {
   color: #fff;

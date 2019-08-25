@@ -8,6 +8,7 @@ import Footer from '../Footer';
 import CountryCode from '../../config/CountryCode.json';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
+import { subYears } from 'date-fns';
 
 class SignUpComponent extends React.Component {
   constructor() {
@@ -124,7 +125,15 @@ class SignUpComponent extends React.Component {
                   <div className="input-group-prepend">
                     <span className="input-group-text" id="basic-addon1"><img className="age" src="img/icon/age.svg" alt="" /></span>
                   </div>
-                  <DatePicker className="form-control datepicker-style" name="dob" selected={this.state.startDate} onChange={this.handleDateChange} placeholderText="Birthdate" />
+                  <DatePicker showMonthDropdown
+                              showYearDropdown 
+                              dropdownMode="select"
+                              className="form-control" 
+                              name="dob" 
+                              selected={this.state.startDate} 
+                              onChange={this.handleDateChange}
+                              maxDate={subYears(new Date(), 10)}
+                              placeholderText="Birthdate"/>
                 </div>
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
