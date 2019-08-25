@@ -24,15 +24,6 @@
     .navbar-brand{
         padding-right: 32px
     }
-    .bashed-border{
-        visibility: hidden;
-    }
-    .section-two hr, .section-three hr, .section-four hr {
-        width: 23%;
-        border-radius: 10px;
-        border: 2px solid #4293f5;
-        margin-left: 35%;
-    }
 }
 
 @media only screen and (min-width:321px) and (max-width:375px){
@@ -61,15 +52,6 @@
     .navbar-brand{
         padding-right: 86px;
     }
-    .bashed-border{
-        visibility: hidden;
-    }
-    .section-two hr, .section-three hr, .section-four hr {
-        width: 23%;
-        border-radius: 10px;
-        border: 2px solid #4293f5;
-        margin-left: 35%;
-    }
 }
 
 @media only screen and (min-width:376px) and (max-width:425px){
@@ -97,14 +79,5 @@
     }
     .navbar-brand{
         padding-right: 86px;
-    }
-    .bashed-border{
-        visibility: hidden;
-    }
-    .section-two hr, .section-three hr, .section-four hr {
-        width: 23%;
-        border-radius: 10px;
-        border: 2px solid #4293f5;
-        margin-left: 35%;
     }
 }

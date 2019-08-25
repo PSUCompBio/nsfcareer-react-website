@@ -9,7 +9,6 @@ class TechnologiesWeUse extends React.Component {
     }
   }
 
-
   render = (props) => {
     const makeFooterVisibeForSmallDevice = {
       reset: {
@@ -21,18 +20,20 @@ class TechnologiesWeUse extends React.Component {
     }
     return (
       <React.Fragment>
-        <div  className={`section-four-container ${this.props.screenWidth >= 1024 ? 'ptf-laptop' : ''}`} onWheel={this.props.onWheel}>
-          <div className="container-fluid pl-0 pr-0">
-            <div className="container no-gutter">
-              <div id="ptf-tech-section" className={`section-four text-center pt-2 ${this.props.screenWidth >= 725 ? (this.props.mouseScroll > 0 && this.props.currentPage===4 ? 'shift-technology-section' : '') : ''}`}>
-                <h1 className="font-weight-bold mt-4 pt-5">TECHNOLOGIES WE USE</h1>
+        <div  className={`section-four-container`} onWheel={this.props.onWheel}>
+            <div className="container section">
+              <div className={`section-four text-center ${this.props.screenWidth >= 725 ? (this.props.mouseScroll > 0 && this.props.currentPage===4 ? 'shift-technology-section' : '') : ''}`}>
+                <div className="col-md-12 col-lg-12 text-center">
                 <InView>
-                {({ inView, ref, entry }) => (
-                  <div ref={ref}>
-                    <hr className={`animated ${inView?'zoomIn':''}`}/>
-                  </div>
-                )}
-              </InView>
+                  {({ inView, ref }) => (
+                    <div ref={ref}>
+                      <div className={`${inView ? 'section-title' : ''}`}>
+                        <h1 className="font-weight-bold">TECHNOLOGIES WE USE</h1>
+                      </div>
+                    </div>
+                  )}
+                </InView>
+              </div>
                 <div className={`row ${this.props.screenWidth > 425 && this.props.screenWidth < 769 ? '' : ' py-5'}`}>
                   <div className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-left'}`}>
                     <img className="py-3" src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg" alt="" />
@@ -104,11 +105,9 @@ class TechnologiesWeUse extends React.Component {
               </div>
             </footer>
           </div>
-        </div>
-      </React.Fragment >
+      </React.Fragment>
     );
   }
-
 }
 
 export default TechnologiesWeUse;
