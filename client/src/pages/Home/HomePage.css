@@ -605,7 +605,7 @@ nav {
   color: unset;
 }
 
-.card:hover {
+.research-card:hover {
   transform: scale(1.05);
   transition: transform 200ms;
   transition-timing-function: ease-out;

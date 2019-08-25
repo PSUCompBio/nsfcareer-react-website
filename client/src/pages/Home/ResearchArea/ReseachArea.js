@@ -25,7 +25,7 @@ class ResearchArea extends React.Component {
               </InView>
               <div className="row text-center center-card  ">
                 <div className={`col-md-6 col-lg-6 ${this.props.screenWidth < 769 ? 'px-2 py-2' : 'px-5'}`} >
-                  <a className="card mx-4 rounded-img" href="/Military">
+                  <a className="card mx-4 research-card rounded-img" href="/Military">
                     <img className="card-img-top" src="/img/ResearchAreaImg/Group-2491.svg" alt={''} />
                     <div className="card-body text-center">
                       <h5>For Soldiers</h5>
@@ -35,7 +35,7 @@ class ResearchArea extends React.Component {
                   </a>
                 </div>
                 <div className={`col-md-6 col-lg-6 ${this.props.screenWidth < 769 ? 'px-2 py-2' : 'px-5'}`}>
-                  <a className="card mx-4 rounded-img">
+                  <a className="card mx-4 research-card rounded-img">
                     <img className="card-img-top" src="/img/ResearchAreaImg/Group-2492.svg" alt={''} />
                     <div className="card-body text-center">
                       <h5>For Athletes</h5>
