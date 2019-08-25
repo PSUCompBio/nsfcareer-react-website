@@ -302,6 +302,7 @@ footer {
 .show-footer {
   display: block !important;
   animation: fadeIn 1s;
+  max-height: 200px; /* temporary */
 }
 .shift-technology-section {
   margin-top: -10vh;
