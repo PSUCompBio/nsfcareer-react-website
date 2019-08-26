@@ -4,11 +4,10 @@ import Banner from './Banner/Banner';
 import AboutTheProduct from './AboutTheProduct/AboutTheProduct';
 import ResearchArea from './ResearchArea/ReseachArea';
 import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse';
-import '../../config/InlineSvgFromImg';
 import './HomePage.css';
 import 'hover.css/css/hover.css';
 import 'animate.css/animate.min.css';
-import 'jquery';
+// import 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
 class HomePage extends React.Component {

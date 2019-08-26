@@ -1,12 +1,13 @@
 import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
 import { Route, withRouter } from 'react-router-dom';
+import { svgToInline } from '../../config/InlineSvgFromImg';
 
 import Nav from './Nav';
 import HomePage from './HomePage';
 import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
-
+import Dashboard from '../../components/Dashboard/Dashboard';
 
 class Routing extends React.Component {
 
@@ -40,6 +41,9 @@ class Routing extends React.Component {
     this.setState({ windowWidth: window.innerWidth })
   }
 
+  componentDidUpdate() {
+    svgToInline();
+  }
 
   render() {
 
@@ -55,6 +59,7 @@ class Routing extends React.Component {
         <Route exact path='/Home' render={(props) => <HomePage {...props} screenWidth={this.state.windowWidth} gotoPage={this.state.gotoPageNo} currentPage={this.state.currentPage} onPageChange={this.onPageChange} />} />
         <Route exact path='/Login' component={Login} />
         <Route exact path='/SignUp' component={SignUp} />
+        <Route exact path='/dashboard' component={Dashboard} />
       </React.Fragment>
     )
   }

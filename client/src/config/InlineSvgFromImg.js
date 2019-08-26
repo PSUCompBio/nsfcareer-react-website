@@ -4,9 +4,9 @@ import $ from 'jquery';
   * Replace all SVG images with inline SVG
   */
 
-const svgToInline = () => {
+export const svgToInline = () => {
     return (
-    $('img.svg').each(function () {
+    $('body').find('img.svg').each(function () {
         var $img = $(this);
         var imgID = $img.attr('id');
         var imgClass = $img.attr('class');
@@ -30,5 +30,3 @@ const svgToInline = () => {
     }))
 };
 
-window.addEventListener('wheel', () => svgToInline());
-window.addEventListener('click', () => svgToInline());
