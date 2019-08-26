@@ -147,14 +147,13 @@ input:-webkit-autofill {
 .country-code:focus {
   box-shadow: none !important;
 }
-.country-name{
+.country-name {
   display: inline-block;
   padding-right: 6px;
   border-right: 1.5px solid #0f81dc !important;
   width: auto;
   color: #909090;
   font-family: 'Segoe UI Regular';
-
 }
 .remove-select-bg {
   background: none !important ;
@@ -232,30 +231,29 @@ input:-webkit-autofill {
 .radio-custom:focus + .radio-custom-label {
   outline: 1px solid #ddd; /* focus style */
 }
-.datepicker-style{
-  float: left!important;
+.datepicker-style {
+  float: left !important;
 }
-.react-datepicker__input-container{
-  display: block!important;
+.react-datepicker__input-container {
+  display: block !important;
 }
 .react-datepicker-wrapper {
-  display: block!important;
+  display: block !important;
   width: calc(100% - 27px);
 }
-.react-datepicker__header{
-  background: url('/img/BannerImg/navbg.png') ;
+.react-datepicker__header {
+  background: url('/img/BannerImg/navbg.png');
 }
 .react-datepicker__day-name {
   color: #fff;
 }
-.react-datepicker__current-month{
+.react-datepicker__current-month {
   color: #fff;
 }
-.react-datepicker {  
-  border:none;
+.react-datepicker {
+  border: none;
   border-radius: 10px;
-  box-shadow: 0 0 10px 5px rgba(0,0,0,0.1);
-
+  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
 }
 @media (max-width: 575px) {
   .brain-icon-container {
