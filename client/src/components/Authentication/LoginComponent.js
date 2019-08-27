@@ -10,8 +10,9 @@ import { logIn, logInFirstTime } from '../../apis';
 import "../../mixed_style.css";
 
 class Login extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    console.log("PROP SRECIVED",props);
     this.state = {
 
       tempPasswordRequired: false,
@@ -134,7 +135,7 @@ class Login extends React.Component {
 
       <div className="container-fluid pl-0 pr-0 overflow-hidden">
       {this.state.isSignInSuccessed?
-          <Redirect to="/"/>
+          <Redirect to="/Profile"/>
           :null
       }
         <div className="row login">

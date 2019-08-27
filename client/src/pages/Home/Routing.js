@@ -1,12 +1,15 @@
 import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
-import { Route, withRouter } from 'react-router-dom';
+import { Route, Redirect, withRouter } from 'react-router-dom';
 
 import Nav from './Nav';
 import HomePage from './HomePage';
 import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
+import Profile from '../../components/profile/Profile'
 
+import { isAuthenticated } from '../../apis';
+import Async from 'react-promise';
 
 class Routing extends React.Component {
 
@@ -53,7 +56,8 @@ class Routing extends React.Component {
         <Nav screenWidth={this.state.windowWidth} currentPage={this.state.currentPage} />
         <Route exact path='/' render={(props) => <HomePage {...props} screenWidth={this.state.windowWidth} gotoPage={this.state.gotoPageNo} currentPage={this.state.currentPage} onPageChange={this.onPageChange} />} />
         <Route exact path='/Home' render={(props) => <HomePage {...props} screenWidth={this.state.windowWidth} gotoPage={this.state.gotoPageNo} currentPage={this.state.currentPage} onPageChange={this.onPageChange} />} />
-        <Route exact path='/Login' component={Login} />
+        <Route exact path='/Login' component={Login}/>
+        <Route exact path='/Profile' component={Profile} />
         <Route exact path='/SignUp' component={SignUp} />
       </React.Fragment>
     )
