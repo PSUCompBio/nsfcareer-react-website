@@ -20,123 +20,43 @@ class TechnologiesWeUse extends React.Component {
     };
     return (
       <React.Fragment>
-        <div
-          className={`section-four-container ${
-            this.props.screenWidth >= 1024 ? 'ptf-laptop' : ''
-          }`}
-          onWheel={this.props.onWheel}
-        >
-          <div className="container-fluid pl-0 pr-0">
-            <div className="container no-gutter">
-              <div
-                id="ptf-tech-section"
-                className={`section-four text-center pt-2 ${
-                  this.props.screenWidth >= 725
-                    ? this.props.mouseScroll > 0 && this.props.currentPage === 4
-                      ? 'shift-technology-section'
-                      : ''
-                    : ''
-                }`}
-              >
-                <h1 className="font-weight-bold mt-4 pt-5">
-                  TECHNOLOGIES WE USE
-                </h1>
+        <div  className={`section-four-container`} onWheel={this.props.onWheel}>
+            <div className="container section">
+              <div className={`section-four text-center ${this.props.screenWidth >= 725 ? (this.props.mouseScroll > 0 && this.props.currentPage===4 ? 'shift-technology-section' : '') : ''}`}>
+                <div className="col-md-12 col-lg-12 text-center">
                 <InView>
-                  {({ inView, ref, entry }) => (
+                  {({ inView, ref }) => (
                     <div ref={ref}>
-                      <hr className={`animated ${inView ? 'zoomIn' : ''}`} />
+                      <div className={`${inView ? 'section-title' : ''}`}>
+                        <h1 className="font-weight-bold">TECHNOLOGIES WE USE</h1>
+                      </div>
                     </div>
                   )}
                 </InView>
-                <div
-                  className={`row ${
-                    this.props.screenWidth > 425 && this.props.screenWidth < 769
-                      ? ''
-                      : ' py-5'
-                  }`}
-                >
-                  <InView>
-                    {({ inView, ref, entry }) => (
-                      <div
-                        ref={ref}
-                        className={`col-md-4   ${
-                          this.props.screenWidth <= 768
-                            ? 'text-center'
-                            : 'text-left'
-                        }
-                        ${inView ? 'animated fadeInLeft' : ''}
-                        `}
-                      >
-                        <img
-                          className="py-3"
-                          src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg"
-                          alt=""
-                        />
-                        <h4 className="font-weight-bold">
-                          Wireless Wearable Sensors
-                        </h4>
-                        <p>
-                          We partner with leading impact and blast sensor
-                          companies to provide real-time brain response
-                          analytics. We help transform their data into
-                          meaningful brain health monitoring. Looking for a
-                          sensor? See our{' '}
-                          {this.props.screenWidth > 1024 ? '' : ''} recommended
-                          providers here.
-                        </p>
-                      </div>
-                    )}
-                  </InView>
-                  <InView>
-                    {({ inView, ref, entry }) => (
-                      <div
-                        ref={ref}
-                        className={`col-md-4   pt-5 ${
-                          this.props.screenWidth < 768 ? 'order-first' : ''
-                        }
-                      ${inView ? 'animated fadeIn' : ''}
-                    `}
-                      >
-                        <img
-                          className="mb-5 img-fluid terminology-img"
-                          src="/img/TechnologiesWeUseImg/cloud.svg"
-                          alt=""
-                        />
-                      </div>
-                    )}
-                  </InView>
-                  <InView>
-                    {({ inView, ref, entry }) => (
-                      <div
-                        ref={ref}
-                        className={`col-md-4   ${
-                          this.props.screenWidth <= 768
-                            ? 'text-center'
-                            : 'text-right'
-                        }
-                      ${inView ? 'animated fadeInRight' : ''}
-
-                        `}
-                      >
-                        <img
-                          className="py-3"
-                          src="/img/TechnologiesWeUseImg/laptop.svg"
-                          alt=""
-                        />
-                        <h4 className="font-weight-bold">
-                          Computational Brain Medicine
-                        </h4>
-                        <p>
-                          Computational Brain Medicine (CBM) is a transformative
-                          and emerging discipline that uses computers to
-                          understand, diagnose, develop treatment options, and
-                          monitor brain health. It leverages engineering,
-                          mathematics and computational science to develop
-                          quantitative approaches for brain health applications.
-                        </p>
-                      </div>
-                    )}
-                  </InView>
+              </div>
+                <div className={`row ${this.props.screenWidth > 425 && this.props.screenWidth < 769 ? '' : ' py-5'}`}>
+                  <div className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-left'}`}>
+                    <img className="py-3" src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg" alt="" />
+                    <h4 className="font-weight-bold">Wireless Wearable Sensors</h4>
+                    <p>
+                      We partner with leading impact and blast  sensor companies to provide real-time  brain response
+                              analytics. We help  transform their data into
+                      meaningful brain health monitoring.  Looking for a sensor? See our {this.props.screenWidth > 1024 ? '' : ''} recommended providers here.
+                            </p>
+                  </div>
+                  <div className={`col-md-4   pt-5 ${this.props.screenWidth < 768 ? 'order-first' : ''}`}>
+                    <img className="mb-5 img-fluid terminology-img" src="/img/TechnologiesWeUseImg/cloud.svg" alt="" />
+                  </div>
+                  <div className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-right'}`}>
+                    <img className="py-3" src="/img/TechnologiesWeUseImg/laptop.svg" alt="" />
+                    <h4 className="font-weight-bold">Computational Brain Medicine</h4>
+                    <p>
+                      Computational Brain Medicine (CBM) is a transformative and emerging discipline that  uses computers to
+                              understand, diagnose, develop treatment options, and monitor  brain health. It leverages
+                              engineering, mathematics and computational science to  develop quantitative approaches for brain
+                              health applications.
+                            </p>
+                  </div>
                 </div>
                 <div className="row text-center">
                   <div className="col-md-12 mb-3 col-lg-12">
@@ -221,10 +141,9 @@ class TechnologiesWeUse extends React.Component {
               </div>
             </footer>
           </div>
-        </div>
       </React.Fragment>
     );
-  };
+  }
 }
 
 export default TechnologiesWeUse;

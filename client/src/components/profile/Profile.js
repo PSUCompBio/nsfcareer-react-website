@@ -1,7 +1,7 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, MDBAlert, MDBInput, MDBCard, MDBCardBody,MDBIcon, MDBCardFooter } from 'mdbreact';
 import './Profile.css'
-import {uploadProfilePic, getUserDetails, getProfilePicLink, getInpFileLink, getModelLink} from '../../apis'
+import {uploadProfilePic, getUserDetails, getProfilePicLink, getInpFileLink, getModelLink, getSimulationFile} from '../../apis'
 
 class Profile extends React.Component {
   constructor() {
@@ -68,9 +68,26 @@ onClickHandler = () => {
               prevState.avatar_url = response.data.avatar_url;
               return {user: prevState}
            })
+           getSimulationFile(JSON.stringify({user_cognito_id : this.state.user.user_cognito_id}))
+           .then((response)=>{
+            if(response.data.message == "success"){
+              this.setState(prevState => {
+                prevState = JSON.parse(JSON.stringify(this.state.user));
+                prevState["is_selfie_simulation_file_uploaded"] = true ;
+                prevState.simulation_file_url = response.data.simulation_file_url;
+                return {user: prevState}
+             })
+            }
+            else{
+              alert("Failed to find the simulation link");  
+            }
+           })
+           .catch((err)=>{
+            alert("Failed to find the simulation link");  
+           })
           }
           else{
-            alert("failed to find the model link");
+            alert("Failed to find the model link");
           }
          })
          .catch((err)=>{
@@ -205,6 +222,12 @@ return <React.Fragment>
                             <span>Mesh File Generated </span>
                             {this.state.user.is_selfie_inp_uploaded? 
                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.inp_file_url} className="btn btn-info">Download FE Mesh</a> </React.Fragment> 
+                            :<MDBIcon icon="times-circle" className="red-text pr-3"/> 
+                            }
+                            <br />
+                            <span>Simulation File Generated </span>
+                            {this.state.user.is_selfie_simulation_file_uploaded? 
+                            <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.simulation_file_url} className="btn btn-secondary">Download Simulation File</a> </React.Fragment> 
                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> 
                             } 
                     </div>

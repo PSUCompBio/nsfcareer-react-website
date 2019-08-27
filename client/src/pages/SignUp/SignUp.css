@@ -28,9 +28,6 @@ input::placeholder {
   font-size: 16px !important;
   font-family: 'Segoe UI Regular' !important;
 }
-select {
-  color: #a0a0a0 !important;
-}
 .age {
   width: 84%;
 }
@@ -53,12 +50,6 @@ select {
 .sign-up {
   color: #0f81dc !important;
   text-decoration: underline !important;
-}
-.verification-btn-bg {
-  background: #aaaaaa !important;
-  border: none !important;
-  font-family: 'Myriad Pro Regular';
-  font-size: 14px !important;
 }
 .send-again-btn {
   background: #fff !important;
@@ -231,18 +222,18 @@ input:-webkit-autofill {
 .radio-custom:focus + .radio-custom-label {
   outline: 1px solid #ddd; /* focus style */
 }
-.datepicker-style {
-  float: left !important;
-}
-.react-datepicker__input-container {
-  display: block !important;
+.react-datepicker__input-container{
+  display: block!important;
 }
 .react-datepicker-wrapper {
   display: block !important;
   width: calc(100% - 27px);
 }
-.react-datepicker__header {
-  background: url('/img/BannerImg/navbg.png');
+.react-datepicker__header{
+  background: rgba(0, 89, 149, 1);
+}
+.react-datepicker__current-month {
+  display: none;
 }
 .react-datepicker__day-name {
   color: #fff;
