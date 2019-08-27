@@ -29,7 +29,10 @@ class Dashboard extends React.Component {
         <div className={`container dashboard`}>
           <PlayerDetails />
           <CumulativeEvents />
-          </div>
+          <HeadAccelerationEvents />
+          <HeadAccelerationEventsTwo />
+        </div>
+        <Footer />
       </React.Fragment>
     );
   }
