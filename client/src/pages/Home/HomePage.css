@@ -201,6 +201,7 @@ body {
   border-radius: 10px;
   margin-top: 1px;
   width: fill-available;
+  background-color: #fff;
 }
 
 .section-two h1,
@@ -230,6 +231,15 @@ body {
   display: inline-block;
   border-radius: 10px;
   margin: 0 5px 0 5px;
+  animation: drawLine 3s;
+}
+@keyframes drawLine{
+  0%{
+    width: 0;
+  }
+  100%{
+    width: 3%;
+  }
 }
 .shift-top {
   margin-top: -110px;
