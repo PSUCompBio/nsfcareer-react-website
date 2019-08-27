@@ -388,7 +388,7 @@ function login(user_name, password, user_type, cb) {
         onFailure: function (err) {
             // console.log(err);
             console.log(err);
-            cb(err.code, "");
+            cb(err.message, "");
         }
     });
 }
@@ -421,7 +421,7 @@ function loginFirstTime(user, cb) {
         },
         onFailure: function (err) {
 
-            cb(err.code, "");
+            cb(err.message, "");
         },
         newPasswordRequired: function (userAttributes, requiredAttributes) {
 
@@ -712,7 +712,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
             res.send({
                 message: "failure",
-                error: err.code
+                error: err.message
             });
         }
         else {
@@ -755,7 +755,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                                 res.send({
                                     message: "faiure",
-                                    error: groupAddErr.code
+                                    error: groupAddErr.message
                                 })
                             }
                             else {
@@ -795,7 +795,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                                 res.send({
                                     message: "faiure",
-                                    error: groupAddErr.code
+                                    error: groupAddErr.message
                                 })
                             }
                             else {
