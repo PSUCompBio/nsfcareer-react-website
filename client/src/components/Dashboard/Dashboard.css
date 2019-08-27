@@ -71,3 +71,35 @@
 .acc-brain-load{
   height: 100%;
 }
+
+.head-acc-evnt-chart{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+
+
+.head-acc-evnt-chart::after{
+  width: 567.2px;;
+  height: 45px;
+  content: attr(data-descr);
+  color:#fff;
+  background: #0f81dc;
+  top: -15%;
+  left: 0;
+  border-radius: 10px;
+  position: absolute;
+  z-index: -22;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.35;
+  padding: 3px 0 3px 0;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  white-space: pre;
+}
+.cumm{
+  margin-top: 6%;
+}
+
+.acc-evnt{
+  margin-top: 7%;
+  margin-bottom: 6%;
+}

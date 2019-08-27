@@ -132,7 +132,9 @@ class Login extends React.Component {
       <div className="container-fluid pl-0 pr-0 overflow-hidden">
       {this.state.isSignInSuccessed?
           <Redirect to="/"/>
-          :null
+          :
+          // temporary redirecting to the dashboard.
+          <Redirect to="/dashboard"/>
       }
         <div className="row login">
           <div className="col-md-6 col-lg-6 offset-md-3 mt-10">

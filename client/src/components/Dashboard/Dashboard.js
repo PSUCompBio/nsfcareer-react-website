@@ -1,6 +1,9 @@
 import React from 'react';
 import PlayerDetails from '../PlayerDetails/PlayerDetails';
-import HeadAcceleratedEvnt from '../HeadAccelerationEvents/HeadAccelerationEvnt';
+import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
+import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
+import HeadAccelerationEventsTwo from '../DashboardEventsChart/HeadAccelerationEvents';
+import Footer from '../Footer';
 import 'jquery';
 
 import { svgToInline } from '../../config/InlineSvgFromImg';
@@ -16,17 +19,18 @@ class Dashboard extends React.Component {
     };
   }
 
- 
   componentDidUpdate() {
     svgToInline();
   }
 
   render() {
     return (
-      <div className={`container dashboard`}>
-        <PlayerDetails />
-        <HeadAcceleratedEvnt/>
-      </div>
+      <React.Fragment>
+        <div className={`container dashboard`}>
+          <PlayerDetails />
+          <CumulativeEvents />
+          </div>
+      </React.Fragment>
     );
   }
 }
