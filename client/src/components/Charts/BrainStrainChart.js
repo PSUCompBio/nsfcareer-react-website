@@ -8,7 +8,7 @@ class BrainStrainChart extends React.Component {
 
   render() {
     return (
-      <div className="card  pt-3 pb-3 acc-card acc-card-before">
+      <div className="card  pt-3 pb-3 pl-2 pr-2 acc-card acc-card-before">
         <div className="row text-center">
           <div className="col-md-4 d-flex align-items-center justify-content-center">
             <img className="svg" src="/img/icon/accBrain.svg" alt="" />

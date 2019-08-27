@@ -23,14 +23,26 @@ class Dashboard extends React.Component {
     svgToInline();
   }
 
+  gotoTop = () => {
+    window.scrollTo({top:'0', behavior:'smooth'})
+  }
+
   render() {
     return (
       <React.Fragment>
-        <div className={`container dashboard`}>
+        <div id="dashboard" className={`container dashboard`}>
           <PlayerDetails />
           <CumulativeEvents />
           <HeadAccelerationEvents />
           <HeadAccelerationEventsTwo />
+          <div className="row text-center pt-5 pb-5 mt-5 mb-5">
+            <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
+              <div onClick={this.gotoTop} className=" d-flex align-items-center justify-content-center ">
+                <img src="/img/icon/arrowUp.svg" alt="" />
+              </div>
+              <p>Back to top</p>
+            </div>
+          </div>
         </div>
         <Footer />
       </React.Fragment>

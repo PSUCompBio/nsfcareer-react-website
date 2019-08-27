@@ -8,9 +8,9 @@ class HeadAccelerationEvents extends React.Component {
 
   render() {
     return (
-      <div  className="position-relative bg-white acc-evnt">
+      <div  className="position-relative  bg-white acc-evnt">
       <div  data-descr={'Head Acceleration Events      07/30/2019        13  :  15  :  26'} className="position-relative head-acc-evnt-chart pl-2 pr-2">
-        <div className="row    text-center">
+        <div className="row p-4   text-center">
           <div className="col-md-6 d-flex align-items-center justify-content-center">
             <img className={`${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" />
           </div>
