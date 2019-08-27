@@ -574,6 +574,7 @@ nav {
 
 .research-card {
   margin-bottom: 1em;
+  transition: transform 200ms;
 }
 .research-card:hover {
   cursor: pointer;
