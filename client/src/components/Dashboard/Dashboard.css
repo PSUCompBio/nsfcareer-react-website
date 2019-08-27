@@ -1,0 +1,130 @@
+.player-details {
+  margin-top: 10%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+.player-name p {
+  font-size: 22px;
+  line-height: 1.68;
+}
+.player-name p span {
+  font-weight: 600;
+  color: #0f81dc;
+}
+.player-name p:nth-child(2) span {
+  font-weight: 600;
+  color: #0f81dc;
+  padding-left: 7%;
+}
+.dashboard {
+  font-family: 'Segoe UI Regular';
+}
+.control {
+  padding-left: 15%;
+}
+.control span:nth-child(2) {
+  padding: 0 5px 0 5px;
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1.36;
+  text-align: right;
+  color: #686868;
+}
+.acc-brain-img{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.acc-brain-img img {
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ margin-left: -50%;
+ margin-top: -50%;
+}
+
+.acc-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.acc-card div div:nth-child(2){
+  font-size: 16px;
+  line-height: 1.31;
+  color: #666666;
+}
+.acc-card-before::before{
+  width: 240px;
+  height: 45px;
+  content: 'Cumulative Events';
+  color:#fff;
+  background: #0f81dc;
+  top: -12%;
+  left: 0;
+  border-radius: 10px;
+  position: absolute;
+  z-index: -2;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.35;
+  padding: 3px 0 3px 0;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.acc-brain-load{
+  height: 100%;
+}
+
+.head-acc-evnt-chart{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+
+
+.head-acc-evnt-chart::after{
+  width: 567.2px;;
+  height: 45px;
+  content: attr(data-descr);
+  color:#fff;
+  background: #0f81dc;
+  top: -13%;
+  left: 0;
+  border-radius: 10px;
+  position: absolute;
+  z-index: -22;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.35;
+  padding: 3px 0 3px 0;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  white-space: pre;
+}
+.cumm{
+  margin-top: 6%;
+}
+
+.acc-evnt{
+  margin-top: 7%;
+  margin-bottom: 6%;
+}
+.goto-top >div{
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: #0f81dc;
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: 3px 0 10px  -1px rgba(0,0,0,0.14);
+  cursor: pointer;
+}
+.goto-top p{
+  font-size: 14px;
+  color: #0f81dc;
+  line-height: 10px;
+  position: absolute;
+  top: 30px;
+}
+.head-acc-evnt-chart >div>div:nth-child(2) p{
+  /* display: inline-block; */
+  font-size: 14px;
+  line-height: 1.36;
+  text-align: center;
+  color: #686868;
+  padding-left: 25%;
+}

@@ -58,7 +58,7 @@ class Nav extends React.Component {
                 </Link>
                 <div
                   className={
-                    this.props.location.pathname === '/Home'
+                    this.props.location.pathname === '/Home' || this.props.location.pathname==='/'
                       ? 'active-link'
                       : ''
                   }
