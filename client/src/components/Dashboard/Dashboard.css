@@ -83,7 +83,7 @@
   content: attr(data-descr);
   color:#fff;
   background: #0f81dc;
-  top: -15%;
+  top: -13%;
   left: 0;
   border-radius: 10px;
   position: absolute;
@@ -119,4 +119,12 @@
   line-height: 10px;
   position: absolute;
   top: 30px;
+}
+.head-acc-evnt-chart >div>div:nth-child(2) p{
+  /* display: inline-block; */
+  font-size: 14px;
+  line-height: 1.36;
+  text-align: center;
+  color: #686868;
+  padding-left: 25%;
 }

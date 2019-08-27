@@ -10,12 +10,13 @@ class HeadAccelerationEvents extends React.Component {
     return (
       <div  className="position-relative  bg-white acc-evnt">
       <div  data-descr={'Head Acceleration Events      07/30/2019        13  :  15  :  26'} className="position-relative head-acc-evnt-chart pl-2 pr-2">
-        <div className="row p-4   text-center">
+        <div className="row pl-4 pr-4 pb-4   text-center">
           <div className="col-md-6 d-flex align-items-center justify-content-center">
             <img className={`${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" />
           </div>
           <div className="col-md-6 text-right">
-            <img className={`${'svg'}`} src="/img/icon/accBrainChart.svg" alt="" />
+              <img className={`${'svg'}`} src="/img/icon/accBrainChart.svg" alt="" />
+              <p>Time</p>
           </div>
         </div>
         </div>
