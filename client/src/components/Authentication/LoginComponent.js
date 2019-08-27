@@ -4,10 +4,10 @@ import { BrowserRouter as Router, Link, Redirect, withRouter } from "react-route
 import Index from "../../index"
 import Footer from '../Footer'
 
-import { formDataToJson } from '../../utilities/utility'
+import { formDataToJson } from '../../utilities/utility';
 import { logIn, logInFirstTime } from '../../apis';
 
-import "../../mixed_style.css";
+import '../../mixed_style.css';
 
 class Login extends React.Component {
   constructor(props) {
@@ -26,10 +26,9 @@ class Login extends React.Component {
 
 
   isAdminType = (userType) => {
-    if (userType === "Admin") {
+    if (userType === 'Admin') {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -37,11 +36,10 @@ class Login extends React.Component {
   handleSubmit(e) {
       console.log("SIGNIN IN CLICKED");
     e.preventDefault();
-    e.persist()
-    console.log("LOGIN API CALLED");
+    e.persist();
+    console.log('LOGIN API CALLED');
     const formData = new FormData(e.target);
     this.setState({
-
       isLoginError: false,
       isLoading: true
     })
@@ -126,7 +124,6 @@ class Login extends React.Component {
         console.log("error : ", err);
 
       })
-
     }
   }
 
@@ -150,13 +147,17 @@ class Login extends React.Component {
                  <form onSubmit={this.handleSubmit} ref="signInForm">
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
-                    <span className="input-group-text" id="basic-addon1"><img src="img/icon/user.svg" alt="" /></span>
+                    <span className="input-group-text" id="basic-addon1">
+                      <img src="img/icon/user.svg" alt="" />
+                    </span>
                   </div>
                   <input type="text" className="form-control" name="user_name" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" />
                 </div>
                 <div className="input-group mb-5">
                   <div className="input-group-prepend">
-                    <span className="input-group-text" id="basic-addon1"><img src="img/icon/lock.svg" alt="" /></span>
+                    <span className="input-group-text" id="basic-addon1">
+                      <img src="img/icon/lock.svg" alt="" />
+                    </span>
                   </div>
                   <input type="password" className="form-control" name="password" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1" />
                 </div>
@@ -173,7 +174,7 @@ class Login extends React.Component {
                 }
 
                 <div>
-                  <a className="float-right forgot-pswd" >Forgot password?</a>
+                  <a className="float-right forgot-pswd">Forgot password?</a>
                 </div>
                 <button type="submit" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
                 </form>
@@ -192,15 +193,21 @@ class Login extends React.Component {
                     : null
                     }
                 <div className="text-center">
-                  <p className="mt-4 sign-up-link">Don't have an account? <Link className="sign-up" to='SignUp' > Sign Up </Link></p>
+                  <p className="mt-4 sign-up-link">
+                    Don't have an account?{' '}
+                    <Link className="sign-up" to="SignUp">
+                      {' '}
+                      Sign Up{' '}
+                    </Link>
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <Footer />
-      </div >
-    )
+      </div>
+    );
   }
 }
 

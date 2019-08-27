@@ -17,10 +17,10 @@ function AboutTheProduct(props) {
             <InView>
               {({ inView, ref }) => (
                 <div ref={ref}>
-                  <div className={`${inView ? 'section-title' : ''}`}>
+                  <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
                     <h1 className="font-weight-bold">ABOUT THE PROJECT</h1>
                   </div>
-                  <p>
+                  <p className={`${inView ? ' animated fadeInUp' : ''}`}>
                     Brain injuries are a significant health concern for civilian
                     and military populations. This Faculty Early Career
                     Development Program (CAREER) project will contribute to the
@@ -47,41 +47,53 @@ function AboutTheProduct(props) {
               </div>
             </div>
             <div className="row text-center shift-top">
-              <div className="col-md-4 animated">
-                <img
-                  className={`svg ${animateOnDesktop}`}
-                  src="/img/AboutTheProductImg/Cloud_white.svg"
-                  alt=""
-                />
-                <h4>
-                  SENSOR ENABLED <br />
-                  CLOUD-BASED BRAIN <br />
-                  MODELING
+            <InView>
+                {({ inView, ref }) => (
+                  <div ref={ref} className={`col-md-4 animated ${inView?'animated slideInLeft':''}`}>
+                    <img
+                      className={`svg ${animateOnDesktop}`}
+                      src="/img/AboutTheProductImg/Cloud_white.svg"
+                      alt=""
+                    />
+                    <h4>
+                      SENSOR ENABLED <br />
+                      CLOUD-BASED BRAIN <br />
+                      MODELING
                 </h4>
-              </div>
-              <div className="col-md-4 animated">
-                <img
-                  className={`svg ${animateOnDesktop}`}
-                  src="/img/AboutTheProductImg/Moniter_white.svg"
-                  alt=""
-                />
-                <h4>
-                  MONITOR AND TRACK BRAIN <br />
-                  RESPONSE OVER TIME
+                  </div>
+                )}
+              </InView>
+              <InView>
+                {({ inView, ref }) => (
+                  <div ref={ref} className={`col-md-4 animated ${inView ? 'animated zoomIn' : ''}`}>
+                    <img
+                      className={`svg ${animateOnDesktop}`}
+                      src="/img/AboutTheProductImg/Moniter_white.svg"
+                      alt=""
+                    />
+                    <h4>
+                      MONITOR AND TRACK BRAIN <br />
+                      RESPONSE OVER TIME
                 </h4>
-              </div>
-              <div className="col-md-4 animated">
-                <img
-                  className={`svg ${animateOnDesktop}`}
-                  src="/img/AboutTheProductImg/Analysis_White.svg"
-                  alt=""
-                />
-                <h4>
-                  TURN YOUR SENSOR DATA <br />
-                  INTO MEANINGFUL BRAIN <br />
-                  INJURY ANALYSIS
+                  </div>
+                )}
+              </InView>
+              <InView>
+                {({ inView, ref }) => (
+                  <div ref={ref} className={`col-md-4 animated ${inView ? 'animated slideInRight' : ''}`}>
+                    <img
+                      className={`svg ${animateOnDesktop}`}
+                      src="/img/AboutTheProductImg/Analysis_White.svg"
+                      alt=""
+                    />
+                    <h4>
+                      TURN YOUR SENSOR DATA <br />
+                      INTO MEANINGFUL BRAIN <br />
+                      INJURY ANALYSIS
                 </h4>
-              </div>
+                  </div>
+                )}
+                </InView>
             </div>
           </div>
         </div>

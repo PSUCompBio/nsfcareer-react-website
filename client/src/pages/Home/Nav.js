@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import './AnimateMobileMenu';
+import '../../config/AnimateMobileMenu';
 
 class Nav extends React.Component {
   constructor(props) {
@@ -62,7 +62,7 @@ class Nav extends React.Component {
                 </Link>
                 <div
                   className={
-                    this.props.location.pathname === '/Home'
+                    this.props.location.pathname === '/Home' || this.props.location.pathname==='/'
                       ? 'active-link'
                       : ''
                   }

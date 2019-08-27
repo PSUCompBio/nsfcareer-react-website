@@ -1,15 +1,17 @@
 import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
 import { Route, Redirect, withRouter } from 'react-router-dom';
+import Async from 'react-promise';
+
+import { svgToInline } from '../../config/InlineSvgFromImg';
 
 import Nav from './Nav';
 import HomePage from './HomePage';
 import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile'
-
+import Dashboard from '../../components/Dashboard/Dashboard';
 import { isAuthenticated } from '../../apis';
-import Async from 'react-promise';
 
 class Routing extends React.Component {
 
@@ -43,6 +45,9 @@ class Routing extends React.Component {
     this.setState({ windowWidth: window.innerWidth })
   }
 
+  componentDidUpdate() {
+    svgToInline();
+  }
 
   render() {
 
@@ -59,6 +64,7 @@ class Routing extends React.Component {
         <Route exact path='/Login' component={Login}/>
         <Route exact path='/Profile' component={Profile} />
         <Route exact path='/SignUp' component={SignUp} />
+        <Route exact path='/dashboard' component={Dashboard} />
       </React.Fragment>
     )
   }

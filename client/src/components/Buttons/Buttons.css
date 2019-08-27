@@ -1,0 +1,27 @@
+.daily-btn,
+.monthly-btn {
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: solid 1px #0f81dc;
+  color: #0f81dc;
+  background-color: #fff;
+  margin-right: 25px;
+}
+
+.weekly-btn {
+  background-color: #0f81dc;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: solid 1px #0f81dc;
+  margin-right: 25px;
+}
+
+.export-report-btn{
+  background-color: #0f81dc;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 10px;
+  border: solid 1px #0f81dc;
+  margin-left: 10px;
+}
