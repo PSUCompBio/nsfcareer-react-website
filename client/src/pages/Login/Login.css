@@ -60,16 +60,26 @@ input::placeholder {
 }
 .brain-icon {
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   background: #0f81dc;
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-left: 5px solid #f1f1f1;
+  border-bottom:5px solid #f1f1f1;
+  border-top: 5px solid #fff;
+  border-right: 5px solid #fff;
 }
 .brain-icon img {
   width: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -25%;
+  margin-top: -25%;
+  transform: rotate(-45deg);
 }
 .mt-10 {
   margin-top: 5%;

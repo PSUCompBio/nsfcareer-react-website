@@ -20,15 +20,13 @@ class ForgotPassword extends React.Component {
           <div className="col-md-5  ml-md-auto mr-md-auto mt-10">
             <div className="card card-border">
               <div className="card-body text-center">
-                <div className="text-center brain-icon-container">
-                  <div className="text-center brain-icon">
-                    <img src="img/icon/brain.png" alt="" />
-                  </div>
+                <div className="text-center brain-icon">
+                  <img src="img/icon/brain.png" alt="" />
                 </div>
                 <p className="enter-email">
-                  
-                  Please enter your email address.<br/>
-                   Reset link will be sent to you.
+                  Please enter your email address.
+                  <br />
+                  Reset link will be sent to you.
                 </p>
                 <form onSubmit={this.handleSubmit} ref="signInForm">
                   <div className="input-group mb-5">
