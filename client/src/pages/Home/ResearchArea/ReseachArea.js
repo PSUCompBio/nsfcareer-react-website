@@ -23,10 +23,7 @@ function ResearchArea(props) {
             <InView>
               {({ inView, ref }) => (
                 <div ref={ref} className={`col-md-6 col-lg-6 ${inView ? 'animated slideInLeft' : ''}`}>
-                  <a
-                    className="card mx-4 research-card rounded-img"
-                    href="/Military"
-                  >
+                  <div className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2491.svg"
@@ -34,19 +31,20 @@ function ResearchArea(props) {
                     />
                     <div className="card-body text-center">
                       <h5>For Soldiers</h5>
-                      <p className="card-text px-4 mt-3 color">
+                      <p className="card-text px-3 mt-3 color">
                         We use sensor-enabled, cloud-based platform for
-                        individualized brain modeling of Soldiers.
-                  </p>
+                        individualized brain modeling of
+                        Soldiers. <a href="/Military">Read More</a>
+                      </p>
                     </div>
-                  </a>
+                  </div>
                 </div>
               )}
             </InView>
             <InView>
               {({ inView, ref }) => (
                 <div ref={ref} className={`col-md-6 col-lg-6 ${inView ? 'animated slideInRight' : ''}`}>
-                  <a className="card mx-4 research-card rounded-img">
+                  <div className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2492.svg"
@@ -54,12 +52,13 @@ function ResearchArea(props) {
                     />
                     <div className="card-body text-center">
                       <h5>For Athletes</h5>
-                      <p className="card-text px-4 mt-3 color">
+                      <p className="card-text mt-3 color">
                         We utilize data from the customized computer models to
-                        approximate an Athlete&apos;s brain’s response to injuries.
-                  </p>
+                        approximate an Athlete&apos;s brain’s response to
+                        injuries. <a href="#">Read More</a>
+                      </p>
                     </div>
-                  </a>
+                  </div>
                 </div>
               )}
             </InView>

@@ -1,22 +1,18 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import '../../config/AnimateMobileMenu';
 
 class Nav extends React.Component {
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
-      onScrollChangeBackground: 'navbar-bg',
       isOpen: false
     };
     this.handleClick = this.handleClick.bind(this);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   handleClick() {
     const body = document.getElementsByTagName('body')[0];
     const menu = document.getElementById('cbp-spmenu-s2');
-    console.log(this.state);
     if (!this.state.isOpen) {
       body.classList.add('cbp-spmenu-push-toleft');
       menu.classList.add('cbp-spmenu-open');
