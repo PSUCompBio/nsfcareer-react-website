@@ -52,7 +52,7 @@
   color: #666666;
 }
 .acc-card-before::before{
-  width: 240px;
+  width: auto;
   height: 45px;
   content: 'Cumulative Events';
   color:#fff;
@@ -67,6 +67,7 @@
   line-height: 1.35;
   padding: 3px 0 3px 0;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  padding: 0 10px 0 10px;
 }
 .acc-brain-load{
   height: 100%;
@@ -78,7 +79,7 @@
 
 
 .head-acc-evnt-chart::after{
-  width: 567.2px;;
+  width: auto;
   height: 45px;
   content: attr(data-descr);
   color:#fff;
@@ -94,6 +95,7 @@
   padding: 3px 0 3px 0;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   white-space: pre;
+  padding: 0 10px 0 10px;
 }
 .cumm{
   margin-top: 6%;
@@ -127,4 +129,30 @@
   text-align: center;
   color: #686868;
   padding-left: 25%;
+}
+@media screen and (max-width:599px){
+  .head-acc-evnt-chart::after{
+    white-space: pre-wrap;
+    top: -12%;
+    height: 70px;
+  }
+  .acc-evnt{
+    margin-top: 25%;
+  }
+  .acc-card-before::before{
+    top: -6%;
+  }
+ .daily-btn, .weekly-btn, .monthly-btn{
+    margin-right: 2px;
+  }
+  .export-report-btn{
+    margin-top: 2px;
+  }
+  .width-100{
+    width: 100%!important;
+  }
+  .dashboard{
+    overflow-x: hidden;
+  }
+  
 }

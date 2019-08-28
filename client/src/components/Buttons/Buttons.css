@@ -17,11 +17,16 @@
   margin-right: 25px;
 }
 
-.export-report-btn{
+.export-report-btn {
   background-color: #0f81dc;
   color: #fff;
   padding: 8px 20px;
   border-radius: 10px;
   border: solid 1px #0f81dc;
   margin-left: 10px;
+}
+
+button:focus{
+  outline: none!important;
+  box-shadow: 0 0 5px -1px rgba(24, 87, 143,0.12)
 }
