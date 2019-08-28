@@ -130,6 +130,52 @@
   color: #686868;
   padding-left: 25%;
 }
+.dark-mode-container{
+  width: 90px;
+  height: 70px;
+  box-shadow: 0 0 10px -1px rgba(0,0,0,0.14);
+  position: fixed;
+  top: 30%;
+  right:-70px;
+  border-left: 5px solid #0f81dc;
+  border-radius: 10px;
+  transition: right 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+  cursor: pointer;
+}
+.dark-mode-container:hover{
+  right: -5px;
+}
+.dark-mode-container img{
+  width: 50%;
+}
+.dark-mode-chooser{
+  width: 85px;
+  height: 120px;
+  position: fixed;
+  top: 42%;
+  right: 0;
+  box-shadow: 0 0 10px -1px rgba(0,0,0,0.14);
+  border-radius: 10px;
+  background: #0f81dc;
+}
+.dark-mode-chooser div{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px -1px rgba(0,0,0,0.14);
+}
+.dark-mode-chooser div:nth-child(1){
+  margin-top: 10%;
+  margin-left: 30%;
+  background: #fff;
+}
+
+.dark-mode-chooser div:nth-child(2){
+  margin-top: 20%;
+  margin-left: 30%;
+  background: #232838;
+}
+
 @media screen and (max-width:599px){
   .head-acc-evnt-chart::after{
     white-space: pre-wrap;
