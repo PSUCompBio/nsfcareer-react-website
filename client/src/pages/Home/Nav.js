@@ -150,36 +150,36 @@ class Nav extends React.Component {
                 />
                 </li>
                 <li className="nav-item make-active active">
-                <Link className="nav-link" to={'/About'}>
+                <Link className="nav-link" to={'/Sports'}>
                   Sports <span className="sr-only">(current)</span>
                 </Link>
                 <div
                   className={
-                    this.props.location.pathname === '/sport'
+                    this.props.location.pathname === '/Sports'
                       ? 'active-link'
                       : ''
                   }
                 />
                 </li>
                 <li className="nav-item make-active active">
-                <Link className="nav-link" to={'/About'}>
+                <Link className="nav-link" to={'/Dashboard'}>
                   Dashboard <span className="sr-only">(current)</span>
                 </Link>
                 <div
                   className={
-                    this.props.location.pathname === '/sport'
+                    this.props.location.pathname === '/Dashboard'
                       ? 'active-link'
                       : ''
                   }
                 />
                 </li>
                 <li className="nav-item make-active active">
-                <Link className="nav-link" to={'/About'}>
+                <Link className="nav-link" to={'/Profile'}>
                   Profile <span className="sr-only">(current)</span>
                 </Link>
                 <div
                   className={
-                    this.props.location.pathname === '/sport'
+                    this.props.location.pathname === '/Profile'
                       ? 'active-link'
                       : ''
                   }

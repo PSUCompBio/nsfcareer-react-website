@@ -1,5 +1,6 @@
 .daily-btn,
-.monthly-btn {
+.monthly-btn,
+.download-selfie {
   padding: 3px 10px;
   border-radius: 5px;
   border: solid 1px #0f81dc;
@@ -26,7 +27,7 @@
   margin-left: 10px;
 }
 
-button:focus{
-  outline: none!important;
-  box-shadow: 0 0 5px -1px rgba(24, 87, 143,0.12)
+button:focus {
+  outline: none !important;
+  box-shadow: 0 0 5px -1px rgba(24, 87, 143, 0.12);
 }

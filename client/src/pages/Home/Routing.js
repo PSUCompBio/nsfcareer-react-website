@@ -11,6 +11,7 @@ import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile'
 import Dashboard from '../../components/Dashboard/Dashboard';
+import ForgotPassword from '../../components/ForgotPassword';
 import { isAuthenticated } from '../../apis';
 
 class Routing extends React.Component {
@@ -69,6 +70,7 @@ class Routing extends React.Component {
         <Route exact path='/Profile' component={Profile} />
         <Route exact path='/SignUp' component={SignUp} />
         <Route exact path='/dashboard' component={Dashboard} />
+        <Route exact path='/Forgot-Password' component={ForgotPassword} />
       </React.Fragment>
     )
   }

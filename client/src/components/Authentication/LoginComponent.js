@@ -176,7 +176,7 @@ class Login extends React.Component {
                 }
 
                 <div>
-                  <a className="float-right forgot-pswd">Forgot password?</a>
+                  <Link to="/Forgot-Password" className="float-right forgot-pswd">Forgot password?</Link>
                 </div>
                 <button type="submit" className="btn btn-primary log-in-btn btn-block mt-5">LOG IN</button>
                 </form>

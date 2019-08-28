@@ -445,6 +445,10 @@ nav {
   cursor: pointer;
 }
 
+.enter-email{
+  margin: 20% 0 10% 0!important;
+}
+
 
 
 /* ======making responsive to navbar========= */
