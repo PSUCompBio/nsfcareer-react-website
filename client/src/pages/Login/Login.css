@@ -60,14 +60,13 @@ input::placeholder {
 }
 .brain-icon {
   border-radius: 50%;
-  width: 90px;
-  height: 90px;
+  width: 60px;
+  height: 60px;
   background: #0f81dc;
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 50%;
-  margin-left: -45px;
-  margin-top: -45px;
+  transform: translate(-50%, -50%);
 }
 .brain-icon img {
   width: 50%;
@@ -110,50 +109,19 @@ input:-webkit-autofill {
   .brain-icon-container {
     margin-top: -11%;
   }
-  .brain-icon {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    background: #0f81dc;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -25px;
-    margin-top: -25px;
-  }
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
   .brain-icon-container {
     margin-top: -11%;
   }
-  .brain-icon {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    background: #0f81dc;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -25px;
-    margin-top: -25px;
-  }
+
 }
 @media (min-width: 768px) and (max-width: 991px) {
   .brain-icon-container {
     margin-top: -11%;
   }
-  .brain-icon {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    background: #0f81dc;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -25px;
-    margin-top: -25px;
-  }
+
   .login {
     padding-top: 0;
   }
