@@ -36,7 +36,9 @@ class Login extends React.Component {
   handleSubmit(e) {
       console.log("SIGNIN IN CLICKED");
     e.preventDefault();
-    e.persist();
+    e.persist(); 
+    //temporary setting authentication to change nav bar tabs
+    this.props.isAuthenticated(true);
     console.log('LOGIN API CALLED');
     const formData = new FormData(e.target);
     this.setState({

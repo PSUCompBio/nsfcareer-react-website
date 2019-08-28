@@ -20,7 +20,8 @@ class Routing extends React.Component {
     this.state = {
       currentPage: 1,
       windowWidth: 0,
-      gotoPageNo: 0
+      gotoPageNo: 0,
+      isLoggedIn:false
     };
   }
 
@@ -49,8 +50,11 @@ class Routing extends React.Component {
     svgToInline();
   }
 
-  render() {
+  settingAuthentication = (value) => {
+    this.setState({ isLoggedIn: value })
+  }
 
+  render() {
     return (
       <React.Fragment>
         {(this.props.location.pathname === '/Home' || this.props.location.pathname === '/') ?
@@ -58,10 +62,10 @@ class Routing extends React.Component {
           :
           ''
         }
-        <Nav screenWidth={this.state.windowWidth} currentPage={this.state.currentPage} />
+        <Nav screenWidth={this.state.windowWidth} isAuthenticated={this.state.isLoggedIn} currentPage={this.state.currentPage} />
         <Route exact path='/' render={(props) => <HomePage {...props} screenWidth={this.state.windowWidth} gotoPage={this.state.gotoPageNo} currentPage={this.state.currentPage} onPageChange={this.onPageChange} />} />
         <Route exact path='/Home' render={(props) => <HomePage {...props} screenWidth={this.state.windowWidth} gotoPage={this.state.gotoPageNo} currentPage={this.state.currentPage} onPageChange={this.onPageChange} />} />
-        <Route exact path='/Login' component={Login}/>
+        <Route exact path='/Login' render={(props) => <Login {...props} isAuthenticated={(value) => this.settingAuthentication(value)}/>}/>
         <Route exact path='/Profile' component={Profile} />
         <Route exact path='/SignUp' component={SignUp} />
         <Route exact path='/dashboard' component={Dashboard} />
