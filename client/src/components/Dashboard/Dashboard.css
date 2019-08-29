@@ -208,6 +208,8 @@
   right: 0;
   z-index: 2;
   box-shadow: -3px 0 10px rgba(0,0,0,0.12);
+  border-radius: 10px;
+
 }
 .dashboard-mock img{
   border-radius: 10px;
@@ -239,4 +241,18 @@
   .dashboard {
     overflow-x: hidden;
   }
+  .dashboard-mock{
+    top: 50%;
+    left: 50%;
+    background-color: #0f81dc;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+  
+  .dashboard-mock::before{
+    content: 'Please tap to close';
+    color: #fff;
+    font-size: 12px;
+  }
+
 }

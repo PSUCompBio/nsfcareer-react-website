@@ -36,6 +36,14 @@ class Login extends React.Component {
     }
   };
 
+  componentWillUpdate() {
+
+  }
+  hideDashboardView = () => {
+    document.getElementById('dashboard-view').style.display = 'none';  
+    document.getElementById('make-full-width').style.display = 'none';
+  }
+
   handleSubmit(e) {
     console.log('SIGNIN IN CLICKED');
     e.preventDefault();
@@ -127,7 +135,7 @@ class Login extends React.Component {
 
   render() {
     return (
-      <div className="container-fluid pl-0 pr-0 overflow-hidden">
+      <div onClick={this.hideDashboardView} className="container-fluid pl-0 pr-0 overflow-hidden">
         {this.state.isSignInSuccessed ? <Redirect to="/Profile" /> : null}
         <div className="row login">
           <div className="col-md-6 ml-md-auto mr-md-auto">
@@ -227,9 +235,9 @@ class Login extends React.Component {
             </div>
             
           </div>
-          <div className="col-md-2">
+          <div id="make-full-width" className="col-md-2">
           </div>
-          <div className="dashboard-mock">
+          <div id="dashboard-view" className="dashboard-mock">
           <img className="img-fluid" src="/img/dashboardMock.png" alt=""/>
           </div>
         </div>
