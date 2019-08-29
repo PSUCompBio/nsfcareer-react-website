@@ -249,6 +249,7 @@
     transform: translate(-50%, -50%);
   }
   
+  
   .dashboard-mock::before{
     content: 'Please tap to close';
     color: #fff;

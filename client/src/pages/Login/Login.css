@@ -115,6 +115,7 @@ input:-webkit-autofill {
   -webkit-animation-fill-mode: both;
 }
 
+
 @media (max-width: 575px) {
   .brain-icon-container {
     margin-top: -11%;
