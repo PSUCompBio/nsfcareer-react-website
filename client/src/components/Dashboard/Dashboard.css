@@ -151,9 +151,9 @@
 .dark-mode-chooser{
   width: 85px;
   height: 120px;
-  position: fixed;
+  /* position: fixed;
   top: 42%;
-  right: 0;
+  right: 0; */
   box-shadow: 0 0 10px -1px rgba(0,0,0,0.14);
   border-radius: 10px;
   background: #0f81dc;

@@ -20,12 +20,13 @@ class DarkMode extends React.Component {
       <React.Fragment>
         <div className="dark-mode-container text-center d-flex justify-content-center align-items-center">
           <img onClick={this.toggleVisiblity} className="" src="/img/icon/darkModeSetting.svg" alt="" />
-        </div>
-        <div style={this.state.visibility} className="dark-mode-chooser text-center  justify-content-center align-items-center">
+          <div style={this.state.visibility} className="dark-mode-chooser text-center  justify-content-center align-items-center">
           <div></div>
           <div></div>
 
         </div>
+        </div>
+        
       </React.Fragment>
     );
   }
