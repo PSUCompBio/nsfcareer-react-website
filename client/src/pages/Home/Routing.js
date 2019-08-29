@@ -69,7 +69,7 @@ class Routing extends React.Component {
         <Route exact path='/Login' render={(props) => <Login {...props} isAuthenticated={(value) => this.settingAuthentication(value)}/>}/>
         <Route exact path='/Profile' component={Profile} />
         <Route exact path='/SignUp' component={SignUp} />
-        <Route exact path='/dashboard' component={Dashboard} />
+        <Route exact path='/dashboard' component={Login} />
         <Route exact path='/Forgot-Password' component={ForgotPassword} />
       </React.Fragment>
     )
