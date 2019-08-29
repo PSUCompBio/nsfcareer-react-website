@@ -201,6 +201,17 @@
   right: -12px;
   transform: translate(-50%, -50%);
 }
+.dashboard-mock{
+  width: calc(43vh + 4px);
+  position: absolute;
+  top: 14.5vh;
+  right: 0;
+  z-index: 2;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.12);
+}
+.dashboard-mock img{
+  border-radius: 10px;
+}
 
 @media screen and (max-width: 599px) {
   .head-acc-evnt-chart::after {

@@ -130,7 +130,7 @@ class Login extends React.Component {
       <div className="container-fluid pl-0 pr-0 overflow-hidden">
         {this.state.isSignInSuccessed ? <Redirect to="/Profile" /> : null}
         <div className="row login">
-          <div className="col-md-5 ml-md-auto mr-md-auto mt-10">
+          <div className="col-md-6 ml-md-auto mr-md-auto">
             <div className="card card-border">
               <div className="card-body">
                 <div className="text-center brain-icon">
@@ -225,6 +225,12 @@ class Login extends React.Component {
                 </div>
               </div>
             </div>
+            
+          </div>
+          <div className="col-md-2">
+          </div>
+          <div className="dashboard-mock">
+          <img className="img-fluid" src="/img/dashboardMock.png" alt=""/>
           </div>
         </div>
         <Footer />

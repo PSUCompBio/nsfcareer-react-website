@@ -91,12 +91,12 @@ class Nav extends React.Component {
               </li>
               {this.props.location.pathname !== '/SignUp' ? (
                  <li className="nav-item make-active active">
-                 <Link className="nav-link" to={'/Dashboard'}>
+                 <Link className="nav-link" to={'/Login'}>
                    Dashboard <span className="sr-only">(current)</span>
                  </Link>
                  <div
                    className={
-                     this.props.location.pathname === '/Dashboard'
+                     this.props.location.pathname === '/Login'
                        ? 'active-link'
                        : ''
                    }
@@ -184,12 +184,12 @@ class Nav extends React.Component {
               </li>
               {this.props.location.pathname !== '/SignUp' ? (
                 <li className="nav-item make-active active">
-                <Link className="nav-link" to={'/Dashboard'}>
+                <Link className="nav-link" to={'/Login'}>
                   Dashboard <span className="sr-only">(current)</span>
                 </Link>
                 <div
                   className={
-                    this.props.location.pathname === '/Dashboard'
+                    this.props.location.pathname === '/Login'
                       ? 'active-link'
                       : ''
                   }
@@ -245,12 +245,12 @@ class Nav extends React.Component {
           />
           {this.props.location.pathname !== '/SignUp' ? (
             <React.Fragment>
-                <Link className="nav-link" to={'/Dashboard'}>
+                <Link className="nav-link" to={'/Login'}>
                   Dashboard <span className="sr-only">(current)</span>
                 </Link>
                 <div
                   className={
-                    this.props.location.pathname === '/Dashboard'
+                    this.props.location.pathname === '/Login'
                       ? 'active-link'
                       : ''
                   }

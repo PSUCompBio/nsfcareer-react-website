@@ -33,7 +33,7 @@ input::placeholder {
 }
 .login {
   height: 63vh;
-  padding-top: 5%;
+  padding-top: 10vh;
   margin-top: 10vh;
 }
 .log-in-btn {
@@ -132,20 +132,13 @@ input:-webkit-autofill {
     margin-top: -11%;
   }
 
-  .login {
-    padding-top: 0;
-  }
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
-  .login {
-    padding-top: 1%;
-  }
+ 
 }
 @media (min-width: 1200px) and (max-width: 1440px) {
-  .login {
-    padding-top: 7%;
-  }
+ 
   .brain-icon-container {
     margin-top: -4%;
   }
@@ -154,9 +147,7 @@ input:-webkit-autofill {
   }
 }
 @media (min-width: 2560px) {
-  .login {
-    padding-top: 9%;
-  }
+ 
   .brain-icon-container {
     margin-top: -4%;
   }
