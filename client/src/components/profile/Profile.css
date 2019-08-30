@@ -6,3 +6,72 @@ display: block;
 line-height: 1.428571429;
 color: #999;
 }
+.profile{
+  width: 148px;
+  height: 148px;
+  object-fit: contain;
+  border: solid 1px #0f81dc;
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%) ;
+}
+.profile-container{
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 10px;
+}
+.profile-mt{
+  margin-top: 200px;
+}
+
+.profile-container div:nth-child(2) p:nth-child(1){
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.34;
+  color: #686868;
+  margin-bottom: 10px
+}
+.profile-container div:nth-child(2){
+  margin-top: 10%;
+}
+
+.profile-container div:nth-child(2) >p{
+  font-size: 14px;
+  line-height: 2.64;
+  color: #aaaaaa;
+}
+.profile-container div:nth-child(2) div label{
+  font-size: 18px;
+  line-height: 2.06;
+  color: #0f81dc;
+  font-weight: normal;
+  font-family: 'Segoe UI Regular';
+  padding: 0!important;
+}
+.profile-container div:nth-child(2) div{
+  padding: 0!important;
+  margin-top: 1px;
+  height: 30px!important;
+}
+.profile-container div:nth-child(2) div input::placeholder{
+  font-size: 18px;
+  line-height: 2.06;
+  color: #000000!important;
+  font-weight: normal;
+  font-family: 'Segoe UI Regular';
+  
+}
+.profile-container div:nth-child(2) div input{
+  border-bottom: none!important;
+  padding: 0!important;
+}
+input::placeholder{
+  color: #000000!important;
+}
+.upload-btn{
+  background-color: #0f81dc!important;
+  border-radius: 10px!important;
+  color: #fff!important;
+}

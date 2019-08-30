@@ -51,6 +51,7 @@ class Nav extends React.Component {
 
         {this.props.screenWidth >= 768 ? (
           <div className="collapse navbar-collapse" id="navbarNav">
+            {!this.props.isAuthenticated?
             <ul className="navbar-nav ml-auto text-center">
               <li className="nav-item make-active active">
                 <Link className="nav-link" to={'/Home'}>
@@ -89,17 +90,110 @@ class Nav extends React.Component {
                 />
               </li>
               {this.props.location.pathname !== '/SignUp' ? (
+                 <li className="nav-item make-active active">
+                 <Link className="nav-link" to={'/Login'}>
+                   Dashboard <span className="sr-only">(current)</span>
+                 </Link>
+                 <div
+                   className={
+                     this.props.location.pathname === '/Login'
+                       ? 'active-link'
+                       : ''
+                   }
+                 />
+                 </li>
+              ) : (
                 <li className="nav-item make-active">
-                  <Link className="nav-link" to={'/Login'}>
-                    Login
+                  <Link className="nav-link" to={'/SignUp'}>
+                    Sign up
                   </Link>
                   <div
                     className={
-                      this.props.location.pathname === '/Login'
+                      this.props.location.pathname === '/SignUp'
                         ? 'active-link'
                         : ''
                     }
                   />
+                </li>
+              )}
+              </ul>
+              
+              :
+
+              <ul className="navbar-nav ml-auto text-center">
+              <li className="nav-item make-active active">
+                <Link className="nav-link" to={'/Home'}>
+                  Home <span className="sr-only">(current)</span>
+                </Link>
+                <div
+                  className={
+                    this.props.location.pathname === '/Home' || this.props.location.pathname==='/'
+                      ? 'active-link'
+                      : ''
+                  }
+                />
+              </li>
+              <li className="nav-item make-active active">
+                <Link className="nav-link" to={'/About'}>
+                  About <span className="sr-only">(current)</span>
+                </Link>
+                <div
+                  className={
+                    this.props.location.pathname === '/About'
+                      ? 'active-link'
+                      : ''
+                  }
+                />
+                </li>
+                <li className="nav-item make-active active">
+                <Link className="nav-link" to={'/Sports'}>
+                  Sports <span className="sr-only">(current)</span>
+                </Link>
+                <div
+                  className={
+                    this.props.location.pathname === '/Sports'
+                      ? 'active-link'
+                      : ''
+                  }
+                />
+                </li>
+                
+                <li className="nav-item make-active active">
+                <Link className="nav-link" to={'/Profile'}>
+                  Profile <span className="sr-only">(current)</span>
+                </Link>
+                <div
+                  className={
+                    this.props.location.pathname === '/Profile'
+                      ? 'active-link'
+                      : ''
+                  }
+                />
+              </li>
+              <li className="nav-item make-active">
+                <Link className="nav-link" to={'/Contact'}>
+                  Contact
+                </Link>
+                <div
+                  className={
+                    this.props.location.pathname === '/Contact'
+                      ? 'active-link'
+                      : ''
+                  }
+                />
+              </li>
+              {this.props.location.pathname !== '/SignUp' ? (
+                <li className="nav-item make-active active">
+                <Link className="nav-link" to={'/Login'}>
+                  Dashboard <span className="sr-only">(current)</span>
+                </Link>
+                <div
+                  className={
+                    this.props.location.pathname === '/Login'
+                      ? 'active-link'
+                      : ''
+                  }
+                />
                 </li>
               ) : (
                 <li className="nav-item make-active">
@@ -116,6 +210,7 @@ class Nav extends React.Component {
                 </li>
               )}
             </ul>
+              }
           </div>
         ) : (
           ''
@@ -150,14 +245,16 @@ class Nav extends React.Component {
           />
           {this.props.location.pathname !== '/SignUp' ? (
             <React.Fragment>
-              <Link className="nav-link" to={'/Login'}>
-                Login
-              </Link>
-              <div
-                className={
-                  this.props.location.pathname === '/Login' ? 'active-link' : ''
-                }
-              />
+                <Link className="nav-link" to={'/Login'}>
+                  Dashboard <span className="sr-only">(current)</span>
+                </Link>
+                <div
+                  className={
+                    this.props.location.pathname === '/Login'
+                      ? 'active-link'
+                      : ''
+                  }
+                />
             </React.Fragment>
           ) : (
             <React.Fragment>

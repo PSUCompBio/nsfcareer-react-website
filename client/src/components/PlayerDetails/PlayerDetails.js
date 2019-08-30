@@ -17,7 +17,7 @@ class PlayerDetails extends React.Component {
           </p>
         </div>
         <div className="col-md-6 text-right">
-          <div className="">
+          <div className="text-center">
             <DailyBtn />
             <WeeklyBtn />
             <MonthlyBtn />

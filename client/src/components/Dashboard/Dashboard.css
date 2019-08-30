@@ -29,33 +29,33 @@
   text-align: right;
   color: #686868;
 }
-.acc-brain-img{
+.acc-brain-img {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
 .acc-brain-img img {
- position: absolute;
- top: 50%;
- left: 50%;
- margin-left: -50%;
- margin-top: -50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -50%;
+  margin-top: -50%;
 }
 
-.acc-card{
+.acc-card {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
-.acc-card div div:nth-child(2){
+.acc-card div div:nth-child(2) {
   font-size: 16px;
   line-height: 1.31;
   color: #666666;
 }
-.acc-card-before::before{
-  width: 240px;
+.acc-card-before::before {
+  width: auto;
   height: 45px;
   content: 'Cumulative Events';
-  color:#fff;
+  color: #fff;
   background: #0f81dc;
   top: -12%;
   left: 0;
@@ -67,21 +67,21 @@
   line-height: 1.35;
   padding: 3px 0 3px 0;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  padding: 0 10px 0 10px;
 }
-.acc-brain-load{
-  height: 100%;
+.acc-brain-load {
+  height: 87%;
 }
 
-.head-acc-evnt-chart{
+.head-acc-evnt-chart {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 
-
-.head-acc-evnt-chart::after{
-  width: 567.2px;;
+.head-acc-evnt-chart::after {
+  width: auto;
   height: 45px;
   content: attr(data-descr);
-  color:#fff;
+  color: #fff;
   background: #0f81dc;
   top: -13%;
   left: 0;
@@ -94,37 +94,166 @@
   padding: 3px 0 3px 0;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   white-space: pre;
+  padding: 0 10px 0 10px;
 }
-.cumm{
+.cumm {
   margin-top: 6%;
 }
 
-.acc-evnt{
+.acc-evnt {
   margin-top: 7%;
   margin-bottom: 6%;
 }
-.goto-top >div{
+.goto-top > div {
   position: absolute;
   width: 50px;
   height: 50px;
   background-color: #0f81dc;
   color: #fff;
   border-radius: 50%;
-  box-shadow: 3px 0 10px  -1px rgba(0,0,0,0.14);
+  box-shadow: 3px 0 10px -1px rgba(0, 0, 0, 0.14);
   cursor: pointer;
 }
-.goto-top p{
+.goto-top p {
   font-size: 14px;
   color: #0f81dc;
   line-height: 10px;
   position: absolute;
   top: 30px;
 }
-.head-acc-evnt-chart >div>div:nth-child(2) p{
+.head-acc-evnt-chart > div > div:nth-child(2) p {
   /* display: inline-block; */
   font-size: 14px;
   line-height: 1.36;
   text-align: center;
   color: #686868;
   padding-left: 25%;
+}
+.dark-mode-container {
+  width: 90px;
+  height: 70px;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.14);
+  position: fixed;
+  top: calc(50% - 70px);
+  right: -70px;
+  border-left: 5px solid #0f81dc;
+  border-radius: 10px;
+  transition: right 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+  cursor: pointer;
+  background: #fff;
+}
+.dark-mode-container:hover   {
+  right: -5px;
+}
+.dark-mode-container img {
+  width: 50%;
+  animation: move 2s linear infinite;
+}
+@keyframes move {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.dark-mode-chooser {
+  width: 85px;
+  height: 120px;
+  position: absolute;
+  right: 100px;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.14);
+  border-radius: 10px;
+  background: #0f81dc;
+}
+.dark-mode-chooser div:not(:nth-child(3)) {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.14);
+  animation: hvr-pulse 2s linear infinite;
+}
+.dark-mode-chooser div:nth-child(1):hover {
+  animation: none;
+}
+.dark-mode-chooser div:nth-child(2):hover {
+  animation: none;
+}
+.dark-mode-chooser div:nth-child(1) {
+  margin-top: 10%;
+  margin-left: 30%;
+  background: #fff;
+}
+
+.dark-mode-chooser div:nth-child(2) {
+  margin-top: 20%;
+  margin-left: 30%;
+  background: #232838;
+}
+.arrow-right {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #0f81dc;
+  top: 50%;
+  position: absolute;
+  right: -12px;
+  transform: translate(-50%, -50%);
+}
+.dashboard-mock{
+  width: calc(43vh + 4px);
+  position: absolute;
+  top: 14.5vh;
+  right: 0;
+  z-index: 2;
+  box-shadow: -3px 0 10px rgba(0,0,0,0.12);
+  border-radius: 10px;
+
+}
+.dashboard-mock img{
+  border-radius: 10px;
+}
+
+@media screen and (max-width: 599px) {
+  .head-acc-evnt-chart::after {
+    white-space: pre-wrap;
+    top: -12%;
+    height: 70px;
+  }
+  .acc-evnt {
+    margin-top: 25%;
+  }
+  .acc-card-before::before {
+    top: -6%;
+  }
+  .daily-btn,
+  .weekly-btn,
+  .monthly-btn {
+    margin-right: 2px;
+  }
+  .export-report-btn {
+    margin-top: 2px;
+  }
+  .width-100 {
+    width: 100% !important;
+  }
+  .dashboard {
+    overflow-x: hidden;
+  }
+  .dashboard-mock{
+    top: 50%;
+    left: 50%;
+    background-color: #0f81dc;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+  
+  
+  .dashboard-mock::before{
+    content: 'Please tap to close';
+    color: #fff;
+    font-size: 12px;
+  }
+
 }
