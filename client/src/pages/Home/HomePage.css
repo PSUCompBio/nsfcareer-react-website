@@ -148,10 +148,10 @@ body {
   background: #fff;
   margin-left: 25%;
 }
-.active-link-hover{
+.active-link-hover {
   transition: border, border-radius, width, background, margin-left 2s;
 }
-.nav-link:hover .active-link-hover{
+.nav-link:hover .active-link-hover {
   border: 1px solid white;
   border-radius: 5px;
   width: 50%;
@@ -233,31 +233,31 @@ body {
   margin: 0 5px 0 5px;
   animation: drawLine 3s;
 }
-@keyframes drawLine{
-  0%{
+@keyframes drawLine {
+  0% {
     width: 0;
   }
-  100%{
+  100% {
     width: 3%;
   }
 }
 .shift-top {
   margin-top: -110px;
 }
-path, circle{
+path,
+circle {
   transition: fill 1s;
   -webkit-transition: fill 1.5s;
 }
-.svg{
+.svg {
   cursor: pointer;
 }
-.svg:hover .cls-2{
+.svg:hover .cls-2 {
   fill: #fff;
 }
-.svg:hover .cls-1{
+.svg:hover .cls-1 {
   fill: #0f81dc;
 }
-
 
 .shift-top h4 {
   font-weight: 900;
@@ -288,11 +288,10 @@ path, circle{
   border-radius: 10px !important;
   transition: background, color 1s;
 }
-.btn-outline-blue:hover{
+.btn-outline-blue:hover {
   background: #0f81dc;
-  color: #fff!important;
+  color: #fff !important;
 }
-
 
 .copyright {
   font-family: 'Segoe UI Regular';
@@ -301,7 +300,9 @@ path, circle{
 footer {
   background: url('/img/BannerImg/navbg.png') no-repeat center;
   background-size: cover;
-  
+  position: absolute;
+  width: 100%;
+  bottom: -300%;
 }
 .footer-height {
   height: 100vh;
@@ -358,11 +359,11 @@ footer p {
   list-style: none;
   z-index: 2;
 }
-.hvr-grow{
-  display: block!important;
+.hvr-grow {
+  display: block !important;
 }
-.hvr-grow:hover{
-  transform: scale(1.5)!important;
+.hvr-grow:hover {
+  transform: scale(1.5) !important;
 }
 .active-indicator {
   background: rgb(255, 255, 255);
@@ -445,11 +446,9 @@ nav {
   cursor: pointer;
 }
 
-.enter-email{
-  margin: 20% 0 10% 0!important;
+.enter-email {
+  margin: 20% 0 10% 0 !important;
 }
-
-
 
 /* ======making responsive to navbar========= */
 
@@ -462,10 +461,9 @@ nav {
   .image-padding img:nth-child(1) {
     width: 40px !important;
   }
-  }
+}
 
 @media (max-width: 575px) {
-  
   .navbar-brand {
     width: 70%;
   }
@@ -610,7 +608,7 @@ nav {
   .heading-container {
     margin-top: 15%;
   }
-  
+
   .research-area-bg {
     height: 100vh;
   }
@@ -626,12 +624,12 @@ nav {
 }
 
 .section-title h1::after {
-  content: "";
+  content: '';
   height: 1px;
   width: 80%;
   position: absolute;
   border: 2px solid #4293f5;
-  bottom: -.1em;
+  bottom: -0.1em;
   left: 50%;
   transform: translate(-50%);
   -webkit-transition: all 1s;
@@ -641,84 +639,83 @@ nav {
 /* Push to Left Navigation Menu */
 
 .cbp-spmenu {
-	background: #13568d;
-	position: fixed;
+  background: #13568d;
+  position: fixed;
 }
 
 .cbp-spmenu h3 {
-	color: #afdefa;
-	font-size: 1.9em;
-	padding: 20px;
-	margin: 0;
-	font-weight: 300;
-	background: #0d77b6;
+  color: #afdefa;
+  font-size: 1.9em;
+  padding: 20px;
+  margin: 0;
+  font-weight: 300;
+  background: #0d77b6;
 }
 
 .cbp-spmenu a {
-	display: block;
-	color: #fff;
-	font-size: 1.1em;
-	font-weight: 300;
+  display: block;
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: 300;
 }
 
 .cbp-spmenu a:hover {
-	background: #258ecd;
+  background: #258ecd;
 }
 
 .cbp-spmenu a:active {
-	background: #afdefa;
-	color: #47a3da;
+  background: #afdefa;
+  color: #47a3da;
 }
 
 .cbp-spmenu-vertical {
-	width: 240px;
-	height: 100%;
-	top: 0;
+  width: 240px;
+  height: 100%;
+  top: 0;
   z-index: 1000;
   right: 0;
 }
 
 .cbp-spmenu-vertical a {
-	border-bottom: 1px solid #258ecd;
-	padding: 1em;
+  border-bottom: 1px solid #258ecd;
+  padding: 1em;
 }
 
 .cbp-spmenu-right {
-	right: -240px;
+  right: -240px;
 }
 
 .cbp-spmenu-right.cbp-spmenu-open {
-	right: 0px;
+  right: 0px;
 }
 
 .cbp-spmenu-push {
-	overflow-x: hidden;
-	position: relative;
-	left: 0;
+  overflow-x: hidden;
+  position: relative;
+  left: 0;
 }
 
 .cbp-spmenu-push-toleft {
-	left: -240px;
+  left: -240px;
 }
 
 .cbp-spmenu,
 .cbp-spmenu-push {
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-@media screen and (max-height: 26.375em){
+@media screen and (max-height: 26.375em) {
+  .cbp-spmenu-vertical {
+    font-size: 90%;
+    width: 190px;
+  }
+  .cbp-spmenu-push-toleft {
+    left: -190px;
+  }
 
-	.cbp-spmenu-vertical {
-		font-size: 90%;
-		width: 190px;
-	}
-	.cbp-spmenu-push-toleft {
-		left: -190px;
-	}
-
-	.cbp-spmenu-right {
-		right: -190px;
-	}
+  .cbp-spmenu-right {
+    right: -190px;
+  }
 }
