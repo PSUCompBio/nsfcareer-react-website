@@ -20,23 +20,23 @@ class DarkMode extends React.Component {
     const fontColor = e.currentTarget.dataset.fontcolor;
 
     document.getElementsByTagName('body')[0].style.backgroundColor = bg;
-    document.getElementsByTagName('body')[0].style.zIndex = -5;    
+    document.getElementsByTagName('body')[0].style.zIndex = -5;
     document.getElementsByTagName('html')[0].style.backgroundColor = bg;
 
     const allParagrap = document.querySelectorAll('div.player-name > p');
-    allParagrap.forEach(element => {
+    allParagrap.forEach((element) => {
       element.style.color = fontColor;
-    })
+    });
 
-    const searchElements = ['player-details','card', 'dark-bg'];
-    searchElements.forEach(element => {
+    const searchElements = ['player-details', 'card', 'dark-bg'];
+    searchElements.forEach((element) => {
       const allClasses = document.getElementsByClassName(element);
-      [...allClasses].forEach(elements => {
+      [...allClasses].forEach((elements) => {
         elements.style.backgroundColor = cardBg;
       });
     });
     this.setState({ visibility: { display: 'none' } });
-  }
+  };
 
   render() {
     return (
@@ -52,8 +52,18 @@ class DarkMode extends React.Component {
             style={this.state.visibility}
             className="dark-mode-chooser text-center  justify-content-center align-items-center"
           >
-            <div onClick={this.setDarkMode} data-fontcolor="#000" data-color="#fff" data-card="#fff"></div>
-            <div onClick={this.setDarkMode} data-fontcolor="#fff" data-color="#171b25" data-card="#232838"></div>
+            <div
+              onClick={this.setDarkMode}
+              data-fontcolor="#000"
+              data-color="#fff"
+              data-card="#fff"
+            ></div>
+            <div
+              onClick={this.setDarkMode}
+              data-fontcolor="#fff"
+              data-color="#171b25"
+              data-card="#232838"
+            ></div>
             <div class="arrow-right"></div>
           </div>
         </div>
