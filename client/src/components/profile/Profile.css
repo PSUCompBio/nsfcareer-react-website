@@ -13,12 +13,18 @@ small {
   height: 148px;
   object-fit: contain;
   border: solid 1px #0f81dc;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
   border-radius: 50%;
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-bottom: 10px solid #f5f5f5;
+  border-left: 10px solid #f5f5f5;
+  border-right: 10px solid white;
+  border-top: 10px solid white;
+}
+.profile img{
+  transform: rotate(45deg);
 }
 .profile-container {
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
