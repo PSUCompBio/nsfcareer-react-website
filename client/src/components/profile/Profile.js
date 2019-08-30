@@ -23,6 +23,8 @@ import {
   isAuthenticated
 } from '../../apis';
 
+import Footer from '../Footer';
+
 import Download3dProfile from '../Buttons/Download3dProfile';
 import DownloadAvtar from '../Buttons/Download3dProfile';
 import DownloadFeMesh from '../Buttons/Download3dProfile';
@@ -39,7 +41,8 @@ class Profile extends React.Component {
       foundInpLink: false,
       isAuthenticated: false,
       isCheckingAuth: true,
-      disableInput:true
+      disableInput: [true, true, true, true, true],
+      inputs: ['email', 'age', 'sex', 'contact', 'organization']
     };
   }
   onChangeHandler = (event) => {
@@ -175,7 +178,18 @@ class Profile extends React.Component {
       return false;
     }
   };
-
+ 
+  enableDisabe = (e) => {
+    const index = e.currentTarget.dataset.inptno;
+    const element = this.refs[this.state.inputs[index]];
+    this.setState({ disableInput: !this.state.disableInput[index] }, () => {
+      element.focus();
+      
+    }
+    );
+    
+  }
+ 
   render() {
     //     return <React.Fragment>
     // <h1 className="topspace">Profile</h1>
@@ -292,7 +306,8 @@ class Profile extends React.Component {
     //   </MDBCard></React.Fragment>
 
     return (
-      <div className="container profile-mt">
+      <React.Fragment>
+      <div className="container profile-mt mb-5 pb-2">
         <div className="row text-center justify-content-center align-items-center profile-container">
           <div className="profile">
             <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
@@ -303,35 +318,35 @@ class Profile extends React.Component {
               <div className="col-md-12 pt-4 titiles">
                 <p>
                   Email :{' '}
-                  <input type="text" disabled={this.state.disableInput} placeholder=" reuben.kraft@gmail.com" />{' '}
+                  <input ref={'email'} type="text" disabled={this.state.disableInput[0]} placeholder=" reuben.kraft@gmail.com" />{' '}
                   <span>
-                    <img src="/img/icon/pencheck.svg" alt="" />
+                    <img data-inptno={0} onClick={this.enableDisabe} src="/img/icon/pencheck.svg" alt="" />
                   </span>{' '}
                 </p>
                 <p>
-                  Age : <input disabled={this.state.disableInput} type="text" placeholder="28" />{' '}
+                  Age : <input ref={this.state.inputs[1]} disabled={this.state.disableInput[1]} type="text" placeholder="28" />{' '}
                   <span>
-                    <img src="/img/icon/pencheck.svg" alt="" />
+                    <img data-inptno={1} onClick={this.enableDisabe} src="/img/icon/pencheck.svg" alt="" />
                   </span>
                 </p>
                 <p>
-                  Sex : <input disabled={this.state.disableInput} type="text" placeholder="Male" />{' '}
+                  Sex : <input ref={this.state.inputs[2]} disabled={this.state.disableInput[2]} type="text" placeholder="Male" />{' '}
                   <span>
-                    <img src="/img/icon/pencheck.svg" alt="" />
+                    <img data-inptno={2} onClick={this.enableDisabe} src="/img/icon/pencheck.svg" alt="" />
                   </span>
                 </p>
                 <p>
                   Contact number :{' '}
-                  <input disabled={this.state.disableInput} type="text" placeholder="+11111111111" />{' '}
+                  <input ref={this.state.inputs[3]}  disabled={this.state.disableInput[3]} type="text" placeholder="+11111111111" />{' '}
                   <span>
-                    <img src="/img/icon/pencheck.svg" alt="" />
+                    <img data-inptno={3} onClick={this.enableDisabe} src="/img/icon/pencheck.svg" alt="" />
                   </span>
                 </p>
                 <p>
                   Organization :{' '}
-                  <input disabled={this.state.disableInput} type="text" placeholder=" lorem ipsum" />{' '}
+                  <input ref={this.state.inputs[4]} disabled={this.state.disableInput[4]}  type="text" placeholder=" lorem ipsum" />{' '}
                   <span>
-                    <img src="/img/icon/pencheck.svg" alt="" />
+                    <img data-inptno={4} onClick={this.enableDisabe} src="/img/icon/pencheck.svg" alt="" />
                   </span>
                 </p>
                 <button type="submit" className="btn mt-5 upload-btn">
@@ -378,7 +393,9 @@ class Profile extends React.Component {
             <DownloadFeMesh content="Download FE Mesh" />
           </div>
         </div>
-      </div>
+        </div>
+        <Footer/>
+        </React.Fragment>
     );
   }
 

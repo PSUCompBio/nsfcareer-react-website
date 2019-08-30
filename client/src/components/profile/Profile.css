@@ -113,6 +113,12 @@ input:checked + .slider:before {
   color: #000000!important;
   opacity: 4.44 !important;
 }
+.titiles p>span>img{
+  cursor: pointer;
+}
+.titiles p input:disabled{
+  background-color: transparent!important;
+}
 .titiles p:nth-child(2) input{
   width: 100px;
 }
