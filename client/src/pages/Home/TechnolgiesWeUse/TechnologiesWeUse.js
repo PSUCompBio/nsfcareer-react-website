@@ -1,6 +1,5 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
-import { Redirect } from 'react-router-dom';
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
@@ -19,6 +18,11 @@ class TechnologiesWeUse extends React.Component {
         display: 'block!important'
       }
     };
+
+    const redirectToOther = () => {
+      window.location.href = "https://psucompbio.org/"
+    }
+
     return (
       <React.Fragment>
         <div className={`section-four-container`} onWheel={this.props.onWheel}>
@@ -145,9 +149,9 @@ class TechnologiesWeUse extends React.Component {
               </div>
               <div className="row text-center">
                 <div className="col-md-12 ">
-                  <p className="copyright">
-                    © 2019 Copyright: <Redirect to="https://psucompbio.org/">Penn State Computational Biomechanics
-                    Group</Redirect> 
+                  <p onClick={redirectToOther} className="copyright">
+                    © 2019 Copyright:  Penn State Computational Biomechanics
+                    Group
                     </p>
                 </div>
               </div>

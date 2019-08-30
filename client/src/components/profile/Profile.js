@@ -38,7 +38,8 @@ class Profile extends React.Component {
       isUploading: false,
       foundInpLink: false,
       isAuthenticated: false,
-      isCheckingAuth: true
+      isCheckingAuth: true,
+      disableInput:true
     };
   }
   onChangeHandler = (event) => {
@@ -296,73 +297,84 @@ class Profile extends React.Component {
           <div className="profile">
             <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
           </div>
-          <div className="col-md-6  offset-md-3">
+          <div className="col-md-5 mt-5 pt-2  offset-md-3">
             <p>Reuben Craft</p>
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Email :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="reuben.kraft@gmail.com"
-                />
+            <div className="row text-center">
+              <div className="col-md-12 pt-4 titiles">
+                <p>
+                  Email :{' '}
+                  <input type="text" disabled={this.state.disableInput} placeholder=" reuben.kraft@gmail.com" />{' '}
+                  <span>
+                    <img src="/img/icon/pencheck.svg" alt="" />
+                  </span>{' '}
+                </p>
+                <p>
+                  Age : <input disabled={this.state.disableInput} type="text" placeholder="28" />{' '}
+                  <span>
+                    <img src="/img/icon/pencheck.svg" alt="" />
+                  </span>
+                </p>
+                <p>
+                  Sex : <input disabled={this.state.disableInput} type="text" placeholder="Male" />{' '}
+                  <span>
+                    <img src="/img/icon/pencheck.svg" alt="" />
+                  </span>
+                </p>
+                <p>
+                  Contact number :{' '}
+                  <input disabled={this.state.disableInput} type="text" placeholder="+11111111111" />{' '}
+                  <span>
+                    <img src="/img/icon/pencheck.svg" alt="" />
+                  </span>
+                </p>
+                <p>
+                  Organization :{' '}
+                  <input disabled={this.state.disableInput} type="text" placeholder=" lorem ipsum" />{' '}
+                  <span>
+                    <img src="/img/icon/pencheck.svg" alt="" />
+                  </span>
+                </p>
+                <button type="submit" className="btn mt-5 upload-btn">
+                  Upload photo
+                </button>
               </div>
             </div>
 
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Age :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input type="text" class="form-control" placeholder="28" />
-              </div>
-            </div>
-
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Sex :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input type="text" class="form-control" placeholder="Male" />
-              </div>
-            </div>
-
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Contact number :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="+11111111111"
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="btn upload-btn">
-              Upload photo
-            </button>
             <p>* jpeg, jpg & png only</p>
           </div>
-          <div className="col-md-3">
-            <div class="custom-control custom-switch">
-            <label class="custom-control-label" for="customSwitch1">
-                  Dark mode
-              </label>
-              <input
-                type="checkbox"
-                class="custom-control-input"
-                id="customSwitch1"
-              />
+          <div className="col-md-3 btns-heading text-left pt-4">
+            <div className="row">
+              <div className="col-sm-7">
+                <span className="dark-mode">Dark mode</span>
+              </div>
+              <div className="col-sm-5  position-relative pt-1">
+                <label class="switch" for="checkbox">
+                  <input type="checkbox" id="checkbox" />
+                  <div class="slider round"></div>
+                </label>
+              </div>
             </div>
-            <p>Selfie Uploaded </p>
+
+            <p>
+              <span>
+                <img src="/img/icon/check.svg" alt="" />
+              </span>{' '}
+              Selfie Uploaded{' '}
+            </p>
             <Download3dProfile content="Download 3d selfie" />
-            <p>3D Avatar Generated </p>
+            <p>
+              <span>
+                <img src="/img/icon/check.svg" alt="" />
+              </span>{' '}
+              3D Avatar Generated{' '}
+            </p>
             <DownloadAvtar content="Download avtar" />
-            <p>Mesh File Generated</p>
+            <p>
+              <span>
+                <img src="/img/icon/check.svg" alt="" />
+              </span>{' '}
+              Mesh File Generated
+            </p>
             <DownloadFeMesh content="Download FE Mesh" />
           </div>
         </div>
