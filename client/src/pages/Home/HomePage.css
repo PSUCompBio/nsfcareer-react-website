@@ -308,7 +308,7 @@ footer {
   height: 100vh;
 }
 .hide-footer {
-  display: none !important;
+  display: none ;
 }
 .show-footer {
   display: block !important;

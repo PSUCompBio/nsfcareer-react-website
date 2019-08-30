@@ -15,7 +15,7 @@ class TechnologiesWeUse extends React.Component {
         marginTop: 10 + '%',
         position: 'relative',
         bottom: 0,
-        display: 'block'
+        display: 'block!important'
       }
     };
     return (
@@ -90,8 +90,8 @@ class TechnologiesWeUse extends React.Component {
             }
             className={`show-footer-mobile ${
               this.props.mouseScroll > 0 && this.props.screenWidth >= 725
-                ? 'show-footer footer-height'
-                : 'hide-footer'
+                ? 'show-footer'
+                : this.props.screenWidth < 725 ? '' : 'hide-footer'
               }`}
           >
             <div className="container">
