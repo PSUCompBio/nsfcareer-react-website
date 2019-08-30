@@ -120,11 +120,17 @@ input:-webkit-autofill {
   .brain-icon-container {
     margin-top: -11%;
   }
+  .login{
+    height: auto!important;
+  }
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
   .brain-icon-container {
     margin-top: -11%;
+  }
+  .login{
+    height: auto!important;
   }
 
 }
