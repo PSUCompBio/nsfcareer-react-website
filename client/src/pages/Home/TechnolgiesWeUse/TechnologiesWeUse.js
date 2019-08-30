@@ -117,7 +117,7 @@ class TechnologiesWeUse extends React.Component {
                     </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">
-                  <div className="icon-container">
+                  {/* <div className="icon-container">
                     <a href="">
                       <img
                         className="px-2"
@@ -139,7 +139,7 @@ class TechnologiesWeUse extends React.Component {
                         alt=""
                       />
                     </a>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="row text-center">
