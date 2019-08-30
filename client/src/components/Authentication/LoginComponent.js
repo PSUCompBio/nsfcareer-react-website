@@ -140,7 +140,7 @@ class Login extends React.Component {
         >
           {this.state.isSignInSuccessed ? <Redirect to="/Profile" /> : null}
           <div className="row login">
-            <div className="col-md-6 mb-5 ">
+            <div className="col-md-6 mb-5 p-3">
               <div className="card card-border">
                 <div className="card-body">
                   <div className="text-center brain-icon">
@@ -242,7 +242,7 @@ class Login extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-md-6 mb-5">
+            <div className="col-md-6 mb-5 p-3">
               <div id="dashboard-view" className="text-right dashboard-mock">
                 <img
                   className="img-fluid"

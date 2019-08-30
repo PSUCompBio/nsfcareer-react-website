@@ -295,6 +295,7 @@ circle {
 
 .copyright {
   font-family: 'Segoe UI Regular';
+  cursor: pointer;
 }
 
 footer {

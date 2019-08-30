@@ -1,6 +1,9 @@
 import React from 'react';
 
 const Footer = () => {
+ const redirectToOther = () => {
+    window.location.href = "https://psucompbio.org/"
+  }
   return (
     <div className="footer" >
     <div className="container">
@@ -36,7 +39,7 @@ const Footer = () => {
       </div>
       <div className="row text-center">
         <div className="col-md-12 col-lg-12">
-          <p className="copyright">© 2019 Copyright: Penn State Computational Biomechanics Group</p>
+          <p onClick={redirectToOther} className="copyright">© 2019 Copyright: Penn State Computational Biomechanics Group</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
+import { Redirect } from 'react-router-dom';
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
@@ -145,8 +146,8 @@ class TechnologiesWeUse extends React.Component {
               <div className="row text-center">
                 <div className="col-md-12 ">
                   <p className="copyright">
-                    © 2019 Copyright: Penn State Computational Biomechanics
-                    Group
+                    © 2019 Copyright: <Redirect to="https://psucompbio.org/">Penn State Computational Biomechanics
+                    Group</Redirect> 
                     </p>
                 </div>
               </div>
