@@ -34,8 +34,9 @@ function ResearchArea(props) {
                       <p className="card-text px-3 mt-3 color">
                         We use sensor-enabled, cloud-based platform for
                         individualized brain modeling of
-                        Soldiers. <a href="/Military">Read More</a>
+                        Soldiers. 
                       </p>
+                      <a href="/Military">Read More</a>
                     </div>
                   </div>
                 </div>
@@ -55,8 +56,9 @@ function ResearchArea(props) {
                       <p className="card-text mt-3 color">
                         We utilize data from the customized computer models to
                         approximate an Athlete&apos;s brain’s response to
-                        injuries. <a href="#">Read More</a>
+                        injuries. 
                       </p>
+                      <a href="#">Read More</a>
                     </div>
                   </div>
                 </div>
