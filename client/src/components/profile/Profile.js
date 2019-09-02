@@ -42,7 +42,8 @@ class Profile extends React.Component {
       isAuthenticated: false,
       isCheckingAuth: true,
       disableInput: [true, true, true, true, true],
-      inputs: ['email', 'age', 'sex', 'contact', 'organization']
+      inputs: ['email', 'age', 'sex', 'contact', 'organization'],
+      isDarkMode:false
     };
   }
   onChangeHandler = (event) => {
@@ -190,6 +191,29 @@ class Profile extends React.Component {
     });
   };
 
+  darkMode = (e) => {
+    this.setState({ isDarkMode: !this.state.isDarkMode }, () => {
+      if (this.state.isDarkMode === true) {
+        this.refs.lightDark.style.background = '#232838';
+        document.getElementsByTagName('html')[0].style.background = '#171b25';
+        document.getElementsByTagName('body')[0].style.background = '#171b25';
+        this.refs.profileBorder.style.border = '10px solid #171b25';
+        this.refs.nameColor.style.color = '#fff';
+        this.refs.chooserColor.style.color = '#fff';
+        const allInputs = this.state.inputs;
+        allInputs.forEach(element => {
+          this.refs[element].setAttribute('id', 'dark-mode-color')
+        })
+        
+      } else {
+        this.refs.lightDark.style.background = '#fff';
+        document.getElementsByTagName('html')[0].style.background = '#fff';
+        document.getElementsByTagName('body')[0].style.background = '#fff';
+      }
+    });
+   
+  }
+
   render() {
     //     return <React.Fragment>
     // <h1 className="topspace">Profile</h1>
@@ -308,12 +332,12 @@ class Profile extends React.Component {
     return (
       <React.Fragment>
         <div className="container profile-mt mb-5 pb-2">
-          <div className="row text-center justify-content-center align-items-center profile-container">
-            <div className="profile">
+          <div ref="lightDark" className="row text-center justify-content-center align-items-center profile-container">
+            <div ref="profileBorder" className="profile">
               <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
             </div>
             <div className="col-md-5 mt-5 pt-2  offset-md-3">
-              <p className="pt-5 pb-1">Reuben Craft</p>
+              <p ref="nameColor" className="pt-5 pb-1">Reuben Craft</p>
               <div className="row text-center">
                 <div className="col-md-12 pt-4 titiles">
                   <p className="mb-2">
@@ -412,12 +436,12 @@ class Profile extends React.Component {
             <div className="col-md-3 btns-heading text-left pt-4">
               <div className="row">
                 <div className="col-sm-7">
-                  <span className="dark-mode">Dark mode</span>
+                  <span ref="chooserColor" className="dark-mode">Dark mode</span>
                 </div>
                 <div className="col-sm-5  position-relative pt-1">
-                  <label class="switch" for="checkbox">
-                    <input type="checkbox" id="checkbox" />
-                    <div class="slider round"></div>
+                  <label className="switch" htmlFor="checkbox">
+                    <input onChange={this.darkMode} value={this.state.isDarkMode} type="checkbox" id="checkbox" />
+                    <div className="slider round"></div>
                   </label>
                 </div>
               </div>

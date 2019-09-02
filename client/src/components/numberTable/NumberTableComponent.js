@@ -56,21 +56,21 @@ class NumberTableComponent extends React.Component {
             <React.Fragment>
                 <form  style={numberFormStyle} onSubmit={this.handleSubmit} ref="addNumbersForm">
                     <div className="row">
-                        <input type="hidden" name="id" class="form-control" placeholder="Number 1" value={uuidv1()} />
+                        <input type="hidden" name="id" className="form-control" placeholder="Number 1" value={uuidv1()} />
                         <div className="col">
-                            <input type="text" name="number_1" class="form-control" placeholder="Number 1" />
+                            <input type="text" name="number_1" className="form-control" placeholder="Number 1" />
                         </div>
                         <div className="col">
-                            <input type="text" name="number_2" class="form-control" placeholder="Number 2" />
+                            <input type="text" name="number_2" className="form-control" placeholder="Number 2" />
                         </div>
                         <div className="col">
-                            <input type="text" name="number_3" class="form-control" placeholder="Number 3" />
+                            <input type="text" name="number_3" className="form-control" placeholder="Number 3" />
                         </div>
                         <div className="col">
-                            <input type="text" name="number_4" class="form-control" placeholder="Number 4" />
+                            <input type="text" name="number_4" className="form-control" placeholder="Number 4" />
                         </div>
                         <div className="col">
-                            <input type="text" name="number_5" class="form-control" placeholder="Number 5" />
+                            <input type="text" name="number_5" className="form-control" placeholder="Number 5" />
                         </div>
                     </div>
                     <button className="btn btn-primary">+</button>

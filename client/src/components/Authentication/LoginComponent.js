@@ -149,7 +149,7 @@ class Login extends React.Component {
                 />
               </div>
             </div>
-          
+
             <div className="col-md-6 mb-5 p-3">
               <div className="card card-border">
                 <div className="card-body">
@@ -234,7 +234,7 @@ class Login extends React.Component {
                   ) : null}
                   {this.state.isLoginError ? (
                     <div
-                      class="alert alert-info api-response-alert"
+                      className="alert alert-info api-response-alert"
                       role="alert"
                     >
                       <strong>Failed! </strong> {this.state.loginError}.

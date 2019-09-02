@@ -125,7 +125,7 @@ input:checked + .slider:before {
 }
 .titiles p input::placeholder {
   color: #000000 !important;
-  opacity: 4.44 !important;
+  opacity: 1 !important;
 }
 .titiles p > span > img {
   cursor: pointer;
@@ -162,4 +162,8 @@ input::placeholder {
   background-color: #0f81dc !important;
   border-radius: 10px !important;
   color: #fff !important;
+}
+#dark-mode-color::placeholder{
+color: #fff!important;
+opacity: 1!important;
 }

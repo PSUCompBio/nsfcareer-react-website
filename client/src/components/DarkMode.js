@@ -64,7 +64,7 @@ class DarkMode extends React.Component {
               data-color="#171b25"
               data-card="#232838"
             ></div>
-            <div class="arrow-right"></div>
+            <div className="arrow-right"></div>
           </div>
         </div>
       </React.Fragment>
