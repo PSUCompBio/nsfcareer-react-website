@@ -13,7 +13,7 @@ function ResearchArea(props) {
               {({ inView, ref }) => (
                 <div ref={ref}>
                   <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
-                    <h1 className="font-weight-bold">RESEARCH AREAS</h1>
+                    <h1 id="color" className="font-weight-bold">RESEARCH AREAS</h1>
                   </div>
                 </div>
               )}

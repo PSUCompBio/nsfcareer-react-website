@@ -585,6 +585,7 @@ nav {
   transition: transform 200ms;
   border-top-left-radius: 17px !important;
   border-top-right-radius: 17px !important;
+  border: none!important;
 }
 
 @media (min-width: 726px) {

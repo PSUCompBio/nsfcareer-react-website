@@ -33,7 +33,7 @@ class TechnologiesWeUse extends React.Component {
                   {({ inView, ref }) => (
                     <div ref={ref}>
                       <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
-                        <h1 className="font-weight-bold">TECHNOLOGIES WE USE</h1>
+                        <h1 id="color" className="font-weight-bold">TECHNOLOGIES WE USE</h1>
                       </div>
                     </div>
                   )}

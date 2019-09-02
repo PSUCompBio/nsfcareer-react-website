@@ -45,7 +45,7 @@ class Dashboard extends React.Component {
             </div>
           </div>
         </div>
-        <DarkMode/>
+        <DarkMode isDarkMode={this.props.isDarkModeSet}/>
         <Footer />
       </React.Fragment>
     );

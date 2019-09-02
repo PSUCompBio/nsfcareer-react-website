@@ -16,6 +16,11 @@ class DarkMode extends React.Component {
 
   setDarkMode = (e) => {
     const bg = e.currentTarget.dataset.color;
+    if (bg === '#171b25') {
+      this.props.isDarkMode(true);
+    } else {
+      this.props.isDarkMode(false);
+    }
     const cardBg = e.currentTarget.dataset.card;
     const fontColor = e.currentTarget.dataset.fontcolor;
 
