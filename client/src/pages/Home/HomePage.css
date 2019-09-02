@@ -500,9 +500,18 @@ nav {
 }
 .get-in-touch {
   border-bottom: 4px solid #4293f5;
+  font-family: 'Roboto', sans-serif;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1.23;
+  color: #242424;
 }
 .get-in-touch + p{
   margin-top: 80px;
+  color: #848484;
+}
+.leave-us{
+  color: #848484;
 }
 .card-contact{
   border-radius: 10px;

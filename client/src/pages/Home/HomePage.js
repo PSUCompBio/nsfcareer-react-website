@@ -7,6 +7,7 @@ import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse';
 import './HomePage.css';
 import 'hover.css/css/hover.css';
 import 'animate.css/animate.min.css';
+import WebFont from 'webfontloader';
 // import 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
