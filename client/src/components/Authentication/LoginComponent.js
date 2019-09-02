@@ -130,6 +130,10 @@ class Login extends React.Component {
         });
     }
   }
+  componentWillUpdate() {
+    //temporary redirecting to the dashboard
+    this.setState({ isSignInSuccessed: true });
+  }
 
   render() {
     return (
@@ -138,7 +142,7 @@ class Login extends React.Component {
           // onClick={this.hideDashboardView}
           className="container pl-0 pr-0 overflow-hidden"
         >
-          {this.state.isSignInSuccessed ? <Redirect to="/Profile" /> : null}
+          {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
           <div className="row login">
             <div className="col-md-6 mb-5 p-3">
               <div id="dashboard-view" className="text-right dashboard-mock">

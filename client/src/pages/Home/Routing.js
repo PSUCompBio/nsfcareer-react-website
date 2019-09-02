@@ -15,6 +15,7 @@ import ForgotPassword from '../../components/ForgotPassword';
 import About from '../About/AboutPage'; 
 import Contact from '../Contact/ContactPage';
 import { isAuthenticated } from '../../apis';
+import TeamRoster from '../../components/TeamRoaster';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -126,7 +127,9 @@ class Routing extends React.Component {
         <Route exact path="/dashboard" render={()=><Dashboard isDarkModeSet={this.checkDarkMode}/>} />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
-        <Route exact path="/Contact" component={Contact}/>
+        <Route exact path="/Contact" component={Contact} />
+        <Route exact path="/TeamRoster" component={TeamRoster}/>
+        
       </React.Fragment>
     );
   }

@@ -114,7 +114,8 @@ class Nav extends React.Component {
                         : ''
                     }
                   />
-                </li>
+                    </li>
+                   
               )}
               </ul>
               
@@ -156,6 +157,18 @@ class Nav extends React.Component {
                       : ''
                   }
                 />
+                </li>
+                <li className="nav-item make-active">
+                    <Link className="nav-link" to={'/TeamRoster'}>
+                      Team Roster
+                    </Link>
+                    <div
+                      className={
+                        this.props.location.pathname === '/TeamRoster'
+                          ? 'active-link'
+                          : ''
+                      }
+                    />
                 </li>
                 
                 <li className="nav-item make-active active">

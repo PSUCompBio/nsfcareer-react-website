@@ -518,6 +518,70 @@ nav {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   background-color: #ffffff;
 }
+/* team roaster */
+.penstate {
+  
+  font-family: 'Segoe UI Regular';
+  font-size: 36px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.94;
+  letter-spacing: 3.53px;
+  text-align: left;
+  color: #686868;
+}
+.counter{
+  width: 78.1px;
+  height: 78.1px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  border: solid 2px #0f81dc;
+  border-radius: 50%;
+  position: relative;
+  
+}
+.counter p{
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+}
+.load-heading, .impact-heading{
+  width: 153px;
+  height: 30px;
+  font-family: 'Segoe UI Regular';
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f81dc;
+  position: absolute;
+  top: -18%;
+  left: 50%;
+  margin-left: -71.5px;
+  background-color: #fff;
+}
+.load-heading + p, .impact-heading + P{
+  font-size: 14px;
+  color: #686868;
+}
+.load-heading + p >span, .impact-heading + P> span{
+  font-size: 10px;
+}
+.load-count, .impact-count{
+  color: #0f81dc;
+} 
+.rostar-btn{
+  width: 50%;
+  background: none;
+  border: 1px solid #0d77b6;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.current-roster-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  border-radius: 10px;
+}
+/* end of team roster */
+
 
 /* ======making responsive to navbar========= */
 
