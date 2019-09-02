@@ -37,6 +37,7 @@ function AboutTheProduct(props) {
             </InView>
           </div>
         </div>
+        
         <div>
           <div className="img-container">
             <div className="row">

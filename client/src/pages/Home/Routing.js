@@ -12,6 +12,7 @@ import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile';
 import Dashboard from '../../components/Dashboard/Dashboard';
 import ForgotPassword from '../../components/ForgotPassword';
+import About from '../About/AboutPage';
 import { isAuthenticated } from '../../apis';
 
 class Routing extends React.Component {
@@ -123,6 +124,7 @@ class Routing extends React.Component {
         <Route exact path="/SignUp" component={SignUp} />
         <Route exact path="/dashboard" render={()=><Dashboard isDarkModeSet={this.checkDarkMode}/>} />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
+        <Route exact path="/About" component={About}/>
       </React.Fragment>
     );
   }

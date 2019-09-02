@@ -450,6 +450,13 @@ nav {
 .enter-email {
   margin: 20% 0 10% 0 !important;
 }
+.about-lines{
+  font-family: SegoeUI;
+  font-size: 20px;
+  line-height: 1.35;
+  color: #757575;
+  font-family: 'Segoe UI Regular';
+}
 
 /* ======making responsive to navbar========= */
 
