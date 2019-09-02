@@ -457,6 +457,58 @@ nav {
   color: #757575;
   font-family: 'Segoe UI Regular';
 }
+.contact-input{
+  display: block;
+    width: 100%;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: solid 1px #707070!important;
+    border-radius: 5px!important;
+    text-align: center;
+}
+.contact-input-text-area{
+  display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: solid 1px #707070!important;
+    border-radius: 5px!important;
+    text-align: center;
+}
+.contact-input-text-area::placeholder{
+  color: #707070!important;
+  opacity: 0.7;
+}
+.submit-now{
+  border-radius: 10px;
+  background-color: #0f81dc;
+  width: 138.7px;
+  height: 42px;
+  border:none;
+  color: #fff;
+}
+.get-in-touch {
+  border-bottom: 4px solid #4293f5;
+}
+.get-in-touch + p{
+  margin-top: 80px;
+}
+.card-contact{
+  border-radius: 10px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: #ffffff;
+}
 
 /* ======making responsive to navbar========= */
 
