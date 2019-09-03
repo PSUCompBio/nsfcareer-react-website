@@ -629,7 +629,7 @@ nav {
   border-bottom: 1px solid black;
   margin-bottom: 5px;
 }
-.current-rostar-selector select {
+.roster-value-container {
   width: 225px;
   border: solid 0.5px #dcdbdb;
   background-color: #ffffff;
@@ -639,6 +639,40 @@ nav {
   text-indent: 1px;
   text-overflow: '';
   background: url('/img/icon/arrowDown.svg') no-repeat no-repeat right;
+}
+.roster-value-set {
+  position: absolute;
+  left: 123px;
+  top: 32px;
+  width: 225px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  border: solid 0.5px #707070;
+  background-color: #ffffff;
+  z-index: 4;
+  border-radius: 3px;
+}
+.roster-arrow {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid #0f81dc;
+  position: absolute;
+  top: -10px;
+  left: 17%;
+}
+.roster-value-set ul {
+  text-decoration: none;
+  list-style: none;
+  margin-bottom: 0;
+}
+.roster-value-set ul li{
+  height: 30px;
+  text-align: center
+}
+.roster-value-set ul li:hover{
+  background-color: #0f81dc;
+  color: #fff;
 }
 .t-roster {
   font-family: 'Segoe UI Regular';
@@ -658,7 +692,7 @@ nav {
   margin-left: 5px;
   padding: 5px;
 }
-.active-tab{
+.active-tab {
   background-color: #0f81dc;
   color: #fff;
 }

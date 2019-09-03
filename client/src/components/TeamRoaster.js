@@ -12,7 +12,9 @@ class TeamRoaster extends React.Component {
       highestLoadCount: 0.046,
       impactCount: 3,
       tabActive: 0,
-      targetBtn: ''
+      targetBtn: '',
+      rosterValue: 'Lorem ipsum',
+      visibilityRosterValueSelector: { display: 'none' }
     };
   }
   toggleTab = (value) => {
@@ -21,6 +23,16 @@ class TeamRoaster extends React.Component {
 
   getTargetBtn = (value) => {
     this.setState({ targetBtn: value });
+  };
+  setRosterValue = (e) => {
+    this.setState({
+      rosterValue: e.currentTarget.dataset.item
+    });
+  };
+  makeVisibleSelector = () => {
+    if (this.state.visibilityRosterValueSelector.display === 'none')
+      this.setState({ visibilityRosterValueSelector: { display: 'block' } });
+    else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
   };
 
   render() {
@@ -59,12 +71,51 @@ class TeamRoaster extends React.Component {
                 <div className="col-md-6">
                   <div className="current-rostar-selector d-flex">
                     <p>Current roster</p>
-                    <select name="" id="">
-                      <option value="">Lorem lipsum</option>
-                      <option value="">York tech football</option>
-                      <option value="">Lorem lipsum</option>
-                      <option value="">York tech football</option>
-                    </select>
+                    <span>
+                      <img
+                        className="w-75"
+                        src="/img/icon/breadcrumb.svg"
+                        alt=""
+                      />
+                    </span>
+                    <div
+                      onClick={this.makeVisibleSelector}
+                      className="roster-value-container"
+                    >
+                      {this.state.rosterValue}
+                      <div
+                        style={this.state.visibilityRosterValueSelector}
+                        className="roster-value-set"
+                      >
+                        <div className="roster-arrow"></div>
+                        <ul>
+                          <li
+                            data-item="Lorem lipsum"
+                            onClick={this.setRosterValue}
+                          >
+                            Lorem lipsum
+                          </li>
+                          <li
+                            data-item="York tech football"
+                            onClick={this.setRosterValue}
+                          >
+                            York tech football
+                          </li>
+                          <li
+                            data-item="Lorem lipsum"
+                            onClick={this.setRosterValue}
+                          >
+                            Lorem lipsum
+                          </li>
+                          <li
+                            data-item="York tech football"
+                            onClick={this.setRosterValue}
+                          >
+                            York tech football
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="col-md-6">
@@ -85,7 +136,7 @@ class TeamRoaster extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-12 current-roster-card mt-4 p-0">
+                <div className="col-md-12 current-roster-card mb-5 mt-4 p-0">
                   <div className="rostar-selector">
                     <RostarBtn
                       tabActive={this.toggleTab}
@@ -126,11 +177,11 @@ class TeamRoaster extends React.Component {
                       </div>
                       <div className="football-body d-flex">
                         <div className="body-left-part ">
-                          <p>1</p>
+                          <p>2</p>
                           <p>Impacts</p>
                         </div>
                         <div className="body-right-part">
-                          <p>0</p>
+                          <p>1</p>
                           <p>Alerts</p>
                         </div>
                       </div>
