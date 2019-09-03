@@ -8,6 +8,11 @@ WebFont.load({
   }
 });
 class Banner extends React.Component {
+  componentWillMount() {
+    if (this.props.darkMode === true) {
+      
+    }
+  }
   render() {
     return (
       <div>

@@ -1,77 +1,169 @@
-
-.glyphicon {  margin-bottom: 10px;margin-right: 10px;}
+.glyphicon {
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
 
 small {
-display: block;
-line-height: 1.428571429;
-color: #999;
+  display: block;
+  line-height: 1.428571429;
+  color: #999;
 }
-.profile{
+.profile {
   width: 148px;
   height: 148px;
   object-fit: contain;
   border: solid 1px #0f81dc;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
   border-radius: 50%;
   position: absolute;
   top: 0;
   left: 50%;
-  transform: translate(-50%, -50%) ;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  border-bottom: 10px solid #f5f5f5;
+  border-left: 10px solid #f5f5f5;
+  border-right: 10px solid white;
+  border-top: 10px solid white;
 }
-.profile-container{
+.profile img{
+  transform: rotate(45deg);
+}
+.profile-container {
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
   border-radius: 10px;
 }
-.profile-mt{
+.profile-mt {
   margin-top: 200px;
 }
 
-.profile-container div:nth-child(2) p:nth-child(1){
+.switch {
+  display: inline-block;
+  position: relative;
+  width: 42.2px;
+  height: 18.8px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  background-color: #c8e7ff;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.4s;
+}
+
+.slider:before {
+  background-color: #fff;
+  bottom: 4px;
+  content: '';
+  left: -4px;
+  position: absolute;
+  transition: 0.4s;
+  width: 28px;
+  height: 28px;
+  background-color: #0f81dc;
+  top: -4px;
+}
+.dark-mode {
+  display: inline-block;
+  font-family: 'Segoe UI Regular';
+  font-size: 20px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.85;
+  letter-spacing: normal;
+  text-align: center;
+  color: #545454;
+}
+
+input:checked + .slider {
+  background-color: #66bb6a;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+  margin-top: 0;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.profile-container > div:nth-child(2) > p:nth-child(1) {
   font-size: 32px;
   font-weight: 600;
   line-height: 1.34;
   color: #686868;
-  margin-bottom: 10px
+  margin-bottom: 10px;
+  font-family: 'Segoe UI Regular';
 }
-.profile-container div:nth-child(2){
-  margin-top: 10%;
+.titiles p {
+  color: #0f81dc;
 }
-
-.profile-container div:nth-child(2) >p{
+.titiles p input {
+  border: none !important;
+  border-radius: 5px !important;
+  padding-left: 5px !important;
+}
+.titiles p input:focus {
+  border: none !important;
+  outline: none;
+}
+.input-outline:focus {
+  border: 2px solid #0f81dc;
+  box-shadow: 0 0 10px -2px rgba(23, 115, 221, 0.4) !important;
+  border-radius: 10px !important;
+}
+.titiles p input::placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+.titiles p > span > img {
+  cursor: pointer;
+}
+.titiles p input:disabled {
+  background-color: transparent !important;
+}
+.titiles p:nth-child(2) input {
+  width: 100px;
+}
+.titiles p:nth-child(3) input {
+  width: 100px;
+}
+.titiles p:nth-child(4) input {
+  width: 130px;
+}
+.titiles p:nth-child(5) input {
+  width: 110px;
+}
+.btns-heading > p {
+  white-space: pre;
+}
+.jpg-png-only {
   font-size: 14px;
   line-height: 2.64;
+  text-align: center;
   color: #aaaaaa;
 }
-.profile-container div:nth-child(2) div label{
-  font-size: 18px;
-  line-height: 2.06;
-  color: #0f81dc;
-  font-weight: normal;
-  font-family: 'Segoe UI Regular';
-  padding: 0!important;
+
+input::placeholder {
+  color: #000000 !important;
 }
-.profile-container div:nth-child(2) div{
-  padding: 0!important;
-  margin-top: 1px;
-  height: 30px!important;
+.upload-btn {
+  background-color: #0f81dc !important;
+  border-radius: 10px !important;
+  color: #fff !important;
 }
-.profile-container div:nth-child(2) div input::placeholder{
-  font-size: 18px;
-  line-height: 2.06;
-  color: #000000!important;
-  font-weight: normal;
-  font-family: 'Segoe UI Regular';
-  
-}
-.profile-container div:nth-child(2) div input{
-  border-bottom: none!important;
-  padding: 0!important;
-}
-input::placeholder{
-  color: #000000!important;
-}
-.upload-btn{
-  background-color: #0f81dc!important;
-  border-radius: 10px!important;
-  color: #fff!important;
+#dark-mode-color::placeholder{
+color: #fff!important;
+opacity: 1!important;
 }

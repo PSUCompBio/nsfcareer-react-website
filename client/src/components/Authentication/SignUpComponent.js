@@ -321,7 +321,7 @@ class SignUpComponent extends React.Component {
                 ) : null}
                 {this.state.isSignUpConfirmed ? (
                   <div
-                    class="alert alert-info api-response-alert-success"
+                    className="alert alert-info api-response-alert-success"
                     role="alert"
                   >
                     <strong>Account created Successfully! </strong> Check your
@@ -329,7 +329,7 @@ class SignUpComponent extends React.Component {
                   </div>
                 ) : null}
                 {this.state.isSignUpError ? (
-                  <div class="alert alert-info api-response-alert" role="alert">
+                  <div className="alert alert-info api-response-alert" role="alert">
                     <strong>Failed! </strong> {this.state.signUpError}.
                   </div>
                 ) : null}

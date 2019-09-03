@@ -148,10 +148,10 @@ body {
   background: #fff;
   margin-left: 25%;
 }
-.active-link-hover{
+.active-link-hover {
   transition: border, border-radius, width, background, margin-left 2s;
 }
-.nav-link:hover .active-link-hover{
+.nav-link:hover .active-link-hover {
   border: 1px solid white;
   border-radius: 5px;
   width: 50%;
@@ -200,7 +200,7 @@ body {
   border: 1px solid white;
   border-radius: 10px;
   margin-top: 1px;
-  width: fill-available;
+  width: auto;
   background-color: #fff;
 }
 
@@ -233,31 +233,31 @@ body {
   margin: 0 5px 0 5px;
   animation: drawLine 3s;
 }
-@keyframes drawLine{
-  0%{
+@keyframes drawLine {
+  0% {
     width: 0;
   }
-  100%{
+  100% {
     width: 3%;
   }
 }
 .shift-top {
   margin-top: -110px;
 }
-path, circle{
+path,
+circle {
   transition: fill 1s;
   -webkit-transition: fill 1.5s;
 }
-.svg{
+.svg {
   cursor: pointer;
 }
-.svg:hover .cls-2{
+.svg:hover .cls-2 {
   fill: #fff;
 }
-.svg:hover .cls-1{
+.svg:hover .cls-1 {
   fill: #0f81dc;
 }
-
 
 .shift-top h4 {
   font-weight: 900;
@@ -288,26 +288,28 @@ path, circle{
   border-radius: 10px !important;
   transition: background, color 1s;
 }
-.btn-outline-blue:hover{
+.btn-outline-blue:hover {
   background: #0f81dc;
-  color: #fff!important;
+  color: #fff !important;
 }
-
 
 .copyright {
   font-family: 'Segoe UI Regular';
+  cursor: pointer;
 }
 
 footer {
   background: url('/img/BannerImg/navbg.png') no-repeat center;
   background-size: cover;
-  
+  position: absolute;
+  width: 100%;
+  bottom: -300%;
 }
 .footer-height {
   height: 100vh;
 }
 .hide-footer {
-  display: none !important;
+  display: none;
 }
 .show-footer {
   display: block !important;
@@ -358,11 +360,11 @@ footer p {
   list-style: none;
   z-index: 2;
 }
-.hvr-grow{
-  display: block!important;
+.hvr-grow {
+  display: block !important;
 }
-.hvr-grow:hover{
-  transform: scale(1.5)!important;
+.hvr-grow:hover {
+  transform: scale(1.5) !important;
 }
 .active-indicator {
   background: rgb(255, 255, 255);
@@ -445,9 +447,309 @@ nav {
   cursor: pointer;
 }
 
-.enter-email{
-  margin: 20% 0 10% 0!important;
+.enter-email {
+  margin: 20% 0 10% 0 !important;
 }
+.about-lines {
+  font-family: SegoeUI;
+  font-size: 20px;
+  line-height: 1.35;
+  color: #757575;
+  font-family: 'Segoe UI Regular';
+}
+.contact-input {
+  display: block;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: solid 1px #707070 !important;
+  border-radius: 5px !important;
+  text-align: center;
+}
+.contact-input-text-area {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: solid 1px #707070 !important;
+  border-radius: 5px !important;
+  text-align: center;
+}
+.contact-input-text-area::placeholder {
+  color: #707070 !important;
+  opacity: 0.7;
+}
+.submit-now {
+  border-radius: 10px;
+  background-color: #0f81dc;
+  width: 138.7px;
+  height: 42px;
+  border: none;
+  color: #fff;
+}
+.get-in-touch {
+  border-bottom: 4px solid #4293f5;
+  font-family: 'Roboto', sans-serif;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1.23;
+  color: #242424;
+}
+.get-in-touch + p {
+  margin-top: 80px;
+  color: #848484;
+}
+.leave-us {
+  color: #848484;
+}
+.card-contact {
+  border-radius: 10px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: #ffffff;
+}
+/* team roaster */
+.penstate {
+  font-family: 'Segoe UI Regular';
+  font-size: 36px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.94;
+  letter-spacing: 3.53px;
+  text-align: left;
+  color: #686868;
+}
+.counter {
+  width: 78.1px;
+  height: 78.1px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  border: solid 2px #0f81dc;
+  border-radius: 50%;
+  position: relative;
+}
+.team-view-counter{
+  width: 78.1px;
+  height: 78.1px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  border: solid 2px #0f81dc;
+  border-radius: 50%;
+  position: relative;
+}
+.team-view-counter p{
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  font-size: 34px;
+  color: #0f81dc;
+}
+.counter p {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+}
+.counter +p{
+  color: #686868;
+  font-size: 14px;
+}
+.load-heading,
+.impact-heading {
+  width: 153px;
+  height: 30px;
+  font-family: 'Segoe UI Regular';
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f81dc;
+  position: absolute;
+  top: -17%;
+  left: 50%;
+  margin-left: -71.5px;
+  background-color: #fff;
+}
+.load-heading + p,
+.impact-heading + p {
+  font-size: 14px;
+  color: #686868;
+}
+.load-heading + p > span,
+.impact-heading + p > span {
+  font-size: 10px;
+}
+.load-count,
+.impact-count {
+  color: #0f81dc;
+}
+.rostar-btn {
+  width: 50%;
+  background: none;
+  border: 1px solid #35a5e6;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  color: #0f81dc;
+}
+.current-roster-card {
+  border-radius: 10px;
+}
+.commander-view-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.tech-football {
+  width: 234px;
+  height: 220px;
+  border-radius: 10px;
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: #ffffff;
+  padding: 5px;
+}
+.football-container {
+  height: 573px;
+}
+.body-left-part {
+  border-right: 1px solid black;
+}
+.body-left-part,
+.body-right-part {
+  width: 50%;
+  height: 155px;
+  padding-top: 45px;
+}
+.body-left-part p:nth-child(1),
+.body-right-part p:nth-child(1) {
+  font-size: 36px;
+  color: #0f81dc;
+}
+.body-left-part p:nth-child(2),
+.body-right-part p:nth-child(2) {
+  font-size: 10px;
+  color: #686868;
+}
+.football-header p:nth-child(1) {
+  font-family: 'Segoe UI Regular';
+  font-size: 14px;
+  color: #686868;
+}
+.football-header p:nth-child(2) {
+  font-family: 'Segoe UI Regular';
+  font-size: 12px;
+  color: #686868;
+}
+.football-header {
+  border-bottom: 1px solid black;
+  margin-bottom: 5px;
+}
+.roster-value-container {
+  width: 225px;
+  height: 28px;
+  border: solid 0.5px #dcdbdb;
+  background-color: #ffffff;
+  color: #686868;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+  background: url('/img/icon/arrowDown.svg') no-repeat no-repeat right;
+}
+.roster-value-set {
+  position: absolute;
+  left: 123px;
+  top: 32px;
+  width: 225px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  border: solid 0.5px #707070;
+  background-color: #ffffff;
+  z-index: 4;
+  border-radius: 3px;
+}
+.roster-arrow {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid #0f81dc;
+  position: absolute;
+  top: -10px;
+  left: 17%;
+}
+.roster-value-set ul {
+  text-decoration: none;
+  list-style: none;
+  margin-bottom: 0;
+}
+.roster-value-set ul li{
+  height: 30px;
+  text-align: center
+}
+.roster-value-set ul li:hover{
+  background-color: #0f81dc;
+  color: #fff;
+}
+.t-roster {
+  font-family: 'Segoe UI Regular';
+}
+.season-position select {
+  font-size: 12px;
+  text-align: left;
+  color: #686868;
+  background-color: #fff;
+  border: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+  background: url('/img/icon/arrowDown.svg') no-repeat no-repeat right;
+  border-bottom: 2px solid #e0e0e0;
+  margin-left: 5px;
+  padding: 5px;
+}
+.active-tab {
+  background-color: #0f81dc;
+  color: #fff;
+}
+/* end of team roster */
+
+
+/* Commander team view */
+.impact-sumary-btn{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: #0f81dc;
+  padding: 2px 20px 2px 20px;
+  color: #fff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border: none;
+}
+.impact-summary-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.impact-history-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.sport, .roster{
+  width: 100px;
+}
+.sport{
+  border-right: 1px solid #0f81dc;
+}
+.counter-container>p{
+  color: #686868;
+  font-family: 'Segoe UI Regular';
+}
+
+/* Commander team view end */
 
 
 
@@ -462,10 +764,22 @@ nav {
   .image-padding img:nth-child(1) {
     width: 40px !important;
   }
-  }
+}
 
 @media (max-width: 575px) {
-  
+  div.tech-football{
+    width: auto;
+    margin-right: 1rem!important;
+  }
+  .penstate{
+    text-align: center!important;
+  }
+  div.season-position{
+    text-align: center!important;
+  }
+  div.football-container{
+    display: block!important;
+  }
   .navbar-brand {
     width: 70%;
   }
@@ -586,6 +900,7 @@ nav {
   transition: transform 200ms;
   border-top-left-radius: 17px !important;
   border-top-right-radius: 17px !important;
+  border: none !important;
 }
 
 @media (min-width: 726px) {
@@ -610,7 +925,7 @@ nav {
   .heading-container {
     margin-top: 15%;
   }
-  
+
   .research-area-bg {
     height: 100vh;
   }
@@ -626,12 +941,12 @@ nav {
 }
 
 .section-title h1::after {
-  content: "";
+  content: '';
   height: 1px;
   width: 80%;
   position: absolute;
   border: 2px solid #4293f5;
-  bottom: -.1em;
+  bottom: -0.1em;
   left: 50%;
   transform: translate(-50%);
   -webkit-transition: all 1s;
@@ -641,84 +956,83 @@ nav {
 /* Push to Left Navigation Menu */
 
 .cbp-spmenu {
-	background: #13568d;
-	position: fixed;
+  background: #13568d;
+  position: fixed;
 }
 
 .cbp-spmenu h3 {
-	color: #afdefa;
-	font-size: 1.9em;
-	padding: 20px;
-	margin: 0;
-	font-weight: 300;
-	background: #0d77b6;
+  color: #afdefa;
+  font-size: 1.9em;
+  padding: 20px;
+  margin: 0;
+  font-weight: 300;
+  background: #0d77b6;
 }
 
 .cbp-spmenu a {
-	display: block;
-	color: #fff;
-	font-size: 1.1em;
-	font-weight: 300;
+  display: block;
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: 300;
 }
 
 .cbp-spmenu a:hover {
-	background: #258ecd;
+  background: #258ecd;
 }
 
 .cbp-spmenu a:active {
-	background: #afdefa;
-	color: #47a3da;
+  background: #afdefa;
+  color: #47a3da;
 }
 
 .cbp-spmenu-vertical {
-	width: 240px;
-	height: 100%;
-	top: 0;
+  width: 240px;
+  height: 100%;
+  top: 0;
   z-index: 1000;
   right: 0;
 }
 
 .cbp-spmenu-vertical a {
-	border-bottom: 1px solid #258ecd;
-	padding: 1em;
+  border-bottom: 1px solid #258ecd;
+  padding: 1em;
 }
 
 .cbp-spmenu-right {
-	right: -240px;
+  right: -240px;
 }
 
 .cbp-spmenu-right.cbp-spmenu-open {
-	right: 0px;
+  right: 0px;
 }
 
 .cbp-spmenu-push {
-	overflow-x: hidden;
-	position: relative;
-	left: 0;
+  overflow-x: hidden;
+  position: relative;
+  left: 0;
 }
 
 .cbp-spmenu-push-toleft {
-	left: -240px;
+  left: -240px;
 }
 
 .cbp-spmenu,
 .cbp-spmenu-push {
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-@media screen and (max-height: 26.375em){
+@media screen and (max-height: 26.375em) {
+  .cbp-spmenu-vertical {
+    font-size: 90%;
+    width: 190px;
+  }
+  .cbp-spmenu-push-toleft {
+    left: -190px;
+  }
 
-	.cbp-spmenu-vertical {
-		font-size: 90%;
-		width: 190px;
-	}
-	.cbp-spmenu-push-toleft {
-		left: -190px;
-	}
-
-	.cbp-spmenu-right {
-		right: -190px;
-	}
+  .cbp-spmenu-right {
+    right: -190px;
+  }
 }

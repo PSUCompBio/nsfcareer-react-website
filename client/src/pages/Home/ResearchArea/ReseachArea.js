@@ -1,8 +1,9 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 
 function ResearchArea(props) {
-  const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
+  // const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
 
   return (
     <div className="research-area-bg">
@@ -13,7 +14,7 @@ function ResearchArea(props) {
               {({ inView, ref }) => (
                 <div ref={ref}>
                   <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
-                    <h1 className="font-weight-bold">RESEARCH AREAS</h1>
+                    <h1 id="color" className="font-weight-bold">RESEARCH AREAS</h1>
                   </div>
                 </div>
               )}
@@ -34,8 +35,9 @@ function ResearchArea(props) {
                       <p className="card-text px-3 mt-3 color">
                         We use sensor-enabled, cloud-based platform for
                         individualized brain modeling of
-                        Soldiers. <a href="/Military">Read More</a>
+                        Soldiers. 
                       </p>
+                      <a href="/Military">Read More</a>
                     </div>
                   </div>
                 </div>
@@ -55,8 +57,9 @@ function ResearchArea(props) {
                       <p className="card-text mt-3 color">
                         We utilize data from the customized computer models to
                         approximate an Athlete&apos;s brain’s response to
-                        injuries. <a href="#">Read More</a>
+                        injuries. 
                       </p>
+                      <Link href="#">Read More</Link>
                     </div>
                   </div>
                 </div>

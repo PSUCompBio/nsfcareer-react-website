@@ -1,12 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {
-  BrowserRouter as Router,
   Link,
   Redirect,
   withRouter
 } from 'react-router-dom';
-import Index from '../../index';
+// import Index from '../../index';
 import Footer from '../Footer';
 
 import { formDataToJson } from '../../utilities/utility';
@@ -36,13 +34,11 @@ class Login extends React.Component {
     }
   };
 
-  componentWillUpdate() {
-
-  }
-  hideDashboardView = () => {
-    document.getElementById('dashboard-view').style.display = 'none';  
-    document.getElementById('make-full-width').style.display = 'none';
-  }
+  // componentWillUpdate() {}
+  // hideDashboardView = () => {
+  //   document.getElementById('dashboard-view').style.display = 'none';
+  //   document.getElementById('make-full-width').style.display = 'none';
+  // };
 
   handleSubmit(e) {
     console.log('SIGNIN IN CLICKED');
@@ -132,52 +128,53 @@ class Login extends React.Component {
         });
     }
   }
+  componentWillUpdate() {
+    //temporary redirecting to the dashboard
+    this.setState({ isSignInSuccessed: true });
+  }
 
   render() {
     return (
-      <div onClick={this.hideDashboardView} className="container-fluid pl-0 pr-0 overflow-hidden">
-        {this.state.isSignInSuccessed ? <Redirect to="/Profile" /> : null}
-        <div className="row login">
-          <div className="col-md-6 ml-md-auto mr-md-auto">
-            <div className="card card-border">
-              <div className="card-body">
-                <div className="text-center brain-icon">
-                  <img src="img/icon/brain.png" alt="" />
-                </div>
+      <React.Fragment>
+        <div
+          // onClick={this.hideDashboardView}
+          className="container pl-0 pr-0 overflow-hidden"
+        >
+          {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
+          <div className="row login">
+            <div className="col-md-6 mb-5 p-3">
+              <div id="dashboard-view" className="text-right dashboard-mock">
+                <img
+                  className="img-fluid"
+                  src="/img/dashboardMock.png"
+                  alt=""
+                />
+              </div>
+            </div>
 
-                <form onSubmit={this.handleSubmit} ref="signInForm">
-                  <div className="input-group mb-5">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text" id="basic-addon1">
-                        <img src="img/icon/user.svg" alt="" />
-                      </span>
-                    </div>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="user_name"
-                      placeholder="Username"
-                      aria-label="Username"
-                      aria-describedby="basic-addon1"
-                    />
-                  </div>
-                  <div className="input-group mb-1">
-                    <div className="input-group-prepend">
-                      <span className="input-group-text" id="basic-addon1">
-                        <img src="img/icon/lock.svg" alt="" />
-                      </span>
-                    </div>
-                    <input
-                      type="password"
-                      className="form-control"
-                      name="password"
-                      placeholder="Password"
-                      aria-label="Password"
-                      aria-describedby="basic-addon1"
-                    />
+            <div className="col-md-6 mb-5 p-3">
+              <div className="card card-border">
+                <div className="card-body">
+                  <div className="text-center brain-icon">
+                    <img src="img/icon/brain.png" alt="" />
                   </div>
 
-                  {this.state.tempPasswordRequired ? (
+                  <form onSubmit={this.handleSubmit} ref="signInForm">
+                    <div className="input-group mb-5">
+                      <div className="input-group-prepend">
+                        <span className="input-group-text" id="basic-addon1">
+                          <img src="img/icon/user.svg" alt="" />
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="user_name"
+                        placeholder="Username"
+                        aria-label="Username"
+                        aria-describedby="basic-addon1"
+                      />
+                    </div>
                     <div className="input-group mb-1">
                       <div className="input-group-prepend">
                         <span className="input-group-text" id="basic-addon1">
@@ -187,62 +184,80 @@ class Login extends React.Component {
                       <input
                         type="password"
                         className="form-control"
-                        name="new_password"
-                        placeholder="New Password (Min. 8 digit password)"
+                        name="password"
+                        placeholder="Password"
                         aria-label="Password"
                         aria-describedby="basic-addon1"
                       />
                     </div>
-                  ) : null}
 
-                  <div>
-                    <Link
-                      to="/Forgot-Password"
-                      className="float-right forgot-pswd"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
-                  <button
-                    type="submit"
-                    className="btn btn-primary log-in-btn btn-block mt-5"
-                  >
-                    LOG IN
-                  </button>
-                </form>
-                {this.state.isLoading ? (
-                  <div className="d-flex justify-content-center center-spinner">
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="sr-only">Loading...</span>
+                    {this.state.tempPasswordRequired ? (
+                      <div className="input-group mb-1">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text" id="basic-addon1">
+                            <img src="img/icon/lock.svg" alt="" />
+                          </span>
+                        </div>
+                        <input
+                          type="password"
+                          className="form-control"
+                          name="new_password"
+                          placeholder="New Password (Min. 8 digit password)"
+                          aria-label="Password"
+                          aria-describedby="basic-addon1"
+                        />
+                      </div>
+                    ) : null}
+
+                    <div>
+                      <Link
+                        to="/Forgot-Password"
+                        className="float-right forgot-pswd"
+                      >
+                        Forgot password?
+                      </Link>
                     </div>
+                    <button
+                      type="submit"
+                      className="btn btn-primary log-in-btn btn-block mt-5"
+                    >
+                      LOG IN
+                    </button>
+                  </form>
+                  {this.state.isLoading ? (
+                    <div className="d-flex justify-content-center center-spinner">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    </div>
+                  ) : null}
+                  {this.state.isLoginError ? (
+                    <div
+                      className="alert alert-info api-response-alert"
+                      role="alert"
+                    >
+                      <strong>Failed! </strong> {this.state.loginError}.
+                    </div>
+                  ) : null}
+                  <div className="text-center">
+                    <p className="mt-4 sign-up-link">
+                      Don't have an account?{' '}
+                      <Link className="sign-up" to="SignUp">
+                        {' '}
+                        Sign Up{' '}
+                      </Link>
+                    </p>
                   </div>
-                ) : null}
-                {this.state.isLoginError ? (
-                  <div class="alert alert-info api-response-alert" role="alert">
-                    <strong>Failed! </strong> {this.state.loginError}.
-                  </div>
-                ) : null}
-                <div className="text-center">
-                  <p className="mt-4 sign-up-link">
-                    Don't have an account?{' '}
-                    <Link className="sign-up" to="SignUp">
-                      {' '}
-                      Sign Up{' '}
-                    </Link>
-                  </p>
                 </div>
               </div>
             </div>
-            
-          </div>
-          <div id="make-full-width" className="col-md-2">
-          </div>
-          <div id="dashboard-view" className="dashboard-mock">
-          <img className="img-fluid" src="/img/dashboardMock.png" alt=""/>
           </div>
         </div>
         <Footer />
-      </div>
+      </React.Fragment>
     );
   }
 }

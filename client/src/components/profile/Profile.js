@@ -1,17 +1,17 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBBtn,
-  MDBAlert,
-  MDBInput,
-  MDBCard,
-  MDBCardBody,
-  MDBIcon,
-  MDBCardFooter
-} from 'mdbreact';
+// import { Redirect } from 'react-router-dom';
+// import {
+//   MDBContainer,
+//   MDBRow,
+//   MDBCol,
+//   MDBBtn,
+//   MDBAlert,
+//   MDBInput,
+//   MDBCard,
+//   MDBCardBody,
+//   MDBIcon,
+//   MDBCardFooter
+// } from 'mdbreact';
 import './Profile.css';
 import {
   uploadProfilePic,
@@ -22,6 +22,8 @@ import {
   getSimulationFile,
   isAuthenticated
 } from '../../apis';
+
+import Footer from '../Footer';
 
 import Download3dProfile from '../Buttons/Download3dProfile';
 import DownloadAvtar from '../Buttons/Download3dProfile';
@@ -38,7 +40,10 @@ class Profile extends React.Component {
       isUploading: false,
       foundInpLink: false,
       isAuthenticated: false,
-      isCheckingAuth: true
+      isCheckingAuth: true,
+      disableInput: [true, true, true, true, true],
+      inputs: ['email', 'age', 'sex', 'contact', 'organization'],
+      isDarkMode: false
     };
   }
   onChangeHandler = (event) => {
@@ -57,7 +62,7 @@ class Profile extends React.Component {
       .then((response) => {
         console.log(response);
 
-        if (response.data.message == 'success') {
+        if (response.data.message === 'success') {
           // Fetch only image url again
           getProfilePicLink(
             JSON.stringify({ user_cognito_id: this.state.user.user_cognito_id })
@@ -72,8 +77,8 @@ class Profile extends React.Component {
                 prevState = JSON.parse(JSON.stringify(this.state.user));
                 prevState.profile_picture_url = res.data.profile_picture_url;
                 if (
-                  res.data.avatar_url != undefined &&
-                  res.data.avatar_url.length != 0
+                  res.data.avatar_url !== undefined &&
+                  res.data.avatar_url.length !== 0
                 ) {
                   prevState.avatar_url = res.data.avatar_url;
                   prevState.is_selfie_image_uploaded = true;
@@ -88,7 +93,7 @@ class Profile extends React.Component {
                 })
               )
                 .then((response) => {
-                  if (response.data.message == 'success') {
+                  if (response.data.message === 'success') {
                     // Updating status for inp file
                     this.setState((prevState) => {
                       prevState = JSON.parse(JSON.stringify(this.state.user));
@@ -102,7 +107,7 @@ class Profile extends React.Component {
                       })
                     )
                       .then((response) => {
-                        if (response.data.message == 'success') {
+                        if (response.data.message === 'success') {
                           this.setState((prevState) => {
                             prevState = JSON.parse(
                               JSON.stringify(this.state.user)
@@ -116,7 +121,7 @@ class Profile extends React.Component {
                             })
                           )
                             .then((response) => {
-                              if (response.data.message == 'success') {
+                              if (response.data.message === 'success') {
                                 this.setState((prevState) => {
                                   prevState = JSON.parse(
                                     JSON.stringify(this.state.user)
@@ -168,11 +173,52 @@ class Profile extends React.Component {
   };
 
   isProfilePictureExists = () => {
-    if (this.state.user.profile_picture_url != '') {
+    if (this.state.user.profile_picture_url !== '') {
       return true;
     } else {
       return false;
     }
+  };
+
+  enableDisabe = (e) => {
+    const index = e.currentTarget.dataset.inptno;
+    const element = this.refs[this.state.inputs[index]];
+    const inputDisable = [...this.state.disableInput];
+    inputDisable[index] = !this.state.disableInput;
+    this.setState({ disableInput: inputDisable }, () => {
+      element.focus();
+      element.classList.add('input-outline');
+    });
+  };
+
+  darkMode = (e) => {
+    this.setState({ isDarkMode: !this.state.isDarkMode }, () => {
+      if (this.state.isDarkMode === true) {
+        this.refs.lightDark.style.background = '#232838';
+        document.getElementsByTagName('html')[0].style.background = '#171b25';
+        document.getElementsByTagName('body')[0].style.background = '#171b25';
+        this.refs.profileBorder.style.border = '10px solid #171b25';
+        this.refs.nameColor.style.color = '#fff';
+        this.refs.chooserColor.style.color = '#fff';
+        const allInputs = this.state.inputs;
+        allInputs.forEach((element) => {
+          this.refs[element].setAttribute('id', 'dark-mode-color');
+        });
+        this.props.isDarkModeSet(this.state.isDarkMode);
+      } else {
+        this.refs.lightDark.style.background = '';
+        document.getElementsByTagName('html')[0].style.background = '';
+        document.getElementsByTagName('body')[0].style.background = '';
+        this.refs.profileBorder.style.border = '';
+        this.refs.nameColor.style.color = '';
+        this.refs.chooserColor.style.color = '';
+        const allInputs = this.state.inputs;
+        allInputs.forEach((element) => {
+          this.refs[element].setAttribute('id', '');
+        });
+        this.props.isDarkModeSet(this.state.isDarkMode);
+      }
+    });
   };
 
   render() {
@@ -291,82 +337,160 @@ class Profile extends React.Component {
     //   </MDBCard></React.Fragment>
 
     return (
-      <div className="container profile-mt">
-        <div className="row text-center justify-content-center align-items-center profile-container">
-          <div className="profile">
-            <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
-          </div>
-          <div className="col-md-6  offset-md-3">
-            <p>Reuben Craft</p>
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Email :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="reuben.kraft@gmail.com"
-                />
+      <React.Fragment>
+        <div className="container profile-mt mb-5 pb-2">
+          <div
+            ref="lightDark"
+            className="row text-center justify-content-center align-items-center profile-container"
+          >
+            <div ref="profileBorder" className="profile">
+              <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
+            </div>
+            <div className="col-md-5 mt-5 pt-2  offset-md-3">
+              <p ref="nameColor" className="pt-5 pb-1">
+                Reuben Craft
+              </p>
+              <div className="row text-center">
+                <div className="col-md-12 pt-4 titiles">
+                  <p className="mb-2">
+                    Email :{' '}
+                    <input
+                      ref={this.state.inputs[0]}
+                      type="text"
+                      disabled={this.state.disableInput[0]}
+                      placeholder=" reuben.kraft@gmail.com"
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={0}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>{' '}
+                  </p>
+                  <p className="mb-1">
+                    Age :{' '}
+                    <input
+                      ref={this.state.inputs[1]}
+                      disabled={this.state.disableInput[1]}
+                      type="text"
+                      placeholder="28"
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={1}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <p className="mb-1">
+                    Sex :{' '}
+                    <input
+                      ref={this.state.inputs[2]}
+                      disabled={this.state.disableInput[2]}
+                      type="text"
+                      placeholder="Male"
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={2}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <p className="mb-1">
+                    Contact number :{' '}
+                    <input
+                      ref={this.state.inputs[3]}
+                      disabled={this.state.disableInput[3]}
+                      type="text"
+                      placeholder="+11111111111"
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={3}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <p className="mb-1">
+                    Organization :{' '}
+                    <input
+                      ref={this.state.inputs[4]}
+                      disabled={this.state.disableInput[4]}
+                      type="text"
+                      placeholder=" lorem ipsum"
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={4}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <button type="submit" className="btn mt-5 upload-btn">
+                    Upload photo
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Age :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input type="text" class="form-control" placeholder="28" />
+              <p className="jpg-png-only">* jpeg, jpg & png only</p>
+            </div>
+            <div className="col-md-3 btns-heading text-left pt-4">
+              <div className="row">
+                <div className="col-sm-7">
+                  <span ref="chooserColor" className="dark-mode">
+                    Dark mode
+                  </span>
+                </div>
+                <div className="col-sm-5  position-relative pt-1">
+                  <label className="switch" htmlFor="checkbox">
+                    <input
+                      onChange={this.darkMode}
+                      value={this.state.isDarkMode}
+                      type="checkbox"
+                      id="checkbox"
+                    />
+                    <div className="slider round"></div>
+                  </label>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Sex :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input type="text" class="form-control" placeholder="Male" />
-              </div>
+              <p>
+                <span>
+                  <img src="/img/icon/check.svg" alt="" />
+                </span>{' '}
+                Selfie Uploaded{' '}
+              </p>
+              <Download3dProfile content="Download 3d selfie" />
+              <p>
+                <span>
+                  <img src="/img/icon/check.svg" alt="" />
+                </span>{' '}
+                3D Avatar Generated{' '}
+              </p>
+              <DownloadAvtar content="Download avtar" />
+              <p>
+                <span>
+                  <img src="/img/icon/check.svg" alt="" />
+                </span>{' '}
+                Mesh File Generated
+              </p>
+              <DownloadFeMesh content="Download FE Mesh" />
             </div>
-
-            <div class="form-group text-center row">
-              <label for="email" class="col-sm">
-                Contact number :{' '}
-              </label>
-              <div class="col-sm-6 ">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="+11111111111"
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="btn upload-btn">
-              Upload photo
-            </button>
-            <p>* jpeg, jpg & png only</p>
-          </div>
-          <div className="col-md-3">
-            <div class="custom-control custom-switch">
-            <label class="custom-control-label" for="customSwitch1">
-                  Dark mode
-              </label>
-              <input
-                type="checkbox"
-                class="custom-control-input"
-                id="customSwitch1"
-              />
-            </div>
-            <p>Selfie Uploaded </p>
-            <Download3dProfile content="Download 3d selfie" />
-            <p>3D Avatar Generated </p>
-            <DownloadAvtar content="Download avtar" />
-            <p>Mesh File Generated</p>
-            <DownloadFeMesh content="Download FE Mesh" />
           </div>
         </div>
-      </div>
+        <Footer />
+      </React.Fragment>
     );
   }
 
@@ -374,7 +498,7 @@ class Profile extends React.Component {
     this.setState({ isLoading: true });
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
-        if (value.data.message == 'success') {
+        if (value.data.message === 'success') {
           this.setState({});
           getUserDetails()
             .then((response) => {

@@ -15,9 +15,14 @@ class TechnologiesWeUse extends React.Component {
         marginTop: 10 + '%',
         position: 'relative',
         bottom: 0,
-        display: 'block'
+        display: 'block!important'
       }
     };
+
+    const redirectToOther = () => {
+      window.location.href = "https://psucompbio.org/"
+    }
+
     return (
       <React.Fragment>
         <div className={`section-four-container`} onWheel={this.props.onWheel}>
@@ -28,7 +33,7 @@ class TechnologiesWeUse extends React.Component {
                   {({ inView, ref }) => (
                     <div ref={ref}>
                       <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
-                        <h1 className="font-weight-bold">TECHNOLOGIES WE USE</h1>
+                        <h1 id="color" className="font-weight-bold">TECHNOLOGIES WE USE</h1>
                       </div>
                     </div>
                   )}
@@ -90,8 +95,8 @@ class TechnologiesWeUse extends React.Component {
             }
             className={`show-footer-mobile ${
               this.props.mouseScroll > 0 && this.props.screenWidth >= 725
-                ? 'show-footer footer-height'
-                : 'hide-footer'
+                ? 'show-footer'
+                : this.props.screenWidth < 725 ? '' : 'hide-footer'
               }`}
           >
             <div className="container">
@@ -117,7 +122,7 @@ class TechnologiesWeUse extends React.Component {
                     </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">
-                  <div className="icon-container">
+                  {/* <div className="icon-container">
                     <a href="">
                       <img
                         className="px-2"
@@ -139,13 +144,13 @@ class TechnologiesWeUse extends React.Component {
                         alt=""
                       />
                     </a>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="row text-center">
                 <div className="col-md-12 ">
-                  <p className="copyright">
-                    © 2019 Copyright: Penn State Computational Biomechanics
+                  <p onClick={redirectToOther} className="copyright">
+                    © 2019 Copyright:  Penn State Computational Biomechanics
                     Group
                     </p>
                 </div>

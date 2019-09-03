@@ -1,10 +1,10 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Link,
-  Redirect,
-  withRouter
-} from 'react-router-dom';
+// import {
+//   BrowserRouter as Router,
+//   Link,
+//   Redirect,
+//   withRouter
+// } from 'react-router-dom';
 import Footer from './Footer';
 
 class ForgotPassword extends React.Component {
@@ -60,7 +60,7 @@ class ForgotPassword extends React.Component {
                   </div>
                 ) : null}
                 {this.state.isLoginError ? (
-                  <div class="alert alert-info api-response-alert" role="alert">
+                  <div className="alert alert-info api-response-alert" role="alert">
                     <strong>Failed! </strong> {this.state.loginError}.
                   </div>
                 ) : null}
