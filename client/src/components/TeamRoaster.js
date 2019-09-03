@@ -121,13 +121,13 @@ class TeamRoaster extends React.Component {
                 <div className="col-md-6">
                   <div className="season-position text-right ">
                     <select name="" id="">
-                      <option value="">Lorem lipsum</option>
+                      <option value="">All session</option>
                       <option value="">York tech football</option>
                       <option value="">Lorem lipsum</option>
                       <option value="">York tech football</option>
                     </select>
                     <select name="" id="">
-                      <option value="">Lorem lipsum</option>
+                      <option value="">All position</option>
                       <option value="">York tech football</option>
                       <option value="">Lorem lipsum</option>
                       <option value="">York tech football</option>

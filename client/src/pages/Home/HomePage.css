@@ -544,6 +544,10 @@ nav {
   transform: translate(-50%, -50%);
   left: 50%;
 }
+.counter +p{
+  color: #686868;
+  font-size: 14px;
+}
 .load-heading,
 .impact-heading {
   width: 153px;
@@ -631,6 +635,7 @@ nav {
 }
 .roster-value-container {
   width: 225px;
+  height: 28px;
   border: solid 0.5px #dcdbdb;
   background-color: #ffffff;
   color: #686868;
@@ -712,6 +717,19 @@ nav {
 }
 
 @media (max-width: 575px) {
+  div.tech-football{
+    width: auto;
+    margin-right: 1rem!important;
+  }
+  .penstate{
+    text-align: center!important;
+  }
+  div.season-position{
+    text-align: center!important;
+  }
+  div.football-container{
+    display: block!important;
+  }
   .navbar-brand {
     width: 70%;
   }
