@@ -1,6 +1,6 @@
 import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
-
+import Footer from './Footer';
 
 class TeamRoaster extends React.Component {
   constructor() {
@@ -10,14 +10,23 @@ class TeamRoaster extends React.Component {
       athletes: 6,
       staff: 8,
       highestLoadCount: 0.046,
-      impactCount: 3
+      impactCount: 3,
+      tabActive: 0,
+      targetBtn: ''
     };
   }
+  toggleTab = (value) => {
+    this.setState({ tabActive: value });
+  };
+
+  getTargetBtn = (value) => {
+    this.setState({ targetBtn: value });
+  };
 
   render() {
     return (
       <React.Fragment>
-        <div className="container pt-5 mt-5">
+        <div className="container t-roster pt-5 mt-5">
           <div className="row">
             <div className="col-md-7">
               <p className="penstate">Penn State University Research</p>
@@ -59,8 +68,8 @@ class TeamRoaster extends React.Component {
                   </div>
                 </div>
                 <div className="col-md-6">
-                  <div className="season-position d-flex">
-                  <select name="" id="">
+                  <div className="season-position text-right ">
+                    <select name="" id="">
                       <option value="">Lorem lipsum</option>
                       <option value="">York tech football</option>
                       <option value="">Lorem lipsum</option>
@@ -76,19 +85,58 @@ class TeamRoaster extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-12 current-roster-card p-0">
+                <div className="col-md-12 current-roster-card mt-4 p-0">
                   <div className="rostar-selector">
-                    <RostarBtn content="Overview" />
-                    <RostarBtn content="staff" />                    
+                    <RostarBtn
+                      tabActive={this.toggleTab}
+                      makeActive={this.state.tabActive}
+                      getBtn={this.getTargetBtn}
+                      currentBtn={this.state.targetBtn}
+                      content="Overview"
+                    />
+                    <RostarBtn
+                      tabActive={this.toggleTab}
+                      makeActive={this.state.tabActive}
+                      getBtn={this.getTargetBtn}
+                      currentBtn={this.state.targetBtn}
+                      content="staff"
+                    />
+                  </div>
+                  <div className="football-container pt-5 d-flex">
+                    <div className="tech-football m-3">
+                      <div className="football-header">
+                        <p>York tech football</p>
+                        <p>2 Athletes </p>
+                      </div>
+                      <div className="football-body d-flex">
+                        <div className="body-left-part">
+                          <p>1</p>
+                          <p>Impacts</p>
+                        </div>
+                        <div className="body-right-part">
+                          <p>0</p>
+                          <p>Alerts</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="tech-football m-3">
+                      <div className="football-header">
+                        <p>York tech football</p>
+                        <p>2 Athletes </p>
+                      </div>
+                      <div className="football-body d-flex">
+                        <div className="body-left-part ">
+                          <p>1</p>
+                          <p>Impacts</p>
+                        </div>
+                        <div className="body-right-part">
+                          <p>0</p>
+                          <p>Alerts</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="row">
-                <div className="col-sm-4 tech-fotball">
-
-                </div>
-                <div className="col-sm-4 tech-fotball"></div>
-                <div className="col-sm-4"></div>
               </div>
             </div>
             <div className="col-md-3 pt-5 mb-3">
@@ -118,6 +166,7 @@ class TeamRoaster extends React.Component {
             </div>
           </div>
         </div>
+        <Footer />
       </React.Fragment>
     );
   }

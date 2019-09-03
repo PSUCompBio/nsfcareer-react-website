@@ -24,7 +24,7 @@ const Footer = () => {
                   </p>
         </div>
         <div className="col-sm-3 col-md-6 col-lg-6">
-          <div className="icon-container">
+          {/* <div className="icon-container">
             <a href="">
               <img className="px-2" src="/img/FooterImg/facebook-logo.svg" alt="" />
             </a>
@@ -34,7 +34,7 @@ const Footer = () => {
             <a href="">
               <img className="px-2" src="/img/FooterImg/icon.svg" alt="" />
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="row text-center">
