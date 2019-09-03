@@ -200,7 +200,7 @@ body {
   border: 1px solid white;
   border-radius: 10px;
   margin-top: 1px;
-  width: fill-available;
+  width: auto;
   background-color: #fff;
 }
 
@@ -600,8 +600,10 @@ nav {
   color: #0f81dc;
 }
 .current-roster-card {
-  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   border-radius: 10px;
+}
+.commander-view-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 .tech-football {
   width: 234px;
@@ -720,9 +722,34 @@ nav {
 /* end of team roster */
 
 
-/* progress circle css  */
+/* Commander team view */
+.impact-sumary-btn{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: #0f81dc;
+  padding: 2px 20px 2px 20px;
+  color: #fff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border: none;
+}
+.impact-summary-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.impact-history-card{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+.sport, .roster{
+  width: 100px;
+}
+.sport{
+  border-right: 1px solid #0f81dc;
+}
+.counter-container>p{
+  color: #686868;
+  font-family: 'Segoe UI Regular';
+}
 
-/* end of progress circle */
+/* Commander team view end */
 
 
 

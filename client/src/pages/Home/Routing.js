@@ -1,7 +1,7 @@
 import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
-import { Route, Redirect, withRouter } from 'react-router-dom';
-import Async from 'react-promise';
+import { Route,  withRouter } from 'react-router-dom';
+// import Async from 'react-promise';
 
 import { svgToInline } from '../../config/InlineSvgFromImg';
 
@@ -14,7 +14,7 @@ import Dashboard from '../../components/Dashboard/Dashboard';
 import ForgotPassword from '../../components/ForgotPassword';
 import About from '../About/AboutPage'; 
 import Contact from '../Contact/ContactPage';
-import { isAuthenticated } from '../../apis';
+// import { isAuthenticated } from '../../apis';
 import TeamRoster from '../../components/TeamRoaster';
 import CommanderTeamView from '../../components/CommanderTeamView';
 class Routing extends React.Component {

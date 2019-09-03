@@ -1,8 +1,9 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 
 function ResearchArea(props) {
-  const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
+  // const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
 
   return (
     <div className="research-area-bg">
@@ -58,7 +59,7 @@ function ResearchArea(props) {
                         approximate an Athlete&apos;s brain’s response to
                         injuries. 
                       </p>
-                      <a href="#">Read More</a>
+                      <Link href="#">Read More</Link>
                     </div>
                   </div>
                 </div>

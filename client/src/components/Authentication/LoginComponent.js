@@ -1,12 +1,10 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {
-  BrowserRouter as Router,
   Link,
   Redirect,
   withRouter
 } from 'react-router-dom';
-import Index from '../../index';
+// import Index from '../../index';
 import Footer from '../Footer';
 
 import { formDataToJson } from '../../utilities/utility';

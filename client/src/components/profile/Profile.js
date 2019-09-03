@@ -1,17 +1,17 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBBtn,
-  MDBAlert,
-  MDBInput,
-  MDBCard,
-  MDBCardBody,
-  MDBIcon,
-  MDBCardFooter
-} from 'mdbreact';
+// import { Redirect } from 'react-router-dom';
+// import {
+//   MDBContainer,
+//   MDBRow,
+//   MDBCol,
+//   MDBBtn,
+//   MDBAlert,
+//   MDBInput,
+//   MDBCard,
+//   MDBCardBody,
+//   MDBIcon,
+//   MDBCardFooter
+// } from 'mdbreact';
 import './Profile.css';
 import {
   uploadProfilePic,
@@ -62,7 +62,7 @@ class Profile extends React.Component {
       .then((response) => {
         console.log(response);
 
-        if (response.data.message == 'success') {
+        if (response.data.message === 'success') {
           // Fetch only image url again
           getProfilePicLink(
             JSON.stringify({ user_cognito_id: this.state.user.user_cognito_id })
@@ -77,8 +77,8 @@ class Profile extends React.Component {
                 prevState = JSON.parse(JSON.stringify(this.state.user));
                 prevState.profile_picture_url = res.data.profile_picture_url;
                 if (
-                  res.data.avatar_url != undefined &&
-                  res.data.avatar_url.length != 0
+                  res.data.avatar_url !== undefined &&
+                  res.data.avatar_url.length !== 0
                 ) {
                   prevState.avatar_url = res.data.avatar_url;
                   prevState.is_selfie_image_uploaded = true;
@@ -93,7 +93,7 @@ class Profile extends React.Component {
                 })
               )
                 .then((response) => {
-                  if (response.data.message == 'success') {
+                  if (response.data.message === 'success') {
                     // Updating status for inp file
                     this.setState((prevState) => {
                       prevState = JSON.parse(JSON.stringify(this.state.user));
@@ -107,7 +107,7 @@ class Profile extends React.Component {
                       })
                     )
                       .then((response) => {
-                        if (response.data.message == 'success') {
+                        if (response.data.message === 'success') {
                           this.setState((prevState) => {
                             prevState = JSON.parse(
                               JSON.stringify(this.state.user)
@@ -121,7 +121,7 @@ class Profile extends React.Component {
                             })
                           )
                             .then((response) => {
-                              if (response.data.message == 'success') {
+                              if (response.data.message === 'success') {
                                 this.setState((prevState) => {
                                   prevState = JSON.parse(
                                     JSON.stringify(this.state.user)
@@ -173,7 +173,7 @@ class Profile extends React.Component {
   };
 
   isProfilePictureExists = () => {
-    if (this.state.user.profile_picture_url != '') {
+    if (this.state.user.profile_picture_url !== '') {
       return true;
     } else {
       return false;
@@ -498,7 +498,7 @@ class Profile extends React.Component {
     this.setState({ isLoading: true });
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
-        if (value.data.message == 'success') {
+        if (value.data.message === 'success') {
           this.setState({});
           getUserDetails()
             .then((response) => {

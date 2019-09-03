@@ -19,6 +19,16 @@ class CommanderTeamView extends React.Component {
           <div className="row">
             <div className="col-md-7">
               <p className="penstate">York tech Football</p>
+              <div className="sport-roster-container d-flex items-align-center jsutify-content-center">
+                <div className="sport text-center">
+                  <p>Sport</p>
+                  <img src="/img/icon/football.svg" alt=""/>
+                </div>
+                <div className="roster text-center">
+                  <p>Rostered</p>
+                  <p>2</p>
+                </div>
+              </div>
             </div>
             <div className="col-md-5 d-flex justify-content-center align-items-center">
               <div className="counter-container ml-md-auto mr-md-auto text-center">
@@ -64,7 +74,7 @@ class CommanderTeamView extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-12 current-roster-card mb-5 mt-4 p-0">
+                <div className="col-md-12 commander-view-card mb-5 mt-4 p-0">
                   <div className="rostar-selector">
                     <RostarBtn
                       tabActive={this.toggleTab}
@@ -115,7 +125,26 @@ class CommanderTeamView extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-md-4 pt-5 mb-3"></div>
+            <div className="col-md-4 pt-5 mb-3">
+              <div className="row">
+                <div className="col-md-12 text-left">
+                  <button type="btn" className="impact-sumary-btn">Impact Summary</button>
+                </div>
+              </div>
+              <div className="impact-summary-card">
+              <img className="img-fluid" src="/img/icon/impactSummary.svg" alt=""/>
+                </div>
+            </div>
+          </div>
+          <div className="row mb-5 mt-5">
+            <div className="col-md-12">
+              <div className="text-left">
+              <button type="btn" className="impact-sumary-btn">Impact History</button>
+              </div>
+              <div className="impact-history-card p-4">
+              <img src="/img/icon/impactHistory.svg" alt=""/>
+              </div>
+            </div>
           </div>
         </div>
         <Footer />

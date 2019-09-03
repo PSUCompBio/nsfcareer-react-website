@@ -1,7 +1,6 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import Footer from '../../components/Footer';
 import WebFont from 'webfontloader';
-import { InView } from 'react-intersection-observer';
 
 WebFont.load({
   google: {

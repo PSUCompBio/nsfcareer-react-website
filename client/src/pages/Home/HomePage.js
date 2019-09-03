@@ -7,7 +7,6 @@ import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse';
 import './HomePage.css';
 import 'hover.css/css/hover.css';
 import 'animate.css/animate.min.css';
-import WebFont from 'webfontloader';
 // import 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
@@ -41,7 +40,7 @@ class HomePage extends React.Component {
         h4Length[i].style.color = '#fff';
       }
 
-      if(this.props.currentPage==2 )
+      if(this.props.currentPage===2 )
     document.getElementsByClassName('research-area-bg')[0].style.background = '#000';
     }
   }

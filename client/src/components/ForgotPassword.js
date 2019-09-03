@@ -1,10 +1,10 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Link,
-  Redirect,
-  withRouter
-} from 'react-router-dom';
+// import {
+//   BrowserRouter as Router,
+//   Link,
+//   Redirect,
+//   withRouter
+// } from 'react-router-dom';
 import Footer from './Footer';
 
 class ForgotPassword extends React.Component {
