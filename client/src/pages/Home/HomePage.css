@@ -538,6 +538,22 @@ nav {
   border-radius: 50%;
   position: relative;
 }
+.team-view-counter{
+  width: 78.1px;
+  height: 78.1px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  border: solid 2px #0f81dc;
+  border-radius: 50%;
+  position: relative;
+}
+.team-view-counter p{
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  font-size: 34px;
+  color: #0f81dc;
+}
 .counter p {
   position: absolute;
   top: 50%;
@@ -702,6 +718,13 @@ nav {
   color: #fff;
 }
 /* end of team roster */
+
+
+/* progress circle css  */
+
+/* end of progress circle */
+
+
 
 /* ======making responsive to navbar========= */
 

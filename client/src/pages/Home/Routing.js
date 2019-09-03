@@ -16,7 +16,7 @@ import About from '../About/AboutPage';
 import Contact from '../Contact/ContactPage';
 import { isAuthenticated } from '../../apis';
 import TeamRoster from '../../components/TeamRoaster';
-
+import CommanderTeamView from '../../components/CommanderTeamView';
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -25,7 +25,7 @@ class Routing extends React.Component {
       windowWidth: 0,
       gotoPageNo: 0,
       isLoggedIn: false,
-      isDarkMode: false
+      isDarkMode: false,
     };
   }
   checkDarkMode = (value) => {
@@ -128,7 +128,8 @@ class Routing extends React.Component {
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
         <Route exact path="/Contact" component={Contact} />
-        <Route exact path="/TeamRoster" component={TeamRoster}/>
+        <Route exact path="/TeamRoster" component={TeamRoster} />
+        <Route exact path="/CommanderTeamView" component={CommanderTeamView}/>
         
       </React.Fragment>
     );
