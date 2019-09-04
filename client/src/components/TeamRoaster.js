@@ -8,9 +8,6 @@ class TeamRoaster extends React.Component {
   constructor() {
     super();
     this.state = {
-      team: 2,
-      athletes: 6,
-      staff: 8,
       highestLoadCount: 0.046,
       impactCount: 3,
       tabActive: 0,

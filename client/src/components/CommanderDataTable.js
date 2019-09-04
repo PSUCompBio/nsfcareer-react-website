@@ -6,8 +6,20 @@ import RostarBtn from './Buttons/RostarBtn';
 class CommanderDataTable extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      tabActive: 0,
+      targetBtn: '',
+    };
   }
+
+  toggleTab = (value) => {
+    this.setState({ tabActive: value });
+  };
+
+  getTargetBtn = (value) => {
+    this.setState({ targetBtn: value });
+  };
+
 
   render() {
     return (
