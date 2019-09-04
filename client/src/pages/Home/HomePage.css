@@ -742,6 +742,9 @@ nav {
 .sport, .roster{
   width: 100px;
 }
+.sport, .roster p{
+  color: #686868;
+}
 .sport{
   border-right: 1px solid #0f81dc;
 }
@@ -983,6 +986,44 @@ nav {
 
 /* Commander team view end */
 
+/* commander data table */
+.commander-data-table table thead tr th{
+  font-family: 'Segoe UI Regular';
+  background-color: #daefff;
+  font-size: 14px;
+  height: 39px;
+  padding: 9px 15px 9px 15px;
+  border: none;
+  color: #424242;
+}
+.commander-data-table table tbody tr{
+  line-height: 12px;
+}
+.commander-data-table table tbody tr td{
+  font-size: 14px;
+  color: #747474;
+}
+.commander-data-table table tbody tr:nth-child(even){
+  background-color: #daefff;
+}
+.commander-data-table table tbody tr th{
+  font-size: 14px;
+  color: #424242;
+}
+div.my-progress{
+  height: 6px;
+}
+div.my-progress-bar{
+  background-image: linear-gradient(77deg, #0f81dc, #204c70);
+}
+.checkbox-custom-label{
+  width: 20px;
+}
+.checkbox-custom-label::before{
+  border-radius: 3px!important;
+  border:1px solid #0f81dc!important;
+}
+/* end of commander data table */
 
 
 /* ======making responsive to navbar========= */

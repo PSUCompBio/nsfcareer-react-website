@@ -16,7 +16,10 @@ import About from '../About/AboutPage';
 import Contact from '../Contact/ContactPage';
 // import { isAuthenticated } from '../../apis';
 import TeamRoster from '../../components/TeamRoaster';
-import CommanderTeamView from '../../components/CommanderTeamView';
+import CommanderTeamView from '../../components/CommanderTeamView'; 
+import CommanderDataTable from '../../components/CommanderDataTable';
+
+
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -129,7 +132,9 @@ class Routing extends React.Component {
         <Route exact path="/About" component={About} />
         <Route exact path="/Contact" component={Contact} />
         <Route exact path="/TeamRoster" component={TeamRoster} />
-        <Route exact path="/CommanderTeamView" component={CommanderTeamView}/>
+        <Route exact path="/CommanderTeamView" component={CommanderTeamView} />
+        <Route exact path="/CommanderDataTable" component={CommanderDataTable}/>
+        
         
       </React.Fragment>
     );

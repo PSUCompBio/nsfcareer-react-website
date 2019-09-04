@@ -9,9 +9,36 @@ class CommanderTeamView extends React.Component {
     this.state = {
       impactCount: 2,
       avgLoad: 0.02,
-      alerts: 0
+      alerts: 0,
+      team: 2,
+      athletes: 6,
+      staff: 8,
+      highestLoadCount: 0.046,
+      impactCount: 3,
+      tabActive: 0,
+      targetBtn: '',
+      rosterValue: 'Lorem ipsum',
+      visibilityRosterValueSelector: { display: 'none' }
     };
   }
+
+  toggleTab = (value) => {
+    this.setState({ tabActive: value });
+  };
+
+  getTargetBtn = (value) => {
+    this.setState({ targetBtn: value });
+  };
+  setRosterValue = (e) => {
+    this.setState({
+      rosterValue: e.currentTarget.dataset.item
+    });
+  };
+  makeVisibleSelector = () => {
+    if (this.state.visibilityRosterValueSelector.display === 'none')
+      this.setState({ visibilityRosterValueSelector: { display: 'block' } });
+    else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
+  };
 
   render() {
     return (
@@ -98,13 +125,13 @@ class CommanderTeamView extends React.Component {
             </div>
             <div className="col-md-4 pt-5 mb-3">
               <div className="row mt-2">
-                <div className="col-md-12 pb-2  text-left">
+                <div className="col-md-12  text-left">
                   <button type="btn" className="impact-sumary-btn">
                     Impact Summary
                   </button>
                 </div>
               </div>
-              <div className="impact-summary-card">
+              <div className="impact-summary-card pt-3 pb-5">
                 <img
                   className="img-fluid"
                   src="/img/icon/impactSummary.svg"
