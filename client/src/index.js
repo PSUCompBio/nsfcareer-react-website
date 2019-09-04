@@ -2,6 +2,8 @@ import React from "react";
 
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from "react-router-dom";
+import { Provider } from 'react-redux';
+import store from './Store';
 
 // NAVIGATION
 // import Nav from "./components/Nav";
@@ -40,7 +42,7 @@ class Index extends React.Component {
   render() {
     return (
       <Router>
-        <Routing />
+        <Routing store={store} />
       </Router>
     )
   }

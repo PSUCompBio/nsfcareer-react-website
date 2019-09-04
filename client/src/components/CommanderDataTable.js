@@ -2,6 +2,7 @@ import React from 'react';
 import PenstateUniversity from './PenstateUniversity';
 import DashboardDropdownSelector from './DashboardDropdownSelector';
 import RostarBtn from './Buttons/RostarBtn';
+import Footer from './Footer';
 
 class CommanderDataTable extends React.Component {
   constructor() {
@@ -32,7 +33,7 @@ class CommanderDataTable extends React.Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-md-12">
+            <div className="col-md-12 pl-0 pr-0 data-table-view">
               <div className="btns-group d-flex">
                 <RostarBtn
                   tabActive={this.toggleTab}
@@ -277,6 +278,7 @@ class CommanderDataTable extends React.Component {
             </div>
           </div>
         </div>
+        <Footer/>
       </React.Fragment>
     );
   }

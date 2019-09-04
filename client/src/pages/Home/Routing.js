@@ -64,7 +64,7 @@ class Routing extends React.Component {
   };
 
   render() {
-    console.log(this.state.isDarkMode)
+    console.log(this.props.store)
     return (
       <React.Fragment>
         {this.props.location.pathname === '/Home' ||
