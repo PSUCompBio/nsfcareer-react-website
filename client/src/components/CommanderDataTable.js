@@ -11,6 +11,7 @@ class CommanderDataTable extends React.Component {
       tabActive: 0,
       targetBtn: '',
     };
+    console.log(this.props)
   }
 
   toggleTab = (value) => {

@@ -1,10 +1,7 @@
 import { createStore } from 'redux';
 import { darkThemeController } from './reducer';
 
-const initialState = {
-  darkThemeActive:false
-}
-
-const store = createStore(darkThemeController, initialState);
+const store = createStore(darkThemeController);
 
 export default store;
+console.log(store)

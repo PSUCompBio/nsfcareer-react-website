@@ -6,6 +6,9 @@ import HeadAccelerationEventsTwo from '../DashboardEventsChart/HeadAccelerationE
 import DarkMode from '../DarkMode';
 import Footer from '../Footer';
 import 'jquery';
+import store from '../../Store';
+import { darkThemeSetter } from '../../Actions';
+import { getStatusOfDarkmode } from '../../reducer';
 
 import { svgToInline } from '../../config/InlineSvgFromImg';
 
@@ -27,8 +30,13 @@ class Dashboard extends React.Component {
   gotoTop = () => {
     window.scrollTo({top:'0', behavior:'smooth'})
   }
+  componentWillMount() {
+    const a = (store.dispatch(darkThemeSetter()));
+    console.log(a)
+  }
 
   render() {
+    console.log(getStatusOfDarkmode());
     return (
       <React.Fragment>
         <div id="dashboard" className={`container dashboard`}>
