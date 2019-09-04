@@ -590,6 +590,7 @@ nav {
 .load-count,
 .impact-count {
   color: #0f81dc;
+  font-size: 24px;
 }
 .rostar-btn {
   width: 50%;
@@ -747,6 +748,237 @@ nav {
 .counter-container>p{
   color: #686868;
   font-family: 'Segoe UI Regular';
+}
+
+/* progress bar */
+
+.progress--circle {
+  position: relative;
+  display: inline-block;
+  margin: 1rem;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.16);
+}
+.progress--circle:before {
+  content: '';
+  position: absolute;
+  top: 10px;
+    left: 10px;
+    width: 100px;
+    height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: inset -4px 6px 5px 0 rgba(0, 0, 0, 0.16);
+  border: 1px solid #ededed;
+}
+.progress--circle:after {
+  content: '';
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #0f81dc;
+}
+
+.progress__number {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  line-height: 1;
+  margin-top: -0.75rem;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #0f81dc;
+}
+
+.progress--pie:before {
+  display: none;
+  /* Get rid of white circle for "pie chart style" meter */
+}
+.progress--pie .progress__number {
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.35) 1px 1px 1px;
+}
+
+
+.progress--bar.progress--0:after {
+  width: 0%;
+}
+
+.progress--circle.progress--0:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(90deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--5:after {
+  width: 5%;
+}
+
+.progress--circle.progress--5:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(108deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--10:after {
+  width: 10%;
+}
+
+.progress--circle.progress--10:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(126deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--15:after {
+  width: 15%;
+}
+
+.progress--circle.progress--15:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(144deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--20:after {
+  width: 20%;
+}
+
+.progress--circle.progress--20:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(162deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--25:after {
+  width: 25%;
+}
+
+.progress--circle.progress--25:after {
+  background-image: 
+}
+
+.progress--bar.progress--30:after {
+  width: 30%;
+}
+
+.progress--circle.progress--30:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(198deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--35:after {
+  width: 35%;
+}
+
+.progress--circle.progress--35:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(216deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--40:after {
+  width: 40%;
+}
+
+.progress--circle.progress--40:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(234deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--45:after {
+  width: 45%;
+}
+
+.progress--circle.progress--45:after {
+  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(252deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--50:after {
+  width: 50%;
+}
+
+.progress--circle.progress--50:after {
+  background-image: linear-gradient(-90deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--55:after {
+  width: 55%;
+}
+
+.progress--circle.progress--55:after {
+  background-image: linear-gradient(-72deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--60:after {
+  width: 60%;
+}
+
+.progress--circle.progress--60:after {
+  background-image: linear-gradient(-54deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--65:after {
+  width: 65%;
+}
+
+.progress--circle.progress--65:after {
+  background-image: linear-gradient(-36deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--70:after {
+  width: 70%;
+}
+
+.progress--circle.progress--70:after {
+  background-image: linear-gradient(-18deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--75:after {
+  width: 75%;
+}
+
+.progress--circle.progress--75:after {
+  background-image: linear-gradient(0deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--80:after {
+  width: 80%;
+}
+
+.progress--circle.progress--80:after {
+  background-image: linear-gradient(18deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--85:after {
+  width: 85%;
+}
+
+.progress--circle.progress--85:after {
+  background-image: linear-gradient(36deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--90:after {
+  width: 90%;
+}
+
+.progress--circle.progress--90:after {
+  background-image: linear-gradient(54deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--95:after {
+  width: 95%;
+}
+
+.progress--circle.progress--95:after {
+  background-image: linear-gradient(72deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--100:after {
+  width: 100%;
+}
+
+.progress--circle.progress--100:after {
+  background-image: linear-gradient(90deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+/* end of progress bar */
+
+.commander-tv-height{
+  height: 230px;
+}
+.most-impacts-height, .highest-load-height{
+  top: -7%;
 }
 
 /* Commander team view end */

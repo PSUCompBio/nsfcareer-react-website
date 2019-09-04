@@ -1,6 +1,7 @@
 import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
+import PenstateUniversity from './PenstateUniversity';
 
 class TeamRoaster extends React.Component {
   constructor() {
@@ -39,32 +40,7 @@ class TeamRoaster extends React.Component {
     return (
       <React.Fragment>
         <div className="container t-roster pt-5 mt-5">
-          <div className="row">
-            <div className="col-md-7">
-              <p className="penstate">Penn State University Research</p>
-            </div>
-            <div className="col-md-5 d-flex justify-content-center align-items-center">
-              <div className="counter-container ml-md-auto mr-md-auto text-center">
-                <div className="counter mb-2 ">
-                  <p>{this.state.team}</p>
-                </div>
-                <p>Team</p>
-              </div>
-              <div className="counter-container ml-md-auto mr-md-auto text-center">
-                <div className="counter mb-2 ">
-                  <p> {this.state.athletes} </p>
-                </div>
-                <p>thletes</p>
-              </div>
-              <div className="counter-container ml-md-auto mr-md-auto text-center">
-                <div className="counter mb-2 ">
-                  <p> {this.state.staff} </p>
-                </div>
-                <p>Staff</p>
-              </div>
-            </div>
-          </div>
-
+        <PenstateUniversity/>
           <div className="row text-center">
             <div className="col-md-9">
               <div className="row">
