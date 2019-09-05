@@ -1070,7 +1070,11 @@ display: block;
 }
 /* end of dropdown dashboard */
 
-
+/* military dashboard */
+.align-end-chart{
+  margin-top: 210px;
+}
+/* end of military dashboard */
 
 
 
