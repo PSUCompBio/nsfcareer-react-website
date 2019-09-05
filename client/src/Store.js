@@ -4,4 +4,3 @@ import { darkThemeController } from './reducer';
 const store = createStore(darkThemeController);
 
 export default store;
-console.log(store)

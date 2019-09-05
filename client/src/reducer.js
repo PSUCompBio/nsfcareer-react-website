@@ -1,21 +1,32 @@
-import { DARK_THEME_ACTIVE, DARK_THEME_ACTIVE_INACTIVE } from './ActionType';
+import { DARK_THEME_ACTIVE, DARK_THEME_INACTIVE } from './ActionType';
 
 const initialState = {
-  darkThemeActive:false
-}
-var abc = false;
-export function darkThemeController(action) {
-  console.log(action)
-  switch (action) {
+  darkThemeActive: false
+};
+
+let darkTheme = {
+  status:false
+};
+
+export function darkThemeController(state = initialState, action) {
+  switch (action.type) {
     case DARK_THEME_ACTIVE:
-      abc = action.payload
-      console.log( action.payload);
-        return Object.assign({}, initialState, {
-          darkThemeActive: action.payload
-        })
+        darkTheme.status = action.payload;
+      return Object.assign({}, state, {
+        darkThemeActive: action.payload
+      });
+
+    case DARK_THEME_INACTIVE:
+        darkTheme.status = action.payload;
+      return Object.assign({}, state, {
+        darkThemeActive: action.payload
+      });
+
+    default:
+      return state;
   }
 }
 
-export const getStatusOfDarkmode = ()=>{
-  return abc;
-}
+export const getStatusOfDarkmode = () => {
+  return darkTheme;
+};

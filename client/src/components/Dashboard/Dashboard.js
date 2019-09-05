@@ -3,14 +3,12 @@ import PlayerDetails from '../PlayerDetails/PlayerDetails';
 import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
 import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
 import HeadAccelerationEventsTwo from '../DashboardEventsChart/HeadAccelerationEvents';
+import { svgToInline } from '../../config/InlineSvgFromImg';
+
 import DarkMode from '../DarkMode';
 import Footer from '../Footer';
-import 'jquery';
-import store from '../../Store';
-import { darkThemeSetter } from '../../Actions';
-import { getStatusOfDarkmode } from '../../reducer';
 
-import { svgToInline } from '../../config/InlineSvgFromImg';
+import 'jquery';
 
 import '../Buttons/Buttons.css';
 import './Dashboard.css';
@@ -28,15 +26,10 @@ class Dashboard extends React.Component {
   }
 
   gotoTop = () => {
-    window.scrollTo({top:'0', behavior:'smooth'})
-  }
-  componentWillMount() {
-    const a = (store.dispatch(darkThemeSetter()));
-    console.log(a)
-  }
+    window.scrollTo({ top: '0', behavior: 'smooth' });
+  };
 
   render() {
-    console.log(getStatusOfDarkmode());
     return (
       <React.Fragment>
         <div id="dashboard" className={`container dashboard`}>
@@ -46,14 +39,17 @@ class Dashboard extends React.Component {
           <HeadAccelerationEventsTwo />
           <div className="row text-center pt-5 pb-5 mt-5 mb-5">
             <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
-              <div onClick={this.gotoTop} className=" d-flex align-items-center justify-content-center ">
+              <div
+                onClick={this.gotoTop}
+                className=" d-flex align-items-center justify-content-center "
+              >
                 <img src="/img/icon/arrowUp.svg" alt="" />
               </div>
               <p>Back to top</p>
             </div>
           </div>
         </div>
-        <DarkMode isDarkMode={this.props.isDarkModeSet}/>
+        <DarkMode isDarkMode={this.props.isDarkModeSet} />
         <Footer />
       </React.Fragment>
     );

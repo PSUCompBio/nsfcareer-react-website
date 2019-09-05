@@ -7,7 +7,6 @@ class CommanderTeamView extends React.Component {
   constructor() {
     super();
     this.state = {
-      impactCount: 2,
       avgLoad: 0.02,
       alerts: 0,
       team: 2,

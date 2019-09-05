@@ -1,10 +1,17 @@
 import React from 'react';
+import store from '../Store';
+import { getStatusOfDarkmode } from '../reducer';
+import { darkThemeActiveSetter } from '../Actions';
+import { darkThemeInactiveSetter } from '../Actions';
 
 class DarkMode extends React.Component {
   constructor() {
     super();
     this.state = {
-      visibility: { display: 'none' }
+      visibility: { display: 'none' },
+      background: '',
+      cardBackground: '',
+      fontColor: ''
     };
   }
 
@@ -16,34 +23,65 @@ class DarkMode extends React.Component {
 
   setDarkMode = (e) => {
     const bg = e.currentTarget.dataset.color;
-    if (bg === '#171b25') {
-      this.props.isDarkMode(true);
-    } else {
-      this.props.isDarkMode(false);
-    }
     const cardBg = e.currentTarget.dataset.card;
     const fontColor = e.currentTarget.dataset.fontcolor;
+    this.setState(
+      {
+        background: bg,
+        cardBackground: cardBg,
+        fontColor: fontColor,
+        visibility: { display: 'none' }
+      },
+      () => {
+        if (this.state.background === '#171b25') {
+          this.props.isDarkMode(true);
+          store.dispatch(darkThemeActiveSetter());
+        } else {
+          store.dispatch(darkThemeInactiveSetter());
+          this.props.isDarkMode(false);
+        }
 
-    document.getElementsByTagName('body')[0].style.backgroundColor = bg;
-    document.getElementsByTagName('body')[0].style.zIndex = -5;
-    document.getElementsByTagName('html')[0].style.backgroundColor = bg;
+        document.getElementsByTagName(
+          'body'
+        )[0].style.backgroundColor = this.state.background;
+        document.getElementsByTagName('body')[0].style.zIndex = -5;
+        document.getElementsByTagName(
+          'html'
+        )[0].style.backgroundColor = this.state.background;
 
-    const allParagrap = document.querySelectorAll('div.player-name > p');
-    allParagrap.forEach((element) => {
-      element.style.color = fontColor;
-    });
+        const allParagrap = document.querySelectorAll('div.player-name > p');
+        allParagrap.forEach((element) => {
+          element.style.color = this.state.fontColor;
+        });
 
-    const searchElements = ['player-details', 'card', 'dark-bg'];
-    searchElements.forEach((element) => {
-      const allClasses = document.getElementsByClassName(element);
-      [...allClasses].forEach((elements) => {
-        elements.style.backgroundColor = cardBg;
-      });
-    });
-    this.setState({ visibility: { display: 'none' } });
+        const searchElements = ['player-details', 'card', 'dark-bg'];
+        searchElements.forEach((element) => {
+          const allClasses = document.getElementsByClassName(element);
+          [...allClasses].forEach((elements) => {
+            // console.log(element)
+            console.log("cards bg====>",this.state.cardBackground)
+
+            elements.style.backgroundColor = this.state.cardBackground;
+          });
+        });
+      }
+    );
   };
 
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      const searchElements = ['player-details', 'card', 'dark-bg'];
+      searchElements.forEach((element) => {
+        const allClasses = document.getElementsByClassName(element);
+        [...allClasses].forEach((elements) => {
+          elements.style.backgroundColor = 'rgb(35, 40, 56)';
+        });
+      });
+    }
+  }
+
   render() {
+    console.log(getStatusOfDarkmode());
     return (
       <React.Fragment>
         <div className="dark-mode-container text-center d-flex justify-content-center align-items-center">

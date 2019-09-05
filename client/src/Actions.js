@@ -1,10 +1,19 @@
-import { DARK_THEME_ACTIVE, DARK_THEME_ACTIVE_INACTIVE } from './ActionType';
+import { DARK_THEME_ACTIVE, DARK_THEME_INACTIVE } from './ActionType';
 
-export const darkThemeSetter = () => {
+export const darkThemeActiveSetter = () => {
   return (
     {
       type: DARK_THEME_ACTIVE,
       payload: true
+    }
+  )
+}
+
+export const darkThemeInactiveSetter = () => {
+  return (
+    {
+      type: DARK_THEME_INACTIVE,
+      payload: false
     }
   )
 }

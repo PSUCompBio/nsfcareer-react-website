@@ -7,6 +7,7 @@ import TechnologiesWeUse from './TechnolgiesWeUse/TechnologiesWeUse';
 import './HomePage.css';
 import 'hover.css/css/hover.css';
 import 'animate.css/animate.min.css';
+import { getStatusOfDarkmode } from '../../reducer';
 // import 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
@@ -27,10 +28,9 @@ class HomePage extends React.Component {
     }
   }
 
-
-
   componentWillUpdate() {
-    if (this.props.darkModeSet === true) {
+    const darkThemeOnOff = getStatusOfDarkmode();
+    if (darkThemeOnOff.status === true) {
       const h1Length = document.getElementsByTagName('h1');
       const h4Length = document.getElementsByTagName('h4');
       for (let i = 0; i < h1Length.length; i++) {
@@ -40,12 +40,12 @@ class HomePage extends React.Component {
         h4Length[i].style.color = '#fff';
       }
 
-      if(this.props.currentPage===2 )
-    document.getElementsByClassName('research-area-bg')[0].style.background = '#000';
+      if (this.props.currentPage === 2)
+        document.getElementsByClassName(
+          'research-area-bg'
+        )[0].style.background = '#000';
     }
   }
-
-
 
   componentWillUnmount() {
     this.resetPage();
@@ -77,15 +77,9 @@ class HomePage extends React.Component {
             scrollUnavailable={this.lastSlide}
             blockScrollDown={this.state.blockScrollDown}
           >
-            <Banner
-              screenWidth={this.props.screenWidth}
-            />
-            <AboutTheProduct
-              screenWidth={this.props.screenWidth}
-            />
-            <ResearchArea
-              screenWidth={this.props.screenWidth}
-            />
+            <Banner screenWidth={this.props.screenWidth} />
+            <AboutTheProduct screenWidth={this.props.screenWidth} />
+            <ResearchArea screenWidth={this.props.screenWidth} />
             <TechnologiesWeUse
               currentPage={this.props.currentPage}
               screenWidth={this.props.screenWidth}
@@ -98,15 +92,9 @@ class HomePage extends React.Component {
     } else {
       return (
         <React.Fragment>
-          <Banner
-            screenWidth={this.props.screenWidth}
-          />
-          <AboutTheProduct
-            screenWidth={this.props.screenWidth}
-          />
-          <ResearchArea
-            screenWidth={this.props.screenWidth}
-          />
+          <Banner screenWidth={this.props.screenWidth} />
+          <AboutTheProduct screenWidth={this.props.screenWidth} />
+          <ResearchArea screenWidth={this.props.screenWidth} />
           <TechnologiesWeUse
             currentPage={this.props.currentPage}
             screenWidth={this.props.screenWidth}

@@ -42,7 +42,9 @@ class Index extends React.Component {
   render() {
     return (
       <Router>
-        <Routing store={store} />
+        <Provider store={store}>
+          <Routing  />
+          </Provider>
       </Router>
     )
   }
