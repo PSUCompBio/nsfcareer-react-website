@@ -1,5 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
+import { getStatusOfDarkmode } from '../reducer';
+
 
 class PenstateUniversity extends React.Component {
   constructor() {
@@ -19,6 +21,13 @@ class PenstateUniversity extends React.Component {
   }
   componentWillMount() {
     this.impactLoadAlertsValue();
+  }
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      for (let i = 1; i <= 3; i++) {
+        this.refs['h' + i].style.color = '#fff';
+      }
+    }
   }
 
   render() {
@@ -51,19 +60,19 @@ class PenstateUniversity extends React.Component {
             <div className="team-view-counter mb-2 ">
               <p>{this.state.circleValues[0]}</p>
             </div>
-            <p>Impacts</p>
+            <p ref="h1">Impacts</p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">
             <div className="team-view-counter mb-2 ">
               <p> {this.state.circleValues[1]} </p>
             </div>
-            <p>Avg Load</p>
+            <p ref="h2">Avg Load</p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">
             <div className="team-view-counter mb-2 ">
               <p> {this.state.circleValues[2]} </p>
             </div>
-            <p>Alerts</p>
+            <p ref="h3">Alerts</p>
           </div>
         </div>
       </div>

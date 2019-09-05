@@ -28,6 +28,11 @@ import Footer from '../Footer';
 import Download3dProfile from '../Buttons/Download3dProfile';
 import DownloadAvtar from '../Buttons/Download3dProfile';
 import DownloadFeMesh from '../Buttons/Download3dProfile';
+import store from '../../Store';
+import { darkThemeActiveSetter } from '../../Actions';
+import { darkThemeInactiveSetter } from '../../Actions';
+import { getStatusOfDarkmode } from '../../reducer';
+
 
 class Profile extends React.Component {
   constructor() {
@@ -194,6 +199,7 @@ class Profile extends React.Component {
   darkMode = (e) => {
     this.setState({ isDarkMode: !this.state.isDarkMode }, () => {
       if (this.state.isDarkMode === true) {
+        store.dispatch(darkThemeActiveSetter());
         this.refs.lightDark.style.background = '#232838';
         document.getElementsByTagName('html')[0].style.background = '#171b25';
         document.getElementsByTagName('body')[0].style.background = '#171b25';
@@ -206,6 +212,7 @@ class Profile extends React.Component {
         });
         this.props.isDarkModeSet(this.state.isDarkMode);
       } else {
+        store.dispatch(darkThemeInactiveSetter());
         this.refs.lightDark.style.background = '';
         document.getElementsByTagName('html')[0].style.background = '';
         document.getElementsByTagName('body')[0].style.background = '';
@@ -220,6 +227,7 @@ class Profile extends React.Component {
       }
     });
   };
+
 
   render() {
     //     return <React.Fragment>
@@ -524,7 +532,25 @@ class Profile extends React.Component {
       .catch((err) => {
         this.setState({ isAuthenticated: false, isCheckingAuth: false });
       });
+    
+    
+    
+      if (getStatusOfDarkmode().status === true) {
+        store.dispatch(darkThemeActiveSetter());
+          this.refs.lightDark.style.background = '#232838';
+          document.getElementsByTagName('html')[0].style.background = '#171b25';
+          document.getElementsByTagName('body')[0].style.background = '#171b25';
+          this.refs.profileBorder.style.border = '10px solid #171b25';
+          this.refs.nameColor.style.color = '#fff';
+          this.refs.chooserColor.style.color = '#fff';
+          const allInputs = this.state.inputs;
+          allInputs.forEach((element) => {
+            this.refs[element].setAttribute('id', 'dark-mode-color');
+          });
+          this.props.isDarkModeSet(this.state.isDarkMode);
+      }
   }
+  
 }
 
 export default Profile;

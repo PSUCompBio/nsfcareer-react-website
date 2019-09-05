@@ -1,4 +1,6 @@
 import React from 'react';
+import { getStatusOfDarkmode } from '../reducer';
+
 
 class DashboardDropdownSelector extends React.Component {
   constructor() {
@@ -20,17 +22,25 @@ class DashboardDropdownSelector extends React.Component {
     else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
   };
 
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      for (let i = 1; i < 2; i++){
+        this.refs['h' + i].style.color = '#e8e8e8';
+      }
+    }
+  }
+
 
   render() {
     return (
       <div className="row">
         <div className="col-md-6">
           <div className="current-rostar-selector d-flex">
-            <p>Current roster</p>
+            <p ref="h1">Current roster</p>
             <span>
               <img className="w-75" src="/img/icon/breadcrumb.svg" alt="" />
             </span>
-            <div
+            <div ref="h2"
               onClick={this.makeVisibleSelector}
               className="roster-value-container"
             >
