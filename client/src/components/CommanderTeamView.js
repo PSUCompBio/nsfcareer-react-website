@@ -2,6 +2,8 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
+import { getStatusOfDarkmode } from '../reducer';
+
 
 class CommanderTeamView extends React.Component {
   constructor() {
@@ -38,11 +40,22 @@ class CommanderTeamView extends React.Component {
       this.setState({ visibilityRosterValueSelector: { display: 'block' } });
     else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
   };
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      this.refs.rosterContainer.style.background = '#171b25';
+      for (let i = 1; i <= 7; i++){
+        this.refs['card' + i].style.background = '#232838';
+        if ('card' + i === 'card5' || 'card' + i === 'card7') {
+          this.refs['card' + i].style.border = "1px solid #e8e8e8";
+        }
+      }
+    }
+  }
 
   render() {
     return (
       <React.Fragment>
-        <div className="container t-roster pt-5 mt-5">
+        <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
           <PenstateUniversity />
           <div className="row text-center">
             <div className="col-md-8">
@@ -66,7 +79,7 @@ class CommanderTeamView extends React.Component {
                 </div>
               </div>
               <div className="row">
-                <div className="col-md-12 commander-view-card mb-5 mt-4 p-0">
+                <div ref="card1" className="col-md-12 commander-view-card mb-5 mt-4 p-0">
                   <div className="rostar-selector">
                     <RostarBtn
                       tabActive={this.toggleTab}
@@ -86,8 +99,8 @@ class CommanderTeamView extends React.Component {
                   <div className="row mt-5">
                     <div className="col-md-6">
                       <div className="highest-load ml-3 mr-3 mt-3 mb-5">
-                        <div className="card">
-                          <div className="load-heading highest-load-height">HIGHEST LOAD</div>
+                        <div ref="card5" className="card">
+                          <div ref="card4" className="load-heading highest-load-height">HIGHEST LOAD</div>
                           <p className="mt-4 ">
                             John Sylvester <span>- York Tech football</span>
                           </p>
@@ -107,8 +120,8 @@ class CommanderTeamView extends React.Component {
 
                     <div className="col-md-6">
                       <div className="most-impacts ml-3 mr-3 mt-3 mb-5">
-                        <div className="card commander-tv-height">
-                          <div className="impact-heading most-impacts-height">MOST IMPACTS</div>
+                        <div ref="card7" className="card commander-tv-height">
+                          <div ref="card6" className="impact-heading most-impacts-height">MOST IMPACTS</div>
                           <p className="mt-4">
                             John Sylvester <span>- York Tech football</span>
                           </p>
@@ -130,7 +143,7 @@ class CommanderTeamView extends React.Component {
                   </button>
                 </div>
               </div>
-              <div className="impact-summary-card pt-3 pb-5">
+              <div ref="card2" className="impact-summary-card pt-3 pb-5">
                 <img
                   className="img-fluid"
                   src="/img/icon/impactSummary.svg"
@@ -146,7 +159,7 @@ class CommanderTeamView extends React.Component {
                   Impact History
                 </button>
               </div>
-              <div className="impact-history-card p-4">
+              <div ref="card3" className="impact-history-card p-4">
                 <img className="img-fluid" src="/img/icon/impactHistory.svg" alt="" />
               </div>
             </div>

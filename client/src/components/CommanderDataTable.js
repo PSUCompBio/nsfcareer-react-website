@@ -3,6 +3,8 @@ import PenstateUniversity from './PenstateUniversity';
 import DashboardDropdownSelector from './DashboardDropdownSelector';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
+import { getStatusOfDarkmode } from '../reducer';
+
 
 class CommanderDataTable extends React.Component {
   constructor() {
@@ -22,6 +24,14 @@ class CommanderDataTable extends React.Component {
     this.setState({ targetBtn: value });
   };
 
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      this.refs.card.style.background = '#232838';
+      this.refs.table.classList.remove('commander-data-table');
+      this.refs.table.classList.add('commander-dark-table');
+    }
+  }
+
 
   render() {
     return (
@@ -34,7 +44,7 @@ class CommanderDataTable extends React.Component {
             </div>
           </div>
           <div className="row">
-            <div className="col-md-12 pl-0 pr-0 data-table-view">
+            <div ref="card" className="col-md-12 pl-0 pr-0 data-table-view">
               <div className="btns-group d-flex">
                 <RostarBtn
                   tabActive={this.toggleTab}
@@ -58,7 +68,7 @@ class CommanderDataTable extends React.Component {
                   content="Staff"
                 />
               </div>
-              <div className="commander-data-table">
+              <div ref="table" className="commander-data-table">
                 <table class="table">
                   <thead>
                     <tr>

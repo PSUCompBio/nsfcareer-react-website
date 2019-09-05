@@ -686,6 +686,9 @@ nav {
   top: -10px;
   left: 17%;
 }
+.current-rostar-selector span{
+  padding: 0 10px 0 10px;
+}
 .roster-value-set ul {
   text-decoration: none;
   list-style: none;
@@ -997,6 +1000,7 @@ nav {
   border: none;
   color: #424242;
 }
+
 .commander-data-table table tbody tr{
   line-height: 12px;
 }
@@ -1011,6 +1015,61 @@ nav {
   font-size: 14px;
   color: #424242;
 }
+
+
+.commander-dark-table table thead tr th{
+  background-color: #0f81dc;
+  opacity: 0.3;
+  color: #fff;
+  border: none
+  }
+.commander-dark-table table tbody tr{
+  line-height: 12px;
+}
+.commander-dark-table table tbody tr td{
+  font-size: 14px;
+  color: #ffffff;
+  border: none;
+}
+.commander-dark-table table tbody tr:nth-child(even){
+  background-color: #5c678a;
+}
+.commander-dark-table table tbody tr th{
+  font-size: 14px;
+  color: #ffffff;
+  border: none
+}
+
+
+/* dashboard dropdown */
+.dashboard-links{
+  position: absolute;
+  background: #fff;
+  display: none;
+}
+.dashboard-links ul{
+  list-style: none;
+}
+.dashboard-links ul li{
+  padding: 10px;
+}
+.dashboard-links ul li:hover{
+  background: #0f81dc;
+}
+.dashboard-links ul li a{
+  color: #000!important;
+  text-decoration: none;
+}
+.dashboard-hover:hover .dashboard-links{
+display: block;
+}
+/* end of dropdown dashboard */
+
+
+
+
+
+
 div.my-progress{
   height: 6px;
 }
