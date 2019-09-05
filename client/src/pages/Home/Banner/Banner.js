@@ -10,7 +10,6 @@ WebFont.load({
 class Banner extends React.Component {
   componentWillMount() {
     if (this.props.darkMode === true) {
-      
     }
   }
   render() {
@@ -23,20 +22,50 @@ class Banner extends React.Component {
               <div className="header-navbar">
                 <div className="container-fluid heading-container">
                   <div className="row">
-                  <InView>
+                    <InView>
                       {({ inView, ref, entry }) => (
-                        <div ref={ref} style={{overflow:'hidden'}} className={`col-md-10 col-lg-10 header-heading ${this.props.screenWidth < 725 ? 'pt-4' : ''}`}>
-                          <h1 className={`${inView?'animated fadeInLeft':''}`}>TRANSFORM YOUR SENSOR DATA</h1>
-                          <h4 className={`${inView?'animated fadeInRight':''}`}>Accurate brain simulations help extend your </h4>
-                          <h4 className={`${inView?'animated fadeInUp':''}`}>sensor data research. </h4>
-                          <div className={`underlined-text ${inView?'fadeIn':''}`}>
-                            <p className={`${inView?'animated fadeInUp':''}`}>Supported By</p>
-                            <hr className={`${inView?'animated zoomIn':''}`}/>
+                        <div
+                          ref={ref}
+                          style={{ overflow: 'hidden' }}
+                          className={`col-md-10 col-lg-10 header-heading ${
+                            this.props.screenWidth < 725 ? '' : ''
+                          }`}
+                        >
+                          <h1
+                            className={`${inView ? 'animated fadeInLeft' : ''}`}
+                          >
+                            TRANSFORM YOUR SENSOR DATA
+                          </h1>
+                          <h4
+                            className={`${
+                              inView ? 'animated fadeInRight' : ''
+                            }`}
+                          >
+                            Accurate brain simulations help extend your{' '}
+                          </h4>
+                          <h4
+                            className={`${inView ? 'animated fadeInUp' : ''}`}
+                          >
+                            sensor data research.{' '}
+                          </h4>
+                          <div
+                            className={`underlined-text ${
+                              inView ? 'fadeIn' : ''
+                            }`}
+                          >
+                            <p
+                              className={`${inView ? 'animated fadeInUp' : ''}`}
+                            >
+                              Supported By
+                            </p>
+                            <hr
+                              className={`${inView ? 'animated zoomIn' : ''}`}
+                            />
                           </div>
                         </div>
                       )}
-                      </InView>
-                        <div className="col-md-2 " />
+                    </InView>
+                    <div className="col-md-2 " />
                   </div>
 
                   <div className="row">
@@ -46,25 +75,29 @@ class Banner extends React.Component {
                           <React.Fragment>
                             <img
                               ref={ref}
-                              className={`img-fluid animated ${inView ? 'fadeIn' : ''}`}
+                              className={`img-fluid animated ${
+                                inView ? 'fadeIn' : ''
+                              }`}
                               src="/img/BannerImg/NSF.png"
                               alt=""
                             />
 
-
                             <img
                               ref={ref}
-                              className={`img-fluid animated ${inView ? 'fadeIn' : ''}`}
+                              className={`img-fluid animated ${
+                                inView ? 'fadeIn' : ''
+                              }`}
                               src="/img/BannerImg/penState.png"
                               alt=""
                             />
                             <img
                               ref={ref}
-                              className={`img-fluid animated ${inView ? 'fadeIn' : ''}`}
+                              className={`img-fluid animated ${
+                                inView ? 'fadeIn' : ''
+                              }`}
                               src="/img/BannerImg/ibm.png"
                               alt=""
                             />
-
                           </React.Fragment>
                         )}
                       </InView>
@@ -77,13 +110,17 @@ class Banner extends React.Component {
                           <React.Fragment>
                             <img
                               ref={ref}
-                              className={`img-fluid animated ${inView ? 'fadeIn' : ''}`}
+                              className={`img-fluid animated ${
+                                inView ? 'fadeIn' : ''
+                              }`}
                               src="/img/BannerImg/amazon.png"
                               alt=""
                             />
                             <img
                               ref={ref}
-                              className={`img-fluid animated ${inView ? 'fadeIn' : ''}`}
+                              className={`img-fluid animated ${
+                                inView ? 'fadeIn' : ''
+                              }`}
                               src="/img/BannerImg/cyberscience.png"
                               alt=""
                             />

@@ -125,7 +125,7 @@ body {
 }
 .header-navbar {
   position: absolute;
-  top: 3%;
+  top: 2%;
   left: 0;
   width: 100%;
 }
@@ -1018,8 +1018,7 @@ nav {
 
 
 .commander-dark-table table thead tr th{
-  background-color: #0f81dc;
-  opacity: 0.3;
+  background-color: #113b5d;
   color: #fff;
   border: none
   }
@@ -1032,7 +1031,7 @@ nav {
   border: none;
 }
 .commander-dark-table table tbody tr:nth-child(even){
-  background-color: #5c678a;
+  background-color: #3d455e;
 }
 .commander-dark-table table tbody tr th{
   font-size: 14px;
