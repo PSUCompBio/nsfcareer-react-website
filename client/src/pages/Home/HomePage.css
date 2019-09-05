@@ -1007,6 +1007,9 @@ nav {
 .commander-data-table table tbody tr td{
   font-size: 14px;
   color: #747474;
+  padding-top: 0 ;
+  padding-bottom: 0;
+  vertical-align: middle;
 }
 .commander-data-table table tbody tr:nth-child(even){
   background-color: #daefff;
@@ -1020,7 +1023,7 @@ nav {
 .commander-dark-table table thead tr th{
   background-color: #113b5d;
   color: #fff;
-  border: none
+  border: none;
   }
 .commander-dark-table table tbody tr{
   line-height: 12px;
@@ -1029,6 +1032,9 @@ nav {
   font-size: 14px;
   color: #ffffff;
   border: none;
+  padding-top: 0 ;
+  padding-bottom: 0;
+  vertical-align: middle;
 }
 .commander-dark-table table tbody tr:nth-child(even){
   background-color: #3d455e;
@@ -1036,7 +1042,7 @@ nav {
 .commander-dark-table table tbody tr th{
   font-size: 14px;
   color: #ffffff;
-  border: none
+  border: none;
 }
 
 
