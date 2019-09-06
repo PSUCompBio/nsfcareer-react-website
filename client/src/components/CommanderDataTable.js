@@ -1,6 +1,4 @@
 import React from 'react';
-import PenstateUniversity from './PenstateUniversity';
-import DashboardDropdownSelector from './DashboardDropdownSelector';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
@@ -64,7 +62,7 @@ class CommanderDataTable extends React.Component {
                 />
               </div>
               <div ref="table" className="commander-data-table">
-                <table class="table">
+                <table className="table">
                   <thead>
                     <tr>
                       <th scope="col"></th>
@@ -100,10 +98,10 @@ class CommanderDataTable extends React.Component {
                       <td>2</td>
                       <td>0.046</td>
                       <td>
-                        <div class="progress my-progress">
+                        <div className="progress my-progress">
                           <div
                             style={{ width: '0%' }}
-                            class="progress-bar my-progress-bar "
+                            className="progress-bar my-progress-bar "
                             role="progressbar"
                             aria-valuenow="0"
                             aria-valuemin="0"
@@ -133,10 +131,10 @@ class CommanderDataTable extends React.Component {
                       <td>2</td>
                       <td>0.046</td>
                       <td>
-                        <div class="progress my-progress">
+                        <div className="progress my-progress">
                           <div
                             style={{ width: '4%' }}
-                            class="progress-bar my-progress-bar"
+                            className="progress-bar my-progress-bar"
                             role="progressbar"
                             aria-valuenow=""
                             aria-valuemin="0"
@@ -166,10 +164,10 @@ class CommanderDataTable extends React.Component {
                       <td>2</td>
                       <td>0.046</td>
                       <td>
-                        <div class="progress my-progress">
+                        <div className="progress my-progress">
                           <div
                             style={{ width: '4%' }}
-                            class="progress-bar my-progress-bar"
+                            className="progress-bar my-progress-bar"
                             role="progressbar"
                             aria-valuenow="75"
                             aria-valuemin="0"
@@ -200,10 +198,10 @@ class CommanderDataTable extends React.Component {
                       <td>2</td>
                       <td>0.046</td>
                       <td>
-                        <div class="progress my-progress">
+                        <div className="progress my-progress">
                           <div
                             style={{ width: '23%' }}
-                            class="progress-bar my-progress-bar"
+                            className="progress-bar my-progress-bar"
                             role="progressbar"
                             aria-valuenow="0"
                             aria-valuemin="0"
@@ -233,10 +231,10 @@ class CommanderDataTable extends React.Component {
                       <td>2</td>
                       <td>0.046</td>
                       <td>
-                        <div class="progress my-progress">
+                        <div className="progress my-progress">
                           <div
                             style={{ width: '4%' }}
-                            class="progress-bar my-progress-bar"
+                            className="progress-bar my-progress-bar"
                             role="progressbar"
                             aria-valuenow=""
                             aria-valuemin="0"
@@ -266,10 +264,10 @@ class CommanderDataTable extends React.Component {
                       <td>2</td>
                       <td>0.046</td>
                       <td>
-                        <div class="progress my-progress">
+                        <div className="progress my-progress">
                           <div
                             style={{ width: '0%' }}
-                            class="progress-bar my-progress-bar"
+                            className="progress-bar my-progress-bar"
                             role="progressbar"
                             aria-valuenow="75"
                             aria-valuemin="0"

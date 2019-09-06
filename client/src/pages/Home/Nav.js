@@ -215,7 +215,7 @@ class Nav extends React.Component {
 
         {this.props.screenWidth >= 768 ? (
           <div className="collapse navbar-collapse" id="navbarNav">
-            {!this.props.isAuthenticated ? this.mobileNav : this.laptopNav}
+            {!this.props.isAuthenticated ? this.mobileNav() : this.laptopNav()}
           </div>
         ) : (
           ''

@@ -37,20 +37,17 @@ class PenstateUniversity extends React.Component {
               ? 'Penn State University Research'
               : 'York tech Football'}
           </p>
-          {this.props.location.pathname === '/CommanderTeamView' ? (
-            <div className="sport-roster-container d-flex justify-content-center justify-content-sm-start">
-              <div className="sport text-center">
-                <p>Sport</p>
-                <img src="/img/icon/football.svg" alt="" />
-              </div>
-              <div className="roster text-center">
-                <p>Rostered</p>
-                <p>2</p>
-              </div>
+
+          <div className="sport-roster-container d-flex justify-content-center justify-content-sm-start">
+            <div className="sport text-center">
+              <p>Sport</p>
+              <img src="/img/icon/football.svg" alt="" />
             </div>
-          ) : (
-            ''
-          )}
+            <div className="roster text-center">
+              <p>Rostered</p>
+              <p>2</p>
+            </div>
+          </div>
         </div>
         <div className="col-md-5 d-flex mt-3 justify-content-center align-items-center">
           <div className="counter-container ml-md-auto mr-md-auto text-center">

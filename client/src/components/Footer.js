@@ -6,7 +6,7 @@ const Footer = () => {
   };
   return (
     <div className="footer">
-      <div className="container">
+      <div style={{background:''}} className="container">
         <div className="row pt-4">
           <div className="col-sm-6 col-md-6 col-lg-6">
             <img className="logo" src="/img/icon/logo.png" alt="" />

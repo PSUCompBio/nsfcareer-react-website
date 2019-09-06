@@ -1113,6 +1113,9 @@ div.my-progress-bar{
   .image-padding img:nth-child(1) {
     width: 40px !important;
   }
+  .footer{
+    height: 36vh!important;
+  }
 }
 
 @media (max-width: 575px) {
@@ -1183,6 +1186,9 @@ div.my-progress-bar{
   }
   .card-body p {
     font-size: 14px;
+  }
+  .footer{
+    height: 36vh!important;
   }
 }
 

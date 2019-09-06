@@ -9,10 +9,10 @@ class PlayerDetails extends React.Component {
     return (
       <div className="row p-4 mb-5 player-details">
         <div className="col-md-6 player-name">
-          <p>
+          <p ref="h1">
             Player Name :<span>John Sylvester</span>
           </p>
-          <p>
+          <p ref="h2">
             Player ID :<span>515115</span>
           </p>
         </div>
