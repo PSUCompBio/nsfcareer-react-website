@@ -2,7 +2,7 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import WebFont from 'webfontloader';
-import { create } from 'jss';
+import { svgToInline } from '../../config/InlineSvgFromImg';
 
 WebFont.load({
   google: {
@@ -28,6 +28,9 @@ class ContactPage extends React.Component {
     }
   }
 
+  componentDidMount() {
+    svgToInline()
+  }
 
   render() {
     return (
@@ -93,14 +96,14 @@ class ContactPage extends React.Component {
           <div className="col-md-4 ml-md-auto animated zoomInLeft">
             <div className="card-contact">
               <p className="get-in-touch">GET IN TOUCH</p>
-
+                <img className="img-fluid w-25 svg  hvr-pulse" src="/img/icon/touch.svg" alt=""/>
               <p>info at nsfcareer.io</p>
             </div>
           </div>
           <div className="col-md-4 mr-md-auto animated zoomInRight">
             <div className="card-contact">
               <p className="get-in-touch">OUR ADDRESS</p>
-
+              <img className="img-fluid w-25 svg pt-2 pb-1 hvr-pulse" src="/img/icon/home.svg" alt=""/>
               <p>United States</p>
             </div>
           </div>

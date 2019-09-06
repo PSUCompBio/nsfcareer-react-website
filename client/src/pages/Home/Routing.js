@@ -15,9 +15,8 @@ import ForgotPassword from '../../components/ForgotPassword';
 import About from '../About/AboutPage'; 
 import Contact from '../Contact/ContactPage';
 // import { isAuthenticated } from '../../apis';
-import TeamRoster from '../../components/TeamRoaster';
-import CommanderTeamView from '../../components/CommanderTeamView'; 
-import CommanderDataTable from '../../components/CommanderDataTable';
+import OrganizationAdmin from '../../components/OrganizationAdmin';
+import TeamAdmin from '../../components/CommanderTeamView'; 
 import Military from '../../components/Military/Military';
 
 
@@ -131,9 +130,8 @@ class Routing extends React.Component {
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
         <Route exact path="/Contact" component={Contact} />
-        <Route exact path="/TeamRoster" component={TeamRoster} />
-        <Route exact path="/CommanderTeamView" component={CommanderTeamView} />
-        <Route exact path="/CommanderDataTable" component={CommanderDataTable} />
+        <Route exact path="/TeamAdmin" component={TeamAdmin} />
+        <Route exact path="/OrganizationAdmin" component={OrganizationAdmin } />
         <Route exact path="/Military" component={Military}/>
       </React.Fragment>
     );

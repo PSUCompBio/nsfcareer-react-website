@@ -14,9 +14,9 @@ class PenstateUniversity extends React.Component {
   impactLoadAlertsValue = ()=>{
     if (this.props.location.pathname === '/TeamRoster')
       this.setState({circleValues:[2,6,8]})
-    else if (this.props.location.pathname === '/CommanderTeamView')
+    else if (this.props.location.pathname === '/OrganizationAdmin')
       this.setState({ circleValues: [2, 0.02, 0] })
-      else if (this.props.location.pathname === '/CommanderDataTable')
+      else if (this.props.location.pathname === '/TeamAdmin')
       this.setState({circleValues:[2,0.02,0]})
   }
   componentWillMount() {
@@ -35,8 +35,7 @@ class PenstateUniversity extends React.Component {
       <div className="row">
         <div className="col-md-7">
           <p className="penstate">
-            {this.props.location.pathname === '/TeamRoster' ||
-            this.props.location.pathname === '/CommanderDataTable'
+            {this.props.location.pathname === '/OrganizationAdmin'
               ? 'Penn State University Research'
               : 'York tech Football'}
           </p>

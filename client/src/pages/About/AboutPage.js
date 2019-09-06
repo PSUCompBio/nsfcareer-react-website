@@ -16,7 +16,6 @@ class AboutPage extends React.Component {
   componentWillUnmount() {
     if (getStatusOfDarkmode().status === true) {
       this.changeHtmlBg('#171b25');
-      console.log('unmounting')
     }
   }
 

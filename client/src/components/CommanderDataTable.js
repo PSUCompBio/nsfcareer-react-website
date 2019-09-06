@@ -36,15 +36,10 @@ class CommanderDataTable extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="container pt-5 my-5">
-          <PenstateUniversity />
-          <div className="row my-3">
-            <div className="col-md-8">
-              <DashboardDropdownSelector />
-            </div>
-          </div>
-          <div className="row">
-            <div ref="card" className="col-md-12 pl-0 pr-0 data-table-view">
+
+
+{/* <div className="row"> */}
+            <div ref="card" className="col-md-12 pl-0 pr-0 mt-5  mb-5 data-table-view">
               <div className="btns-group d-flex">
                 <RostarBtn
                   tabActive={this.toggleTab}
@@ -287,9 +282,18 @@ class CommanderDataTable extends React.Component {
                 </table>
               </div>
             </div>
+        {/* </div> */}
+        
+        {/* <div className="container pt-5 my-5">
+          <PenstateUniversity />
+          <div className="row my-3">
+            <div className="col-md-8">
+              <DashboardDropdownSelector />
+            </div>
           </div>
-        </div>
-        <Footer/>
+          
+        </div> */}
+        {/* <Footer/> */}
       </React.Fragment>
     );
   }
