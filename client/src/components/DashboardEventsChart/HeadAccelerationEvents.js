@@ -16,7 +16,7 @@ class HeadAccelerationEvents extends React.Component {
           </div>
           <div className="col-md-6 text-right">
               <img className={`img-fluid ${'svg'}`} src="/img/icon/accBrainChart.svg" alt="" />
-              <p>Time</p>
+              <p ref="h4">Time</p>
           </div>
         </div>
         </div>

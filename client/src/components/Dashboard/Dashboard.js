@@ -3,7 +3,6 @@ import PlayerDetails from '../PlayerDetails/PlayerDetails';
 import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
 import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
 import { svgToInline } from '../../config/InlineSvgFromImg';
-import { getStatusOfDarkmode } from '../../reducer';
 import DarkMode from '../DarkMode';
 import Footer from '../Footer';
 import 'jquery';
@@ -26,13 +25,7 @@ class Dashboard extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
 
-  componentDidMount() {
-    if (getStatusOfDarkmode().status === true) {
-      const element = ['h1', 'h2'];
-      this.refs[element[0]].style.color = "#fff";
-      this.refs[element[1]].style.color = "#fff";
-    }
-  }
+  
 
   render() {
     return (

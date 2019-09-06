@@ -23,7 +23,7 @@ class BrainStrainChart extends React.Component {
               src="/img/icon/accBrainChart.svg"
               alt=""
             />
-            <p>Time</p>
+            <p ref="h3">Time</p>
           </div>
         </div>
       </div>
