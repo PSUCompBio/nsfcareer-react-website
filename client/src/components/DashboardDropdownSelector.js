@@ -1,7 +1,6 @@
 import React from 'react';
 import { getStatusOfDarkmode } from '../reducer';
 
-
 class DashboardDropdownSelector extends React.Component {
   constructor() {
     super();
@@ -24,12 +23,11 @@ class DashboardDropdownSelector extends React.Component {
 
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
-      for (let i = 1; i < 2; i++){
+      for (let i = 1; i < 2; i++) {
         this.refs['h' + i].style.color = '#e8e8e8';
       }
     }
   }
-
 
   render() {
     return (
@@ -40,7 +38,8 @@ class DashboardDropdownSelector extends React.Component {
             <span>
               <img className="w-75" src="/img/icon/breadcrumb.svg" alt="" />
             </span>
-            <div ref="h2"
+            <div
+              ref="h2"
               onClick={this.makeVisibleSelector}
               className="roster-value-container"
             >

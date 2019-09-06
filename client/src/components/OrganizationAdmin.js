@@ -4,8 +4,6 @@ import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
 import DashboardDropdownSelector from './DashboardDropdownSelector';
 import { getStatusOfDarkmode } from '../reducer';
-import CommanderDataTable from './CommanderDataTable';
-
 
 class OrganizationAdmin extends React.Component {
   constructor() {
@@ -14,7 +12,7 @@ class OrganizationAdmin extends React.Component {
       highestLoadCount: 0.046,
       impactCount: 3,
       tabActive: 0,
-      targetBtn: '',
+      targetBtn: ''
     };
   }
   toggleTab = (value) => {
@@ -42,13 +40,13 @@ class OrganizationAdmin extends React.Component {
 
       this.refs.loadCard.style.background = '#171b25';
       this.refs.impactCard.style.background = '#171b25';
-      
-      this.refs.parentChildTop1.style.borderBottom = '0.5px solid #e8e8e8'
-      this.refs.parentChildTop2.style.borderBottom = '0.5px solid #e8e8e8'
-      this.refs.parentChildLeft1.style.borderRight = '0.5px solid #e8e8e8'
-      this.refs.parentChildLeft2.style.borderRight = '0.5px solid #e8e8e8'
-      
-      for (let i = 1; i <= 10; i++){
+
+      this.refs.parentChildTop1.style.borderBottom = '0.5px solid #e8e8e8';
+      this.refs.parentChildTop2.style.borderBottom = '0.5px solid #e8e8e8';
+      this.refs.parentChildLeft1.style.borderRight = '0.5px solid #e8e8e8';
+      this.refs.parentChildLeft2.style.borderRight = '0.5px solid #e8e8e8';
+
+      for (let i = 1; i <= 10; i++) {
         this.refs['h' + i].style.color = '#fff';
       }
     }
@@ -58,12 +56,15 @@ class OrganizationAdmin extends React.Component {
     return (
       <React.Fragment>
         <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
-        <PenstateUniversity/>
+          <PenstateUniversity />
           <div className="row text-center">
             <div className="col-md-9">
-              <DashboardDropdownSelector/>
-               <div className="row">
-                <div ref="cardContainer" className="col-md-12 current-roster-card mb-5 mt-4 p-0">
+              <DashboardDropdownSelector />
+              <div className="row">
+                <div
+                  ref="cardContainer"
+                  className="col-md-12 current-roster-card mb-5 mt-4 p-0"
+                >
                   <div className="rostar-selector">
                     <RostarBtn
                       tabActive={this.toggleTab}
@@ -83,7 +84,10 @@ class OrganizationAdmin extends React.Component {
                   <div className="football-container pt-5 d-flex">
                     <div ref="smCard1" className="tech-football m-3">
                       <div ref="parentChildTop1" className="football-header">
-                        <p ref="h1">York tech football <img src="/img/icon/football.svg" alt=""/></p>
+                        <p ref="h1">
+                          York tech football{' '}
+                          <img src="/img/icon/football.svg" alt="" />
+                        </p>
                         <p ref="h2">2 Athletes </p>
                       </div>
                       <div className="football-body d-flex">
@@ -99,12 +103,15 @@ class OrganizationAdmin extends React.Component {
                     </div>
                     <div ref="smCard2" className="tech-football m-3">
                       <div ref="parentChildTop2" className="football-header">
-                        <p ref="h5">York tech football <img src="/img/icon/football.svg" alt=""/></p>
+                        <p ref="h5">
+                          York tech football{' '}
+                          <img src="/img/icon/football.svg" alt="" />
+                        </p>
                         <p ref="h6">2 Athletes </p>
                       </div>
                       <div className="football-body d-flex">
                         <div ref="parentChildLeft2" className="body-left-part ">
-                          <p >2</p>
+                          <p>2</p>
                           <p ref="h7">Impacts</p>
                         </div>
                         <div className="body-right-part">
@@ -120,7 +127,9 @@ class OrganizationAdmin extends React.Component {
             <div className="col-md-3 pt-5 mb-3">
               <div className="highest-load mb-5">
                 <div ref="loadCardParent" className="card">
-                  <div ref="loadCard" className="load-heading">HIGHEST LOAD</div>
+                  <div ref="loadCard" className="load-heading">
+                    HIGHEST LOAD
+                  </div>
                   <p ref="h9" className="mt-4 ">
                     John Sylvester <span>- York Tech football</span>
                   </p>
@@ -132,7 +141,9 @@ class OrganizationAdmin extends React.Component {
 
               <div className="most-impacts">
                 <div ref="impactCardParent" className="card">
-                  <div ref="impactCard" className="impact-heading">MOST IMPACTS</div>
+                  <div ref="impactCard" className="impact-heading">
+                    MOST IMPACTS
+                  </div>
                   <p ref="h10" className="mt-4">
                     John Sylvester <span>- York Tech football</span>
                   </p>
@@ -143,9 +154,6 @@ class OrganizationAdmin extends React.Component {
               </div>
             </div>
           </div>
-
-         
-
         </div>
         <Footer />
       </React.Fragment>

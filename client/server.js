@@ -1,4 +1,4 @@
-// A simple server that hosts REACT App created after build. 
+// A simple server that hosts REACT App created after build.
 // React App is converted into simple .html , .css & .js files
 // Then these files can be easily hosted on any web server
 const express = require('express');

@@ -1,17 +1,4 @@
 import React from 'react';
-// import { Redirect } from 'react-router-dom';
-// import {
-//   MDBContainer,
-//   MDBRow,
-//   MDBCol,
-//   MDBBtn,
-//   MDBAlert,
-//   MDBInput,
-//   MDBCard,
-//   MDBCardBody,
-//   MDBIcon,
-//   MDBCardFooter
-// } from 'mdbreact';
 import './Profile.css';
 import {
   uploadProfilePic,

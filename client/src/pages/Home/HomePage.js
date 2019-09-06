@@ -8,7 +8,6 @@ import './HomePage.css';
 import 'hover.css/css/hover.css';
 import 'animate.css/animate.min.css';
 import { getStatusOfDarkmode } from '../../reducer';
-// import 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
 class HomePage extends React.Component {

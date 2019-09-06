@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  Link,
-  Redirect,
-  withRouter
-} from 'react-router-dom';
-// import Index from '../../index';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import Footer from '../Footer';
-
 import { formDataToJson } from '../../utilities/utility';
 import { logIn, logInFirstTime } from '../../apis';
 
@@ -34,12 +28,6 @@ class Login extends React.Component {
     }
   };
 
-  // componentWillUpdate() {}
-  // hideDashboardView = () => {
-  //   document.getElementById('dashboard-view').style.display = 'none';
-  //   document.getElementById('make-full-width').style.display = 'none';
-  // };
-
   handleSubmit(e) {
     console.log('SIGNIN IN CLICKED');
     e.preventDefault();
@@ -63,16 +51,6 @@ class Login extends React.Component {
               isLoading: false,
               isSignInSuccessed: true
             });
-            // login user
-            // ReactDOM.render(
-            //
-            //   <Router>
-            //
-            //     <Index isAuthenticated={true} isAdmin={this.isAdminType(response.data.user_type)} />
-            //   </Router>
-            //   ,
-            //   document.getElementById('root')
-            // );
           } else {
             // show error
             this.setState({
@@ -88,7 +66,6 @@ class Login extends React.Component {
     } else {
       logIn(formJsonData)
         .then((response) => {
-          // this.refs.signInForm.reset();
           console.log('Login ', response);
           if (response.data.message === 'success') {
             if (response.data.status === 'FORCE_CHANGE_PASSWORD') {
@@ -102,14 +79,6 @@ class Login extends React.Component {
                 isLoading: false,
                 isSignInSuccessed: true
               });
-
-              // ReactDOM.render(
-              //   <Router>
-              //     <Index isAuthenticated={true} isAdmin={this.isAdminType(response.data.user_type)} />
-              //   </Router>
-              //   ,
-              //   document.getElementById('root')
-              // );
             }
           } else {
             this.setState({
@@ -136,10 +105,7 @@ class Login extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div
-          // onClick={this.hideDashboardView}
-          className="container pl-0 pr-0 overflow-hidden"
-        >
+        <div className="container pl-0 pr-0 overflow-hidden">
           {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
           <div className="row login">
             <div className="col-md-6 mb-5 p-3">

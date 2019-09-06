@@ -1,8 +1,7 @@
 import React from 'react';
 import store from '../Store';
 import { getStatusOfDarkmode } from '../reducer';
-import { darkThemeActiveSetter } from '../Actions';
-import { darkThemeInactiveSetter } from '../Actions';
+import { darkThemeActiveSetter, darkThemeInactiveSetter } from '../Actions';
 
 class DarkMode extends React.Component {
   constructor() {
@@ -59,7 +58,7 @@ class DarkMode extends React.Component {
           const allClasses = document.getElementsByClassName(element);
           [...allClasses].forEach((elements) => {
             // console.log(element)
-            console.log("cards bg====>",this.state.cardBackground)
+            console.log('cards bg====>', this.state.cardBackground);
 
             elements.style.backgroundColor = this.state.cardBackground;
           });

@@ -2,7 +2,6 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { getStatusOfDarkmode } from '../reducer';
 
-
 class PenstateUniversity extends React.Component {
   constructor() {
     super();
@@ -11,14 +10,13 @@ class PenstateUniversity extends React.Component {
     };
   }
 
-  impactLoadAlertsValue = ()=>{
-    if (this.props.location.pathname === '/TeamRoster')
-      this.setState({circleValues:[2,6,8]})
-    else if (this.props.location.pathname === '/OrganizationAdmin')
-      this.setState({ circleValues: [2, 0.02, 0] })
-      else if (this.props.location.pathname === '/TeamAdmin')
-      this.setState({circleValues:[2,0.02,0]})
-  }
+  impactLoadAlertsValue = () => {
+    if (this.props.location.pathname === '/TeamAdmin') {
+      this.setState({ circleValues: [2, 6, 8] });
+    } else if (this.props.location.pathname === '/OrganizationAdmin') {
+      this.setState({ circleValues: [2, 0.02, 0] });
+    }
+  };
   componentWillMount() {
     this.impactLoadAlertsValue();
   }

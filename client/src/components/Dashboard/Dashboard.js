@@ -1,8 +1,10 @@
 import React from 'react';
 import PlayerDetails from '../PlayerDetails/PlayerDetails';
 import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
-import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
-import HeadAccelerationEventsTwo from '../DashboardEventsChart/HeadAccelerationEvents';
+import {
+  HeadAccelerationEvents,
+  HeadAccelerationEventsTwo
+} from '../DashboardEventsChart/HeadAccelerationEvents';
 import { svgToInline } from '../../config/InlineSvgFromImg';
 
 import DarkMode from '../DarkMode';
