@@ -11,19 +11,19 @@ class MilitaryCardComponent extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="card-login mb-5">
+        <div className="card-login text-center mb-5">
           {this.props.isRequired === true ? (
             <React.Fragment>
               <div className="btn-container text-left">
                 <LoadingAnalyseBtn content={this.props.btnContent} />
               </div>
-              <div className="card">
+              <div className="card card-box">
                 <WhiteBtn content={this.props.cardBtn1Content} />
                 <WhiteBtn content={this.props.cardBtn2Content} />
               </div>
             </React.Fragment>
           ) : (
-            <div className="card">
+            <div className="card card-box">
               <img className="img-fluid" src={this.props.imageSource} alt="" />
             </div>
           )}

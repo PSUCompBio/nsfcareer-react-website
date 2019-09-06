@@ -24,7 +24,7 @@ class Military extends React.Component {
 
                   <MilitaryCardComponent
                     isRequired={true}
-                    btnContent="Loading"
+                    btnContent="Analyze"
                     cardBtn1Content="Generate Graph"
                     cardBtn2Content="Import Loading"
                   />

@@ -1072,7 +1072,10 @@ display: block;
 
 /* military dashboard */
 .align-end-chart{
-  margin-top: 210px;
+  margin-top: 270px;
+}
+.card-box{
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 /* end of military dashboard */
 
