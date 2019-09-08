@@ -29,6 +29,7 @@ class Login extends React.Component {
   };
 
   handleSubmit(e) {
+    this.setState({ isSignInSuccessed: true });
     console.log('SIGNIN IN CLICKED');
     e.preventDefault();
     e.persist();
@@ -96,10 +97,6 @@ class Login extends React.Component {
           console.log('error : ', err);
         });
     }
-  }
-  componentWillUpdate() {
-    //temporary redirecting to the dashboard
-    this.setState({ isSignInSuccessed: true });
   }
 
   render() {

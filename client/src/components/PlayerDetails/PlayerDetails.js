@@ -7,10 +7,14 @@ import { getStatusOfDarkmode } from '../../reducer';
 
 class PlayerDetails extends React.Component {
 
-  componentDidUpdate() {
+  changeHeadingColor = () => {
     if (getStatusOfDarkmode().status === true) {
       this.refs.h1.style.color = "#fff";
     }
+  }
+
+  componentDidMount() {
+    this.changeHeadingColor();
   }
 
   render() {

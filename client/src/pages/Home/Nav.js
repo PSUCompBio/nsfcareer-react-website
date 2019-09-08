@@ -87,7 +87,6 @@ class Nav extends React.Component {
     );
   };
 
-  
   laptopNav = () => {
     return (
       <ul className="navbar-nav ml-auto text-center">
