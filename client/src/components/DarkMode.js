@@ -80,7 +80,6 @@ class DarkMode extends React.Component {
   }
 
   render() {
-    console.log(getStatusOfDarkmode());
     return (
       <React.Fragment>
         <div className="dark-mode-container text-center d-flex justify-content-center align-items-center">

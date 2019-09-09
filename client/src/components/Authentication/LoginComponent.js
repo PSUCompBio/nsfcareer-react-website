@@ -3,13 +3,14 @@ import { Link, Redirect, withRouter } from 'react-router-dom';
 import Footer from '../Footer';
 import { formDataToJson } from '../../utilities/utility';
 import { logIn, logInFirstTime } from '../../apis';
-
+import { connect } from 'react-redux';
+import store from '../../Store';
 import '../../mixed_style.css';
+import { setIsSignedInSucceeded } from '../../Actions';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    console.log('PROP SRECIVED', props);
     this.state = {
       tempPasswordRequired: false,
       isLoginError: false,
@@ -28,8 +29,12 @@ class Login extends React.Component {
     }
   };
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ isSignInSuccessed: nextProps.signedIn });
+  }
+
   handleSubmit(e) {
-    this.setState({ isSignInSuccessed: true });
+    store.dispatch(setIsSignedInSucceeded());
     console.log('SIGNIN IN CLICKED');
     e.preventDefault();
     e.persist();
@@ -225,4 +230,11 @@ class Login extends React.Component {
   }
 }
 
-export default withRouter(Login);
+function mapStateToProps(state) {
+  return {
+    // dispatching actions
+    signedIn: state.isSignedInSuccess
+  };
+}
+
+export default connect(mapStateToProps)(withRouter(Login));

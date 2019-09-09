@@ -1,12 +1,14 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, Redirect } from 'react-router-dom';
+import store from '../../Store';
+import { resetSignedInSucceeded } from '../../Actions';
 
 class Nav extends React.Component {
   constructor() {
     super();
     this.state = {
       isOpen: false,
-      signOutClass: ''
+      signOutClass: 'sign-out-hide'
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -26,15 +28,19 @@ class Nav extends React.Component {
   }
 
   showLogOut = () => {
-    if (this.state.signOutClass === '') {
+    if (this.state.signOutClass === 'sign-out-hide') {
       this.setState({ signOutClass: 'sign-out' });
     } else {
-      this.setState({ signOutClass: '' });
+      this.setState({ signOutClass: 'sign-out-hide' });
     }
   };
 
   hideSignOut = () => {
-    this.setState({ signOutClass: '' });
+    this.setState({ signOutClass: 'sign-out-hide' });
+  };
+
+  signOut = () => {
+    store.dispatch(resetSignedInSucceeded());
   };
 
   mobileNav = () => {
@@ -205,10 +211,16 @@ class Nav extends React.Component {
           <div onClick={this.showLogOut} className="name">
             R K
           </div>
-          <div ref="signOut" className={this.state.signOutClass}>
-            <Link to="SignOut">
-              <img src="" alt="" />
+          <div ref="signOut" className={`${this.state.signOutClass} pt-4`}>
+            <Link to="">
+              <img
+                onClick={this.signOut}
+                className="img-fluid w-25"
+                src="/img/icon/powerBtn.svg"
+                alt=""
+              />
             </Link>
+            <div>Sign out</div>
           </div>
         </li>
       </ul>

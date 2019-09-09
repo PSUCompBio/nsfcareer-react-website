@@ -1229,6 +1229,10 @@ nav {
   top: 70px;
   box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.2);
   animation: changeHeight 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  color: #fff;
+}
+.sign-out-hide{
+  display: none;
 }
 @keyframes changeHeight{
   from{
