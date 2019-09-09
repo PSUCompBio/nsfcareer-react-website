@@ -144,24 +144,9 @@ class Nav extends React.Component {
             }
           />
         </li>
-        <li className="nav-item dashboard-hover make-active active">
-          <div className="nav-link">
-            PSU <img src="/img/icon/arrowDown.svg" alt="" />
-          </div>
-          <div className="dashboard-links">
-            <ul>
-              <li>
-                <Link to="TeamAdmin">Team Admin</Link>
-              </li>
-              <li>
-                <Link to="OrganizationAdmin">Organization Admin</Link>
-              </li>
-            </ul>
-          </div>
-        </li>
 
         {this.props.location.pathname !== '/SignUp' ? (
-          <li className="nav-item make-active active">
+          <li className="nav-item dashboard-hover make-active active">
             <Link className="nav-link" to={'/Login'}>
               Dashboard <span className="sr-only">(current)</span>
             </Link>
@@ -170,6 +155,20 @@ class Nav extends React.Component {
                 this.props.location.pathname === '/Login' ? 'active-link' : ''
               }
             />
+
+            <div className="dashboard-links">
+              <ul>
+              <li>
+                  <Link to="">PSU</Link>
+                </li>
+                <li>
+                  <Link to="TeamAdmin">Team Admin</Link>
+                </li>
+                <li>
+                  <Link to="OrganizationAdmin">Organization Admin</Link>
+                </li>
+              </ul>
+            </div>
           </li>
         ) : (
           <li className="nav-item make-active">

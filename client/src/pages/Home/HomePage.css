@@ -538,7 +538,7 @@ nav {
   border-radius: 50%;
   position: relative;
 }
-.team-view-counter{
+.team-view-counter {
   width: 78.1px;
   height: 78.1px;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
@@ -546,7 +546,7 @@ nav {
   border-radius: 50%;
   position: relative;
 }
-.team-view-counter p{
+.team-view-counter p {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -560,7 +560,7 @@ nav {
   transform: translate(-50%, -50%);
   left: 50%;
 }
-.counter +p{
+.counter + p {
   color: #686868;
   font-size: 14px;
 }
@@ -604,7 +604,7 @@ nav {
   border-radius: 10px;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
-.commander-view-card{
+.commander-view-card {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 .tech-football {
@@ -686,7 +686,7 @@ nav {
   top: -10px;
   left: 17%;
 }
-.current-rostar-selector span{
+.current-rostar-selector span {
   padding: 0 10px 0 10px;
 }
 .roster-value-set ul {
@@ -694,11 +694,11 @@ nav {
   list-style: none;
   margin-bottom: 0;
 }
-.roster-value-set ul li{
+.roster-value-set ul li {
   height: 30px;
-  text-align: center
+  text-align: center;
 }
-.roster-value-set ul li:hover{
+.roster-value-set ul li:hover {
   background-color: #0f81dc;
   color: #fff;
 }
@@ -726,9 +726,8 @@ nav {
 }
 /* end of team roster */
 
-
 /* Commander team view */
-.impact-sumary-btn{
+.impact-sumary-btn {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   background-color: #0f81dc;
   padding: 2px 20px 2px 20px;
@@ -737,22 +736,24 @@ nav {
   border-top-right-radius: 5px;
   border: none;
 }
-.impact-summary-card{
+.impact-summary-card {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
-.impact-history-card{
+.impact-history-card {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
-.sport, .roster{
+.sport,
+.roster {
   width: 100px;
 }
-.sport, .roster p{
+.sport,
+.roster p {
   color: #686868;
 }
-.sport{
+.sport {
   border-right: 1px solid #0f81dc;
 }
-.counter-container>p{
+.counter-container > p {
   color: #686868;
   font-family: 'Segoe UI Regular';
 }
@@ -773,9 +774,9 @@ nav {
   content: '';
   position: absolute;
   top: 10px;
-    left: 10px;
-    width: 100px;
-    height: 100px;
+  left: 10px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background-color: white;
   box-shadow: inset -4px 6px 5px 0 rgba(0, 0, 0, 0.16);
@@ -810,13 +811,18 @@ nav {
   text-shadow: rgba(0, 0, 0, 0.35) 1px 1px 1px;
 }
 
-
 .progress--bar.progress--0:after {
   width: 0%;
 }
 
 .progress--circle.progress--0:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(90deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(90deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--5:after {
@@ -824,7 +830,13 @@ nav {
 }
 
 .progress--circle.progress--5:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(108deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(108deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--10:after {
@@ -832,7 +844,13 @@ nav {
 }
 
 .progress--circle.progress--10:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(126deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(126deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--15:after {
@@ -840,7 +858,13 @@ nav {
 }
 
 .progress--circle.progress--15:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(144deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(144deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--20:after {
@@ -848,7 +872,13 @@ nav {
 }
 
 .progress--circle.progress--20:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(162deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(162deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--25:after {
@@ -856,7 +886,7 @@ nav {
 }
 
 .progress--circle.progress--25:after {
-  background-image: 
+  background-image: ;
 }
 
 .progress--bar.progress--30:after {
@@ -864,7 +894,13 @@ nav {
 }
 
 .progress--circle.progress--30:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(198deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(198deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--35:after {
@@ -872,7 +908,13 @@ nav {
 }
 
 .progress--circle.progress--35:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(216deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(216deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--40:after {
@@ -880,7 +922,13 @@ nav {
 }
 
 .progress--circle.progress--40:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(234deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(234deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--45:after {
@@ -888,7 +936,13 @@ nav {
 }
 
 .progress--circle.progress--45:after {
-  background-image: linear-gradient(90deg, #fff 50%, transparent 50%, transparent), linear-gradient(252deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(252deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--50:after {
@@ -896,7 +950,13 @@ nav {
 }
 
 .progress--circle.progress--50:after {
-  background-image: linear-gradient(-90deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      -90deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--55:after {
@@ -904,7 +964,13 @@ nav {
 }
 
 .progress--circle.progress--55:after {
-  background-image: linear-gradient(-72deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      -72deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--60:after {
@@ -912,7 +978,13 @@ nav {
 }
 
 .progress--circle.progress--60:after {
-  background-image: linear-gradient(-54deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      -54deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--65:after {
@@ -920,7 +992,13 @@ nav {
 }
 
 .progress--circle.progress--65:after {
-  background-image: linear-gradient(-36deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      -36deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--70:after {
@@ -928,7 +1006,13 @@ nav {
 }
 
 .progress--circle.progress--70:after {
-  background-image: linear-gradient(-18deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      -18deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--75:after {
@@ -936,7 +1020,13 @@ nav {
 }
 
 .progress--circle.progress--75:after {
-  background-image: linear-gradient(0deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      0deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--80:after {
@@ -944,7 +1034,13 @@ nav {
 }
 
 .progress--circle.progress--80:after {
-  background-image: linear-gradient(18deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      18deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--85:after {
@@ -952,7 +1048,13 @@ nav {
 }
 
 .progress--circle.progress--85:after {
-  background-image: linear-gradient(36deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      36deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--90:after {
@@ -960,7 +1062,13 @@ nav {
 }
 
 .progress--circle.progress--90:after {
-  background-image: linear-gradient(54deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      54deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--95:after {
@@ -968,7 +1076,13 @@ nav {
 }
 
 .progress--circle.progress--95:after {
-  background-image: linear-gradient(72deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      72deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 .progress--bar.progress--100:after {
@@ -976,22 +1090,29 @@ nav {
 }
 
 .progress--circle.progress--100:after {
-  background-image: linear-gradient(90deg, #0f81dc 50%, transparent 50%, transparent), linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+  background-image: linear-gradient(
+      90deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
 }
 
 /* end of progress bar */
 
-.commander-tv-height{
+.commander-tv-height {
   height: 265px;
 }
-.most-impacts-height, .highest-load-height{
+.most-impacts-height,
+.highest-load-height {
   top: -7%;
 }
 
 /* Commander team view end */
 
 /* commander data table */
-.commander-data-table table thead tr th{
+.commander-data-table table thead tr th {
   font-family: 'Segoe UI Regular';
   background-color: #daefff;
   font-size: 14px;
@@ -1001,106 +1122,106 @@ nav {
   color: #424242;
 }
 
-.commander-data-table table tbody tr{
+.commander-data-table table tbody tr {
   line-height: 12px;
 }
-.commander-data-table table tbody tr td{
+.commander-data-table table tbody tr td {
   font-size: 14px;
   color: #747474;
-  padding-top: 0 ;
+  padding-top: 0;
   padding-bottom: 0;
   vertical-align: middle;
 }
-.commander-data-table table tbody tr:nth-child(even){
+.commander-data-table table tbody tr:nth-child(even) {
   background-color: #daefff;
 }
-.commander-data-table table tbody tr th{
+.commander-data-table table tbody tr th {
   font-size: 14px;
   color: #424242;
 }
 
-
-.commander-dark-table table thead tr th{
+.commander-dark-table table thead tr th {
   background-color: #113b5d;
   color: #fff;
   border: none;
-  }
-.commander-dark-table table tbody tr{
+}
+.commander-dark-table table tbody tr {
   line-height: 12px;
 }
-.commander-dark-table table tbody tr td{
+.commander-dark-table table tbody tr td {
   font-size: 14px;
   color: #ffffff;
   border: none;
-  padding-top: 0 ;
+  padding-top: 0;
   padding-bottom: 0;
   vertical-align: middle;
 }
-.commander-dark-table table tbody tr:nth-child(even){
+.commander-dark-table table tbody tr:nth-child(even) {
   background-color: #3d455e;
 }
-.commander-dark-table table tbody tr th{
+.commander-dark-table table tbody tr th {
   font-size: 14px;
   color: #ffffff;
   border: none;
 }
 
-
 /* dashboard dropdown */
-.dashboard-links{
+.dashboard-links {
   position: absolute;
-  background: linear-gradient(45deg,#1d61a5, #267bd3);
+  background: linear-gradient(45deg, #1d61a5, #267bd3);
   display: none;
-  box-shadow: 0px 8px 5px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.2);
 }
-.dashboard-links ul{
+.dashboard-links ul {
   list-style: none;
 }
-.dashboard-links ul li{
+.dashboard-links ul li {
   padding: 10px;
 }
-.dashboard-links ul li:hover{
+.dashboard-links ul li:hover {
   background: #0f81dc;
 }
-.dashboard-links ul li a{
-  color: rgb(255, 255, 255)!important;
+.dashboard-links ul li:nth-child(1) {
+  background: #0f81dc;
+}
+.dashboard-links ul li a {
+  color: rgb(255, 255, 255) !important;
   text-decoration: none;
 }
-.dashboard-hover:hover .dashboard-links{
-display: block;
+.dashboard-hover:hover .dashboard-links {
+  display: block;
+}
+.dashboard-links ul li:nth-child(1) {
+  border-bottom: 1px solid #fff;
 }
 /* end of dropdown dashboard */
 
 /* military dashboard */
-.align-end-chart{
+.align-end-chart {
   margin-top: 270px;
 }
-.card-box{
+.card-box {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 /* end of military dashboard */
 
-
-
-
-div.my-progress{
+div.my-progress {
   height: 6px;
 }
-div.my-progress-bar{
+div.my-progress-bar {
   background-image: linear-gradient(77deg, #0f81dc, #204c70);
 }
-.checkbox-custom-label{
+.checkbox-custom-label {
   width: 20px;
 }
-.checkbox-custom-label::before{
-  border-radius: 3px!important;
-  border:1px solid #0f81dc!important;
+.checkbox-custom-label::before {
+  border-radius: 3px !important;
+  border: 1px solid #0f81dc !important;
 }
-.data-table-view{
+.data-table-view {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 /* end of commander data table */
-
 
 /* ======making responsive to navbar========= */
 
@@ -1113,24 +1234,24 @@ div.my-progress-bar{
   .image-padding img:nth-child(1) {
     width: 40px !important;
   }
-  .footer{
-    height: 36vh!important;
+  .footer {
+    height: 36vh !important;
   }
 }
 
 @media (max-width: 575px) {
-  div.tech-football{
+  div.tech-football {
     width: auto;
-    margin-right: 1rem!important;
+    margin-right: 1rem !important;
   }
-  .penstate{
-    text-align: center!important;
+  .penstate {
+    text-align: center !important;
   }
-  div.season-position{
-    text-align: center!important;
+  div.season-position {
+    text-align: center !important;
   }
-  div.football-container{
-    display: block!important;
+  div.football-container {
+    display: block !important;
   }
   .navbar-brand {
     width: 70%;
@@ -1187,8 +1308,8 @@ div.my-progress-bar{
   .card-body p {
     font-size: 14px;
   }
-  .footer{
-    height: 36vh!important;
+  .footer {
+    height: 36vh !important;
   }
 }
 
