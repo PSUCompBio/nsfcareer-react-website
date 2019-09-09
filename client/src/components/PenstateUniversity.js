@@ -41,7 +41,7 @@ class PenstateUniversity extends React.Component {
           <div className="sport-roster-container d-flex justify-content-center justify-content-sm-start">
             <div className="sport text-center">
               <p>Sport</p>
-              <img src="/img/icon/football.svg" alt="" />
+              <img src="/img/icon/americanFootball.svg" alt="" />
             </div>
             <div className="roster text-center">
               <p>Rostered</p>
