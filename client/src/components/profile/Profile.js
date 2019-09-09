@@ -1,17 +1,4 @@
 import React from 'react';
-// import { Redirect } from 'react-router-dom';
-// import {
-//   MDBContainer,
-//   MDBRow,
-//   MDBCol,
-//   MDBBtn,
-//   MDBAlert,
-//   MDBInput,
-//   MDBCard,
-//   MDBCardBody,
-//   MDBIcon,
-//   MDBCardFooter
-// } from 'mdbreact';
 import './Profile.css';
 import {
   uploadProfilePic,
@@ -28,6 +15,10 @@ import Footer from '../Footer';
 import Download3dProfile from '../Buttons/Download3dProfile';
 import DownloadAvtar from '../Buttons/Download3dProfile';
 import DownloadFeMesh from '../Buttons/Download3dProfile';
+import store from '../../Store';
+import { darkThemeActiveSetter } from '../../Actions';
+import { darkThemeInactiveSetter } from '../../Actions';
+import { getStatusOfDarkmode } from '../../reducer';
 
 class Profile extends React.Component {
   constructor() {
@@ -43,7 +34,8 @@ class Profile extends React.Component {
       isCheckingAuth: true,
       disableInput: [true, true, true, true, true],
       inputs: ['email', 'age', 'sex', 'contact', 'organization'],
-      isDarkMode: false
+      isDarkMode: false,
+      mode: 'Dark mode'
     };
   }
   onChangeHandler = (event) => {
@@ -192,33 +184,39 @@ class Profile extends React.Component {
   };
 
   darkMode = (e) => {
-    this.setState({ isDarkMode: !this.state.isDarkMode }, () => {
-      if (this.state.isDarkMode === true) {
-        this.refs.lightDark.style.background = '#232838';
-        document.getElementsByTagName('html')[0].style.background = '#171b25';
-        document.getElementsByTagName('body')[0].style.background = '#171b25';
-        this.refs.profileBorder.style.border = '10px solid #171b25';
-        this.refs.nameColor.style.color = '#fff';
-        this.refs.chooserColor.style.color = '#fff';
-        const allInputs = this.state.inputs;
-        allInputs.forEach((element) => {
-          this.refs[element].setAttribute('id', 'dark-mode-color');
-        });
-        this.props.isDarkModeSet(this.state.isDarkMode);
-      } else {
-        this.refs.lightDark.style.background = '';
-        document.getElementsByTagName('html')[0].style.background = '';
-        document.getElementsByTagName('body')[0].style.background = '';
-        this.refs.profileBorder.style.border = '';
-        this.refs.nameColor.style.color = '';
-        this.refs.chooserColor.style.color = '';
-        const allInputs = this.state.inputs;
-        allInputs.forEach((element) => {
-          this.refs[element].setAttribute('id', '');
-        });
-        this.props.isDarkModeSet(this.state.isDarkMode);
+    this.setState(
+      { isDarkMode: !this.state.isDarkMode, mode: 'Light mode' },
+      () => {
+        if (this.state.isDarkMode === true) {
+          store.dispatch(darkThemeActiveSetter());
+          this.refs.lightDark.style.background = '#232838';
+          document.getElementsByTagName('html')[0].style.background = '#171b25';
+          document.getElementsByTagName('body')[0].style.background = '#171b25';
+          this.refs.profileBorder.style.border = '10px solid #171b25';
+          this.refs.nameColor.style.color = '#fff';
+          this.refs.chooserColor.style.color = '#fff';
+          const allInputs = this.state.inputs;
+          allInputs.forEach((element) => {
+            this.refs[element].setAttribute('id', 'dark-mode-color');
+          });
+          this.props.isDarkModeSet(this.state.isDarkMode);
+        } else {
+          this.setState({mode:'Dark mode'})
+          store.dispatch(darkThemeInactiveSetter());
+          this.refs.lightDark.style.background = '';
+          document.getElementsByTagName('html')[0].style.background = '';
+          document.getElementsByTagName('body')[0].style.background = '';
+          this.refs.profileBorder.style.border = '';
+          this.refs.nameColor.style.color = '';
+          this.refs.chooserColor.style.color = '';
+          const allInputs = this.state.inputs;
+          allInputs.forEach((element) => {
+            this.refs[element].setAttribute('id', '');
+          });
+          this.props.isDarkModeSet(this.state.isDarkMode);
+        }
       }
-    });
+    );
   };
 
   render() {
@@ -338,10 +336,10 @@ class Profile extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="container profile-mt mb-5 pb-2">
+        <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
           <div
             ref="lightDark"
-            className="row text-center justify-content-center align-items-center profile-container"
+            className="row mb-5 text-center justify-content-center align-items-center profile-container"
           >
             <div ref="profileBorder" className="profile">
               <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
@@ -449,7 +447,7 @@ class Profile extends React.Component {
               <div className="row">
                 <div className="col-sm-7">
                   <span ref="chooserColor" className="dark-mode">
-                    Dark mode
+                    {this.state.mode}
                   </span>
                 </div>
                 <div className="col-sm-5  position-relative pt-1">
@@ -524,6 +522,21 @@ class Profile extends React.Component {
       .catch((err) => {
         this.setState({ isAuthenticated: false, isCheckingAuth: false });
       });
+
+    if (getStatusOfDarkmode().status === true) {
+      store.dispatch(darkThemeActiveSetter());
+      this.refs.lightDark.style.background = '#232838';
+      document.getElementsByTagName('html')[0].style.background = '#171b25';
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+      this.refs.profileBorder.style.border = '10px solid #171b25';
+      this.refs.nameColor.style.color = '#fff';
+      this.refs.chooserColor.style.color = '#fff';
+      const allInputs = this.state.inputs;
+      allInputs.forEach((element) => {
+        this.refs[element].setAttribute('id', 'dark-mode-color');
+      });
+      this.props.isDarkModeSet(this.state.isDarkMode);
+    }
   }
 }
 

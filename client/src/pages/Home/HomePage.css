@@ -125,7 +125,7 @@ body {
 }
 .header-navbar {
   position: absolute;
-  top: 3%;
+  top: 2%;
   left: 0;
   width: 100%;
 }
@@ -538,7 +538,7 @@ nav {
   border-radius: 50%;
   position: relative;
 }
-.team-view-counter{
+.team-view-counter {
   width: 78.1px;
   height: 78.1px;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
@@ -546,7 +546,7 @@ nav {
   border-radius: 50%;
   position: relative;
 }
-.team-view-counter p{
+.team-view-counter p {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -560,7 +560,7 @@ nav {
   transform: translate(-50%, -50%);
   left: 50%;
 }
-.counter +p{
+.counter + p {
   color: #686868;
   font-size: 14px;
 }
@@ -590,6 +590,7 @@ nav {
 .load-count,
 .impact-count {
   color: #0f81dc;
+  font-size: 24px;
 }
 .rostar-btn {
   width: 50%;
@@ -601,8 +602,9 @@ nav {
 }
 .current-roster-card {
   border-radius: 10px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
-.commander-view-card{
+.commander-view-card {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 .tech-football {
@@ -684,16 +686,19 @@ nav {
   top: -10px;
   left: 17%;
 }
+.current-rostar-selector span {
+  padding: 0 10px 0 10px;
+}
 .roster-value-set ul {
   text-decoration: none;
   list-style: none;
   margin-bottom: 0;
 }
-.roster-value-set ul li{
+.roster-value-set ul li {
   height: 30px;
-  text-align: center
+  text-align: center;
 }
-.roster-value-set ul li:hover{
+.roster-value-set ul li:hover {
   background-color: #0f81dc;
   color: #fff;
 }
@@ -721,9 +726,8 @@ nav {
 }
 /* end of team roster */
 
-
 /* Commander team view */
-.impact-sumary-btn{
+.impact-sumary-btn {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   background-color: #0f81dc;
   padding: 2px 20px 2px 20px;
@@ -732,26 +736,557 @@ nav {
   border-top-right-radius: 5px;
   border: none;
 }
-.impact-summary-card{
+.impact-summary-card {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
-.impact-history-card{
+.impact-history-card {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
-.sport, .roster{
+.sport,
+.roster {
   width: 100px;
 }
-.sport{
+.sport,
+.roster p {
+  color: #686868;
+}
+.sport {
   border-right: 1px solid #0f81dc;
 }
-.counter-container>p{
+.counter-container > p {
   color: #686868;
   font-family: 'Segoe UI Regular';
 }
 
+/* progress bar */
+
+.progress--circle {
+  position: relative;
+  display: inline-block;
+  margin: 1rem;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.16);
+}
+.progress--circle:before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: inset -4px 6px 5px 0 rgba(0, 0, 0, 0.16);
+  border: 1px solid #ededed;
+}
+.progress--circle:after {
+  content: '';
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #0f81dc;
+}
+
+.progress__number {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  line-height: 1;
+  margin-top: -0.75rem;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #0f81dc;
+}
+
+.progress--pie:before {
+  display: none;
+  /* Get rid of white circle for "pie chart style" meter */
+}
+.progress--pie .progress__number {
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.35) 1px 1px 1px;
+}
+
+.progress--bar.progress--0:after {
+  width: 0%;
+}
+
+.progress--circle.progress--0:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(90deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--5:after {
+  width: 5%;
+}
+
+.progress--circle.progress--5:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(108deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--10:after {
+  width: 10%;
+}
+
+.progress--circle.progress--10:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(126deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--15:after {
+  width: 15%;
+}
+
+.progress--circle.progress--15:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(144deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--20:after {
+  width: 20%;
+}
+
+.progress--circle.progress--20:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(162deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--25:after {
+  width: 25%;
+}
+
+.progress--circle.progress--25:after {
+  background-image: ;
+}
+
+.progress--bar.progress--30:after {
+  width: 30%;
+}
+
+.progress--circle.progress--30:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(198deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--35:after {
+  width: 35%;
+}
+
+.progress--circle.progress--35:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(216deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--40:after {
+  width: 40%;
+}
+
+.progress--circle.progress--40:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(234deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--45:after {
+  width: 45%;
+}
+
+.progress--circle.progress--45:after {
+  background-image: linear-gradient(
+      90deg,
+      #fff 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(252deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--50:after {
+  width: 50%;
+}
+
+.progress--circle.progress--50:after {
+  background-image: linear-gradient(
+      -90deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--55:after {
+  width: 55%;
+}
+
+.progress--circle.progress--55:after {
+  background-image: linear-gradient(
+      -72deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--60:after {
+  width: 60%;
+}
+
+.progress--circle.progress--60:after {
+  background-image: linear-gradient(
+      -54deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--65:after {
+  width: 65%;
+}
+
+.progress--circle.progress--65:after {
+  background-image: linear-gradient(
+      -36deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--70:after {
+  width: 70%;
+}
+
+.progress--circle.progress--70:after {
+  background-image: linear-gradient(
+      -18deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--75:after {
+  width: 75%;
+}
+
+.progress--circle.progress--75:after {
+  background-image: linear-gradient(
+      0deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--80:after {
+  width: 80%;
+}
+
+.progress--circle.progress--80:after {
+  background-image: linear-gradient(
+      18deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--85:after {
+  width: 85%;
+}
+
+.progress--circle.progress--85:after {
+  background-image: linear-gradient(
+      36deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--90:after {
+  width: 90%;
+}
+
+.progress--circle.progress--90:after {
+  background-image: linear-gradient(
+      54deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--95:after {
+  width: 95%;
+}
+
+.progress--circle.progress--95:after {
+  background-image: linear-gradient(
+      72deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+.progress--bar.progress--100:after {
+  width: 100%;
+}
+
+.progress--circle.progress--100:after {
+  background-image: linear-gradient(
+      90deg,
+      #0f81dc 50%,
+      transparent 50%,
+      transparent
+    ),
+    linear-gradient(270deg, #0f81dc 50%, #fff 50%, #fff);
+}
+
+/* end of progress bar */
+
+.commander-tv-height {
+  height: 265px;
+}
+.most-impacts-height,
+.highest-load-height {
+  top: -7%;
+}
+
 /* Commander team view end */
 
+/* commander data table */
+.commander-data-table table thead tr th {
+  font-family: 'Segoe UI Regular';
+  background-color: #daefff;
+  font-size: 14px;
+  height: 39px;
+  padding: 9px 15px 9px 15px;
+  border: none;
+  color: #424242;
+}
 
+.commander-data-table table tbody tr {
+  line-height: 12px;
+}
+.commander-data-table table tbody tr td {
+  font-size: 14px;
+  color: #747474;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: middle;
+}
+.commander-data-table table tbody tr:nth-child(even) {
+  background-color: #daefff;
+}
+.commander-data-table table tbody tr th {
+  font-size: 14px;
+  color: #424242;
+}
+
+.commander-dark-table table thead tr th {
+  background-color: #113b5d;
+  color: #fff;
+  border: none;
+}
+.commander-dark-table table tbody tr {
+  line-height: 12px;
+}
+.commander-dark-table table tbody tr td {
+  font-size: 14px;
+  color: #ffffff;
+  border: none;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: middle;
+}
+.commander-dark-table table tbody tr:nth-child(even) {
+  background-color: #3d455e;
+}
+.commander-dark-table table tbody tr th {
+  font-size: 14px;
+  color: #ffffff;
+  border: none;
+}
+
+/* dashboard dropdown */
+.dashboard-links {
+  position: absolute;
+  background: linear-gradient(45deg, #1d61a5, #267bd3);
+  display: none;
+  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.2);
+}
+.dashboard-links ul {
+  list-style: none;
+}
+.dashboard-links ul li {
+  padding: 10px;
+}
+.dashboard-links ul li:hover {
+  background: #0f81dc;
+}
+.dashboard-links ul li:nth-child(1) {
+  background: #0f81dc;
+  color: #fff;
+}
+.dashboard-links ul li a {
+  color: rgb(255, 255, 255) !important;
+  text-decoration: none;
+}
+.dashboard-hover:hover .dashboard-links {
+  display: block;
+}
+.dashboard-links ul li:nth-child(1) {
+  border-bottom: 1px solid #fff;
+}
+/* end of dropdown dashboard */
+
+/* military dashboard */
+.align-end-chart {
+  margin-top: 270px;
+}
+.card-box {
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+/* end of military dashboard */
+
+
+/* mobile dashboard dropdown */
+.mobile-dashboard-dropdown{
+  position: absolute;
+  top: 53%;
+  box-shadow: 1px 15px 8px 3px rgba(0,0,0,0.2);
+  display: none;
+}
+.mobile-dashboard-dropdown ul{
+  list-style: none;
+  text-align: center;
+}
+.mobile-dashboard-dropdown ul li:nth-child(1){
+  text-align: center;
+  border-bottom: 1px solid #fff;
+  line-height: 50px;
+  background: #113b5d;
+}
+.mobile-dashboard-dropdown ul li a{
+  text-decoration: none;
+}
+.mobie-dashboard-hover:hover .mobile-dashboard-dropdown{
+  display: block;
+}
+/* end of mobile dashboard dropdown */
+
+/* profile icon on nav */
+.profile-nav-icon{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #fff;
+  margin-left: 10px;
+}
+.name{
+  line-height: 50px;
+  font-weight: 600;
+  text-shadow: 0 2px 3px rgba(0,0,0,0.2);
+  color: #0d77b6;
+  cursor: pointer;
+}
+.sign-out{
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(45deg, #1d61a5, #267bd3);
+  position: absolute;
+  top: 70px;
+  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.2);
+  animation: changeHeight 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  color: #fff;
+}
+.sign-out-hide{
+  display: none;
+}
+@keyframes changeHeight{
+  from{
+    height: 0;
+  }
+  to{
+    height: 100px;
+  }
+}
+/* end of profile icon nav */
+
+div.my-progress {
+  height: 6px;
+}
+div.my-progress-bar {
+  background-image: linear-gradient(77deg, #0f81dc, #204c70);
+}
+.checkbox-custom-label {
+  width: 20px;
+}
+.checkbox-custom-label::before {
+  border-radius: 3px !important;
+  border: 1px solid #0f81dc !important;
+}
+.data-table-view {
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+}
+/* end of commander data table */
 
 /* ======making responsive to navbar========= */
 
@@ -764,21 +1299,24 @@ nav {
   .image-padding img:nth-child(1) {
     width: 40px !important;
   }
+  .footer {
+    height: 36vh !important;
+  }
 }
 
 @media (max-width: 575px) {
-  div.tech-football{
+  div.tech-football {
     width: auto;
-    margin-right: 1rem!important;
+    margin-right: 1rem !important;
   }
-  .penstate{
-    text-align: center!important;
+  .penstate {
+    text-align: center !important;
   }
-  div.season-position{
-    text-align: center!important;
+  div.season-position {
+    text-align: center !important;
   }
-  div.football-container{
-    display: block!important;
+  div.football-container {
+    display: block !important;
   }
   .navbar-brand {
     width: 70%;
@@ -834,6 +1372,9 @@ nav {
   }
   .card-body p {
     font-size: 14px;
+  }
+  .footer {
+    height: 36vh !important;
   }
 }
 

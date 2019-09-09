@@ -20,60 +20,120 @@ class TechnologiesWeUse extends React.Component {
     };
 
     const redirectToOther = () => {
-      window.location.href = "https://psucompbio.org/"
-    }
+      window.location.href = 'https://psucompbio.org/';
+    };
 
     return (
       <React.Fragment>
         <div className={`section-four-container`} onWheel={this.props.onWheel}>
           <div className="container section">
-            <div className={`section-four text-center ${this.props.screenWidth >= 725 ? (this.props.mouseScroll > 0 && this.props.currentPage === 4 ? 'shift-technology-section' : '') : ''}`}>
+            <div
+              className={`section-four text-center ${
+                this.props.screenWidth >= 725
+                  ? this.props.mouseScroll > 0 && this.props.currentPage === 4
+                    ? 'shift-technology-section'
+                    : ''
+                  : ''
+              }`}
+            >
               <div className="col-md-12 col-lg-12 text-center">
                 <InView>
                   {({ inView, ref }) => (
                     <div ref={ref}>
-                      <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
-                        <h1 id="color" className="font-weight-bold">TECHNOLOGIES WE USE</h1>
+                      <div
+                        className={`${
+                          inView ? 'section-title animated zoomIn' : ''
+                        }`}
+                      >
+                        <h1 id="color" className="font-weight-bold">
+                          TECHNOLOGIES WE USE
+                        </h1>
                       </div>
                     </div>
                   )}
                 </InView>
               </div>
-              <div className={`row ${this.props.screenWidth > 425 && this.props.screenWidth < 769 ? '' : ' py-5'}`}>
-              <InView>
+              <div
+                className={`row ${
+                  this.props.screenWidth > 425 && this.props.screenWidth < 769
+                    ? ''
+                    : ' py-5'
+                }`}
+              >
+                <InView>
                   {({ inView, ref }) => (
-                    <div ref={ref} className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-left'} ${inView?'animated slideInLeft':''}`}>
-                      <img className="py-3" src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg" alt="" />
-                      <h4 className="font-weight-bold">Wireless Wearable Sensors</h4>
+                    <div
+                      ref={ref}
+                      className={`col-md-4   ${
+                        this.props.screenWidth <= 768
+                          ? 'text-center'
+                          : 'text-left'
+                      } ${inView ? 'animated slideInLeft' : ''}`}
+                    >
+                      <img
+                        className="py-3"
+                        src="/img/TechnologiesWeUseImg/noun_Wireless_1210449.svg"
+                        alt=""
+                      />
+                      <h4 className="font-weight-bold">
+                        Wireless Wearable Sensors
+                      </h4>
                       <p>
-                        We partner with leading impact and blast  sensor companies to provide real-time  brain response
-                                analytics. We help  transform their data into
-                      meaningful brain health monitoring.  Looking for a sensor? See our {this.props.screenWidth > 1024 ? '' : ''} recommended providers here.
-                            </p>
+                        We partner with leading impact and blast sensor
+                        companies to provide real-time brain response analytics.
+                        We help transform their data into meaningful brain
+                        health monitoring. Looking for a sensor? See our{' '}
+                        {this.props.screenWidth > 1024 ? '' : ''} recommended
+                        providers here.
+                      </p>
                     </div>
                   )}
                 </InView>
                 <InView>
                   {({ inView, ref }) => (
-                    <div ref={ref} className={`col-md-4   pt-5 ${this.props.screenWidth < 768 ? 'order-first' : ''} ${inView?'animated fadeIn':''}`}>
-                      <img className="mb-5 img-fluid terminology-img" src="/img/TechnologiesWeUseImg/cloud.svg" alt="" />
+                    <div
+                      ref={ref}
+                      className={`col-md-4   pt-5 ${
+                        this.props.screenWidth < 768 ? 'order-first' : ''
+                      } ${inView ? 'animated fadeIn' : ''}`}
+                    >
+                      <img
+                        className="mb-5 img-fluid terminology-img"
+                        src="/img/TechnologiesWeUseImg/cloud.svg"
+                        alt=""
+                      />
                     </div>
                   )}
-                  </InView>
-                  <InView>
+                </InView>
+                <InView>
                   {({ inView, ref }) => (
-                    <div ref={ref} className={`col-md-4   ${this.props.screenWidth <= 768 ? 'text-center' : 'text-right'} ${inView?'animated slideInRight':''}`}>
-                      <img className="py-3" src="/img/TechnologiesWeUseImg/laptop.svg" alt="" />
-                      <h4 className="font-weight-bold">Computational Brain Medicine</h4>
+                    <div
+                      ref={ref}
+                      className={`col-md-4   ${
+                        this.props.screenWidth <= 768
+                          ? 'text-center'
+                          : 'text-right'
+                      } ${inView ? 'animated slideInRight' : ''}`}
+                    >
+                      <img
+                        className="py-3"
+                        src="/img/TechnologiesWeUseImg/laptop.svg"
+                        alt=""
+                      />
+                      <h4 className="font-weight-bold">
+                        Computational Brain Medicine
+                      </h4>
                       <p>
-                        Computational Brain Medicine (CBM) is a transformative and emerging discipline that  uses computers to
-                                understand, diagnose, develop treatment options, and monitor  brain health. It leverages
-                                engineering, mathematics and computational science to  develop quantitative approaches for brain
-                                health applications.
-                            </p>
+                        Computational Brain Medicine (CBM) is a transformative
+                        and emerging discipline that uses computers to
+                        understand, diagnose, develop treatment options, and
+                        monitor brain health. It leverages engineering,
+                        mathematics and computational science to develop
+                        quantitative approaches for brain health applications.
+                      </p>
                     </div>
                   )}
-                  </InView>
+                </InView>
               </div>
               <div className="row text-center">
                 <div className="col-md-12 mb-3 col-lg-12">
@@ -82,7 +142,7 @@ class TechnologiesWeUse extends React.Component {
                     className="btn btn-outline-blue  px-5 mt-5"
                   >
                     Read More
-                    </button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -96,8 +156,10 @@ class TechnologiesWeUse extends React.Component {
             className={`show-footer-mobile ${
               this.props.mouseScroll > 0 && this.props.screenWidth >= 725
                 ? 'show-footer'
-                : this.props.screenWidth < 725 ? '' : 'hide-footer'
-              }`}
+                : this.props.screenWidth < 725
+                ? ''
+                : 'hide-footer'
+            }`}
           >
             <div className="container">
               <div className="row pt-4">
@@ -105,12 +167,9 @@ class TechnologiesWeUse extends React.Component {
                   <img className="logo" src="/img/icon/logo.png" alt="" />
                 </div>
                 <div className="col-sm-6  col-md-6 ">
-                  <button
-                    type="button"
-                    className="btn btn-primary float-right"
-                  >
+                  <button type="button" className="btn btn-primary float-right">
                     Get Updates
-                    </button>
+                  </button>
                 </div>
                 <hr />
               </div>
@@ -119,7 +178,7 @@ class TechnologiesWeUse extends React.Component {
                   <p>
                     Contact Us: info@NSFCAREER.IO <br />
                     IP | Privacy Policy &amp; IRB | Collaborate
-                    </p>
+                  </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">
                   {/* <div className="icon-container">
@@ -150,9 +209,9 @@ class TechnologiesWeUse extends React.Component {
               <div className="row text-center">
                 <div className="col-md-12 ">
                   <p onClick={redirectToOther} className="copyright">
-                    © 2019 Copyright:  Penn State Computational Biomechanics
+                    © 2019 Copyright: Penn State Computational Biomechanics
                     Group
-                    </p>
+                  </p>
                 </div>
               </div>
             </div>
@@ -160,7 +219,7 @@ class TechnologiesWeUse extends React.Component {
         </div>
       </React.Fragment>
     );
-  }
+  };
 }
 
 export default TechnologiesWeUse;

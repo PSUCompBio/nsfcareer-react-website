@@ -88,16 +88,13 @@ input::placeholder {
 .footer {
   background: url('/img/BannerImg/navbg.png') no-repeat center;
   background-size: cover;
-  height: 27vh;
+  /* height: 27vh; */
+  position: absolute;
+  bottom: -190px;
+  width: 100%;
 }
 .footer h4 {
   color: #fff;
-}
-.footer hr {
-  border: 1px solid #fff;
-  width: 100%;
-  border-radius: 10px;
-  background: #fff;
 }
 .footer p {
   color: #fff;

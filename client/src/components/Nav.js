@@ -1,7 +1,5 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import Nav from '../../config/AnimateMobileMenu';
-
 
 class Nav extends React.Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
-import { Route,  withRouter } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 // import Async from 'react-promise';
 
 import { svgToInline } from '../../config/InlineSvgFromImg';
@@ -12,11 +12,13 @@ import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile';
 import Dashboard from '../../components/Dashboard/Dashboard';
 import ForgotPassword from '../../components/ForgotPassword';
-import About from '../About/AboutPage'; 
+import About from '../About/AboutPage';
 import Contact from '../Contact/ContactPage';
 // import { isAuthenticated } from '../../apis';
-import TeamRoster from '../../components/TeamRoaster';
-import CommanderTeamView from '../../components/CommanderTeamView';
+import OrganizationAdmin from '../../components/OrganizationAdmin';
+import TeamAdmin from '../../components/CommanderTeamView';
+import Military from '../../components/Military/Military';
+
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -25,7 +27,7 @@ class Routing extends React.Component {
       windowWidth: 0,
       gotoPageNo: 0,
       isLoggedIn: false,
-      isDarkMode: false,
+      isDarkMode: false
     };
   }
   checkDarkMode = (value) => {
@@ -61,7 +63,6 @@ class Routing extends React.Component {
   };
 
   render() {
-    console.log(this.state.isDarkMode)
     return (
       <React.Fragment>
         {this.props.location.pathname === '/Home' ||
@@ -124,13 +125,17 @@ class Routing extends React.Component {
           render={() => <Profile isDarkModeSet={this.checkDarkMode} />}
         />
         <Route exact path="/SignUp" component={SignUp} />
-        <Route exact path="/dashboard" render={()=><Dashboard isDarkModeSet={this.checkDarkMode}/>} />
+        <Route
+          exact
+          path="/dashboard"
+          render={() => <Dashboard isDarkModeSet={this.checkDarkMode} />}
+        />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
         <Route exact path="/Contact" component={Contact} />
-        <Route exact path="/TeamRoster" component={TeamRoster} />
-        <Route exact path="/CommanderTeamView" component={CommanderTeamView}/>
-        
+        <Route exact path="/TeamAdmin" component={TeamAdmin} />
+        <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />
+        <Route exact path="/Military" component={Military} />
       </React.Fragment>
     );
   }

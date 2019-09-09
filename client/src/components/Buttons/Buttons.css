@@ -31,3 +31,21 @@ button:focus {
   outline: none !important;
   box-shadow: 0 0 5px -1px rgba(24, 87, 143, 0.12);
 }
+.loding-btn{
+  width: 168px;
+  height: 36px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: #0f81dc;
+  border: none;
+  color: #fff;
+}
+
+.dynamic-white-btn{
+  padding: 2% 10% 2% 10%;
+  border-radius: 10px;
+  border: solid 1px #0f81dc;
+  background: #fff;
+  color: #0f81dc;
+}
+
+

@@ -59,7 +59,7 @@ function ResearchArea(props) {
                         approximate an Athlete&apos;s brain’s response to
                         injuries. 
                       </p>
-                      <Link href="#">Read More</Link>
+                      <Link to="">Read More</Link>
                     </div>
                   </div>
                 </div>

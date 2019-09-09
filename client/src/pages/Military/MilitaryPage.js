@@ -623,7 +623,7 @@ class Military extends Component {
 
 	componentWillUnmount = () => {
 		document.removeEventListener('mousemove', this.handleMouseMove, false);
-		document.addEventListener('mousehover', this.handleMouseHover, false);
+		document.removeEventListener('mousehover', this.handleMouseHover, false);
 		document.removeEventListener('mouseup', this.handleMouseUp, false);
 	};
 
