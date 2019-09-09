@@ -307,7 +307,7 @@ class SignUpComponent extends React.Component {
                 <div className="text-center brain-icon">
                   <img src="img/icon/brain.png" alt="" />
                 </div>
-                {this.getForm}
+                {this.getForm()}
                 {this.state.isLoading ? (
                   <div className="d-flex justify-content-center center-spinner">
                     <div className="spinner-border text-primary" role="status">

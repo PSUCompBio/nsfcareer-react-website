@@ -152,15 +152,18 @@ class Nav extends React.Component {
             </Link>
             <div
               className={
-                this.props.location.pathname === '/Login' ? 'active-link' : ''
+                this.props.location.pathname === '/Login' ||
+                this.props.location.pathname === '/dashboard' ||
+                this.props.location.pathname === '/TeamAdmin' ||
+                this.props.location.pathname === '/OrganizationAdmin'
+                  ? 'active-link'
+                  : ''
               }
             />
 
             <div className="dashboard-links">
               <ul>
-              <li>
-                  <Link to="">PSU</Link>
-                </li>
+                <li>PSU</li>
                 <li>
                   <Link to="TeamAdmin">Team Admin</Link>
                 </li>
@@ -170,6 +173,7 @@ class Nav extends React.Component {
               </ul>
             </div>
           </li>
+          
         ) : (
           <li className="nav-item make-active">
             <Link className="nav-link" to={'/SignUp'}>
@@ -181,7 +185,8 @@ class Nav extends React.Component {
               }
             />
           </li>
-        )}
+          )}
+        <li className=" nav-item profile-nav-icon"></li>
       </ul>
     );
   };
