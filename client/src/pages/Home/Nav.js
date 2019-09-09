@@ -33,6 +33,10 @@ class Nav extends React.Component {
     }
   };
 
+  hideSignOut = () => {
+    this.setState({ signOutClass: '' });
+  };
+
   mobileNav = () => {
     return (
       <ul className="navbar-nav ml-auto text-center">
@@ -155,7 +159,10 @@ class Nav extends React.Component {
         </li>
 
         {this.props.location.pathname !== '/SignUp' ? (
-          <li className="nav-item dashboard-hover make-active active">
+          <li
+            onMouseOver={this.hideSignOut}
+            className="nav-item dashboard-hover make-active active"
+          >
             <Link className="nav-link" to={'/Login'}>
               Dashboard <span className="sr-only">(current)</span>
             </Link>
