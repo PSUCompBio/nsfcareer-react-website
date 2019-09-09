@@ -1214,6 +1214,30 @@ nav {
   background: #fff;
   margin-left: 10px;
 }
+.name{
+  line-height: 50px;
+  font-weight: 600;
+  text-shadow: 0 2px 3px rgba(0,0,0,0.2);
+  color: #0d77b6;
+  cursor: pointer;
+}
+.sign-out{
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(45deg, #1d61a5, #267bd3);
+  position: absolute;
+  top: 70px;
+  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.2);
+  animation: changeHeight 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+@keyframes changeHeight{
+  from{
+    height: 0;
+  }
+  to{
+    height: 100px;
+  }
+}
 /* end of profile icon nav */
 
 div.my-progress {

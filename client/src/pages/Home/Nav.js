@@ -5,7 +5,8 @@ class Nav extends React.Component {
   constructor() {
     super();
     this.state = {
-      isOpen: false
+      isOpen: false,
+      signOutClass: ''
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -23,6 +24,14 @@ class Nav extends React.Component {
       this.setState({ isOpen: false });
     }
   }
+
+  showLogOut = () => {
+    if (this.state.signOutClass === '') {
+      this.setState({ signOutClass: 'sign-out' });
+    } else {
+      this.setState({ signOutClass: '' });
+    }
+  };
 
   mobileNav = () => {
     return (
@@ -173,7 +182,6 @@ class Nav extends React.Component {
               </ul>
             </div>
           </li>
-          
         ) : (
           <li className="nav-item make-active">
             <Link className="nav-link" to={'/SignUp'}>
@@ -185,8 +193,17 @@ class Nav extends React.Component {
               }
             />
           </li>
-          )}
-        <li className=" nav-item profile-nav-icon"></li>
+        )}
+        <li className=" nav-item profile-nav-icon">
+          <div onClick={this.showLogOut} className="name">
+            R K
+          </div>
+          <div ref="signOut" className={this.state.signOutClass}>
+            <Link to="SignOut">
+              <img src="" alt="" />
+            </Link>
+          </div>
+        </li>
       </ul>
     );
   };
