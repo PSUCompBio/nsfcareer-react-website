@@ -15,6 +15,18 @@ class Nav extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
+  componentWillUpdate() {
+    document.addEventListener('mousedown', function (event) {
+      if (event.detail > 1) {
+        event.preventDefault();
+       }
+    }, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown');
+  }
+
   handleClick() {
     const body = document.getElementsByTagName('body')[0];
     const menu = document.getElementById('cbp-spmenu-s2');
