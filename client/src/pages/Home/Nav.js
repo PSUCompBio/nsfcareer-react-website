@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link, withRouter, Redirect } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import store from '../../Store';
 import { resetSignedInSucceeded } from '../../Actions';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 class Nav extends React.Component {
   constructor() {
@@ -41,6 +43,7 @@ class Nav extends React.Component {
 
   signOut = () => {
     store.dispatch(resetSignedInSucceeded());
+    this.setState({ signOutClass: 'sign-out-hide' });
   };
 
   mobileNav = () => {
@@ -103,6 +106,22 @@ class Nav extends React.Component {
           </li>
         )}
       </ul>
+    );
+  };
+
+  dashboardDropDownList = () => {
+    return (
+      <div className="dashboard-links">
+        <ul>
+          <li>PSU</li>
+          <li>
+            <Link to="TeamAdmin">Team Admin</Link>
+          </li>
+          <li>
+            <Link to="OrganizationAdmin">Organization Admin</Link>
+          </li>
+        </ul>
+      </div>
     );
   };
 
@@ -182,18 +201,7 @@ class Nav extends React.Component {
                   : ''
               }
             />
-
-            <div className="dashboard-links">
-              <ul>
-                <li>PSU</li>
-                <li>
-                  <Link to="TeamAdmin">Team Admin</Link>
-                </li>
-                <li>
-                  <Link to="OrganizationAdmin">Organization Admin</Link>
-                </li>
-              </ul>
-            </div>
+            {this.dashboardDropDownList()}
           </li>
         ) : (
           <li className="nav-item make-active">
@@ -228,6 +236,7 @@ class Nav extends React.Component {
   };
 
   render() {
+    console.log(this.props)
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
@@ -254,7 +263,7 @@ class Nav extends React.Component {
 
         {this.props.screenWidth >= 768 ? (
           <div className="collapse navbar-collapse" id="navbarNav">
-            {!this.props.isAuthenticated ? this.mobileNav() : this.laptopNav()}
+            {!this.props.isLoggedIn ? this.mobileNav() : this.laptopNav()}
           </div>
         ) : (
           ''
@@ -279,6 +288,34 @@ class Nav extends React.Component {
               this.props.location.pathname === '/About' ? 'active-link' : ''
             }
           />
+          {this.props.isLoggedIn === true ? (
+            <React.Fragment>
+              <Link className="nav-link" to={'/Sports'}>
+                Sports <span className="sr-only">(current)</span>
+              </Link>
+              <div
+                className={
+                  this.props.location.pathname === '/Sports'
+                    ? 'active-link'
+                    : ''
+                }
+              />
+
+              <Link className="nav-link" to={'/Profile'}>
+                Profile <span className="sr-only">(current)</span>
+              </Link>
+              <div
+                className={
+                  this.props.location.pathname === '/Profile'
+                    ? 'active-link'
+                    : ''
+                }
+              />
+            </React.Fragment>
+          ) : (
+            ''
+          )}
+
           <Link className="nav-link" to={'/Contact'}>
             Contact
           </Link>
@@ -289,8 +326,23 @@ class Nav extends React.Component {
           />
           {this.props.location.pathname !== '/SignUp' ? (
             <React.Fragment>
-              <Link className="nav-link" to={'/Login'}>
+              <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
+                {this.props.isLoggedIn === true ? (
+                  <div className="mobile-dashboard-dropdown">
+                    <ul>
+                      <li>PSU</li>
+                      <li>
+                        <Link to="TeamAdmin">Team Admin</Link>
+                      </li>
+                      <li>
+                        <Link to="OrganizationAdmin">Organization Admin</Link>
+                      </li>
+                    </ul>
+                  </div>
+                ) : (
+                  ''
+                )}
               </Link>
               <div
                 className={
@@ -318,4 +370,13 @@ class Nav extends React.Component {
   }
 }
 
-export default withRouter(Nav);
+function mapStateToProps(state) {
+  console.log(state);
+  return {
+    isLoggedIn: state.isSignedInSuccess
+  };
+}
+export default compose(
+  withRouter,
+  connect(mapStateToProps)
+)(Nav);

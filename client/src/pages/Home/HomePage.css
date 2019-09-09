@@ -1206,6 +1206,32 @@ nav {
 }
 /* end of military dashboard */
 
+
+/* mobile dashboard dropdown */
+.mobile-dashboard-dropdown{
+  position: absolute;
+  top: 53%;
+  box-shadow: 1px 15px 8px 3px rgba(0,0,0,0.2);
+  display: none;
+}
+.mobile-dashboard-dropdown ul{
+  list-style: none;
+  text-align: center;
+}
+.mobile-dashboard-dropdown ul li:nth-child(1){
+  text-align: center;
+  border-bottom: 1px solid #fff;
+  line-height: 50px;
+  background: #113b5d;
+}
+.mobile-dashboard-dropdown ul li a{
+  text-decoration: none;
+}
+.mobie-dashboard-hover:hover .mobile-dashboard-dropdown{
+  display: block;
+}
+/* end of mobile dashboard dropdown */
+
 /* profile icon on nav */
 .profile-nav-icon{
   width: 50px;
