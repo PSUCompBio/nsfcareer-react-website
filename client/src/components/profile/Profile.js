@@ -336,7 +336,7 @@ class Profile extends React.Component {
         <div className="container profile-mt mb-5 pb-2">
           <div
             ref="lightDark"
-            className="row text-center justify-content-center align-items-center profile-container"
+            className="row mb-5 text-center justify-content-center align-items-center profile-container"
           >
             <div ref="profileBorder" className="profile">
               <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
