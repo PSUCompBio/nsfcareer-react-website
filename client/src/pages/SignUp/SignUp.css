@@ -38,7 +38,7 @@ input::placeholder {
   border-radius: 12px !important;
 }
 .login {
-  height: 63vh;
+  height: 60%;
   padding-top: 10vh;
 }
 .sign-up-btn {

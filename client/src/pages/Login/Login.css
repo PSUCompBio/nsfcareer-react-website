@@ -32,7 +32,7 @@ input::placeholder {
   border-radius: 12px !important;
 }
 .login {
-  height: 63vh;
+  height: 60%;
   padding-top: 10vh;
   margin-top: 10vh;
 }
@@ -97,6 +97,10 @@ input::placeholder {
 }
 .footer p {
   color: #fff;
+}
+.top-heading__login{
+  color: #0f81dc;
+  font-size: 30px;
 }
 
 @-webkit-keyframes autofill {
