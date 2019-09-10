@@ -110,7 +110,7 @@ class Login extends React.Component {
         <div className="container pl-0 pr-0 overflow-hidden">
           {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
           <div className="row login">
-            <div className="col-md-12 mt-5 mb-5">
+            <div className="col-md-12  mb-5">
               <div className="card text-center ">
                 <p className="top-heading__login">
                   The Dashboard gives users and administers a cumulative

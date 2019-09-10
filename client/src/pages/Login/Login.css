@@ -71,6 +71,7 @@ input::placeholder {
   border-bottom: 5px solid #f1f1f1;
   border-top: 5px solid #fff;
   border-right: 5px solid #fff;
+  z-index: 1;
 }
 .brain-icon img {
   width: 50%;
