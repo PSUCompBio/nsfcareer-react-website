@@ -122,6 +122,9 @@ class Login extends React.Component {
 
             <div className="col-md-6 mb-5 p-3">
               <div id="dashboard-view" className="text-right dashboard-mock">
+                <div className="text-center dashboard-example">
+                  Dashboard Example
+                </div>
                 <img
                   className="img-fluid"
                   src="/img/dashboardMock.png"
