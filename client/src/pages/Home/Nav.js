@@ -28,7 +28,7 @@ class Nav extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousedown');
+    // document.removeEventListener('mousedown');
   }
 
   handleClick() {

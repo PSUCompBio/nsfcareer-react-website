@@ -19,7 +19,7 @@ app = express(),
     config_env = require("./config/configuration_keys"),
     ms = require("ms"),
     multer = require('multer');
-
+app
 // ================================================
 //            SERVER CONFIGURATION
 // ================================================
@@ -103,19 +103,28 @@ const docClient = new AWS.DynamoDB.DocumentClient({
 
 // Express configured for POST Request handling of multiple types
 // xxx-url encoded (form type)  & json type
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors(
-    {
-        origin: [process.env.DOMAIN],
-        credentials: true
-    }
-));
+app.use(function (req, res, next) {
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8444');
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    // Pass to next layer of middleware
+    next();
+});
 
 
 function setConnectionTimeout(time) {
     var delay = typeof time === 'string'
+    
         ? ms(time)
         : Number(time || 5000);
 
@@ -357,7 +366,7 @@ function getUploadedInpFileList(user_name, cb) {
 
 // Function to authenticate user credentials
 function login(user_name, password, user_type, cb) {
-
+console.log('gyanendra')
     const poolData = {
         UserPoolId: cognito.userPoolId, // Your user pool id here
         ClientId: cognito.ClientId // Your client id here

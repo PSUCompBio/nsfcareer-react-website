@@ -333,7 +333,6 @@ class Profile extends React.Component {
     //     </div>
     //   </MDBCardBody>
     //   </MDBCard></React.Fragment>
-
     return (
       <React.Fragment>
         <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
@@ -342,21 +341,21 @@ class Profile extends React.Component {
             className="row mb-5 text-center justify-content-center align-items-center profile-container"
           >
             <div ref="profileBorder" className="profile">
-              <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
+              <img className="img-fluid" src={this.state.user.profile_picture_url} alt="" />
             </div>
             <div className="col-md-5 mt-5 pt-2  offset-md-3">
               <p ref="nameColor" className="pt-5 pb-1">
-                Reuben Craft
+                {this.state.user.first_name+' '+this.state.user.last_name}
               </p>
               <div className="row text-center">
                 <div className="col-md-12 pt-4 titiles">
                   <p className="mb-2">
-                    Email :{' '}
+                    Email :
                     <input
                       ref={this.state.inputs[0]}
                       type="text"
                       disabled={this.state.disableInput[0]}
-                      placeholder=" reuben.kraft@gmail.com"
+                      placeholder={this.state.user.email}
                     />{' '}
                     <span>
                       <img
@@ -373,7 +372,7 @@ class Profile extends React.Component {
                       ref={this.state.inputs[1]}
                       disabled={this.state.disableInput[1]}
                       type="text"
-                      placeholder="28"
+                      placeholder={this.state.user.age}
                     />{' '}
                     <span>
                       <img
@@ -390,7 +389,7 @@ class Profile extends React.Component {
                       ref={this.state.inputs[2]}
                       disabled={this.state.disableInput[2]}
                       type="text"
-                      placeholder="Male"
+                      placeholder={this.state.user.gender}
                     />{' '}
                     <span>
                       <img
@@ -407,7 +406,7 @@ class Profile extends React.Component {
                       ref={this.state.inputs[3]}
                       disabled={this.state.disableInput[3]}
                       type="text"
-                      placeholder="+11111111111"
+                      placeholder={this.state.user.phone_number}
                     />{' '}
                     <span>
                       <img
@@ -424,7 +423,7 @@ class Profile extends React.Component {
                       ref={this.state.inputs[4]}
                       disabled={this.state.disableInput[4]}
                       type="text"
-                      placeholder=" lorem ipsum"
+                      placeholder={this.state.user.user_type}
                     />{' '}
                     <span>
                       <img

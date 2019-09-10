@@ -34,7 +34,6 @@ class Login extends React.Component {
   }
 
   handleSubmit(e) {
-    store.dispatch(setIsSignedInSucceeded());
     console.log('SIGNIN IN CLICKED');
     e.preventDefault();
     e.persist();
@@ -86,6 +85,8 @@ class Login extends React.Component {
                 isSignInSuccessed: true
               });
             }
+            store.dispatch(setIsSignedInSucceeded());
+
           } else {
             this.setState({
               isLoginError: true,
