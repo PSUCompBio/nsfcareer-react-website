@@ -12,7 +12,8 @@ class OrganizationAdmin extends React.Component {
       highestLoadCount: 0.046,
       impactCount: 3,
       tabActive: 0,
-      targetBtn: ''
+      targetBtn: '',
+      totalTeam: 0
     };
   }
   toggleTab = (value) => {
@@ -52,6 +53,10 @@ class OrganizationAdmin extends React.Component {
     }
   }
 
+  addTeam = () => {
+    this.setState({ totalTeam: this.state.totalTeam + 1 });
+  };
+
   smallCards = (reference, noOfAthletes, noOfAlerts, noOfImpacts) => {
     return (
       <div ref={reference[0]} className="tech-football m-3">
@@ -73,6 +78,30 @@ class OrganizationAdmin extends React.Component {
         </div>
       </div>
     );
+  };
+
+  iterateTeam = () => {
+    console.log(this.state.totalTeam);
+    let inc = -1;
+    var cards = new Array(this.state.totalTeam);
+    for (let i = 1; i <= this.state.totalTeam; i++) {
+      console.log('sf');
+      cards[i] = this.smallCards(
+        [
+          'smCard' + i,
+          'parentChildTop' + i,
+          'h' + i + inc++,
+          'h' + i + inc++,
+          'parentChildLeft' + i + inc++,
+          'h' + i + inc++,
+          'h' + i + inc++
+        ],
+        0,
+        0,
+        0
+      );
+    }
+    return cards;
   };
 
   render() {
@@ -104,8 +133,9 @@ class OrganizationAdmin extends React.Component {
                       content="staff"
                     />
                   </div>
-                  <div className="football-container pt-5 d-flex">
-                    {this.smallCards(
+                  <div className="football-container pt-5 d-flex flex-wrap">
+                    {this.iterateTeam()}
+                    {/* {this.smallCards(
                       [
                         'smCard1',
                         'parentChildTop1',
@@ -118,8 +148,8 @@ class OrganizationAdmin extends React.Component {
                       2,
                       2,
                       1
-                    )}
-                    {this.smallCards(
+                    )} */}
+                    {/* {this.smallCards(
                       [
                         'smCard2',
                         'parentChildTop2',
@@ -132,11 +162,13 @@ class OrganizationAdmin extends React.Component {
                       2,
                       1,
                       2
-                    )}
+                    )} */}
 
                     <div className="tech-football m-3">
                       <div className="addTeam text-center">
-                        <div className="plus">+</div>
+                        <div onClick={this.addTeam} className="plus">
+                          +
+                        </div>
                         <p>Add Team</p>
                       </div>
                     </div>

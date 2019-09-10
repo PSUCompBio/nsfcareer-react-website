@@ -626,7 +626,7 @@ nav {
   color: #0f81dc;
 }
 .football-container {
-  height: 573px;
+  height: auto;
 }
 .body-left-part {
   border-right: 1px solid black;
