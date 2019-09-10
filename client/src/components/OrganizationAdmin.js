@@ -52,6 +52,29 @@ class OrganizationAdmin extends React.Component {
     }
   }
 
+  smallCards = (reference, noOfAthletes, noOfAlerts, noOfImpacts) => {
+    return (
+      <div ref={reference[0]} className="tech-football m-3">
+        <div ref={reference[1]} className="football-header">
+          <p ref={reference[2]}>
+            York tech football <img src="/img/icon/football.svg" alt="" />
+          </p>
+          <p ref={reference[3]}>{noOfAthletes} Athletes </p>
+        </div>
+        <div className="football-body d-flex">
+          <div ref={reference[4]} className="body-left-part ">
+            <p>{noOfImpacts}</p>
+            <p ref={reference[5]}>Impacts</p>
+          </div>
+          <div className="body-right-part">
+            <p>{noOfAlerts}</p>
+            <p ref={reference[6]}>Alerts</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -82,42 +105,39 @@ class OrganizationAdmin extends React.Component {
                     />
                   </div>
                   <div className="football-container pt-5 d-flex">
-                    <div ref="smCard1" className="tech-football m-3">
-                      <div ref="parentChildTop1" className="football-header">
-                        <p ref="h1">
-                          York tech football{' '}
-                          <img src="/img/icon/football.svg" alt="" />
-                        </p>
-                        <p ref="h2">2 Athletes </p>
-                      </div>
-                      <div className="football-body d-flex">
-                        <div ref="parentChildLeft1" className="body-left-part">
-                          <p>1</p>
-                          <p ref="h3">Impacts</p>
-                        </div>
-                        <div className="body-right-part">
-                          <p>0</p>
-                          <p ref="h4">Alerts</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div ref="smCard2" className="tech-football m-3">
-                      <div ref="parentChildTop2" className="football-header">
-                        <p ref="h5">
-                          York tech football{' '}
-                          <img src="/img/icon/football.svg" alt="" />
-                        </p>
-                        <p ref="h6">2 Athletes </p>
-                      </div>
-                      <div className="football-body d-flex">
-                        <div ref="parentChildLeft2" className="body-left-part ">
-                          <p>2</p>
-                          <p ref="h7">Impacts</p>
-                        </div>
-                        <div className="body-right-part">
-                          <p>1</p>
-                          <p ref="h8">Alerts</p>
-                        </div>
+                    {this.smallCards(
+                      [
+                        'smCard1',
+                        'parentChildTop1',
+                        'h1',
+                        'h2',
+                        'parentChildLeft1',
+                        'h3',
+                        'h4'
+                      ],
+                      2,
+                      2,
+                      1
+                    )}
+                    {this.smallCards(
+                      [
+                        'smCard2',
+                        'parentChildTop2',
+                        'h5',
+                        'h6',
+                        'parentChildLeft2',
+                        'h7',
+                        'h8'
+                      ],
+                      2,
+                      1,
+                      2
+                    )}
+
+                    <div className="tech-football m-3">
+                      <div className="addTeam text-center">
+                        <div className="plus">+</div>
+                        <p>Add Team</p>
                       </div>
                     </div>
                   </div>
