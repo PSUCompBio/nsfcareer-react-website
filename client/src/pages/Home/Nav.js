@@ -16,11 +16,15 @@ class Nav extends React.Component {
   }
 
   componentWillUpdate() {
-    document.addEventListener('mousedown', function (event) {
-      if (event.detail > 1) {
-        event.preventDefault();
-       }
-    }, false);
+    document.addEventListener(
+      'mousedown',
+      function(event) {
+        if (event.detail > 1) {
+          event.preventDefault();
+        }
+      },
+      false
+    );
   }
 
   componentWillUnmount() {
@@ -174,16 +178,6 @@ class Nav extends React.Component {
           />
         </li>
 
-        <li className="nav-item make-active active">
-          <Link className="nav-link" to={'/Profile'}>
-            Profile <span className="sr-only">(current)</span>
-          </Link>
-          <div
-            className={
-              this.props.location.pathname === '/Profile' ? 'active-link' : ''
-            }
-          />
-        </li>
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
             Contact
@@ -231,7 +225,20 @@ class Nav extends React.Component {
           <div onClick={this.showLogOut} className="name">
             R K
           </div>
-          <div ref="signOut" className={`${this.state.signOutClass} pt-4`}>
+
+          <div ref="signOut" className={`${this.state.signOutClass}`}>
+            <div className="nav-item make-active profile-user active">
+              <Link className="nav-link" to={'/Profile'}>
+                Profile <span className="sr-only">(current)</span>
+              </Link>
+              <div
+                className={
+                  this.props.location.pathname === '/Profile'
+                    ? 'active-link'
+                    : ''
+                }
+              />
+            </div>
             <Link to="">
               <img
                 onClick={this.signOut}
@@ -240,6 +247,7 @@ class Nav extends React.Component {
                 alt=""
               />
             </Link>
+
             <div>Sign out</div>
           </div>
         </li>
@@ -248,7 +256,7 @@ class Nav extends React.Component {
   };
 
   render() {
-    console.log(this.props)
+    console.log(this.props);
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${

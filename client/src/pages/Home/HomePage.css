@@ -1232,6 +1232,10 @@ nav {
 /* end of mobile dashboard dropdown */
 
 /* profile icon on nav */
+.profile-user{
+  background: #174f86;
+  margin-bottom: 5px;
+}
 .profile-nav-icon {
   width: 50px;
   height: 50px;
