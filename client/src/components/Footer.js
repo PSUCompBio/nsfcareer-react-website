@@ -5,7 +5,7 @@ const Footer = () => {
     window.location.href = 'https://psucompbio.org/';
   };
   return (
-    <div className="footer">
+    <div className="footer about__page">
       <div style={{background:''}} className="container">
         <div className="row pt-4">
           <div className="col-sm-6 col-md-6 col-lg-6">

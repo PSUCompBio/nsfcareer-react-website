@@ -1206,48 +1206,47 @@ nav {
 }
 /* end of military dashboard */
 
-
 /* mobile dashboard dropdown */
-.mobile-dashboard-dropdown{
+.mobile-dashboard-dropdown {
   position: absolute;
   top: 53%;
-  box-shadow: 1px 15px 8px 3px rgba(0,0,0,0.2);
+  box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2);
   display: none;
 }
-.mobile-dashboard-dropdown ul{
+.mobile-dashboard-dropdown ul {
   list-style: none;
   text-align: center;
 }
-.mobile-dashboard-dropdown ul li:nth-child(1){
+.mobile-dashboard-dropdown ul li:nth-child(1) {
   text-align: center;
   border-bottom: 1px solid #fff;
   line-height: 50px;
   background: #113b5d;
 }
-.mobile-dashboard-dropdown ul li a{
+.mobile-dashboard-dropdown ul li a {
   text-decoration: none;
 }
-.mobie-dashboard-hover:hover .mobile-dashboard-dropdown{
+.mobie-dashboard-hover:hover .mobile-dashboard-dropdown {
   display: block;
 }
 /* end of mobile dashboard dropdown */
 
 /* profile icon on nav */
-.profile-nav-icon{
+.profile-nav-icon {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   background: #fff;
   margin-left: 10px;
 }
-.name{
+.name {
   line-height: 50px;
   font-weight: 600;
-  text-shadow: 0 2px 3px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
   color: #0d77b6;
   cursor: pointer;
 }
-.sign-out{
+.sign-out {
   width: 100px;
   height: 100px;
   background: linear-gradient(45deg, #1d61a5, #267bd3);
@@ -1257,14 +1256,14 @@ nav {
   animation: changeHeight 1s cubic-bezier(0.075, 0.82, 0.165, 1);
   color: #fff;
 }
-.sign-out-hide{
+.sign-out-hide {
   display: none;
 }
-@keyframes changeHeight{
-  from{
+@keyframes changeHeight {
+  from {
     height: 0;
   }
-  to{
+  to {
     height: 100px;
   }
 }
@@ -1419,6 +1418,12 @@ div.my-progress-bar {
   .shift-technology-section {
     margin-top: -15%;
   }
+  .about__page {
+    bottom: -26.93vh !important;
+  }
+  .padding-about__page{
+    padding-top: 4%
+  }
 }
 
 @media (min-width: 1500px) and (max-width: 2560px) {
@@ -1434,6 +1439,13 @@ div.my-progress-bar {
   .header-heading .underlined-text {
     font-size: 24px;
   }
+  .about__page {
+    bottom: -39.93vh !important;
+  }
+  .padding-about__page{
+    padding-top: 24vh;
+  }
+
 }
 
 .research-card {
