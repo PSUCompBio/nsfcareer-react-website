@@ -232,6 +232,24 @@ class Login extends React.Component {
                       </Link>
                     </p>
                   </div>
+
+                  <div className="option-or">
+                    <div className="or-img text-center">
+                      <img src="/img/icon/or.png" className="" alt="" />
+                    </div>
+                    <div className="text-center">
+                      <p className="sign-up-link">
+                        Are you an administrator including coach, parent,
+                        trainer, or military unit leader?{' '}
+                        <br/>
+                        <Link className="sign-up" to="SignUp">
+                          {' '}
+                          Sign Up{' '}
+                        </Link>{' '}
+                        for Someone Else.{' '}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
