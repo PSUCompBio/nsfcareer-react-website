@@ -256,7 +256,7 @@ class Nav extends React.Component {
   };
 
   render() {
-    console.log(this.props);
+    const localStore = JSON.parse(localStorage.getItem('state'));
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
@@ -283,7 +283,7 @@ class Nav extends React.Component {
 
         {this.props.screenWidth >= 768 ? (
           <div className="collapse navbar-collapse" id="navbarNav">
-            {!this.props.isLoggedIn ? this.mobileNav() : this.laptopNav()}
+            {!localStore.isSignedInSuccess ? this.mobileNav() : this.laptopNav()}
           </div>
         ) : (
           ''
