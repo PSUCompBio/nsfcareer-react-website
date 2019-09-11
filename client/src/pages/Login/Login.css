@@ -102,6 +102,7 @@ input::placeholder {
 .top-heading__login {
   color: #0f81dc;
   font-size: 30px;
+  font-weight: 900;
 }
 .dashboard-example{
   height: 30px;
