@@ -226,7 +226,7 @@ div.line_container div{
   width: 310px;
   height: 5px;
   background:#0f81dc;
-  animation: changeLine 2.5s;
+  animation: changeLine 2.5s cubic-bezier(0.26,-0.62, 0.17, 1);
   border-radius: 10px;
 }
 

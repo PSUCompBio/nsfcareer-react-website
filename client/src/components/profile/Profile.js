@@ -19,6 +19,7 @@ import store from '../../Store';
 import { darkThemeActiveSetter } from '../../Actions';
 import { darkThemeInactiveSetter } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
+import Spinner from '../Spinner/Spinner';
 
 class Profile extends React.Component {
   constructor() {
@@ -219,120 +220,7 @@ class Profile extends React.Component {
     );
   };
 
-  render() {
-    //     return <React.Fragment>
-    // <h1 className="topspace">Profile</h1>
-    // <div>
-    // <MDBInput
-
-    //                       name="profile_pic"
-    //                       icon="file"
-
-    //                       type="file"
-    //                       onChange={this.onChangeHandler}
-    //                     />
-    //                     <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn>
-
-    // </div>
-    //     </React.Fragment>;
-    // if((!this.state.isCheckingAuth) && (!this.state.isAuthenticated)){
-    //     return <Redirect to="/Login"/>
-    // }
-    // if(this.state.isLoading && (!this.state.isAuthenticated)){
-    //     return <div className="container">Loading...</div>
-    // }
-    // if(this.state.isLoading && this.state.isAuthenticated){
-
-    //   return <div className="topspace"><h1 >User Profile</h1><h2>Loading...</h2></div>
-    // }
-
-    // return <React.Fragment>
-    // <MDBCard className="topspace">
-    //   <MDBCardBody>
-
-    //     <div className="row">
-    //         <div className="col-xs-12 col-sm-6 col-md-6">
-    //             <div className="well well-sm">
-    //                 <div className="row">
-    //                     <div className="col-sm-6 col-md-4">
-    //                       {!this.isProfilePictureExists()?<div><MDBInput
-    //                       name="profile_pic"
-    //                       icon="file"
-    //                       type="file"
-    //                       onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>
-    //                                             {
-    //                     this.state.isUploading ?
-    //                     <div className="d-flex justify-content-center center-spinner">
-    //                          <div className="spinner-border text-primary" role="status" >
-    //         <span className="sr-only">Uploading...</span>
-    //       </div>
-    //              </div>:null
-    //                   }
-    //                   <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn></div>
-    //                     :
-    //                     <div>
-    //                       <img src={this.state.user.profile_picture_url} alt="" className="img-rounded img-responsive" />
-    //                       <MDBInput
-    //                       name="profile_pic"
-    //                       icon="file"
-    //                       type="file"
-    //                       onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>
-    //                       {
-    //                     this.state.isUploading ?
-    //                     <div className="d-flex justify-content-center center-spinner">
-    //                          <div className="spinner-border text-primary" role="status" >
-    //         <span className="sr-only">Uploading...</span>
-    //       </div>
-    //              </div>:null
-    //                   }
-    //                       <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn>
-
-    //                       </div>
-
-    //                       }
-
-    //                     </div>
-    //                     <div className="col-sm-6 col-md-8">
-    //                         <h4>
-    //                             {this.state.user.first_name} {this.state.user.last_name}</h4>
-
-    //                         <p>
-    //                             <i className="glyphicon glyphicon-envelope"></i>{this.state.user.email}
-    //                             <br />
-    //                             <i className="glyphicon glyphicon-globe"></i>Age : {this.state.user.age}
-    //                             <br />
-    //                             <i className="glyphicon glyphicon-globe"></i>Sex : {this.state.user.gender}
-    //                             <br />
-    //                             <i className="glyphicon glyphicon-gift"></i>{this.state.user.phone_number}</p>
-    //                             <br />
-    //                             <span>Selfie Uploaded </span>
-    //                             {this.state.user.is_selfie_image_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.profile_picture_url} className="btn btn-warning">Download 3D Selfie</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> }
-    //                             <br />
-    //                             <span>3D Avatar Generated </span>
-    //                             {this.state.user.is_selfie_model_uploaded?
-    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
-    //                             }
-    //                             <br />
-    //                             <span>Mesh File Generated </span>
-    //                             {this.state.user.is_selfie_inp_uploaded?
-    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.inp_file_url} className="btn btn-info">Download FE Mesh</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
-    //                             }
-    //                             <br />
-    //                             <span>Simulation File Generated </span>
-    //                             {this.state.user.is_selfie_simulation_file_uploaded?
-    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.simulation_file_url} className="btn btn-secondary">Download Simulation File</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
-    //                             }
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     </div>
-    //   </MDBCardBody>
-    //   </MDBCard></React.Fragment>
+  showProfile = ()=>{
     return (
       <React.Fragment>
         <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
@@ -492,7 +380,138 @@ class Profile extends React.Component {
         </div>
         <Footer />
       </React.Fragment>
-    );
+    
+    )
+  }
+
+  returnComponent = () => {
+    console.log(this.state)
+    if (Object.entries(this.state.user).length===0) {
+      return <Spinner/>
+    }
+    else {
+      return this.showProfile();
+    }
+  }
+
+  render() {
+    //     return <React.Fragment>
+    // <h1 className="topspace">Profile</h1>
+    // <div>
+    // <MDBInput
+
+    //                       name="profile_pic"
+    //                       icon="file"
+
+    //                       type="file"
+    //                       onChange={this.onChangeHandler}
+    //                     />
+    //                     <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn>
+
+    // </div>
+    //     </React.Fragment>;
+    // if((!this.state.isCheckingAuth) && (!this.state.isAuthenticated)){
+    //     return <Redirect to="/Login"/>
+    // }
+    // if(this.state.isLoading && (!this.state.isAuthenticated)){
+    //     return <div className="container">Loading...</div>
+    // }
+    // if(this.state.isLoading && this.state.isAuthenticated){
+
+    //   return <div className="topspace"><h1 >User Profile</h1><h2>Loading...</h2></div>
+    // }
+
+    // return <React.Fragment>
+    // <MDBCard className="topspace">
+    //   <MDBCardBody>
+
+    //     <div className="row">
+    //         <div className="col-xs-12 col-sm-6 col-md-6">
+    //             <div className="well well-sm">
+    //                 <div className="row">
+    //                     <div className="col-sm-6 col-md-4">
+    //                       {!this.isProfilePictureExists()?<div><MDBInput
+    //                       name="profile_pic"
+    //                       icon="file"
+    //                       type="file"
+    //                       onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>
+    //                                             {
+    //                     this.state.isUploading ?
+    //                     <div className="d-flex justify-content-center center-spinner">
+    //                          <div className="spinner-border text-primary" role="status" >
+    //         <span className="sr-only">Uploading...</span>
+    //       </div>
+    //              </div>:null
+    //                   }
+    //                   <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn></div>
+    //                     :
+    //                     <div>
+    //                       <img src={this.state.user.profile_picture_url} alt="" className="img-rounded img-responsive" />
+    //                       <MDBInput
+    //                       name="profile_pic"
+    //                       icon="file"
+    //                       type="file"
+    //                       onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>
+    //                       {
+    //                     this.state.isUploading ?
+    //                     <div className="d-flex justify-content-center center-spinner">
+    //                          <div className="spinner-border text-primary" role="status" >
+    //         <span className="sr-only">Uploading...</span>
+    //       </div>
+    //              </div>:null
+    //                   }
+    //                       <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn>
+
+    //                       </div>
+
+    //                       }
+
+    //                     </div>
+    //                     <div className="col-sm-6 col-md-8">
+    //                         <h4>
+    //                             {this.state.user.first_name} {this.state.user.last_name}</h4>
+
+    //                         <p>
+    //                             <i className="glyphicon glyphicon-envelope"></i>{this.state.user.email}
+    //                             <br />
+    //                             <i className="glyphicon glyphicon-globe"></i>Age : {this.state.user.age}
+    //                             <br />
+    //                             <i className="glyphicon glyphicon-globe"></i>Sex : {this.state.user.gender}
+    //                             <br />
+    //                             <i className="glyphicon glyphicon-gift"></i>{this.state.user.phone_number}</p>
+    //                             <br />
+    //                             <span>Selfie Uploaded </span>
+    //                             {this.state.user.is_selfie_image_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.profile_picture_url} className="btn btn-warning">Download 3D Selfie</a> </React.Fragment>
+    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> }
+    //                             <br />
+    //                             <span>3D Avatar Generated </span>
+    //                             {this.state.user.is_selfie_model_uploaded?
+    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment>
+    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
+    //                             }
+    //                             <br />
+    //                             <span>Mesh File Generated </span>
+    //                             {this.state.user.is_selfie_inp_uploaded?
+    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.inp_file_url} className="btn btn-info">Download FE Mesh</a> </React.Fragment>
+    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
+    //                             }
+    //                             <br />
+    //                             <span>Simulation File Generated </span>
+    //                             {this.state.user.is_selfie_simulation_file_uploaded?
+    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.simulation_file_url} className="btn btn-secondary">Download Simulation File</a> </React.Fragment>
+    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
+    //                             }
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     </div>
+    //   </MDBCardBody>
+    //   </MDBCard></React.Fragment>
+    return (
+      this.returnComponent()
+      // this.showProfile()
+      );
   }
 
   componentDidMount() {
