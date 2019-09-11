@@ -142,7 +142,7 @@ class Login extends React.Component {
                   </div>
 
                   <form onSubmit={this.handleSubmit} ref="signInForm">
-                    <div className="input-group mb-5">
+                    <div className="input-group mt-3 mb-5">
                       <div className="input-group-prepend">
                         <span className="input-group-text" id="basic-addon1">
                           <img src="img/icon/user.svg" alt="" />

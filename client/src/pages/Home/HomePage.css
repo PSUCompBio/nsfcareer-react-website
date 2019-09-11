@@ -194,6 +194,12 @@ body {
   margin-bottom: 0;
   width: fit-content;
 }
+.brain-overlay{
+  position: absolute;
+  top: -20%;
+  right: 0;
+  z-index: 5;
+}
 
 .header-heading hr {
   display: inline-block;
@@ -208,6 +214,31 @@ body {
 .section-three h1,
 .section-four h1 {
   font-family: 'Roboto', sans-serif;
+}
+div.line_container{
+  width: 310px;
+  height: 5px;
+  /* background:#dedede; */
+  border-radius: 10px;
+}
+
+div.line_container div{
+  width: 310px;
+  height: 5px;
+  background:#0f81dc;
+  animation: changeLine 2.5s;
+  border-radius: 10px;
+}
+
+@keyframes changeLine {
+  from{
+    margin-left: 50%;
+    width: 0;
+  }
+  to{
+    margin-left: 0;
+    width: 310px;
+  }
 }
 
 .section-three h5 {

@@ -12,9 +12,19 @@ function ResearchArea(props) {
           <div className="col-md-12 col-lg-12 text-center">
             <InView>
               {({ inView, ref }) => (
-                <div ref={ref}>
-                  <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
-                    <h1 id="color" className="font-weight-bold">RESEARCH AREAS</h1>
+                <div className="mb-3" ref={ref}>
+                  <h1
+                    className={`font-weight-bold animated ${
+                      inView ? 'zoomIn' : ''
+                    }`}
+                  >
+                    RESEARCH AREA
+                  </h1>
+
+                  <div className="w-100 d-flex justify-content-center">
+                    <div className={inView ? 'line_container' : ''}>
+                      <div></div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -23,7 +33,12 @@ function ResearchArea(props) {
           <div className="row text-center center-card">
             <InView>
               {({ inView, ref }) => (
-                <div ref={ref} className={`col-md-6 col-lg-6 ${inView ? 'animated slideInLeft' : ''}`}>
+                <div
+                  ref={ref}
+                  className={`col-md-6 col-lg-6 ${
+                    inView ? 'animated slideInLeft' : ''
+                  }`}
+                >
                   <div className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
@@ -34,8 +49,7 @@ function ResearchArea(props) {
                       <h5>For Soldiers</h5>
                       <p className="card-text px-3 mt-3 color">
                         We use sensor-enabled, cloud-based platform for
-                        individualized brain modeling of
-                        Soldiers. 
+                        individualized brain modeling of Soldiers.
                       </p>
                       <a href="/Military">Read More</a>
                     </div>
@@ -45,7 +59,12 @@ function ResearchArea(props) {
             </InView>
             <InView>
               {({ inView, ref }) => (
-                <div ref={ref} className={`col-md-6 col-lg-6 ${inView ? 'animated slideInRight' : ''}`}>
+                <div
+                  ref={ref}
+                  className={`col-md-6 col-lg-6 ${
+                    inView ? 'animated slideInRight' : ''
+                  }`}
+                >
                   <div className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
@@ -57,7 +76,7 @@ function ResearchArea(props) {
                       <p className="card-text mt-3 color">
                         We utilize data from the customized computer models to
                         approximate an Athlete&apos;s brain’s response to
-                        injuries. 
+                        injuries.
                       </p>
                       <Link to="">Read More</Link>
                     </div>

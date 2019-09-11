@@ -201,7 +201,7 @@ class Profile extends React.Component {
           });
           this.props.isDarkModeSet(this.state.isDarkMode);
         } else {
-          this.setState({mode:'Dark mode'})
+          this.setState({ mode: 'Dark mode' });
           store.dispatch(darkThemeInactiveSetter());
           this.refs.lightDark.style.background = '';
           document.getElementsByTagName('html')[0].style.background = '';
@@ -341,11 +341,15 @@ class Profile extends React.Component {
             className="row mb-5 text-center justify-content-center align-items-center profile-container"
           >
             <div ref="profileBorder" className="profile">
-              <img className="img-fluid" src={this.state.user.profile_picture_url} alt="" />
+              <img
+                className="img-fluid"
+                src={this.state.user.profile_picture_url}
+                alt=""
+              />
             </div>
             <div className="col-md-5 mt-5 pt-2  offset-md-3">
               <p ref="nameColor" className="pt-5 pb-1">
-                {this.state.user.first_name+' '+this.state.user.last_name}
+                {this.state.user.first_name + ' ' + this.state.user.last_name}
               </p>
               <div className="row text-center">
                 <div className="col-md-12 pt-4 titiles">
@@ -434,7 +438,7 @@ class Profile extends React.Component {
                       />
                     </span>
                   </p>
-                  <button type="submit" className="btn mt-5 upload-btn">
+                  <button onClick={this.onClickHandler} type="submit" className="btn mt-5 upload-btn">
                     Upload photo
                   </button>
                 </div>

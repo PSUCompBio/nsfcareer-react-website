@@ -16,13 +16,19 @@ function AboutTheProduct(props) {
           <div className="col-md-12 col-lg-12 text-center">
             <InView>
               {({ inView, ref }) => (
-                <div ref={ref}>
-                  <div
-                    className={`animated ${
-                      inView ? 'section-title  zoomIn' : ''
+                <div className="mb-3" ref={ref}>
+                  <h1
+                    className={`font-weight-bold animated ${
+                      inView ? 'zoomIn' : ''
                     }`}
                   >
-                    <h1 className="font-weight-bold">ABOUT THE PROJECT</h1>
+                    ABOUT THE PROJECT
+                  </h1>
+
+                  <div className="w-100 d-flex justify-content-center">
+                    <div className={inView ? 'line_container' : ''}>
+                      <div></div>
+                    </div>
                   </div>
                   <p className={` animated ${inView ? '  fadeInUp' : ''}`}>
                     Brain injuries are a significant health concern for civilian
@@ -77,9 +83,7 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 animated ${
-                      inView ? ' zoomIn' : ''
-                    }`}
+                    className={`col-md-4 animated ${inView ? ' zoomIn' : ''}`}
                   >
                     <img
                       className={`svg ${animateOnDesktop}`}
