@@ -112,7 +112,7 @@ class Login extends React.Component {
           {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
           <div className="row login">
             <div className="col-md-12  mb-5">
-              <div className="card text-center ">
+              <div className="text-center">
                 <p className="top-heading__login">
                   The Dashboard gives users and administers a cumulative
                   overview, as well as an in-depth analysis on each head
@@ -245,9 +245,9 @@ class Login extends React.Component {
                         <br/>
                         <Link className="sign-up" to="SignUp">
                           {' '}
-                          Sign Up{' '}
-                        </Link>{' '}
-                        for Someone Else.{' '}
+                          Sign Up for Someone Else.
+                        </Link>
+                        {' '}
                       </p>
                     </div>
                   </div>
