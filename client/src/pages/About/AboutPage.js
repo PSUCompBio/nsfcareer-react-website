@@ -23,9 +23,9 @@ class AboutPage extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="container">
+        <div className="container ">
           <div className="row pt-5 mt-5">
-            <div className="col-md-12 col-lg-12 text-center">
+            <div className="col-md-12 col-lg-12 padding-about__page text-center">
               <div className={`section-title animated zoomIn`}>
                 <h1 className="font-weight-bold">ABOUT US</h1>
               </div>

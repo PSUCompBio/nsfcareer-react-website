@@ -1,39 +1,42 @@
-import { DARK_THEME_ACTIVE, DARK_THEME_INACTIVE, SIGNED_IN_SUCCEEDED, RESET_SIGNED_IN_SUCCEEDED } from './ActionType';
+import {
+  DARK_THEME_ACTIVE,
+  DARK_THEME_INACTIVE,
+  SIGNED_IN_SUCCEEDED,
+  RESET_SIGNED_IN_SUCCEEDED,
+  USER_INFO
+} from './ActionType';
 
 export const darkThemeActiveSetter = () => {
-  return (
-    {
-      type: DARK_THEME_ACTIVE,
-      payload: true
-    }
-  )
-}
+  return {
+    type: DARK_THEME_ACTIVE,
+    payload: true
+  };
+};
 
 export const darkThemeInactiveSetter = () => {
-  return (
-    {
-      type: DARK_THEME_INACTIVE,
-      payload: false
-    }
-  )
-}
+  return {
+    type: DARK_THEME_INACTIVE,
+    payload: false
+  };
+};
 
 export const setIsSignedInSucceeded = () => {
-  return (
-    {
-      type: SIGNED_IN_SUCCEEDED,
-      payload: true
-    }
-  )
-}
+  return {
+    type: SIGNED_IN_SUCCEEDED,
+    payload: true
+  };
+};
 
 export const resetSignedInSucceeded = () => {
-  return (
-    {
-      type: RESET_SIGNED_IN_SUCCEEDED,
-      payload: false
-    }
-  )
-}
+  return {
+    type: RESET_SIGNED_IN_SUCCEEDED,
+    payload: false
+  };
+};
 
-
+export const userDetails = (data) => {
+  return {
+    type: USER_INFO,
+    payload: data
+  };
+};

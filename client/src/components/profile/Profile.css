@@ -25,6 +25,7 @@ small {
 }
 .profile img{
   transform: rotate(45deg);
+  border-radius: 50%;
 }
 .profile-container {
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);

@@ -2,12 +2,14 @@ import {
   DARK_THEME_ACTIVE,
   DARK_THEME_INACTIVE,
   SIGNED_IN_SUCCEEDED,
-  RESET_SIGNED_IN_SUCCEEDED
+  RESET_SIGNED_IN_SUCCEEDED,
+  USER_INFO
 } from './ActionType';
 
 const initialState = {
   darkThemeActive: false,
-  isSignedInSuccess: false
+  isSignedInSuccess: false,
+  userInfo: {}
 };
 
 let darkTheme = {
@@ -36,6 +38,8 @@ export function darkThemeController(state = initialState, action) {
       return Object.assign({}, state, {
         isSignedInSuccess:action.payload
       })
+    case USER_INFO:
+      return Object.assign({},state, {userInfo:action.payload})
 
     default:
       return state;

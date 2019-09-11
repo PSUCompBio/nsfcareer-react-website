@@ -4,6 +4,7 @@ import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
 import DashboardDropdownSelector from './DashboardDropdownSelector';
 import { getStatusOfDarkmode } from '../reducer';
+import { withRouter } from 'react-router-dom';
 
 class OrganizationAdmin extends React.Component {
   constructor() {
@@ -12,7 +13,8 @@ class OrganizationAdmin extends React.Component {
       highestLoadCount: 0.046,
       impactCount: 3,
       tabActive: 0,
-      targetBtn: ''
+      targetBtn: '',
+      totalTeam: 0
     };
   }
   toggleTab = (value) => {
@@ -23,13 +25,11 @@ class OrganizationAdmin extends React.Component {
     this.setState({ targetBtn: value });
   };
 
-  componentDidMount() {
+  componentDidUpdate() {
     if (getStatusOfDarkmode().status === true) {
       this.refs.rosterContainer.style.background = '#171b25';
       this.refs.cardContainer.style.background = '#232838';
-
-      this.refs.smCard1.style.background = '#171b25';
-      this.refs.smCard2.style.background = '#171b25';
+      // this.refs.smCard2.style.background = '#171b25';
 
       this.refs.loadCardParent.style.background = 'transparent';
 
@@ -40,19 +40,75 @@ class OrganizationAdmin extends React.Component {
 
       this.refs.loadCard.style.background = '#171b25';
       this.refs.impactCard.style.background = '#171b25';
-
-      this.refs.parentChildTop1.style.borderBottom = '0.5px solid #e8e8e8';
-      this.refs.parentChildTop2.style.borderBottom = '0.5px solid #e8e8e8';
-      this.refs.parentChildLeft1.style.borderRight = '0.5px solid #e8e8e8';
-      this.refs.parentChildLeft2.style.borderRight = '0.5px solid #e8e8e8';
-
-      for (let i = 1; i <= 10; i++) {
-        this.refs['h' + i].style.color = '#fff';
+      for (let i = 1; i <= this.state.totalTeam; i++) {
+        // this.refs['smcard' + i].style.background = '#171b25';
+        // this.refs['parentChildTop' + i].style.borderBottom =
+        //   '0.5px solid #e8e8e8';
+        // this.refs['parentChildLeft' + i].style.borderRight =
+        //   '0.5px solid #e8e8e8';
+        // this.refs['parentChildLeft' + i].style.borderRight =
+        //   '0.5px solid #e8e8e8';
+      }
+      for (let i = 1; i <= this.state.totalTeam; i++) {
+        // this.refs['h' + i].style.color = '#fff';
       }
     }
   }
 
+  addTeam = () => {
+    this.setState({ totalTeam: this.state.totalTeam + 1 });
+  };
+
+  smallCards = (reference, noOfAthletes, noOfAlerts, noOfImpacts) => {
+    // console.log(reference);
+    return (
+      <div >
+        <div ref={reference[0]} onClick={()=>this.props.history.push('/TeamAdmin')} className="tech-football m-3">
+          <div ref={reference[1]}  className="football-header">
+            <p ref={reference[2]}>
+              York tech football <img src="/img/icon/football.svg" alt="" />
+            </p>
+            <p ref={reference[3]}>{noOfAthletes} Athletes </p>
+          </div>
+          <div className="football-body d-flex">
+            <div ref={reference[4]} className="body-left-part ">
+              <p>{noOfImpacts}</p>
+              <p ref={reference[5]}>Impacts</p>
+            </div>
+            <div className="body-right-part">
+              <p>{noOfAlerts}</p>
+              <p ref={reference[6]}>Alerts</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  iterateTeam = () => {
+    let inc = 1;
+    var cards = new Array(this.state.totalTeam);
+    for (let i = 1; i <= this.state.totalTeam; i++) {
+      cards[i] = this.smallCards(
+        [
+          'smCard' + i,
+          'parentChildTop' + i,
+          'h' + inc++,
+          'h' + inc++,
+          'parentChildLeft' + i,
+          'h' + inc++,
+          'h' + inc++
+        ],
+        0,
+        0,
+        0
+      );
+    }
+    return cards;
+  };
+
   render() {
+    console.log(this.props);
     return (
       <React.Fragment>
         <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
@@ -81,43 +137,14 @@ class OrganizationAdmin extends React.Component {
                       content="staff"
                     />
                   </div>
-                  <div className="football-container pt-5 d-flex">
-                    <div ref="smCard1" className="tech-football m-3">
-                      <div ref="parentChildTop1" className="football-header">
-                        <p ref="h1">
-                          York tech football{' '}
-                          <img src="/img/icon/football.svg" alt="" />
-                        </p>
-                        <p ref="h2">2 Athletes </p>
-                      </div>
-                      <div className="football-body d-flex">
-                        <div ref="parentChildLeft1" className="body-left-part">
-                          <p>1</p>
-                          <p ref="h3">Impacts</p>
+                  <div className="football-container pt-5 d-flex flex-wrap">
+                    {this.iterateTeam()}
+                    <div className="tech-football m-3">
+                      <div className="addTeam text-center">
+                        <div onClick={this.addTeam} className="plus">
+                          +
                         </div>
-                        <div className="body-right-part">
-                          <p>0</p>
-                          <p ref="h4">Alerts</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div ref="smCard2" className="tech-football m-3">
-                      <div ref="parentChildTop2" className="football-header">
-                        <p ref="h5">
-                          York tech football{' '}
-                          <img src="/img/icon/football.svg" alt="" />
-                        </p>
-                        <p ref="h6">2 Athletes </p>
-                      </div>
-                      <div className="football-body d-flex">
-                        <div ref="parentChildLeft2" className="body-left-part ">
-                          <p>2</p>
-                          <p ref="h7">Impacts</p>
-                        </div>
-                        <div className="body-right-part">
-                          <p>1</p>
-                          <p ref="h8">Alerts</p>
-                        </div>
+                        <p>Add Team</p>
                       </div>
                     </div>
                   </div>
@@ -130,7 +157,7 @@ class OrganizationAdmin extends React.Component {
                   <div ref="loadCard" className="load-heading">
                     HIGHEST LOAD
                   </div>
-                  <p ref="h9" className="mt-4 ">
+                  <p ref="john1" className="mt-4 ">
                     John Sylvester <span>- York Tech football</span>
                   </p>
                   <div className="load-count mt-3 mb-3">
@@ -144,7 +171,7 @@ class OrganizationAdmin extends React.Component {
                   <div ref="impactCard" className="impact-heading">
                     MOST IMPACTS
                   </div>
-                  <p ref="h10" className="mt-4">
+                  <p ref="john2" className="mt-4">
                     John Sylvester <span>- York Tech football</span>
                   </p>
                   <div className="impact-count mt-3 mb-3">
@@ -161,4 +188,4 @@ class OrganizationAdmin extends React.Component {
   }
 }
 
-export default OrganizationAdmin;
+export default withRouter(OrganizationAdmin);

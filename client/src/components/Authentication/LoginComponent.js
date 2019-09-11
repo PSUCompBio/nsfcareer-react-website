@@ -34,7 +34,6 @@ class Login extends React.Component {
   }
 
   handleSubmit(e) {
-    store.dispatch(setIsSignedInSucceeded());
     console.log('SIGNIN IN CLICKED');
     e.preventDefault();
     e.persist();
@@ -86,6 +85,8 @@ class Login extends React.Component {
                 isSignInSuccessed: true
               });
             }
+            store.dispatch(setIsSignedInSucceeded());
+
           } else {
             this.setState({
               isLoginError: true,
@@ -110,8 +111,21 @@ class Login extends React.Component {
         <div className="container pl-0 pr-0 overflow-hidden">
           {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
           <div className="row login">
+            <div className="col-md-12  mb-5">
+              <div className="text-center">
+                <p className="top-heading__login">
+                  The Dashboard gives users and administers a cumulative
+                  overview, as well as an in-depth analysis on each head
+                  acceleration event.
+                </p>
+              </div>
+            </div>
+
             <div className="col-md-6 mb-5 p-3">
               <div id="dashboard-view" className="text-right dashboard-mock">
+                <div className="text-center dashboard-example">
+                  Dashboard Example
+                </div>
                 <img
                   className="img-fluid"
                   src="/img/dashboardMock.png"
@@ -128,7 +142,7 @@ class Login extends React.Component {
                   </div>
 
                   <form onSubmit={this.handleSubmit} ref="signInForm">
-                    <div className="input-group mb-5">
+                    <div className="input-group mt-3 mb-5">
                       <div className="input-group-prepend">
                         <span className="input-group-text" id="basic-addon1">
                           <img src="img/icon/user.svg" alt="" />
@@ -218,6 +232,24 @@ class Login extends React.Component {
                         Sign Up{' '}
                       </Link>
                     </p>
+                  </div>
+
+                  <div className="option-or">
+                    <div className="or-img text-center">
+                      <img src="/img/icon/or.png" className="" alt="" />
+                    </div>
+                    <div className="text-center">
+                      <p className="sign-up-link">
+                        Are you an administrator including coach, parent,
+                        trainer, or military unit leader?{' '}
+                        <br/>
+                        <Link className="sign-up" to="SignUp">
+                          {' '}
+                          Sign Up for Someone Else.
+                        </Link>
+                        {' '}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

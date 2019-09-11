@@ -40,15 +40,19 @@ class TechnologiesWeUse extends React.Component {
                 <InView>
                   {({ inView, ref }) => (
                     <div ref={ref}>
-                      <div
-                        className={`${
-                          inView ? 'section-title animated zoomIn' : ''
-                        }`}
-                      >
-                        <h1 id="color" className="font-weight-bold">
-                          TECHNOLOGIES WE USE
-                        </h1>
-                      </div>
+                      <h1
+                    className={`font-weight-bold animated ${
+                      inView ? 'zoomIn' : ''
+                    }`}
+                  >
+                    TECHNOLOGIES THAT WE USE
+                  </h1>
+
+                  <div className="w-100 d-flex justify-content-center">
+                    <div className={inView ? 'line_container' : ''}>
+                      <div></div>
+                    </div>
+                  </div>
                     </div>
                   )}
                 </InView>

@@ -16,9 +16,10 @@ import Download3dProfile from '../Buttons/Download3dProfile';
 import DownloadAvtar from '../Buttons/Download3dProfile';
 import DownloadFeMesh from '../Buttons/Download3dProfile';
 import store from '../../Store';
-import { darkThemeActiveSetter } from '../../Actions';
-import { darkThemeInactiveSetter } from '../../Actions';
+import { darkThemeActiveSetter, darkThemeInactiveSetter, userDetails } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
+import Spinner from '../Spinner/Spinner';
+import { Redirect } from 'react-router-dom';
 
 class Profile extends React.Component {
   constructor() {
@@ -201,7 +202,7 @@ class Profile extends React.Component {
           });
           this.props.isDarkModeSet(this.state.isDarkMode);
         } else {
-          this.setState({mode:'Dark mode'})
+          this.setState({ mode: 'Dark mode' });
           store.dispatch(darkThemeInactiveSetter());
           this.refs.lightDark.style.background = '';
           document.getElementsByTagName('html')[0].style.background = '';
@@ -217,6 +218,182 @@ class Profile extends React.Component {
         }
       }
     );
+  };
+
+  showProfile = () => {
+    return (
+      <React.Fragment>
+        <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
+          <div
+            ref="lightDark"
+            className="row mb-5 text-center justify-content-center align-items-center profile-container"
+          >
+            <div ref="profileBorder" className="profile">
+              <img
+                className="img-fluid"
+                src={this.state.user.profile_picture_url}
+                alt=""
+              />
+            </div>
+            <div className="col-md-5 mt-5 pt-2  offset-md-3">
+              <p ref="nameColor" className="pt-5 pb-1">
+                {this.state.user.first_name + ' ' + this.state.user.last_name}
+              </p>
+              <div className="row text-center">
+                <div className="col-md-12 pt-4 titiles">
+                  <p className="mb-2">
+                    Email :
+                    <input
+                      ref={this.state.inputs[0]}
+                      type="text"
+                      disabled={this.state.disableInput[0]}
+                      placeholder={this.state.user.email}
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={0}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>{' '}
+                  </p>
+                  <p className="mb-1">
+                    Age :{' '}
+                    <input
+                      ref={this.state.inputs[1]}
+                      disabled={this.state.disableInput[1]}
+                      type="text"
+                      placeholder={this.state.user.age}
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={1}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <p className="mb-1">
+                    Sex :{' '}
+                    <input
+                      ref={this.state.inputs[2]}
+                      disabled={this.state.disableInput[2]}
+                      type="text"
+                      placeholder={this.state.user.gender}
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={2}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <p className="mb-1">
+                    Contact number :{' '}
+                    <input
+                      ref={this.state.inputs[3]}
+                      disabled={this.state.disableInput[3]}
+                      type="text"
+                      placeholder={this.state.user.phone_number}
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={3}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <p className="mb-1">
+                    Organization :{' '}
+                    <input
+                      ref={this.state.inputs[4]}
+                      disabled={this.state.disableInput[4]}
+                      type="text"
+                      placeholder={this.state.user.user_type}
+                    />{' '}
+                    <span>
+                      <img
+                        data-inptno={4}
+                        onClick={this.enableDisabe}
+                        src="/img/icon/pencheck.svg"
+                        alt=""
+                      />
+                    </span>
+                  </p>
+                  <button
+                    onClick={this.onClickHandler}
+                    type="submit"
+                    className="btn mt-5 upload-btn"
+                  >
+                    Upload photo
+                  </button>
+                </div>
+              </div>
+
+              <p className="jpg-png-only">* jpeg, jpg & png only</p>
+            </div>
+            <div className="col-md-3 btns-heading text-left pt-4">
+              <div className="row">
+                <div className="col-sm-7">
+                  <span ref="chooserColor" className="dark-mode">
+                    {this.state.mode}
+                  </span>
+                </div>
+                <div className="col-sm-5  position-relative pt-1">
+                  <label className="switch" htmlFor="checkbox">
+                    <input
+                      onChange={this.darkMode}
+                      value={this.state.isDarkMode}
+                      type="checkbox"
+                      id="checkbox"
+                    />
+                    <div className="slider round"></div>
+                  </label>
+                </div>
+              </div>
+
+              <p>
+                <span>
+                  <img src="/img/icon/check.svg" alt="" />
+                </span>{' '}
+                Selfie Uploaded{' '}
+              </p>
+              <Download3dProfile content="Download 3d selfie" />
+              <p>
+                <span>
+                  <img src="/img/icon/check.svg" alt="" />
+                </span>{' '}
+                3D Avatar Generated{' '}
+              </p>
+              <DownloadAvtar content="Download avtar" />
+              <p>
+                <span>
+                  <img src="/img/icon/check.svg" alt="" />
+                </span>{' '}
+                Mesh File Generated
+              </p>
+              <DownloadFeMesh content="Download FE Mesh" />
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </React.Fragment>
+    );
+  };
+
+  returnComponent = () => {
+    console.log(this.state);
+    if (Object.entries(this.state.user).length === 0) {
+      return <Spinner />;
+    } else {
+      return this.showProfile();
+    }
   };
 
   render() {
@@ -333,163 +510,10 @@ class Profile extends React.Component {
     //     </div>
     //   </MDBCardBody>
     //   </MDBCard></React.Fragment>
-
     return (
-      <React.Fragment>
-        <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
-          <div
-            ref="lightDark"
-            className="row mb-5 text-center justify-content-center align-items-center profile-container"
-          >
-            <div ref="profileBorder" className="profile">
-              <img className="img-fluid" src="/img/profile/Reuben.png" alt="" />
-            </div>
-            <div className="col-md-5 mt-5 pt-2  offset-md-3">
-              <p ref="nameColor" className="pt-5 pb-1">
-                Reuben Craft
-              </p>
-              <div className="row text-center">
-                <div className="col-md-12 pt-4 titiles">
-                  <p className="mb-2">
-                    Email :{' '}
-                    <input
-                      ref={this.state.inputs[0]}
-                      type="text"
-                      disabled={this.state.disableInput[0]}
-                      placeholder=" reuben.kraft@gmail.com"
-                    />{' '}
-                    <span>
-                      <img
-                        data-inptno={0}
-                        onClick={this.enableDisabe}
-                        src="/img/icon/pencheck.svg"
-                        alt=""
-                      />
-                    </span>{' '}
-                  </p>
-                  <p className="mb-1">
-                    Age :{' '}
-                    <input
-                      ref={this.state.inputs[1]}
-                      disabled={this.state.disableInput[1]}
-                      type="text"
-                      placeholder="28"
-                    />{' '}
-                    <span>
-                      <img
-                        data-inptno={1}
-                        onClick={this.enableDisabe}
-                        src="/img/icon/pencheck.svg"
-                        alt=""
-                      />
-                    </span>
-                  </p>
-                  <p className="mb-1">
-                    Sex :{' '}
-                    <input
-                      ref={this.state.inputs[2]}
-                      disabled={this.state.disableInput[2]}
-                      type="text"
-                      placeholder="Male"
-                    />{' '}
-                    <span>
-                      <img
-                        data-inptno={2}
-                        onClick={this.enableDisabe}
-                        src="/img/icon/pencheck.svg"
-                        alt=""
-                      />
-                    </span>
-                  </p>
-                  <p className="mb-1">
-                    Contact number :{' '}
-                    <input
-                      ref={this.state.inputs[3]}
-                      disabled={this.state.disableInput[3]}
-                      type="text"
-                      placeholder="+11111111111"
-                    />{' '}
-                    <span>
-                      <img
-                        data-inptno={3}
-                        onClick={this.enableDisabe}
-                        src="/img/icon/pencheck.svg"
-                        alt=""
-                      />
-                    </span>
-                  </p>
-                  <p className="mb-1">
-                    Organization :{' '}
-                    <input
-                      ref={this.state.inputs[4]}
-                      disabled={this.state.disableInput[4]}
-                      type="text"
-                      placeholder=" lorem ipsum"
-                    />{' '}
-                    <span>
-                      <img
-                        data-inptno={4}
-                        onClick={this.enableDisabe}
-                        src="/img/icon/pencheck.svg"
-                        alt=""
-                      />
-                    </span>
-                  </p>
-                  <button type="submit" className="btn mt-5 upload-btn">
-                    Upload photo
-                  </button>
-                </div>
-              </div>
-
-              <p className="jpg-png-only">* jpeg, jpg & png only</p>
-            </div>
-            <div className="col-md-3 btns-heading text-left pt-4">
-              <div className="row">
-                <div className="col-sm-7">
-                  <span ref="chooserColor" className="dark-mode">
-                    {this.state.mode}
-                  </span>
-                </div>
-                <div className="col-sm-5  position-relative pt-1">
-                  <label className="switch" htmlFor="checkbox">
-                    <input
-                      onChange={this.darkMode}
-                      value={this.state.isDarkMode}
-                      type="checkbox"
-                      id="checkbox"
-                    />
-                    <div className="slider round"></div>
-                  </label>
-                </div>
-              </div>
-
-              <p>
-                <span>
-                  <img src="/img/icon/check.svg" alt="" />
-                </span>{' '}
-                Selfie Uploaded{' '}
-              </p>
-              <Download3dProfile content="Download 3d selfie" />
-              <p>
-                <span>
-                  <img src="/img/icon/check.svg" alt="" />
-                </span>{' '}
-                3D Avatar Generated{' '}
-              </p>
-              <DownloadAvtar content="Download avtar" />
-              <p>
-                <span>
-                  <img src="/img/icon/check.svg" alt="" />
-                </span>{' '}
-                Mesh File Generated
-              </p>
-              <DownloadFeMesh content="Download FE Mesh" />
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </React.Fragment>
-    );
+      this.returnComponent()
+      // this.state.isAuthenticated?this.returnComponent():<Redirect to="/Login"/>
+    )
   }
 
   componentDidMount() {
@@ -500,6 +524,7 @@ class Profile extends React.Component {
           this.setState({});
           getUserDetails()
             .then((response) => {
+              store.dispatch(userDetails(response.data))
               console.log(response.data);
               this.setState({
                 user: response.data.data,

@@ -16,11 +16,21 @@ function AboutTheProduct(props) {
           <div className="col-md-12 col-lg-12 text-center">
             <InView>
               {({ inView, ref }) => (
-                <div ref={ref}>
-                  <div className={`${inView ? 'section-title animated zoomIn' : ''}`}>
-                    <h1 className="font-weight-bold">ABOUT THE PROJECT</h1>
+                <div className="mb-3" ref={ref}>
+                  <h1
+                    className={`font-weight-bold animated ${
+                      inView ? 'zoomIn' : ''
+                    }`}
+                  >
+                    ABOUT THE PROJECT
+                  </h1>
+
+                  <div className="w-100 d-flex justify-content-center">
+                    <div className={inView ? 'line_container' : ''}>
+                      <div></div>
+                    </div>
                   </div>
-                  <p className={`${inView ? ' animated fadeInUp' : ''}`}>
+                  <p className={` animated ${inView ? '  fadeInUp' : ''}`}>
                     Brain injuries are a significant health concern for civilian
                     and military populations. This Faculty Early Career
                     Development Program (CAREER) project will contribute to the
@@ -37,7 +47,7 @@ function AboutTheProduct(props) {
             </InView>
           </div>
         </div>
-        
+
         <div>
           <div className="img-container">
             <div className="row">
@@ -48,9 +58,14 @@ function AboutTheProduct(props) {
               </div>
             </div>
             <div className="row text-center shift-top">
-            <InView>
+              <InView>
                 {({ inView, ref }) => (
-                  <div ref={ref} className={`col-md-4 animated ${inView?'animated slideInLeft':''}`}>
+                  <div
+                    ref={ref}
+                    className={`col-md-4 animated ${
+                      inView ? ' slideInLeft' : ''
+                    }`}
+                  >
                     <img
                       className={`svg ${animateOnDesktop}`}
                       src="/img/AboutTheProductImg/Cloud_white.svg"
@@ -60,13 +75,16 @@ function AboutTheProduct(props) {
                       SENSOR ENABLED <br />
                       CLOUD-BASED BRAIN <br />
                       MODELING
-                </h4>
+                    </h4>
                   </div>
                 )}
               </InView>
               <InView>
                 {({ inView, ref }) => (
-                  <div ref={ref} className={`col-md-4 animated ${inView ? 'animated zoomIn' : ''}`}>
+                  <div
+                    ref={ref}
+                    className={`col-md-4 animated ${inView ? ' zoomIn' : ''}`}
+                  >
                     <img
                       className={`svg ${animateOnDesktop}`}
                       src="/img/AboutTheProductImg/Moniter_white.svg"
@@ -75,13 +93,18 @@ function AboutTheProduct(props) {
                     <h4>
                       MONITOR AND TRACK BRAIN <br />
                       RESPONSE OVER TIME
-                </h4>
+                    </h4>
                   </div>
                 )}
               </InView>
               <InView>
                 {({ inView, ref }) => (
-                  <div ref={ref} className={`col-md-4 animated ${inView ? 'animated slideInRight' : ''}`}>
+                  <div
+                    ref={ref}
+                    className={`col-md-4 animated ${
+                      inView ? 'slideInRight' : ''
+                    }`}
+                  >
                     <img
                       className={`svg ${animateOnDesktop}`}
                       src="/img/AboutTheProductImg/Analysis_White.svg"
@@ -91,10 +114,10 @@ function AboutTheProduct(props) {
                       TURN YOUR SENSOR DATA <br />
                       INTO MEANINGFUL BRAIN <br />
                       INJURY ANALYSIS
-                </h4>
+                    </h4>
                   </div>
                 )}
-                </InView>
+              </InView>
             </div>
           </div>
         </div>

@@ -1,23 +1,27 @@
 import React from 'react';
 import LoginComponent from '../../components/Authentication/LoginComponent';
-import { withRouter } from 'react-router-dom';
-import "./Login.css";
+import { withRouter, Redirect } from 'react-router-dom';
+import './Login.css';
 
 class Login extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      someKey: 'someValue',
+      someKey: 'someValue'
     };
   }
 
- 
   render() {
+    const checkIfUserLoggedIn = JSON.parse(localStorage.getItem('state'));
+
     return (
       <React.Fragment>
-
-        <LoginComponent isAuthenticated={this.props.isAuthenticated}/>
-        </React.Fragment>
+        {/* {checkIfUserLoggedIn.isSignedInSuccess === true ? (
+          <Redirect to="/Dashboard" />
+        ) : ( */}
+          <LoginComponent isAuthenticated={this.props.isAuthenticated} />
+        {/* )} */}
+      </React.Fragment>
     );
   }
 }
