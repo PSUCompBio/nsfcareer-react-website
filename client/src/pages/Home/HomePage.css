@@ -194,7 +194,7 @@ body {
   margin-bottom: 0;
   width: fit-content;
 }
-.brain-overlay{
+.brain-overlay {
   position: absolute;
   top: -20%;
   right: 0;
@@ -215,27 +215,27 @@ body {
 .section-four h1 {
   font-family: 'Roboto', sans-serif;
 }
-div.line_container{
+div.line_container {
   width: 310px;
   height: 5px;
   /* background:#dedede; */
   border-radius: 10px;
 }
 
-div.line_container div{
+div.line_container div {
   width: 310px;
   height: 5px;
-  background:#0f81dc;
-  animation: changeLine 2.5s cubic-bezier(0.26,-0.62, 0.17, 1);
+  background: #0f81dc;
+  animation: changeLine 2.5s cubic-bezier(0.26, -0.62, 0.17, 1);
   border-radius: 10px;
 }
 
 @keyframes changeLine {
-  from{
+  from {
     margin-left: 50%;
     width: 0;
   }
-  to{
+  to {
     margin-left: 0;
     width: 310px;
   }
@@ -648,12 +648,12 @@ nav {
   background-color: #ffffff;
   padding: 5px;
 }
-.plus{
+.plus {
   font-size: 100px;
   color: #0f81dc;
   cursor: pointer;
 }
-.plus + p{
+.plus + p {
   color: #0f81dc;
 }
 .football-container {
@@ -1248,9 +1248,12 @@ nav {
 /* mobile dashboard dropdown */
 .mobile-dashboard-dropdown {
   position: absolute;
-  top: 53%;
+  top: 450px;
   box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2);
   display: none;
+  background: #13568d;
+  width: 100%;
+  right: 0;
 }
 .mobile-dashboard-dropdown ul {
   list-style: none;
@@ -1271,7 +1274,7 @@ nav {
 /* end of mobile dashboard dropdown */
 
 /* profile icon on nav */
-.profile-user{
+.profile-user {
   background: #174f86;
   margin-bottom: 5px;
 }
@@ -1329,6 +1332,61 @@ div.my-progress-bar {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
 }
 /* end of commander data table */
+
+/* mobile user profile  */
+.mobile-profile-container {
+  width: 100%;
+  height: 200px;
+  background: #0f81dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.mobile-profile-container img {
+  width: 50%;
+  border-radius: 50%;
+}
+.mobile-profile-container p {
+  font-size: 30px;
+  color: #fff;
+  font-weight: 900;
+  font-family: 'Segoe UI Regular';
+  letter-spacing: 2px;
+}
+
+.mobile-user-profile {
+  width: 50%;
+  height: 120px;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  color: #ffffff;
+  font-weight: 900;
+  letter-spacing: 5px;
+  font-size: 40px;
+}
+.user-profile-dropdown__mobile {
+  position: absolute;
+  background: #13568d;
+  top: 180px;
+  box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+.user-profile-dropdown__mobile ul {
+  text-align: center;
+  list-style: none;
+}
+.user-profile-dropdown__mobile ul li a {
+  text-decoration: none;
+}
+.mobile-profile-container:hover .user-profile-dropdown__mobile {
+  display: block;
+}
+/* end of mobile user profile */
 
 /* ======making responsive to navbar========= */
 
@@ -1464,8 +1522,8 @@ div.my-progress-bar {
   .about__page {
     bottom: -26.93vh !important;
   }
-  .padding-about__page{
-    padding-top: 4%
+  .padding-about__page {
+    padding-top: 4%;
   }
 }
 
@@ -1485,10 +1543,9 @@ div.my-progress-bar {
   .about__page {
     bottom: -39.93vh !important;
   }
-  .padding-about__page{
+  .padding-about__page {
     padding-top: 24vh;
   }
-
 }
 
 .research-card {

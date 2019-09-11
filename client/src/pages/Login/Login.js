@@ -16,11 +16,11 @@ class Login extends React.Component {
 
     return (
       <React.Fragment>
-        {checkIfUserLoggedIn.isSignedInSuccess === true ? (
+        {/* {checkIfUserLoggedIn.isSignedInSuccess === true ? (
           <Redirect to="/Dashboard" />
-        ) : (
+        ) : ( */}
           <LoginComponent isAuthenticated={this.props.isAuthenticated} />
-        )}
+        {/* )} */}
       </React.Fragment>
     );
   }

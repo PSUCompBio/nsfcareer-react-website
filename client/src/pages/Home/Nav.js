@@ -1,16 +1,18 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import store from '../../Store';
-import { resetSignedInSucceeded } from '../../Actions';
+import { resetSignedInSucceeded, userDetails } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-
+import { isAuthenticated, getUserDetails } from '../../apis';
 class Nav extends React.Component {
   constructor() {
     super();
     this.state = {
       isOpen: false,
-      signOutClass: 'sign-out-hide'
+      signOutClass: 'sign-out-hide',
+      userProfile: '',
+      userName: ''
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -30,6 +32,27 @@ class Nav extends React.Component {
   componentWillUnmount() {
     // document.removeEventListener('mousedown');
   }
+
+  // componentDidMount() {
+  //   isAuthenticated(JSON.stringify({}))
+  //     .then((value) => {
+  //       if (value.data.message === 'success') {
+  //         this.setState({});
+  //         getUserDetails()
+  //           .then((response) => {
+  //             store.dispatch(userDetails(response.data));
+  //             console.log(response.data);
+  //             this.setState({userProfile:response.data.profile_picture_url, userName:response.data.first_name+' '+response.data.last_name})
+  //           })
+  //           .catch((error) => {});
+  //       } else {
+  //         // this.setState({ isAuthenticated: false, isCheckingAuth: false });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       // this.setState({ isAuthenticated: false, isCheckingAuth: false });
+  //     });
+  // }
 
   handleClick() {
     const body = document.getElementsByTagName('body')[0];
@@ -256,6 +279,7 @@ class Nav extends React.Component {
   };
 
   render() {
+    console.log(localStorage.getItem('state'));
     const localStore = JSON.parse(localStorage.getItem('state'));
     return (
       <nav
@@ -283,7 +307,9 @@ class Nav extends React.Component {
 
         {this.props.screenWidth >= 768 ? (
           <div className="collapse navbar-collapse" id="navbarNav">
-            {!localStore.isSignedInSuccess ? this.mobileNav() : this.laptopNav()}
+            {!this.props.isAuthenticated
+              ? this.mobileNav()
+              : this.laptopNav()}
           </div>
         ) : (
           ''
@@ -292,6 +318,28 @@ class Nav extends React.Component {
           className="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right"
           id="cbp-spmenu-s2"
         >
+          <div className="mobile-profile-container">
+            {/* <img src={localStore.userInfo.data.profile_picture_url} alt="" /> */}
+            {/* <p>
+              {localStore.userInfo.data.first_name +
+                ' ' +
+                localStore.userInfo.data.last_name}
+            </p> */}
+            <div className="mobile-user-profile">RK</div>
+
+            <div className="user-profile-dropdown__mobile">
+              <ul>
+                <li><Link to="profile">Profile</Link></li>
+                <img
+                onClick={this.signOut}
+                className=" mt-3 img-fluid w-25"
+                src="/img/icon/powerBtn.svg"
+                alt=""
+              />
+              </ul>
+            </div>
+          </div>
+
           <Link className="nav-link" to={'/Home'}>
             Home <span className="sr-only">(current)</span>
           </Link>
@@ -348,7 +396,7 @@ class Nav extends React.Component {
             <React.Fragment>
               <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
-                {this.props.isLoggedIn === true ? (
+                {/* {localStore.isSignedInSuccess === true ? ( */}
                   <div className="mobile-dashboard-dropdown">
                     <ul>
                       <li>PSU</li>
@@ -360,9 +408,9 @@ class Nav extends React.Component {
                       </li>
                     </ul>
                   </div>
-                ) : (
+                {/* ) : (
                   ''
-                )}
+                )} */}
               </Link>
               <div
                 className={

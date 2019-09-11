@@ -16,10 +16,10 @@ import Download3dProfile from '../Buttons/Download3dProfile';
 import DownloadAvtar from '../Buttons/Download3dProfile';
 import DownloadFeMesh from '../Buttons/Download3dProfile';
 import store from '../../Store';
-import { darkThemeActiveSetter } from '../../Actions';
-import { darkThemeInactiveSetter } from '../../Actions';
+import { darkThemeActiveSetter, darkThemeInactiveSetter, userDetails } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
+import { Redirect } from 'react-router-dom';
 
 class Profile extends React.Component {
   constructor() {
@@ -220,7 +220,7 @@ class Profile extends React.Component {
     );
   };
 
-  showProfile = ()=>{
+  showProfile = () => {
     return (
       <React.Fragment>
         <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
@@ -326,7 +326,11 @@ class Profile extends React.Component {
                       />
                     </span>
                   </p>
-                  <button onClick={this.onClickHandler} type="submit" className="btn mt-5 upload-btn">
+                  <button
+                    onClick={this.onClickHandler}
+                    type="submit"
+                    className="btn mt-5 upload-btn"
+                  >
                     Upload photo
                   </button>
                 </div>
@@ -380,19 +384,17 @@ class Profile extends React.Component {
         </div>
         <Footer />
       </React.Fragment>
-    
-    )
-  }
+    );
+  };
 
   returnComponent = () => {
-    console.log(this.state)
-    if (Object.entries(this.state.user).length===0) {
-      return <Spinner/>
-    }
-    else {
+    console.log(this.state);
+    if (Object.entries(this.state.user).length === 0) {
+      return <Spinner />;
+    } else {
       return this.showProfile();
     }
-  }
+  };
 
   render() {
     //     return <React.Fragment>
@@ -510,8 +512,8 @@ class Profile extends React.Component {
     //   </MDBCard></React.Fragment>
     return (
       this.returnComponent()
-      // this.showProfile()
-      );
+      // this.state.isAuthenticated?this.returnComponent():<Redirect to="/Login"/>
+    )
   }
 
   componentDidMount() {
@@ -522,6 +524,7 @@ class Profile extends React.Component {
           this.setState({});
           getUserDetails()
             .then((response) => {
+              store.dispatch(userDetails(response.data))
               console.log(response.data);
               this.setState({
                 user: response.data.data,
