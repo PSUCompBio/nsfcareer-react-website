@@ -371,7 +371,7 @@ class Profile extends React.Component {
                 </span>{' '}
                 3D Avatar Generated{' '}
               </p>
-              <DownloadAvtar file={this.state.user.avatar_url} content="Download avtar" />
+              <DownloadAvtar file={this.state.user.avatar_url} content="Download avatar" />
               <p>
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
@@ -524,7 +524,7 @@ class Profile extends React.Component {
           this.setState({});
           getUserDetails()
             .then((response) => {
-              store.dispatch(userDetails(response.data))
+              // store.dispatch(userDetails(response.data))
               console.log(response.data);
               this.setState({
                 user: response.data.data,

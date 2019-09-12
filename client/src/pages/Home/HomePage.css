@@ -1206,9 +1206,12 @@ nav {
 
 /* dashboard dropdown */
 .dashboard-links {
+  top: 100%;
+  right: 10%;
+  width: 200px;
   position: absolute;
   background: linear-gradient(45deg, #1d61a5, #267bd3);
-  display: none;
+  display: block;
   box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.2);
 }
 .dashboard-links ul {
@@ -1228,9 +1231,9 @@ nav {
   color: rgb(255, 255, 255) !important;
   text-decoration: none;
 }
-.dashboard-hover:hover .dashboard-links {
+/* .dashboard-hover:hover .dashboard-links {
   display: block;
-}
+} */
 .dashboard-links ul li:nth-child(1) {
   border-bottom: 1px solid #fff;
 }
@@ -1293,26 +1296,23 @@ nav {
   cursor: pointer;
 }
 .sign-out {
-  width: 100px;
-  height: 100px;
+  right: 4.5%;
+  width: 190px;
+  height: 130px;
   background: linear-gradient(45deg, #1d61a5, #267bd3);
   position: absolute;
   top: 70px;
   box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.2);
-  animation: changeHeight 1s cubic-bezier(0.075, 0.82, 0.165, 1);
   color: #fff;
+}
+.sign-out img{
+  width:15%;
+  padding-top: 20px;
 }
 .sign-out-hide {
   display: none;
 }
-@keyframes changeHeight {
-  from {
-    height: 0;
-  }
-  to {
-    height: 100px;
-  }
-}
+
 /* end of profile icon nav */
 
 div.my-progress {

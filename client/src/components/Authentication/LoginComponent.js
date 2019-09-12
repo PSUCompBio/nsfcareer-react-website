@@ -106,6 +106,7 @@ class Login extends React.Component {
   }
 
   render() {
+    console.log(this.state)
     return (
       <React.Fragment>
         <div className="container pl-0 pr-0 overflow-hidden">

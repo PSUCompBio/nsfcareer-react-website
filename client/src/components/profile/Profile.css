@@ -147,7 +147,7 @@ input:checked + .slider:before {
   width: 110px;
 }
 .btns-heading > p {
-  white-space: pre;
+  /* white-space: pre; */
 }
 .jpg-png-only {
   font-size: 14px;

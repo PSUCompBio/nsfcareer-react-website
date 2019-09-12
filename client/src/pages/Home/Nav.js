@@ -12,7 +12,9 @@ class Nav extends React.Component {
       isOpen: false,
       signOutClass: 'sign-out-hide',
       userProfile: '',
-      userName: ''
+      userName: '',
+      dashboardLinks: { display: 'none' },
+      countMouseEnter: 0
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -83,9 +85,25 @@ class Nav extends React.Component {
     }
   };
 
-  hideSignOut = () => {
-    this.setState({ signOutClass: 'sign-out-hide' });
+  hideSignOut = (e) => {
+    console.log(e.currentTarget)
+    if (this.state.dashboardLinks.display === 'none') {
+      this.setState({
+        dashboardLinks: { display: 'block' },
+        signOutClass: 'sign-out-hide',
+        countMouseEnter:this.state.countMouseEnter+1
+      });
+    }
+    
+   
   };
+
+  hideLinks = (e) => {
+    console.log()
+    this.setState({
+      dashboardLinks: { display: 'none' }
+    })
+  }
 
   signOut = () => {
     store.dispatch(resetSignedInSucceeded());
@@ -157,7 +175,7 @@ class Nav extends React.Component {
 
   dashboardDropDownList = () => {
     return (
-      <div className="dashboard-links">
+      <div  onMouseLeave={this.hideLinks} style={this.state.dashboardLinks} className="dashboard-links">
         <ul>
           <li>PSU</li>
           <li>
@@ -170,6 +188,8 @@ class Nav extends React.Component {
       </div>
     );
   };
+
+
 
   laptopNav = () => {
     return (
@@ -221,7 +241,8 @@ class Nav extends React.Component {
 
         {this.props.location.pathname !== '/SignUp' ? (
           <li
-            onMouseOver={this.hideSignOut}
+            onMouseEnter={this.hideSignOut}
+           
             className="nav-item dashboard-hover make-active active"
           >
             <Link className="nav-link" to={'/Login'}>
@@ -252,11 +273,11 @@ class Nav extends React.Component {
           </li>
         )}
         <li className=" nav-item profile-nav-icon">
-          <div onClick={this.showLogOut} className="name">
+          <div onMouseEnter={this.showLogOut} className="name">
             R K
           </div>
 
-          <div ref="signOut" className={`${this.state.signOutClass}`}>
+          <div onMouseLeave={this.showLogOut} ref="signOut" className={`${this.state.signOutClass}`}>
             <div className="nav-item make-active profile-user active">
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
@@ -272,7 +293,7 @@ class Nav extends React.Component {
             <Link to="">
               <img
                 onClick={this.signOut}
-                className="img-fluid w-25"
+                className="img-fluid"
                 src="/img/icon/powerBtn.svg"
                 alt=""
               />
