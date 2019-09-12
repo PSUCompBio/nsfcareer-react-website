@@ -364,21 +364,21 @@ class Profile extends React.Component {
                 </span>{' '}
                 Selfie Uploaded{' '}
               </p>
-              <Download3dProfile content="Download 3d selfie" />
+              <Download3dProfile file={this.state.user.profile_picture_url} content="Download 3d selfie" />
               <p>
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
                 </span>{' '}
                 3D Avatar Generated{' '}
               </p>
-              <DownloadAvtar content="Download avtar" />
+              <DownloadAvtar file={this.state.user.avatar_url} content="Download avtar" />
               <p>
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
                 </span>{' '}
                 Mesh File Generated
               </p>
-              <DownloadFeMesh content="Download FE Mesh" />
+              <DownloadFeMesh file={this.state.user.inp_file_url} content="Download FE Mesh" />
             </div>
           </div>
         </div>

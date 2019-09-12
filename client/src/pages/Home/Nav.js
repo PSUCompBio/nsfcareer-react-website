@@ -29,6 +29,13 @@ class Nav extends React.Component {
     );
   }
 
+  // componentWillMount() {
+  //   console.log(store.getState());
+  //   if (store.getState().isSignedInSuccess === false) {
+  //     store.dispatch(userDetails({}));
+  //   }
+  // }
+
   componentWillUnmount() {
     // document.removeEventListener('mousedown');
   }
@@ -279,8 +286,8 @@ class Nav extends React.Component {
   };
 
   render() {
-    console.log(localStorage.getItem('state'));
     const localStore = JSON.parse(localStorage.getItem('state'));
+
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
@@ -307,9 +314,11 @@ class Nav extends React.Component {
 
         {this.props.screenWidth >= 768 ? (
           <div className="collapse navbar-collapse" id="navbarNav">
-            {!this.props.isAuthenticated
+            {localStore === null
               ? this.mobileNav()
-              : this.laptopNav()}
+              : localStore.isSignedInSuccess === true
+              ? this.laptopNav()
+              : this.mobileNav()}
           </div>
         ) : (
           ''
@@ -329,13 +338,15 @@ class Nav extends React.Component {
 
             <div className="user-profile-dropdown__mobile">
               <ul>
-                <li><Link to="profile">Profile</Link></li>
+                <li>
+                  <Link to="profile">Profile</Link>
+                </li>
                 <img
-                onClick={this.signOut}
-                className=" mt-3 img-fluid w-25"
-                src="/img/icon/powerBtn.svg"
-                alt=""
-              />
+                  onClick={this.signOut}
+                  className=" mt-3 img-fluid w-25"
+                  src="/img/icon/powerBtn.svg"
+                  alt=""
+                />
               </ul>
             </div>
           </div>
@@ -397,17 +408,17 @@ class Nav extends React.Component {
               <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
                 {/* {localStore.isSignedInSuccess === true ? ( */}
-                  <div className="mobile-dashboard-dropdown">
-                    <ul>
-                      <li>PSU</li>
-                      <li>
-                        <Link to="TeamAdmin">Team Admin</Link>
-                      </li>
-                      <li>
-                        <Link to="OrganizationAdmin">Organization Admin</Link>
-                      </li>
-                    </ul>
-                  </div>
+                <div className="mobile-dashboard-dropdown">
+                  <ul>
+                    <li>PSU</li>
+                    <li>
+                      <Link to="TeamAdmin">Team Admin</Link>
+                    </li>
+                    <li>
+                      <Link to="OrganizationAdmin">Organization Admin</Link>
+                    </li>
+                  </ul>
+                </div>
                 {/* ) : (
                   ''
                 )} */}
@@ -439,7 +450,6 @@ class Nav extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log(state);
   return {
     isLoggedIn: state.isSignedInSuccess
   };
