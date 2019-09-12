@@ -9,12 +9,10 @@ import {
 const initialState = {
   darkThemeActive: false,
   isSignedInSuccess: false,
-  userInfo: {}
 };
 
 let darkTheme = {
   status: false,
-  isSignedInSuccess: false
 };
 
 export function darkThemeController(state = initialState, action) {

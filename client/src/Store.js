@@ -13,5 +13,7 @@ function saveTOLocalStorage(state) {
 const store = createStore(darkThemeController);
 store.subscribe(() => {
   saveTOLocalStorage(store.getState());
+  console.log(store.getState())
+
 });
 export default store;

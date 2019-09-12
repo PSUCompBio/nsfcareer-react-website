@@ -594,7 +594,6 @@ class Profile extends React.Component {
       });
   }
 
-  componentDidUpdate() {}
 }
 
 export default Profile;

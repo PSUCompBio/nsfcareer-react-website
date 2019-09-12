@@ -648,6 +648,9 @@ nav {
   background-color: #ffffff;
   padding: 5px;
 }
+.tech-football::before{
+  background: rebeccapurple;
+}
 .plus {
   font-size: 100px;
   color: #0f81dc;
