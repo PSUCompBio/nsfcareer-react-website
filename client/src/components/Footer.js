@@ -14,6 +14,9 @@ class Footer extends React.Component {
     else if (this.props.location.pathname === '/Profile') {
       return 'profile__page';
     }
+    else if (this.props.location.pathname === '/OrganizationAdmin') {
+      return 'organization_team';
+    }
   };
 
   render() {

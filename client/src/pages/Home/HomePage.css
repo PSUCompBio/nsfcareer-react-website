@@ -648,7 +648,7 @@ nav {
   background-color: #ffffff;
   padding: 5px;
 }
-.tech-football::before{
+.tech-football::before {
   background: rebeccapurple;
 }
 .plus {
@@ -1551,6 +1551,9 @@ div.my-progress-bar {
   }
   .profile__page {
     bottom: -33.7vh !important;
+  }
+  .organization_team {
+    bottom: -36.2vh !important;
   }
   .padding-about__page {
     padding-top: 6.1%;
