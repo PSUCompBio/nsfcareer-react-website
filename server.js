@@ -65,7 +65,7 @@ var upload = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         //var ext = path.extname(file.originalname);
-        console.log(file.originalname);
+        console.log("This is filename ------> \n",file.originalname);
 
         let jpgFile = new RegExp(".jpg").test(file.originalname);
         let jpegFile = new RegExp(".jpeg").test(file.originalname);

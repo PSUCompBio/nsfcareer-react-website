@@ -3,6 +3,10 @@
   margin-right: 10px;
 }
 
+.cancel-icon {
+    height: 20px;
+    width: 20px;
+}
 small {
   display: block;
   line-height: 1.428571429;

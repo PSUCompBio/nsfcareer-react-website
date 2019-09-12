@@ -1,7 +1,8 @@
 {
-  "name": "react-responsive-navigation",
+  "name": "nsfcareer-react-front-end",
   "version": "1.0.0",
   "description": "A simple React.JS Responsive  Navigation with React Router and Styled Components.",
+  "proxy": "http://localhost:3001/api/",
   "keywords": [
     "responsive  nav",
     "styled components",
