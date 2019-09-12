@@ -16,7 +16,11 @@ import Download3dProfile from '../Buttons/Download3dProfile';
 import DownloadAvtar from '../Buttons/Download3dProfile';
 import DownloadFeMesh from '../Buttons/Download3dProfile';
 import store from '../../Store';
-import { darkThemeActiveSetter, darkThemeInactiveSetter, userDetails } from '../../Actions';
+import {
+  darkThemeActiveSetter,
+  darkThemeInactiveSetter,
+  userDetails
+} from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import { Redirect } from 'react-router-dom';
@@ -220,6 +224,23 @@ class Profile extends React.Component {
     );
   };
 
+  updateTheme = () => {
+    // if (getStatusOfDarkmode().status === true) {
+    //   store.dispatch(darkThemeActiveSetter());
+    //   this.refs.lightDark.style.background = '#232838';
+    //   document.getElementsByTagName('html')[0].style.background = '#171b25';
+    //   document.getElementsByTagName('body')[0].style.background = '#171b25';
+    //   this.refs.profileBorder.style.border = '10px solid #171b25';
+    //   this.refs.nameColor.style.color = '#fff';
+    //   this.refs.chooserColor.style.color = '#fff';
+    //   const allInputs = this.state.inputs;
+    //   allInputs.forEach((element) => {
+    //     this.refs[element].setAttribute('id', 'dark-mode-color');
+    //   });
+    //   this.props.isDarkModeSet(this.state.isDarkMode);
+    // }
+  };
+
   showProfile = () => {
     return (
       <React.Fragment>
@@ -364,25 +385,35 @@ class Profile extends React.Component {
                 </span>{' '}
                 Selfie Uploaded{' '}
               </p>
-              <Download3dProfile file={this.state.user.profile_picture_url} content="Download 3d selfie" />
+              <Download3dProfile
+                file={this.state.user.profile_picture_url}
+                content="Download 3d selfie"
+              />
               <p>
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
                 </span>{' '}
                 3D Avatar Generated{' '}
               </p>
-              <DownloadAvtar file={this.state.user.avatar_url} content="Download avatar" />
+              <DownloadAvtar
+                file={this.state.user.avatar_url}
+                content="Download avatar"
+              />
               <p>
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
                 </span>{' '}
                 Mesh File Generated
               </p>
-              <DownloadFeMesh file={this.state.user.inp_file_url} content="Download FE Mesh" />
+              <DownloadFeMesh
+                file={this.state.user.inp_file_url}
+                content="Download FE Mesh"
+              />
             </div>
           </div>
         </div>
         <Footer />
+        {this.updateTheme()}
       </React.Fragment>
     );
   };
@@ -509,10 +540,8 @@ class Profile extends React.Component {
     //     </div>
     //   </MDBCardBody>
     //   </MDBCard></React.Fragment>
-    return (
-      this.returnComponent()
-      // this.state.isAuthenticated?this.returnComponent():<Redirect to="/Login"/>
-    )
+    return this.returnComponent();
+    // this.state.isAuthenticated?this.returnComponent():<Redirect to="/Login"/>
   }
 
   componentDidMount() {
@@ -531,6 +560,23 @@ class Profile extends React.Component {
                 isAuthenticated: true,
                 isCheckingAuth: false
               });
+
+              if (getStatusOfDarkmode().status === true) {
+                store.dispatch(darkThemeActiveSetter());
+                this.refs.lightDark.style.background = '#232838';
+                document.getElementsByTagName('html')[0].style.background =
+                  '#171b25';
+                document.getElementsByTagName('body')[0].style.background =
+                  '#171b25';
+                this.refs.profileBorder.style.border = '10px solid #171b25';
+                this.refs.nameColor.style.color = '#fff';
+                this.refs.chooserColor.style.color = '#fff';
+                const allInputs = this.state.inputs;
+                allInputs.forEach((element) => {
+                  this.refs[element].setAttribute('id', 'dark-mode-color');
+                });
+                this.props.isDarkModeSet(this.state.isDarkMode);
+              }
             })
             .catch((error) => {
               this.setState({
@@ -546,22 +592,9 @@ class Profile extends React.Component {
       .catch((err) => {
         this.setState({ isAuthenticated: false, isCheckingAuth: false });
       });
-
-    if (getStatusOfDarkmode().status === true) {
-      store.dispatch(darkThemeActiveSetter());
-      this.refs.lightDark.style.background = '#232838';
-      document.getElementsByTagName('html')[0].style.background = '#171b25';
-      document.getElementsByTagName('body')[0].style.background = '#171b25';
-      this.refs.profileBorder.style.border = '10px solid #171b25';
-      this.refs.nameColor.style.color = '#fff';
-      this.refs.chooserColor.style.color = '#fff';
-      const allInputs = this.state.inputs;
-      allInputs.forEach((element) => {
-        this.refs[element].setAttribute('id', 'dark-mode-color');
-      });
-      this.props.isDarkModeSet(this.state.isDarkMode);
-    }
   }
+
+  componentDidUpdate() {}
 }
 
 export default Profile;
