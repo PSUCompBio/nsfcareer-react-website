@@ -8,13 +8,25 @@ import Footer from '../Footer';
 import 'jquery';
 import '../Buttons/Buttons.css';
 import './Dashboard.css';
+import { getUserDetails } from '../../apis';
 
 class Dashboard extends React.Component {
   constructor() {
     super();
     this.state = {
-      isAuthenticated: false
+      isAuthenticated: false,
+      user: null
     };
+  }
+
+  componentWillMount() {
+    getUserDetails()
+      .then((response) => {
+        this.setState({ user: response.data.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   componentDidUpdate() {
@@ -25,13 +37,13 @@ class Dashboard extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
 
-  
-
   render() {
+    const isLoaded = this.state.user;
+    if (!isLoaded) return null;
     return (
       <React.Fragment>
-        <div id="dashboard" className={`container dashboard`}>
-          <PlayerDetails />
+        <div id="dashboard" className="container dashboard">
+          <PlayerDetails user={this.state.user} />
           <CumulativeEvents />
           <HeadAccelerationEvents />
           <HeadAccelerationEvents />
