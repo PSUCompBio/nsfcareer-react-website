@@ -40,7 +40,7 @@ class Profile extends React.Component {
     };
   }
   onChangeHandler = (event) => {
-    console.log(event.target.files[0]);
+    // console.log(event.target.files[0]);
     this.setState({
       selectedFile: event.target.files[0],
       loaded: 0
@@ -388,7 +388,6 @@ class Profile extends React.Component {
   };
 
   returnComponent = () => {
-    console.log(this.state);
     if (Object.entries(this.state.user).length === 0) {
       return <Spinner />;
     } else {
@@ -525,7 +524,7 @@ class Profile extends React.Component {
           getUserDetails()
             .then((response) => {
               // store.dispatch(userDetails(response.data))
-              console.log(response.data);
+              // console.log(response.data);
               this.setState({
                 user: response.data.data,
                 isLoading: false,
