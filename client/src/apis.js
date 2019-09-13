@@ -1,10 +1,12 @@
 import {ENDPOINT} from './config/constants'
 import axios from 'axios';
 
+
+
 // function to get number from DB calling our Server API
 export const getNumbersFromDb = () =>{
     return new Promise((resolve,reject)=>{
-        axios.post(`${ENDPOINT}getNumbers`, {})
+        axios.post(`/getNumbers`, {})
         .then(function (response) {
           resolve(response.data);
         })
@@ -15,7 +17,7 @@ export const getNumbersFromDb = () =>{
 }
 export const putNumbersToDb = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}putNumbers`, JSON.parse(request))
+      axios.post(`/putNumbers`, JSON.parse(request))
       .then(function (response) {
         resolve(response);
       })
@@ -26,7 +28,7 @@ export const putNumbersToDb = (request) =>{
 }
 export const signUp = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}signUp`, JSON.parse(request))
+      axios.post(`/signUp`, JSON.parse(request))
       .then(function (response) {
         resolve(response);
       })
@@ -38,7 +40,7 @@ export const signUp = (request) =>{
 
 export const logIn = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}logIn`, JSON.parse(request),{withCredentials: true})
+      axios.post(`/logIn`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -49,7 +51,7 @@ export const logIn = (request) =>{
 }
 export const logInFirstTime = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}logInFirstTime`, JSON.parse(request),{withCredentials: true})
+      axios.post(`/logInFirstTime`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -61,7 +63,7 @@ export const logInFirstTime = (request) =>{
 
 export const isAuthenticated = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}isAuthenticated`, JSON.parse(request),{withCredentials: true})
+      axios.post(`/isAuthenticated`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -73,7 +75,7 @@ export const isAuthenticated = (request) =>{
 
 export const listUsers = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}listUsers`, {})
+      axios.post(`/listUsers`, {})
       .then(function (response) {
         resolve(response);
       })
@@ -84,7 +86,7 @@ export const listUsers = (request) =>{
 }
 export const enableUser = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}enableUser`, JSON.parse(request))
+      axios.post(`/enableUser`, JSON.parse(request))
       .then(function (response) {
         resolve(response);
       })
@@ -96,7 +98,7 @@ export const enableUser = (request) =>{
 
 export const disableUser = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}disableUser`, JSON.parse(request))
+      axios.post(`/disableUser`, JSON.parse(request))
       .then(function (response) {
         resolve(response);
       })
@@ -107,7 +109,7 @@ export const disableUser = (request) =>{
 }
 export const uploadProfilePic = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}uploadProfilePic`, request,{withCredentials: true})
+      axios.post(`/uploadProfilePic`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -118,7 +120,7 @@ export const uploadProfilePic = (request) =>{
 }
 export const getUserDetails = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}getUserDetails`, {},{withCredentials: true})
+      axios.post(`/getUserDetails`, {},{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -129,7 +131,7 @@ export const getUserDetails = (request) =>{
 }
 export const getProfilePicLink = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}getProfilePicLink`, JSON.parse(request),{withCredentials: true})
+      axios.post(`/getProfilePicLink`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -140,7 +142,7 @@ export const getProfilePicLink = (request) =>{
 }
 export const getInpFileLink = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}getInpFileLink`, JSON.parse(request),{withCredentials: true})
+      axios.post(`/getInpFileLink`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -152,7 +154,7 @@ export const getInpFileLink = (request) =>{
 
 export const getModelLink = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}getModelFileLink`, JSON.parse(request),{withCredentials: true})
+      axios.post(`/getModelFileLink`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -163,7 +165,7 @@ export const getModelLink = (request) =>{
 }
 export const getSimulationFile = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}getSimulationFileLink`, JSON.parse(request),{withCredentials: true})
+      axios.post(`/getSimulationFileLink`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -175,7 +177,7 @@ export const getSimulationFile = (request) =>{
 
 export const verifyUser = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}verifyUser`, {},{withCredentials: true})
+      axios.post(`/verifyUser`, {},{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -187,7 +189,7 @@ export const verifyUser = (request) =>{
 
 export const logOut = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}logOut`, {},{withCredentials: true})
+      axios.post(`/logOut`, {},{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -199,7 +201,7 @@ export const logOut = (request) =>{
 
 export const createAvatar = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`${ENDPOINT}createAvatar`, request)
+      axios.post(`/createAvatar`, request)
       .then(function (response) {
         resolve(response);
       })
