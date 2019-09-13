@@ -42,8 +42,7 @@ class Profile extends React.Component {
   onChangeHandler = (event) => {
     console.log(event.target.files[0]);
     this.setState({
-      selectedFile: event.target.files[0],
-      loaded: 0
+      selectedFile: event.target.files[0]
     });
   };
 
@@ -329,7 +328,7 @@ class Profile extends React.Component {
                     </span>
                   </p>
                   <input
-                    onClick={this.onChangeHandler}
+                    onChange={this.onChangeHandler}
                     type="file"
                     className="btn mt-5 upload-btn"
                     name="profile_pic"

@@ -32,7 +32,7 @@ global.navigator = () => null;
 // ======================================
 const successMessage = "success";
 const failureMessage = "failure";
-const apiPrefix = "/api/"
+const apiPrefix = "/"
 console.log("DOMAIN IS ", process.env.DOMAIN);
 // ======================================
 //       CONFIGURING AWS SDK & EXPESS
@@ -105,13 +105,14 @@ const docClient = new AWS.DynamoDB.DocumentClient({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors(
-    {
-        origin: [process.env.DOMAIN],
-        credentials: true
-    }
-));
+// app.use(cors(
+//     {
+//         origin: [process.env.DOMAIN],
+//         credentials: true
+//     }
+// ));
 
+app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 function setConnectionTimeout(time) {
     var delay = typeof time === 'string'
@@ -656,9 +657,14 @@ function getINPFile(user_id) {
 //     				ROUTES
 // ============================================
 
-app.get(`${apiPrefix}`, (req, res) => {
-    res.send("NSFCareeIO");
-})
+// app.get(`${apiPrefix}`, (req, res) => {
+//     res.send("NSFCareeIO");
+// })
+
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
+});
+
 
 app.post(`${apiPrefix}getNumbers`, (req, res) => {
     console.log("API CAlled");
