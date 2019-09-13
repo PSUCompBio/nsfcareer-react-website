@@ -360,7 +360,7 @@ class Nav extends React.Component {
 
             <div className="user-profile-dropdown__mobile">
               <ul>
-                <li>
+                <li onClick={this.handleClick}>
                   <Link to="profile">Profile</Link>
                 </li>
                 <img
@@ -373,7 +373,7 @@ class Nav extends React.Component {
             </div>
           </div>
 
-          <Link className="nav-link" to={'/Home'}>
+          <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
             Home <span className="sr-only">(current)</span>
           </Link>
           <div
@@ -381,7 +381,7 @@ class Nav extends React.Component {
               this.props.location.pathname === '/Home' ? 'active-link' : ''
             }
           />
-          <Link className="nav-link" to={'/About'}>
+          <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
           <div
@@ -402,7 +402,11 @@ class Nav extends React.Component {
                 }
               />
 
-              <Link className="nav-link" to={'/Profile'}>
+              <Link
+                onClick={this.handleClick}
+                className="nav-link"
+                to={'/Profile'}
+              >
                 Profile <span className="sr-only">(current)</span>
               </Link>
               <div
@@ -417,7 +421,7 @@ class Nav extends React.Component {
             ''
           )}
 
-          <Link className="nav-link" to={'/Contact'}>
+          <Link onClick={this.handleClick} className="nav-link" to={'/Contact'}>
             Contact
           </Link>
           <div
@@ -432,11 +436,11 @@ class Nav extends React.Component {
                 {/* {localStore.isSignedInSuccess === true ? ( */}
                 <div className="mobile-dashboard-dropdown">
                   <ul>
-                    <li>PSU</li>
-                    <li>
+                    <li >PSU</li>
+                    <li onClick={this.handleClick}>
                       <Link to="TeamAdmin">Team Admin</Link>
                     </li>
-                    <li>
+                    <li onClick={this.handleClick}>
                       <Link to="OrganizationAdmin">Organization Admin</Link>
                     </li>
                   </ul>
@@ -453,7 +457,11 @@ class Nav extends React.Component {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <Link className="nav-link" to={'/SignUp'}>
+              <Link
+                onClick={this.handleClick}
+                className="nav-link"
+                to={'/SignUp'}
+              >
                 Sign up
               </Link>
               <div

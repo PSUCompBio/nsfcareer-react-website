@@ -9,6 +9,7 @@ import CountryCode from '../../config/CountryCode.json';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
+import { withRouter } from 'react-router-dom';
 
 class SignUpComponent extends React.Component {
   constructor() {
@@ -22,7 +23,8 @@ class SignUpComponent extends React.Component {
       CountryCode: [CountryCode],
       selectedCountryCode: '+1',
       slectedCountryName: 'USA',
-      startDate: ''
+      startDate: '',
+      signupOrElse:{email:'',sex:''}
     };
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -33,6 +35,14 @@ class SignUpComponent extends React.Component {
     this.setState({
       toLogIn: true
     });
+  }
+
+  componentDidMount() {
+    if (this.props.location.pathname === '/SignUp') {
+      this.setState({signupOrElse:{email:'XYZ@something.com',sex:'Select your sex'}})
+    } else if (this.props.location.pathname === '/SignUpElse') {
+      this.setState({signupOrElse:{email:'Contact email for this individual',sex:'Select the individual\'s sex'}})
+    }
   }
 
   handeChange = (e) => {
@@ -201,7 +211,7 @@ class SignUpComponent extends React.Component {
             <input
               type="text"
               className="form-control"
-              placeholder="XYZ@nsf.com"
+              placeholder={this.state.signupOrElse.email}
               name="user_name"
               aria-label="Username"
               aria-describedby="basic-addon1"
@@ -259,7 +269,7 @@ class SignUpComponent extends React.Component {
               aria-label="age"
               aria-describedby="basic-addon1"
             >
-              <option defaultValue>Select your sex</option>
+              <option defaultValue>{this.state.signupOrElse.sex}</option>
               <option value="male"> Male</option>
               <option value="female"> Female</option>
             </select>
@@ -351,4 +361,4 @@ class SignUpComponent extends React.Component {
   }
 }
 
-export default SignUpComponent;
+export default withRouter(SignUpComponent);

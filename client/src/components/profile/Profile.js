@@ -363,7 +363,7 @@ class Profile extends React.Component {
                 </div>
               </div>
 
-              <p>
+              <p ref="p1">
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
                 </span>{' '}
@@ -373,7 +373,7 @@ class Profile extends React.Component {
                 file={this.state.user.profile_picture_url}
                 content="Download 3d selfie"
               />
-              <p>
+              <p ref="p2">
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
                 </span>{' '}
@@ -383,7 +383,7 @@ class Profile extends React.Component {
                 file={this.state.user.avatar_url}
                 content="Download avatar"
               />
-              <p>
+              <p ref="p3">
                 <span>
                   <img src="/img/icon/check.svg" alt="" />
                 </span>{' '}
@@ -397,12 +397,12 @@ class Profile extends React.Component {
           </div>
         </div>
         <Footer />
-        {this.updateTheme()}
       </React.Fragment>
     );
   };
 
   returnComponent = () => {
+    console.log(this.state.user)
     if (Object.entries(this.state.user).length === 0) {
       return <Spinner />;
     } else {
@@ -524,6 +524,7 @@ class Profile extends React.Component {
     //     </div>
     //   </MDBCardBody>
     //   </MDBCard></React.Fragment>
+    console.log(this.state.user)
     return this.returnComponent();
     // this.state.isAuthenticated?this.returnComponent():<Redirect to="/Login"/>
   }
@@ -537,9 +538,9 @@ class Profile extends React.Component {
           getUserDetails()
             .then((response) => {
               // store.dispatch(userDetails(response.data))
-              // console.log(response.data);
+              console.log(response.data);
               this.setState({
-                user: response.data.data,
+                user: { ...this.state.user, ...response.data.data },
                 isLoading: false,
                 isAuthenticated: true,
                 isCheckingAuth: false
@@ -559,6 +560,9 @@ class Profile extends React.Component {
                 allInputs.forEach((element) => {
                   this.refs[element].setAttribute('id', 'dark-mode-color');
                 });
+                for (let i = 1; i <= 3; i++){
+                  this.refs['h' + i].style.color = '#fff';
+                }
                 this.props.isDarkModeSet(this.state.isDarkMode);
               }
             })

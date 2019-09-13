@@ -929,7 +929,7 @@ nav {
 }
 
 .progress--circle.progress--25:after {
-  background-image: ;
+  /* background-image: ; */
 }
 
 .progress--bar.progress--30:after {
@@ -1406,6 +1406,25 @@ div.my-progress-bar {
   .footer {
     height: 36vh !important;
   }
+  .section-two{
+    padding-top: 5%;
+  }
+  div.line_container{
+    width:150px;
+  }
+  div.line_container div{
+    width: 150px;
+  }
+  @keyframes changeLine {
+    from {
+      margin-left: 50%;
+      width: 0;
+    }
+    to {
+      margin-left: 0;
+      width: 150px;
+    }
+  }
 }
 
 @media (max-width: 575px) {
@@ -1480,6 +1499,31 @@ div.my-progress-bar {
   .footer {
     height: 36vh !important;
   }
+  .section-two{
+    padding-top: 5%;
+  }
+  div.line_container{
+    width:150px!important;
+  }
+  div.line_container div{
+    width: 150px;
+  }
+  div.line_container{
+    width:150px;
+  }
+  div.line_container div{
+    width: 150px;
+  }
+  @keyframes changeLine {
+    from {
+      margin-left: 50%;
+      width: 0;
+    }
+    to {
+      margin-left: 0;
+      width: 150px;
+    }
+  }
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
@@ -1488,6 +1532,25 @@ div.my-progress-bar {
   }
   .section-two p {
     font-size: 18px;
+  }
+  .section-one img:nth-child(1){
+    height: auto!important;
+  }
+  a.navbar-brand{
+    width:80%;
+  }
+  .header-heading h1 {
+    font-size: 31px;
+  }
+  .header-heading h4{
+    font-size: 18px;
+  }
+  .header-heading .underlined-text{
+    font-size: 14px;
+    margin-top: 0;
+  }
+  .section-two{
+    padding-top: 5%;
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {

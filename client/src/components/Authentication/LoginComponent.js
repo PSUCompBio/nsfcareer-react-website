@@ -247,7 +247,7 @@ class Login extends React.Component {
                         <p className="sign-up-link">
                           Are you an administrator including coach, parent,
                           trainer, or military unit leader? <br />
-                          <Link className="sign-up" to="SignUp">
+                          <Link className="sign-up" to="SignUpElse">
                             {' '}
                             Sign Up for Someone Else.
                           </Link>{' '}
