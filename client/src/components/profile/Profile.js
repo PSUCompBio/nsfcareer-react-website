@@ -224,23 +224,7 @@ class Profile extends React.Component {
     );
   };
 
-  updateTheme = () => {
-    // if (getStatusOfDarkmode().status === true) {
-    //   store.dispatch(darkThemeActiveSetter());
-    //   this.refs.lightDark.style.background = '#232838';
-    //   document.getElementsByTagName('html')[0].style.background = '#171b25';
-    //   document.getElementsByTagName('body')[0].style.background = '#171b25';
-    //   this.refs.profileBorder.style.border = '10px solid #171b25';
-    //   this.refs.nameColor.style.color = '#fff';
-    //   this.refs.chooserColor.style.color = '#fff';
-    //   const allInputs = this.state.inputs;
-    //   allInputs.forEach((element) => {
-    //     this.refs[element].setAttribute('id', 'dark-mode-color');
-    //   });
-    //   this.props.isDarkModeSet(this.state.isDarkMode);
-    // }
-  };
-
+  
   showProfile = () => {
     return (
       <React.Fragment>

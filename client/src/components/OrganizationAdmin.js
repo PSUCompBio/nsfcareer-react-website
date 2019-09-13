@@ -5,6 +5,8 @@ import PenstateUniversity from './PenstateUniversity';
 import DashboardDropdownSelector from './DashboardDropdownSelector';
 import { getStatusOfDarkmode } from '../reducer';
 import { withRouter } from 'react-router-dom';
+import { formDataToJson } from '../utilities/utility';
+
 
 class OrganizationAdmin extends React.Component {
   constructor() {
@@ -21,7 +23,8 @@ class OrganizationAdmin extends React.Component {
       hideEditElement: { display: 'block' },
       showEditPen: { display: 'none' },
       toShowEditPen: '',
-      showEditForm: false
+      showEditForm: false,
+      teamFormData:{}
     };
   }
   toggleTab = (value) => {
@@ -131,6 +134,9 @@ class OrganizationAdmin extends React.Component {
 
   handleTeamEditSubmit = (e) => {
     e.preventDefault();
+    const data = new FormData(e.target);
+    const formData = formDataToJson(data);
+    this.setState({ teamFormData: formData },()=>console.log(this.state.teamFormData));
   };
 
   teamForm = (fieldName, placeholder, name, labelFor) => {
@@ -161,7 +167,7 @@ class OrganizationAdmin extends React.Component {
           alt=""
         />
           <p className="edit-your-team">Edit your team.</p>
-          <form onSubmit={this.handleTeamEditSubmit}>
+          <form  onSubmit={this.handleTeamEditSubmit}>
             {this.teamForm(
               'Team Name:',
               'Enter your team name',

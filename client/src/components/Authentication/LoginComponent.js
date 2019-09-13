@@ -47,6 +47,7 @@ class Login extends React.Component {
     });
     // converting formData to JSON
     const formJsonData = formDataToJson(formData);
+    console.log(formJsonData)
     if (this.state.tempPasswordRequired) {
       // call API of first Time Login with Temporary Password
       logInFirstTime(formJsonData)
