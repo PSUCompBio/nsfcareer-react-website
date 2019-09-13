@@ -250,6 +250,23 @@
   align-items: center;
   background: #205b912e;
 }
+div.modal_form{
+  height: 400px !important;
+  margin-top: -200px!important;
+}
+
+.edit-your-team{
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #fff;
+  margin-bottom: 10px!important;
+}
+
+input.team-edit-input{
+  background-color: transparent!important;
+}
+
 
 .modal__show {
   position: fixed;

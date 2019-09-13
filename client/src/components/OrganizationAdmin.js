@@ -77,10 +77,10 @@ class OrganizationAdmin extends React.Component {
   };
 
   disableEditTeamOPtion = () => {
-    if(this.state.editTeamClass === 'edit-teams') {
+    if (this.state.editTeamClass === 'edit-teams') {
       this.setState({ editTeamClass: '', closeBtn: { display: 'none' } });
     }
-  }
+  };
 
   deleteTeam = (e) => {
     this.setState({
@@ -98,40 +98,93 @@ class OrganizationAdmin extends React.Component {
   };
 
   hideElementForEdit = (e) => {
-    console.log(e.currentTarget);
     if (this.state.editTeamClass === 'edit-teams') {
-      this.setState({
-        hideEditElement: { display: 'none' },
-        showEditPen: { display: 'block' },
-        toShowEditPen: 'hover_edit'
-      });
+      // this.setState({
+      //   hideEditElement: { display: 'none' },
+      //   showEditPen: { display: 'block' },
+      //   toShowEditPen: 'hover_edit'
+      // });
+      e.currentTarget.classList.add('hover_edit');
+      e.currentTarget.firstChild.style = 'display:block';
+      e.currentTarget.firstChild.nextSibling.style = 'display:none';
     }
   };
-  showElements = () => {
-    this.setState({
-      hideEditElement: { display: 'block' },
-      showEditPen: { display: 'none' },
-      toShowEditPen: ''
-    });
+
+  showElements = (e) => {
+    // this.setState({
+    //   hideEditElement: { display: 'block' },
+    //   showEditPen: { display: 'none' },
+    //   toShowEditPen: ''
+    // });
+    e.currentTarget.classList.remove('hover_edit');
+    e.currentTarget.firstChild.style = 'display:none';
+    e.currentTarget.firstChild.nextSibling.style = 'display:block';
   };
 
   makeEditable = () => {
     this.setState({ showEditForm: true });
   };
 
+  handleTeamEditSubmit = (e) => {
+    e.preventDefault();
+  };
+
   showEditForm = () => {
     return (
-      <div class="modal__wrapper">
-        <div class="modal__show">
-          <p>Edit your team.</p>
-          <form action="">
-            <div className="row">
-              <div className="col-md-12">
-                <div className="form-group">
-                  <input type="text" />
-                </div>
+      <div class="modal__wrapper ">
+        <div class="modal__show modal_form">
+          <p className="edit-your-team">Edit your team.</p>
+          <form onSubmit={this.handleTeamEditSubmit}>
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text">Team Name:</div>
               </div>
+              <input
+                type="text"
+                className="form-control team-edit-input"
+                id="inlineFormInputGroup"
+                placeholder="Enter team name"
+              />
             </div>
+
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text">Athletes:</div>
+              </div>
+              <input
+                type="text"
+                className="form-control team-edit-input"
+                id="inlineFormInputGroup"
+                placeholder="Enter no of athletes"
+              />
+            </div>
+
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text"> Impacts:</div>
+              </div>
+              <input
+                type="text"
+                className="form-control team-edit-input"
+                id="inlineFormInputGroup"
+                placeholder="Enter no of athletes"
+              />
+            </div>
+
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text"> Alerts:</div>
+              </div>
+              <input
+                type="text"
+                className="form-control team-edit-input"
+                id="inlineFormInputGroup"
+                placeholder="Enter no of alerts."
+              />
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
           </form>
         </div>
       </div>
@@ -169,7 +222,7 @@ class OrganizationAdmin extends React.Component {
           onMouseLeave={this.showElements}
           onDoubleClick={() => this.props.history.push('/TeamAdmin')}
           onClick={this.makeEditable}
-          className={`tech-football m-3 ${this.state.toShowEditPen}`}
+          className={`tech-football m-3`}
         >
           <img
             className="pen_icon"
