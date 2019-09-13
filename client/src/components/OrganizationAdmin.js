@@ -73,10 +73,14 @@ class OrganizationAdmin extends React.Component {
         closeBtn: { display: 'block' },
         currentDeleteTarget: ''
       });
-    } else {
-      this.setState({ editTeamClass: '', closeBtn: { display: 'none' } });
     }
   };
+
+  disableEditTeamOPtion = () => {
+    if(this.state.editTeamClass === 'edit-teams') {
+      this.setState({ editTeamClass: '', closeBtn: { display: 'none' } });
+    }
+  }
 
   deleteTeam = (e) => {
     this.setState({
@@ -94,7 +98,7 @@ class OrganizationAdmin extends React.Component {
   };
 
   hideElementForEdit = (e) => {
-    console.log(e.currentTarget)
+    console.log(e.currentTarget);
     if (this.state.editTeamClass === 'edit-teams') {
       this.setState({
         hideEditElement: { display: 'none' },
@@ -148,10 +152,10 @@ class OrganizationAdmin extends React.Component {
     );
   };
 
-  smallCards = (reference, noOfAthletes, noOfAlerts, noOfImpacts) => {
+  smallCards = (reference, noOfAthletes, noOfAlerts, noOfImpacts, key) => {
     // console.log(reference);
     return (
-      <div ref={''} className={this.state.editTeamClass}>
+      <div key={key} ref={''} className={this.state.editTeamClass}>
         <img
           className="delete__icon"
           onClick={this.deleteTeam}
@@ -212,7 +216,8 @@ class OrganizationAdmin extends React.Component {
         ],
         0,
         0,
-        0
+        0,
+        i
       );
     }
     return cards;
@@ -260,6 +265,17 @@ class OrganizationAdmin extends React.Component {
                       >
                         Edit Teams
                       </button>
+                      {this.state.editTeamClass === 'edit-teams' ? (
+                        <button
+                          type="button"
+                          onClick={this.disableEditTeamOPtion}
+                          className="edit-team-btn"
+                        >
+                          Done
+                        </button>
+                      ) : (
+                        ''
+                      )}
                     </div>
                   </div>
                   <div className="football-container mt-4 d-flex flex-wrap">
