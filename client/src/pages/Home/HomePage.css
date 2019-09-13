@@ -191,8 +191,12 @@ body {
   color: #fff;
   margin-top: 7%;
   font-size: 20px;
-  margin-bottom: 0;
+  margin-bottom: 5%;
   width: fit-content;
+}
+div.underlined-text p {
+  border-bottom: 1px solid;
+  margin-bottom: 10px;
 }
 .brain-overlay {
   position: absolute;
@@ -1399,6 +1403,12 @@ div.my-progress-bar {
     width: 40%;
     margin-bottom: 5px;
   }
+  .section-one img:nth-child(1){
+    width: 530px!important;
+  }
+  .section-one{
+    overflow-x: hidden;
+  }
 
   .image-padding img:nth-child(1) {
     width: 40px !important;
@@ -1406,13 +1416,13 @@ div.my-progress-bar {
   .footer {
     height: 36vh !important;
   }
-  .section-two{
+  .section-two {
     padding-top: 5%;
   }
-  div.line_container{
-    width:150px;
+  div.line_container {
+    width: 150px;
   }
-  div.line_container div{
+  div.line_container div {
     width: 150px;
   }
   @keyframes changeLine {
@@ -1428,6 +1438,12 @@ div.my-progress-bar {
 }
 
 @media (max-width: 575px) {
+  .section-one >img:nth-child(1){
+    width: 530px!important;
+  }
+  .section-one{
+    overflow-x: hidden;
+  }
   div.tech-football {
     width: auto;
     margin-right: 1rem !important;
@@ -1452,6 +1468,7 @@ div.my-progress-bar {
   }
   .header-heading .underlined-text {
     font-size: 10px;
+    margin-bottom: 10px;
     margin-top: 2px;
   }
   .image-padding img {
@@ -1460,7 +1477,7 @@ div.my-progress-bar {
   }
 
   .image-padding img:nth-child(1) {
-    width: 68px;
+    width: 56px;
   }
   .section-one > img {
     height: 45vh;
@@ -1499,19 +1516,22 @@ div.my-progress-bar {
   .footer {
     height: 36vh !important;
   }
-  .section-two{
+  .section-two {
     padding-top: 5%;
   }
-  div.line_container{
-    width:150px!important;
+  div.line_container {
+    width: 150px !important;
   }
-  div.line_container div{
+  div.line_container div {
     width: 150px;
   }
-  div.line_container{
-    width:150px;
+  div.line_container {
+    width: 150px;
   }
-  div.line_container div{
+  .section-four{
+    padding-top:10%;
+  }
+  div.line_container div {
     width: 150px;
   }
   @keyframes changeLine {
@@ -1533,27 +1553,37 @@ div.my-progress-bar {
   .section-two p {
     font-size: 18px;
   }
-  .section-one img:nth-child(1){
-    height: auto!important;
+  .section-one img:nth-child(1) {
+    height: auto !important;
   }
-  a.navbar-brand{
-    width:80%;
+  a.navbar-brand {
+    width: 80%;
   }
   .header-heading h1 {
     font-size: 31px;
   }
-  .header-heading h4{
+  .header-heading h4 {
     font-size: 18px;
   }
-  .header-heading .underlined-text{
+  .header-heading .underlined-text {
     font-size: 14px;
     margin-top: 0;
   }
-  .section-two{
+  .section-two {
     padding-top: 5%;
+  }
+
+  .padding-mobile {
+    padding-top: 0;
+  }
+  div.image-padding {
+    padding-top: -10px;
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {
+  .section-one > img:nth-child(1){
+    width: 1200px;
+  }
   .navbar-brand {
     width: auto;
   }
@@ -1584,6 +1614,9 @@ div.my-progress-bar {
   .shift-technology-section {
     margin-top: -33.5%;
   }
+  .section-one > img:nth-child(1){
+    width: 1500px;
+  }
 }
 @media (min-width: 1200px) and (max-width: 1440px) {
   .shift-technology-section {
@@ -1595,6 +1628,9 @@ div.my-progress-bar {
   .padding-about__page {
     padding-top: 4%;
   }
+  /* .section-one > img:nth-child(1){
+    width: 1850px;
+  } */
 }
 
 @media (min-width: 1500px) and (max-width: 2560px) {
@@ -1763,5 +1799,14 @@ div.my-progress-bar {
 
   .cbp-spmenu-right {
     right: -190px;
+  }
+}
+
+@media screen and (min-height:731px){
+  .header-heading{
+    margin-bottom: 10%;
+  }
+  .section-one > img:nth-child(1){
+    height: 35%;
   }
 }

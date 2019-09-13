@@ -54,10 +54,7 @@ class Banner extends React.Component {
                               className={`${inView ? 'animated fadeInUp' : ''}`}
                             >
                               Supported By
-                            </p>
-                            <hr
-                              className={`${inView ? 'animated zoomIn' : ''}`}
-                            />
+                            </p>                           
                           </div>
                         </div>
                       )}

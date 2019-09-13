@@ -4,7 +4,8 @@ import store from '../../Store';
 import { resetSignedInSucceeded, userDetails } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { isAuthenticated, getUserDetails } from '../../apis';
+import { Redirect } from 'react-router-dom';
+
 class Nav extends React.Component {
   constructor() {
     super();
@@ -104,6 +105,7 @@ class Nav extends React.Component {
   signOut = () => {
     store.dispatch(resetSignedInSucceeded());
     this.setState({ signOutClass: 'sign-out-hide' });
+    this.props.history.push('/Home');
   };
 
   mobileNav = () => {
@@ -364,7 +366,10 @@ class Nav extends React.Component {
                   <Link to="profile">Profile</Link>
                 </li>
                 <img
-                  onClick={this.signOut}
+                  onClick={() => {
+                    this.signOut();
+                    this.handleClick();
+                  }}
                   className=" mt-3 img-fluid w-25"
                   src="/img/icon/powerBtn.svg"
                   alt=""
@@ -436,7 +441,7 @@ class Nav extends React.Component {
                 {/* {localStore.isSignedInSuccess === true ? ( */}
                 <div className="mobile-dashboard-dropdown">
                   <ul>
-                    <li >PSU</li>
+                    <li>PSU</li>
                     <li onClick={this.handleClick}>
                       <Link to="TeamAdmin">Team Admin</Link>
                     </li>
