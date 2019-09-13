@@ -647,6 +647,7 @@ nav {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
   background-color: #ffffff;
   padding: 5px;
+  cursor: pointer;
 }
 .tech-football::before {
   background: rebeccapurple;

@@ -241,7 +241,7 @@
 }
 .modal__wrapper {
   position: fixed;
-  z-index: 5;
+  z-index: 1;
   height: 100vh;
   background: transparent;
   width: 100%;

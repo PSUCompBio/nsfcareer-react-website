@@ -125,64 +125,68 @@ class OrganizationAdmin extends React.Component {
     this.setState({ showEditForm: true });
   };
 
+  hideTeamForm = () => {
+    this.setState({ showEditForm: false });
+  }
+
   handleTeamEditSubmit = (e) => {
     e.preventDefault();
+  };
+
+  teamForm = (fieldName, placeholder, name, labelFor) => {
+    return (
+      <div className="input-group mb-2">
+        <div className="input-group-prepend">
+          <div className="input-group-text">{fieldName}</div>
+        </div>
+        <input
+          name={name}
+          type="text"
+          className="form-control team-edit-input"
+          id={labelFor}
+          placeholder={placeholder}
+        />
+      </div>
+    );
   };
 
   showEditForm = () => {
     return (
       <div class="modal__wrapper ">
         <div class="modal__show modal_form">
+        <img
+          className="delete__icon"
+          onClick={this.hideTeamForm}
+          src="/img/icon/close.svg"
+          alt=""
+        />
           <p className="edit-your-team">Edit your team.</p>
           <form onSubmit={this.handleTeamEditSubmit}>
-            <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text">Team Name:</div>
-              </div>
-              <input
-                type="text"
-                className="form-control team-edit-input"
-                id="inlineFormInputGroup"
-                placeholder="Enter team name"
-              />
-            </div>
-
-            <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text">Athletes:</div>
-              </div>
-              <input
-                type="text"
-                className="form-control team-edit-input"
-                id="inlineFormInputGroup"
-                placeholder="Enter no of athletes"
-              />
-            </div>
-
-            <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text"> Impacts:</div>
-              </div>
-              <input
-                type="text"
-                className="form-control team-edit-input"
-                id="inlineFormInputGroup"
-                placeholder="Enter no of athletes"
-              />
-            </div>
-
-            <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text"> Alerts:</div>
-              </div>
-              <input
-                type="text"
-                className="form-control team-edit-input"
-                id="inlineFormInputGroup"
-                placeholder="Enter no of alerts."
-              />
-            </div>
-            <button type="submit" className="btn btn-primary">
+            {this.teamForm(
+              'Team Name:',
+              'Enter your team name',
+              'team',
+              'teamName'
+            )}
+            {this.teamForm(
+              'Athletes:',
+              'Enter number of athletes',
+              'athletes',
+              'athletesFor'
+            )}
+            {this.teamForm(
+              'Impacts:',
+              'Enter number of impacts',
+              'impacts',
+              'impactsFor'
+            )}
+            {this.teamForm(
+              'Alerts:',
+              'Enter number of alerts',
+              'alerts',
+              'alertsFor'
+            )}
+            <button type="submit" className="dynamic-white-btn">
               Submit
             </button>
           </form>
@@ -220,8 +224,11 @@ class OrganizationAdmin extends React.Component {
           ref={reference[0]}
           onMouseEnter={this.hideElementForEdit}
           onMouseLeave={this.showElements}
-          onDoubleClick={() => this.props.history.push('/TeamAdmin')}
-          onClick={this.makeEditable}
+          onClick={() => {
+            this.state.editTeamClass === 'edit-teams'
+              ? this.makeEditable()
+              : this.props.history.push('/TeamAdmin');
+          }}
           className={`tech-football m-3`}
         >
           <img
