@@ -1803,10 +1803,10 @@ div.my-progress-bar {
 }
 
 @media screen and (min-height:731px){
-  .header-heading{
+  /* .header-heading{
     margin-bottom: 10%;
-  }
-  .section-one > img:nth-child(1){
+  } */
+  /* .section-one > img:nth-child(1){
     height: 35%;
-  }
+  } */
 }
