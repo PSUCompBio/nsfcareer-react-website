@@ -10,6 +10,7 @@ node_modules
 oauth.json
 player.json
 tmp/*
+client/build/*
 config/configuration_keys.json
 package-lock.json
 client/package-lock.json
