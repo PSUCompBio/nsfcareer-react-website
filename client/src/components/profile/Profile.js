@@ -444,9 +444,8 @@ class Profile extends React.Component {
     console.log(this.state);
     if (Object.entries(this.state.user).length === 0) {
       return <Spinner />;
-    } else {
-      return this.showProfile();
     }
+    return this.showProfile();
   };
 
   render() {
