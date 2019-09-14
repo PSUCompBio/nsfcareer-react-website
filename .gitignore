@@ -1,7 +1,6 @@
 .DS_STORE
 node_modules
 *~
-build/
 *.log*
 .vscode
 *.swp
@@ -11,6 +10,7 @@ build/
 oauth.json
 player.json
 tmp/*
+client/build/*
 config/configuration_keys.json
 package-lock.json
 client/package-lock.json

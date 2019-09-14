@@ -46,15 +46,16 @@ class Profile extends React.Component {
   onChangeHandler = (event) => {
     // console.log(event.target.files[0]);
     this.setState({
-      selectedFile: event.target.files[0],
-      loaded: 0
+      selectedFile: event.target.files[0]
     });
   };
+
   onClickHandler = () => {
     const data = new FormData();
     this.setState({ isFileBeingUploaded: true });
     this.setState({ isUploading: true });
     data.append('profile_pic', this.state.selectedFile);
+    console.log(data);
     uploadProfilePic(data)
       .then((response) => {
         console.log(response);
@@ -331,13 +332,27 @@ class Profile extends React.Component {
                       />
                     </span>
                   </p>
-                  <button
-                    onClick={this.onClickHandler}
-                    type="submit"
+                  <input
+                    onChange={this.onChangeHandler}
+                    type="file"
                     className="btn mt-5 upload-btn"
-                  >
+                    name="profile_pic"
+                  />
+                  {
+                                      this.state.isUploading ?
+                                      <div className="d-flex justify-content-center center-spinner">
+                                           <div className="spinner-border text-primary" role="status" >
+                          <span className="sr-only">Uploading...</span>
+                        </div>
+                               </div>:null
+                                    }
+                <button
+                    type="button"
+                    onClick={this.onClickHandler}
+                        className="btn mt-5 upload-btn"
+                        >
                     Upload photo
-                  </button>
+                </button>
                 </div>
               </div>
 
@@ -364,35 +379,64 @@ class Profile extends React.Component {
               </div>
 
               <p ref="p1">
-                <span>
-                  <img src="/img/icon/check.svg" alt="" />
-                </span>{' '}
-                Selfie Uploaded{' '}
+                  {this.state.user.is_selfie_image_uploaded?
+                      <span>
+                        <img src="/img/icon/check.svg" alt="" />
+                      </span>
+                      :
+                      <span>
+                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
+                      </span>}
+
+                  {' '}
+                  Selfie Uploaded{' '}
               </p>
-              <Download3dProfile
-                file={this.state.user.profile_picture_url}
-                content="Download 3d selfie"
-              />
+              {this.state.user.is_selfie_image_uploaded? <Download3dProfile url={this.state.user.profile_picture_url} content="Download 3d Selfie" /> : null}
+
               <p ref="p2">
-                <span>
-                  <img src="/img/icon/check.svg" alt="" />
-                </span>{' '}
+                  {this.state.user.is_selfie_model_uploaded?
+                      <span>
+                        <img src="/img/icon/check.svg" alt="" />
+                      </span>
+                      :
+                      <span>
+                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
+                      </span>}
+
+                  {' '}
                 3D Avatar Generated{' '}
               </p>
-              <DownloadAvtar
-                file={this.state.user.avatar_url}
-                content="Download avatar"
-              />
+              {this.state.user.is_selfie_model_uploaded? <DownloadAvtar url={this.state.user.avatar_url} content="Download avatar" /> : null}
+
               <p ref="p3">
-                <span>
-                  <img src="/img/icon/check.svg" alt="" />
-                </span>{' '}
+                  {this.state.user.is_selfie_inp_uploaded?
+                      <span>
+                        <img src="/img/icon/check.svg" alt="" />
+                      </span>
+                      :
+                      <span>
+                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
+                      </span>}
+
+                  {' '}
                 Mesh File Generated
               </p>
-              <DownloadFeMesh
-                file={this.state.user.inp_file_url}
-                content="Download FE Mesh"
-              />
+              {this.state.user.is_selfie_inp_uploaded? <DownloadFeMesh url={this.state.user.inp_file_url} content="Download FE Mesh" /> : null}
+
+              <p ref="p4">
+                  {this.state.user.is_selfie_simulation_file_uploaded?
+                      <span>
+                        <img src="/img/icon/check.svg" alt="" />
+                      </span>
+                      :
+                      <span>
+                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
+                      </span>}
+
+                  {' '}
+                Simulation File Generated{' '}
+              </p>
+              {this.state.user.is_selfie_simulation_file_uploaded ? <DownloadAvtar url={this.state.user.simulation_file_url} content="Download Simulation File" /> : null}
             </div>
           </div>
         </div>
@@ -405,9 +449,8 @@ class Profile extends React.Component {
     console.log(this.state.user)
     if (Object.entries(this.state.user).length === 0) {
       return <Spinner />;
-    } else {
-      return this.showProfile();
     }
+    return this.showProfile();
   };
 
   render() {

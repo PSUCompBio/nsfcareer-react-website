@@ -1,15 +1,10 @@
 import React from 'react';
-import './Spinner.css'
-class Spinner extends React.Component {
+import './Spinner.css';
 
-
-  render() {
-    return (
-      <div className="Spinner__container">
-        <div class="spinner"></div>
-      </div>
-    );
-  }
+export default function Spinner() {
+  return (
+    <div className="Spinner__container">
+      <div className="spinner"></div>
+    </div>
+  );
 }
-
-export default Spinner;

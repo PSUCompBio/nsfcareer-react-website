@@ -6,7 +6,6 @@
 - ###### NOTE : Skip this step if you're planning to deploy this application on for production. Follow the steps given in end to deploy for production !
 - #### Install all the required dependencies by executing following commands :
 - ##### Pre-Requisites
-    - A Debian based Linux System (Ubuntu)
     - Nodejs (min version >= 10.X)
 ```
 # If on Windows : Use Power-Shell to execute below commands
@@ -20,7 +19,7 @@ $ sudo npm install -g nodemon
 
 # To install Project's dependencies
 # Then in project root's directory run the following commands :
-$ sudo npm run init 
+$ sudo npm run init
 
 ```
 
@@ -35,6 +34,7 @@ $ sudo npm run init
 - ###### Update variable ( ComputeInstanceEndpoint ) with the endpoint of Compute Instance ( Docker Image deployed with NodeJS Service ) in below given format to generate Mesh Data :
     - E.g http://yourcomputeinstance.com/api/
 #### Step 3 : Run Application locally :
+
 ```
 # If on Windows : Use Power-Shell to execute below commands
 # To run application normally
@@ -44,10 +44,23 @@ $ npm start
 $ npm run start-dev
 ```
 #### Step 4 : Access application on URL -> http://localhost:3000 in your browser.
-### To Deploy Application for Production Build :
-- Clone this repository https://github.com/vradars/react-website-bash-script.git
-- Open the repository .And follow the instructions from README.md to execute the scripts.
-- Follow the on-console instructions & successfully deploy your application.
+### To Deploy Application for Production Build ( AWS Elastic Beanstalk ):
+#### In Local System
+ - Generate a build of client side (Front-end) code;
+  - ``` cd client ; npm run build ; ```
+ - After successful build, Delete node_modules in /client/node_modules & root direcotory of repository.
+ - Create a Zip file of repository from root directory excluding .git Directory
+#### In AWS Elastic Beanstalk Management Console :
+  - Click on `Create New Application` on Top Right corner.
+  - Enter the name of application. Click on 'OK'.
+  - Create an environment by clicking on `Create one now.` And Select Web server environment.
+  - Enter Domain Name and check its availability.
+  - Select NodeJS as preconfigured platform.
+  - In Application Code , Select `Upload your code`. And upload the zip you created in your local computer of the repository.
+  - Click on Configure more options, And Click on Software configuration . Click on modify .
+  - Add node command as `npm run server`. And save the configuration.
+  - Click on Create Environment. After process completion , A `URL` will be generated .
+  - You can find this URL in the dashboard of Selected Application in AWS Elastic Beanstalk
 
 ### Major Dependencies
 
