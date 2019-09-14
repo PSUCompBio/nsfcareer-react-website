@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginComponent from '../../components/Authentication/LoginComponent';
-import { withRouter, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import './Login.css';
 
 class Login extends React.Component {
@@ -12,7 +12,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const checkIfUserLoggedIn = JSON.parse(localStorage.getItem('state'));
+
 
     return (
       <React.Fragment>

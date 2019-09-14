@@ -1,4 +1,3 @@
-import {ENDPOINT} from './config/constants'
 import axios from 'axios';
 
 

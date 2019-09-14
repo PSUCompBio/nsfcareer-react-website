@@ -19,7 +19,6 @@ import store from '../../Store';
 import { darkThemeActiveSetter, darkThemeInactiveSetter, userDetails } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
-import { Redirect } from 'react-router-dom';
 
 class Profile extends React.Component {
   constructor() {
