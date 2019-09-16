@@ -19,11 +19,12 @@ import store from '../../Store';
 import {
   darkThemeActiveSetter,
   darkThemeInactiveSetter,
-  userDetails
+  resetSignedInSucceeded
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
-import { Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
+
 
 class Profile extends React.Component {
   constructor() {
@@ -225,7 +226,6 @@ class Profile extends React.Component {
     );
   };
 
-  
   showProfile = () => {
     return (
       <React.Fragment>
@@ -338,21 +338,23 @@ class Profile extends React.Component {
                     className="btn mt-5 upload-btn"
                     name="profile_pic"
                   />
-                  {
-                                      this.state.isUploading ?
-                                      <div className="d-flex justify-content-center center-spinner">
-                                           <div className="spinner-border text-primary" role="status" >
-                          <span className="sr-only">Uploading...</span>
-                        </div>
-                               </div>:null
-                                    }
-                <button
+                  {this.state.isUploading ? (
+                    <div className="d-flex justify-content-center center-spinner">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="sr-only">Uploading...</span>
+                      </div>
+                    </div>
+                  ) : null}
+                  <button
                     type="button"
                     onClick={this.onClickHandler}
-                        className="btn mt-5 upload-btn"
-                        >
+                    className="btn mt-5 upload-btn"
+                  >
                     Upload photo
-                </button>
+                  </button>
                 </div>
               </div>
 
@@ -379,64 +381,96 @@ class Profile extends React.Component {
               </div>
 
               <p ref="p1">
-                  {this.state.user.is_selfie_image_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
-
-                  {' '}
-                  Selfie Uploaded{' '}
+                {this.state.user.is_selfie_image_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
+                Selfie Uploaded{' '}
               </p>
-              {this.state.user.is_selfie_image_uploaded? <Download3dProfile url={this.state.user.profile_picture_url} content="Download 3d Selfie" /> : null}
+              {this.state.user.is_selfie_image_uploaded ? (
+                <Download3dProfile
+                  url={this.state.user.profile_picture_url}
+                  content="Download 3d Selfie"
+                />
+              ) : null}
 
               <p ref="p2">
-                  {this.state.user.is_selfie_model_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
-
-                  {' '}
+                {this.state.user.is_selfie_model_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
                 3D Avatar Generated{' '}
               </p>
-              {this.state.user.is_selfie_model_uploaded? <DownloadAvtar url={this.state.user.avatar_url} content="Download avatar" /> : null}
+              {this.state.user.is_selfie_model_uploaded ? (
+                <DownloadAvtar
+                  url={this.state.user.avatar_url}
+                  content="Download avatar"
+                />
+              ) : null}
 
               <p ref="p3">
-                  {this.state.user.is_selfie_inp_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
-
-                  {' '}
+                {this.state.user.is_selfie_inp_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
                 Mesh File Generated
               </p>
-              {this.state.user.is_selfie_inp_uploaded? <DownloadFeMesh url={this.state.user.inp_file_url} content="Download FE Mesh" /> : null}
+              {this.state.user.is_selfie_inp_uploaded ? (
+                <DownloadFeMesh
+                  url={this.state.user.inp_file_url}
+                  content="Download FE Mesh"
+                />
+              ) : null}
 
               <p ref="p4">
-                  {this.state.user.is_selfie_simulation_file_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
-
-                  {' '}
+                {this.state.user.is_selfie_simulation_file_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
                 Simulation File Generated{' '}
               </p>
-              {this.state.user.is_selfie_simulation_file_uploaded ? <DownloadAvtar url={this.state.user.simulation_file_url} content="Download Simulation File" /> : null}
+              {this.state.user.is_selfie_simulation_file_uploaded ? (
+                <DownloadAvtar
+                  url={this.state.user.simulation_file_url}
+                  content="Download Simulation File"
+                />
+              ) : null}
             </div>
           </div>
         </div>
@@ -446,7 +480,7 @@ class Profile extends React.Component {
   };
 
   returnComponent = () => {
-    console.log(this.state.user)
+    console.log(this.state.user);
     if (Object.entries(this.state.user).length === 0) {
       return <Spinner />;
     }
@@ -567,7 +601,7 @@ class Profile extends React.Component {
     //     </div>
     //   </MDBCardBody>
     //   </MDBCard></React.Fragment>
-    console.log(this.state.user)
+    console.log(this.state.user);
     return this.returnComponent();
     // this.state.isAuthenticated?this.returnComponent():<Redirect to="/Login"/>
   }
@@ -603,7 +637,7 @@ class Profile extends React.Component {
                 allInputs.forEach((element) => {
                   this.refs[element].setAttribute('id', 'dark-mode-color');
                 });
-                for (let i = 1; i <= 3; i++){
+                for (let i = 1; i <= 3; i++) {
                   this.refs['h' + i].style.color = '#fff';
                 }
                 this.props.isDarkModeSet(this.state.isDarkMode);
@@ -625,6 +659,13 @@ class Profile extends React.Component {
       });
   }
 
+  componentDidUpdate() {
+    console.log(this.state.isAuthenticated)
+    if (this.state.isAuthenticated === false) {
+      store.dispatch(resetSignedInSucceeded());
+      this.props.history.push('/Home');
+    }
+  }
 }
 
-export default Profile;
+export default withRouter(Profile);

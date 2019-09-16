@@ -35,7 +35,7 @@ class ContactPage extends React.Component {
   render() {
     return (
     <React.Fragment>
-      <div className="container pt-5 mt-5">
+      <div className="container  contact__page-center-align">
         <div className="row  animated zoomIn text-center">
           <div className="col-md-12">
             <div className={`w-100 section-title`}>

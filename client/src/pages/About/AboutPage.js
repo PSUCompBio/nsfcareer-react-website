@@ -23,6 +23,7 @@ class AboutPage extends React.Component {
   render() {
     return (
       <React.Fragment>
+        <div className="align-element-center">
         <div className="container ">
           <div className="row pt-5 mt-5">
             <div className="col-md-12 col-lg-12 padding-about__page text-center">
@@ -60,7 +61,9 @@ class AboutPage extends React.Component {
             </div>
           </div>
         </div>
-        <Footer />
+        
+        </div>
+       <Footer />
       </React.Fragment>
     );
   }

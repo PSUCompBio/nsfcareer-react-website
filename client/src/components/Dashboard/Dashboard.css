@@ -342,6 +342,18 @@ input.team-edit-input{
   transform: translate(-50%, -50%) */
 }
 
+.align-element-center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60.1vh;
+}
+
+.contact__page-center-align{
+  padding-top: 5.7%;
+}
+
+
 @media screen and (max-width: 599px) {
   .head-acc-evnt-chart::after {
     white-space: pre-wrap;
@@ -373,5 +385,23 @@ input.team-edit-input{
     content: 'Please tap to close';
     color: #fff;
     font-size: 12px;
+  }
+}
+@media screen and (min-width:3240px){
+  .align-element-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90.1vh;
+  }
+  .contact__page-center-align{
+    padding-top: 20%;
+    padding-bottom: 6.4%;
+  }
+  div.profile-mt{
+    margin-top: 25%;
+  }
+  div.profile__page{
+    bottom: -130.1%;
   }
 }
