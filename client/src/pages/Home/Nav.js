@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import store from '../../Store';
-import { resetSignedInSucceeded, userDetails } from '../../Actions';
+import { resetSignedInSucceeded } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Redirect } from 'react-router-dom';
+import LineUnderLink from '../../utilities/LineUnderLink.js';
 
 class Nav extends React.Component {
   constructor() {
@@ -15,7 +15,8 @@ class Nav extends React.Component {
       userProfile: '',
       userName: '',
       dashboardLinks: { display: 'none' },
-      countMouseEnter: 0
+      countMouseEnter: 0,
+      dashboardDropDown: ['/Login', '/dashboard', '/TeamAdmin', '/OrganizationAdmin']
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -32,37 +33,7 @@ class Nav extends React.Component {
     );
   }
 
-  // componentWillMount() {
-  //   console.log(store.getState());
-  //   if (store.getState().isSignedInSuccess === false) {
-  //     store.dispatch(userDetails({}));
-  //   }
-  // }
 
-  componentWillUnmount() {
-    // document.removeEventListener('mousedown');
-  }
-
-  // componentDidMount() {
-  //   isAuthenticated(JSON.stringify({}))
-  //     .then((value) => {
-  //       if (value.data.message === 'success') {
-  //         this.setState({});
-  //         getUserDetails()
-  //           .then((response) => {
-  //             store.dispatch(userDetails(response.data));
-  //             console.log(response.data);
-  //             this.setState({userProfile:response.data.profile_picture_url, userName:response.data.first_name+' '+response.data.last_name})
-  //           })
-  //           .catch((error) => {});
-  //       } else {
-  //         // this.setState({ isAuthenticated: false, isCheckingAuth: false });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       // this.setState({ isAuthenticated: false, isCheckingAuth: false });
-  //     });
-  // }
 
   handleClick() {
     const body = document.getElementsByTagName('body')[0];
@@ -128,43 +99,27 @@ class Nav extends React.Component {
           <Link className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/About' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/About')} />
         </li>
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
             Contact
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/Contact' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Contact')} />
         </li>
         {this.props.location.pathname !== '/SignUp' ? (
           <li className="nav-item make-active active">
             <Link className="nav-link" to={'/Login'}>
               Dashboard <span className="sr-only">(current)</span>
             </Link>
-            <div
-              className={
-                this.props.location.pathname === '/Login' ? 'active-link' : ''
-              }
-            />
+            <div className={LineUnderLink.linkeMaker('/Login')} />
           </li>
         ) : (
           <li className="nav-item make-active">
             <Link className="nav-link" to={'/SignUp'}>
               Sign up
             </Link>
-            <div
-              className={
-                this.props.location.pathname === '/SignUp' ? 'active-link' : ''
-              }
-            />
+            <div className={LineUnderLink.linkeMaker('/SignUp')} />
           </li>
         )}
       </ul>
@@ -200,10 +155,7 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/Home' ||
-              this.props.location.pathname === '/'
-                ? 'active-link'
-                : ''
+              LineUnderLink.linkeMaker('/Home') || LineUnderLink.linkeMaker('/')
             }
           />
         </li>
@@ -213,7 +165,7 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/About' ? 'active-link' : ''
+              LineUnderLink.linkeMaker('/About')
             }
           />
         </li>
@@ -223,7 +175,7 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/Sports' ? 'active-link' : ''
+              LineUnderLink.linkeMaker('/Sports')
             }
           />
         </li>
@@ -234,7 +186,7 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/Contact' ? 'active-link' : ''
+              LineUnderLink.linkeMaker('/Contact')
             }
           />
         </li>
@@ -249,12 +201,9 @@ class Nav extends React.Component {
             </Link>
             <div
               className={
-                this.props.location.pathname === '/Login' ||
-                this.props.location.pathname === '/dashboard' ||
-                this.props.location.pathname === '/TeamAdmin' ||
-                this.props.location.pathname === '/OrganizationAdmin'
-                  ? 'active-link'
-                  : ''
+                this.state.dashboardDropDownList.forEach(element => {
+                  LineUnderLink.linkeMaker(element)
+                })
               }
             />
             {this.dashboardDropDownList()}
@@ -266,7 +215,7 @@ class Nav extends React.Component {
             </Link>
             <div
               className={
-                this.props.location.pathname === '/SignUp' ? 'active-link' : ''
+                LineUnderLink.linkeMaker('/SignUp')
               }
             />
           </li>
@@ -287,9 +236,7 @@ class Nav extends React.Component {
               </Link>
               <div
                 className={
-                  this.props.location.pathname === '/Profile'
-                    ? 'active-link'
-                    : ''
+                  LineUnderLink.linkeMaker('/Profile')
                 }
               />
             </div>
@@ -383,7 +330,7 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/Home' ? 'active-link' : ''
+              LineUnderLink.linkeMaker('/Home')
             }
           />
           <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
@@ -391,7 +338,7 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/About' ? 'active-link' : ''
+              LineUnderLink.linkeMaker('/About')
             }
           />
           {this.props.isLoggedIn === true ? (
@@ -401,9 +348,7 @@ class Nav extends React.Component {
               </Link>
               <div
                 className={
-                  this.props.location.pathname === '/Sports'
-                    ? 'active-link'
-                    : ''
+                  LineUnderLink.linkeMaker('/Sports')
                 }
               />
 
@@ -416,9 +361,7 @@ class Nav extends React.Component {
               </Link>
               <div
                 className={
-                  this.props.location.pathname === '/Profile'
-                    ? 'active-link'
-                    : ''
+                  LineUnderLink.linkeMaker('/Profile')
                 }
               />
             </React.Fragment>
@@ -431,12 +374,12 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/Contact' ? 'active-link' : ''
+              LineUnderLink.linkeMaker('/Contact')
             }
           />
           {this.props.location.pathname !== '/SignUp' ? (
             <React.Fragment>
-              <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
+              <div className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
                 {/* {localStore.isSignedInSuccess === true ? ( */}
                 <div className="mobile-dashboard-dropdown">
@@ -453,10 +396,10 @@ class Nav extends React.Component {
                 {/* ) : (
                   ''
                 )} */}
-              </Link>
+              </div>
               <div
                 className={
-                  this.props.location.pathname === '/Login' ? 'active-link' : ''
+                  LineUnderLink.linkeMaker('/Login')
                 }
               />
             </React.Fragment>
@@ -471,9 +414,7 @@ class Nav extends React.Component {
               </Link>
               <div
                 className={
-                  this.props.location.pathname === '/SignUp'
-                    ? 'active-link'
-                    : ''
+                  LineUnderLink.linkeMaker('/SignUp')
                 }
               />
             </React.Fragment>

@@ -12,9 +12,7 @@ import {
 
 import Footer from '../Footer';
 
-import Download3dProfile from '../Buttons/Download3dProfile';
-import DownloadAvtar from '../Buttons/Download3dProfile';
-import DownloadFeMesh from '../Buttons/Download3dProfile';
+import DownloadBtn from '../Buttons/Download3dProfile';
 import store from '../../Store';
 import {
   darkThemeActiveSetter,
@@ -44,7 +42,6 @@ class Profile extends React.Component {
     };
   }
   onChangeHandler = (event) => {
-    // console.log(event.target.files[0]);
     this.setState({
       selectedFile: event.target.files[0]
     });
@@ -400,7 +397,7 @@ class Profile extends React.Component {
                 Selfie Uploaded{' '}
               </p>
               {this.state.user.is_selfie_image_uploaded ? (
-                <Download3dProfile
+                <DownloadBtn
                   url={this.state.user.profile_picture_url}
                   content="Download 3d Selfie"
                 />
@@ -423,7 +420,7 @@ class Profile extends React.Component {
                 3D Avatar Generated{' '}
               </p>
               {this.state.user.is_selfie_model_uploaded ? (
-                <DownloadAvtar
+                <DownloadBtn
                   url={this.state.user.avatar_url}
                   content="Download avatar"
                 />
@@ -446,7 +443,7 @@ class Profile extends React.Component {
                 Mesh File Generated
               </p>
               {this.state.user.is_selfie_inp_uploaded ? (
-                <DownloadFeMesh
+                <DownloadBtn
                   url={this.state.user.inp_file_url}
                   content="Download FE Mesh"
                 />
@@ -469,7 +466,7 @@ class Profile extends React.Component {
                 Simulation File Generated{' '}
               </p>
               {this.state.user.is_selfie_simulation_file_uploaded ? (
-                <DownloadAvtar
+                <DownloadBtn
                   url={this.state.user.simulation_file_url}
                   content="Download Simulation File"
                 />

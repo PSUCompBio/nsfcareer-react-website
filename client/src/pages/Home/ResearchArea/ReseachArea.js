@@ -3,8 +3,6 @@ import { InView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 
 function ResearchArea(props) {
-  // const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
-
   return (
     <div className="research-area-bg">
       <div className="container section">
