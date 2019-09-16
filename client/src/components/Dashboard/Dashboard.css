@@ -404,4 +404,10 @@ input.team-edit-input{
   div.profile__page{
     bottom: -130.1%;
   }
+  .align-center__about-page{
+    margin-top: 21%;
+  }
+  div.about__page{
+    bottom: -189%;
+  }
 }

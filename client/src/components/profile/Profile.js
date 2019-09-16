@@ -25,7 +25,6 @@ import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import { withRouter } from 'react-router-dom';
 
-
 class Profile extends React.Component {
   constructor() {
     super();
@@ -651,20 +650,20 @@ class Profile extends React.Component {
               });
             });
         } else {
-          this.setState({ isAuthenticated: false, isCheckingAuth: false });
+          this.setState(
+            { isAuthenticated: false, isCheckingAuth: false },
+            () => {
+              if (this.state.isAuthenticated === false) {
+                store.dispatch(resetSignedInSucceeded());
+                this.props.history.push('/Home');
+              }
+            }
+          );
         }
       })
       .catch((err) => {
         this.setState({ isAuthenticated: false, isCheckingAuth: false });
       });
-  }
-
-  componentDidUpdate() {
-    console.log(this.state.isAuthenticated)
-    if (this.state.isAuthenticated === false) {
-      store.dispatch(resetSignedInSucceeded());
-      this.props.history.push('/Home');
-    }
   }
 }
 

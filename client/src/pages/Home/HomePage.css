@@ -1668,6 +1668,15 @@ div.my-progress-bar {
   border: none !important;
 }
 
+@media screen and (min-width:3240px){
+  .dynamic__height{
+    margin-top: 10%;
+  }
+  div.footer{
+    bottom: -73.6%;
+  }
+}
+
 @media (min-width: 726px) {
   .research-card:hover {
     transform: scale(1.05);
