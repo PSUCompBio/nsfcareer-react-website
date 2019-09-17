@@ -15,8 +15,15 @@ class Nav extends React.Component {
       userProfile: '',
       userName: '',
       dashboardLinks: { display: 'none' },
+      dashboardLinksIsOpen: false,
       countMouseEnter: 0,
-      dashboardDropDown: ['/Login', '/dashboard', '/TeamAdmin', '/OrganizationAdmin']
+      dashboardDropDown: [
+        '/Login',
+        '/dashboard',
+        '/TeamAdmin',
+        '/OrganizationAdmin'
+      ],
+      userProfileIconLinksIsOpen: false
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -32,8 +39,6 @@ class Nav extends React.Component {
       false
     );
   }
-
-
 
   handleClick() {
     const body = document.getElementsByTagName('body')[0];
@@ -55,7 +60,12 @@ class Nav extends React.Component {
     } else {
       this.setState({ signOutClass: 'sign-out-hide' });
     }
+    this.setState({userProfileIconLinksIsOpen:false})
   };
+
+  showLogOutOption = () => {
+    this.setState({ signOutClass: 'sign-out' });
+  }
 
   hideSignOut = (e) => {
     if (this.state.dashboardLinks.display === 'none') {
@@ -69,8 +79,23 @@ class Nav extends React.Component {
 
   hideLinks = (e) => {
     this.setState({
-      dashboardLinks: { display: 'none' }
+      dashboardLinks: { display: 'none' },
+      dashboardLinksIsOpen: false
     });
+  };
+
+  StopHiding = () => {
+    this.setState({ dashboardLinksIsOpen: true });
+  };
+
+  hideDashboardsLinkIfNotEnter = () => {
+    setTimeout(() => {
+      if (this.state.dashboardLinksIsOpen === false) {
+        this.setState({
+          dashboardLinks: { display: 'none' }
+        });
+      }
+    }, 100);
   };
 
   signOut = () => {
@@ -78,6 +103,18 @@ class Nav extends React.Component {
     this.setState({ signOutClass: 'sign-out-hide' });
     this.props.history.push('/Home');
   };
+
+  hideUserIconLinks = () => {
+    this.setState({userProfileIconLinksIsOpen:true})
+  };
+
+  hideUserIconLinksIfnotEnter = () => {
+    setTimeout(() => {
+      if (this.state.userProfileIconLinksIsOpen === false) {
+        this.setState({ signOutClass: 'sign-out-hide' });
+        }
+    },100)
+  }
 
   mobileNav = () => {
     return (
@@ -129,6 +166,7 @@ class Nav extends React.Component {
   dashboardDropDownList = () => {
     return (
       <div
+        onMouseEnter={this.StopHiding}
         onMouseLeave={this.hideLinks}
         style={this.state.dashboardLinks}
         className="dashboard-links"
@@ -163,48 +201,35 @@ class Nav extends React.Component {
           <Link className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              LineUnderLink.linkeMaker('/About')
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/About')} />
         </li>
         <li className="nav-item make-active active">
           <Link className="nav-link" to={'/Sports'}>
             Sports <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              LineUnderLink.linkeMaker('/Sports')
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Sports')} />
         </li>
 
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
             Contact
           </Link>
-          <div
-            className={
-              LineUnderLink.linkeMaker('/Contact')
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Contact')} />
         </li>
 
         {this.props.location.pathname !== '/SignUp' ? (
           <li
             onMouseEnter={this.hideSignOut}
+            onMouseLeave={this.hideDashboardsLinkIfNotEnter}
             className="nav-item dashboard-hover make-active active"
           >
             <Link className="nav-link" to={'/Login'}>
               Dashboard <span className="sr-only">(current)</span>
             </Link>
             <div
-              className={
-                this.state.dashboardDropDownList.forEach(element => {
-                  LineUnderLink.linkeMaker(element)
-                })
-              }
+              className={this.state.dashboardDropDown.forEach((element) => {
+                LineUnderLink.linkeMaker(element);
+              })}
             />
             {this.dashboardDropDownList()}
           </li>
@@ -213,19 +238,20 @@ class Nav extends React.Component {
             <Link className="nav-link" to={'/SignUp'}>
               Sign up
             </Link>
-            <div
-              className={
-                LineUnderLink.linkeMaker('/SignUp')
-              }
-            />
+            <div className={LineUnderLink.linkeMaker('/SignUp')} />
           </li>
         )}
         <li className=" nav-item profile-nav-icon">
-          <div onMouseEnter={this.showLogOut} className="name">
+          <div
+            onMouseEnter={this.showLogOutOption}
+            onMouseLeave={this.hideUserIconLinksIfnotEnter}
+            className="name"
+          >
             R K
           </div>
 
           <div
+            onMouseEnter={this.hideUserIconLinks}
             onMouseLeave={this.showLogOut}
             ref="signOut"
             className={`${this.state.signOutClass}`}
@@ -234,11 +260,7 @@ class Nav extends React.Component {
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
               </Link>
-              <div
-                className={
-                  LineUnderLink.linkeMaker('/Profile')
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/Profile')} />
             </div>
             <Link to="">
               <img
@@ -328,29 +350,17 @@ class Nav extends React.Component {
           <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
             Home <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              LineUnderLink.linkeMaker('/Home')
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Home')} />
           <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              LineUnderLink.linkeMaker('/About')
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/About')} />
           {this.props.isLoggedIn === true ? (
             <React.Fragment>
               <Link className="nav-link" to={'/Sports'}>
                 Sports <span className="sr-only">(current)</span>
               </Link>
-              <div
-                className={
-                  LineUnderLink.linkeMaker('/Sports')
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/Sports')} />
 
               <Link
                 onClick={this.handleClick}
@@ -359,11 +369,7 @@ class Nav extends React.Component {
               >
                 Profile <span className="sr-only">(current)</span>
               </Link>
-              <div
-                className={
-                  LineUnderLink.linkeMaker('/Profile')
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/Profile')} />
             </React.Fragment>
           ) : (
             ''
@@ -372,11 +378,7 @@ class Nav extends React.Component {
           <Link onClick={this.handleClick} className="nav-link" to={'/Contact'}>
             Contact
           </Link>
-          <div
-            className={
-              LineUnderLink.linkeMaker('/Contact')
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Contact')} />
           {this.props.location.pathname !== '/SignUp' ? (
             <React.Fragment>
               <div className="nav-link mobie-dashboard-hover" to={'/Login'}>
@@ -397,11 +399,7 @@ class Nav extends React.Component {
                   ''
                 )} */}
               </div>
-              <div
-                className={
-                  LineUnderLink.linkeMaker('/Login')
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/Login')} />
             </React.Fragment>
           ) : (
             <React.Fragment>
@@ -412,11 +410,7 @@ class Nav extends React.Component {
               >
                 Sign up
               </Link>
-              <div
-                className={
-                  LineUnderLink.linkeMaker('/SignUp')
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/SignUp')} />
             </React.Fragment>
           )}
         </nav>

@@ -4,8 +4,23 @@ import WeeklyBtn from '../Buttons/WeeklyBtn';
 import ExportReportBtn from '../Buttons/ExportReportBtn';
 import MonthlyBtn from '../Buttons/MonthlyBtn';
 import { getStatusOfDarkmode } from '../../reducer';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { subYears } from 'date-fns';
 
 class PlayerDetails extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      startDate:''
+    }
+    this.handleDateChange = this.handleDateChange.bind(this);
+  }
+
+  handleDateChange = (date) => {
+  this.setState({startDate:date})
+  }
+
   changeHeadingColor = () => {
     if (getStatusOfDarkmode().status === true) {
       this.refs.h1.style.color = '#fff';
@@ -41,7 +56,17 @@ class PlayerDetails extends React.Component {
             <span>
               <img src="/img/icon/backword.svg" alt="" />
             </span>
-            <span ref="h1">5 August 2019 -11 August 2019</span>
+            <span ref="h1"><DatePicker
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+            className="form-control"
+            name="dob"
+            selected={this.state.startDate}
+            onChange={this.handleDateChange}
+            maxDate={subYears(new Date(), 10)}
+            placeholderText="Birthdate"
+          /></span>
             <span>
               <img src="/img/icon/farword.svg" alt="" />
             </span>
