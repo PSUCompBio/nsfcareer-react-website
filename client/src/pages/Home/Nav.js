@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import store from '../../Store';
-import { resetSignedInSucceeded, userDetails } from '../../Actions';
+import { resetSignedInSucceeded } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Redirect } from 'react-router-dom';
 
 class Nav extends React.Component {
   constructor() {
@@ -311,7 +310,6 @@ class Nav extends React.Component {
 
   render() {
     const localStore = JSON.parse(localStorage.getItem('state'));
-
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
