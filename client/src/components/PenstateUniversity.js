@@ -10,6 +10,14 @@ class PenstateUniversity extends React.Component {
     };
   }
 
+  organizationType = () => {
+    if (this.props.location.pathname === '/OrganizationAdmin') {
+      return 'Team';
+    } else if (this.props.location.pathname === '/TeamAdmin') {
+      return 'Impact'
+    }
+  }
+
   impactLoadAlertsValue = () => {
     if (this.props.location.pathname === '/TeamAdmin') {
       this.setState({ circleValues: [2, 6, 8] });
@@ -54,7 +62,7 @@ class PenstateUniversity extends React.Component {
             <div className="team-view-counter mb-2 ">
               <p>{this.state.circleValues[0]}</p>
             </div>
-            <p ref="h1">Impacts</p>
+            <p ref="h1">{this.organizationType()}</p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">
             <div className="team-view-counter mb-2 ">

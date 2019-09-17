@@ -12,28 +12,31 @@ class PlayerDetails extends React.Component {
   constructor() {
     super();
     this.state = {
-      startDate1: new Date(),
-      startDate2: new Date()
-
+      startDate: new Date(),
+      endDate: new Date()
     };
     this.handleDateChange1 = this.handleDateChange1.bind(this);
     this.handleDateChange2 = this.handleDateChange2.bind(this);
-
   }
 
   handleDateChange1 = (date) => {
-    this.setState({ startDate1: date });
+    this.setState({ startDate: date });
   };
 
   handleDateChange2 = (date) => {
-    this.setState({ startDate2: date });
+    this.setState({ endDate: date });
   };
-
 
   changeHeadingColor = () => {
     if (getStatusOfDarkmode().status === true) {
       this.refs.h1.style.color = '#fff';
     }
+  };
+
+  decrementDate = () => {
+    let startDate = this.state.startDate;
+    startDate = String(startDate).split(' ');
+    console.log(startDate)
   };
 
   componentDidMount() {
@@ -63,33 +66,37 @@ class PlayerDetails extends React.Component {
           </div>
           <div className="mt-4 text-left control">
             <span>
-              <img src="/img/icon/backword.svg" alt="" />
+              <img
+                onClick={this.decrementDate}
+                src="/img/icon/backword.svg"
+                alt=""
+              />
             </span>
             <span ref="h1">
               <div className="d-flex">
-              <DatePicker
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                className="form-control fromTodate"
-                name="dob"
-                dateFormat="d MMMM yyyy"
-                selected={this.state.startDate1}
-                onChange={this.handleDateChange1}
-                placeholderText="From"
-              />
-             
-              <DatePicker
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                className="form-control fromTodate borderRight__fromTodate"
-                name="dob"
-                dateFormat="d MMMM yyyy"
-                selected={this.state.startDate2}
-                onChange={this.handleDateChange2}
-                placeholderText="To"
-              />
+                <DatePicker
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  className="form-control fromTodate"
+                  name="dob"
+                  dateFormat="d MMMM yyyy"
+                  selected={this.state.startDate}
+                  onChange={this.handleDateChange1}
+                  placeholderText="From"
+                />
+
+                <DatePicker
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  className="form-control fromTodate borderRight__fromTodate"
+                  name="dob"
+                  dateFormat="d MMMM yyyy"
+                  selected={this.state.endDate}
+                  onChange={this.handleDateChange2}
+                  placeholderText="To"
+                />
               </div>
             </span>
             <span>
