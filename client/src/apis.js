@@ -1,4 +1,3 @@
-import {ENDPOINT} from './config/constants'
 import axios from 'axios';
 
 
@@ -107,6 +106,7 @@ export const disableUser = (request) =>{
       });
   })
 }
+
 export const uploadProfilePic = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/uploadProfilePic`, request,{withCredentials: true})
@@ -118,6 +118,19 @@ export const uploadProfilePic = (request) =>{
       });
   })
 }
+
+export const uploadSensorDataAndCompute = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/uploadSensorDataAndCompute`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getUserDetails = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getUserDetails`, {},{withCredentials: true})
