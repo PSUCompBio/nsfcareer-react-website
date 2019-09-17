@@ -12,14 +12,23 @@ class PlayerDetails extends React.Component {
   constructor() {
     super();
     this.state = {
-      startDate:''
-    }
-    this.handleDateChange = this.handleDateChange.bind(this);
+      startDate1: new Date(),
+      startDate2: new Date()
+
+    };
+    this.handleDateChange1 = this.handleDateChange1.bind(this);
+    this.handleDateChange2 = this.handleDateChange2.bind(this);
+
   }
 
-  handleDateChange = (date) => {
-  this.setState({startDate:date})
-  }
+  handleDateChange1 = (date) => {
+    this.setState({ startDate1: date });
+  };
+
+  handleDateChange2 = (date) => {
+    this.setState({ startDate2: date });
+  };
+
 
   changeHeadingColor = () => {
     if (getStatusOfDarkmode().status === true) {
@@ -56,17 +65,33 @@ class PlayerDetails extends React.Component {
             <span>
               <img src="/img/icon/backword.svg" alt="" />
             </span>
-            <span ref="h1"><DatePicker
-            showMonthDropdown
-            showYearDropdown
-            dropdownMode="select"
-            className="form-control"
-            name="dob"
-            selected={this.state.startDate}
-            onChange={this.handleDateChange}
-            maxDate={subYears(new Date(), 10)}
-            placeholderText="Birthdate"
-          /></span>
+            <span ref="h1">
+              <div className="d-flex">
+              <DatePicker
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                className="form-control fromTodate"
+                name="dob"
+                dateFormat="d MMMM yyyy"
+                selected={this.state.startDate1}
+                onChange={this.handleDateChange1}
+                placeholderText="From"
+              />
+             
+              <DatePicker
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                className="form-control fromTodate borderRight__fromTodate"
+                name="dob"
+                dateFormat="d MMMM yyyy"
+                selected={this.state.startDate2}
+                onChange={this.handleDateChange2}
+                placeholderText="To"
+              />
+              </div>
+            </span>
             <span>
               <img src="/img/icon/farword.svg" alt="" />
             </span>

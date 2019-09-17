@@ -353,6 +353,13 @@ input.team-edit-input{
   padding-top: 5.7%;
 }
 
+input.fromTodate{
+  border-bottom: none!important;
+}
+input.borderRight__fromTodate{
+  border-right: 1px solid #0f81dc;
+}
+
 
 @media screen and (max-width: 599px) {
   .head-acc-evnt-chart::after {
