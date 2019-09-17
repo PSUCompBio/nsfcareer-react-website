@@ -1,5 +1,6 @@
 import React from 'react';
 import './Profile.css';
+import { Redirect } from 'react-router-dom';
 import {
   uploadProfilePic,
   getUserDetails,
@@ -440,10 +441,16 @@ class Profile extends React.Component {
   };
 
   returnComponent = () => {
+
     console.log(this.state);
-    if (Object.entries(this.state.user).length === 0) {
+    if (!this.state.isAuthenticated && !this.state.isCheckingAuth){
+        
+        return <Redirect to="/Login"/>
+    }
+    else if (Object.entries(this.state.user).length === 0) {
       return <Spinner />;
     }
+
     return this.showProfile();
   };
 

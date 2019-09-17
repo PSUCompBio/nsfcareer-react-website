@@ -82,6 +82,27 @@ var upload = multer({
     // }
 });
 
+var uploadSensorData = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        //var ext = path.extname(file.originalname);
+        console.log("This is filename ------> \n",file.originalname);
+
+        let csv = new RegExp(".csv").test(file.originalname);
+        let csv_upper = new RegExp(".CSV").test(file.originalname);
+        let excel = new RegExp(".xlsx").test(file.originalname);
+        let excelx = new RegExp(".xls").test(file.originalname);
+        if (!csv && !csv_upper && !excel && !excelx) {
+            // res.send({message : "FAILURE"});
+            req.body["file_error"] = "Only .csv , .xlsx file is allowed"
+        }
+        callback(null, true)
+    }
+    // limits:{
+    //     fileSize: 1024 * 1024
+    // }
+});
+
 // AWS S3 & Other Controllers Configuration
 const awsWorker = require('./controllers/aws.controller.js');
 
@@ -1601,6 +1622,48 @@ var deleteDirectory = function (path, callback) {
         });
     });
 };
+// Uploading the Sensor Data (CSV) file
+app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
+    // Upload this data in Profile Bucket of USER
+    console.log("API Called to upload to upload Sensor Data")
+    var file_name = Date.now();
+
+    var uploadParams = {
+        Bucket: config.usersbucket,
+        Key: '', // pass key
+        Body: null, // pass file body
+    };
+
+    // File Extensions
+    var file_extension = req.file.originalname.split(".");
+    file_extension = file_extension[file_extension.length - 1];
+
+    // Setting Attributes for file upload on S3
+    uploadParams.Key = req.user_cognito_id + "/sensor_data/" + file_name + "." + file_extension;
+    uploadParams.Body = req.file.buffer;
+
+    if (req.body.file_error) {
+        console.log(req.body.file_error);
+        res.status(500).send({
+            message: "failure",
+            status: "Invalid File type"
+        });
+    }
+    else{
+        // Uploading it on S3
+        s3.upload(uploadParams, (err, data) => {
+            if (err) {
+
+                res.status(500).send({ message: 'failure' });
+            }
+            else{
+                res.send({
+                    message : 'success'
+                })
+            }
+        })
+    }
+})
 
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {
