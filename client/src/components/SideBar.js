@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 class SideBar extends React.Component {
   constructor() {
@@ -31,7 +32,7 @@ class SideBar extends React.Component {
               <li>Roster 5</li>
             </ul>
           </li>
-          <li>York Tech Football</li>
+          <li> <Link to="/TeamAdmin">  York Tech Football </Link></li>
         </ul>
       </div>
     );

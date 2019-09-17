@@ -414,8 +414,14 @@ input.borderRight__fromTodate{
 }
 
 .list-one  >li{
-  padding:5px 5px 5px 5px;
+  padding: 5px;
+}
+
+.list-one  >li a{
   color: #fff;
+  text-decoration: none;
+  padding:5px 0 5px 0;
+
 }
 .list-two > li{
   padding:5px 5px 5px 5px;
