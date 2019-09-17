@@ -17,6 +17,7 @@
 }
 .dashboard {
   font-family: 'Segoe UI Regular';
+  margin-top: 10%;
 }
 .control {
   padding-left: 15%;
@@ -96,6 +97,10 @@
   white-space: pre;
   padding: 0 10px 0 10px;
 }
+
+select.select-gender{
+color: #9e9e9e;
+}
 .cumm {
   margin-top: 6%;
 }
@@ -142,7 +147,7 @@
   cursor: pointer;
   background: #fff;
 }
-.dark-mode-container:hover   {
+.dark-mode-container:hover {
   right: -5px;
 }
 .dark-mode-container img {
@@ -201,22 +206,140 @@
   right: -12px;
   transform: translate(-50%, -50%);
 }
-.dashboard-mock{
+.dashboard-mock {
   border-radius: 10px;
   height: 405px;
   overflow-y: auto;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
 }
-.dashboard-mock::-webkit-scrollbar{
+.dashboard-mock::-webkit-scrollbar {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   background-color: #0f81dc;
 }
-.dashboard-mock::-webkit-scrollbar-thumb{
+.dashboard-mock::-webkit-scrollbar-thumb {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   background-color: rgb(142, 210, 255);
-  box-shadow: -3px 0 10px rgba(0,0,0,0.12);
+  box-shadow: -3px 0 10px rgba(0, 0, 0, 0.12);
+}
+
+.edit-team-btn {
+  background: #0f81dc;
+  padding: 5px 20px 5px 20px;
+  color: #fff;
+  border: none;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+.edit-teams {
+  background: rgba(0, 0, 0, 0.06);
+  position: relative;
+  margin: 5px;
+  border-radius: 10px;
+}
+.delete__icon {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  cursor: pointer;
+}
+.modal__wrapper {
+  position: fixed;
+  z-index: 1;
+  height: 100vh;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #205b912e;
+}
+div.modal_form{
+  height: 400px !important;
+  margin-top: -200px!important;
+}
+
+.edit-your-team{
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #fff;
+  margin-bottom: 10px!important;
+}
+
+input.team-edit-input{
+  background-color: transparent!important;
+}
+
+
+.modal__show {
+  position: fixed;
+  color: #fff;
+  text-align: center;
+  width: 50%;
+  height: 200px;
+  top: 50%;
+  margin-top: -100px !important;
+  background-color: #0f81dc;
+  animation: fadeIn 1s, slideIn 0.8s linear;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px #999;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-flow: column;
+}
+.action_buttons button {
+  border: 1px solid #0f81dc;
+  background: #fff;
+  color: #0f81dc;
+  padding: 5px 20px 5px 20px;
+  border-radius: 10px;
+  margin: 10px;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(400px);
+    animation-timing-function: ease-out;
+  }
+  60% {
+    transform: translateY(-30px);
+    animation-timing-function: ease-in;
+  }
+  80% {
+    transform: translateY(10px);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: translateY(0px);
+    animation-timing-function: ease-in;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hover_edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: aliceblue;
+}
+.pen_icon {
+  width: 50%;
+  /* position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translate(-50%, -50%) */
 }
 
 @media screen and (max-width: 599px) {
@@ -246,10 +369,9 @@
     overflow-x: hidden;
   }
 
-  .dashboard-mock::before{
+  .dashboard-mock::before {
     content: 'Please tap to close';
     color: #fff;
     font-size: 12px;
   }
-
 }

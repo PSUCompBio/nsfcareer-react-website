@@ -47,6 +47,7 @@ class Login extends React.Component {
     });
     // converting formData to JSON
     const formJsonData = formDataToJson(formData);
+    console.log(formJsonData)
     if (this.state.tempPasswordRequired) {
       // call API of first Time Login with Temporary Password
       logInFirstTime(formJsonData)
@@ -86,7 +87,6 @@ class Login extends React.Component {
               });
             }
             store.dispatch(setIsSignedInSucceeded());
-
           } else {
             this.setState({
               isLoginError: true,
@@ -106,74 +106,59 @@ class Login extends React.Component {
   }
 
   render() {
+    console.log(this.state);
     return (
       <React.Fragment>
-        <div className="container pl-0 pr-0 overflow-hidden">
-          {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
-          <div className="row login">
-            <div className="col-md-12  mb-5">
-              <div className="text-center">
-                <p className="top-heading__login">
-                  The Dashboard gives users and administers a cumulative
-                  overview, as well as an in-depth analysis on each head
-                  acceleration event.
-                </p>
-              </div>
-            </div>
-
-            <div className="col-md-6 mb-5 p-3">
-              <div id="dashboard-view" className="text-right dashboard-mock">
-                <div className="text-center dashboard-example">
-                  Dashboard Example
+        <div className="dynamic__height">
+          <div className="container pl-0 pr-0 overflow-hidden">
+            {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
+            <div className="row login">
+              <div className="col-md-12  mb-5">
+                <div className="text-center">
+                  <p className="top-heading__login">
+                    The Dashboard gives users and administrators a cumulative
+                    overview, as well as an in-depth analysis on each head
+                    acceleration event.
+                  </p>
                 </div>
-                <img
-                  className="img-fluid"
-                  src="/img/dashboardMock.png"
-                  alt=""
-                />
               </div>
-            </div>
 
-            <div className="col-md-6 mb-5 p-3">
-              <div className="card card-border">
-                <div className="card-body">
-                  <div className="text-center brain-icon">
-                    <img src="img/icon/brain.png" alt="" />
+              <div className="col-md-6 mb-5 p-3">
+                <div id="dashboard-view" className="text-right dashboard-mock">
+                  <div className="text-center dashboard-example">
+                    Dashboard Example
                   </div>
+                  <img
+                    className="img-fluid"
+                    src="/img/dashboardMock.png"
+                    alt=""
+                  />
+                </div>
+              </div>
 
-                  <form onSubmit={this.handleSubmit} ref="signInForm">
-                    <div className="input-group mt-3 mb-5">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1">
-                          <img src="img/icon/user.svg" alt="" />
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="user_name"
-                        placeholder="Username"
-                        aria-label="Username"
-                        aria-describedby="basic-addon1"
-                      />
-                    </div>
-                    <div className="input-group mb-1">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1">
-                          <img src="img/icon/lock.svg" alt="" />
-                        </span>
-                      </div>
-                      <input
-                        type="password"
-                        className="form-control"
-                        name="password"
-                        placeholder="Password"
-                        aria-label="Password"
-                        aria-describedby="basic-addon1"
-                      />
+              <div className="col-md-6 mb-5 p-3">
+                <div className="card card-border">
+                  <div className="card-body">
+                    <div className="text-center brain-icon">
+                      <img src="img/icon/brain.png" alt="" />
                     </div>
 
-                    {this.state.tempPasswordRequired ? (
+                    <form onSubmit={this.handleSubmit} ref="signInForm">
+                      <div className="input-group mt-3 mb-5">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text" id="basic-addon1">
+                            <img src="img/icon/user.svg" alt="" />
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="user_name"
+                          placeholder="Username"
+                          aria-label="Username"
+                          aria-describedby="basic-addon1"
+                        />
+                      </div>
                       <div className="input-group mb-1">
                         <div className="input-group-prepend">
                           <span className="input-group-text" id="basic-addon1">
@@ -183,80 +168,99 @@ class Login extends React.Component {
                         <input
                           type="password"
                           className="form-control"
-                          name="new_password"
-                          placeholder="New Password (Min. 8 digit password)"
+                          name="password"
+                          placeholder="Password"
                           aria-label="Password"
                           aria-describedby="basic-addon1"
                         />
                       </div>
-                    ) : null}
 
-                    <div>
-                      <Link
-                        to="/Forgot-Password"
-                        className="float-right forgot-pswd"
-                      >
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary log-in-btn btn-block mt-5"
-                    >
-                      LOG IN
-                    </button>
-                  </form>
-                  {this.state.isLoading ? (
-                    <div className="d-flex justify-content-center center-spinner">
-                      <div
-                        className="spinner-border text-primary"
-                        role="status"
-                      >
-                        <span className="sr-only">Loading...</span>
+                      {this.state.tempPasswordRequired ? (
+                        <div className="input-group mb-1">
+                          <div className="input-group-prepend">
+                            <span
+                              className="input-group-text"
+                              id="basic-addon1"
+                            >
+                              <img src="img/icon/lock.svg" alt="" />
+                            </span>
+                          </div>
+                          <input
+                            type="password"
+                            className="form-control"
+                            name="new_password"
+                            placeholder="New Password (Min. 8 digit password)"
+                            aria-label="Password"
+                            aria-describedby="basic-addon1"
+                          />
+                        </div>
+                      ) : null}
+
+                      <div>
+                        <Link
+                          to="/Forgot-Password"
+                          className="float-right forgot-pswd"
+                        >
+                          Forgot password?
+                        </Link>
                       </div>
-                    </div>
-                  ) : null}
-                  {this.state.isLoginError ? (
-                    <div
-                      className="alert alert-info api-response-alert"
-                      role="alert"
-                    >
-                      <strong>Failed! </strong> {this.state.loginError}.
-                    </div>
-                  ) : null}
-                  <div className="text-center">
-                    <p className="mt-4 sign-up-link">
-                      Don't have an account?{' '}
-                      <Link className="sign-up" to="SignUp">
-                        {' '}
-                        Sign Up{' '}
-                      </Link>
-                    </p>
-                  </div>
-
-                  <div className="option-or">
-                    <div className="or-img text-center">
-                      <img src="/img/icon/or.png" className="" alt="" />
-                    </div>
+                      <button
+                        type="submit"
+                        className="btn btn-primary log-in-btn btn-block mt-5"
+                      >
+                        LOG IN
+                      </button>
+                    </form>
+                    {this.state.isLoading ? (
+                      <div className="d-flex justify-content-center center-spinner">
+                        <div
+                          className="spinner-border text-primary"
+                          role="status"
+                        >
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      </div>
+                    ) : null}
+                    {this.state.isLoginError ? (
+                      <div
+                        className="alert alert-info api-response-alert"
+                        role="alert"
+                      >
+                        <strong>Failed! </strong> {this.state.loginError}.
+                      </div>
+                    ) : null}
                     <div className="text-center">
-                      <p className="sign-up-link">
-                        Are you an administrator including coach, parent,
-                        trainer, or military unit leader?{' '}
-                        <br/>
+                      <p className="mt-4 sign-up-link">
+                        Don't have an account?{' '}
                         <Link className="sign-up" to="SignUp">
                           {' '}
-                          Sign Up for Someone Else.
+                          Sign Up{' '}
                         </Link>
-                        {' '}
                       </p>
+                    </div>
+
+                    <div className="option-or">
+                      <div className="or-img text-center">
+                        <img src="/img/icon/or.png" className="" alt="" />
+                      </div>
+                      <div className="text-center">
+                        <p className="sign-up-link">
+                          Are you an administrator including coach, parent,
+                          trainer, or military unit leader? <br />
+                          <Link className="sign-up" to="SignUpElse">
+                            {' '}
+                            Sign Up for Someone Else.
+                          </Link>{' '}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
       </React.Fragment>
     );
   }

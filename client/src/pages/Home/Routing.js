@@ -125,6 +125,7 @@ class Routing extends React.Component {
           render={() => <Profile isDarkModeSet={this.checkDarkMode} />}
         />
         <Route exact path="/SignUp" component={SignUp} />
+        <Route exact path="/SignUpElse" component={SignUp} />
         <Route
           exact
           path="/dashboard"
