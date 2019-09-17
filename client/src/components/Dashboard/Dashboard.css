@@ -367,7 +367,7 @@ input.borderRight__fromTodate{
 .military-sidebar{
   height: 100vh;
   width: 15%;
-  background: #0f81dc;
+  background:linear-gradient(-30deg, rgb(8, 64, 97), rgb(47, 114, 223));
 }
 .military-main-content{
   width: 85%;
@@ -398,7 +398,7 @@ input.borderRight__fromTodate{
 .slidebar-nav h5{
   font-size: 30px;
   font-weight: 900;
-  background: #232838;
+  background: #003a69;
   line-height: 50px;
   color: #fff;
 }
@@ -410,6 +410,7 @@ input.borderRight__fromTodate{
   background: none;
   padding:5px 0 5px 0;
   color: #fff;
+  border-bottom: 1px solid #fff;
 }
 
 .list-one  >li{

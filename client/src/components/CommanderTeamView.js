@@ -4,6 +4,8 @@ import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
 import CommanderDataTable from './CommanderDataTable';
+import SideBar from './SideBar';
+
 
 class CommanderTeamView extends React.Component {
   constructor() {
@@ -57,7 +59,7 @@ class CommanderTeamView extends React.Component {
       <React.Fragment>
         <div className="militay-view">
           <div className="military-sidebar">
-            
+            <SideBar/>
           </div>
           <div className="military-main-content">
             <div ref="rosterContainer" className="container t-roster pt-5 mt-5">

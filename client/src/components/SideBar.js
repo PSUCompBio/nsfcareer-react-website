@@ -22,7 +22,7 @@ class SideBar extends React.Component {
         <h5>Teams</h5>
         <ul className="list-one">
           <li onClick={this.showSubList}>
-            Current Roster
+            Current Roster <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
             <ul style={this.state.isSubListOpen} className="list-two">
               <li>Roster 1</li>
               <li>Roster 2</li>
