@@ -2,11 +2,10 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
-import DashboardDropdownSelector from './DashboardDropdownSelector';
 import { getStatusOfDarkmode } from '../reducer';
 import { withRouter } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
-
+import SideBar from './SideBar';
 
 class OrganizationAdmin extends React.Component {
   constructor() {
@@ -24,7 +23,7 @@ class OrganizationAdmin extends React.Component {
       showEditPen: { display: 'none' },
       toShowEditPen: '',
       showEditForm: false,
-      teamFormData:{}
+      teamFormData: {}
     };
   }
   toggleTab = (value) => {
@@ -130,13 +129,15 @@ class OrganizationAdmin extends React.Component {
 
   hideTeamForm = () => {
     this.setState({ showEditForm: false });
-  }
+  };
 
   handleTeamEditSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
     const formData = formDataToJson(data);
-    this.setState({ teamFormData: formData },()=>console.log(this.state.teamFormData));
+    this.setState({ teamFormData: formData }, () =>
+      console.log(this.state.teamFormData)
+    );
   };
 
   teamForm = (fieldName, placeholder, name, labelFor) => {
@@ -160,14 +161,14 @@ class OrganizationAdmin extends React.Component {
     return (
       <div class="modal__wrapper ">
         <div class="modal__show modal_form">
-        <img
-          className="delete__icon"
-          onClick={this.hideTeamForm}
-          src="/img/icon/close.svg"
-          alt=""
-        />
+          <img
+            className="delete__icon"
+            onClick={this.hideTeamForm}
+            src="/img/icon/close.svg"
+            alt=""
+          />
           <p className="edit-your-team">Edit your team.</p>
-          <form  onSubmit={this.handleTeamEditSubmit}>
+          <form onSubmit={this.handleTeamEditSubmit}>
             {this.teamForm(
               'Team Name:',
               'Enter your team name',
@@ -290,106 +291,112 @@ class OrganizationAdmin extends React.Component {
   };
 
   render() {
-    console.log(this.props);
     return (
       <React.Fragment>
-        {this.state.wantDeleteTeam === true ? this.showModal() : ''}
-        {this.state.showEditForm === true ? this.showEditForm() : ''}
+        <div className="militay-view">
+          <div className="military-sidebar">
+            <SideBar/>
+          </div>
+          <div className="military-main-content">
+            {this.state.wantDeleteTeam === true ? this.showModal() : ''}
+            {this.state.showEditForm === true ? this.showEditForm() : ''}
 
-        <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
-          <PenstateUniversity />
-          <div className="row text-center">
-            <div className="col-md-9">
-              <DashboardDropdownSelector />
-              <div className="row">
-                <div
-                  ref="cardContainer"
-                  className="col-md-12 current-roster-card mb-5 mt-4 p-0"
-                >
-                  <div className="rostar-selector">
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="Overview"
-                    />
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="staff"
-                    />
-                  </div>
+            <div ref="rosterContainer" className="t-roster pt-5 mt-5">
+              <PenstateUniversity />
+              <div className="row text-center organization-pad__military">
+                <div className="col-md-9">
                   <div className="row">
-                    <div className="col-md-12 text-right">
-                      <button
-                        type="button"
-                        onClick={this.enableEditTeamOPtion}
-                        className="edit-team-btn"
-                      >
-                        Edit Teams
-                      </button>
-                      {this.state.editTeamClass === 'edit-teams' ? (
-                        <button
-                          type="button"
-                          onClick={this.disableEditTeamOPtion}
-                          className="edit-team-btn"
-                        >
-                          Done
-                        </button>
-                      ) : (
-                        ''
-                      )}
+                    <div
+                      ref="cardContainer"
+                      className="col-md-12 current-roster-card mb-5 mt-4 p-0"
+                    >
+                      <div className="rostar-selector">
+                        <RostarBtn
+                          tabActive={this.toggleTab}
+                          makeActive={this.state.tabActive}
+                          getBtn={this.getTargetBtn}
+                          currentBtn={this.state.targetBtn}
+                          content="Overview"
+                        />
+                        <RostarBtn
+                          tabActive={this.toggleTab}
+                          makeActive={this.state.tabActive}
+                          getBtn={this.getTargetBtn}
+                          currentBtn={this.state.targetBtn}
+                          content="staff"
+                        />
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12 text-right">
+                          <button
+                            type="button"
+                            onClick={this.enableEditTeamOPtion}
+                            className="edit-team-btn"
+                          >
+                            Edit Teams
+                          </button>
+                          {this.state.editTeamClass === 'edit-teams' ? (
+                            <button
+                              type="button"
+                              onClick={this.disableEditTeamOPtion}
+                              className="edit-team-btn"
+                            >
+                              Done
+                            </button>
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </div>
+                      <div className="football-container mt-4 d-flex flex-wrap">
+                        {this.iterateTeam()}
+                        <div className="tech-football m-3">
+                          <div className="addTeam text-center">
+                            <div onClick={this.addTeam} className="plus">
+                              +
+                            </div>
+                            <p>Add Team</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="football-container mt-4 d-flex flex-wrap">
-                    {this.iterateTeam()}
-                    <div className="tech-football m-3">
-                      <div className="addTeam text-center">
-                        <div onClick={this.addTeam} className="plus">
-                          +
-                        </div>
-                        <p>Add Team</p>
+                </div>
+                <div className="col-md-3 pt-5 mb-3">
+                  <div className="highest-load mb-5">
+                    <div ref="loadCardParent" className="card">
+                      <div ref="loadCard" className="load-heading">
+                        HIGHEST LOAD
+                      </div>
+                      <p ref="john1" className="mt-4 ">
+                        John Sylvester <span>- York Tech football</span>
+                      </p>
+                      <div className="load-count mt-3 mb-3">
+                        {this.state.highestLoadCount}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="most-impacts">
+                    <div ref="impactCardParent" className="card">
+                      <div ref="impactCard" className="impact-heading">
+                        MOST IMPACTS
+                      </div>
+                      <p ref="john2" className="mt-4">
+                        John Sylvester <span>- York Tech football</span>
+                      </p>
+                      <div className="impact-count mt-3 mb-3">
+                        {this.state.impactCount}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-md-3 pt-5 mb-3">
-              <div className="highest-load mb-5">
-                <div ref="loadCardParent" className="card">
-                  <div ref="loadCard" className="load-heading">
-                    HIGHEST LOAD
-                  </div>
-                  <p ref="john1" className="mt-4 ">
-                    John Sylvester <span>- York Tech football</span>
-                  </p>
-                  <div className="load-count mt-3 mb-3">
-                    {this.state.highestLoadCount}
-                  </div>
-                </div>
-              </div>
-
-              <div className="most-impacts">
-                <div ref="impactCardParent" className="card">
-                  <div ref="impactCard" className="impact-heading">
-                    MOST IMPACTS
-                  </div>
-                  <p ref="john2" className="mt-4">
-                    John Sylvester <span>- York Tech football</span>
-                  </p>
-                  <div className="impact-count mt-3 mb-3">
-                    {this.state.impactCount}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-        <Footer />
+
+        {/* <Footer /> */}
       </React.Fragment>
     );
   }

@@ -17,12 +17,6 @@ class Nav extends React.Component {
       dashboardLinks: { display: 'none' },
       dashboardLinksIsOpen: false,
       countMouseEnter: 0,
-      dashboardDropDown: [
-        '/Login',
-        '/dashboard',
-        '/TeamAdmin',
-        '/OrganizationAdmin'
-      ],
       userProfileIconLinksIsOpen: false
     };
     this.handleClick = this.handleClick.bind(this);
@@ -227,9 +221,10 @@ class Nav extends React.Component {
               Dashboard <span className="sr-only">(current)</span>
             </Link>
             <div
-              className={this.state.dashboardDropDown.forEach((element) => {
-                LineUnderLink.linkeMaker(element);
-              })}
+              className={
+                LineUnderLink.linkeMaker('/Login') || LineUnderLink.linkeMaker('/Dashboard')||
+                LineUnderLink.linkeMaker('/TeamAdmin')||LineUnderLink.linkeMaker('/OrganizationAdmin')
+              }
             />
             {this.dashboardDropDownList()}
           </li>

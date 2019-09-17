@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { getStatusOfDarkmode } from '../reducer';
+import DashboardDropdownSelector from './DashboardDropdownSelector';
 
 class PenstateUniversity extends React.Component {
   constructor() {
@@ -38,7 +39,7 @@ class PenstateUniversity extends React.Component {
 
   render() {
     return (
-      <div className="row">
+      <div className="row organization-pad__military">
         <div className="col-md-7">
           <p className="penstate">
             {this.props.location.pathname === '/OrganizationAdmin'
@@ -77,6 +78,11 @@ class PenstateUniversity extends React.Component {
             <p ref="h3">Alerts</p>
           </div>
         </div>
+        {this.props.location.pathname === '/OrganizationAdmin' ?
+          < DashboardDropdownSelector />
+          :
+          ''
+        }
       </div>
     );
   }

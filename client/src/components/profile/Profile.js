@@ -38,7 +38,8 @@ class Profile extends React.Component {
       disableInput: [true, true, true, true, true],
       inputs: ['email', 'age', 'sex', 'contact', 'organization'],
       isDarkMode: false,
-      mode: 'Dark mode'
+      mode: 'Dark mode',
+      militaryVersion: 'Military version'
     };
   }
   onChangeHandler = (event) => {
@@ -374,6 +375,25 @@ class Profile extends React.Component {
                       value={this.state.isDarkMode}
                       type="checkbox"
                       id="checkbox"
+                    />
+                    <div className="slider round"></div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-sm-7">
+                  <span ref="chooserColor" className="dark-mode">
+                    {this.state.militaryVersion}
+                  </span>
+                </div>
+                <div className="col-sm-5  position-relative pt-1">
+                  <label className="switch" htmlFor="militaryVersion">
+                    <input
+                      // onChange={this.darkMode}
+                      // value={this.state.isDarkMode}
+                      type="checkbox"
+                      id="militaryVersion"
                     />
                     <div className="slider round"></div>
                   </label>

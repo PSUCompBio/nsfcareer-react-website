@@ -359,6 +359,70 @@ input.fromTodate{
 input.borderRight__fromTodate{
   border-right: 1px solid #0f81dc;
 }
+.militay-view{
+  height: 100vh;
+  width:100%;
+  display: flex;
+}
+.military-sidebar{
+  height: 100vh;
+  width: 15%;
+  background: #0f81dc;
+}
+.military-main-content{
+  width: 85%;
+  height: 100vh;
+  overflow-y:scroll;
+  overflow-x: hidden;
+  /* padding: 0 5% 0 5%; */
+}
+
+.penstate-university-bg{
+  background: -moz-linear-gradient(300deg, rgba(112,158,186,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,1) 90%, rgba(0,0,0,1) 100%); /* ff3.6+ */
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(112,158,186,1)), color-stop(85%, rgba(0,0,0,1)), color-stop(90%, rgba(0,0,0,1)), color-stop(100%, rgba(0,0,0,1))); /* safari4+,chrome */
+  background: -webkit-linear-gradient(300deg, rgba(112,158,186,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,1) 90%, rgba(0,0,0,1) 100%); /* safari5.1+,chrome10+ */
+  background: -o-linear-gradient(300deg, rgba(112,158,186,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,1) 90%, rgba(0,0,0,1) 100%); /* opera 11.10+ */
+  background: -ms-linear-gradient(300deg, rgba(112,158,186,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,1) 90%, rgba(0,0,0,1) 100%); /* ie10+ */
+  background: linear-gradient(150deg, rgba(112,158,186,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,1) 90%, rgba(0,0,0,1) 100%); /* w3c */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#709EBA', endColorstr='#000000',GradientType=0 ); /* ie6-9 */
+}
+
+.organization-pad__military{
+  padding: 0 3% 0 3%;
+}
+
+.slidebar-nav{
+  margin-top: 10vh;
+  text-align: center;
+}
+.slidebar-nav h5{
+  font-size: 30px;
+  font-weight: 900;
+  background: #232838;
+  line-height: 50px;
+  color: #fff;
+}
+.slidebar-nav ul{
+  text-align: center;
+}
+
+.list-one  >li:nth-child(1){
+  background: none;
+  padding:5px 0 5px 0;
+  color: #fff;
+}
+
+.list-one  >li{
+  padding:5px 5px 5px 5px;
+  color: #fff;
+}
+.list-two > li{
+  padding:5px 5px 5px 5px;
+
+}
+
+
+
 
 
 @media screen and (max-width: 599px) {
