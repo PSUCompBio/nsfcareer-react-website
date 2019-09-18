@@ -3,16 +3,18 @@ import {
   DARK_THEME_INACTIVE,
   SIGNED_IN_SUCCEEDED,
   RESET_SIGNED_IN_SUCCEEDED,
-  USER_INFO
+  USER_INFO,
+  MILITARY_VERSION
 } from './ActionType';
 
 const initialState = {
   darkThemeActive: false,
   isSignedInSuccess: false,
+  militaryVersion: false
 };
 
 let darkTheme = {
-  status: false,
+  status: false
 };
 
 export function darkThemeController(state = initialState, action) {
@@ -34,10 +36,12 @@ export function darkThemeController(state = initialState, action) {
       });
     case RESET_SIGNED_IN_SUCCEEDED:
       return Object.assign({}, state, {
-        isSignedInSuccess:action.payload
-      })
+        isSignedInSuccess: action.payload
+      });
     case USER_INFO:
-      return Object.assign({},state, {userInfo:action.payload})
+      return Object.assign({}, state, { userInfo: action.payload });
+    case MILITARY_VERSION:
+      return Object.assign({}, state, { militaryVersion: action.payload });
 
     default:
       return state;

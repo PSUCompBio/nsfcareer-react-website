@@ -18,7 +18,8 @@ import store from '../../Store';
 import {
   darkThemeActiveSetter,
   darkThemeInactiveSetter,
-  resetSignedInSucceeded
+  resetSignedInSucceeded,
+  militaryVersion
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
@@ -40,7 +41,8 @@ class Profile extends React.Component {
       inputs: ['email', 'age', 'sex', 'contact', 'organization'],
       isDarkMode: false,
       mode: 'Dark mode',
-      militaryVersion: 'Military version'
+      militaryVersion: 'Military version',
+      militaryStatus: false
     };
   }
   onChangeHandler = (event) => {
@@ -228,6 +230,18 @@ class Profile extends React.Component {
     );
   };
 
+  militaryVersionHandler = () => {
+    if (this.state.militaryStatus === false) {
+      this.setState({ militaryStatus: true }, () => {
+        store.dispatch(militaryVersion(true));
+      });
+    } else {
+      this.setState({ militaryStatus: false }, () => {
+        store.dispatch(militaryVersion(false));
+      });
+    }
+  };
+
   showProfile = () => {
     return (
       <React.Fragment>
@@ -391,8 +405,8 @@ class Profile extends React.Component {
                 <div className="col-sm-5  position-relative pt-1">
                   <label className="switch" htmlFor="militaryVersion">
                     <input
-                      // onChange={this.darkMode}
-                      // value={this.state.isDarkMode}
+                      onChange={this.militaryVersionHandler}
+                      value={this.state.militaryStatus}
                       type="checkbox"
                       id="militaryVersion"
                     />
