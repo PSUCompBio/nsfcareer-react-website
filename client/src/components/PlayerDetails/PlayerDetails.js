@@ -83,57 +83,9 @@ class PlayerDetails extends React.Component {
                     </span>
                 </div>
             </div>
-            <div className="col-md-6">
-                <div >
-
-                    <input
-                        onChange={this.onChangeHandler}
-                        type="file"
-                        className="btn mt-5 upload-btn"
-                        name="sensor_csv_file"
-                        /> {' '}
-                        <button
-                            type="button"
-                            onClick={this.onClickHandler}
-                            className="btn mt-5 upload-btn"
-                            >
-                            <i class="fa fa-cloud-upload"></i>
-                        </button>
-                        {
-                            this.state.isUploading ?
-                            <div className="d-flex justify-content-center center-spinner">
-                                <div className="spinner-border text-primary" role="status" >
-                                </div>
-                            </div>:null
-                        }
-                        {
-                            this.state.isFileUploaded ?
-                            <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible fade show" role="alert">
-                                Successfully uploaded the CSV/ XLSX file
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-
-                            :null
-                        }
-                        {
-                            this.state.fileUploadError ?
-                            <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible api-response-alert fade show" role="alert">
-                                Failed to upload CSV/ XLSX file
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                                :null
-                            }
-
-                        </div>
-
-                    </div>
-                </div>
-            );
-        }
+            </div>
+        );
     }
+}
 
-    export default PlayerDetails;
+export default PlayerDetails;

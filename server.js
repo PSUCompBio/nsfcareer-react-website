@@ -17,7 +17,10 @@ app = express(),
     global.fetch = require('node-fetch'),
     config_env = require("./config/configuration_keys"),
     ms = require("ms"),
-    multer = require('multer');
+    multer = require('multer'),
+    XLSX = require('xlsx'),
+    request = require('request'),
+    moment = require('moment');
 
 // ================================================
 //            SERVER CONFIGURATION
@@ -591,6 +594,102 @@ function addUserToGroup(event, callback) {
         }
     });
 }
+function parseDate(date, arg, timezone) {
+	// var result = 0, arr = arg.split(':')
+	console.log(arg);
+    arg = arg.replace(".",":");
+    var t = arg.split(":");
+    var milliseconds ;
+    var time_type ;
+    milliseconds = t[3].split(" ")[0];
+    // x stores parsed time format
+    var x = "";
+    if(t[3].indexOf('P') > -1){
+        x = `${t[0]}:${t[1]}:${t[2]} ${t[3].split(" ")[1]}`
+    }
+    return moment.utc(date  + " , " +   x , 'MM/DD/YYYY , hh:mm:ss a', true).milliseconds(Number(milliseconds)).valueOf();
+}
+
+
+function convertXLSXDataToJSON(buf,cb){
+    // york_data.xlsx
+
+    var wb = XLSX.read(buf, {type:'buffer'});
+    var sheet_name_list = wb.SheetNames;
+    sheet_name_list.forEach(function(y) {
+        var worksheet = wb.Sheets[y];
+        var headers = {};
+        var data = [];
+        for(z in worksheet) {
+            if(z[0] === '!') continue;
+            //parse out the column, row, and value
+            var col = z.substring(0,1);
+            var row = parseInt(z.substring(1));
+            var value = worksheet[z].v;
+
+            //store header names
+            if(row == 1) {
+
+                if(value == "Athlete"){
+                    value = "player_id"
+                }
+                 headers[col] = value
+                                .split(" ")
+                                .join("_")
+                                .replace(/[{()}]/g, '')
+                                .toLowerCase();
+                continue;
+            }
+
+            if(!data[row]) data[row]={};
+
+            data[row][headers[col]] = value;
+
+
+
+        }
+        //drop those first two rows which are empty
+        data.shift();
+        data.shift();
+        var data_array = data.filter(function(el) {
+            return el.false_positive == false;
+        });
+        console.log("The impact data found is ", data_array.length);
+        for(var i = 0 ; i < data_array.length ; i++){
+            var d = data_array[i];
+            // TODO : Parse Date here
+            data_array[i]["timestamp"] = Number(parseDate(d.date, d.time, d.time_zone)).toString();
+        }
+        cb(data_array);
+    });
+
+}
+
+function storeSensorData(sensor_data_array){
+    return new Promise((resolve, reject) =>{
+        var counter = 0 ;
+        if(sensor_data_array.length == 0 ){
+            resolve(true);
+        }
+        for(var i = 0 ; i < sensor_data_array.length ; i++){
+            // TODO STORE SENSOR DATA
+            let param = {
+                TableName: "sensor_data",
+                Item: sensor_data_array[i]
+            };
+            docClient.put(param, function (err, data) {
+                counter++;
+                if (err) {
+                    console.log(err);
+                    reject(err)
+                }
+                if(counter == sensor_data_array.length){
+                    resolve(true);
+                }
+            })
+        }
+    })
+}
 
 
 
@@ -885,7 +984,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                         });
                         // Here call the login function then
                         login(req.body.user_name, req.body.password, userType, function (err, result) {
-                            // TODO : REfactor code here
+
                             if (err) {
                                 res.cookie("token", "");
                                 res.send({
@@ -1657,9 +1756,26 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
                 res.status(500).send({ message: 'failure' });
             }
             else{
-                res.send({
-                    message : 'success'
-                })
+                            
+                convertXLSXDataToJSON(req.file.buffer,function(items){
+                    // Store the Data in DynamoDB
+                    storeSensorData(items)
+                    .then(flag => {
+                        res.send({
+                            message : 'success'
+                        })
+                    })
+                    .catch(err => {
+                        res.send({
+                            message : 'failure',
+                            error : err
+                        })
+                    })
+
+
+                });
+
+
             }
         })
     }
