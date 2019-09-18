@@ -1320,6 +1320,14 @@ nav {
 .sign-out-hide {
   display: none;
 }
+i.close-mobile_nave {
+  font-size: 30px !important;
+  position: absolute;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
 /* end of profile icon nav */
 
@@ -1391,9 +1399,9 @@ div.my-progress-bar {
 .user-profile-dropdown__mobile ul li a {
   text-decoration: none;
 }
-.mobile-profile-container:hover .user-profile-dropdown__mobile {
+/* .mobile-profile-container:hover .user-profile-dropdown__mobile {
   display: block;
-}
+} */
 /* end of mobile user profile */
 
 /* ======making responsive to navbar========= */
@@ -1403,10 +1411,10 @@ div.my-progress-bar {
     width: 40%;
     margin-bottom: 5px;
   }
-  .section-one img:nth-child(1){
-    width: 530px!important;
+  .section-one img:nth-child(1) {
+    width: 530px !important;
   }
-  .section-one{
+  .section-one {
     overflow-x: hidden;
   }
 
@@ -1438,10 +1446,10 @@ div.my-progress-bar {
 }
 
 @media (max-width: 575px) {
-  .section-one >img:nth-child(1){
-    width: 530px!important;
+  .section-one > img:nth-child(1) {
+    width: 530px !important;
   }
-  .section-one{
+  .section-one {
     overflow-x: hidden;
   }
   div.tech-football {
@@ -1528,8 +1536,8 @@ div.my-progress-bar {
   div.line_container {
     width: 150px;
   }
-  .section-four{
-    padding-top:10%;
+  .section-four {
+    padding-top: 10%;
   }
   div.line_container div {
     width: 150px;
@@ -1581,7 +1589,7 @@ div.my-progress-bar {
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {
-  .section-one > img:nth-child(1){
+  .section-one > img:nth-child(1) {
     width: 1200px;
   }
   .navbar-brand {
@@ -1614,7 +1622,7 @@ div.my-progress-bar {
   .shift-technology-section {
     margin-top: -33.5%;
   }
-  .section-one > img:nth-child(1){
+  .section-one > img:nth-child(1) {
     width: 1500px;
   }
 }
@@ -1668,11 +1676,11 @@ div.my-progress-bar {
   border: none !important;
 }
 
-@media screen and (min-width:3240px){
-  .dynamic__height{
+@media screen and (min-width: 3240px) {
+  .dynamic__height {
     margin-top: 10%;
   }
-  div.footer{
+  div.footer {
     bottom: -73.6%;
   }
 }
@@ -1811,7 +1819,7 @@ div.my-progress-bar {
   }
 }
 
-@media screen and (min-height:731px){
+@media screen and (min-height: 731px) {
   /* .header-heading{
     margin-bottom: 10%;
   } */

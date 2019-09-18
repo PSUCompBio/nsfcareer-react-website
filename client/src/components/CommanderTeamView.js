@@ -5,7 +5,7 @@ import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
 import CommanderDataTable from './CommanderDataTable';
 import SideBar from './SideBar';
-
+import { connect } from 'react-redux';
 
 class CommanderTeamView extends React.Component {
   constructor() {
@@ -54,151 +54,166 @@ class CommanderTeamView extends React.Component {
     }
   }
 
-  render() {
+  militaryVersionOrNormal = () => {
     return (
-      <React.Fragment>
-        <div className="militay-view">
-          <div className="military-sidebar">
-            <SideBar/>
-          </div>
-          <div className="military-main-content">
-            <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
-              <PenstateUniversity />
-              <div className="row text-center">
-                <div className="col-md-8">
-                  <div className="row mt-3">
-                    <div className="col-md-6"></div>
-                    <div className="col-md-6">
-                      <div className="season-position text-right ">
-                        <select name="" id="">
-                          <option value="">All session</option>
-                          <option value="">York tech football</option>
-                          <option value="">Lorem lipsum</option>
-                          <option value="">York tech football</option>
-                        </select>
-                        <select name="" id="">
-                          <option value="">All position</option>
-                          <option value="">York tech football</option>
-                          <option value="">Lorem lipsum</option>
-                          <option value="">York tech football</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <div
-                      ref="card1"
-                      className="col-md-12 commander-view-card mb-5 mt-4 p-0"
-                    >
-                      <div className="rostar-selector">
-                        <RostarBtn
-                          tabActive={this.toggleTab}
-                          makeActive={this.state.tabActive}
-                          getBtn={this.getTargetBtn}
-                          currentBtn={this.state.targetBtn}
-                          content="Overview"
-                        />
-                        <RostarBtn
-                          tabActive={this.toggleTab}
-                          makeActive={this.state.tabActive}
-                          getBtn={this.getTargetBtn}
-                          currentBtn={this.state.targetBtn}
-                          content="Roster"
-                        />
-                      </div>
-                      <div className="row mt-5">
-                        <div className="col-md-6">
-                          <div className="highest-load ml-3 mr-3 mt-3 mb-5">
-                            <div ref="card5" className="card">
-                              <div
-                                ref="card4"
-                                className="load-heading highest-load-height"
-                              >
-                                HIGHEST LOAD
-                              </div>
-                              <p className="mt-4 ">
-                                John Sylvester <span>- York Tech football</span>
-                              </p>
-
-                              <div className="text-center">
-                                <div className="progress--circle progress--5">
-                                  <div className="progress__number">0.046</div>
-                                </div>
-                              </div>
-
-                              <div className="load-count mt-3 mb-3">
-                                {this.state.highestLoadCount}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="col-md-6">
-                          <div className="most-impacts ml-3 mr-3 mt-3 mb-5">
-                            <div
-                              ref="card7"
-                              className="card commander-tv-height"
-                            >
-                              <div
-                                ref="card6"
-                                className="impact-heading most-impacts-height"
-                              >
-                                MOST IMPACTS
-                              </div>
-                              <p className="mt-4">
-                                John Sylvester <span>- York Tech football</span>
-                              </p>
-                              <div className="impact-count mt-3 mb-3">
-                                {this.state.impactCount}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-4 pt-5 mb-3">
-                  <div className="row mt-2">
-                    <div className="col-md-12  text-left">
-                      <button type="btn" className="impact-sumary-btn">
-                        Impact Summary
-                      </button>
-                    </div>
-                  </div>
-                  <div ref="card2" className="impact-summary-card pt-3 pb-5">
-                    <img
-                      className="img-fluid"
-                      src="/img/icon/impactSummary.svg"
-                      alt=""
-                    />
-                  </div>
+      <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
+        <PenstateUniversity />
+        <div className="row text-center">
+          <div className="col-md-8">
+            <div className="row mt-3">
+              <div className="col-md-6"></div>
+              <div className="col-md-6">
+                <div className="season-position text-right ">
+                  <select name="" id="">
+                    <option value="">All session</option>
+                    <option value="">York tech football</option>
+                    <option value="">Lorem lipsum</option>
+                    <option value="">York tech football</option>
+                  </select>
+                  <select name="" id="">
+                    <option value="">All position</option>
+                    <option value="">York tech football</option>
+                    <option value="">Lorem lipsum</option>
+                    <option value="">York tech football</option>
+                  </select>
                 </div>
               </div>
-              <div className="row mb-5 mt-5">
-                <div className="col-md-12">
-                  <div className="text-left">
-                    <button type="btn" className="impact-sumary-btn">
-                      Impact History
-                    </button>
+            </div>
+            <div className="row">
+              <div
+                ref="card1"
+                className="col-md-12 commander-view-card mb-5 mt-4 p-0"
+              >
+                <div className="rostar-selector">
+                  <RostarBtn
+                    tabActive={this.toggleTab}
+                    makeActive={this.state.tabActive}
+                    getBtn={this.getTargetBtn}
+                    currentBtn={this.state.targetBtn}
+                    content="Overview"
+                  />
+                  <RostarBtn
+                    tabActive={this.toggleTab}
+                    makeActive={this.state.tabActive}
+                    getBtn={this.getTargetBtn}
+                    currentBtn={this.state.targetBtn}
+                    content="Roster"
+                  />
+                </div>
+                <div className="row mt-5">
+                  <div className="col-md-6">
+                    <div className="highest-load ml-3 mr-3 mt-3 mb-5">
+                      <div ref="card5" className="card">
+                        <div
+                          ref="card4"
+                          className="load-heading highest-load-height"
+                        >
+                          HIGHEST LOAD
+                        </div>
+                        <p className="mt-4 ">
+                          John Sylvester <span>- York Tech football</span>
+                        </p>
+
+                        <div className="text-center">
+                          <div className="progress--circle progress--5">
+                            <div className="progress__number">0.046</div>
+                          </div>
+                        </div>
+
+                        <div className="load-count mt-3 mb-3">
+                          {this.state.highestLoadCount}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div ref="card3" className="impact-history-card p-4">
-                    <img
-                      className="img-fluid"
-                      src="/img/icon/impactHistory.svg"
-                      alt=""
-                    />
+
+                  <div className="col-md-6">
+                    <div className="most-impacts ml-3 mr-3 mt-3 mb-5">
+                      <div ref="card7" className="card commander-tv-height">
+                        <div
+                          ref="card6"
+                          className="impact-heading most-impacts-height"
+                        >
+                          MOST IMPACTS
+                        </div>
+                        <p className="mt-4">
+                          John Sylvester <span>- York Tech football</span>
+                        </p>
+                        <div className="impact-count mt-3 mb-3">
+                          {this.state.impactCount}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <CommanderDataTable />
                 </div>
               </div>
             </div>
           </div>
+          <div className="col-md-4 pt-5 mb-3">
+            <div className="row mt-2">
+              <div className="col-md-12  text-left">
+                <button type="btn" className="impact-sumary-btn">
+                  Impact Summary
+                </button>
+              </div>
+            </div>
+            <div ref="card2" className="impact-summary-card pt-3 pb-5">
+              <img
+                className="img-fluid"
+                src="/img/icon/impactSummary.svg"
+                alt=""
+              />
+            </div>
+          </div>
         </div>
-        {/* <Footer /> */}
+        <div className="row mb-5 mt-5">
+          <div className="col-md-12">
+            <div className="text-left">
+              <button type="btn" className="impact-sumary-btn">
+                Impact History
+              </button>
+            </div>
+            <div ref="card3" className="impact-history-card p-4">
+              <img
+                className="img-fluid"
+                src="/img/icon/impactHistory.svg"
+                alt=""
+              />
+            </div>
+            <CommanderDataTable />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  render() {
+    return (
+      <React.Fragment>
+        {this.props.isMilitaryVersionActive === true ? (
+          <div className="militay-view">
+            <div className="military-sidebar">
+              <SideBar />
+            </div>
+            <div className="military-main-content">
+              {this.militaryVersionOrNormal()}
+            </div>
+          </div>
+        ) : (
+          <React.Fragment>
+            {this.militaryVersionOrNormal()}
+            <Footer />
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }
 }
 
-export default CommanderTeamView;
+function mapStateToProps(state) {
+  return {
+    isMilitaryVersionActive: state.militaryVersion
+  };
+}
+
+export default connect(mapStateToProps)(CommanderTeamView);

@@ -17,7 +17,8 @@ class Nav extends React.Component {
       dashboardLinks: { display: 'none' },
       dashboardLinksIsOpen: false,
       countMouseEnter: 0,
-      userProfileIconLinksIsOpen: false
+      userProfileIconLinksIsOpen: false,
+      logoutBox:{display:'none'}
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -54,12 +55,12 @@ class Nav extends React.Component {
     } else {
       this.setState({ signOutClass: 'sign-out-hide' });
     }
-    this.setState({userProfileIconLinksIsOpen:false})
+    this.setState({ userProfileIconLinksIsOpen: false });
   };
 
   showLogOutOption = () => {
     this.setState({ signOutClass: 'sign-out' });
-  }
+  };
 
   hideSignOut = (e) => {
     if (this.state.dashboardLinks.display === 'none') {
@@ -99,16 +100,16 @@ class Nav extends React.Component {
   };
 
   hideUserIconLinks = () => {
-    this.setState({userProfileIconLinksIsOpen:true})
+    this.setState({ userProfileIconLinksIsOpen: true });
   };
 
   hideUserIconLinksIfnotEnter = () => {
     setTimeout(() => {
       if (this.state.userProfileIconLinksIsOpen === false) {
         this.setState({ signOutClass: 'sign-out-hide' });
-        }
-    },100)
-  }
+      }
+    }, 100);
+  };
 
   mobileNav = () => {
     return (
@@ -156,6 +157,14 @@ class Nav extends React.Component {
       </ul>
     );
   };
+
+  showLogOutOptions = () => {
+    if (this.state.logoutBox.display === 'none') {
+      this.setState({logoutBox:{display:'block'}})
+    } else {
+      this.setState({logoutBox:{display:'none'}})      
+    }
+  }
 
   dashboardDropDownList = () => {
     return (
@@ -222,8 +231,10 @@ class Nav extends React.Component {
             </Link>
             <div
               className={
-                LineUnderLink.linkeMaker('/Login') || LineUnderLink.linkeMaker('/Dashboard')||
-                LineUnderLink.linkeMaker('/TeamAdmin')||LineUnderLink.linkeMaker('/OrganizationAdmin')
+                LineUnderLink.linkeMaker('/Login') ||
+                LineUnderLink.linkeMaker('/Dashboard') ||
+                LineUnderLink.linkeMaker('/TeamAdmin') ||
+                LineUnderLink.linkeMaker('/OrganizationAdmin')
               }
             />
             {this.dashboardDropDownList()}
@@ -315,15 +326,16 @@ class Nav extends React.Component {
           id="cbp-spmenu-s2"
         >
           <div className="mobile-profile-container">
+            <i onClick={this.handleClick} className=" close-mobile_nave fa fa-times-circle" aria-hidden="true"></i>
             {/* <img src={localStore.userInfo.data.profile_picture_url} alt="" /> */}
             {/* <p>
               {localStore.userInfo.data.first_name +
                 ' ' +
                 localStore.userInfo.data.last_name}
             </p> */}
-            <div className="mobile-user-profile">RK</div>
+            <div onClick={this.showLogOutOptions} className="mobile-user-profile">RK</div>
 
-            <div className="user-profile-dropdown__mobile">
+            <div style={this.state.logoutBox} className="user-profile-dropdown__mobile">
               <ul>
                 <li onClick={this.handleClick}>
                   <Link to="profile">Profile</Link>
