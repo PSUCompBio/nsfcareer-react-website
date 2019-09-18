@@ -167,7 +167,7 @@ class TechnologiesWeUse extends React.Component {
                 : {}
             }
             className={`show-footer-mobile ${
-              this.props.mouseScroll > 0 && this.props.screenWidth <= 725
+              this.props.mouseScroll > 0 && this.props.screenWidth >= 725
                 ? 'show-footer'
                 : this.props.screenWidth < 725
                 ? ''

@@ -60,9 +60,10 @@ class Footer extends React.Component {
           </div>
           <div className="row text-center">
             <div className="col-md-12 col-lg-12">
-              <p onClick={this.redirectToOther} className="copyright">
-                © 2019 Copyright: Penn State Computational Biomechanics Group
-              </p>
+            <p>
+                    Contact Us: info@NSFCAREER.IO <br />
+                    <span onClick={()=>window.open('')}>  IP </span> | Privacy Policy &amp; <span onClick={()=>window.open('')}>  IRB </span> | Collaborate
+                  </p>
             </div>
           </div>
         </div>
