@@ -22,7 +22,9 @@ class Banner extends React.Component {
           <div className="container-fluid pl-0 pr-0">
             <div className="section-one">
               <img src="/img/BannerImg/Brain.png" alt="" />
-              {/* <img className="svg brain-overlay w-25" src="/img/BannerImg/b2.png" alt=""/> */}
+              <div className="brain-over-blue">
+              <img className="svg brain-overlay" src="/img/BannerImg/b2.png" alt=""/>
+              </div>
               <div className="header-navbar">
                 <div className="container-fluid heading-container">
                   <div className="row">

@@ -214,6 +214,15 @@ div.underlined-text p {
   background-color: #fff;
 }
 
+.brain-over-blue {
+  width: 50%;
+  height: 50vh;
+}
+div.brain-over-blue img {
+  width: 45%!important;
+  margin-top: 20vh!important;
+}
+
 .section-two h1,
 .section-three h1,
 .section-four h1 {
@@ -1469,7 +1478,7 @@ div.my-progress-bar {
     width: 70%;
   }
   .header-heading h1 {
-    font-size: 18px;
+    font-size: 21px;
   }
   .header-heading h4 {
     font-size: 12px;
@@ -1553,9 +1562,14 @@ div.my-progress-bar {
       width: 150px;
     }
   }
-  .section-two,.section-three, .section-four{
+  .section-two,
+  .section-three,
+  .section-four {
     height: 100vh;
     overflow-y: scroll;
+  }
+  .header-navbar {
+    top: 15%;
   }
 }
 
@@ -1670,6 +1684,10 @@ div.my-progress-bar {
   }
   .padding-about__page {
     padding-top: 6.1%;
+  }
+  .div.brain-over-blue img {
+    width: 45%!important;
+    margin-top: 20vh!important;
   }
 }
 
@@ -1827,6 +1845,13 @@ div.my-progress-bar {
 
   .cbp-spmenu-right {
     right: -190px;
+  }
+}
+
+@media screen and (min-width:1680px){
+  div.brain-over-blue img {
+    width: 45%!important;
+    margin-top: 32vh!important;
   }
 }
 
