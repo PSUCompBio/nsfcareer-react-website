@@ -387,7 +387,7 @@ class Nav extends React.Component {
           <div className={LineUnderLink.linkeMaker('/Contact')} />
           {this.props.location.pathname !== '/SignUp' ? (
             <React.Fragment>
-              <div className="nav-link mobie-dashboard-hover" to={'/Login'}>
+              <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
                 {/* {localStore.isSignedInSuccess === true ? ( */}
                 <div className="mobile-dashboard-dropdown">
@@ -404,7 +404,7 @@ class Nav extends React.Component {
                 {/* ) : (
                   ''
                 )} */}
-              </div>
+              </Link>
               <div className={LineUnderLink.linkeMaker('/Login')} />
             </React.Fragment>
           ) : (

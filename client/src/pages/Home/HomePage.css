@@ -1683,6 +1683,12 @@ div.my-progress-bar {
   div.footer {
     bottom: -73.6%;
   }
+  div.organization_team {
+    bottom: -210.6%;
+  }
+  div.t-roster{
+    margin-top: 7%!important;
+  }
 }
 
 @media (min-width: 726px) {

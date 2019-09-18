@@ -9,6 +9,14 @@ function AboutTheProduct(props) {
   }
   const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
 
+  function removeAnimationMobileView(animation){
+    if (props.screenWidth > 425)
+      return animation;
+    else {
+      return ''
+    }
+  }
+
   return (
     <div className="container section">
       <div className="section-two">
@@ -19,7 +27,7 @@ function AboutTheProduct(props) {
                 <div className="mb-3" ref={ref}>
                   <h1
                     className={`font-weight-bold animated ${
-                      inView ? 'zoomIn' : ''
+                      inView ? removeAnimationMobileView('zoomIn') : ''
                     }`}
                   >
                     ABOUT THE PROJECT
@@ -30,7 +38,7 @@ function AboutTheProduct(props) {
                       <div></div>
                     </div>
                   </div>
-                  <p className={` animated ${inView ? '  fadeInUp' : ''}`}>
+                  <p className={` animated ${inView ? removeAnimationMobileView('fadeInUp') : ''}`}>
                     Brain injuries are a significant health concern for civilian
                     and military populations. This Faculty Early Career
                     Development Program (CAREER) project will contribute to the
@@ -63,7 +71,7 @@ function AboutTheProduct(props) {
                   <div
                     ref={ref}
                     className={`col-md-4 animated ${
-                      inView ? ' slideInLeft' : ''
+                      inView ? removeAnimationMobileView('slideInLeft') : ''
                     }`}
                   >
                     <img
@@ -83,7 +91,7 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 animated ${inView ? ' zoomIn' : ''}`}
+                    className={`col-md-4 animated ${inView ? removeAnimationMobileView('zoomIn') : ''}`}
                   >
                     <img
                       className={`svg ${animateOnDesktop}`}
@@ -102,7 +110,7 @@ function AboutTheProduct(props) {
                   <div
                     ref={ref}
                     className={`col-md-4 animated ${
-                      inView ? 'slideInRight' : ''
+                      inView ? removeAnimationMobileView('slideInRight') : ''
                     }`}
                   >
                     <img

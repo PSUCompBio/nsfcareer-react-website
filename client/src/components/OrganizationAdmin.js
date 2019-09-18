@@ -409,7 +409,7 @@ class OrganizationAdmin extends React.Component {
           </div>
         ) : (
           <React.Fragment>
-            {this.militaryVersionOrNormal()}
+            {this.militaryVersionOrNormalVersion()}
             <Footer />
           </React.Fragment>
         )}
