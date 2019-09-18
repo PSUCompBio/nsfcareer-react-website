@@ -275,7 +275,6 @@ class Nav extends React.Component {
 
   render() {
     const localStore = JSON.parse(localStorage.getItem('state'));
-
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${

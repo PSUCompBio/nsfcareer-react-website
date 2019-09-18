@@ -159,8 +159,8 @@ class OrganizationAdmin extends React.Component {
 
   showEditForm = () => {
     return (
-      <div class="modal__wrapper ">
-        <div class="modal__show modal_form">
+      <div className="modal__wrapper ">
+        <div className="modal__show modal_form">
           <img
             className="delete__icon"
             onClick={this.hideTeamForm}
@@ -204,8 +204,8 @@ class OrganizationAdmin extends React.Component {
 
   showModal = () => {
     return (
-      <div class="modal__wrapper">
-        <div class="modal__show">
+      <div className="modal__wrapper">
+        <div className="modal__show">
           <p>Are You really want to delete this team? It cannot be undone.</p>
           <div className="action_buttons">
             <button onClick={this.deleteCard}>YES</button>

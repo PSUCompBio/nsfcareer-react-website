@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import PlayerDetails from '../PlayerDetails/PlayerDetails';
 import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
 import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
@@ -8,26 +9,29 @@ import Footer from '../Footer';
 import 'jquery';
 import '../Buttons/Buttons.css';
 import './Dashboard.css';
-import { getUserDetails } from '../../apis';
+import { getUserDetails, isAuthenticated } from '../../apis';
+import Spinner from '../Spinner/Spinner';
 
 class Dashboard extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    console.log(props);
     this.state = {
       isAuthenticated: false,
-      user: null
+      user: null,
+      isCheckingAuth : true
     };
   }
 
-  componentWillMount() {
-    getUserDetails()
-      .then((response) => {
-        this.setState({ user: response.data.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  // componentWillMount() {
+  //   getUserDetails()
+  //     .then((response) => {
+  //       this.setState({ user: response.data.data });
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
 
   componentDidUpdate() {
     svgToInline();
@@ -39,11 +43,15 @@ class Dashboard extends React.Component {
 
   render() {
     const isLoaded = this.state.user;
-    if (!isLoaded) return null;
+    if(!this.state.isAuthenticated && !this.state.isCheckingAuth){
+        return <Redirect to="/Login" />;
+    }
+    if (!isLoaded) return <Spinner />;
     return (
       <React.Fragment>
         <div id="dashboard" className="container dashboard">
           <PlayerDetails user={this.state.user} />
+
           <CumulativeEvents />
           <HeadAccelerationEvents />
           <HeadAccelerationEvents />
@@ -63,6 +71,38 @@ class Dashboard extends React.Component {
         <Footer />
       </React.Fragment>
     );
+  }
+  componentDidMount() {
+      isAuthenticated(JSON.stringify({}))
+        .then((value) => {
+          if (value.data.message === 'success') {
+            this.setState({});
+            getUserDetails()
+              .then((response) => {
+                
+                console.log(response.data);
+                this.setState({
+                  user: response.data.data,
+                  isLoading: false,
+                  isAuthenticated: true,
+                  isCheckingAuth: false
+                });
+              })
+              .catch((error) => {
+                this.setState({
+                  user: {},
+                  isLoading: false,
+                  isCheckingAuth: false
+                });
+              });
+          } else {
+            this.setState({ isAuthenticated: false, isCheckingAuth: false });
+          }
+        })
+        .catch((err) => {
+          this.setState({ isAuthenticated: false, isCheckingAuth: false });
+        });
+
   }
 }
 
