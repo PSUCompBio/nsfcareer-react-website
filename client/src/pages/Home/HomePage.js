@@ -67,7 +67,7 @@ class HomePage extends React.Component {
   };
 
   render() {
-    if (this.props.screenWidth >= 725) {
+    // if (this.props.screenWidth >= 725) {
       return (
         <React.Fragment>
           <ReactPageScroller
@@ -88,21 +88,21 @@ class HomePage extends React.Component {
           </ReactPageScroller>
         </React.Fragment>
       );
-    } else {
-      return (
-        <React.Fragment>
-          <Banner screenWidth={this.props.screenWidth} />
-          <AboutTheProduct screenWidth={this.props.screenWidth} />
-          <ResearchArea screenWidth={this.props.screenWidth} />
-          <TechnologiesWeUse
-            currentPage={this.props.currentPage}
-            screenWidth={this.props.screenWidth}
-            onWheel={this.onFooterScroll}
-            mouseScroll={this.state.scrollY}
-          />
-        </React.Fragment>
-      );
-    }
+    // } else {
+    //   return (
+    //     <React.Fragment>
+    //       <Banner screenWidth={this.props.screenWidth} />
+    //       <AboutTheProduct screenWidth={this.props.screenWidth} />
+    //       <ResearchArea screenWidth={this.props.screenWidth} />
+    //       <TechnologiesWeUse
+    //         currentPage={this.props.currentPage}
+    //         screenWidth={this.props.screenWidth}
+    //         onWheel={this.onFooterScroll}
+    //         mouseScroll={this.state.scrollY}
+    //       />
+    //     </React.Fragment>
+    //   );
+    // }
   }
 }
 

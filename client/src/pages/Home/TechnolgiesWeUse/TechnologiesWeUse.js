@@ -190,7 +190,7 @@ class TechnologiesWeUse extends React.Component {
                 <div className="col-sm-9 col-md-6 ">
                   <p>
                     Contact Us: info@NSFCAREER.IO <br />
-                    IP | Privacy Policy &amp; IRB | Collaborate
+                    <span onClick={()=>window.open('')}>  IP </span> | Privacy Policy &amp; <span onClick={()=>window.open('')}>  IRB </span> | Collaborate
                   </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">

@@ -1488,7 +1488,7 @@ div.my-progress-bar {
     width: 56px;
   }
   .section-one > img {
-    height: 45vh;
+    height: 100vh;
   }
 
   /* .shift-top img:hover{
@@ -1541,6 +1541,7 @@ div.my-progress-bar {
   }
   div.line_container div {
     width: 150px;
+    animation: none;
   }
   @keyframes changeLine {
     from {
@@ -1551,6 +1552,10 @@ div.my-progress-bar {
       margin-left: 0;
       width: 150px;
     }
+  }
+  .section-two,.section-three, .section-four{
+    height: 100vh;
+    overflow-y: scroll;
   }
 }
 
@@ -1686,8 +1691,8 @@ div.my-progress-bar {
   div.organization_team {
     bottom: -210.6%;
   }
-  div.t-roster{
-    margin-top: 7%!important;
+  div.t-roster {
+    margin-top: 7% !important;
   }
 }
 
