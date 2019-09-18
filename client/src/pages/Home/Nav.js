@@ -4,6 +4,7 @@ import store from '../../Store';
 import { resetSignedInSucceeded } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+
 class Nav extends React.Component {
   constructor() {
     super();
@@ -11,7 +12,9 @@ class Nav extends React.Component {
       isOpen: false,
       signOutClass: 'sign-out-hide',
       userProfile: '',
-      userName: ''
+      userName: '',
+      dashboardLinks: { display: 'none' },
+      countMouseEnter: 0
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -27,6 +30,13 @@ class Nav extends React.Component {
       false
     );
   }
+
+  // componentWillMount() {
+  //   console.log(store.getState());
+  //   if (store.getState().isSignedInSuccess === false) {
+  //     store.dispatch(userDetails({}));
+  //   }
+  // }
 
   componentWillUnmount() {
     // document.removeEventListener('mousedown');
@@ -75,13 +85,26 @@ class Nav extends React.Component {
     }
   };
 
-  hideSignOut = () => {
-    this.setState({ signOutClass: 'sign-out-hide' });
+  hideSignOut = (e) => {
+    if (this.state.dashboardLinks.display === 'none') {
+      this.setState({
+        dashboardLinks: { display: 'block' },
+        signOutClass: 'sign-out-hide',
+        countMouseEnter: this.state.countMouseEnter + 1
+      });
+    }
+  };
+
+  hideLinks = (e) => {
+    this.setState({
+      dashboardLinks: { display: 'none' }
+    });
   };
 
   signOut = () => {
     store.dispatch(resetSignedInSucceeded());
     this.setState({ signOutClass: 'sign-out-hide' });
+    this.props.history.push('/Home');
   };
 
   mobileNav = () => {
@@ -149,7 +172,11 @@ class Nav extends React.Component {
 
   dashboardDropDownList = () => {
     return (
-      <div className="dashboard-links">
+      <div
+        onMouseLeave={this.hideLinks}
+        style={this.state.dashboardLinks}
+        className="dashboard-links"
+      >
         <ul>
           <li>PSU</li>
           <li>
@@ -213,7 +240,7 @@ class Nav extends React.Component {
 
         {this.props.location.pathname !== '/SignUp' ? (
           <li
-            onMouseOver={this.hideSignOut}
+            onMouseEnter={this.hideSignOut}
             className="nav-item dashboard-hover make-active active"
           >
             <Link className="nav-link" to={'/Login'}>
@@ -244,11 +271,15 @@ class Nav extends React.Component {
           </li>
         )}
         <li className=" nav-item profile-nav-icon">
-          <div onClick={this.showLogOut} className="name">
+          <div onMouseEnter={this.showLogOut} className="name">
             R K
           </div>
 
-          <div ref="signOut" className={`${this.state.signOutClass}`}>
+          <div
+            onMouseLeave={this.showLogOut}
+            ref="signOut"
+            className={`${this.state.signOutClass}`}
+          >
             <div className="nav-item make-active profile-user active">
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
@@ -264,7 +295,7 @@ class Nav extends React.Component {
             <Link to="">
               <img
                 onClick={this.signOut}
-                className="img-fluid w-25"
+                className="img-fluid"
                 src="/img/icon/powerBtn.svg"
                 alt=""
               />
@@ -278,7 +309,7 @@ class Nav extends React.Component {
   };
 
   render() {
-    console.log(localStorage.getItem('state'));
+    const localStore = JSON.parse(localStorage.getItem('state'));
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
@@ -305,9 +336,11 @@ class Nav extends React.Component {
 
         {this.props.screenWidth >= 768 ? (
           <div className="collapse navbar-collapse" id="navbarNav">
-            {!this.props.isAuthenticated
+            {localStore === null
               ? this.mobileNav()
-              : this.laptopNav()}
+              : localStore.isSignedInSuccess === true
+              ? this.laptopNav()
+              : this.mobileNav()}
           </div>
         ) : (
           ''
@@ -327,18 +360,23 @@ class Nav extends React.Component {
 
             <div className="user-profile-dropdown__mobile">
               <ul>
-                <li><Link to="profile">Profile</Link></li>
+                <li onClick={this.handleClick}>
+                  <Link to="profile">Profile</Link>
+                </li>
                 <img
-                onClick={this.signOut}
-                className=" mt-3 img-fluid w-25"
-                src="/img/icon/powerBtn.svg"
-                alt=""
-              />
+                  onClick={() => {
+                    this.signOut();
+                    this.handleClick();
+                  }}
+                  className=" mt-3 img-fluid w-25"
+                  src="/img/icon/powerBtn.svg"
+                  alt=""
+                />
               </ul>
             </div>
           </div>
 
-          <Link className="nav-link" to={'/Home'}>
+          <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
             Home <span className="sr-only">(current)</span>
           </Link>
           <div
@@ -346,7 +384,7 @@ class Nav extends React.Component {
               this.props.location.pathname === '/Home' ? 'active-link' : ''
             }
           />
-          <Link className="nav-link" to={'/About'}>
+          <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
           <div
@@ -367,7 +405,11 @@ class Nav extends React.Component {
                 }
               />
 
-              <Link className="nav-link" to={'/Profile'}>
+              <Link
+                onClick={this.handleClick}
+                className="nav-link"
+                to={'/Profile'}
+              >
                 Profile <span className="sr-only">(current)</span>
               </Link>
               <div
@@ -382,7 +424,7 @@ class Nav extends React.Component {
             ''
           )}
 
-          <Link className="nav-link" to={'/Contact'}>
+          <Link onClick={this.handleClick} className="nav-link" to={'/Contact'}>
             Contact
           </Link>
           <div
@@ -395,17 +437,17 @@ class Nav extends React.Component {
               <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
                 {/* {localStore.isSignedInSuccess === true ? ( */}
-                  <div className="mobile-dashboard-dropdown">
-                    <ul>
-                      <li>PSU</li>
-                      <li>
-                        <Link to="TeamAdmin">Team Admin</Link>
-                      </li>
-                      <li>
-                        <Link to="OrganizationAdmin">Organization Admin</Link>
-                      </li>
-                    </ul>
-                  </div>
+                <div className="mobile-dashboard-dropdown">
+                  <ul>
+                    <li>PSU</li>
+                    <li onClick={this.handleClick}>
+                      <Link to="TeamAdmin">Team Admin</Link>
+                    </li>
+                    <li onClick={this.handleClick}>
+                      <Link to="OrganizationAdmin">Organization Admin</Link>
+                    </li>
+                  </ul>
+                </div>
                 {/* ) : (
                   ''
                 )} */}
@@ -418,7 +460,11 @@ class Nav extends React.Component {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <Link className="nav-link" to={'/SignUp'}>
+              <Link
+                onClick={this.handleClick}
+                className="nav-link"
+                to={'/SignUp'}
+              >
                 Sign up
               </Link>
               <div
@@ -437,7 +483,6 @@ class Nav extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log(state);
   return {
     isLoggedIn: state.isSignedInSuccess
   };

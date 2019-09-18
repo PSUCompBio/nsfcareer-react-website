@@ -54,10 +54,7 @@ class Banner extends React.Component {
                               className={`${inView ? 'animated fadeInUp' : ''}`}
                             >
                               Supported By
-                            </p>
-                            <hr
-                              className={`${inView ? 'animated zoomIn' : ''}`}
-                            />
+                            </p>                           
                           </div>
                         </div>
                       )}
@@ -66,7 +63,7 @@ class Banner extends React.Component {
                   </div>
 
                   <div className="row">
-                    <div className="col-md-12 col-sm-6  image-padding">
+                    <div className="col-md-12 image-padding">
                       <InView>
                         {({ inView, ref, entry }) => (
                           <React.Fragment>
@@ -101,7 +98,7 @@ class Banner extends React.Component {
                     </div>
                   </div>
                   <div className="row padding-mobile">
-                    <div className="col-md-12 col-sm-6  image-padding">
+                    <div className="col-md-12   image-padding">
                       <InView>
                         {({ inView, ref, entry }) => (
                           <React.Fragment>

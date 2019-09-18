@@ -1,7 +1,7 @@
 {
   "name": "nsfcareer-react-website-application",
   "version": "1.0.0",
-  "description": "",
+  "description": "- ###### NOTE : Skip this step if you're planning to deploy this application on for production. Follow the steps given in end to deploy for production !\r - #### Install all the required dependencies by executing following commands :\r - ##### Pre-Requisites\r     - Nodejs (min version >= 10.X)\r ```\r # If on Windows : Use Power-Shell to execute below commands\r # If on Linux : sudo is required with -g based npm commands (They are global dependencies being installed in System)",
   "main": "server.js",
   "dependencies": {
     "amazon-cognito-identity-js": "^3.0.13",
