@@ -299,6 +299,7 @@ class Nav extends React.Component {
             className={`${this.state.signOutClass}`}
           >
             <div className="nav-item make-active profile-user active">
+            {/* <div class="sign-out-box-arrow"></div> */}
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
               </Link>
@@ -356,11 +357,13 @@ class Nav extends React.Component {
           </div>
         ) : (
           ''
-        )}
+          )}
+        
         <nav
           className="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right"
           id="cbp-spmenu-s2"
         >
+          <div className="hide-list-left">
           <div className="mobile-profile-container">
             <i
               onClick={this.handleClick}
@@ -452,7 +455,8 @@ class Nav extends React.Component {
               </Link>
               <div className={LineUnderLink.linkeMaker('/SignUp')} />
             </React.Fragment>
-          )}
+              )}
+            </div>
         </nav>
       </nav>
     );

@@ -36,7 +36,7 @@ class OrganizationAdmin extends React.Component {
     this.setState({ targetBtn: value });
   };
 
-  componentDidUpdate() {
+  checkIfDarkModeActive = () => {
     if (getStatusOfDarkmode().status === true) {
       this.refs.rosterContainer.style.background = '#171b25';
       this.refs.cardContainer.style.background = '#232838';
@@ -75,7 +75,7 @@ class OrganizationAdmin extends React.Component {
       ];
       elementsRequire.forEach((element) => {
         const totalCards = document.getElementsByClassName(element);
-  
+
         if (element === 'tech-football') {
           for (let i = 0; i < totalCards.length; i++) {
             totalCards[i].style.background = '#171b25';
@@ -100,6 +100,13 @@ class OrganizationAdmin extends React.Component {
         }
       });
     }
+  };
+
+  componentDidUpdate() {
+    this.checkIfDarkModeActive();
+  }
+  componentDidMount() {
+    this.checkIfDarkModeActive();    
   }
 
   addTeam = () => {
@@ -287,7 +294,9 @@ class OrganizationAdmin extends React.Component {
               <p className="teamName" ref={reference[2]}>
                 York tech football <img src="/img/icon/football.svg" alt="" />
               </p>
-              <p className="athletes" ref={reference[3]}>{noOfAthletes} Athletes </p>
+              <p className="athletes" ref={reference[3]}>
+                {noOfAthletes} Athletes{' '}
+              </p>
             </div>
             <div className="football-body d-flex">
               <div ref={reference[4]} className="body-left-part ">

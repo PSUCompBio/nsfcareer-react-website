@@ -115,10 +115,10 @@
 body {
   font-family: 'Segoe UI Regular';
 }
-.section-one-container{
-  background: linear-gradient(90deg, #083c66 10%, #078ae2)
+.section-one-container {
+  background: linear-gradient(90deg, #083c66 10%, #078ae2);
 }
-div.section-one{
+div.section-one {
   height: 100vh;
 }
 
@@ -226,14 +226,14 @@ div.underlined-text p {
   width: 50%;
   height: 50vh;
 }
-.image-container__banner{
+.image-container__banner {
   display: flex;
 }
-.left-bubble-img{
+.left-bubble-img {
   width: 50%;
   height: 100vh;
 }
-.right-brain-img{
+.right-brain-img {
   width: 50%;
   text-align: right;
   height: 100vh;
@@ -241,7 +241,7 @@ div.underlined-text p {
   justify-content: right;
   align-items: center;
 }
-.downpointer{
+.downpointer {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -250,22 +250,22 @@ div.underlined-text p {
   bottom: 10%;
   left: 50%;
   margin-left: -25px;
-  box-shadow: 0 0 15px -2px rgba(0,0,0,0.4);
+  box-shadow: 0 0 15px -2px rgba(0, 0, 0, 0.4);
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: arrowUpDown 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
 }
-@keyframes arrowUpDown{
-  from{
+@keyframes arrowUpDown {
+  from {
     bottom: 12%;
   }
-  to{
+  to {
     bottom: 8%;
   }
 }
-.downpointer i{
+.downpointer i {
   font-size: 30px;
   color: #078ae2;
 }
@@ -273,7 +273,6 @@ div.brain-over-blue img {
   width: 45% !important;
   margin-top: 20vh !important;
 }
-
 
 .section-two h1,
 .section-three h1,
@@ -1343,8 +1342,8 @@ nav {
   text-decoration: none;
 }
 
-.psu-list{
-  padding:15px 20px 15px 20px;
+.psu-list {
+  padding: 15px 20px 15px 20px;
   color: #fff;
   cursor: pointer;
   border-bottom: 1px solid #258ecd;
@@ -1371,7 +1370,7 @@ nav {
   cursor: pointer;
 }
 .sign-out {
-  right: 4.5%;
+  right: 5%;
   width: 190px;
   height: 130px;
   background: linear-gradient(45deg, #1d61a5, #267bd3);
@@ -1383,6 +1382,17 @@ nav {
 .sign-out img {
   width: 15%;
   padding-top: 20px;
+}
+.sign-out-box-arrow {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  position: absolute;
+  border-bottom: 10px solid #083c66;
+  top:-7%;
+  left: 50%;
+  margin-left: -10px;
 }
 .sign-out-hide {
   display: none;
@@ -1666,7 +1676,6 @@ div.my-progress-bar {
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {
- 
   .section-one > img:nth-child(1) {
     width: 1200px;
   }
@@ -1705,6 +1714,9 @@ div.my-progress-bar {
   }
 }
 @media (min-width: 1200px) and (max-width: 1440px) {
+  /* .sign-out {
+    right: 4.5%;
+  } */
   .shift-technology-section {
     margin-top: -15%;
   }
@@ -1718,9 +1730,17 @@ div.my-progress-bar {
     width: 1850px;
   } */
 }
+@media screen and (min-width: 2560px) and (max-width: 3000px) {
+  .login-height {
+    height: 85.1vh;
+  }
+  .sign-out {
+    /* top: 80%; */
+    right: 7%;
+  }
+}
 
 @media (min-width: 1500px) and (max-width: 2560px) {
- 
   .shift-technology-section {
     margin-top: -15%;
   }
@@ -1766,6 +1786,9 @@ div.my-progress-bar {
 }
 
 @media screen and (min-width: 3240px) {
+  .sign-out{
+    right: 7.5%;
+  }
   div.login-height {
     height: 49vh;
   }
@@ -1922,6 +1945,10 @@ div.my-progress-bar {
     width: 45% !important;
     margin-top: 32vh !important;
   }
+  /* .sign-out {
+    top: 80%;
+    right: 5.8%;
+  } */
 }
 
 @media screen and (min-height: 731px) {
