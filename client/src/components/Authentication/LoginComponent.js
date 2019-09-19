@@ -6,6 +6,7 @@ import { logIn, logInFirstTime } from '../../apis';
 import { connect } from 'react-redux';
 import store from '../../Store';
 import '../../mixed_style.css';
+import { getStatusOfDarkmode } from '../../reducer';
 import { setIsSignedInSucceeded, userDetails } from '../../Actions';
 
 class Login extends React.Component {
@@ -31,6 +32,17 @@ class Login extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ isSignInSuccessed: nextProps.signedIn });
+  }
+
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      this.refs.loginForm.style.background = "rgb(35, 40, 56)";
+      this.refs.dashboardView.src = "/img/icon/dashboardViewDark.png";
+      this.refs.brainIcon.style.border = "5px solid rgb(23, 27, 37)";
+      for (let i = 1; i <= 2; i++){
+        this.refs[`p${i}`].style.color = "#fff";
+      }
+    }
   }
 
   handleSubmit(e) {
@@ -129,7 +141,7 @@ class Login extends React.Component {
                   <div className="text-center dashboard-example">
                     Dashboard Example
                   </div>
-                  <img
+                  <img ref="dashboardView"
                     className="img-fluid"
                     src="/img/dashboardMock.png"
                     alt=""
@@ -138,9 +150,9 @@ class Login extends React.Component {
               </div>
 
               <div className="col-md-6 mb-5 p-3">
-                <div className="card card-border">
+                <div ref="loginForm" className="card card-border">
                   <div className="card-body">
-                    <div className="text-center brain-icon">
+                    <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
                     </div>
 
@@ -218,7 +230,7 @@ class Login extends React.Component {
                           className="spinner-border text-primary"
                           role="status"
                         >
-                          <span className="sr-only">Loading...</span>
+                          <span  className="sr-only">Loading...</span>
                         </div>
                       </div>
                     ) : null}
@@ -227,11 +239,11 @@ class Login extends React.Component {
                         className="alert alert-info api-response-alert"
                         role="alert"
                       >
-                        <strong>Failed! </strong> {this.state.loginError}.
+                        <strong >Failed! </strong> {this.state.loginError}.
                       </div>
                     ) : null}
                     <div className="text-center">
-                      <p className="mt-4 sign-up-link">
+                      <p ref="p1" className="mt-4 sign-up-link">
                         Don't have an account?{' '}
                         <Link className="sign-up" to="SignUp">
                           {' '}
@@ -245,7 +257,7 @@ class Login extends React.Component {
                         <img src="/img/icon/or.png" className="" alt="" />
                       </div>
                       <div className="text-center">
-                        <p className="sign-up-link">
+                        <p ref="p2" className="sign-up-link">
                           Are you an administrator including coach, parent,
                           trainer, or military unit leader? <br />
                           <Link className="sign-up" to="SignUpElse">
