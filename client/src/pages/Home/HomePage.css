@@ -233,6 +233,7 @@ div.line_container {
   height: 5px;
   /* background:#dedede; */
   border-radius: 10px;
+  margin-bottom: 3%;
 }
 
 div.line_container div {
