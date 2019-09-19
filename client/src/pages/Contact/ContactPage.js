@@ -17,19 +17,22 @@ class ContactPage extends React.Component {
   }
 
   componentWillMount() {
-    if (getStatusOfDarkmode().status === true) {
-      this.changeHtmlBg('#fff');
-    }
+   
   }
 
   componentWillUnmount() {
-    if (getStatusOfDarkmode().status === true) {
-      this.changeHtmlBg('#171b25');
-    }
+    // if (getStatusOfDarkmode().status === true) {
+    //   this.changeHtmlBg('#171b25');
+    // }
   }
 
   componentDidMount() {
     svgToInline()
+    if (getStatusOfDarkmode().status === true) {
+      this.refs.p1.style.color = "#fff";
+      this.refs.h1.style.color = "#fff";
+      this.refs.form.style.background = "rgb(35, 40, 56)";
+      }
   }
 
   render() {
@@ -39,15 +42,15 @@ class ContactPage extends React.Component {
         <div className="row  animated zoomIn text-center">
           <div className="col-md-12">
             <div className={`w-100 section-title`}>
-              <h1 className="font-weight-bold h1">SEND A MESSAGE</h1>
+              <h1 ref="h1" className="font-weight-bold h1">SEND A MESSAGE</h1>
             </div>
-            <p className="leave-us">
+            <p ref="p1" className="leave-us">
               Leave us a message to let us know you are interested in what we are
               doing.
           </p>
           </div>
           <div className="col-md-5 ml-md-auto mr-md-auto">
-            <form action="">
+            <form ref="form"  className="p-5 mb-5 mt-2" action="">
               <div className="row mt-3">
                 <div className="col-sm-6 mb-4">
                   <input
