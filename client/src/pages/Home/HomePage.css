@@ -1321,8 +1321,8 @@ nav {
 /* mobile dashboard dropdown */
 .mobile-dashboard-dropdown {
   position: absolute;
-  top: 450px;
-  box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2);
+  top: 500px;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2);
   display: none;
   background: #13568d;
   width: 100%;
@@ -1331,18 +1331,23 @@ nav {
 .mobile-dashboard-dropdown ul {
   list-style: none;
   text-align: center;
+  margin-bottom: 0;
 }
-.mobile-dashboard-dropdown ul li:nth-child(1) {
+/* .mobile-dashboard-dropdown ul li:nth-child(1) {
   text-align: center;
   border-bottom: 1px solid #fff;
   line-height: 50px;
   background: #113b5d;
-}
+} */
 .mobile-dashboard-dropdown ul li a {
   text-decoration: none;
 }
-.mobie-dashboard-hover:hover .mobile-dashboard-dropdown {
-  display: block;
+
+.psu-list{
+  padding:15px 20px 15px 20px;
+  color: #fff;
+  cursor: pointer;
+  border-bottom: 1px solid #258ecd;
 }
 /* end of mobile dashboard dropdown */
 

@@ -18,7 +18,8 @@ class Nav extends React.Component {
       dashboardLinksIsOpen: false,
       countMouseEnter: 0,
       userProfileIconLinksIsOpen: false,
-      logoutBox: { display: 'none' }
+      logoutBox: { display: 'none' },
+      psuLinks: { display: 'none' }
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -163,6 +164,39 @@ class Nav extends React.Component {
       this.setState({ logoutBox: { display: 'block' } });
     } else {
       this.setState({ logoutBox: { display: 'none' } });
+    }
+  };
+
+  makePSUlinksVisible = () => {
+    if (this.state.psuLinks.display === 'none') {
+      this.setState({ psuLinks: { display: 'block' } });
+    } else {
+      this.setState({ psuLinks: { display: 'none' } });
+    }
+  };
+
+  mobilePSUlinks = () => {
+    if (this.props.userType === 'Admin') {
+      return (
+        <React.Fragment>
+          <div onClick={this.makePSUlinksVisible} className="psu-list">
+            PSU
+          </div>
+          <div
+            style={this.state.psuLinks}
+            className="mobile-dashboard-dropdown"
+          >
+            <ul>
+              <li onClick={this.handleClick}>
+                <Link to="TeamAdmin">Team Admin</Link>
+              </li>
+              <li onClick={this.handleClick}>
+                <Link to="OrganizationAdmin">Organization Admin</Link>
+              </li>
+            </ul>
+          </div>
+        </React.Fragment>
+      );
     }
   };
 
@@ -403,22 +437,8 @@ class Nav extends React.Component {
             <React.Fragment>
               <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
-                {/* {localStore.isSignedInSuccess === true ? ( */}
-                <div className="mobile-dashboard-dropdown">
-                  <ul>
-                    <li>PSU</li>
-                    <li onClick={this.handleClick}>
-                      <Link to="TeamAdmin">Team Admin</Link>
-                    </li>
-                    <li onClick={this.handleClick}>
-                      <Link to="OrganizationAdmin">Organization Admin</Link>
-                    </li>
-                  </ul>
-                </div>
-                {/* ) : (
-                  ''
-                )} */}
               </Link>
+              {this.mobilePSUlinks()}
               <div className={LineUnderLink.linkeMaker('/Login')} />
             </React.Fragment>
           ) : (
