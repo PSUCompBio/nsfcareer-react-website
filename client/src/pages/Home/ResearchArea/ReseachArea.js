@@ -1,6 +1,6 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 function ResearchArea(props) {
 
@@ -10,6 +10,10 @@ function ResearchArea(props) {
     else {
       return ''
     }
+  }
+
+  function gotoSportPage() {
+    props.history.push('/Sports')
   }
 
 
@@ -47,7 +51,7 @@ function ResearchArea(props) {
                     inView ? removeAnimationMobileView('slideInLeft') : ''
                   }`}
                 >
-                  <div className="card mx-4 research-card rounded-img">
+                  <div  className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2491.svg"
@@ -73,7 +77,7 @@ function ResearchArea(props) {
                     inView ? removeAnimationMobileView('slideInRight') : ''
                   }`}
                 >
-                  <div className="card mx-4 research-card rounded-img">
+                  <div onClick={()=>gotoSportPage()} className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2492.svg"
@@ -86,7 +90,7 @@ function ResearchArea(props) {
                         approximate an Athlete&apos;s brain’s response to
                         injuries.
                       </p>
-                      <Link to="">Read More</Link>
+                      <Link to="/Sports">Read More</Link>
                     </div>
                   </div>
                 </div>
@@ -98,4 +102,4 @@ function ResearchArea(props) {
     </div>
   );
 }
-export default ResearchArea;
+export default withRouter(ResearchArea);

@@ -167,24 +167,26 @@ class Nav extends React.Component {
   }
 
   dashboardDropDownList = () => {
-    return (
-      <div
-        onMouseEnter={this.StopHiding}
-        onMouseLeave={this.hideLinks}
-        style={this.state.dashboardLinks}
-        className="dashboard-links"
-      >
-        <ul>
-          <li>PSU</li>
-          <li>
-            <Link to="TeamAdmin">Team Admin</Link>
-          </li>
-          <li>
-            <Link to="OrganizationAdmin">Organization Admin</Link>
-          </li>
-        </ul>
-      </div>
-    );
+    if (this.props.userType !== "StandardUser") {
+      return (
+        <div
+          onMouseEnter={this.StopHiding}
+          onMouseLeave={this.hideLinks}
+          style={this.state.dashboardLinks}
+          className="dashboard-links"
+        >
+          <ul>
+            <li>PSU</li>
+            <li>
+              <Link to="TeamAdmin">Team Admin</Link>
+            </li>
+            <li>
+              <Link to="OrganizationAdmin">Organization Admin</Link>
+            </li>
+          </ul>
+        </div>
+      );
+    }
   };
 
   laptopNav = () => {
@@ -206,12 +208,12 @@ class Nav extends React.Component {
           </Link>
           <div className={LineUnderLink.linkeMaker('/About')} />
         </li>
-        <li className="nav-item make-active active">
+        {/* <li className="nav-item make-active active">
           <Link className="nav-link" to={'/Sports'}>
             Sports <span className="sr-only">(current)</span>
           </Link>
           <div className={LineUnderLink.linkeMaker('/Sports')} />
-        </li>
+        </li> */}
 
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
@@ -426,8 +428,10 @@ class Nav extends React.Component {
 }
 
 function mapStateToProps(state) {
+  console.log(state)
   return {
-    isLoggedIn: state.isSignedInSuccess
+    isLoggedIn: state.isSignedInSuccess,
+    userType:state.userInfo
   };
 }
 export default compose(

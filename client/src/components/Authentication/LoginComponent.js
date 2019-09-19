@@ -6,7 +6,7 @@ import { logIn, logInFirstTime } from '../../apis';
 import { connect } from 'react-redux';
 import store from '../../Store';
 import '../../mixed_style.css';
-import { setIsSignedInSucceeded } from '../../Actions';
+import { setIsSignedInSucceeded, userDetails } from '../../Actions';
 
 class Login extends React.Component {
   constructor(props) {
@@ -87,6 +87,7 @@ class Login extends React.Component {
               });
             }
             store.dispatch(setIsSignedInSucceeded());
+            store.dispatch(userDetails(response.data.user_type));
           } else {
             this.setState({
               isLoginError: true,
