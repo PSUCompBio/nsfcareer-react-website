@@ -223,3 +223,123 @@ export const createAvatar = (request) =>{
       });
   })
 }
+
+export const getCumulativeEventPressureData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getCumulativeEventPressureData`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getCumulativeEventLoadData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getCumulativeEventLoadData`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getHeadAccelerationEvents = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getHeadAccelerationEvents`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getTeamAdminData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamAdminData`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getImpactHistory = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getImpactHistory`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getPlayersData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getPlayersData`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getOrganizationAdminData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getOrganizationAdminData`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getAllRosters = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllRosters`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const addTeam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/addTeam`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const deleteTeam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteTeam`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
