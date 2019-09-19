@@ -63,19 +63,19 @@ class PenstateUniversity extends React.Component {
             <div className="team-view-counter mb-2 ">
               <p>{this.state.circleValues[0]}</p>
             </div>
-            <p ref="h1">{this.organizationType()}</p>
+            <p ref="h1">Teams</p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">
             <div className="team-view-counter mb-2 ">
               <p> {this.state.circleValues[1]} </p>
             </div>
-            <p ref="h2">Avg Load</p>
+            <p ref="h2">Athelets</p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">
             <div className="team-view-counter mb-2 ">
               <p> {this.state.circleValues[2]} </p>
             </div>
-            <p ref="h3">Alerts</p>
+            <p ref="h3">Staff</p>
           </div>
         </div>
         {this.props.location.pathname === '/OrganizationAdmin' ?
