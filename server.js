@@ -1756,7 +1756,7 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
                 res.status(500).send({ message: 'failure' });
             }
             else{
-                            
+
                 convertXLSXDataToJSON(req.file.buffer,function(items){
                     // Store the Data in DynamoDB
                     storeSensorData(items)
@@ -1780,6 +1780,136 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
         })
     }
 })
+
+app.post(`${apiPrefix}getCumulativeEventPressureData`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeEventPressureData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getCumulativeEventLoadData`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeEventLoadData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+app.post(`${apiPrefix}getHeadAccelerationEvents`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getHeadAccelerationEvents", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+app.post(`${apiPrefix}getTeamAdminData`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getTeamAdminData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+app.post(`${apiPrefix}getImpactHistory`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getImpactHistory", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getImpactSummary", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getPlayersData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getOrganizationAdminData`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getOrganizationAdminData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getAllRosters`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllRosters", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}addTeam`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "addTeam", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}deleteTeam`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "deleteTeam", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
 
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {
