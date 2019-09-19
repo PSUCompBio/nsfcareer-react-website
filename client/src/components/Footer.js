@@ -17,9 +17,15 @@ class Footer extends React.Component {
     else if (this.props.location.pathname === '/OrganizationAdmin') {
       return 'organization_team';
     }
+    else if (this.props.location.pathname === '/profile') {
+      return 'profile__page'
+    }
   };
 
   render() {
+    const redirectToOther = () => {
+      window.location.href = 'https://psucompbio.org/';
+    };
     return (
       <div className={`footer ${this.addFooterClass()}`}>
         <div style={{ background: '' }} className="container">
@@ -36,10 +42,10 @@ class Footer extends React.Component {
           </div>
           <div className="row">
             <div className="col-sm-9 col-md-6 col-lg-6">
-              <p>
-                Contact Us: info@NSFCAREER.IO <br />
-                IP | Privacy Policy &amp; IRB | Collaborate
-              </p>
+            <p>
+                    Contact Us: info@NSFCAREER.IO <br />
+                    <span onClick={()=>window.open('')}>  IP </span> | Privacy Policy &amp; <span onClick={()=>window.open('')}>  IRB </span> | Collaborate
+                  </p>
             </div>
             <div className="col-sm-3 col-md-6 col-lg-6">
               {/* <div className="icon-container">
@@ -56,10 +62,12 @@ class Footer extends React.Component {
             </div>
           </div>
           <div className="row text-center">
-            <div className="col-md-12 col-lg-12">
-              <p onClick={this.redirectToOther} className="copyright">
-                © 2019 Copyright: Penn State Computational Biomechanics Group
-              </p>
+            <div className="col-md-12 pb-3">
+            <p onClick={redirectToOther} className="copyright">
+                    © 2019 Copyright: Penn State Computational Biomechanics
+                    Group
+                  </p>
+           
             </div>
           </div>
         </div>

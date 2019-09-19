@@ -9,6 +9,15 @@ class TechnologiesWeUse extends React.Component {
     };
   }
 
+   removeAnimationMobileView(animation){
+    if (this.props.screenWidth > 425)
+      return animation;
+    else {
+      return ''
+    }
+  }
+
+
   render = (props) => {
     const makeFooterVisibeForSmallDevice = {
       reset: {
@@ -42,7 +51,7 @@ class TechnologiesWeUse extends React.Component {
                     <div ref={ref}>
                       <h1
                     className={`font-weight-bold animated ${
-                      inView ? 'zoomIn' : ''
+                      inView ? this.removeAnimationMobileView('zoomIn') : ''
                     }`}
                   >
                     TECHNOLOGIES THAT WE USE
@@ -68,11 +77,11 @@ class TechnologiesWeUse extends React.Component {
                   {({ inView, ref }) => (
                     <div
                       ref={ref}
-                      className={`col-md-4   ${
+                      className={`col-md-4 animated   ${
                         this.props.screenWidth <= 768
                           ? 'text-center'
                           : 'text-left'
-                      } ${inView ? 'animated slideInLeft' : ''}`}
+                      } ${inView ? this.removeAnimationMobileView('slideInLeft') : ''}`}
                     >
                       <img
                         className="py-3"
@@ -97,9 +106,9 @@ class TechnologiesWeUse extends React.Component {
                   {({ inView, ref }) => (
                     <div
                       ref={ref}
-                      className={`col-md-4   pt-5 ${
+                      className={`col-md-4 animated   pt-5 ${
                         this.props.screenWidth < 768 ? 'order-first' : ''
-                      } ${inView ? 'animated fadeIn' : ''}`}
+                      } ${inView ? this.removeAnimationMobileView('zoomIn') : ''}`}
                     >
                       <img
                         className="mb-5 img-fluid terminology-img"
@@ -113,11 +122,11 @@ class TechnologiesWeUse extends React.Component {
                   {({ inView, ref }) => (
                     <div
                       ref={ref}
-                      className={`col-md-4   ${
+                      className={`col-md-4 animated  ${
                         this.props.screenWidth <= 768
                           ? 'text-center'
                           : 'text-right'
-                      } ${inView ? 'animated slideInRight' : ''}`}
+                      } ${inView ? this.removeAnimationMobileView('slideInRight') : ''}`}
                     >
                       <img
                         className="py-3"
@@ -181,7 +190,7 @@ class TechnologiesWeUse extends React.Component {
                 <div className="col-sm-9 col-md-6 ">
                   <p>
                     Contact Us: info@NSFCAREER.IO <br />
-                    IP | Privacy Policy &amp; IRB | Collaborate
+                    <span onClick={()=>window.open('')}>  IP </span> | Privacy Policy &amp; <span onClick={()=>window.open('')}>  IRB </span> | Collaborate
                   </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">
@@ -211,7 +220,7 @@ class TechnologiesWeUse extends React.Component {
                 </div>
               </div>
               <div className="row text-center">
-                <div className="col-md-12 ">
+                <div className="col-md-12 pb-3 ">
                   <p onClick={redirectToOther} className="copyright">
                     © 2019 Copyright: Penn State Computational Biomechanics
                     Group

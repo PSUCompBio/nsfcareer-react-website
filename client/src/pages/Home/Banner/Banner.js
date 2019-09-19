@@ -8,14 +8,28 @@ WebFont.load({
   }
 });
 class Banner extends React.Component {
+  removeAnimationMobileView(animation) {
+    if (this.props.screenWidth > 425) return animation;
+    else {
+      return '';
+    }
+  }
+
   render() {
     return (
       <div>
         <div className="section-one-container">
           <div className="container-fluid pl-0 pr-0">
             <div className="section-one">
-              <img src="/img/BannerImg/Brain.png" alt="" />
-              {/* <img className="svg brain-overlay w-25" src="/img/BannerImg/b2.png" alt=""/> */}
+              <div className="image-container__banner">
+                <div className="left-bubble-img"></div>
+                <div className="right-brain-img">
+              <img className="svg img-fluid" src="/img/BannerImg/b2.png" alt=""/>
+                </div>
+              </div>
+              <div className="downpointer">
+              <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              </div>
               <div className="header-navbar">
                 <div className="container-fluid heading-container">
                   <div className="row">
@@ -29,19 +43,27 @@ class Banner extends React.Component {
                           }`}
                         >
                           <h1
-                            className={`${inView ? 'animated fadeInLeft' : ''}`}
+                            className={`animated ${
+                              inView
+                                ? this.removeAnimationMobileView('fadeInLeft')
+                                : ''
+                            }`}
                           >
                             TRANSFORM YOUR SENSOR DATA
                           </h1>
                           <h4
-                            className={`${
-                              inView ? 'animated fadeInRight' : ''
+                            className={`animated ${
+                              inView ? this.removeAnimationMobileView('fadeInRight') : ''
                             }`}
                           >
                             Accurate brain simulations help extend your{' '}
                           </h4>
                           <h4
-                            className={`${inView ? 'animated fadeInUp' : ''}`}
+                            className={`animated ${
+                              inView
+                                ? this.removeAnimationMobileView('fadeInUp')
+                                : ''
+                            }`}
                           >
                             sensor data research.{' '}
                           </h4>
@@ -51,10 +73,14 @@ class Banner extends React.Component {
                             }`}
                           >
                             <p
-                              className={`${inView ? 'animated fadeInUp' : ''}`}
+                              className={`animated ${
+                                inView
+                                  ? this.removeAnimationMobileView('fadeInUp')
+                                  : ''
+                              }`}
                             >
                               Supported By
-                            </p>                           
+                            </p>
                           </div>
                         </div>
                       )}
@@ -70,7 +96,7 @@ class Banner extends React.Component {
                             <img
                               ref={ref}
                               className={`img-fluid animated ${
-                                inView ? 'fadeIn' : ''
+                                inView ? this.removeAnimationMobileView('fadeIn') : ''
                               }`}
                               src="/img/BannerImg/NSF.png"
                               alt=""
@@ -79,7 +105,7 @@ class Banner extends React.Component {
                             <img
                               ref={ref}
                               className={`img-fluid animated ${
-                                inView ? 'fadeIn' : ''
+                                inView ? this.removeAnimationMobileView('fadeIn') : ''
                               }`}
                               src="/img/BannerImg/penState.png"
                               alt=""
@@ -87,7 +113,7 @@ class Banner extends React.Component {
                             <img
                               ref={ref}
                               className={`img-fluid animated ${
-                                inView ? 'fadeIn' : ''
+                                inView ? this.removeAnimationMobileView('fadeIn') : ''
                               }`}
                               src="/img/BannerImg/ibm.png"
                               alt=""
@@ -105,7 +131,7 @@ class Banner extends React.Component {
                             <img
                               ref={ref}
                               className={`img-fluid animated ${
-                                inView ? 'fadeIn' : ''
+                                inView ? this.removeAnimationMobileView('fadeIn') : ''
                               }`}
                               src="/img/BannerImg/amazon.png"
                               alt=""
@@ -113,7 +139,7 @@ class Banner extends React.Component {
                             <img
                               ref={ref}
                               className={`img-fluid animated ${
-                                inView ? 'fadeIn' : ''
+                                inView ? this.removeAnimationMobileView('fadeIn') : ''
                               }`}
                               src="/img/BannerImg/cyberscience.png"
                               alt=""

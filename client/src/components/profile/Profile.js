@@ -13,17 +13,17 @@ import {
 
 import Footer from '../Footer';
 
-import Download3dProfile from '../Buttons/Download3dProfile';
-import DownloadAvtar from '../Buttons/Download3dProfile';
-import DownloadFeMesh from '../Buttons/Download3dProfile';
+import DownloadBtn from '../Buttons/Download3dProfile';
 import store from '../../Store';
 import {
   darkThemeActiveSetter,
   darkThemeInactiveSetter,
-  userDetails
+  resetSignedInSucceeded,
+  militaryVersion
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
+import { withRouter } from 'react-router-dom';
 
 class Profile extends React.Component {
   constructor() {
@@ -40,11 +40,12 @@ class Profile extends React.Component {
       disableInput: [true, true, true, true, true],
       inputs: ['email', 'age', 'sex', 'contact', 'organization'],
       isDarkMode: false,
-      mode: 'Dark mode'
+      mode: 'Dark mode',
+      militaryVersion: 'Military version',
+      militaryStatus: false
     };
   }
   onChangeHandler = (event) => {
-    // console.log(event.target.files[0]);
     this.setState({
       selectedFile: event.target.files[0]
     });
@@ -67,8 +68,9 @@ class Profile extends React.Component {
           )
             .then((res) => {
               console.log(res.data);
-              // this.setState({...this.state.user, profile_picture_url: res.data.profile_picture_url});
-              // this.setState({profile_picture_url : res.data.profile_picture_url})
+              this.setState({
+                profile_picture_url: res.data.profile_picture_url
+              });
               this.setState({ isUploading: false });
 
               this.setState((prevState) => {
@@ -189,43 +191,57 @@ class Profile extends React.Component {
     });
   };
 
+  elementsOfDarkMode = (
+    darkThemereSetterFunc,
+    bgColor,
+    fontColor,
+    darkModeColor
+  ) => {
+    store.dispatch(darkThemereSetterFunc());
+    this.refs.lightDark.style.background = bgColor[0];
+    document.getElementsByTagName('html')[0].style.background = bgColor[1];
+    document.getElementsByTagName('body')[0].style.background = bgColor[1];
+    this.refs.profileBorder.style.border = `10px solid ${bgColor[1]}`;
+    this.refs.nameColor.style.color = fontColor;
+    this.refs.chooserColor.style.color = fontColor;
+    const allInputs = this.state.inputs;
+    allInputs.forEach((element) => {
+      this.refs[element].setAttribute('id', darkModeColor);
+    });
+    this.props.isDarkModeSet(this.state.isDarkMode);
+  };
+
   darkMode = (e) => {
     this.setState(
       { isDarkMode: !this.state.isDarkMode, mode: 'Light mode' },
       () => {
         if (this.state.isDarkMode === true) {
-          store.dispatch(darkThemeActiveSetter());
-          this.refs.lightDark.style.background = '#232838';
-          document.getElementsByTagName('html')[0].style.background = '#171b25';
-          document.getElementsByTagName('body')[0].style.background = '#171b25';
-          this.refs.profileBorder.style.border = '10px solid #171b25';
-          this.refs.nameColor.style.color = '#fff';
-          this.refs.chooserColor.style.color = '#fff';
-          const allInputs = this.state.inputs;
-          allInputs.forEach((element) => {
-            this.refs[element].setAttribute('id', 'dark-mode-color');
-          });
-          this.props.isDarkModeSet(this.state.isDarkMode);
+          this.elementsOfDarkMode(
+            darkThemeActiveSetter,
+            ['#232838', '#171b25'],
+            '#fff',
+            'dark-mode-color'
+          );
         } else {
           this.setState({ mode: 'Dark mode' });
-          store.dispatch(darkThemeInactiveSetter());
-          this.refs.lightDark.style.background = '';
-          document.getElementsByTagName('html')[0].style.background = '';
-          document.getElementsByTagName('body')[0].style.background = '';
-          this.refs.profileBorder.style.border = '';
-          this.refs.nameColor.style.color = '';
-          this.refs.chooserColor.style.color = '';
-          const allInputs = this.state.inputs;
-          allInputs.forEach((element) => {
-            this.refs[element].setAttribute('id', '');
-          });
-          this.props.isDarkModeSet(this.state.isDarkMode);
+          this.elementsOfDarkMode(darkThemeInactiveSetter, ['', ''], '', '');
         }
       }
     );
   };
 
-  
+  militaryVersionHandler = () => {
+    if (this.state.militaryStatus === false) {
+      this.setState({ militaryStatus: true }, () => {
+        store.dispatch(militaryVersion(true));
+      });
+    } else {
+      this.setState({ militaryStatus: false }, () => {
+        store.dispatch(militaryVersion(false));
+      });
+    }
+  };
+
   showProfile = () => {
     return (
       <React.Fragment>
@@ -338,21 +354,23 @@ class Profile extends React.Component {
                     className="btn mt-5 upload-btn"
                     name="profile_pic"
                   />
-                  {
-                                      this.state.isUploading ?
-                                      <div className="d-flex justify-content-center center-spinner">
-                                           <div className="spinner-border text-primary" role="status" >
-                          <span className="sr-only">Uploading...</span>
-                        </div>
-                               </div>:null
-                                    }
-                <button
+                  {this.state.isUploading ? (
+                    <div className="d-flex justify-content-center center-spinner">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="sr-only">Uploading...</span>
+                      </div>
+                    </div>
+                  ) : null}
+                  <button
                     type="button"
                     onClick={this.onClickHandler}
-                        className="btn mt-5 upload-btn"
-                        >
+                    className="btn mt-5 upload-btn"
+                  >
                     Upload photo
-                </button>
+                  </button>
                 </div>
               </div>
 
@@ -378,65 +396,116 @@ class Profile extends React.Component {
                 </div>
               </div>
 
-              <p ref="p1">
-                  {this.state.user.is_selfie_image_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
+              <div className="row">
+                <div className="col-sm-7">
+                  <span ref="chooserColor" className="dark-mode">
+                    {this.state.militaryVersion}
+                  </span>
+                </div>
+                <div className="col-sm-5  position-relative pt-1">
+                  <label className="switch" htmlFor="militaryVersion">
+                    <input
+                      onChange={this.militaryVersionHandler}
+                      value={this.state.militaryStatus}
+                      type="checkbox"
+                      id="militaryVersion"
+                    />
+                    <div className="slider round"></div>
+                  </label>
+                </div>
+              </div>
 
-                  {' '}
-                  Selfie Uploaded{' '}
+              <p ref="p1">
+                {this.state.user.is_selfie_image_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
+                Selfie Uploaded{' '}
               </p>
-              {this.state.user.is_selfie_image_uploaded? <Download3dProfile url={this.state.user.profile_picture_url} content="Download 3d Selfie" /> : null}
+              {this.state.user.is_selfie_image_uploaded ? (
+                <DownloadBtn
+                  url={this.state.user.profile_picture_url}
+                  content="Download 3d Selfie"
+                />
+              ) : null}
 
               <p ref="p2">
-                  {this.state.user.is_selfie_model_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
-
-                  {' '}
+                {this.state.user.is_selfie_model_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
                 3D Avatar Generated{' '}
               </p>
-              {this.state.user.is_selfie_model_uploaded? <DownloadAvtar url={this.state.user.avatar_url} content="Download avatar" /> : null}
+              {this.state.user.is_selfie_model_uploaded ? (
+                <DownloadBtn
+                  url={this.state.user.avatar_url}
+                  content="Download avatar"
+                />
+              ) : null}
 
               <p ref="p3">
-                  {this.state.user.is_selfie_inp_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
-
-                  {' '}
+                {this.state.user.is_selfie_inp_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
                 Mesh File Generated
               </p>
-              {this.state.user.is_selfie_inp_uploaded? <DownloadFeMesh url={this.state.user.inp_file_url} content="Download FE Mesh" /> : null}
+              {this.state.user.is_selfie_inp_uploaded ? (
+                <DownloadBtn
+                  url={this.state.user.inp_file_url}
+                  content="Download FE Mesh"
+                />
+              ) : null}
 
               <p ref="p4">
-                  {this.state.user.is_selfie_simulation_file_uploaded?
-                      <span>
-                        <img src="/img/icon/check.svg" alt="" />
-                      </span>
-                      :
-                      <span>
-                        <img className="cancel-icon" src="/img/icon/cancel.svg" alt="" />
-                      </span>}
-
-                  {' '}
+                {this.state.user.is_selfie_simulation_file_uploaded ? (
+                  <span>
+                    <img src="/img/icon/check.svg" alt="" />
+                  </span>
+                ) : (
+                  <span>
+                    <img
+                      className="cancel-icon"
+                      src="/img/icon/cancel.svg"
+                      alt=""
+                    />
+                  </span>
+                )}{' '}
                 Simulation File Generated{' '}
               </p>
-              {this.state.user.is_selfie_simulation_file_uploaded ? <DownloadAvtar url={this.state.user.simulation_file_url} content="Download Simulation File" /> : null}
+              {this.state.user.is_selfie_simulation_file_uploaded ? (
+                <DownloadBtn
+                  url={this.state.user.simulation_file_url}
+                  content="Download Simulation File"
+                />
+              ) : null}
             </div>
           </div>
         </div>
@@ -446,13 +515,10 @@ class Profile extends React.Component {
   };
 
   returnComponent = () => {
-
     console.log(this.state);
-    if (!this.state.isAuthenticated && !this.state.isCheckingAuth){
-        
-        return <Redirect to="/Login"/>
-    }
-    else if (Object.entries(this.state.user).length === 0) {
+    if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+      return <Redirect to="/Login" />;
+    } else if (Object.entries(this.state.user).length === 0) {
       return <Spinner />;
     }
 
@@ -460,122 +526,7 @@ class Profile extends React.Component {
   };
 
   render() {
-    //     return <React.Fragment>
-    // <h1 className="topspace">Profile</h1>
-    // <div>
-    // <MDBInput
-
-    //                       name="profile_pic"
-    //                       icon="file"
-
-    //                       type="file"
-    //                       onChange={this.onChangeHandler}
-    //                     />
-    //                     <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn>
-
-    // </div>
-    //     </React.Fragment>;
-    // if((!this.state.isCheckingAuth) && (!this.state.isAuthenticated)){
-    //     return <Redirect to="/Login"/>
-    // }
-    // if(this.state.isLoading && (!this.state.isAuthenticated)){
-    //     return <div className="container">Loading...</div>
-    // }
-    // if(this.state.isLoading && this.state.isAuthenticated){
-
-    //   return <div className="topspace"><h1 >User Profile</h1><h2>Loading...</h2></div>
-    // }
-
-    // return <React.Fragment>
-    // <MDBCard className="topspace">
-    //   <MDBCardBody>
-
-    //     <div className="row">
-    //         <div className="col-xs-12 col-sm-6 col-md-6">
-    //             <div className="well well-sm">
-    //                 <div className="row">
-    //                     <div className="col-sm-6 col-md-4">
-    //                       {!this.isProfilePictureExists()?<div><MDBInput
-    //                       name="profile_pic"
-    //                       icon="file"
-    //                       type="file"
-    //                       onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>
-    //                                             {
-    //                     this.state.isUploading ?
-    //                     <div className="d-flex justify-content-center center-spinner">
-    //                          <div className="spinner-border text-primary" role="status" >
-    //         <span className="sr-only">Uploading...</span>
-    //       </div>
-    //              </div>:null
-    //                   }
-    //                   <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn></div>
-    //                     :
-    //                     <div>
-    //                       <img src={this.state.user.profile_picture_url} alt="" className="img-rounded img-responsive" />
-    //                       <MDBInput
-    //                       name="profile_pic"
-    //                       icon="file"
-    //                       type="file"
-    //                       onChange={this.onChangeHandler}/><p className="grey-text">* jpeg, jpg & png only</p>
-    //                       {
-    //                     this.state.isUploading ?
-    //                     <div className="d-flex justify-content-center center-spinner">
-    //                          <div className="spinner-border text-primary" role="status" >
-    //         <span className="sr-only">Uploading...</span>
-    //       </div>
-    //              </div>:null
-    //                   }
-    //                       <MDBBtn color="light-green" onClick={this.onClickHandler}>Upload</MDBBtn>
-
-    //                       </div>
-
-    //                       }
-
-    //                     </div>
-    //                     <div className="col-sm-6 col-md-8">
-    //                         <h4>
-    //                             {this.state.user.first_name} {this.state.user.last_name}</h4>
-
-    //                         <p>
-    //                             <i className="glyphicon glyphicon-envelope"></i>{this.state.user.email}
-    //                             <br />
-    //                             <i className="glyphicon glyphicon-globe"></i>Age : {this.state.user.age}
-    //                             <br />
-    //                             <i className="glyphicon glyphicon-globe"></i>Sex : {this.state.user.gender}
-    //                             <br />
-    //                             <i className="glyphicon glyphicon-gift"></i>{this.state.user.phone_number}</p>
-    //                             <br />
-    //                             <span>Selfie Uploaded </span>
-    //                             {this.state.user.is_selfie_image_uploaded? <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.profile_picture_url} className="btn btn-warning">Download 3D Selfie</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/> }
-    //                             <br />
-    //                             <span>3D Avatar Generated </span>
-    //                             {this.state.user.is_selfie_model_uploaded?
-    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.avatar_url} className="btn btn-primary">Download Avatar</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
-    //                             }
-    //                             <br />
-    //                             <span>Mesh File Generated </span>
-    //                             {this.state.user.is_selfie_inp_uploaded?
-    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.inp_file_url} className="btn btn-info">Download FE Mesh</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
-    //                             }
-    //                             <br />
-    //                             <span>Simulation File Generated </span>
-    //                             {this.state.user.is_selfie_simulation_file_uploaded?
-    //                             <React.Fragment><MDBIcon icon="check-circle" className="green-text pr-3"/> <br /> <a href={this.state.user.simulation_file_url} className="btn btn-secondary">Download Simulation File</a> </React.Fragment>
-    //                             :<MDBIcon icon="times-circle" className="red-text pr-3"/>
-    //                             }
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     </div>
-    //   </MDBCardBody>
-    //   </MDBCard></React.Fragment>
-    console.log(this.state.user)
     return this.returnComponent();
-    // this.state.isAuthenticated?this.returnComponent():<Redirect to="/Login"/>
   }
 
   componentDidMount() {
@@ -609,7 +560,7 @@ class Profile extends React.Component {
                 allInputs.forEach((element) => {
                   this.refs[element].setAttribute('id', 'dark-mode-color');
                 });
-                for (let i = 1; i <= 3; i++){
+                for (let i = 1; i <= 3; i++) {
                   this.refs['h' + i].style.color = '#fff';
                 }
                 this.props.isDarkModeSet(this.state.isDarkMode);
@@ -623,14 +574,21 @@ class Profile extends React.Component {
               });
             });
         } else {
-          this.setState({ isAuthenticated: false, isCheckingAuth: false });
+          this.setState(
+            { isAuthenticated: false, isCheckingAuth: false },
+            () => {
+              if (this.state.isAuthenticated === false) {
+                store.dispatch(resetSignedInSucceeded());
+                this.props.history.push('/Home');
+              }
+            }
+          );
         }
       })
       .catch((err) => {
         this.setState({ isAuthenticated: false, isCheckingAuth: false });
       });
   }
-
 }
 
-export default Profile;
+export default withRouter(Profile);

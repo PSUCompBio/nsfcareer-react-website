@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { getStatusOfDarkmode } from '../reducer';
+import DashboardDropdownSelector from './DashboardDropdownSelector';
 
 class PenstateUniversity extends React.Component {
   constructor() {
@@ -8,6 +9,14 @@ class PenstateUniversity extends React.Component {
     this.state = {
       circleValues: []
     };
+  }
+
+  organizationType = () => {
+    if (this.props.location.pathname === '/OrganizationAdmin') {
+      return 'Team';
+    } else if (this.props.location.pathname === '/TeamAdmin') {
+      return 'Impact'
+    }
   }
 
   impactLoadAlertsValue = () => {
@@ -30,7 +39,7 @@ class PenstateUniversity extends React.Component {
 
   render() {
     return (
-      <div className="row">
+      <div className="row organization-pad__military">
         <div className="col-md-7">
           <p className="penstate">
             {this.props.location.pathname === '/OrganizationAdmin'
@@ -54,21 +63,26 @@ class PenstateUniversity extends React.Component {
             <div className="team-view-counter mb-2 ">
               <p>{this.state.circleValues[0]}</p>
             </div>
-            <p ref="h1">Impacts</p>
+            <p ref="h1">Teams</p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">
             <div className="team-view-counter mb-2 ">
               <p> {this.state.circleValues[1]} </p>
             </div>
-            <p ref="h2">Avg Load</p>
+            <p ref="h2">Athelets</p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">
             <div className="team-view-counter mb-2 ">
               <p> {this.state.circleValues[2]} </p>
             </div>
-            <p ref="h3">Alerts</p>
+            <p ref="h3">Staff</p>
           </div>
         </div>
+        {this.props.location.pathname === '/OrganizationAdmin' ?
+          < DashboardDropdownSelector />
+          :
+          ''
+        }
       </div>
     );
   }

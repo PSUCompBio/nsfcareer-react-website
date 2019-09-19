@@ -16,7 +16,7 @@ class NumberTableComponent extends React.Component {
 
         // numbers => Array of items received from DynamoDB table `numbers`
         // isLoading => Flag to check if Data is fetched and load component accordingly
-        // headerCount => No. Of header items in Table to be displayed 
+        // headerCount => No. Of header items in Table to be displayed
         // 1st heading is always 'id' then consecutive heading is 'number_1 ... number_5'
 
         this.state = {
@@ -31,18 +31,16 @@ class NumberTableComponent extends React.Component {
 
         const formData = new FormData(e.target);
 
-        // converting formData to JSON 
+        // converting formData to JSON
         const formJsonData = formDataToJson(formData)
         putNumbersToDb(formJsonData).then((data) => {
             this.refs.addNumbersForm.reset();
             // Now update the state with data that we added
             this.setState((prevState) => ({ numbers: prevState.numbers.concat(JSON.parse(formJsonData)), isLoading: false }));
-            
         }).catch((err) => {
             e.target.reset();
-            // catch error 
+            // catch error
             console.log("error : ",err);
-            
         })
     }
 

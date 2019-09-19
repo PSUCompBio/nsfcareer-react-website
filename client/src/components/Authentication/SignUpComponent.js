@@ -24,7 +24,7 @@ class SignUpComponent extends React.Component {
       selectedCountryCode: '+1',
       slectedCountryName: 'USA',
       startDate: '',
-      signupOrElse:{email:'',sex:''}
+      signupOrElse: { email: '', sex: '' }
     };
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -39,9 +39,16 @@ class SignUpComponent extends React.Component {
 
   componentDidMount() {
     if (this.props.location.pathname === '/SignUp') {
-      this.setState({signupOrElse:{email:'XYZ@something.com',sex:'Select your sex'}})
+      this.setState({
+        signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' }
+      });
     } else if (this.props.location.pathname === '/SignUpElse') {
-      this.setState({signupOrElse:{email:'Contact email for this individual',sex:'Select the individual\'s sex'}})
+      this.setState({
+        signupOrElse: {
+          email: 'Contact email for this individual',
+          sex: "Select the individual's sex"
+        }
+      });
     }
   }
 
@@ -101,10 +108,33 @@ class SignUpComponent extends React.Component {
       });
   }
 
+  forJsx = (imgSrc, placeholder, name) => {
+    return (
+      <div className="input-group mb-5">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            <img src={imgSrc} alt="" />
+          </span>
+        </div>
+        <input
+          type="text"
+          className="form-control"
+          placeholder={placeholder}
+          name={name}
+          aria-label={name}
+          aria-describedby="basic-addon1"
+        />
+      </div>
+    );
+  };
+
   getForm = () => {
     return (
       <form className="mt-5" onSubmit={this.handleSubmit} ref="signUpForm">
-        <div className="input-group mb-5">
+        {this.forJsx('img/icon/user.svg', 'First name', 'first_name')}
+        {this.forJsx('img/icon/user.svg', 'Last name', 'last_name')}
+
+        {/* <div className="input-group mb-5">
           <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon1">
               <img src="img/icon/user.svg" alt="" />
@@ -133,7 +163,7 @@ class SignUpComponent extends React.Component {
             aria-label="last_name"
             aria-describedby="basic-addon1"
           />
-        </div>
+        </div> */}
 
         <div className="input-group mb-5">
           <div className="input-group-prepend">

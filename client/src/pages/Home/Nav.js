@@ -4,6 +4,7 @@ import store from '../../Store';
 import { resetSignedInSucceeded } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import LineUnderLink from '../../utilities/LineUnderLink.js';
 
 class Nav extends React.Component {
   constructor() {
@@ -14,7 +15,11 @@ class Nav extends React.Component {
       userProfile: '',
       userName: '',
       dashboardLinks: { display: 'none' },
-      countMouseEnter: 0
+      dashboardLinksIsOpen: false,
+      countMouseEnter: 0,
+      userProfileIconLinksIsOpen: false,
+      logoutBox: { display: 'none' },
+      psuLinks: { display: 'none' }
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -30,38 +35,6 @@ class Nav extends React.Component {
       false
     );
   }
-
-  // componentWillMount() {
-  //   console.log(store.getState());
-  //   if (store.getState().isSignedInSuccess === false) {
-  //     store.dispatch(userDetails({}));
-  //   }
-  // }
-
-  componentWillUnmount() {
-    // document.removeEventListener('mousedown');
-  }
-
-  // componentDidMount() {
-  //   isAuthenticated(JSON.stringify({}))
-  //     .then((value) => {
-  //       if (value.data.message === 'success') {
-  //         this.setState({});
-  //         getUserDetails()
-  //           .then((response) => {
-  //             store.dispatch(userDetails(response.data));
-  //             console.log(response.data);
-  //             this.setState({userProfile:response.data.profile_picture_url, userName:response.data.first_name+' '+response.data.last_name})
-  //           })
-  //           .catch((error) => {});
-  //       } else {
-  //         // this.setState({ isAuthenticated: false, isCheckingAuth: false });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       // this.setState({ isAuthenticated: false, isCheckingAuth: false });
-  //     });
-  // }
 
   handleClick() {
     const body = document.getElementsByTagName('body')[0];
@@ -83,6 +56,11 @@ class Nav extends React.Component {
     } else {
       this.setState({ signOutClass: 'sign-out-hide' });
     }
+    this.setState({ userProfileIconLinksIsOpen: false });
+  };
+
+  showLogOutOption = () => {
+    this.setState({ signOutClass: 'sign-out' });
   };
 
   hideSignOut = (e) => {
@@ -97,14 +75,41 @@ class Nav extends React.Component {
 
   hideLinks = (e) => {
     this.setState({
-      dashboardLinks: { display: 'none' }
+      dashboardLinks: { display: 'none' },
+      dashboardLinksIsOpen: false
     });
+  };
+
+  StopHiding = () => {
+    this.setState({ dashboardLinksIsOpen: true });
+  };
+
+  hideDashboardsLinkIfNotEnter = () => {
+    setTimeout(() => {
+      if (this.state.dashboardLinksIsOpen === false) {
+        this.setState({
+          dashboardLinks: { display: 'none' }
+        });
+      }
+    }, 100);
   };
 
   signOut = () => {
     store.dispatch(resetSignedInSucceeded());
     this.setState({ signOutClass: 'sign-out-hide' });
     this.props.history.push('/Home');
+  };
+
+  hideUserIconLinks = () => {
+    this.setState({ userProfileIconLinksIsOpen: true });
+  };
+
+  hideUserIconLinksIfnotEnter = () => {
+    setTimeout(() => {
+      if (this.state.userProfileIconLinksIsOpen === false) {
+        this.setState({ signOutClass: 'sign-out-hide' });
+      }
+    }, 100);
   };
 
   mobileNav = () => {
@@ -127,67 +132,95 @@ class Nav extends React.Component {
           <Link className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/About' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/About')} />
         </li>
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
             Contact
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/Contact' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Contact')} />
         </li>
         {this.props.location.pathname !== '/SignUp' ? (
           <li className="nav-item make-active active">
             <Link className="nav-link" to={'/Login'}>
               Dashboard <span className="sr-only">(current)</span>
             </Link>
-            <div
-              className={
-                this.props.location.pathname === '/Login' ? 'active-link' : ''
-              }
-            />
+            <div className={LineUnderLink.linkeMaker('/Login')} />
           </li>
         ) : (
           <li className="nav-item make-active">
             <Link className="nav-link" to={'/SignUp'}>
               Sign up
             </Link>
-            <div
-              className={
-                this.props.location.pathname === '/SignUp' ? 'active-link' : ''
-              }
-            />
+            <div className={LineUnderLink.linkeMaker('/SignUp')} />
           </li>
         )}
       </ul>
     );
   };
 
+  showLogOutOptions = () => {
+    if (this.state.logoutBox.display === 'none') {
+      this.setState({ logoutBox: { display: 'block' } });
+    } else {
+      this.setState({ logoutBox: { display: 'none' } });
+    }
+  };
+
+  makePSUlinksVisible = () => {
+    if (this.state.psuLinks.display === 'none') {
+      this.setState({ psuLinks: { display: 'block' } });
+    } else {
+      this.setState({ psuLinks: { display: 'none' } });
+    }
+  };
+
+  mobilePSUlinks = () => {
+    if (this.props.userType === 'Admin') {
+      return (
+        <React.Fragment>
+          <div onClick={this.makePSUlinksVisible} className="psu-list">
+            PSU
+          </div>
+          <div
+            style={this.state.psuLinks}
+            className="mobile-dashboard-dropdown"
+          >
+            <ul>
+              <li onClick={this.handleClick}>
+                <Link to="TeamAdmin">Team Admin</Link>
+              </li>
+              <li onClick={this.handleClick}>
+                <Link to="OrganizationAdmin">Organization Admin</Link>
+              </li>
+            </ul>
+          </div>
+        </React.Fragment>
+      );
+    }
+  };
+
   dashboardDropDownList = () => {
-    return (
-      <div
-        onMouseLeave={this.hideLinks}
-        style={this.state.dashboardLinks}
-        className="dashboard-links"
-      >
-        <ul>
-          <li>PSU</li>
-          <li>
-            <Link to="TeamAdmin">Team Admin</Link>
-          </li>
-          <li>
-            <Link to="OrganizationAdmin">Organization Admin</Link>
-          </li>
-        </ul>
-      </div>
-    );
+    if (this.props.userType === 'Admin') {
+      return (
+        <div
+          onMouseEnter={this.StopHiding}
+          onMouseLeave={this.hideLinks}
+          style={this.state.dashboardLinks}
+          className="dashboard-links"
+        >
+          <ul>
+            <li>PSU</li>
+            <li>
+              <Link to="TeamAdmin">Team Admin</Link>
+            </li>
+            <li>
+              <Link to="OrganizationAdmin">Organization Admin</Link>
+            </li>
+          </ul>
+        </div>
+      );
+    }
   };
 
   laptopNav = () => {
@@ -199,10 +232,7 @@ class Nav extends React.Component {
           </Link>
           <div
             className={
-              this.props.location.pathname === '/Home' ||
-              this.props.location.pathname === '/'
-                ? 'active-link'
-                : ''
+              LineUnderLink.linkeMaker('/Home') || LineUnderLink.linkeMaker('/')
             }
           />
         </li>
@@ -210,37 +240,26 @@ class Nav extends React.Component {
           <Link className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/About' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/About')} />
         </li>
-        <li className="nav-item make-active active">
+        {/* <li className="nav-item make-active active">
           <Link className="nav-link" to={'/Sports'}>
             Sports <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/Sports' ? 'active-link' : ''
-            }
-          />
-        </li>
+          <div className={LineUnderLink.linkeMaker('/Sports')} />
+        </li> */}
 
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
             Contact
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/Contact' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Contact')} />
         </li>
 
         {this.props.location.pathname !== '/SignUp' ? (
           <li
             onMouseEnter={this.hideSignOut}
+            onMouseLeave={this.hideDashboardsLinkIfNotEnter}
             className="nav-item dashboard-hover make-active active"
           >
             <Link className="nav-link" to={'/Login'}>
@@ -248,12 +267,10 @@ class Nav extends React.Component {
             </Link>
             <div
               className={
-                this.props.location.pathname === '/Login' ||
-                this.props.location.pathname === '/dashboard' ||
-                this.props.location.pathname === '/TeamAdmin' ||
-                this.props.location.pathname === '/OrganizationAdmin'
-                  ? 'active-link'
-                  : ''
+                LineUnderLink.linkeMaker('/Login') ||
+                LineUnderLink.linkeMaker('/Dashboard') ||
+                LineUnderLink.linkeMaker('/TeamAdmin') ||
+                LineUnderLink.linkeMaker('/OrganizationAdmin')
               }
             />
             {this.dashboardDropDownList()}
@@ -263,34 +280,30 @@ class Nav extends React.Component {
             <Link className="nav-link" to={'/SignUp'}>
               Sign up
             </Link>
-            <div
-              className={
-                this.props.location.pathname === '/SignUp' ? 'active-link' : ''
-              }
-            />
+            <div className={LineUnderLink.linkeMaker('/SignUp')} />
           </li>
         )}
         <li className=" nav-item profile-nav-icon">
-          <div onMouseEnter={this.showLogOut} className="name">
+          <div
+            onMouseEnter={this.showLogOutOption}
+            onMouseLeave={this.hideUserIconLinksIfnotEnter}
+            className="name"
+          >
             R K
           </div>
 
           <div
+            onMouseEnter={this.hideUserIconLinks}
             onMouseLeave={this.showLogOut}
             ref="signOut"
             className={`${this.state.signOutClass}`}
           >
             <div className="nav-item make-active profile-user active">
+            {/* <div class="sign-out-box-arrow"></div> */}
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
               </Link>
-              <div
-                className={
-                  this.props.location.pathname === '/Profile'
-                    ? 'active-link'
-                    : ''
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/Profile')} />
             </div>
             <Link to="">
               <img
@@ -344,21 +357,36 @@ class Nav extends React.Component {
           </div>
         ) : (
           ''
-        )}
+          )}
+        
         <nav
           className="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right"
           id="cbp-spmenu-s2"
         >
+          <div className="hide-list-left">
           <div className="mobile-profile-container">
+            <i
+              onClick={this.handleClick}
+              className=" close-mobile_nave fa fa-times-circle"
+              aria-hidden="true"
+            ></i>
             {/* <img src={localStore.userInfo.data.profile_picture_url} alt="" /> */}
             {/* <p>
               {localStore.userInfo.data.first_name +
                 ' ' +
                 localStore.userInfo.data.last_name}
             </p> */}
-            <div className="mobile-user-profile">RK</div>
+            <div
+              onClick={this.showLogOutOptions}
+              className="mobile-user-profile"
+            >
+              RK
+            </div>
 
-            <div className="user-profile-dropdown__mobile">
+            <div
+              style={this.state.logoutBox}
+              className="user-profile-dropdown__mobile"
+            >
               <ul>
                 <li onClick={this.handleClick}>
                   <Link to="profile">Profile</Link>
@@ -379,31 +407,17 @@ class Nav extends React.Component {
           <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
             Home <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/Home' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Home')} />
           <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
             About <span className="sr-only">(current)</span>
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/About' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/About')} />
           {this.props.isLoggedIn === true ? (
             <React.Fragment>
               <Link className="nav-link" to={'/Sports'}>
                 Sports <span className="sr-only">(current)</span>
               </Link>
-              <div
-                className={
-                  this.props.location.pathname === '/Sports'
-                    ? 'active-link'
-                    : ''
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/Sports')} />
 
               <Link
                 onClick={this.handleClick}
@@ -412,13 +426,7 @@ class Nav extends React.Component {
               >
                 Profile <span className="sr-only">(current)</span>
               </Link>
-              <div
-                className={
-                  this.props.location.pathname === '/Profile'
-                    ? 'active-link'
-                    : ''
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/Profile')} />
             </React.Fragment>
           ) : (
             ''
@@ -427,36 +435,14 @@ class Nav extends React.Component {
           <Link onClick={this.handleClick} className="nav-link" to={'/Contact'}>
             Contact
           </Link>
-          <div
-            className={
-              this.props.location.pathname === '/Contact' ? 'active-link' : ''
-            }
-          />
+          <div className={LineUnderLink.linkeMaker('/Contact')} />
           {this.props.location.pathname !== '/SignUp' ? (
             <React.Fragment>
               <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
                 Dashboard <span className="sr-only">(current)</span>
-                {/* {localStore.isSignedInSuccess === true ? ( */}
-                <div className="mobile-dashboard-dropdown">
-                  <ul>
-                    <li>PSU</li>
-                    <li onClick={this.handleClick}>
-                      <Link to="TeamAdmin">Team Admin</Link>
-                    </li>
-                    <li onClick={this.handleClick}>
-                      <Link to="OrganizationAdmin">Organization Admin</Link>
-                    </li>
-                  </ul>
-                </div>
-                {/* ) : (
-                  ''
-                )} */}
               </Link>
-              <div
-                className={
-                  this.props.location.pathname === '/Login' ? 'active-link' : ''
-                }
-              />
+              {this.mobilePSUlinks()}
+              <div className={LineUnderLink.linkeMaker('/Login')} />
             </React.Fragment>
           ) : (
             <React.Fragment>
@@ -467,15 +453,10 @@ class Nav extends React.Component {
               >
                 Sign up
               </Link>
-              <div
-                className={
-                  this.props.location.pathname === '/SignUp'
-                    ? 'active-link'
-                    : ''
-                }
-              />
+              <div className={LineUnderLink.linkeMaker('/SignUp')} />
             </React.Fragment>
-          )}
+              )}
+            </div>
         </nav>
       </nav>
     );
@@ -483,8 +464,10 @@ class Nav extends React.Component {
 }
 
 function mapStateToProps(state) {
+  console.log(state);
   return {
-    isLoggedIn: state.isSignedInSuccess
+    isLoggedIn: state.isSignedInSuccess,
+    userType: state.userInfo
   };
 }
 export default compose(
