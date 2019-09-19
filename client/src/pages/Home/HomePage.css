@@ -116,9 +116,11 @@ body {
   font-family: 'Segoe UI Regular';
 }
 
-.section-one > img {
+.section-one > img:nth-child(1) {
   width: 100%;
   height: 100vh;
+  position: absolute;
+  z-index: -2;
 }
 .padding-mobile {
   padding-top: 20px;
@@ -219,8 +221,9 @@ div.underlined-text p {
   height: 50vh;
 }
 div.brain-over-blue img {
-  width: 45%!important;
-  margin-top: 20vh!important;
+  width: 45% !important;
+  margin-top: 20vh !important;
+  z-index: -1;
 }
 
 .section-two h1,
@@ -1609,6 +1612,7 @@ div.my-progress-bar {
   }
 }
 @media (min-width: 768px) and (max-width: 991px) {
+ 
   .section-one > img:nth-child(1) {
     width: 1200px;
   }
@@ -1662,6 +1666,7 @@ div.my-progress-bar {
 }
 
 @media (min-width: 1500px) and (max-width: 2560px) {
+ 
   .shift-technology-section {
     margin-top: -15%;
   }
@@ -1687,8 +1692,8 @@ div.my-progress-bar {
     padding-top: 6.1%;
   }
   .div.brain-over-blue img {
-    width: 45%!important;
-    margin-top: 20vh!important;
+    width: 45% !important;
+    margin-top: 20vh !important;
   }
 }
 
@@ -1700,7 +1705,16 @@ div.my-progress-bar {
   border: none !important;
 }
 
+@media screen and (min-width: 2600px) and (max-width: 3239px) {
+  div.login-height {
+    height: 85.1vh;
+  }
+}
+
 @media screen and (min-width: 3240px) {
+  div.login-height {
+    height: 49vh;
+  }
   .dynamic__height {
     margin-top: 10%;
   }
@@ -1849,10 +1863,10 @@ div.my-progress-bar {
   }
 }
 
-@media screen and (min-width:1680px){
+@media screen and (min-width: 1680px) {
   div.brain-over-blue img {
-    width: 45%!important;
-    margin-top: 32vh!important;
+    width: 45% !important;
+    margin-top: 32vh !important;
   }
 }
 

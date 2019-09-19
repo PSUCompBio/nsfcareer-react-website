@@ -220,7 +220,7 @@ class TechnologiesWeUse extends React.Component {
                 </div>
               </div>
               <div className="row text-center">
-                <div className="col-md-12 ">
+                <div className="col-md-12 pb-3 ">
                   <p onClick={redirectToOther} className="copyright">
                     © 2019 Copyright: Penn State Computational Biomechanics
                     Group

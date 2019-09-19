@@ -18,7 +18,7 @@ class Nav extends React.Component {
       dashboardLinksIsOpen: false,
       countMouseEnter: 0,
       userProfileIconLinksIsOpen: false,
-      logoutBox:{display:'none'}
+      logoutBox: { display: 'none' }
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -160,14 +160,14 @@ class Nav extends React.Component {
 
   showLogOutOptions = () => {
     if (this.state.logoutBox.display === 'none') {
-      this.setState({logoutBox:{display:'block'}})
+      this.setState({ logoutBox: { display: 'block' } });
     } else {
-      this.setState({logoutBox:{display:'none'}})      
+      this.setState({ logoutBox: { display: 'none' } });
     }
-  }
+  };
 
   dashboardDropDownList = () => {
-    if (this.props.userType !== "StandardUser") {
+    if (this.props.userType === 'Admin') {
       return (
         <div
           onMouseEnter={this.StopHiding}
@@ -328,16 +328,28 @@ class Nav extends React.Component {
           id="cbp-spmenu-s2"
         >
           <div className="mobile-profile-container">
-            <i onClick={this.handleClick} className=" close-mobile_nave fa fa-times-circle" aria-hidden="true"></i>
+            <i
+              onClick={this.handleClick}
+              className=" close-mobile_nave fa fa-times-circle"
+              aria-hidden="true"
+            ></i>
             {/* <img src={localStore.userInfo.data.profile_picture_url} alt="" /> */}
             {/* <p>
               {localStore.userInfo.data.first_name +
                 ' ' +
                 localStore.userInfo.data.last_name}
             </p> */}
-            <div onClick={this.showLogOutOptions} className="mobile-user-profile">RK</div>
+            <div
+              onClick={this.showLogOutOptions}
+              className="mobile-user-profile"
+            >
+              RK
+            </div>
 
-            <div style={this.state.logoutBox} className="user-profile-dropdown__mobile">
+            <div
+              style={this.state.logoutBox}
+              className="user-profile-dropdown__mobile"
+            >
               <ul>
                 <li onClick={this.handleClick}>
                   <Link to="profile">Profile</Link>
@@ -428,10 +440,10 @@ class Nav extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log(state)
+  console.log(state);
   return {
     isLoggedIn: state.isSignedInSuccess,
-    userType:state.userInfo
+    userType: state.userInfo
   };
 }
 export default compose(

@@ -111,7 +111,7 @@ class Login extends React.Component {
     return (
       <React.Fragment>
         <div className="dynamic__height">
-          <div className="container pl-0 pr-0 overflow-hidden">
+          <div className="container pl-0 pr-0 login-height overflow-hidden">
             {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
             <div className="row login">
               <div className="col-md-12  mb-5">
