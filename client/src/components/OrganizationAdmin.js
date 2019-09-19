@@ -63,6 +63,42 @@ class OrganizationAdmin extends React.Component {
       for (let i = 1; i <= this.state.totalTeam; i++) {
         // this.refs['h' + i].style.color = '#fff';
       }
+
+      const elementsRequire = [
+        'tech-football',
+        'football-header',
+        'body-left-part',
+        'teamName',
+        'teamImpact',
+        'teamAlerts',
+        'athletes'
+      ];
+      elementsRequire.forEach((element) => {
+        const totalCards = document.getElementsByClassName(element);
+  
+        if (element === 'tech-football') {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.background = '#171b25';
+          }
+        } else if (element === 'football-header') {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.borderBottom = '1px solid #c7c7c7';
+          }
+        } else if (element === 'body-left-part') {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.borderRight = '1px solid #c7c7c7';
+          }
+        } else if (
+          element === 'teamName' ||
+          element === 'teamImpact' ||
+          element === 'teamAlerts' ||
+          element === 'athletes'
+        ) {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.color = '#fff';
+          }
+        }
+      });
     }
   }
 
@@ -248,19 +284,23 @@ class OrganizationAdmin extends React.Component {
           />
           <div style={this.state.hideEditElement}>
             <div ref={reference[1]} className="football-header ">
-              <p ref={reference[2]}>
+              <p className="teamName" ref={reference[2]}>
                 York tech football <img src="/img/icon/football.svg" alt="" />
               </p>
-              <p ref={reference[3]}>{noOfAthletes} Athletes </p>
+              <p className="athletes" ref={reference[3]}>{noOfAthletes} Athletes </p>
             </div>
             <div className="football-body d-flex">
               <div ref={reference[4]} className="body-left-part ">
                 <p>{noOfImpacts}</p>
-                <p ref={reference[5]}>Impacts</p>
+                <p className="teamImpact" ref={reference[5]}>
+                  Impacts
+                </p>
               </div>
               <div className="body-right-part">
                 <p>{noOfAlerts}</p>
-                <p ref={reference[6]}>Alerts</p>
+                <p className="teamAlerts" ref={reference[6]}>
+                  Alerts
+                </p>
               </div>
             </div>
           </div>
