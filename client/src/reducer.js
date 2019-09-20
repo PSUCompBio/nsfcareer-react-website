@@ -9,7 +9,7 @@ import {
 
 const initialState = {
   darkThemeActive: false,
-  isSignedInSuccess: true,
+  isSignedInSuccess: false,
   militaryVersion: false,
   userInfo:''
 };
