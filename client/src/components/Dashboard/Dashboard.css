@@ -349,7 +349,9 @@ input.team-edit-input {
   left: 50%;
   transform: translate(-50%, -50%) */
 }
-
+.ptf-team{
+  padding: 0 4% 0 4%;
+}
 .align-element-center {
   display: flex;
   align-items: center;

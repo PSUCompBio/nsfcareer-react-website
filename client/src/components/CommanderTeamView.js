@@ -7,7 +7,7 @@ import CommanderDataTable from './CommanderDataTable';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { uploadSensorDataAndCompute } from '../apis';
-
+import MilitaryVersionBtn from './MilitaryVersionBtn';
 
 class CommanderTeamView extends React.Component {
   constructor() {
@@ -27,39 +27,44 @@ class CommanderTeamView extends React.Component {
       selectedFile: null,
       isLoading: true,
       isUploading: false,
-      isFileUploaded : false,
-      fileUploadError : ""
+      isFileUploaded: false,
+      fileUploadError: ''
     };
   }
 
   onChangeHandler = (event) => {
-      console.log(event.target.files[0]);
-      this.setState({
-          selectedFile: event.target.files[0]
-      });
+    console.log(event.target.files[0]);
+    this.setState({
+      selectedFile: event.target.files[0]
+    });
   };
 
   onClickHandler = () => {
-      const data = new FormData();
-      this.setState({ isUploading: true, isFileUploaded : false, fileUploadError : "" });
-      data.append('sensor_csv_file', this.state.selectedFile);
-      console.log(data);
-      uploadSensorDataAndCompute(data)
+    const data = new FormData();
+    this.setState({
+      isUploading: true,
+      isFileUploaded: false,
+      fileUploadError: ''
+    });
+    data.append('sensor_csv_file', this.state.selectedFile);
+    console.log(data);
+    uploadSensorDataAndCompute(data)
       .then((response) => {
-          if(response.data.message == "success"){
-              this.setState({ isUploading: false, isFileUploaded: true });
-          }
-          else{
-              this.setState({ isUploading: false, fileUploadError : response.data.error });
-
-          }
-          console.log(response);
+        if (response.data.message == 'success') {
+          this.setState({ isUploading: false, isFileUploaded: true });
+        } else {
+          this.setState({
+            isUploading: false,
+            fileUploadError: response.data.error
+          });
+        }
+        console.log(response);
       })
-      .catch(err => {
-          this.setState({ isUploading: false, fileUploadError : err });
-          console.log(err);
-      })
-  }
+      .catch((err) => {
+        this.setState({ isUploading: false, fileUploadError: err });
+        console.log(err);
+      });
+  };
 
   toggleTab = (value) => {
     this.setState({ tabActive: value });
@@ -90,74 +95,100 @@ class CommanderTeamView extends React.Component {
     }
   }
 
+  getDropdownsIfMilitaryVersionActive = () => {
+    return (
+      <React.Fragment>
+        <div className="season-position text-right ">
+          <select name="" id="">
+            <option value="">All session</option>
+            <option value="">York tech football</option>
+            <option value="">Lorem lipsum</option>
+            <option value="">York tech football</option>
+          </select>
+          <select name="" id="">
+            <option value="">All position</option>
+            <option value="">York tech football</option>
+            <option value="">Lorem lipsum</option>
+            <option value="">York tech football</option>
+          </select>
+        </div>
+
+        <div className="col-auto">
+          <div>
+            <input
+              onChange={this.onChangeHandler}
+              type="file"
+              className="btn upload-btn"
+              name="sensor_csv_file"
+            />{' '}
+            <button
+              type="button"
+              onClick={this.onClickHandler}
+              className="btn \ upload-btn"
+            >
+              <i class="fa fa-cloud-upload"></i>
+            </button>
+            {this.state.isUploading ? (
+              <div className="d-flex justify-content-center center-spinner">
+                <div
+                  className="spinner-border text-primary"
+                  role="status"
+                ></div>
+              </div>
+            ) : null}
+            {this.state.isFileUploaded ? (
+              <div
+                style={{ marginTop: '5px' }}
+                class="alert alert-success alert-dismissible fade show"
+                role="alert"
+              >
+                Successfully uploaded the CSV/ XLSX file
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="alert"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            ) : null}
+            {this.state.fileUploadError ? (
+              <div
+                style={{ marginTop: '5px' }}
+                class="alert alert-success alert-dismissible api-response-alert fade show"
+                role="alert"
+              >
+                Failed to upload CSV/ XLSX file
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="alert"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  };
+
   militaryVersionOrNormal = () => {
     return (
-      <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
+      <div ref="rosterContainer" className="t-roster">
         <PenstateUniversity />
-        <div className="row text-center">
+        <MilitaryVersionBtn>
+          {this.getDropdownsIfMilitaryVersionActive()}
+        </MilitaryVersionBtn>
+        <div className="row ptf-team text-center">
           <div className="col-md-8">
             <div className="row mt-3">
               <div className="col-md-6"></div>
               <div className="col-md-6">
-                <div className="season-position text-right ">
-                  <select name="" id="">
-                    <option value="">All session</option>
-                    <option value="">York tech football</option>
-                    <option value="">Lorem lipsum</option>
-                    <option value="">York tech football</option>
-                  </select>
-                  <select name="" id="">
-                    <option value="">All position</option>
-                    <option value="">York tech football</option>
-                    <option value="">Lorem lipsum</option>
-                    <option value="">York tech football</option>
-                  </select>
-                </div>
-                <div className="col-auto">
-                    <div>
-                        <input
-                            onChange={this.onChangeHandler}
-                            type="file"
-                            className="btn upload-btn"
-                            name="sensor_csv_file"
-                            /> {' '}
-                            <button
-                                type="button"
-                                onClick={this.onClickHandler}
-                                className="btn \ upload-btn"
-                                >
-                                <i class="fa fa-cloud-upload"></i>
-                            </button>
-                            {
-                                this.state.isUploading ?
-                                <div className="d-flex justify-content-center center-spinner">
-                                    <div className="spinner-border text-primary" role="status" >
-                                    </div>
-                                </div>:null
-                            }
-                            {
-                                this.state.isFileUploaded ?
-                                <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible fade show" role="alert">
-                                    Successfully uploaded the CSV/ XLSX file
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-
-                                :null
-                            }
-                            {
-                                this.state.fileUploadError ?
-                                <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible api-response-alert fade show" role="alert">
-                                    Failed to upload CSV/ XLSX file
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                :null
-                            }
-                    </div>
-                </div>
+                {/* {this.getDropdownsIfMilitaryVersionActive()} */}
               </div>
             </div>
             <div className="row">
@@ -181,7 +212,7 @@ class CommanderTeamView extends React.Component {
                     content="Roster"
                   />
                 </div>
-                <div className="row mt-5">
+                <div className="row  mt-5">
                   <div className="col-md-6">
                     <div className="highest-load ml-3 mr-3 mt-3 mb-5">
                       <div ref="card5" className="card">
@@ -247,7 +278,7 @@ class CommanderTeamView extends React.Component {
             </div>
           </div>
         </div>
-        <div className="row mb-5 mt-5">
+        <div className="row ptf-team mb-5 mt-5">
           <div className="col-md-12">
             <div className="text-left">
               <button type="btn" className="impact-sumary-btn">
