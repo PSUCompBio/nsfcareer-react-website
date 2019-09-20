@@ -8,14 +8,14 @@ import {
 } from './ActionType';
 
 const initialState = {
-  darkThemeActive: true,
-  isSignedInSuccess: false,
-  militaryVersion: true,
+  darkThemeActive: false,
+  isSignedInSuccess: true,
+  militaryVersion: false,
   userInfo:''
 };
 
 let darkTheme = {
-  status: true
+  status: false
 };
 
 export function darkThemeController(state = initialState, action) {

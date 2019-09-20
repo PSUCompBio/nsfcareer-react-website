@@ -229,9 +229,18 @@ div.underlined-text p {
 .image-container__banner {
   display: flex;
 }
+
 .left-bubble-img {
   width: 50%;
+  text-align: left;
   height: 100vh;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+.left-bubble-img img {
+  width: 40%;
+  margin-left: -8%;
 }
 .right-brain-img {
   width: 50%;
@@ -1320,13 +1329,28 @@ nav {
 /* mobile dashboard dropdown */
 .mobile-dashboard-dropdown {
   position: absolute;
-  top: 500px;
-  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2);
+  top: 5%;
+  /* box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2); */
   display: none;
   background: #13568d;
   width: 100%;
   right: 0;
+  animation: showPSUlinks 1s cubic-bezier(0.96, -0.15, 0, 0.98);
 }
+
+@keyframes showPSUlinks{
+from{
+  transform: scale(0)
+}
+to{
+  transform: scale(1)
+}
+}
+i.mobile-back-option{
+  font-size: 30px;
+  color: #fff;
+}
+
 .mobile-dashboard-dropdown ul {
   list-style: none;
   text-align: center;
@@ -1390,7 +1414,7 @@ nav {
   border-right: 10px solid transparent;
   position: absolute;
   border-bottom: 10px solid #083c66;
-  top:-7%;
+  top: -7%;
   left: 50%;
   margin-left: -10px;
 }
@@ -1404,6 +1428,21 @@ i.close-mobile_nave {
   position: absolute;
   top: 0;
   left: 0;
+}
+.back-li{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.goto-back{
+  display: inline-block;
+  text-align: center;
+  width: 50px;
+  height: 20px;
+  border-radius: 5px;
+  background: #078ae2;
+  margin-left: 10px;
+  color: #fff;
 }
 
 /* end of profile icon nav */
@@ -1465,10 +1504,22 @@ div.my-progress-bar {
 .user-profile-dropdown__mobile {
   position: absolute;
   background: #13568d;
-  top: 180px;
-  box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2);
+  top: 5%;
+  /* box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2); */
   display: none;
+  animation: showProfileSection 1s cubic-bezier(1, 0.31, 0, 1.55);
 }
+
+@keyframes showProfileSection {
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
 .user-profile-dropdown__mobile ul {
   text-align: center;
   list-style: none;
@@ -1479,6 +1530,36 @@ div.my-progress-bar {
 /* .mobile-profile-container:hover .user-profile-dropdown__mobile {
   display: block;
 } */
+
+.hide-list-left {
+  position: relative;
+  right: 0;
+}
+
+div.show-mobile-links{
+  right: 0;
+  animation: showMobileLink 1s cubic-bezier(0.96, -0.15, 0, 0.98);
+}
+@keyframes showMobileLink{
+  from {
+    right: -100%;
+  }
+  to {
+    right: 0%;
+  }
+}
+.hide-list-onlink-click {
+  animation: hideMobileLink 1s cubic-bezier(0.96, -0.15, 0, 0.98);
+  right: -100%;
+}
+@keyframes hideMobileLink {
+  from {
+    right: 0;
+  }
+  to {
+    right: -100%;
+  }
+}
 /* end of mobile user profile */
 
 /* ======making responsive to navbar========= */
@@ -1787,7 +1868,7 @@ div.my-progress-bar {
 }
 
 @media screen and (min-width: 3240px) {
-  .sign-out{
+  .sign-out {
     right: 7.5%;
   }
   div.login-height {

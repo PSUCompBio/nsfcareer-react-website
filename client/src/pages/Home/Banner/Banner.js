@@ -22,7 +22,9 @@ class Banner extends React.Component {
           <div className="container-fluid pl-0 pr-0">
             <div className="section-one">
               <div className="image-container__banner">
-                <div className="left-bubble-img"></div>
+                <div className="left-bubble-img">
+                  <img className="svg img-fluid" src="/img/icon/bubble.png" alt=""/>
+                </div>
                 <div className="right-brain-img">
               <img className="svg img-fluid" src="/img/BannerImg/b2.png" alt=""/>
                 </div>
