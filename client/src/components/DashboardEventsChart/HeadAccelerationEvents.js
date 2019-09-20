@@ -1,22 +1,55 @@
 import React from 'react';
+import {Line} from 'react-chartjs-2';
+
+
+const options = {
+    scales: {
+        yAxes: [{
+            scaleLabel: {
+                display: true,
+                labelString: 'Pressure (psi)'
+            },
+            ticks: {
+                min: 0
+              }
+        }],
+        xAxes: [{
+
+            scaleLabel: {
+                display: true,
+                labelString: 'Time'
+            }
+        }]
+    }
+};
 
 class HeadAccelerationEvents extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
+  constructor(props) {
+    super(props);
+    this.state = {
+        data : {
+            labels: this.props.data.time_label,
+            datasets: [{
+                lineTension: 0.1,
+                label: "Pressure Vs Time",
+                backgroundColor: '#7CB5EC',
+                borderColor: '#1987DD',
+                data: this.props.data.pressure,
+            }]
+        }
+    };
   }
 
   render() {
     return (
       <div  className="position-relative  bg-white acc-evnt">
-      <div  data-descr={'Head Acceleration Events      07/30/2019        13  :  15  :  26'} className="position-relative head-acc-evnt-chart pl-2 pr-2">
+      <div  data-descr={`Head Acceleration Events      ${new Date(Number(this.props.data.timestamp)).toDateString()} ${new Date(Number(this.props.data.timestamp)).toLocaleTimeString()}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
         <div className="row pl-4 pr-4 pb-4 dark-bg   text-center">
           <div className="col-md-6 d-flex align-items-center justify-content-center">
             <img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" />
           </div>
           <div className="col-md-6 text-right">
-              <img className={`img-fluid ${'svg'}`} src="/img/icon/accBrainChart.svg" alt="" />
-              <p ref="h4">Time</p>
+              <Line data={this.state.data} options={options}/>
           </div>
         </div>
         </div>

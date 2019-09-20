@@ -284,6 +284,18 @@ export const getImpactHistory = (request) =>{
   })
 }
 
+export const getImpactSummary = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getImpactSummary`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getPlayersData = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getPlayersData`, {},{withCredentials: true})
