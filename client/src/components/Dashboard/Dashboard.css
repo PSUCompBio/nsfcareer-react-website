@@ -300,6 +300,15 @@ input.team-edit-input {
   margin: 10px;
 }
 
+.military-version-btn-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2% 20% 2% 20%;
+  background:linear-gradient(45deg, #0000, #0b3b88,#0000);
+  box-shadow: 0 0 15px -1px rgba(0,0,0,0.2);
+}
+
 @keyframes slideIn {
   0% {
     transform: translateY(400px);
@@ -376,12 +385,15 @@ input.borderRight__fromTodate {
   /* padding: 0 5% 0 5%; */
 }
 
-.penstate-university-bg {
+div.penstate-university-bg {
+  padding-top: 4%;
+    padding-bottom: 4%;
   background: rgb(2, 0, 36);
   background: radial-gradient(
     circle,
     rgba(2, 0, 36, 1) 0%,
-    rgba(5, 96, 169, 1) 0%,
+    rgba(8, 133, 233, 1) 0%,
+    rgba(2, 34, 67, 1) 50%,
     rgba(1, 8, 25, 1) 100%
   );
 }
@@ -458,12 +470,22 @@ input.borderRight__fromTodate {
     font-size: 12px;
   }
 }
-@media screen and (min-width: 1680px) and (max-width:3239px) {
+
+@media screen and (min-width:1024px) and (max-width:1500px){
+div.penstate-university-bg {
+  padding-top: 10%!important;
+}
+}
+
+@media screen and (min-width: 1680px) and (max-width: 3239px) {
   div.t-roster {
     margin-top: 6% !important;
   }
 }
 @media screen and (min-width: 3240px) {
+  div.t-roster {
+    margin-top: 7% !important;
+  }
   .align-element-center {
     display: flex;
     align-items: center;

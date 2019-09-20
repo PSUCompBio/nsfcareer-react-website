@@ -8,6 +8,7 @@ import { formDataToJson } from '../utilities/utility';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import MilitaryVersionBtn from './MilitaryVersionBtn';
 
 class OrganizationAdmin extends React.Component {
   constructor() {
@@ -106,7 +107,7 @@ class OrganizationAdmin extends React.Component {
     this.checkIfDarkModeActive();
   }
   componentDidMount() {
-    this.checkIfDarkModeActive();    
+    this.checkIfDarkModeActive();
   }
 
   addTeam = () => {
@@ -341,37 +342,51 @@ class OrganizationAdmin extends React.Component {
     return cards;
   };
 
+  retunrnRosterBtn = () => {
+    return (
+      <React.Fragment>
+        <RostarBtn
+          tabActive={this.toggleTab}
+          makeActive={this.state.tabActive}
+          getBtn={this.getTargetBtn}
+          currentBtn={this.state.targetBtn}
+          content="Overview"
+        />
+        <RostarBtn
+          tabActive={this.toggleTab}
+          makeActive={this.state.tabActive}
+          getBtn={this.getTargetBtn}
+          currentBtn={this.state.targetBtn}
+          content="staff"
+        />
+      </React.Fragment>
+    );
+  };
+
   militaryVersionOrNormalVersion = () => {
     return (
       <React.Fragment>
         {this.state.wantDeleteTeam === true ? this.showModal() : ''}
         {this.state.showEditForm === true ? this.showEditForm() : ''}
 
-        <div ref="rosterContainer" className="t-roster pt-5 mt-5">
+        <div ref="rosterContainer" className="t-roster">
           <PenstateUniversity />
-          <div className="row text-center organization-pad__military">
+          <MilitaryVersionBtn>{this.retunrnRosterBtn()}</MilitaryVersionBtn>
+          <div className="row text-center  organization-pad__military">
             <div className="col-md-9">
               <div className="row">
                 <div
                   ref="cardContainer"
                   className="col-md-12 current-roster-card mb-5 mt-4 p-0"
                 >
-                  <div className="rostar-selector">
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="Overview"
-                    />
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="staff"
-                    />
-                  </div>
+                  {this.props.isMilitaryVersionActive === true ? (
+                    ''
+                  ) : (
+                    <div className="rostar-selector">
+                      {this.retunrnRosterBtn()}
+                    </div>
+                  )}
+
                   <div className="row">
                     <div className="col-md-12 text-right">
                       <button

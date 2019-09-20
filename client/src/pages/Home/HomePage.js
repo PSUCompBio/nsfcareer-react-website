@@ -20,6 +20,13 @@ class HomePage extends React.Component {
     };
     this._pageScroller = null;
   }
+  componentDidMount() {
+
+  }
+  componentWillMount() {
+    // const doc = document.getElementById("root").getElementsByTagName('div');
+    // console.log(doc[9])
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.screenWidth > 725) {
