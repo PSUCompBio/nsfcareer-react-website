@@ -26,7 +26,9 @@ class OrganizationAdmin extends React.Component {
       showEditPen: { display: 'none' },
       toShowEditPen: '',
       showEditForm: false,
-      teamFormData: {}
+      teamFormData: {},
+      disableEditBtn: false,
+      editBtnStye: { background: '' }
     };
   }
   toggleTab = (value) => {
@@ -114,19 +116,26 @@ class OrganizationAdmin extends React.Component {
     this.setState({ totalTeam: this.state.totalTeam + 1 });
   };
 
-  enableEditTeamOPtion = () => {
+  enableEditTeamOPtion = (e) => {
     if (this.state.editTeamClass === '') {
       this.setState({
         editTeamClass: 'edit-teams',
         closeBtn: { display: 'block' },
-        currentDeleteTarget: ''
+        currentDeleteTarget: '',
+        disableEditBtn: true,
+        editBtnStye: { background: '#000' }
       });
     }
   };
 
   disableEditTeamOPtion = () => {
     if (this.state.editTeamClass === 'edit-teams') {
-      this.setState({ editTeamClass: '', closeBtn: { display: 'none' } });
+      this.setState({
+        editTeamClass: '',
+        closeBtn: { display: 'none' },
+        disableEditBtn: false,
+        editBtnStye: { background: '' }
+      });
     }
   };
 
@@ -390,6 +399,8 @@ class OrganizationAdmin extends React.Component {
                   <div className="row">
                     <div className="col-md-12 text-right">
                       <button
+                        style={this.state.editBtnStye}
+                        disabled={this.state.disableEditBtn}
                         type="button"
                         onClick={this.enableEditTeamOPtion}
                         className="edit-team-btn"
@@ -458,6 +469,10 @@ class OrganizationAdmin extends React.Component {
     );
   };
 
+  ifMilitaryVersionActive = () => {
+    return 'military-dark-mode';
+  };
+
   render() {
     console.log(this.props);
     return (
@@ -467,7 +482,9 @@ class OrganizationAdmin extends React.Component {
             <div className="military-sidebar">
               <SideBar />
             </div>
-            <div className="military-main-content">
+            <div
+              className={`military-main-content ${this.ifMilitaryVersionActive()}`}
+            >
               {this.militaryVersionOrNormalVersion()}
             </div>
           </div>

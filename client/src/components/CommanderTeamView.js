@@ -261,7 +261,7 @@ class CommanderTeamView extends React.Component {
               </div>
             </div>
           </div>
-          <div className="col-md-4 pt-5 mb-3">
+          <div className="col-md-4 pt-4 mb-3">
             <div className="row mt-2">
               <div className="col-md-12  text-left">
                 <button type="btn" className="impact-sumary-btn">
@@ -299,6 +299,10 @@ class CommanderTeamView extends React.Component {
     );
   };
 
+  ifMilitaryVersionActive = () => {
+    return 'military-dark-mode'
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -307,7 +311,7 @@ class CommanderTeamView extends React.Component {
             <div className="military-sidebar">
               <SideBar />
             </div>
-            <div className="military-main-content">
+            <div className={`military-main-content ${this.ifMilitaryVersionActive()}`}>
               {this.militaryVersionOrNormal()}
             </div>
           </div>

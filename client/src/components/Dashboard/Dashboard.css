@@ -386,6 +386,9 @@ input.borderRight__fromTodate {
   overflow-x: hidden;
   /* padding: 0 5% 0 5%; */
 }
+.military-dark-mode{
+  background: #171b25;
+}
 
 div.penstate-university-bg {
   padding-top: 4%;
