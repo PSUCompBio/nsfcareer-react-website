@@ -1,9 +1,21 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 function ResearchArea(props) {
-  // const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
+
+  function removeAnimationMobileView(animation){
+    if (props.screenWidth > 425)
+      return animation;
+    else {
+      return ''
+    }
+  }
+
+  function gotoPage(pageName) {
+    props.history.push(pageName)
+  }
+
 
   return (
     <div className="research-area-bg">
@@ -15,7 +27,7 @@ function ResearchArea(props) {
                 <div className="mb-3" ref={ref}>
                   <h1
                     className={`font-weight-bold animated ${
-                      inView ? 'zoomIn' : ''
+                      inView ? removeAnimationMobileView('zoomIn') : ''
                     }`}
                   >
                     RESEARCH AREA
@@ -35,11 +47,11 @@ function ResearchArea(props) {
               {({ inView, ref }) => (
                 <div
                   ref={ref}
-                  className={`col-md-6 col-lg-6 ${
-                    inView ? 'animated slideInLeft' : ''
+                  className={`col-md-6 col-lg-6 animated ${
+                    inView ? removeAnimationMobileView('slideInLeft') : ''
                   }`}
                 >
-                  <div className="card mx-4 research-card rounded-img">
+                  <div onClick={()=>gotoPage('/Military')}  className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2491.svg"
@@ -61,11 +73,11 @@ function ResearchArea(props) {
               {({ inView, ref }) => (
                 <div
                   ref={ref}
-                  className={`col-md-6 col-lg-6 ${
-                    inView ? 'animated slideInRight' : ''
+                  className={`col-md-6 col-lg-6 animated ${
+                    inView ? removeAnimationMobileView('slideInRight') : ''
                   }`}
                 >
-                  <div className="card mx-4 research-card rounded-img">
+                  <div onClick={()=>gotoPage('/Sports')} className="card mx-4 research-card rounded-img">
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2492.svg"
@@ -78,7 +90,7 @@ function ResearchArea(props) {
                         approximate an Athlete&apos;s brain’s response to
                         injuries.
                       </p>
-                      <Link to="">Read More</Link>
+                      <Link to="/Sports">Read More</Link>
                     </div>
                   </div>
                 </div>
@@ -90,4 +102,4 @@ function ResearchArea(props) {
     </div>
   );
 }
-export default ResearchArea;
+export default withRouter(ResearchArea);

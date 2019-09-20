@@ -31,7 +31,8 @@ class DashboardDropdownSelector extends React.Component {
 
   render() {
     return (
-      <div className="row">
+      // <div className="row">
+      <React.Fragment>
         <div className="col-md-7">
           <div className="current-rostar-selector d-flex">
             <p ref="h1">Current roster</p>
@@ -89,7 +90,8 @@ class DashboardDropdownSelector extends React.Component {
             </select>
           </div>
         </div>
-      </div>
+      {/* // </div> */}
+      </React.Fragment>
     );
   }
 }

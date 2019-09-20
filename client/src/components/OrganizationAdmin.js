@@ -2,12 +2,15 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
-import DashboardDropdownSelector from './DashboardDropdownSelector';
 import { getStatusOfDarkmode } from '../reducer';
 import { withRouter } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import { getOrganizationAdminData, getAllRosters, addTeam, deleteTeam } from '../apis';
+
+import SideBar from './SideBar';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 
 class OrganizationAdmin extends React.Component {
@@ -40,7 +43,7 @@ class OrganizationAdmin extends React.Component {
     this.setState({ targetBtn: value });
   };
 
-  componentDidUpdate() {
+  checkIfDarkModeActive = () => {
     if (getStatusOfDarkmode().status === true) {
       this.refs.rosterContainer.style.background = '#171b25';
       this.refs.cardContainer.style.background = '#232838';
@@ -67,10 +70,47 @@ class OrganizationAdmin extends React.Component {
       for (let i = 1; i <= this.state.totalTeam; i++) {
         // this.refs['h' + i].style.color = '#fff';
       }
-    }
 
+      const elementsRequire = [
+        'tech-football',
+        'football-header',
+        'body-left-part',
+        'teamName',
+        'teamImpact',
+        'teamAlerts',
+        'athletes'
+      ];
+      elementsRequire.forEach((element) => {
+        const totalCards = document.getElementsByClassName(element);
 
+        if (element === 'tech-football') {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.background = '#171b25';
+          }
+        } else if (element === 'football-header') {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.borderBottom = '1px solid #c7c7c7';
+          }
+        } else if (element === 'body-left-part') {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.borderRight = '1px solid #c7c7c7';
+          }
+        } else if (
+          element === 'teamName' ||
+          element === 'teamImpact' ||
+          element === 'teamAlerts' ||
+          element === 'athletes'
+        ) {
+          for (let i = 0; i < totalCards.length; i++) {
+            totalCards[i].style.color = '#fff';
+          }
+        }
+      });
   }
+}
+
+
+
   componentDidMount() {
       getAllRosters(JSON.stringify({}))
       .then(rostersResponse => {
@@ -92,7 +132,13 @@ class OrganizationAdmin extends React.Component {
       .catch(err => {
           console.log(err)
       })
+    this.checkIfDarkModeActive();
+  };
+
+  componentDidUpdate() {
+    this.checkIfDarkModeActive();
   }
+
 
   addTeam = () => {
     this.setState({ totalTeam: this.state.totalTeam + 1 });
@@ -173,7 +219,7 @@ class OrganizationAdmin extends React.Component {
 
   hideTeamForm = () => {
     this.setState({ showEditForm: false });
-  }
+  };
 
   handleTeamEditSubmit = (e) => {
     e.preventDefault();
@@ -216,16 +262,16 @@ class OrganizationAdmin extends React.Component {
 
   showEditForm = () => {
     return (
-      <div class="modal__wrapper ">
-        <div class="modal__show modal_form">
-        <img
-          className="delete__icon"
-          onClick={this.hideTeamForm}
-          src="/img/icon/close.svg"
-          alt=""
-        />
+      <div className="modal__wrapper ">
+        <div className="modal__show modal_form">
+          <img
+            className="delete__icon"
+            onClick={this.hideTeamForm}
+            src="/img/icon/close.svg"
+            alt=""
+          />
           <p className="edit-your-team">Edit your team.</p>
-          <form  onSubmit={this.handleTeamEditSubmit}>
+          <form onSubmit={this.handleTeamEditSubmit}>
             {this.teamForm(
               'Team Name:',
               'Enter your team name',
@@ -261,8 +307,8 @@ class OrganizationAdmin extends React.Component {
 
   showModal = () => {
     return (
-      <div class="modal__wrapper">
-        <div class="modal__show">
+      <div className="modal__wrapper">
+        <div className="modal__show">
           <p>Are You really want to delete this team? It cannot be undone.</p>
           <div className="action_buttons">
             <button onClick={this.deleteCard}>YES</button>
@@ -303,19 +349,25 @@ class OrganizationAdmin extends React.Component {
           />
           <div style={this.state.hideEditElement}>
             <div ref={reference[1]} className="football-header ">
-              <p ref={reference[2]}>
+              <p className="teamName" ref={reference[2]}>
                 York tech football <img src="/img/icon/football.svg" alt="" />
               </p>
-              <p ref={reference[3]}>{noOfAthletes} Athletes </p>
+              <p className="athletes" ref={reference[3]}>
+                {noOfAthletes} Athletes{' '}
+              </p>
             </div>
             <div className="football-body d-flex">
               <div ref={reference[4]} className="body-left-part ">
                 <p>{noOfImpacts}</p>
-                <p ref={reference[5]}>Impacts</p>
+                <p className="teamImpact" ref={reference[5]}>
+                  Impacts
+                </p>
               </div>
               <div className="body-right-part">
                 <p>{noOfAlerts}</p>
-                <p ref={reference[6]}>Alerts</p>
+                <p className="teamAlerts" ref={reference[6]}>
+                  Alerts
+                </p>
               </div>
             </div>
           </div>
@@ -347,21 +399,17 @@ class OrganizationAdmin extends React.Component {
     return cards;
   };
 
-  render() {
-    console.log(this.props);
-    if(this.state.isFetching){
-        return <Spinner />;
-    }
+  militaryVersionOrNormalVersion = () => {
+
     return (
       <React.Fragment>
         {this.state.wantDeleteTeam === true ? this.showModal() : ''}
         {this.state.showEditForm === true ? this.showEditForm() : ''}
 
-        <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
+        <div ref="rosterContainer" className="t-roster pt-5 mt-5">
           <PenstateUniversity />
-          <div className="row text-center">
+          <div className="row text-center organization-pad__military">
             <div className="col-md-9">
-              <DashboardDropdownSelector />
               <div className="row">
                 <div
                   ref="cardContainer"
@@ -450,10 +498,46 @@ class OrganizationAdmin extends React.Component {
             </div>
           </div>
         </div>
-        <Footer />
+      </React.Fragment>
+    );
+  };
+
+  render() {
+    console.log(this.props);
+    if(this.state.isFetching){
+        return <Spinner />;
+    }
+
+    return (
+      <React.Fragment>
+        {this.props.isMilitaryVersionActive === true ? (
+          <div className="militay-view">
+            <div className="military-sidebar">
+              <SideBar />
+            </div>
+            <div className="military-main-content">
+              {this.militaryVersionOrNormalVersion()}
+            </div>
+          </div>
+        ) : (
+          <React.Fragment>
+            {this.militaryVersionOrNormalVersion()}
+            <Footer />
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }
 }
 
-export default withRouter(OrganizationAdmin);
+function mapStateToProps(state) {
+  console.log(state);
+  return {
+    isMilitaryVersionActive: state.militaryVersion
+  };
+}
+
+export default compose(
+  withRouter,
+  connect(mapStateToProps)
+)(OrganizationAdmin);

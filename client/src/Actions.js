@@ -3,7 +3,8 @@ import {
   DARK_THEME_INACTIVE,
   SIGNED_IN_SUCCEEDED,
   RESET_SIGNED_IN_SUCCEEDED,
-  USER_INFO
+  USER_INFO,
+  MILITARY_VERSION
 } from './ActionType';
 
 export const darkThemeActiveSetter = () => {
@@ -40,3 +41,10 @@ export const userDetails = (data) => {
     payload: data
   };
 };
+
+export const militaryVersion = (status) => {
+  return {
+    type: MILITARY_VERSION,
+    payload: status
+  }
+}

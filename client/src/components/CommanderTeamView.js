@@ -4,9 +4,12 @@ import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
 import CommanderDataTable from './CommanderDataTable';
+import SideBar from './SideBar';
+import { connect } from 'react-redux';
 import { uploadSensorDataAndCompute, getTeamAdminData, getImpactHistory, getImpactSummary } from '../apis';
 import {Bar} from 'react-chartjs-2';
 import Spinner from './Spinner/Spinner';
+
 
 const impactHistoryBarData = {
   labels: [],
@@ -36,6 +39,7 @@ const impactSummaryBarData = {
   ]
 };
 
+
 class CommanderTeamView extends React.Component {
   constructor() {
     super();
@@ -57,7 +61,6 @@ class CommanderTeamView extends React.Component {
       isFileUploaded : false,
       fileUploadError : "",
       isLoaded : false,
-      
       impactSummaryData : {},
       impactHistoryData : {}
     };
@@ -119,8 +122,7 @@ class CommanderTeamView extends React.Component {
         }
       }
     }
-
-    getImpactHistory(JSON.stringify({}))
+        getImpactHistory(JSON.stringify({}))
     .then(impactHistory => {
         console.log("History",impactHistory);
         this.setState({
@@ -145,41 +147,30 @@ class CommanderTeamView extends React.Component {
     .catch(err => {
         console.log(err);
     })
-
   }
 
-  render() {
-    if (!this.state.isLoaded){
-        return <Spinner />;
-    }
-    impactHistoryBarData.labels = this.state.impactHistoryData.force ;
-    impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure ;
-    impactSummaryBarData.labels = this.state.impactSummaryData.force ;
-    impactSummaryBarData.datasets[0].data = this.state.impactSummaryData.pressure ;
-
+  militaryVersionOrNormal = () => {
     return (
-      <React.Fragment>
-        <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
-          <PenstateUniversity/>
-          <div className="row text-center">
-            <div className="col-md-8">
-              <div className="row mt-3">
-                <div className="col-md-6"></div>
-                <div className="col-md-6">
-                  <div className="season-position text-right ">
-                    <select name="" id="">
-                      <option value="">All session</option>
-                      <option value="">York tech football</option>
-                      <option value="">Lorem lipsum</option>
-                      <option value="">York tech football</option>
-                    </select>
-                    <select name="" id="">
-                      <option value="">All position</option>
-                      <option value="">York tech football</option>
-                      <option value="">Lorem lipsum</option>
-                      <option value="">York tech football</option>
-                    </select>
-                  </div>
+      <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
+        <PenstateUniversity />
+        <div className="row text-center">
+          <div className="col-md-8">
+            <div className="row mt-3">
+              <div className="col-md-6"></div>
+              <div className="col-md-6">
+                <div className="season-position text-right ">
+                  <select name="" id="">
+                    <option value="">All session</option>
+                    <option value="">York tech football</option>
+                    <option value="">Lorem lipsum</option>
+                    <option value="">York tech football</option>
+                  </select>
+                  <select name="" id="">
+                    <option value="">All position</option>
+                    <option value="">York tech football</option>
+                    <option value="">Lorem lipsum</option>
+                    <option value="">York tech football</option>
+                  </select>
                 </div>
                 <div className="col-auto">
                     <div>
@@ -227,123 +218,147 @@ class CommanderTeamView extends React.Component {
                     </div>
                 </div>
               </div>
-              <div className="row">
-                <div
-                  ref="card1"
-                  className="col-md-12 commander-view-card mb-5 mt-4 p-0"
-                >
-                  <div className="rostar-selector">
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="Overview"
-                    />
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="Roster"
-                    />
-                  </div>
-                  <div className="row mt-5">
-                    <div className="col-md-6">
-                      <div className="highest-load ml-3 mr-3 mt-3 mb-5">
-                        <div ref="card5" className="card">
-                          <div
-                            ref="card4"
-                            className="load-heading highest-load-height"
-                          >
-                            HIGHEST LOAD
-                          </div>
-                          <p className="mt-4 ">
-                            John Sylvester <span>- {this.state.adminData.organization} </span>
-                          </p>
-
-                          <div className="text-center">
-                            <div className="progress--circle progress--5">
-                              <div className="progress__number">0.046</div>
-                            </div>
-                          </div>
-
-                          <div className="load-count mt-3 mb-3">
-                            {this.state.adminData.highest_load}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="col-md-6">
-                      <div className="most-impacts ml-3 mr-3 mt-3 mb-5">
-                        <div ref="card7" className="card commander-tv-height">
-                          <div
-                            ref="card6"
-                            className="impact-heading most-impacts-height"
-                          >
-                            MOST IMPACTS
-                          </div>
-                          <p className="mt-4">
-                            John Sylvester <span>- {this.state.adminData.organization} </span>
-                          </p>
-                          <div className="impact-count mt-3 mb-3">
-                            {this.state.adminData.impacts}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-            <div className="col-md-4 pt-5 mb-3">
-              <div className="row mt-2">
-                <div className="col-md-12  text-left">
-                  <button type="btn" className="impact-sumary-btn">
-                    Impact Summary
-                  </button>
+            <div className="row">
+              <div
+                ref="card1"
+                className="col-md-12 commander-view-card mb-5 mt-4 p-0"
+              >
+                <div className="rostar-selector">
+                  <RostarBtn
+                    tabActive={this.toggleTab}
+                    makeActive={this.state.tabActive}
+                    getBtn={this.getTargetBtn}
+                    currentBtn={this.state.targetBtn}
+                    content="Overview"
+                  />
+                  <RostarBtn
+                    tabActive={this.toggleTab}
+                    makeActive={this.state.tabActive}
+                    getBtn={this.getTargetBtn}
+                    currentBtn={this.state.targetBtn}
+                    content="Roster"
+                  />
                 </div>
-              </div>
-              <div ref="card2" className="impact-summary-card pt-3 pb-5">
-                  <Bar data={impactSummaryBarData} options={{
-                          maintainAspectRatio: false,
-                    }} />
-                {/*<img
-                  className="img-fluid"
-                  src="/img/icon/impactSummary.svg"
-                  alt=""
-                />
-                */}
+                <div className="row mt-5">
+                  <div className="col-md-6">
+                    <div className="highest-load ml-3 mr-3 mt-3 mb-5">
+                      <div ref="card5" className="card">
+                        <div
+                          ref="card4"
+                          className="load-heading highest-load-height"
+                        >
+                          HIGHEST LOAD
+                        </div>
+                        <p className="mt-4 ">
+                         John Sylvester <span>- {this.state.adminData.organization} </span>
+                        </p>
+
+                        <div className="text-center">
+                          <div className="progress--circle progress--5">
+                            <div className="progress__number">0.046</div>
+                          </div>
+                        </div>
+
+                        <div className="load-count mt-3 mb-3">
+                          {this.state.adminData.highest_load}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-md-6">
+                    <div className="most-impacts ml-3 mr-3 mt-3 mb-5">
+                      <div ref="card7" className="card commander-tv-height">
+                        <div
+                          ref="card6"
+                          className="impact-heading most-impacts-height"
+                        >
+                          MOST IMPACTS
+                        </div>
+                        <p className="mt-4">
+                          John Sylvester <span>- {this.state.adminData.organization} </span>
+                        </p>
+                        <div className="impact-count mt-3 mb-3">
+                           {this.state.adminData.impacts}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="row mb-5 mt-5">
-            <div className="col-md-12">
-              <div className="text-left">
+          <div className="col-md-4 pt-5 mb-3">
+            <div className="row mt-2">
+              <div className="col-md-12  text-left">
                 <button type="btn" className="impact-sumary-btn">
-                  Impact History
+                  Impact Summary
                 </button>
               </div>
-              <div ref="card3" className="impact-history-card p-4">
+            </div>
+            <div ref="card2" className="impact-summary-card pt-3 pb-5">
+             <Bar data={impactSummaryBarData} options={{
+                          maintainAspectRatio: false,
+                    }} />
+            </div>
+          </div>
+        </div>
+        <div className="row mb-5 mt-5">
+          <div className="col-md-12">
+            <div className="text-left">
+              <button type="btn" className="impact-sumary-btn">
+                Impact History
+              </button>
+            </div>
+            <div ref="card3" className="impact-history-card p-4">
                   <Bar data={impactHistoryBarData} options={{
                           maintainAspectRatio: false,
 
                     }} />
-                {/*<img
-                  className="img-fluid"
-                  src="/img/icon/impactHistory.svg"
-                  alt=""*/}
-
-              </div>
-              <CommanderDataTable  />
             </div>
+            <CommanderDataTable />
           </div>
         </div>
-        <Footer />
+      </div>
+    );
+  };
+
+  render() {
+          if (!this.state.isLoaded){
+        return <Spinner />;
+    }
+    impactHistoryBarData.labels = this.state.impactHistoryData.force ;
+    impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure ;
+    impactSummaryBarData.labels = this.state.impactSummaryData.force ;
+    impactSummaryBarData.datasets[0].data = this.state.impactSummaryData.pressure ;
+
+    return (
+      <React.Fragment>
+        {this.props.isMilitaryVersionActive === true ? (
+          <div className="militay-view">
+            <div className="military-sidebar">
+              <SideBar />
+            </div>
+            <div className="military-main-content">
+              {this.militaryVersionOrNormal()}
+            </div>
+          </div>
+        ) : (
+          <React.Fragment>
+            {this.militaryVersionOrNormal()}
+            <Footer />
+          </React.Fragment>
+        )}
       </React.Fragment>
     );
   }
 }
 
-export default CommanderTeamView;
+function mapStateToProps(state) {
+  return {
+    isMilitaryVersionActive: state.militaryVersion
+  };
+}
+
+export default connect(mapStateToProps)(CommanderTeamView);
