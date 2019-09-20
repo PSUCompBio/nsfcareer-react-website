@@ -9,7 +9,8 @@ class PenstateUniversity extends React.Component {
   constructor() {
     super();
     this.state = {
-      circleValues: []
+      circleValues: [],
+      penBg: { background: 'transparent' }
     };
   }
 
@@ -32,7 +33,7 @@ class PenstateUniversity extends React.Component {
     this.impactLoadAlertsValue();
   }
   componentDidMount() {
-    var elementStart = 0;
+    var elementStart = 1;
     if (getStatusOfDarkmode().status === true) {
       if (this.props.isMilitaryVersionActive) {
         elementStart = 5;
@@ -44,13 +45,14 @@ class PenstateUniversity extends React.Component {
     }
   }
 
-  checkIfMilitaryModeOn = () => {
-    
-  };
+  checkIfMilitaryModeOn = () => {};
 
   render() {
     return (
-      <div className="row penstate-university-bg organization-pad__military">
+      <div
+        style={this.props.isMilitaryVersionActive ? {} : this.state.penBg}
+        className={`row  penstate-university-bg organization-pad__military`}
+      >
         <div className="col-md-7 my-auto">
           <p ref="h1" className="penstate">
             {this.props.location.pathname === '/OrganizationAdmin'
@@ -97,7 +99,8 @@ class PenstateUniversity extends React.Component {
             <p ref="h7">Staff</p>
           </div>
         </div>
-        {this.props.location.pathname === '/OrganizationAdmin' && this.props.isMilitaryVersionActive===false ? (
+        {this.props.location.pathname === '/OrganizationAdmin' &&
+        this.props.isMilitaryVersionActive === false ? (
           <DashboardDropdownSelector />
         ) : (
           ''

@@ -10,12 +10,12 @@ import {
 const initialState = {
   darkThemeActive: true,
   isSignedInSuccess: false,
-  militaryVersion: false,
+  militaryVersion: true,
   userInfo:''
 };
 
 let darkTheme = {
-  status: false
+  status: true
 };
 
 export function darkThemeController(state = initialState, action) {

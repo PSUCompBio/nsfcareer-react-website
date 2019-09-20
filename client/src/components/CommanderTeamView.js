@@ -180,9 +180,14 @@ class CommanderTeamView extends React.Component {
     return (
       <div ref="rosterContainer" className="t-roster">
         <PenstateUniversity />
-        <MilitaryVersionBtn>
-          {this.getDropdownsIfMilitaryVersionActive()}
-        </MilitaryVersionBtn>
+        {this.props.isMilitaryVersionActive ? (
+          <MilitaryVersionBtn>
+            {this.getDropdownsIfMilitaryVersionActive()}
+          </MilitaryVersionBtn>
+        ) : (
+          ''
+        )}
+
         <div className="row ptf-team text-center">
           <div className="col-md-8">
             <div className="row mt-3">
@@ -300,8 +305,8 @@ class CommanderTeamView extends React.Component {
   };
 
   ifMilitaryVersionActive = () => {
-    return 'military-dark-mode'
-  }
+    return 'military-dark-mode';
+  };
 
   render() {
     return (
@@ -311,7 +316,9 @@ class CommanderTeamView extends React.Component {
             <div className="military-sidebar">
               <SideBar />
             </div>
-            <div className={`military-main-content ${this.ifMilitaryVersionActive()}`}>
+            <div
+              className={`military-main-content ${this.ifMilitaryVersionActive()}`}
+            >
               {this.militaryVersionOrNormal()}
             </div>
           </div>

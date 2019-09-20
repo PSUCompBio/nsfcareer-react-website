@@ -380,7 +380,11 @@ class OrganizationAdmin extends React.Component {
 
         <div ref="rosterContainer" className="t-roster">
           <PenstateUniversity />
-          <MilitaryVersionBtn>{this.retunrnRosterBtn()}</MilitaryVersionBtn>
+          {this.props.isMilitaryVersionActive ? (
+            <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
+          ) : (
+            ''
+          )}
           <div className="row text-center  organization-pad__military">
             <div className="col-md-9">
               <div className="row">

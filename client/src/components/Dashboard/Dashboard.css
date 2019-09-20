@@ -377,7 +377,8 @@ input.borderRight__fromTodate {
 .military-sidebar {
   height: 100vh;
   width: 15%;
-  background: linear-gradient(-30deg, rgb(8, 64, 97), rgb(47, 114, 223));
+  background:linear-gradient(0deg, #000, #1282d8,#000);
+  box-shadow: 5px 0 10px -1px rgba(0,0,0,0.12)
 }
 .military-main-content {
   width: 85%;
