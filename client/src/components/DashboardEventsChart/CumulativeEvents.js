@@ -5,8 +5,9 @@ import BrainLoadChart from '../Charts/BrainLoadChart';
 
 class CumulativeEvents extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    console.log("Received in Props", props)
     this.state = {};
   }
 
@@ -20,10 +21,10 @@ class CumulativeEvents extends React.Component {
     return (
       <div className="row cumm mb-5">
         <div className="col-md-6 col-lg-7">
-          <BrainStrainChart/>
+          <BrainStrainChart data={this.props.data}/>
         </div>
         <div className="col-md-6 col-lg-5  ">
-          <BrainLoadChart/>
+          <BrainLoadChart data={this.props.loadData}/>
         </div>
       </div>
     );
