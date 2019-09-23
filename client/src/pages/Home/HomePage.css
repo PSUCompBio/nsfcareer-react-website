@@ -595,6 +595,18 @@ nav {
   color: #707070 !important;
   opacity: 0.7;
 }
+.contact-query p{
+  color: #5c5c5c;
+  font-weight: 900;
+}
+.mi-mb{
+  margin-bottom: 30px!important;
+}
+.contact-query p span{
+  color: #258ecd;
+  font-weight: normal;
+}
+
 .submit-now {
   border-radius: 10px;
   background-color: #0f81dc;
@@ -1784,8 +1796,9 @@ div.show-mobile-links{
   }
 }
 .contact__page {
-  bottom: -29.4vh !important;
+  bottom: -27.8vh !important;
 }
+
 
 @media (min-width: 992px) and (max-width: 1199px) {
   .shift-technology-section {

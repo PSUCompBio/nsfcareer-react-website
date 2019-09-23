@@ -19,6 +19,8 @@
     "font-awesome": "^4.7.0",
     "fs": "^0.0.1-security",
     "gh-pages": "^1.1.0",
+    "google-map-react": "^1.1.5",
+    "google-maps-react": "^2.0.2",
     "init": "^0.1.2",
     "jquery": "^3.4.1",
     "lodash": "^4.17.10",

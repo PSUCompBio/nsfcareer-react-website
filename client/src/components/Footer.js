@@ -7,7 +7,7 @@ class Footer extends React.Component {
 
   addFooterClass = () => {
     if (this.props.location.pathname === '/Contact') {
-      return 'contact__page';
+      // return 'contact__page';
     } else if (this.props.location.pathname === '/About') {
       return 'about__page';
     }
