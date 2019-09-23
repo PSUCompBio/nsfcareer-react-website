@@ -15,6 +15,7 @@ import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import TeamAdmin from '../../components/CommanderTeamView';
 import Military from '../../components/Military/Military';
+import GetUpdates from '../../components/GetUpdates';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -77,6 +78,8 @@ class Routing extends React.Component {
           isAuthenticated={this.state.isLoggedIn}
           currentPage={this.state.currentPage}
         />
+        {/* <GetUpdates /> */}
+
         <Route
           exact
           path="/"

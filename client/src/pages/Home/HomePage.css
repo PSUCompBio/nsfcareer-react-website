@@ -606,6 +606,18 @@ nav {
   color: #258ecd;
   font-weight: normal;
 }
+div.checkboxes label{
+  width: auto;
+}
+.get-cnt{
+  width: auto!important;
+}
+input.gt-up-email{
+  width: 100%!important;
+}
+.play-title{
+  border-bottom: 1px solid #fff;
+}
 
 .submit-now {
   border-radius: 10px;

@@ -10,6 +10,7 @@ import 'animate.css/animate.min.css';
 import { getStatusOfDarkmode } from '../../reducer';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
+
 class HomePage extends React.Component {
   constructor(props) {
     super(props);
