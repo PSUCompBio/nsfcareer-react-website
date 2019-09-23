@@ -165,16 +165,14 @@ class Nav extends React.Component {
     } else {
       this.setState({ logoutBox: { display: 'none' } });
     }
-  }
+  };
 
   showLogOutOptions = (e) => {
     setTimeout(() => {
-      this.profileLinks()
+      this.profileLinks();
     }, 500);
-
-    e.currentTarget.parentNode.parentNode.classList.add(
-      'hide-list-onlink-click'
-    );
+    this.refs.hideList.classList.remove('show-mobile-links');
+    this.refs.hideList.classList.add('hide-list-onlink-click');
   };
 
   makePSUlinksVisible = (e) => {
@@ -185,19 +183,24 @@ class Nav extends React.Component {
         this.setState({ psuLinks: { display: 'none' } });
       }
     }, 500);
-
-    e.currentTarget.parentNode.classList.add('hide-list-onlink-click');
+    this.refs.hideList.classList.remove('show-mobile-links');
+    this.refs.hideList.classList.add('hide-list-onlink-click');
   };
 
   showMobileLinkOption = (e) => {
     this.profileLinks();
-    e.currentTarget.parentNode.parentNode.parentNode.parentNode.children[0].classList.add(
-      'show-mobile-links'
-    );
+    this.refs.hideList.classList.remove('hide-list-onlink-click');
+    this.refs.hideList.classList.add('show-mobile-links');
   };
 
+  hidePsuLinks = () => {
+    this.setState({ psuLinks: { display: 'none' } });
+    this.refs.hideList.classList.remove('hide-list-onlink-click');
+    this.refs.hideList.classList.add('show-mobile-links');
+  }
+
   mobilePSUlinks = () => {
-    if (this.props.userType !== 'Admin') {
+    if (this.props.userType === 'Admin') {
       return (
         <React.Fragment>
           <div
@@ -205,6 +208,14 @@ class Nav extends React.Component {
             className="mobile-dashboard-dropdown"
           >
             <ul>
+              <li className="back-li">
+                <i
+                  onClick={this.hidePsuLinks}
+                  className="fa mobile-back-option fa-arrow-circle-left"
+                  aria-hidden="true"
+                ></i>
+                <span className="goto-back">Back</span>
+              </li>
               <li onClick={this.handleClick}>
                 <Link to="TeamAdmin">Team Admin</Link>
               </li>
@@ -381,7 +392,7 @@ class Nav extends React.Component {
           className="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right"
           id="cbp-spmenu-s2"
         >
-          <div className="hide-list-left">
+          <div ref="hideList" className="hide-list-left">
             <div className="mobile-profile-container">
               <i
                 onClick={this.handleClick}
