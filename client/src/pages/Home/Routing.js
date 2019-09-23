@@ -15,6 +15,7 @@ import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import TeamAdmin from '../../components/CommanderTeamView';
 import Military from '../../components/Military/Military';
+import Model from '../Model/ModelPage';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -130,6 +131,7 @@ class Routing extends React.Component {
         />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
+        <Route exact path="/Model" component={Model} />
         <Route exact path="/Contact" component={Contact} />
         <Route exact path="/TeamAdmin" component={TeamAdmin} />
         <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />
