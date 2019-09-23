@@ -92,6 +92,7 @@ class HomePage extends React.Component {
               screenWidth={this.props.screenWidth}
               onWheel={this.onFooterScroll}
               mouseScroll={this.state.scrollY}
+              showmodal={this.props.showformModal}
             />
           </ReactPageScroller>
         </React.Fragment>

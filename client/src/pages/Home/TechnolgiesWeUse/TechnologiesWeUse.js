@@ -1,13 +1,29 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
+import GetUpdates from '../../../components/GetUpdates';
+
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      showAndHideFooter: ''
+      showAndHideFooter: '',
+      isDisplay: { display: 'none' }
     };
   }
+
+  makeVisible = (data) => {
+    this.setState({ isDisplay: data });
+  }
+
+  showModal = () => {
+    if (this.state.isDisplay.display === 'none') {
+      this.setState({ isDisplay: {display:'flex'} });
+    } else {
+      this.setState({ isDisplay: {display:'none'} });
+    }
+  };
+
 
    removeAnimationMobileView(animation){
     if (this.props.screenWidth > 425)
@@ -36,6 +52,7 @@ class TechnologiesWeUse extends React.Component {
       <React.Fragment>
         <div className={`section-four-container`} onWheel={this.props.onWheel}>
           <div className="container section">
+         
             <div
               className={`section-four text-center ${
                 this.props.screenWidth >= 725
@@ -180,7 +197,7 @@ class TechnologiesWeUse extends React.Component {
                   <img className="logo" src="/img/icon/logo.png" alt="" />
                 </div>
                 <div className="col-sm-6  col-md-6 ">
-                  <button type="button" className="btn btn-primary float-right">
+                  <button onClick={()=>this.props.showmodal()} type="button" className="btn btn-primary float-right">
                     Get Updates
                   </button>
                 </div>

@@ -25,9 +25,25 @@ class Routing extends React.Component {
       windowWidth: 0,
       gotoPageNo: 0,
       isLoggedIn: false,
-      isDarkMode: false
+      isDarkMode: false,
+      isDisplay: { display: 'none' }
     };
   }
+
+  makeVisible = (data) => {
+    this.setState({ isDisplay: data });
+  };
+
+
+  showModal = () => {
+    if (this.state.isDisplay.display === 'none') {
+      this.setState({ isDisplay: {display:'flex'} });
+    } else {
+      this.setState({ isDisplay: {display:'none'} });
+    }
+    console.log('helloo sdfsdkjh')
+  };
+
   checkDarkMode = (value) => {
     this.setState({ isDarkMode: value });
   };
@@ -78,8 +94,10 @@ class Routing extends React.Component {
           isAuthenticated={this.state.isLoggedIn}
           currentPage={this.state.currentPage}
         />
-        {/* <GetUpdates /> */}
-
+        <GetUpdates
+          isVisible={this.state.isDisplay}
+          makeVisible={this.makeVisible}
+        />
         <Route
           exact
           path="/"
@@ -91,6 +109,7 @@ class Routing extends React.Component {
               gotoPage={this.state.gotoPageNo}
               currentPage={this.state.currentPage}
               onPageChange={this.onPageChange}
+              showformModal = {this.showModal}
             />
           )}
         />
@@ -105,6 +124,7 @@ class Routing extends React.Component {
               gotoPage={this.state.gotoPageNo}
               currentPage={this.state.currentPage}
               onPageChange={this.onPageChange}
+              showformModal = {this.showModal}
             />
           )}
         />
