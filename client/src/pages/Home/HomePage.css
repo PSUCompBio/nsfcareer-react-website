@@ -1836,6 +1836,12 @@ div.show-mobile-links{
   /* .section-one > img:nth-child(1){
     width: 1850px;
   } */
+  img.img-contact-us{
+    height: 650px!important;
+  }
+  .contact__page{
+    bottom: -13%!important;
+  }
 }
 @media screen and (min-width: 2560px) and (max-width: 3000px) {
   .login-height {
@@ -1845,9 +1851,15 @@ div.show-mobile-links{
     /* top: 80%; */
     right: 7%;
   }
+  .contact__page{
+    bottom: -13%!important;
+  }
+  img.img-contact-us{
+    height: 1150px!important;
+  }
 }
 
-@media (min-width: 1500px) and (max-width: 2560px) {
+@media (min-width: 1500px) and (max-width: 2559px) {
   .shift-technology-section {
     margin-top: -15%;
   }
@@ -1876,6 +1888,12 @@ div.show-mobile-links{
     width: 45% !important;
     margin-top: 20vh !important;
   }
+  img.img-contact-us{
+    height: 800px!important;
+  }
+  .contact__page {
+    bottom: -18.8vh !important;
+}
 }
 
 .research-card {

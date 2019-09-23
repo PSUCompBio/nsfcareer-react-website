@@ -499,7 +499,7 @@ div.penstate-university-bg {
     height: 90.1vh;
   }
   .contact__page-center-align {
-    padding-top: 20%;
+    padding-top: 5%;
     padding-bottom: 6.4%;
   }
   div.profile-mt {
@@ -513,5 +513,11 @@ div.penstate-university-bg {
   }
   div.about__page {
     bottom: -189%;
+  }
+  div.contact__page{
+    bottom: -9.8vh!important;
+  }
+  div.pt-surface{
+    padding-top: 287px;
   }
 }
