@@ -18,10 +18,9 @@ class GetUpdates extends React.Component {
             alt=""
           />
 
-          <h4 className="play-title">STAND FOR SMART PLAY</h4>
+          <h4 className="play-title">TRANSFORM YOUR SENSOR DATA</h4>
           <p>
-            Learn more about outfitting your athletes with the <br /> Prevent
-            Impact Monitor Mouthguard (IMM)
+          Learn more about how you can use brain simulations to add value to your monitoring data.
           </p>
 
           <h5>Who are you?</h5>
@@ -33,7 +32,7 @@ class GetUpdates extends React.Component {
               type="checkbox"
             />
             <label htmlFor="checkbox-1" className="checkbox-custom-label">
-              Athlete
+            Researcher
             </label>
 
             <input
@@ -43,7 +42,7 @@ class GetUpdates extends React.Component {
               type="checkbox"
             />
             <label htmlFor="checkbox-2" className="checkbox-custom-label">
-              Parent
+            Athlete
             </label>
 
             <input
@@ -53,7 +52,7 @@ class GetUpdates extends React.Component {
               type="checkbox"
             />
             <label htmlFor="checkbox-3" className="checkbox-custom-label">
-              Coach
+            Soldier
             </label>
 
             <input
@@ -63,7 +62,43 @@ class GetUpdates extends React.Component {
               type="checkbox"
             />
             <label htmlFor="checkbox-4" className="checkbox-custom-label">
-              Athletic Trainer
+            Coach
+            </label>
+            <input
+              id="checkbox-5"
+              className="checkbox-custom"
+              name="Parent"
+              type="checkbox"
+            />
+            <label htmlFor="checkbox-5" className="checkbox-custom-label">
+            Military Team Leader
+            </label>
+            <input
+              id="checkbox-5"
+              className="checkbox-custom"
+              name="Parent"
+              type="checkbox"
+            />
+            <label htmlFor="checkbox-5" className="checkbox-custom-label">
+            Parent
+            </label>
+            <input
+              id="checkbox-5"
+              className="checkbox-custom"
+              name="Parent"
+              type="checkbox"
+            />
+            <label htmlFor="checkbox-5" className="checkbox-custom-label">
+            Athletic Trainer
+            </label>
+            <input
+              id="checkbox-5"
+              className="checkbox-custom"
+              name="Parent"
+              type="checkbox"
+            />
+            <label htmlFor="checkbox-5" className="checkbox-custom-label">
+            Medic
             </label>
             <input
               id="checkbox-5"
