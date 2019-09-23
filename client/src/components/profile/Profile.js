@@ -222,6 +222,9 @@ class Profile extends React.Component {
             '#fff',
             'dark-mode-color'
           );
+          for (let i = 1; i <= 4; i++) {
+            this.refs['p' + i].style.color = '#fff';
+          }
         } else {
           this.setState({ mode: 'Dark mode' });
           this.elementsOfDarkMode(darkThemeInactiveSetter, ['', ''], '', '');
@@ -560,8 +563,8 @@ class Profile extends React.Component {
                 allInputs.forEach((element) => {
                   this.refs[element].setAttribute('id', 'dark-mode-color');
                 });
-                for (let i = 1; i <= 3; i++) {
-                  this.refs['h' + i].style.color = '#fff';
+                for (let i = 1; i <= 4; i++) {
+                  this.refs['p' + i].style.color = '#fff';
                 }
                 this.props.isDarkModeSet(this.state.isDarkMode);
               }
