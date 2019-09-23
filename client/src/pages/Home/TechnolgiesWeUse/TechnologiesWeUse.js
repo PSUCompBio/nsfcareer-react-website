@@ -1,7 +1,6 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
-import GetUpdates from '../../../components/GetUpdates';
-
+import screenWidth from '../../../utilities/ScreenWidth';
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
@@ -14,25 +13,22 @@ class TechnologiesWeUse extends React.Component {
 
   makeVisible = (data) => {
     this.setState({ isDisplay: data });
-  }
+  };
 
   showModal = () => {
     if (this.state.isDisplay.display === 'none') {
-      this.setState({ isDisplay: {display:'flex'} });
+      this.setState({ isDisplay: { display: 'flex' } });
     } else {
-      this.setState({ isDisplay: {display:'none'} });
+      this.setState({ isDisplay: { display: 'none' } });
     }
   };
 
-
-   removeAnimationMobileView(animation){
-    if (this.props.screenWidth > 425)
-      return animation;
+  removeAnimationMobileView(animation) {
+    if (this.props.screenWidth > screenWidth[0].screen425) return animation;
     else {
-      return ''
+      return '';
     }
   }
-
 
   render = (props) => {
     const makeFooterVisibeForSmallDevice = {
@@ -52,10 +48,9 @@ class TechnologiesWeUse extends React.Component {
       <React.Fragment>
         <div className={`section-four-container`} onWheel={this.props.onWheel}>
           <div className="container section">
-         
             <div
               className={`section-four text-center ${
-                this.props.screenWidth >= 725
+                this.props.screenWidth >= screenWidth[1].screen725
                   ? this.props.mouseScroll > 0 && this.props.currentPage === 4
                     ? 'shift-technology-section'
                     : ''
@@ -67,25 +62,25 @@ class TechnologiesWeUse extends React.Component {
                   {({ inView, ref }) => (
                     <div ref={ref}>
                       <h1
-                    className={`font-weight-bold animated ${
-                      inView ? this.removeAnimationMobileView('zoomIn') : ''
-                    }`}
-                  >
-                    TECHNOLOGIES THAT WE USE
-                  </h1>
+                        className={`font-weight-bold animated ${
+                          inView ? this.removeAnimationMobileView('zoomIn') : ''
+                        }`}
+                      >
+                        TECHNOLOGIES THAT WE USE
+                      </h1>
 
-                  <div className="w-100 d-flex justify-content-center">
-                    <div className={inView ? 'line_container' : ''}>
-                      <div></div>
-                    </div>
-                  </div>
+                      <div className="w-100 d-flex justify-content-center">
+                        <div className={inView ? 'line_container' : ''}>
+                          <div></div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </InView>
               </div>
               <div
                 className={`row ${
-                  this.props.screenWidth > 425 && this.props.screenWidth < 769
+                  this.props.screenWidth > screenWidth[0].screen425 && this.props.screenWidth < screenWidth[2].screen769
                     ? ''
                     : ' py-5'
                 }`}
@@ -95,10 +90,14 @@ class TechnologiesWeUse extends React.Component {
                     <div
                       ref={ref}
                       className={`col-md-4 animated   ${
-                        this.props.screenWidth <= 768
+                        this.props.screenWidth <= screenWidth[3].screen768
                           ? 'text-center'
                           : 'text-left'
-                      } ${inView ? this.removeAnimationMobileView('slideInLeft') : ''}`}
+                      } ${
+                        inView
+                          ? this.removeAnimationMobileView('slideInLeft')
+                          : ''
+                      }`}
                     >
                       <img
                         className="py-3"
@@ -113,7 +112,7 @@ class TechnologiesWeUse extends React.Component {
                         companies to provide real-time brain response analytics.
                         We help transform their data into meaningful brain
                         health monitoring. Looking for a sensor? See our{' '}
-                        {this.props.screenWidth > 1024 ? '' : ''} recommended
+                        {this.props.screenWidth > screenWidth[4].screen1024 ? '' : ''} recommended
                         providers here.
                       </p>
                     </div>
@@ -124,8 +123,10 @@ class TechnologiesWeUse extends React.Component {
                     <div
                       ref={ref}
                       className={`col-md-4 animated   pt-5 ${
-                        this.props.screenWidth < 768 ? 'order-first' : ''
-                      } ${inView ? this.removeAnimationMobileView('zoomIn') : ''}`}
+                        this.props.screenWidth < screenWidth[3].screen768 ? 'order-first' : ''
+                      } ${
+                        inView ? this.removeAnimationMobileView('zoomIn') : ''
+                      }`}
                     >
                       <img
                         className="mb-5 img-fluid terminology-img"
@@ -140,10 +141,14 @@ class TechnologiesWeUse extends React.Component {
                     <div
                       ref={ref}
                       className={`col-md-4 animated  ${
-                        this.props.screenWidth <= 768
+                        this.props.screenWidth <= screenWidth[3].screen768
                           ? 'text-center'
                           : 'text-right'
-                      } ${inView ? this.removeAnimationMobileView('slideInRight') : ''}`}
+                      } ${
+                        inView
+                          ? this.removeAnimationMobileView('slideInRight')
+                          : ''
+                      }`}
                     >
                       <img
                         className="py-3"
@@ -179,14 +184,14 @@ class TechnologiesWeUse extends React.Component {
           </div>
           <footer
             style={
-              this.props.screenWidth < 725
+              this.props.screenWidth < screenWidth[5].screen725
                 ? makeFooterVisibeForSmallDevice.reset
                 : {}
             }
             className={`show-footer-mobile ${
-              this.props.mouseScroll > 0 && this.props.screenWidth >= 725
+              this.props.mouseScroll > 0 && this.props.screenWidth >= screenWidth[5].screen725
                 ? 'show-footer'
-                : this.props.screenWidth < 725
+                : this.props.screenWidth < screenWidth[5].screen725
                 ? ''
                 : 'hide-footer'
             }`}
@@ -197,7 +202,11 @@ class TechnologiesWeUse extends React.Component {
                   <img className="logo" src="/img/icon/logo.png" alt="" />
                 </div>
                 <div className="col-sm-6  col-md-6 ">
-                  <button onClick={()=>this.props.showmodal()} type="button" className="btn btn-primary float-right">
+                  <button
+                    onClick={() => this.props.showmodal()}
+                    type="button"
+                    className="btn btn-primary float-right"
+                  >
                     Get Updates
                   </button>
                 </div>
@@ -207,7 +216,10 @@ class TechnologiesWeUse extends React.Component {
                 <div className="col-sm-9 col-md-6 ">
                   <p>
                     Contact Us: info@NSFCAREER.IO <br />
-                    <span onClick={()=>window.open('')}>  IP </span> | Privacy Policy &amp; <span onClick={()=>window.open('')}>  IRB </span> | Collaborate
+                    <span onClick={() => window.open('')}> IP </span> | Privacy
+                    Policy &amp;{' '}
+                    <span onClick={() => window.open('')}> IRB </span> |
+                    Collaborate
                   </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">

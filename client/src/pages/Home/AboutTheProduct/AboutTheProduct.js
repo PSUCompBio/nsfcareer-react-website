@@ -1,5 +1,7 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
+import screenWidth from '../../../utilities/ScreenWidth';
+
 
 function AboutTheProduct(props) {
   const dashes = [];
@@ -7,10 +9,10 @@ function AboutTheProduct(props) {
   for (let i = 0; i < 19; i += 1) {
     dashes.push(<li key={i} />);
   }
-  const animateOnDesktop = props.screenWidth > 725 ? 'hvr-bounce-in' : '';
+  const animateOnDesktop = props.screenWidth > screenWidth[1].screen725 ? 'hvr-bounce-in' : '';
 
   function removeAnimationMobileView(animation){
-    if (props.screenWidth > 425)
+    if (props.screenWidth > screenWidth[0].screen425)
       return animation;
     else {
       return ''

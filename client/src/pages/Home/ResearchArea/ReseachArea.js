@@ -1,11 +1,13 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
 import { Link, withRouter } from 'react-router-dom';
+import screenWidth from '../../../utilities/ScreenWidth';
+
 
 function ResearchArea(props) {
 
   function removeAnimationMobileView(animation){
-    if (props.screenWidth > 425)
+    if (props.screenWidth > screenWidth[0].screen425)
       return animation;
     else {
       return ''

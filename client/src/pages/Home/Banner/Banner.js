@@ -1,6 +1,7 @@
 import React from 'react';
 import WebFont from 'webfontloader';
 import { InView } from 'react-intersection-observer';
+import screenWidth from '../../../utilities/ScreenWidth'
 
 WebFont.load({
   google: {
@@ -9,7 +10,7 @@ WebFont.load({
 });
 class Banner extends React.Component {
   removeAnimationMobileView(animation) {
-    if (this.props.screenWidth > 425) return animation;
+    if (this.props.screenWidth > screenWidth[0].screen425) return animation;
     else {
       return '';
     }
@@ -41,7 +42,7 @@ class Banner extends React.Component {
                           ref={ref}
                           style={{ overflow: 'hidden' }}
                           className={`col-md-10 col-lg-10 header-heading ${
-                            this.props.screenWidth < 725 ? '' : ''
+                            this.props.screenWidth < screenWidth[1].screen725 ? '' : ''
                           }`}
                         >
                           <h1
