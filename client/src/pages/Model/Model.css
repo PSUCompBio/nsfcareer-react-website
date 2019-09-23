@@ -1,0 +1,8 @@
+#model_block {
+	width: 100%;
+}
+.model_loader{
+	position: absolute;
+	top: 60%;
+	right: 50%;
+}
