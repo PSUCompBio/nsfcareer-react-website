@@ -130,13 +130,13 @@ class Nav extends React.Component {
         </li>
         <li className="nav-item make-active active">
           <Link className="nav-link" to={'/About'}>
-            About <span className="sr-only">(current)</span>
+            About us <span className="sr-only">(current)</span>
           </Link>
           <div className={LineUnderLink.linkeMaker('/About')} />
         </li>
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
-            Contact
+            Contact us
           </Link>
           <div className={LineUnderLink.linkeMaker('/Contact')} />
         </li>
@@ -267,7 +267,7 @@ class Nav extends React.Component {
         </li>
         <li className="nav-item make-active active">
           <Link className="nav-link" to={'/About'}>
-            About <span className="sr-only">(current)</span>
+            About us <span className="sr-only">(current)</span>
           </Link>
           <div className={LineUnderLink.linkeMaker('/About')} />
         </li>
@@ -280,7 +280,7 @@ class Nav extends React.Component {
 
         <li className="nav-item make-active">
           <Link className="nav-link" to={'/Contact'}>
-            Contact
+            Contact us
           </Link>
           <div className={LineUnderLink.linkeMaker('/Contact')} />
         </li>
@@ -418,7 +418,7 @@ class Nav extends React.Component {
             </Link>
             <div className={LineUnderLink.linkeMaker('/Home')} />
             <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
-              About <span className="sr-only">(current)</span>
+              About us <span className="sr-only">(current)</span>
             </Link>
             <div className={LineUnderLink.linkeMaker('/About')} />
             {this.props.isLoggedIn === true ? (
@@ -446,7 +446,7 @@ class Nav extends React.Component {
               className="nav-link"
               to={'/Contact'}
             >
-              Contact
+              Contact us
             </Link>
             <div className={LineUnderLink.linkeMaker('/Contact')} />
             {this.props.location.pathname !== '/SignUp' ? (
