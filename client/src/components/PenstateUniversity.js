@@ -42,6 +42,7 @@ class PenstateUniversity extends React.Component {
   componentDidMount() {
     var elementStart = 1;
     if (getStatusOfDarkmode().status === true) {
+      console.log(this.refs)
       if (this.props.isMilitaryVersionActive) {
         elementStart = 5;
         this.refs.h1.style.color = '#fff';

@@ -41,7 +41,6 @@ class Routing extends React.Component {
     } else {
       this.setState({ isDisplay: {display:'none'} });
     }
-    console.log('helloo sdfsdkjh')
   };
 
   checkDarkMode = (value) => {

@@ -130,20 +130,22 @@ class OrganizationAdmin extends React.Component {
           this.setState({
               organizationAdminData : { ...this.state.organizationAdminData, ...organizationResponseData.data.data },
               isFetching : false
+          }, () => {
+              this.checkIfDarkModeActive();
           });
       })
       .catch(err => {
           console.log(err)
       })
-    this.checkIfDarkModeActive();
+    // this.checkIfDarkModeActive();
   };
 
-  componentDidUpdate() {
-    this.checkIfDarkModeActive();
-  }
-  componentDidMount() {
-    this.checkIfDarkModeActive();
-  }
+  // componentDidUpdate() {
+  //   this.checkIfDarkModeActive();
+  // }
+  // componentDidMount() {
+  //   this.checkIfDarkModeActive();
+  // }
 
   addTeam = () => {
     this.setState({ totalTeam: this.state.totalTeam + 1 });
