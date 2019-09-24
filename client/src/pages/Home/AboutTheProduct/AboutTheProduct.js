@@ -20,13 +20,15 @@ function AboutTheProduct(props) {
   }
 
   function detectScroll(e) {
-    const scrollHeight = e.currentTarget.scrollHeight;
-    const scrollTop = e.currentTarget.scrollTop;
-    const clientHeight = e.currentTarget.clientHeight;
-    if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
-      props.scrollBarTouchBottom();
-    } else if (scrollTop === 0) {
-      props.scrollBarTouchTop();
+    if (props.screenWidth < screenWidth[1].screen725) {
+      const scrollHeight = e.currentTarget.scrollHeight;
+      const scrollTop = e.currentTarget.scrollTop;
+      const clientHeight = e.currentTarget.clientHeight;
+      if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
+        props.scrollBarTouchBottom();
+      } else if (scrollTop === 0) {
+        props.scrollBarTouchTop();
+      }
     }
   }
 

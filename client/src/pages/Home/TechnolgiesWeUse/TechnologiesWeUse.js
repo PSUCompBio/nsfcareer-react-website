@@ -32,17 +32,19 @@ class TechnologiesWeUse extends React.Component {
   }
 
   detectScroll(e) {
-    const scrollHeight = e.currentTarget.scrollHeight;
-    const scrollTop = e.currentTarget.scrollTop;
-    const clientHeight = e.currentTarget.clientHeight;
-    if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
-      this.props.scrollBarTouchBottom();
-      this.setState({ bottomTouched: true });
-    } else if (scrollTop === 0) {
-      this.setState({ bottomTouched: false });
-      this.props.scrollBarTouchTop();
-    } else {
-      this.setState({ bottomTouched: false });
+    if (this.props.screenWidth < screenWidth[1].screen725) {
+      const scrollHeight = e.currentTarget.scrollHeight;
+      const scrollTop = e.currentTarget.scrollTop;
+      const clientHeight = e.currentTarget.clientHeight;
+      if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
+        this.props.scrollBarTouchBottom();
+        this.setState({ bottomTouched: true });
+      } else if (scrollTop === 0) {
+        this.setState({ bottomTouched: false });
+        this.props.scrollBarTouchTop();
+      } else {
+        this.setState({ bottomTouched: false });
+      }
     }
   }
 
