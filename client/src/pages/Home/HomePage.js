@@ -26,13 +26,11 @@ class HomePage extends React.Component {
     this._pageScroller = null;
   }
   componentDidMount() {
-    document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+    if (this.props.screenWidth < 725) {
+      document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+    }
   }
-  componentWillMount() {
-    // const doc = document.getElementById("root").getElementsByTagName('div');
-    // console.log(doc[9])
-  }
-
+ 
   componentWillReceiveProps(nextProps) {
     if (this.props.screenWidth > 725) {
       this.goToPage(nextProps.gotoPage);

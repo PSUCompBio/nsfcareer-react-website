@@ -144,6 +144,7 @@ div.section-one {
   position: fixed !important;
   width: 100% !important;
   z-index: 2 !important;
+  box-shadow: 0 5px 13px 8px rgba(0,0,0,0.12)!important;
 }
 .navbar-padding a {
   color: #fff !important;

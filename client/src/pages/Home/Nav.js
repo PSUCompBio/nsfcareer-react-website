@@ -355,11 +355,11 @@ class Nav extends React.Component {
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
-          (this.props.location.pathname !== '/Home' &&
-            this.props.location.pathname !== '/') ||
-          this.props.currentPage !== 1
-            ? 'navbar-bg-change'
-            : ''
+          // (this.props.location.pathname !== '/Home' &&
+          //   this.props.location.pathname !== '/') ||
+          // this.props.currentPage !== 1
+             'navbar-bg-change'
+            // : ''
         } ${this.props.screenWidth <= 768 ? 'navbar-bg-change' : ''}`}
       >
         <Link className="navbar-brand" to={'/Home'}>
