@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import ReactPageScroller from 'react-page-scroller';
 import Banner from './Banner/Banner';
 import AboutTheProduct from './AboutTheProduct/AboutTheProduct';
@@ -10,6 +9,8 @@ import 'hover.css/css/hover.css';
 import 'animate.css/animate.min.css';
 import { getStatusOfDarkmode } from '../../reducer';
 import 'bootstrap/dist/js/bootstrap.bundle';
+import screenWidth from '../../utilities/ScreenWidth';
+
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -26,13 +27,13 @@ class HomePage extends React.Component {
     this._pageScroller = null;
   }
   componentDidMount() {
-    if (this.props.screenWidth < 725) {
+    if (this.props.screenWidth < screenWidth[1].screen725) {
       document.getElementsByTagName('body')[0].style.overflow = 'hidden';
     }
   }
  
   componentWillReceiveProps(nextProps) {
-    if (this.props.screenWidth > 725) {
+    if (this.props.screenWidth > screenWidth[1].screen725) {
       this.goToPage(nextProps.gotoPage);
     }
   }
@@ -170,7 +171,7 @@ class HomePage extends React.Component {
   }
 
   render() {
-    if (this.props.screenWidth >= 725) {
+    if (this.props.screenWidth >= screenWidth[1].screen725) {
       return (
         <React.Fragment>
           <ReactPageScroller
