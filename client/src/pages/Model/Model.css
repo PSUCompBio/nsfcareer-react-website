@@ -1,8 +1,29 @@
-#model_block {
+#model_block, #clone_model_block {
 	width: 100%;
 }
 .model_loader{
 	position: absolute;
 	top: 60%;
 	right: 50%;
+}
+.generate_graph {
+	margin-top: 87px;
+}
+.tringulate_btn {
+	margin-top: 20px;
+}
+.graph1 {
+	position: absolute;
+	top: 25%;
+	right: 0;
+}
+.graph2 {
+	position: absolute;
+	bottom: 5%;
+	right: 0;
+}
+.graph3 {
+	position: absolute;
+	top: 40%;
+	left: 3%;
 }
