@@ -19,9 +19,20 @@ function AboutTheProduct(props) {
     }
   }
 
+  function detectScroll(e) {
+    const scrollHeight = e.currentTarget.scrollHeight;
+    const scrollTop = e.currentTarget.scrollTop;
+    const clientHeight = e.currentTarget.clientHeight;
+    if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
+      props.scrollBarTouchBottom();
+    } else if (scrollTop === 0) {
+      props.scrollBarTouchTop();
+    }
+  }
+
   return (
     <div className="container section">
-      <div className="section-two">
+      <div onWheel={(e)=>detectScroll(e)} className="section-two">
         <div className="row">
           <div className="col-md-12 col-lg-12 text-center">
             <InView>

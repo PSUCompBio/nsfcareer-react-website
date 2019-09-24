@@ -23,7 +23,7 @@
     "google-maps-react": "^2.0.2",
     "init": "^0.1.2",
     "jquery": "^3.4.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.15",
     "mdbreact": "^4.19.0",
     "moment": "^2.24.0",
     "ms": "^2.1.2",

@@ -197,7 +197,7 @@ class Nav extends React.Component {
     this.setState({ psuLinks: { display: 'none' } });
     this.refs.hideList.classList.remove('hide-list-onlink-click');
     this.refs.hideList.classList.add('show-mobile-links');
-  }
+  };
 
   mobilePSUlinks = () => {
     if (this.props.userType === 'Admin') {
@@ -360,7 +360,7 @@ class Nav extends React.Component {
           this.props.currentPage !== 1
             ? 'navbar-bg-change'
             : ''
-        }`}
+        } ${this.props.screenWidth <= 768 ? 'navbar-bg-change' : ''}`}
       >
         <Link className="navbar-brand" to={'/Home'}>
           <img src="img/icon/logo.png" alt="" />

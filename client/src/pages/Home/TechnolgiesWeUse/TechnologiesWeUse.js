@@ -7,7 +7,8 @@ class TechnologiesWeUse extends React.Component {
     super();
     this.state = {
       showAndHideFooter: '',
-      isDisplay: { display: 'none' }
+      isDisplay: { display: 'none' },
+      bottomTouched: false
     };
   }
 
@@ -30,6 +31,21 @@ class TechnologiesWeUse extends React.Component {
     }
   }
 
+  detectScroll(e) {
+    const scrollHeight = e.currentTarget.scrollHeight;
+    const scrollTop = e.currentTarget.scrollTop;
+    const clientHeight = e.currentTarget.clientHeight;
+    if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
+      this.props.scrollBarTouchBottom();
+      this.setState({ bottomTouched: true });
+    } else if (scrollTop === 0) {
+      this.setState({ bottomTouched: false });
+      this.props.scrollBarTouchTop();
+    } else {
+      this.setState({ bottomTouched: false });
+    }
+  }
+
   render = (props) => {
     const makeFooterVisibeForSmallDevice = {
       reset: {
@@ -49,13 +65,14 @@ class TechnologiesWeUse extends React.Component {
         <div className={`section-four-container`} onWheel={this.props.onWheel}>
           <div className="container section">
             <div
+              onWheel={(e) => this.detectScroll(e)}
               className={`section-four text-center ${
                 this.props.screenWidth >= screenWidth[1].screen725
                   ? this.props.mouseScroll > 0 && this.props.currentPage === 4
                     ? 'shift-technology-section'
                     : ''
                   : ''
-              }`}
+              } ${this.state.bottomTouched === true ? 'shift-technology-ms' : ''}`}
             >
               <div className="col-md-12 col-lg-12 text-center">
                 <InView>
@@ -80,7 +97,8 @@ class TechnologiesWeUse extends React.Component {
               </div>
               <div
                 className={`row ${
-                  this.props.screenWidth > screenWidth[0].screen425 && this.props.screenWidth < screenWidth[2].screen769
+                  this.props.screenWidth > screenWidth[0].screen425 &&
+                  this.props.screenWidth < screenWidth[2].screen769
                     ? ''
                     : ' py-5'
                 }`}
@@ -112,8 +130,10 @@ class TechnologiesWeUse extends React.Component {
                         companies to provide real-time brain response analytics.
                         We help transform their data into meaningful brain
                         health monitoring. Looking for a sensor? See our{' '}
-                        {this.props.screenWidth > screenWidth[4].screen1024 ? '' : ''} recommended
-                        providers here.
+                        {this.props.screenWidth > screenWidth[4].screen1024
+                          ? ''
+                          : ''}{' '}
+                        recommended providers here.
                       </p>
                     </div>
                   )}
@@ -123,7 +143,9 @@ class TechnologiesWeUse extends React.Component {
                     <div
                       ref={ref}
                       className={`col-md-4 animated   pt-5 ${
-                        this.props.screenWidth < screenWidth[3].screen768 ? 'order-first' : ''
+                        this.props.screenWidth < screenWidth[3].screen768
+                          ? 'order-first'
+                          : ''
                       } ${
                         inView ? this.removeAnimationMobileView('zoomIn') : ''
                       }`}
@@ -189,7 +211,8 @@ class TechnologiesWeUse extends React.Component {
                 : {}
             }
             className={`show-footer-mobile ${
-              this.props.mouseScroll > 0 && this.props.screenWidth >= screenWidth[5].screen725
+              this.props.mouseScroll > 0 &&
+              this.props.screenWidth >= screenWidth[5].screen725
                 ? 'show-footer'
                 : this.props.screenWidth < screenWidth[5].screen725
                 ? ''

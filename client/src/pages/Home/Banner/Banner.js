@@ -18,7 +18,7 @@ class Banner extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <div className="section-one-container">
           <div className="container-fluid pl-0 pr-0">
             <div className="section-one">
@@ -157,7 +157,7 @@ class Banner extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

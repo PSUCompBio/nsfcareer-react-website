@@ -18,11 +18,22 @@ function ResearchArea(props) {
     props.history.push(pageName)
   }
 
+  function detectScroll(e) {
+    const scrollHeight = e.currentTarget.scrollHeight;
+    const scrollTop = e.currentTarget.scrollTop;
+    const clientHeight = e.currentTarget.clientHeight;
+    if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
+      props.scrollBarTouchBottom();
+    }else if (scrollTop === 0) {
+      props.scrollBarTouchTop();
+    }
+  }
+
 
   return (
-    <div className="research-area-bg">
+    <div className="research-area-bg" onWheel={()=>console.log('rolling')}>
       <div className="container section">
-        <div className="section-three">
+        <div onWheel={(e)=>detectScroll(e)} className="section-three">
           <div className="col-md-12 col-lg-12 text-center">
             <InView>
               {({ inView, ref }) => (

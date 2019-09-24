@@ -141,7 +141,7 @@ div.section-one {
 .navbar-padding {
   padding-left: 10% !important;
   padding-right: 10% !important;
-  position: absolute !important;
+  position: fixed !important;
   width: 100% !important;
   z-index: 2 !important;
 }
@@ -1627,6 +1627,10 @@ div.show-mobile-links{
   }
 }
 
+.mobile-compo{
+  transform: translate(0,-100%)
+}
+
 @media (max-width: 575px) {
   .section-one > img:nth-child(1) {
     width: 530px !important;
@@ -1740,10 +1744,108 @@ div.show-mobile-links{
   .section-four {
     height: 100vh;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding-top: 70px;
   }
   .header-navbar {
     top: 15%;
+  }
+}
+.mobile-scroll-1{
+  transform: translateY(-100vh);
+  animation: scrolling1 1s ease-in-out;
+}
+
+@keyframes scrolling1 {
+  from{
+    transform: translateY(0);
+  }
+  to{
+    transform: translateY(-100vh);
+  }
+}
+
+.mobile-scroll-2{
+  transform: translateY(-200vh);
+  animation: scrolling2 1s ease-in-out;
+}
+
+@keyframes scrolling2 {
+  from{
+    transform: translateY(-100vh);
+  }
+  to{
+    transform: translateY(-200vh);
+  }
+}
+
+.mobile-scroll-3{
+  transform: translateY(-300vh);
+  animation: scrolling3 1s ease-in-out;
+}
+
+@keyframes scrolling3 {
+  from{
+    transform: translateY(-200vh);
+  }
+  to{
+    transform: translateY(-300vh);
+  }
+}
+
+
+
+.mobile-scroll-back-2{
+  transform: translateY(-200vh);
+  animation: scrollingBack2 1s ease-in-out;
+}
+
+@keyframes scrollingBack2 {
+  from{
+    transform: translateY(-300vh);
+  }
+  to{
+    transform: translateY(-200vh);
+  }
+}
+.mobile-scroll-back-1{
+  transform: translateY(-100vh);
+  animation: scrollingBack1 1s ease-in-out;
+}
+
+@keyframes scrollingBack1 {
+  from{
+    transform: translateY(-200vh);
+  }
+  to{
+    transform: translateY(-100vh);
+  }
+}
+.mobile-scroll-back-0{
+  transform: translateY(0);
+  animation: scrollingBack0 1s ease-in-out;
+}
+.shift-technology-ms {
+  margin-top: -40vh;
+  animation: smothms 0.2s ease-in;
+}
+@keyframes smothms {
+  0% {
+    margin-top: 0;
+  }
+  50% {
+    margin-top: -10vh;
+  }
+  100% {
+    margin-top: -40vh;
+  }
+}
+@keyframes scrollingBack0 {
+  from{
+    transform: translateY(-100vh);
+  }
+  to{
+    transform: translateY(0);
   }
 }
 
