@@ -128,7 +128,7 @@ class GetUpdates extends React.Component {
             <div className="col-sm-12 mt-3">
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 placeholder="Email address"
               />
 

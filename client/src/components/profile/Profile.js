@@ -204,6 +204,7 @@ class Profile extends React.Component {
     this.refs.profileBorder.style.border = `10px solid ${bgColor[1]}`;
     this.refs.nameColor.style.color = fontColor;
     this.refs.chooserColor.style.color = fontColor;
+    this.refs.darkMode.style.color = fontColor;
     const allInputs = this.state.inputs;
     allInputs.forEach((element) => {
       this.refs[element].setAttribute('id', darkModeColor);
@@ -382,7 +383,7 @@ class Profile extends React.Component {
             <div className="col-md-3 btns-heading text-left pt-4">
               <div className="row">
                 <div className="col-sm-7">
-                  <span ref="chooserColor" className="dark-mode">
+                  <span  ref="darkMode" className="dark-mode">
                     {this.state.mode}
                   </span>
                 </div>
@@ -559,6 +560,7 @@ class Profile extends React.Component {
                 this.refs.profileBorder.style.border = '10px solid #171b25';
                 this.refs.nameColor.style.color = '#fff';
                 this.refs.chooserColor.style.color = '#fff';
+                this.refs.darkMode.style.color = '#fff';
                 const allInputs = this.state.inputs;
                 allInputs.forEach((element) => {
                   this.refs[element].setAttribute('id', 'dark-mode-color');

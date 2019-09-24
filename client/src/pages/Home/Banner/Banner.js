@@ -31,7 +31,7 @@ class Banner extends React.Component {
                 </div>
               </div>
               <div className="downpointer">
-              <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              <i className="fa fa-arrow-down" aria-hidden="true"></i>
               </div>
               <div className="header-navbar">
                 <div className="container-fluid heading-container">

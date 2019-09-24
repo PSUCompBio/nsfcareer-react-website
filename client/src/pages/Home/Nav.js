@@ -328,7 +328,7 @@ class Nav extends React.Component {
             className={`${this.state.signOutClass}`}
           >
             <div className="nav-item make-active profile-user active">
-              {/* <div class="sign-out-box-arrow"></div> */}
+              {/* <div className="sign-out-box-arrow"></div> */}
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
               </Link>

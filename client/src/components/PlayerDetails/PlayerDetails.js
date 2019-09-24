@@ -36,6 +36,8 @@ class PlayerDetails extends React.Component {
   changeHeadingColor = () => {
     if (getStatusOfDarkmode().status === true) {
       this.refs.h1.style.color = '#fff';
+      this.refs.p1.style.color = '#fff';
+      this.refs.p2.style.color = '#fff';
     }
   };
 
@@ -72,13 +74,13 @@ class PlayerDetails extends React.Component {
     return (
       <div className="row p-4 mb-5 player-details ">
         <div className="col-md-6 player-name">
-          <p>
+          <p ref="p1">
             Player Name :
             <span>
               {` ${this.props.user.first_name} ${this.props.user.last_name}`}
             </span>
           </p>
-          <p>
+          <p ref="p2">
             Player ID :<span>515115</span>
           </p>
         </div>

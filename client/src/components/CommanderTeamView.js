@@ -185,7 +185,7 @@ class CommanderTeamView extends React.Component {
                                 onClick={this.onClickHandler}
                                 className="btn \ upload-btn"
                                 >
-                                <i class="fa fa-cloud-upload"></i>
+                                <i className="fa fa-cloud-upload"></i>
                             </button>
                             {
                                 this.state.isUploading ?
@@ -196,9 +196,9 @@ class CommanderTeamView extends React.Component {
                             }
                             {
                                 this.state.isFileUploaded ?
-                                <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible fade show" role="alert">
+                                <div style={{marginTop : "5px"}} className="alert alert-success alert-dismissible fade show" role="alert">
                                     Successfully uploaded the CSV/ XLSX file
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
@@ -207,9 +207,9 @@ class CommanderTeamView extends React.Component {
                             }
                             {
                                 this.state.fileUploadError ?
-                                <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible api-response-alert fade show" role="alert">
+                                <div style={{marginTop : "5px"}} className="alert alert-success alert-dismissible api-response-alert fade show" role="alert">
                                     Failed to upload CSV/ XLSX file
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <button type="button" className="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
