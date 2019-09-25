@@ -516,7 +516,7 @@ class OrganizationAdmin extends React.Component {
                 </div>
               </div>
 
-              <div className="most-impacts">
+              <div className="most-impacts mb-5">
                 <div ref="impactCardParent" className="card">
                   <div ref="impactCard" className="impact-heading">
                     MOST IMPACTS
@@ -542,7 +542,7 @@ class OrganizationAdmin extends React.Component {
 
   render() {
     console.log(this.props);
-    if(this.state.isFetching){
+    if(!this.state.isFetching){
         return <Spinner />;
     }
 
