@@ -455,7 +455,7 @@ div.titles{
   .acc-evnt {
     margin-top: 25%;
   }
-  div.titiles input{
+  div.titiles input, input.upload-btn{
     width: 225px;
   }
   .acc-card-before::before {
@@ -477,7 +477,7 @@ div.titles{
   }
   @media screen and (min-width:768px) and (max-width:1023px) {
     
-    div.titiles input{
+    div.titiles input,input.upload-btn{
       width: 225px;
     }
   }

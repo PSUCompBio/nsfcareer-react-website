@@ -38,11 +38,11 @@ class ContactPage extends React.Component {
       <React.Fragment>
         <div className="container-fluid  contact__page-center-align pl-0">
           <div className="row pt-surface  animated zoomIn text-center">
-            <div  className="col-md-8 order-12 pr-0">
+            <div  className="col-md-7 order-12 pr-0 contact-img-container">
               {/* <GoogleMap /> */}
-              <img className="img-fluid img-contact-us" src="/img/contactus.png" alt=""/>
+              <img className="img-fluid img-contact-us w-50" src="/img/contactus.png" alt=""/>
             </div>
-            <div className="col-md-4 order-1 my-auto contact-query">
+            <div className="col-md-5 order-1 my-auto contact-query">
               <h4>Have Questions? Need Help?</h4>
               <p>
                 User Support: <span>support@nsfcareer.io</span>
