@@ -123,12 +123,12 @@ class Login extends React.Component {
     return (
       <React.Fragment>
         <div className="dynamic__height">
-          <div className="container pl-0 pr-0 login-height overflow-hidden">
+          <div className="container  pl-0 pr-0 login-height overflow-hidden">
             {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
             <div className="row login">
               <div className="col-md-12  mb-5">
                 <div className="text-center">
-                  <p className="top-heading__login">
+                  <p className="top-heading__login animated fadeInUp">
                     The Dashboard gives users and administrators a cumulative
                     overview, as well as an in-depth analysis on each head
                     acceleration event.
@@ -136,7 +136,7 @@ class Login extends React.Component {
                 </div>
               </div>
 
-              <div className="col-md-6 mb-5 p-3">
+              <div className="col-md-6 mb-5 p-3 animated fadeInLeft">
                 <div id="dashboard-view" className="text-right dashboard-mock">
                   <div className="text-center dashboard-example">
                     Dashboard Example
@@ -149,7 +149,7 @@ class Login extends React.Component {
                 </div>
               </div>
 
-              <div className="col-md-6 mb-5 p-3">
+              <div className="col-md-6 mb-5 p-3 animated fadeInRight">
                 <div ref="loginForm" className="card card-border">
                   <div className="card-body">
                     <div ref="brainIcon" className="text-center brain-icon">
