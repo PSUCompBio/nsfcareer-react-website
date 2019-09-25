@@ -151,7 +151,7 @@ class CommanderTeamView extends React.Component {
 
   militaryVersionOrNormal = () => {
     return (
-      <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
+      <div ref="rosterContainer" className="container t-roster pt-5 mt-5 animated zoomIn">
         <PenstateUniversity />
         <div className="row text-center">
           <div className="col-md-8">

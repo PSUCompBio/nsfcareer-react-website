@@ -441,7 +441,7 @@ class OrganizationAdmin extends React.Component {
         {this.state.wantDeleteTeam === true ? this.showModal() : ''}
         {this.state.showEditForm === true ? this.showEditForm() : ''}
 
-        <div ref="rosterContainer" className="t-roster">
+        <div ref="rosterContainer" className="t-roster animated zoomIn">
           <PenstateUniversity />
           {this.props.isMilitaryVersionActive ? (
             <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>

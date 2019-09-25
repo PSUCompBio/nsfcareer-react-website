@@ -249,7 +249,7 @@ class Profile extends React.Component {
   showProfile = () => {
     return (
       <React.Fragment>
-        <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
+        <div className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2">
           <div
             ref="lightDark"
             className="row mb-5 text-center justify-content-center align-items-center profile-container"
