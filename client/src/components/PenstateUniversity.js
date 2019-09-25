@@ -67,7 +67,7 @@ class PenstateUniversity extends React.Component {
   checkIfMilitaryModeOn = () => {};
 
   render() {
-      if(!this.state.isFetching){
+      if(this.state.isFetching){
           return <div></div>
       }
     return (

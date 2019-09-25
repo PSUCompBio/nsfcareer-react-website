@@ -138,6 +138,9 @@ class OrganizationAdmin extends React.Component {
           console.log(err)
       })
     // this.checkIfDarkModeActive();
+    if (getStatusOfDarkmode().status) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    }
   };
 
   // componentDidUpdate() {
@@ -542,7 +545,7 @@ class OrganizationAdmin extends React.Component {
 
   render() {
     console.log(this.props);
-    if(!this.state.isFetching){
+    if(this.state.isFetching){
         return <Spinner />;
     }
 

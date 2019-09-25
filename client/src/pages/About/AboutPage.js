@@ -9,8 +9,8 @@ class AboutPage extends React.Component {
 
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
-      console.log('dfsdgds');
       this.refs.h1.style.color = '#fff';
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
     }
   }
 

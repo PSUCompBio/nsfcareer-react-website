@@ -36,6 +36,7 @@ class Login extends React.Component {
 
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
       this.refs.loginForm.style.background = "rgb(35, 40, 56)";
       this.refs.dashboardView.src = "/img/icon/dashboardViewDark.png";
       this.refs.brainIcon.style.border = "5px solid rgb(23, 27, 37)";
@@ -119,7 +120,7 @@ class Login extends React.Component {
   }
 
   render() {
-    console.log(this.state);
+    console.log(JSON.parse(localStorage.getItem('state')));
     return (
       <React.Fragment>
         <div className="dynamic__height">

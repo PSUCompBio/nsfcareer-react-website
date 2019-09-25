@@ -8,14 +8,22 @@ import {
 } from './ActionType';
 
 const initialState = {
-  darkThemeActive: false,
+  darkThemeActive: getStatusFromLocalStorage(),
   isSignedInSuccess: false,
   militaryVersion: false,
   userInfo:''
 };
 
+function getStatusFromLocalStorage() {
+  try {
+    return JSON.parse(localStorage.getItem('state')).darkThemeActive
+  } catch (error) {
+    return false;
+  }
+}
+
 let darkTheme = {
-  status: false
+  status: getStatusFromLocalStorage()
 };
 
 export function darkThemeController(state = initialState, action) {
@@ -50,5 +58,6 @@ export function darkThemeController(state = initialState, action) {
 }
 
 export const getStatusOfDarkmode = () => {
+  console.log(darkTheme)
   return darkTheme;
 };

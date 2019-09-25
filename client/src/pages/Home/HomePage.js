@@ -31,7 +31,6 @@ class HomePage extends React.Component {
       document.getElementsByTagName('body')[0].style.overflow = 'hidden';
     }
   }
- 
   componentWillReceiveProps(nextProps) {
     if (this.props.screenWidth > screenWidth[1].screen725) {
       this.goToPage(nextProps.gotoPage);
@@ -41,6 +40,7 @@ class HomePage extends React.Component {
   componentWillUpdate() {
     const darkThemeOnOff = getStatusOfDarkmode();
     if (darkThemeOnOff.status === true) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
       const h1Length = document.getElementsByTagName('h1');
       const h4Length = document.getElementsByTagName('h4');
       for (let i = 0; i < h1Length.length; i++) {
