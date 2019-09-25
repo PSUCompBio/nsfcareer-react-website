@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import GLB from './SoldierMesh.glb';
+import GLB1 from './SoldierMesh11.glb';
 import './Model.css';
 import { getStatusOfDarkmode } from '../../reducer';
 
@@ -583,7 +584,18 @@ let pointArray = [
 					[17.84670968,	-0.31876129],
 					]
 				];
-
+let pointArrayClone = [[
+    ['x', 'Curve1', 'Curve2', 'Curve3', 'Average'],
+    [0, 0, 0, 0, 0],
+    [1, 10, 5, 5, 6.3],
+    [2, 23, 15, 20, 19],
+    [3, 17, 9, 13, 13],
+    [4, 18, 10, 19, 16],
+    [5, 9, 5, 7, 6.3],
+    [6, 11, 3, 7, 7],
+    [7, 27, 19, 23, 23],
+ ]];			
+				
 class ModelPage extends React.Component {
 	
 	constructor(props) {
@@ -593,7 +605,8 @@ class ModelPage extends React.Component {
 			isLoadingClone: false,
 			dataPoints1: pointArray[0],
 			dataPoints2: pointArray[1],
-			dataPoints3: pointArray[2]
+			dataPoints3: pointArray[2],
+			dataPoints4: pointArrayClone[0],
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
@@ -749,24 +762,39 @@ class ModelPage extends React.Component {
 			});
 		});
 		
+		pointArrayClone[0] = pointArrayClone[0].map(function(element) {
+			return element = element.map(function(element1) {
+				if (!isNaN(element1))
+				return element1*1.01;
+				else
+				return element1;
+			});
+		});
+		
 		const dataPoints1 = pointArray[0];
 		const dataPoints2 = pointArray[1];
 		const dataPoints3 = pointArray[2];
+		const dataPoints4 = pointArrayClone[0];
 		
 		this.setState({
 			dataPoints1: dataPoints1,
 			dataPoints2: dataPoints2,
-			dataPoints3: dataPoints3
+			dataPoints3: dataPoints3,
+			dataPoints4: dataPoints4
 		});
 	}
 	
 	generateClone = () => {
-		this.sceneSetup1();
-		this.loadModel1();
-		this.startAnimationLoop1();
+		
+		document.getElementById('clone_block').style.display = "block";
+		document.getElementById("model_block").scrollIntoView();
+		
+		this.sceneSetupClone();
+		this.loadModelClone();
+		this.startAnimationLoopClone();
 	}
 	
-	sceneSetup1 = () => {
+	sceneSetupClone = () => {
 		// get container dimensions and use them for scene sizing
 		const width = window.innerWidth;
 		const height = window.innerHeight;
@@ -806,7 +834,7 @@ class ModelPage extends React.Component {
 		//this.controls.maxDistance = 10;
 	};
   
-	loadModel1 = () => {
+	loadModelClone = () => {
 		const scene  = this.scene1;
 		const me  = this;
 		var loader = new GLTFLoader();
@@ -849,10 +877,47 @@ class ModelPage extends React.Component {
 				console.log( error );
 			}
 		);
+		
+		// Load a glTF resource
+		/* loader.load(
+			// resource URL
+			GLB,
+			// called when the resource is loaded
+			function ( gltf ) {
+				
+				gltf.scene.position.x = 1;
+				scene.add( gltf.scene );
+				
+				me.setState({
+					isLoadingClone: false
+				});
+
+				//gltf.animations; // Array<THREE.AnimationClip>
+				//gltf.scene; // THREE.Scene
+				//gltf.scenes; // Array<THREE.Scene>
+				//gltf.cameras; // Array<THREE.Camera>
+				//gltf.asset; // Object
+
+			},
+			// called while loading is progressing
+			function ( xhr ) {
+				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+			},
+			// called when loading has errors
+			function ( error ) {
+				
+				me.setState({
+					isLoading: false
+				});
+				
+				alert( 'An error happened' );
+				console.log( error );
+			}
+		); */
 	};
 
-	startAnimationLoop1 = () => {
-		if (this.resizeRendererToDisplaySize1(this.renderer1)) {
+	startAnimationLoopClone = () => {
+		if (this.resizeRendererToDisplaySizeClone(this.renderer1)) {
 			const canvas = this.renderer1.domElement;
 			this.camera1.aspect = canvas.clientWidth / canvas.clientHeight;
 			this.camera1.updateProjectionMatrix();
@@ -863,10 +928,10 @@ class ModelPage extends React.Component {
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
 		// to update an animation before the next repaint
-		this.requestID1 = window.requestAnimationFrame(this.startAnimationLoop1);
+		this.requestID1 = window.requestAnimationFrame(this.startAnimationLoopClone);
 	};
 
-	resizeRendererToDisplaySize1 = (renderer)  => {
+	resizeRendererToDisplaySizeClone = (renderer)  => {
 		const canvas = renderer.domElement;
 		const width = canvas.clientWidth;
 		const height = canvas.clientHeight;
@@ -876,8 +941,6 @@ class ModelPage extends React.Component {
 		}
 		return needResize;
     }
-
-		
 		
 	render() {
 		
@@ -897,7 +960,32 @@ class ModelPage extends React.Component {
 			    startup: true,
 			    easing: 'linear',
 			    duration: 500,
+			}
+		};
+		
+		const cloneOptions = {
+			title: "",
+			hAxis: { title: "Time (ms)", titleTextStyle: {
+				color: '#FF0000'
+			}},
+			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
+				color: '#FF0000'
+			}},
+			backgroundColor: { fill:'transparent' },
+			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
+			legend: "none",
+			pointSize: 2,
+			animation: {
+			    startup: true,
+			    easing: 'linear',
+			    duration: 500,
 			},
+			series: {
+				0: { color: '#1c91c0' },
+				1: { color: '#1c91c0' },
+				2: { color: '#1c91c0' },
+				3: { color: '#00008b' },
+			}
 		};
 		
 		return (
@@ -912,10 +1000,8 @@ class ModelPage extends React.Component {
 							<div className="chart-container">
 								<div className="graph1">
 									<Chart
-										width={'300px'}
-										height={'200px'}
 										chartType="LineChart"
-										loader={<div>Loading Chart</div>}
+										//loader={<div>Loading Chart</div>}
 										data={this.state.dataPoints1}
 										options={options}
 										rootProps={{ 'data-testid': '1' }}
@@ -923,10 +1009,8 @@ class ModelPage extends React.Component {
 								</div>
 								<div className="graph2">
 									<Chart
-										width={'300px'}
-										height={'200px'}
 										chartType="LineChart"
-										loader={<div>Loading Chart</div>}
+										//loader={<div>Loading Chart</div>}
 										data={this.state.dataPoints2}
 										options={options}
 										rootProps={{ 'data-testid': '2' }}
@@ -935,10 +1019,8 @@ class ModelPage extends React.Component {
 								</div>
 								<div className="graph3">
 									<Chart
-										width={'300px'}
-										height={'200px'}
 										chartType="LineChart"
-										loader={<div>Loading Chart</div>}
+										//loader={<div>Loading Chart</div>}
 										data={this.state.dataPoints3}
 										options={options}
 										rootProps={{ 'data-testid': '3' }}
@@ -965,27 +1047,49 @@ class ModelPage extends React.Component {
 							<button type="submit" class="generate_graph btn btn-primary" onClick={this.generateGraphs}>Generate Graph</button>
 						</div>
 						<div>
-							<button type="submit" class="tringulate_btn btn btn-primary" onClick={this.generateClone}>Tringulate</button>
+							<button type="submit" class="tringulate_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
 						</div>
 					</div>
 				</div>
-				
-				<div class="row">
-					 <div className="model_container col-md-9 col-sm-9 padding-about__page text-center">
-						<canvas id="clone_model_block" />
-							{this.state.isLoadingClone ? (
-							<div className="model_loader d-flex justify-content-center center-spinner">
-								<div
-								  className="spinner-border text-primary"
-								  role="status"
-								>
-								  <span  className="sr-only">Loading...</span>
-								</div>
-							 </div>
-							) : null}
-					 </div>
-					 <div className="col-md-3 col-sm-3 padding-about__page">
-					 </div>
+								
+				<div class="row" id="clone_block" style={{ display: 'none'}}>
+					<div class="row">
+						<div className="model_container col-md-12 col-sm-12 padding-about__page text-center">
+							<div className="graph4">
+								<Chart
+									chartType="LineChart"
+									//loader={<div>Loading Chart</div>}
+									data={this.state.dataPoints4}
+									options={cloneOptions}
+									rootProps={{ 'data-testid': '3' }}
+								/>
+							</div>
+							<canvas id="clone_model_block" />
+								{this.state.isLoadingClone ? (
+								<div className="model_loader_clone d-flex justify-content-center center-spinner">
+									<div
+									  className="spinner-border text-primary"
+									  role="status"
+									>
+									  <span  className="sr-only">Loading...</span>
+									</div>
+								 </div>
+								) : null}
+						</div>
+						{/*<div className="model_container col-md-3 col-sm-3 padding-about__page text-center">
+							<div className="graph4">
+								<Chart
+									width={'500px'}
+									height={'300px'}
+									chartType="LineChart"
+									//loader={<div>Loading Chart</div>}
+									data={this.state.dataPoints4}
+									options={cloneOptions}
+									rootProps={{ 'data-testid': '3' }}
+								/>
+							</div>
+						</div>*/}
+					</div>
 				</div>	 
 				
 			 </div>

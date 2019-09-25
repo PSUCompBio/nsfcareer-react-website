@@ -6,6 +6,11 @@
 	top: 60%;
 	right: 50%;
 }
+.model_loader_clone{
+	position: absolute;
+	top: 50%;
+	right: 50%;
+}
 .generate_graph {
 	margin-top: 87px;
 }
@@ -16,14 +21,27 @@
 	position: absolute;
 	top: 25%;
 	right: 0;
+	width: 300px;
+	height: 200px;
 }
 .graph2 {
 	position: absolute;
 	bottom: 5%;
 	right: 0;
+	width: 300px;
+	height: 200px;
 }
 .graph3 {
 	position: absolute;
 	top: 40%;
 	left: 3%;
+	width: 300px;
+	height: 200px;
+}
+.graph4 {
+	position: absolute;
+	top: 30%;
+	right: 0;
+	width: 300px;
+	height: 200px;
 }
