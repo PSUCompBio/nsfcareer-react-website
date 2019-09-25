@@ -510,6 +510,14 @@ div.titles {
   div.organization_team {
     bottom: -35.4vh;
   }
+  div.profile-mt{
+    height: 71.2vh;
+    align-items: center;
+    display: grid;
+  }
+  div.profile-container{
+    position: relative;
+  }
 }
 
 @media screen and (min-width: 1680px) and (max-width: 3239px) {
