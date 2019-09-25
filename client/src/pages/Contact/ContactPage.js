@@ -44,7 +44,7 @@ class ContactPage extends React.Component {
               <img className="img-fluid img-contact-us w-50" src="/img/contactus.png" alt=""/>
             </div>
             <div className="col-md-5 order-1 my-auto contact-query">
-              <h4 ref="h1">Have Questions? Need Help?</h4>
+              <h2 ref="h1">Have Questions? Need Help?</h2>
               <p ref="h2">
                 User Support: <span>support@nsfcareer.io</span>
               </p>
