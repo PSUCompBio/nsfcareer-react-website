@@ -48,7 +48,7 @@ class Dashboard extends React.Component {
 
           <CumulativeEvents loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>
           <HeadAccelerationEvents data={this.state.headAccelerationEventsData}/>
-          <div className="row text-center pt-5 pb-5 mt-5 mb-5">
+          <div className="row text-center pt-5 pb-5 mt-5 mb-5 animated fadeInUp">
             <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
               <div
                 onClick={this.gotoTop}

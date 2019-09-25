@@ -49,7 +49,7 @@ class BrainLoadChart extends React.Component {
 
   render() {
     return (
-      <div className="card acc-card acc-brain-load pt-4 pb-3 pl-2 pr-2">
+      <div className="card acc-card acc-brain-load pt-4 pb-3 pl-2 pr-2 animated fadeInRight">
         <Line data={this.state.data} options={options}/>
         {/*<img className="svg img-fluid" src="/img/icon/brainLoad.svg" alt="" />*/}
       </div>

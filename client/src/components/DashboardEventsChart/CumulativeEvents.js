@@ -19,7 +19,7 @@ class CumulativeEvents extends React.Component {
 
   render() {
     return (
-      <div className="row cumm mb-5">
+      <div className="row cumm mb-5 ">
         <div className="col-md-6 col-lg-7">
           <BrainStrainChart data={this.props.data}/>
         </div>

@@ -72,7 +72,7 @@ class PlayerDetails extends React.Component {
 
   render() {
     return (
-      <div className="row p-4 mb-5 player-details ">
+      <div className="row p-4 mb-5 player-details animated fadeInDown ">
         <div className="col-md-6 player-name">
           <p ref="p1">
             Player Name :
