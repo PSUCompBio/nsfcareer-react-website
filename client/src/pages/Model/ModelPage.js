@@ -5,7 +5,6 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import GLB from './SoldierMesh.glb';
-import GLB1 from './SoldierMesh11.glb';
 import './Model.css';
 import { getStatusOfDarkmode } from '../../reducer';
 
