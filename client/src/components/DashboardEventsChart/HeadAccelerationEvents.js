@@ -36,7 +36,10 @@ class HeadAccelerationEvents extends React.Component {
                 borderColor: '#1987DD',
                 data: this.props.data.pressure,
             }]
-        }
+
+        },
+        is_selfie_simulation_file_uploaded : props.is_selfie_simulation_file_uploaded,
+        imageUrl : props.imageUrl
     };
   }
 
@@ -46,7 +49,8 @@ class HeadAccelerationEvents extends React.Component {
       <div  data-descr={`Head Acceleration Events      ${new Date(Number(this.props.data.timestamp)).toDateString()} ${new Date(Number(this.props.data.timestamp)).toLocaleTimeString()}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
         <div className="row pl-4 pr-4 pb-4 dark-bg   text-center">
           <div className="col-md-6 d-flex align-items-center justify-content-center">
-            <img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" />
+            {(this.state.is_selfie_simulation_file_uploaded)?<div><img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" /><img width="95%"  height="95%" className={`img fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div> : <img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" />}
+
           </div>
           <div className="col-md-6 text-right">
               <Line data={this.state.data} options={options}/>

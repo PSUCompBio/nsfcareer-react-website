@@ -6,7 +6,7 @@ import { getStatusOfDarkmode } from '../reducer';
 import { withRouter } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
-import { getOrganizationAdminData, getAllRosters, addTeam, deleteTeam } from '../apis';
+import { getOrganizationAdminData, getAllRosters, addTeam, deleteTeam, fetchAllTeamsInOrganization } from '../apis';
 
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
@@ -112,6 +112,16 @@ class OrganizationAdmin extends React.Component {
 
 
   componentDidMount() {
+      fetchAllTeamsInOrganization({})
+      .then(response => {
+          var list = response.data.data ;
+          // Update the states
+
+      })
+      .catch(err => {
+          alert(err);
+      })
+
       getAllRosters(JSON.stringify({}))
       .then(rostersResponse => {
           console.log("ROSTER DATA LOADED ",rostersResponse);
@@ -260,6 +270,23 @@ class OrganizationAdmin extends React.Component {
     );
   };
 
+  teamFormHidden = (fieldName, placeholder, name, labelFor) => {
+    return (
+      <div className="input-group mb-2">
+        <div className="input-group-prepend">
+          <div className="input-group-text">{fieldName}</div>
+        </div>
+        <input
+          name={name}
+          type="hidden"
+          className="form-control team-edit-input"
+          id={labelFor}
+          placeholder={placeholder}
+        />
+      </div>
+    );
+  };
+
   showEditForm = () => {
     return (
       <div className="modal__wrapper ">
@@ -275,7 +302,7 @@ class OrganizationAdmin extends React.Component {
             {this.teamForm(
               'Team Name:',
               'Enter your team name',
-              'team',
+              'team_name',
               'teamName'
             )}
             {this.teamForm(
@@ -295,6 +322,12 @@ class OrganizationAdmin extends React.Component {
               'Enter number of alerts',
               'alerts',
               'alertsFor'
+            )}
+            {this.teamFormHidden(
+                'Organization:',
+                'Organization name',
+                'organization',
+                'alertsFor'
             )}
             <button type="submit" className="dynamic-white-btn">
               Submit

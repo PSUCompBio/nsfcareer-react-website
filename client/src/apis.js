@@ -320,6 +320,18 @@ export const getOrganizationAdminData = (request) =>{
   })
 }
 
+export const fetchAllTeamsInOrganization = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/fetchAllTeamsInOrganization`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getAllRosters = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllRosters`, {},{withCredentials: true})
@@ -334,7 +346,7 @@ export const getAllRosters = (request) =>{
 
 export const addTeam = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/addTeam`, {},{withCredentials: true})
+      axios.post(`/addTeam`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -346,7 +358,7 @@ export const addTeam = (request) =>{
 
 export const deleteTeam = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/deleteTeam`, {},{withCredentials: true})
+      axios.post(`/deleteTeam`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

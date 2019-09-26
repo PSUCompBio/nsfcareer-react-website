@@ -191,7 +191,7 @@ class SignUpComponent extends React.Component {
             >
               <select
                 className="custom-select country-code"
-                value={this.state.selectedCountryCode}
+                defaultValue={this.state.selectedCountryCode}
                 onChange={this.handeChange}
                 name="country_code"
                 id=""
