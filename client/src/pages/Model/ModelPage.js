@@ -786,7 +786,7 @@ class ModelPage extends React.Component {
 	generateClone = () => {
 		
 		document.getElementById('clone_block').style.display = "block";
-		document.getElementById("model_block").scrollIntoView();
+		document.getElementById("clone_block").scrollIntoView();
 		
 		this.sceneSetupClone();
 		this.loadModelClone();
@@ -989,45 +989,13 @@ class ModelPage extends React.Component {
 		
 		return (
 		  <React.Fragment>
-			<div id="container" className="container align-center__about-page">
+			<div className="container align-center__about-page">
 				<div class="row">
 					 <div className="model_container col-md-9 col-sm-9 padding-about__page text-center">
 						<div className={`section-title animated zoomIn`}>
 							<h1 ref="h1" className="font-weight-bold">3D Model</h1>
 						</div>
-						<div id="canvas-Container">
-							<div className="chart-container">
-								<div className="graph1">
-									<Chart
-										chartType="LineChart"
-										//loader={<div>Loading Chart</div>}
-										data={this.state.dataPoints1}
-										options={options}
-										rootProps={{ 'data-testid': '1' }}
-									/>
-								</div>
-								<div className="graph2">
-									<Chart
-										chartType="LineChart"
-										//loader={<div>Loading Chart</div>}
-										data={this.state.dataPoints2}
-										options={options}
-										rootProps={{ 'data-testid': '2' }}
-									/>
-
-								</div>
-								<div className="graph3">
-									<Chart
-										chartType="LineChart"
-										//loader={<div>Loading Chart</div>}
-										data={this.state.dataPoints3}
-										options={options}
-										rootProps={{ 'data-testid': '3' }}
-									/>
-								</div>
-
-							</div>
-							
+						<div id="canvas_container">
 							<canvas id="model_block" />
 							{this.state.isLoading ? (
 							<div className="model_loader d-flex justify-content-center center-spinner">
@@ -1040,6 +1008,33 @@ class ModelPage extends React.Component {
 							 </div>
 							) : null}
 						</div>
+						<div className="chart-container">
+							<div className="graph1">
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints1}
+									options={options}
+									rootProps={{ 'data-testid': '1' }}
+								/>
+							</div>
+							<div className="graph2">
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints2}
+									options={options}
+									rootProps={{ 'data-testid': '2' }}
+								/>
+
+							</div>
+							<div className="graph3">
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints3}
+									options={options}
+									rootProps={{ 'data-testid': '3' }}
+								/>
+							</div>
+						</div>
 					</div>
 					<div className="col-md-3 col-sm-3 padding-about__page">
 						<div>
@@ -1050,20 +1045,12 @@ class ModelPage extends React.Component {
 						</div>
 					</div>
 				</div>
-								
-				<div class="row" id="clone_block" style={{ display: 'none'}}>
+				
+				<div id="clone_block" style={{ display: 'none'}}>				
 					<div class="row">
-						<div className="model_container col-md-12 col-sm-12 padding-about__page text-center">
-							<div className="graph4">
-								<Chart
-									chartType="LineChart"
-									//loader={<div>Loading Chart</div>}
-									data={this.state.dataPoints4}
-									options={cloneOptions}
-									rootProps={{ 'data-testid': '3' }}
-								/>
-							</div>
-							<canvas id="clone_model_block" />
+						<div className="col-md-12 col-sm-12 padding-about__page text-center">
+							<div id="canvas_container">
+								<canvas id="clone_model_block" />
 								{this.state.isLoadingClone ? (
 								<div className="model_loader_clone d-flex justify-content-center center-spinner">
 									<div
@@ -1074,23 +1061,18 @@ class ModelPage extends React.Component {
 									</div>
 								 </div>
 								) : null}
-						</div>
-						{/*<div className="model_container col-md-3 col-sm-3 padding-about__page text-center">
+							</div>	
 							<div className="graph4">
 								<Chart
-									width={'500px'}
-									height={'300px'}
 									chartType="LineChart"
-									//loader={<div>Loading Chart</div>}
 									data={this.state.dataPoints4}
 									options={cloneOptions}
 									rootProps={{ 'data-testid': '3' }}
 								/>
 							</div>
-						</div>*/}
+						</div>
 					</div>
 				</div>	 
-				
 			 </div>
 			<Footer />
 		  </React.Fragment>
