@@ -619,13 +619,15 @@ nav {
   background: linear-gradient(45deg, #174f86, #2196f3);
   line-height: 50px;
   /* border-radius: 10px; */
-  text-align: center;
+  text-align: left;
   color: #fff;
   font-size: 18px;
   font-weight: 900;
   box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.1);
   border: 1px solid #fff;
   position: relative;
+  cursor: pointer;
+  padding-left: 20px;
 }
 .Collapsible::before{
   content: "\f107";
@@ -645,6 +647,9 @@ div.Collapsible-changeIcon::before{
   line-height: 26px;
   font-weight: normal;
   font-size: 15px;
+}
+.Collapsible__contentInner{
+  padding:10px;
 }
 .mi-mb {
   margin-bottom: 30px !important;
@@ -1997,6 +2002,9 @@ div.show-mobile-links {
   }
 }
 @media screen and (min-width: 2560px) and (max-width: 3000px) {
+  div.sport__page{
+    bottom: -41.6vh;
+  }
   .login-height {
     height: 85.1vh;
   }
@@ -2064,6 +2072,9 @@ div.show-mobile-links {
 }
 
 @media screen and (min-width: 3240px) {
+  div.footer.sport__page{
+    bottom: -56vh;
+  }
   .sign-out {
     right: 7.5%;
   }

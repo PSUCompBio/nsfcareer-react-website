@@ -1,6 +1,7 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
 import screenWidth from '../../../utilities/ScreenWidth';
+import { withRouter } from 'react-router-dom';
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
@@ -241,9 +242,9 @@ class TechnologiesWeUse extends React.Component {
                 <div className="col-sm-9 col-md-6 ">
                   <p>
                     Contact Us: info@NSFCAREER.IO <br />
-                    <span onClick={() => window.open('')}> IP </span> | Privacy
+                    <span onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
                     Policy &amp;{' '}
-                    <span onClick={() => window.open('')}> IRB </span> |
+                    <span onClick={() => this.props.history.push('/IRB')}> IRB </span> |
                     Collaborate
                   </p>
                 </div>
@@ -289,4 +290,4 @@ class TechnologiesWeUse extends React.Component {
   };
 }
 
-export default TechnologiesWeUse;
+export default withRouter(TechnologiesWeUse);

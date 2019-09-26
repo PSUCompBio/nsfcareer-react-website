@@ -27,6 +27,8 @@ class Footer extends React.Component {
       return 'organization_team';
     } else if (this.props.location.pathname === '/profile') {
       return 'profile__page';
+    } else if (this.props.location.pathname === '/Sports') {
+      return 'sport__page';
     }
   };
 
