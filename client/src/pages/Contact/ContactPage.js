@@ -55,7 +55,7 @@ class ContactPage extends React.Component {
                 Media Inquiries:<span> media@nsfcareer.io </span>
               </p>
               <p ref="h5">
-                Call us at <span>612-315-0260</span>
+                Call us at <span>814-867-4570</span>
               </p>
               <p ref="h6">
                 <span>Monday – Friday</span>

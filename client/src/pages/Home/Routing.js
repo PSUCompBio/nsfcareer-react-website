@@ -17,6 +17,7 @@ import TeamAdmin from '../../components/CommanderTeamView';
 import Military from '../../components/Military/Military';
 import GetUpdates from '../../components/GetUpdates';
 import Model from '../Model/ModelPage';
+import Sports from '../Sports';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -158,6 +159,7 @@ class Routing extends React.Component {
         <Route exact path="/TeamAdmin" component={TeamAdmin} />
         <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />
         <Route exact path="/Military" component={Military} />
+        <Route exact path="/Sports" component={Sports} />
       </React.Fragment>
     );
   }

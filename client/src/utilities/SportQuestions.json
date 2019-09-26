@@ -1,0 +1,62 @@
+[
+  {
+    "Q1": "1. Why is this research study being done?",
+    "A1": " We are asking you to be in this research because we want to understand more about head acceleration events in sports and more broadly how engineering might improve safety for players. This research is being done to find out if the combination of sports sensors and modeling can help us understand head acceleration events better. This study may enroll up to 500 athletes and non-athletes. The data obtained from this study could provide potentially useful information for the quantitative diagnosis of brain injury. However, this technology can make no formal diagnosis at this time and does not claim to be a diagnostic tool. Subjects are directed to a medical professional for a formal diagnosis of injury."
+  },
+  {
+    "Q2": "2. What will happen in this research study?",
+    "A2": "In this research subjects will be asked to wear the impact sensors. The impact sensors monitor/record every significant incidence of head impact (single or multiple impacts) sustained during the game or practice. They measure the magnitude (both linear and rotational acceleration), location, direction and duration as well as the exact time of each impact. Subjects may also be asked to get an MRI scan at the beginning of season and after the subject experienced concussion. Also note the following items: screening procedures that occur after signing the consent form - you will be asked some questions. procedures during intervention – just play the sport as you normally would. If a significant head impact occurs during the study, participants should consult with a medical physician who can provide a medically acceptable comparison. If a concussion or mild traumatic brain injury is diagnosed, participates will share outcome of diagnosis with study team. If you are a non-athlete (a control in the study) you will not be wearing sensors or participant in contact sports. You may only be needed for brain imaging taken at the same time as the subjects playing contact sports so a comparison can be made."
+
+  },
+  {
+    "Q3": "3. What are the risks and possible discomforts from being in this research study?",
+    "A3": "There is a risk of loss of confidentiality if your information or your identity is obtained by someone other than the investigators, but precautions will be taken to prevent this from happening. The confidentiality of your electronic data created by you or by the researchers will be maintained to the degree permitted by the technology used. Absolute confidentiality cannot be guaranteed."
+
+  },
+  {
+    "Q4": "4. What are the possible benefits from being in this research study?",
+    "Q4a": "4a. What are the possible benefits to you?",
+    "A4a": "Your taking part in this research participation provides the investigator(s) with a greater understanding of how the brain recovers from mild brain injury, which will contribute to scientific knowledge and may be useful in the development of beneficial clinical treatments of mild traumatic brain injury. This research, in fact, benefits subjects (players) by letting the physical/sports trainer know if the impact levels during a game are too high.",
+    "Q4b": "4b. What are the possible benefits to others?",
+    "A4b": "The benefits to society include better understanding the possible consequences of concussion and predicting whether or not individuals are at high risk for concussion."    
+  },
+  {
+    "Q5": "5. What other options are available instead of being in this research study?",
+    "A5": "You may decide not to participate in this research. "
+
+  },
+  {
+    "Q6": "6.   How long will you take part in this research study?",
+    "A6": "Being in this research study may require some additional time on your part. For example, magnetic resonance imaging before the start of the season and after a head injury event is required. Each scan would last about 1 hour, so an estimated 2 hours plus travel time would be required."
+
+  },
+  {
+    "Q7": "7.   How will your privacy and confidentiality be protected if you decide to take part in this research study?",
+    "A7": "Efforts will be made to limit the use and sharing of your personal research information to people who have a need to review this information. Participation information of the subject in this research is sensitive. All possible steps have been taken to assure subjects’ privacy. For all procedures, subjects will be assigned a code number that will be used throughout the session. Only this code (and never a name) will be used when analyzing or reporting the data. Any identifying information will be kept in a locked (physical and cyberspace) location and password-protected electronic files. The Pennsylvania State University’s Office for Research Protections, the Institutional Review Board, and the Office for Human Research Protections in the Department of Health and Human Services may review records related to this research study. All the biomechanical readings and the MRI data will be coded properly saved and secured. Only you (as the participant) the PI and his research team will have access to the participant’s identity and access to the data. All records associated with a subject’s participation in the study will be subject to the usual confidentiality standards applicable to medical records (e.g., such as records maintained by physicians, hospitals, etc.). In the event of any publication resulting from the research, no personally identifiable information will be disclosed. In the event of any publication or presentation resulting from the research, no personally identifiable information will be shared. We will do our best to keep your participation in this research study confidential to the extent permitted by law. However, it is possible that other people may find out about your participation in this research study. For example, the following people/groups may check and copy records about this research. The Office for Human Research Protections in the U. S. Department of Health and Human Services The research study sponsor, National Science Foundation. The Institutional Review Board (a committee that reviews and approves research studies) and The Office for Research Protections. U.S. Food and Drug Administration (FDA) Some of these records could contain information that personally identifies you. Reasonable efforts will be made to keep the personal information in your research record private. However, absolute confidentiality cannot be guaranteed."
+
+  },
+  {
+    "Q8": "8. What are the costs of taking part in this research study?",
+    "Q8a": "8a. What will you have to pay for if you take part in this research study? ",
+    "A8a":"There are no costs associated with the participation for the subjects.",
+    "Q8b": "8b. What happens if you are injured as a result of taking part in this research study?",
+    "A8b": "In the unlikely event you become injured as a result of your participation in this study, medical care is available. It is the policy of this institution to provide neither financial compensation nor free medical treatment for research-related injury. By signing this document, you are not waiving any rights that you have against The Pennsylvania State University for injury resulting from negligence of the University or its investigators."
+  },
+  {
+    "Q9": "9. Will you be paid or receive credit to take part in this research study?",
+    "A9": "You will not be paid to participate in this research study."
+
+  },
+  {
+    "Q10": "10. Who is paying for this research study?",
+    "A10": "The National Science Foundation is paying for this study. Kraft has a financial interest in Digital Brain Technologies, a company which could potentially benefit from the results of this research. This interest has been reviewed by Penn State University in accordance with its Individual Conflict of Interest policy for the purpose of maintaining the objectivity and integrity in research and is being managed. No data used in this study will be used with the company."
+  },
+  {
+    "Q11": "11. What are your rights if you take part in this research study?",
+    "A11": "Taking part in this research study is voluntary. You do not have to be in this research. If you choose to be in this research, you have the right to stop at any time. If you decide not to be in this research or if you decide to stop at a later date, there will be no penalty or loss of benefits to which you are entitled. Note that all data collected up to the point of withdrawal remains part of the study database and may not be removed."
+  },
+  {
+    "Q12": "12. If you have questions or concerns about this research study, whom should you call?",
+    "A12": "Please call the head of the research study (principal investigator), Reuben Kraft at 814-867-4570 if you: Have questions, complaints or concerns about the research. Believe you may have been harmed by being in the research study. You may also contact the Office for Research Protections at (814) 865-1775, ORProtections@psu.edu if you: Have questions regarding your rights as a person in a research study. Have concerns or general questions about the research. You may also call this number if you cannot reach the research team or wish to offer input or to talk to someone else about any concerns related to the research."
+  }
+]

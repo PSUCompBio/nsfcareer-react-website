@@ -607,6 +607,45 @@ nav {
   font-weight: 900;
   font-size: 16px;
 }
+.sport-page {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  margin-top: 15vh;
+}
+.Collapsible {
+  width: 100%;
+  background: linear-gradient(45deg, #174f86, #2196f3);
+  line-height: 50px;
+  /* border-radius: 10px; */
+  text-align: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #fff;
+  position: relative;
+}
+.Collapsible::before{
+  content: "\f107";
+  font-family: FontAwesome;
+  position: absolute;
+  right: 2%;
+}
+div.Collapsible-changeIcon::before{
+  content: "\f106";
+}
+.Collapsible__contentInner {
+  background: linear-gradient(45deg, #0d1a25, #285888);
+  color: #fff;
+  font-weight: normal;
+}
+.Collapsible__contentInner p {
+  line-height: 26px;
+  font-weight: normal;
+  font-size: 15px;
+}
 .mi-mb {
   margin-bottom: 30px !important;
 }
