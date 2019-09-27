@@ -2,8 +2,6 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import WebFont from 'webfontloader';
-import { svgToInline } from '../../config/InlineSvgFromImg';
-import GoogleMap from '../../components/SimpleMap';
 
 WebFont.load({
   google: {
@@ -12,19 +10,6 @@ WebFont.load({
 });
 
 class ContactPage extends React.Component {
-  // changeHtmlBg = (hexCode) => {
-  //   document.getElementsByTagName('body')[0].style.backgroundColor = hexCode;
-  // };
-
-  // componentWillMount() {}
-
-  // componentWillUnmount() {
-  //   // if (getStatusOfDarkmode().status === true) {
-  //   //   this.changeHtmlBg('#171b25');
-  //   // }
-  // }
-
-
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
