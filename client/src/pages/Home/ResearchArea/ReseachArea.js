@@ -23,9 +23,13 @@ function ResearchArea(props) {
       const scrollHeight = e.currentTarget.scrollHeight;
       const scrollTop = e.currentTarget.scrollTop;
       const clientHeight = e.currentTarget.clientHeight;
-      if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
+      console.log("clientheight + scrollTOp==>",Math.floor(clientHeight + scrollTop),"scrollheight==>",scrollHeight)
+      if (scrollHeight === Math.floor(scrollTop + clientHeight) || scrollHeight === Math.floor(scrollTop + clientHeight)+1 ) {
+        console.log("inside bottmo")
         props.scrollBarTouchBottom();
       } else if (scrollTop === 0) {
+        console.log("inside top")
+
         props.scrollBarTouchTop();
       }
     }
@@ -33,7 +37,7 @@ function ResearchArea(props) {
 
 
   return (
-    <div className="research-area-bg" onWheel={()=>console.log('rolling')}>
+    <div className="research-area-bg">
       <div className="container section">
         <div onWheel={(e)=>detectScroll(e)} className="section-three">
           <div className="col-md-12 col-lg-12 text-center">
