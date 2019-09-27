@@ -1,5 +1,4 @@
 import React from 'react';
-import Collapsible from 'react-collapsible';
 import Section1 from './IRBcontent/Section1';
 import Section2 from './IRBcontent/Section2';
 import Section3 from './IRBcontent/Section3';
@@ -22,7 +21,6 @@ import Section19 from './IRBcontent/Section19';
 import Section20 from './IRBcontent/Section20';
 import Section21 from './IRBcontent/Section21';
 import Section22 from './IRBcontent/Section22';
-
 import Footer from './Footer';
 
 class IRBLinkContent extends React.Component {
