@@ -24,10 +24,6 @@ class GetUpdates extends React.Component {
           </p>
 
           <h5>Who are you?</h5>
-          <div class="checkbox">
-    <input type="checkbox" id="checkbox_1"/>
-    <label for="checkbox_1">Pure CSS Checkbox</label>
-</div>
           <div className="checkboxes">
       
             <label htmlFor="checkbox-1" className="checkbox-custom-label">
