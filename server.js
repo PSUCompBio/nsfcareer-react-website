@@ -1900,9 +1900,10 @@ app.post(`${apiPrefix}fetchAllTeamsInOrganization`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}addTeam`, (req,res) =>{
+    console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "addTeam", json: req.body }, function (err, httpResponse, body) {
         if (err) {
-
+            console.log(err);
             res.send({ message: 'failure', error: err });
         }
         else {
@@ -1913,6 +1914,7 @@ app.post(`${apiPrefix}addTeam`, (req,res) =>{
 
 
 app.post(`${apiPrefix}deleteTeam`, (req,res) =>{
+    console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "deleteTeam", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 

@@ -88,6 +88,7 @@ exports.doUpload = (req, res) => {
                         res.send({ message: 'failure' });
                     } else {
                         // Calling Compute Instance API
+                        console.log("Request made is , \n" , { image_url : url , user_cognito_id: req.user_cognito_id } );
                             request.post({ url: config.ComputeInstanceEndpoint + "computeImageData", json: { image_url : url , user_cognito_id: req.user_cognito_id } }, function (err, httpResponse, body) {
                                 if (err) {
                                     console.log("ERROR in Generating INP File");

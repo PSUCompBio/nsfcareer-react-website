@@ -32,7 +32,12 @@ class OrganizationAdmin extends React.Component {
       teamFormData:{},
       organizationAdminData : {},
       isFetching : true,
-      rostersArray : []
+      rostersArray : [],
+      teamList : [],
+      organization : 'York Tech Football',
+      organizationToDelete : '',
+      teamNameToDelete : '',
+      apiLoader : false
     };
   }
   toggleTab = (value) => {
@@ -112,17 +117,16 @@ class OrganizationAdmin extends React.Component {
 
 
   componentDidMount() {
-      fetchAllTeamsInOrganization({})
+      fetchAllTeamsInOrganization({ organization : this.state.organization })
       .then(response => {
           var list = response.data.data ;
           // Update the states
-
+          this.setState(prevState => ({
+              teamList: [...prevState.teamList, ...list],
+              totalTeam : list.length
+          }));
+        return  getAllRosters(JSON.stringify({}))
       })
-      .catch(err => {
-          alert(err);
-      })
-
-      getAllRosters(JSON.stringify({}))
       .then(rostersResponse => {
           console.log("ROSTER DATA LOADED ",rostersResponse);
           for(var j = 0 ; j < rostersResponse.data.data.rosters.length ; j++){
@@ -140,8 +144,10 @@ class OrganizationAdmin extends React.Component {
           });
       })
       .catch(err => {
-          console.log(err)
+          alert(err);
       })
+
+
     this.checkIfDarkModeActive();
   };
 
@@ -151,7 +157,11 @@ class OrganizationAdmin extends React.Component {
 
 
   addTeam = () => {
-    this.setState({ totalTeam: this.state.totalTeam + 1 });
+      // this.showEditForm()
+
+      this.setState(prevState => ({
+          showEditForm : true
+      }));
   };
 
   enableEditTeamOPtion = () => {
@@ -170,27 +180,41 @@ class OrganizationAdmin extends React.Component {
     }
   };
 
-  deleteTeam = (e) => {
+  deleteTeam = (organization, team_name) => (e) => {
+      console.log("VIOLENT DELETE ",e.target);
     this.setState({
       wantDeleteTeam: true,
-      currentDeleteTarget: e.currentTarget.parentNode
+      currentDeleteTarget: e.currentTarget.parentNode,
+      organizationToDelete : organization,
+      teamNameToDelete : team_name
     });
 
   };
   deleteCard = () => {
-      deleteTeam(JSON.stringify({}))
+      this.setState({
+          apiLoader : true
+      });
+
+      deleteTeam({ organization : this.state.organizationToDelete, team_name : this.state.teamNameToDelete })
       .then(response => {
           if(response.data.message == "success"){
               this.state.currentDeleteTarget.remove();
               this.setState({ wantDeleteTeam: false });
-              alert("Team deleted successfully");
+
           }
           else{
               alert("Failed to delete team");
           }
+          console.log(response.data);
+          this.setState({
+              apiLoader : false
+          });
       })
       .catch(err => {
           console.log(err);
+          this.setState({
+              apiLoader : false
+          });
       })
 
   };
@@ -235,20 +259,37 @@ class OrganizationAdmin extends React.Component {
     e.preventDefault();
     const data = new FormData(e.target);
     const formData = formDataToJson(data);
+    this.setState({
+        apiLoader : true
+    });
+
     addTeam(formData)
     .then(response => {
 
         if(response.data.message == "success"){
             this.hideTeamForm();
-            alert("Added Team successfully !");
-            this.setState({ teamFormData: formData },()=>console.log(this.state.teamFormData));
+            console.log("FORM ADDED ,", formData);
+
+            this.setState(prevState => ({
+                teamFormData: formData ,
+                teamList: [...prevState.teamList, ...[JSON.parse(formData)]],
+                totalTeam : prevState.totalTeam + 1,
+                apiLoader : false
+            }));
         }
         else{
+            this.setState({
+                apiLoader : false
+            });
+            console.log(response.data);
             alert("Failed to add team");
         }
     })
     .catch(err => {
         console.log(err);
+        this.setState({
+            apiLoader : true
+        });
     })
 
   };
@@ -274,7 +315,9 @@ class OrganizationAdmin extends React.Component {
     return (
       <div className="input-group mb-2">
         <div className="input-group-prepend">
-          <div className="input-group-text">{fieldName}</div>
+
+          {/* Field is hidden as this form is hidden form
+              <div className="input-group-text">{fieldName}</div>*/}
         </div>
         <input
           name={name}
@@ -282,6 +325,7 @@ class OrganizationAdmin extends React.Component {
           className="form-control team-edit-input"
           id={labelFor}
           placeholder={placeholder}
+          value="York Tech Football"
         />
       </div>
     );
@@ -297,7 +341,7 @@ class OrganizationAdmin extends React.Component {
             src="/img/icon/close.svg"
             alt=""
           />
-          <p className="edit-your-team">Edit your team.</p>
+      <p className="edit-your-team">Add your team.</p>
           <form onSubmit={this.handleTeamEditSubmit}>
             {this.teamForm(
               'Team Name:',
@@ -332,6 +376,17 @@ class OrganizationAdmin extends React.Component {
             <button type="submit" className="dynamic-white-btn">
               Submit
             </button>
+            {this.state.apiLoader ?
+                <div className="d-flex justify-content-center center-spinner">
+                  <div
+                    style={{color : "#ffffff !important"}}
+                    className="spinner-border"
+                    role="status"
+                  >
+                    <span  className="sr-only">Loading...</span>
+                  </div>
+                </div>
+                : null}
           </form>
         </div>
       </div>
@@ -347,22 +402,35 @@ class OrganizationAdmin extends React.Component {
             <button onClick={this.deleteCard}>YES</button>
             <button onClick={this.hideModal}>NO</button>
           </div>
+          {this.state.apiLoader ?
+              <div className="d-flex justify-content-center center-spinner">
+                <div
+                  style={{color : "#ffffff !important"}}
+                  className="spinner-border"
+                  role="status"
+                >
+                  <span  className="sr-only">Loading...</span>
+                </div>
+              </div>
+              : null
+          }
         </div>
       </div>
     );
   };
 
-  smallCards = (reference, noOfAthletes, noOfAlerts, noOfImpacts, key) => {
+  smallCards = (reference, organization, team_name, noOfAthletes, noOfAlerts, noOfImpacts, key) => {
     // console.log(reference);
     return (
       <div key={key} ref={''} className={this.state.editTeamClass}>
         <img
           className="delete__icon"
-          onClick={this.deleteTeam}
+          onClick={this.deleteTeam(organization, team_name)}
           style={this.state.closeBtn}
           src="/img/icon/close.svg"
           alt=""
         />
+    {/* TODO : ADD TEAM UPDATION BEHAVIOUR
         <div
           ref={reference[0]}
           onMouseEnter={this.hideElementForEdit}
@@ -370,6 +438,18 @@ class OrganizationAdmin extends React.Component {
           onClick={() => {
             this.state.editTeamClass === 'edit-teams'
               ? this.makeEditable()
+              : this.props.history.push('/TeamAdmin');
+          }}
+          className={`tech-football m-3`}
+        >
+        */}
+        <div
+          ref={reference[0]}
+          onMouseEnter={this.hideElementForEdit}
+          onMouseLeave={this.showElements}
+          onClick={() => {
+            this.state.editTeamClass === 'edit-teams'
+              ? null
               : this.props.history.push('/TeamAdmin');
           }}
           className={`tech-football m-3`}
@@ -412,7 +492,11 @@ class OrganizationAdmin extends React.Component {
   iterateTeam = () => {
     let inc = 1;
     var cards = new Array(this.state.totalTeam);
-    for (let i = 1; i <= this.state.totalTeam; i++) {
+    let j = 1 ;
+    for (let i = 0; i < this.state.totalTeam; i++) {
+
+        const team = this.state.teamList[i] ;
+        console.log("POP IT ",team);
       cards[i] = this.smallCards(
         [
           'smCard' + i,
@@ -423,12 +507,16 @@ class OrganizationAdmin extends React.Component {
           'h' + inc++,
           'h' + inc++
         ],
-        0,
-        0,
-        0,
+        this.state.teamList[i].organization,
+        this.state.teamList[i].team_name,
+        Number(this.state.teamList[i].athletes),
+        Number(this.state.teamList[i].alerts),
+        Number(this.state.teamList[i].impacts),
         i
       );
+      j++;
     }
+
     return cards;
   };
 

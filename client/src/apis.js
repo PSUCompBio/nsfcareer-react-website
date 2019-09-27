@@ -346,7 +346,7 @@ export const getAllRosters = (request) =>{
 
 export const addTeam = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/addTeam`, request,{withCredentials: true})
+      axios.post(`/addTeam`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
