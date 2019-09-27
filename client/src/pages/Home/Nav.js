@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import LineUnderLink from '../../utilities/LineUnderLink.js';
 
-
 class Nav extends React.Component {
   constructor() {
     super();
@@ -113,6 +112,17 @@ class Nav extends React.Component {
     }, 100);
   };
 
+  links = (linkText, routeName) => {
+    return (
+      <li className="nav-item make-active active">
+        <Link className="nav-link" to={routeName}>
+          {linkText} <span className="sr-only">(current)</span>
+        </Link>
+        <div className={LineUnderLink.linkeMaker(routeName)} />
+      </li>
+    );
+  };
+
   mobileNav = () => {
     return (
       <ul className="navbar-nav ml-auto text-center">
@@ -129,33 +139,11 @@ class Nav extends React.Component {
             }
           />
         </li>
-        <li className="nav-item make-active active">
-          <Link className="nav-link" to={'/About'}>
-            About us <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/About')} />
-        </li>
-        <li className="nav-item make-active">
-          <Link className="nav-link" to={'/Contact'}>
-            Contact us
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Contact')} />
-        </li>
-        {this.props.location.pathname !== '/SignUp' ? (
-          <li className="nav-item make-active active">
-            <Link className="nav-link" to={'/Login'}>
-              Dashboard <span className="sr-only">(current)</span>
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/Login')} />
-          </li>
-        ) : (
-          <li className="nav-item make-active">
-            <Link className="nav-link" to={'/SignUp'}>
-              Sign up
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/SignUp')} />
-          </li>
-        )}
+        {this.links('About us', '/About')}
+        {this.links('Contact us', '/Contact')}
+        {this.props.location.pathname !== '/SignUp'
+          ? this.links('Dashboard', '/Login')
+          : this.links('Sign up', '/SignUp')}
       </ul>
     );
   };
@@ -266,25 +254,8 @@ class Nav extends React.Component {
             }
           />
         </li>
-        <li className="nav-item make-active active">
-          <Link className="nav-link" to={'/About'}>
-            About us <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/About')} />
-        </li>
-        {/* <li className="nav-item make-active active">
-          <Link className="nav-link" to={'/Sports'}>
-            Sports <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Sports')} />
-        </li> */}
-
-        <li className="nav-item make-active">
-          <Link className="nav-link" to={'/Contact'}>
-            Contact us
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Contact')} />
-        </li>
+        {this.links('About us', '/About')}
+        {this.links('Contact us', '/Contact')}
 
         {this.props.location.pathname !== '/SignUp' ? (
           <li
@@ -306,12 +277,7 @@ class Nav extends React.Component {
             {this.dashboardDropDownList()}
           </li>
         ) : (
-          <li className="nav-item make-active">
-            <Link className="nav-link" to={'/SignUp'}>
-              Sign up
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/SignUp')} />
-          </li>
+        this.links('Sign up','/SignUp')
         )}
         <li className=" nav-item profile-nav-icon">
           <div
@@ -359,8 +325,8 @@ class Nav extends React.Component {
           // (this.props.location.pathname !== '/Home' &&
           //   this.props.location.pathname !== '/') ||
           // this.props.currentPage !== 1
-             'navbar-bg-change'
-            // : ''
+          'navbar-bg-change'
+          // : ''
         } ${this.props.screenWidth <= 768 ? 'navbar-bg-change' : ''}`}
       >
         <Link className="navbar-brand" to={'/Home'}>
