@@ -58,6 +58,5 @@ export function darkThemeController(state = initialState, action) {
 }
 
 export const getStatusOfDarkmode = () => {
-  console.log(darkTheme)
   return darkTheme;
 };

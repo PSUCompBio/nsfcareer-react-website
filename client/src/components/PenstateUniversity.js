@@ -22,11 +22,13 @@ class PenstateUniversity extends React.Component {
   }
 
   organizationType = () => {
+    let type = '';
     if (this.props.location.pathname === '/OrganizationAdmin') {
-      return 'Team';
+      type = 'Team';
     } else if (this.props.location.pathname === '/TeamAdmin') {
-      return 'Impact';
+      type = 'Impact';
     }
+    return type;
   };
 
   impactLoadAlertsValue = () => {

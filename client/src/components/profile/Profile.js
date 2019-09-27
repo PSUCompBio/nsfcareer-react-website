@@ -1,6 +1,6 @@
 import React from 'react';
 import './Profile.css';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import {
   uploadProfilePic,
   getUserDetails,
@@ -23,7 +23,6 @@ import {
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
-import { withRouter } from 'react-router-dom';
 
 class Profile extends React.Component {
   constructor() {
@@ -383,7 +382,7 @@ class Profile extends React.Component {
             <div className="col-md-3 btns-heading text-left pt-4">
               <div className="row">
                 <div className="col-sm-7">
-                  <span  ref="darkMode" className="dark-mode">
+                  <span ref="darkMode" className="dark-mode">
                     {this.state.mode}
                   </span>
                 </div>
@@ -594,7 +593,7 @@ class Profile extends React.Component {
         this.setState({ isAuthenticated: false, isCheckingAuth: false });
       });
     if (getStatusOfDarkmode().status) {
-      document.getElementsByTagName('body')[0].style.background = '#171b25';      
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
     }
   }
 }

@@ -295,7 +295,6 @@ class Nav extends React.Component {
             className={`${this.state.signOutClass}`}
           >
             <div className="nav-item make-active profile-user active">
-              {/* <div className="sign-out-box-arrow"></div> */}
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
               </Link>
@@ -322,11 +321,7 @@ class Nav extends React.Component {
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
-          // (this.props.location.pathname !== '/Home' &&
-          //   this.props.location.pathname !== '/') ||
-          // this.props.currentPage !== 1
           'navbar-bg-change'
-          // : ''
         } ${this.props.screenWidth <= 768 ? 'navbar-bg-change' : ''}`}
       >
         <Link className="navbar-brand" to={'/Home'}>
@@ -366,12 +361,6 @@ class Nav extends React.Component {
                 className=" close-mobile_nave fa fa-times-circle"
                 aria-hidden="true"
               ></i>
-              {/* <img src={localStore.userInfo.data.profile_picture_url} alt="" /> */}
-              {/* <p>
-              {localStore.userInfo.data.first_name +
-                ' ' +
-                localStore.userInfo.data.last_name}
-            </p> */}
               <div
                 onClick={this.showLogOutOptions}
                 className="mobile-user-profile"

@@ -7,7 +7,6 @@ import { getStatusOfDarkmode } from '../../reducer';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { uploadSensorDataAndCompute } from '../../apis';
-import { subYears } from 'date-fns';
 
 class PlayerDetails extends React.Component {
   constructor() {

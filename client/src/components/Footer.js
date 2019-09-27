@@ -17,19 +17,21 @@ class Footer extends React.Component {
   };
 
   addFooterClass = () => {
+    let setClassName='';
     if (this.props.location.pathname === '/Contact') {
-      return 'contact__page';
+      setClassName = 'contact__page';
     } else if (this.props.location.pathname === '/About') {
-      return 'about__page';
+      setClassName = 'about__page';
     } else if (this.props.location.pathname === '/Profile') {
-      return 'profile__page';
+      setClassName = 'profile__page';
     } else if (this.props.location.pathname === '/OrganizationAdmin') {
-      return 'organization_team';
+      setClassName = 'organization_team';
     } else if (this.props.location.pathname === '/profile') {
-      return 'profile__page';
+      setClassName = 'profile__page';
     } else if (this.props.location.pathname === '/Sports') {
-      return 'sport__page';
+      setClassName = 'sport__page';
     }
+    return setClassName;
   };
 
   showModal = () => {
@@ -73,17 +75,6 @@ class Footer extends React.Component {
               </p>
             </div>
             <div className="col-sm-3 col-md-6 col-lg-6">
-              {/* <div className="icon-container">
-            <a href="">
-              <img className="px-2" src="/img/FooterImg/facebook-logo.svg" alt="" />
-            </a>
-            <a href="">
-              <img className="px-2" src="/img/FooterImg/twitter-logo-silhouette.svg" alt="" />
-            </a>
-            <a href="">
-              <img className="px-2" src="/img/FooterImg/icon.svg" alt="" />
-            </a>
-          </div> */}
             </div>
           </div>
           <div className="row text-center">

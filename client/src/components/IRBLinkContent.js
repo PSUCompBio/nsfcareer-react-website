@@ -21,13 +21,15 @@ import Section19 from './IRBcontent/Section19';
 import Section20 from './IRBcontent/Section20';
 import Section21 from './IRBcontent/Section21';
 import Section22 from './IRBcontent/Section22';
+import { getStatusOfDarkmode } from '../../reducer';
 import Footer from './Footer';
 
 class IRBLinkContent extends React.Component {
-  constructor() {
-    super();
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    }
   }
-
   render() {
     return (
       <React.Fragment>

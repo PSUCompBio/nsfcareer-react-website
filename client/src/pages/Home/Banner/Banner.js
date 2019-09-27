@@ -41,9 +41,7 @@ class Banner extends React.Component {
                         <div
                           ref={ref}
                           style={{ overflow: 'hidden' }}
-                          className={`col-md-10 col-lg-10 header-heading ${
-                            this.props.screenWidth < screenWidth[1].screen725 ? '' : ''
-                          }`}
+                          className={`col-md-10 col-lg-10 header-heading`}
                         >
                           <h1
                             className={`animated ${

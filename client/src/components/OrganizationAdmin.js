@@ -6,13 +6,18 @@ import { getStatusOfDarkmode } from '../reducer';
 import { withRouter } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
-import { getOrganizationAdminData, getAllRosters, addTeam, deleteTeam } from '../apis';
+
+import {
+  getOrganizationAdminData,
+  getAllRosters,
+  addTeam,
+  deleteTeam
+} from '../apis';
 
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
-
 
 class OrganizationAdmin extends React.Component {
   constructor() {
@@ -30,9 +35,9 @@ class OrganizationAdmin extends React.Component {
       showEditPen: { display: 'none' },
       toShowEditPen: '',
       showEditForm: false,
-      teamFormData:{},
-      organizationAdminData : {},
-      isFetching : true,
+      teamFormData: {},
+      organizationAdminData: {},
+      isFetching: true,
       rostersArray: [],
       disableEditBtn: false,
       editBtnStye: { background: '' }
@@ -50,29 +55,12 @@ class OrganizationAdmin extends React.Component {
     if (getStatusOfDarkmode().status === true) {
       this.refs.rosterContainer.style.background = '#171b25';
       this.refs.cardContainer.style.background = '#232838';
-      // this.refs.smCard2.style.background = '#171b25';
-
       this.refs.loadCardParent.style.background = 'transparent';
-
       this.refs.loadCardParent.style.border = '0.5px solid #e8e8e8';
       this.refs.impactCardParent.style.border = '0.5px solid #e8e8e8';
-
       this.refs.impactCardParent.style.background = 'transparent';
-
       this.refs.loadCard.style.background = '#171b25';
       this.refs.impactCard.style.background = '#171b25';
-      for (let i = 1; i <= this.state.totalTeam; i++) {
-        // this.refs['smcard' + i].style.background = '#171b25';
-        // this.refs['parentChildTop' + i].style.borderBottom =
-        //   '0.5px solid #e8e8e8';
-        // this.refs['parentChildLeft' + i].style.borderRight =
-        //   '0.5px solid #e8e8e8';
-        // this.refs['parentChildLeft' + i].style.borderRight =
-        //   '0.5px solid #e8e8e8';
-      }
-      for (let i = 1; i <= this.state.totalTeam; i++) {
-        // this.refs['h' + i].style.color = '#fff';
-      }
 
       const elementsRequire = [
         'tech-football',
@@ -109,46 +97,46 @@ class OrganizationAdmin extends React.Component {
           }
         }
       });
-  }
-}
-
-
-
-  componentDidMount() {
-      getAllRosters(JSON.stringify({}))
-      .then(rostersResponse => {
-          console.log("ROSTER DATA LOADED ",rostersResponse);
-          for(var j = 0 ; j < rostersResponse.data.data.rosters.length ; j++){
-              this.setState(prevState => ({
-                  rostersArray: [...prevState.rostersArray, rostersResponse.data.data.rosters[j]]
-              }));
-          }
-          return getOrganizationAdminData(JSON.stringify({}))
-      })
-      .then(organizationResponseData => {
-          console.log("IN ORG", organizationResponseData);
-          this.setState({
-              organizationAdminData : { ...this.state.organizationAdminData, ...organizationResponseData.data.data },
-              isFetching : false
-          }, () => {
-              this.checkIfDarkModeActive();
-          });
-      })
-      .catch(err => {
-          console.log(err)
-      })
-    // this.checkIfDarkModeActive();
-    if (getStatusOfDarkmode().status) {
-      document.getElementsByTagName('body')[0].style.background = '#171b25';
     }
   };
 
-  // componentDidUpdate() {
-  //   this.checkIfDarkModeActive();
-  // }
-  // componentDidMount() {
-  //   this.checkIfDarkModeActive();
-  // }
+  componentDidMount() {
+    getAllRosters(JSON.stringify({}))
+      .then((rostersResponse) => {
+        console.log('ROSTER DATA LOADED ', rostersResponse);
+        for (var j = 0; j < rostersResponse.data.data.rosters.length; j++) {
+          this.setState((prevState) => ({
+            rostersArray: [
+              ...prevState.rostersArray,
+              rostersResponse.data.data.rosters[j]
+            ]
+          }));
+        }
+        return getOrganizationAdminData(JSON.stringify({}));
+      })
+      .then((organizationResponseData) => {
+        console.log('IN ORG', organizationResponseData);
+        this.setState(
+          {
+            organizationAdminData: {
+              ...this.state.organizationAdminData,
+              ...organizationResponseData.data.data
+            },
+            isFetching: false
+          },
+          () => {
+            this.checkIfDarkModeActive();
+          }
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    if (getStatusOfDarkmode().status) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    }
+  }
 
   addTeam = () => {
     this.setState({ totalTeam: this.state.totalTeam + 1 });
@@ -182,24 +170,21 @@ class OrganizationAdmin extends React.Component {
       wantDeleteTeam: true,
       currentDeleteTarget: e.currentTarget.parentNode
     });
-
   };
   deleteCard = () => {
-      deleteTeam(JSON.stringify({}))
-      .then(response => {
-          if(response.data.message == "success"){
-              this.state.currentDeleteTarget.remove();
-              this.setState({ wantDeleteTeam: false });
-              alert("Team deleted successfully");
-          }
-          else{
-              alert("Failed to delete team");
-          }
+    deleteTeam(JSON.stringify({}))
+      .then((response) => {
+        if (response.data.message === 'success') {
+          this.state.currentDeleteTarget.remove();
+          this.setState({ wantDeleteTeam: false });
+          alert('Team deleted successfully');
+        } else {
+          alert('Failed to delete team');
+        }
       })
-      .catch(err => {
-          console.log(err);
-      })
-
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   hideModal = () => {
@@ -208,11 +193,6 @@ class OrganizationAdmin extends React.Component {
 
   hideElementForEdit = (e) => {
     if (this.state.editTeamClass === 'edit-teams') {
-      // this.setState({
-      //   hideEditElement: { display: 'none' },
-      //   showEditPen: { display: 'block' },
-      //   toShowEditPen: 'hover_edit'
-      // });
       e.currentTarget.classList.add('hover_edit');
       e.currentTarget.firstChild.style = 'display:block';
       e.currentTarget.firstChild.nextSibling.style = 'display:none';
@@ -220,11 +200,6 @@ class OrganizationAdmin extends React.Component {
   };
 
   showElements = (e) => {
-    // this.setState({
-    //   hideEditElement: { display: 'block' },
-    //   showEditPen: { display: 'none' },
-    //   toShowEditPen: ''
-    // });
     e.currentTarget.classList.remove('hover_edit');
     e.currentTarget.firstChild.style = 'display:none';
     e.currentTarget.firstChild.nextSibling.style = 'display:block';
@@ -243,21 +218,20 @@ class OrganizationAdmin extends React.Component {
     const data = new FormData(e.target);
     const formData = formDataToJson(data);
     addTeam(formData)
-    .then(response => {
-
-        if(response.data.message == "success"){
-            this.hideTeamForm();
-            alert("Added Team successfully !");
-            this.setState({ teamFormData: formData },()=>console.log(this.state.teamFormData));
+      .then((response) => {
+        if (response.data.message === 'success') {
+          this.hideTeamForm();
+          alert('Added Team successfully !');
+          this.setState({ teamFormData: formData }, () =>
+            console.log(this.state.teamFormData)
+          );
+        } else {
+          alert('Failed to add team');
         }
-        else{
-            alert("Failed to add team");
-        }
-    })
-    .catch(err => {
+      })
+      .catch((err) => {
         console.log(err);
-    })
-
+      });
   };
 
   teamForm = (fieldName, placeholder, name, labelFor) => {
@@ -438,7 +412,6 @@ class OrganizationAdmin extends React.Component {
   };
 
   militaryVersionOrNormalVersion = () => {
-
     return (
       <React.Fragment>
         {this.state.wantDeleteTeam === true ? this.showModal() : ''}
@@ -545,8 +518,8 @@ class OrganizationAdmin extends React.Component {
 
   render() {
     console.log(this.props);
-    if(this.state.isFetching){
-        return <Spinner />;
+    if (this.state.isFetching) {
+      return <Spinner />;
     }
 
     return (

@@ -1,15 +1,17 @@
 import React from 'react';
 
-class WhiteBtn extends React.Component{
+class WhiteBtn extends React.Component {
   constructor() {
     super();
-    this.state = {
-
-    }
+    this.state = {};
   }
 
   render() {
-    return <button type="button" className="dynamic-white-btn m-3">{this.props.content}</button>
+    return (
+      <button type="button" className="dynamic-white-btn m-3">
+        {this.props.content}
+      </button>
+    );
   }
 }
 

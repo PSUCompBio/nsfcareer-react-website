@@ -14,7 +14,6 @@ import {
 } from '../apis';
 import { Bar } from 'react-chartjs-2';
 import Spinner from './Spinner/Spinner';
-import MilitaryVersionBtn from './MilitaryVersionBtn';
 
 const impactHistoryBarData = {
   labels: [],
@@ -88,7 +87,7 @@ class CommanderTeamView extends React.Component {
     console.log(data);
     uploadSensorDataAndCompute(data)
       .then((response) => {
-        if (response.data.message == 'success') {
+        if (response.data.message === 'success') {
           this.setState({ isUploading: false, isFileUploaded: true });
         } else {
           this.setState({
