@@ -242,36 +242,13 @@ class TechnologiesWeUse extends React.Component {
                 <div className="col-sm-9 col-md-6 ">
                   <p>
                     Contact Us: info@NSFCAREER.IO <br />
-                    <span onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
+                    <span className="ip-irb-link" onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
                     Policy &amp;{' '}
-                    <span onClick={() => this.props.history.push('/IRB')}> IRB </span> |
+                    <span className="ip-irb-link" onClick={() => this.props.history.push('/IRB')}> IRB </span> |
                     Collaborate
                   </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">
-                  {/* <div className="icon-container">
-                    <a href="">
-                      <img
-                        className="px-2"
-                        src="/img/FooterImg/facebook-logo.svg"
-                        alt=""
-                      />
-                    </a>
-                    <a href="">
-                      <img
-                        className="px-2"
-                        src="/img/FooterImg/twitter-logo-silhouette.svg"
-                        alt=""
-                      />
-                    </a>
-                    <a href="">
-                      <img
-                        className="px-2"
-                        src="/img/FooterImg/icon.svg"
-                        alt=""
-                      />
-                    </a>
-                  </div> */}
                 </div>
               </div>
               <div className="row text-center">

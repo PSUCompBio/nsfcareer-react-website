@@ -69,9 +69,10 @@ class Footer extends React.Component {
             <div className="col-sm-9 col-md-6 col-lg-6">
               <p>
                 Contact Us: info@NSFCAREER.IO <br />
-                <span onClick={() => window.open('')}> IP </span> | Privacy
-                Policy &amp; <span onClick={() => window.open('')}> IRB </span>{' '}
-                | Collaborate
+                <span className="ip-irb-link" onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
+                    Policy &amp;{' '}
+                    <span className="ip-irb-link" onClick={() => this.props.history.push('/IRB')}> IRB </span> |
+                    Collaborate
               </p>
             </div>
             <div className="col-sm-3 col-md-6 col-lg-6">

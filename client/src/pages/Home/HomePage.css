@@ -1308,6 +1308,10 @@ input.gt-up-email {
 
 /* Commander team view end */
 
+.ip-irb-link{
+  cursor: pointer;
+}
+
 /* commander data table */
 .commander-data-table table thead tr th {
   font-family: 'Segoe UI Regular';
