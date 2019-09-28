@@ -1,8 +1,83 @@
-#model_block {
+#model_block, #clone_model_block {
 	width: 100%;
 }
-.model_loader{
-	position: absolute;
-	top: 60%;
-	right: 50%;
+#canvas_container {
+	position:relative;
 }
+.model_loader, .model_loader_clone {
+	position: absolute;
+	top: 50%;
+	transform:translate(-50%, -50%);
+	left: 50%;
+	margin:0;
+}
+.generate_graph {
+	margin-top: 87px;
+}
+.tringulate_btn {
+	margin-top: 20px;
+}
+.graph1 {
+	position: absolute;
+	top: 25%;
+	right: 0;
+	width: 35%;
+}
+.graph2 {
+	position: absolute;
+	bottom: 5%;
+	right: 0;
+	width: 35%;
+}
+.graph3 {
+	position: absolute;
+	top: 40%;
+	left: 2%;
+	width: 35%;
+}
+.graph4 {
+	position: absolute;
+	top: 30%;
+	right: 0;
+	width: 35%;
+}
+
+/* @media only screen and (min-width: 1360px) and (max-width: 767px)  {
+	.model_container{
+		padding-top: 4rem !important;
+	}
+	#model_block {
+		height: 400px;
+	}
+	.generate_graph {
+		margin-top: 20px;
+	}
+	.tringulate_btn {
+		margin-top: 20px;
+		margin-bottom: 50px;
+	}
+}	
+ */
+@media only screen and (max-width: 767px) {
+	.graph1, .graph2, .graph3, .graph4  {
+		position:relative;
+		width: 100%;
+		top:0;
+	}
+	.graph4 {
+		margin-bottom: 50px;
+	}
+	#model_block, #clone_model_block {
+		height: 400px;
+	}
+	.generate_graph {
+		margin-top: 20px;
+	}
+	.tringulate_btn {
+		margin-top: 20px;
+		margin-bottom: 50px;
+	}
+	.model_container{
+		padding-top: 4rem !important;
+	}
+}	
