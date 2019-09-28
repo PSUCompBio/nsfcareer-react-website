@@ -1,6 +1,7 @@
 import React from 'react';
 import Collapsible from 'react-collapsible';
 import SportQues from '../utilities/SportQuestions.json';
+import { getStatusOfDarkmode } from '../reducer';
 import Footer from '../components/Footer';
 
 class Sports extends React.Component {
@@ -11,17 +12,20 @@ class Sports extends React.Component {
     };
   }
 
-  changeIcon = () => {
-    console.log(this.refs);
-    this.setState({ iconName: 'Collapsible Collapsible-changeIcon' });
-  };
-  removeIcon = () => {
-    this.setState({ iconName: 'Collapsible' });
-  };
+  componentDidMount() {
+    if (getStatusOfDarkmode().status === true) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    } else {
+      const element = document.getElementsByClassName('Collapsible__contentInner');
+      for (let i = 0; i < element.length; i++){
+        element[i].style.background = "#fff";
+        element[i].style.color = "#000";
 
-  componentWillUpdate() {
-    console.log(document.getElementsByClassName('Collapsible'));
+      }
+    }
   }
+
+
 
   renderAllQues = () => {
     return SportQues.map((element, index) => {

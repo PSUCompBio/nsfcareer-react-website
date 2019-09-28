@@ -614,6 +614,10 @@ nav {
   grid-template-columns: 1fr auto;
   margin-top: 15vh;
 }
+.Collapsible__trigger{
+  width: 100%;
+  display: inline-block;
+}
 .Collapsible {
   width: 100%;
   background: linear-gradient(45deg, #174f86, #2196f3);

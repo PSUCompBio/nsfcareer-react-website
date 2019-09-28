@@ -28,6 +28,13 @@ class IRBLinkContent extends React.Component {
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
+    } else {
+      const element = document.getElementsByClassName('Collapsible__contentInner');
+      for (let i = 0; i < element.length; i++){
+        element[i].style.background = "#fff";
+        element[i].style.color = "#000";
+
+      }
     }
   }
   render() {
