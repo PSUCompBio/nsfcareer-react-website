@@ -46,8 +46,8 @@ class Dashboard extends React.Component {
         <div id="dashboard" className="container dashboard">
           <PlayerDetails user={this.state.user} />
 
-          <CumulativeEvents loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>
-          <HeadAccelerationEvents data={this.state.headAccelerationEventsData}/>
+          <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>
+          <HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>
           <div className="row text-center pt-5 pb-5 mt-5 mb-5">
             <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
               <div
@@ -73,39 +73,26 @@ class Dashboard extends React.Component {
 
               getCumulativeEventPressureData(JSON.stringify({}))
               .then(response => {
-                  console.log(response.data.data);
+                  console.log(response.data);
                   this.setState({
                       cumulativeEventData : { ...this.state.cumulativeEventData, ...response.data.data }
                   });
-
+                  return getHeadAccelerationEvents(JSON.stringify({}))
               })
-              .catch(err => {
-                  console.log(err);
-              })
-
-              getHeadAccelerationEvents(JSON.stringify({}))
               .then(response => {
-                  console.log("Head aceleration data",response.data.data);
+                  console.log("Head aceleration data",response.data);
                   this.setState({
                       headAccelerationEventsData : { ...this.state.headAccelerationEventsData, ...response.data.data }
                   });
+                  return getCumulativeEventLoadData(JSON.stringify({}))
               })
-              .catch(err => {
-                  console.log(err);
-              });
-
-              getCumulativeEventLoadData(JSON.stringify({}))
               .then(response => {
-                  console.log("Load event data",response.data.data);
+                  console.log("Load event data",response.data);
                   this.setState({
                       cumulativeEventLoadData : { ...this.state.cumulativeEventLoadData, ...response.data.data }
                   });
+                  return getUserDetails()
               })
-              .catch(err => {
-                  console.log(err);
-              });
-
-            getUserDetails()
               .then((response) => {
 
                 console.log(response.data);
@@ -120,12 +107,16 @@ class Dashboard extends React.Component {
 
               })
               .catch((error) => {
+
+                console.log(error);
+
                 this.setState({
                   user: {},
                   isLoading: false,
                   isCheckingAuth: false
                 });
               });
+
           } else {
             this.setState({ isAuthenticated: false, isCheckingAuth: false });
           }

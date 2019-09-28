@@ -41,7 +41,9 @@ class BrainStrainChart extends React.Component {
                     borderColor: '#1987DD',
                     data: this.props.data.pressure,
                 }]
-            }
+            },
+            is_selfie_image_uploaded : props.is_selfie_image_uploaded ,
+            imageUrl : props.imageUrl
         };
     }
 
@@ -50,11 +52,14 @@ class BrainStrainChart extends React.Component {
             <div className="card  pt-3 pb-3 pl-2 pr-2 mb-5 acc-card acc-card-before">
                 <div className="row text-center">
                     <div className="col-md-4 d-flex align-items-center justify-content-center">
-                        <img
+                        {(this.state.is_selfie_image_uploaded)?<div><img className={`svg img-fluid ${'svg'}`} src="/img/icon/accBrain.svg" alt="" /><img width="95%"  height="95%" className={`img fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div>
+                        : <img className={`svg img-fluid`} src="/img/icon/accBrain.svg" alt="" />}
+                        {/*<img
                             className="svg img-fluid"
                             src="/img/icon/accBrain.svg"
                             alt=""
                             />
+                            */}
                     </div>
                     <div className="col-md-8 mb-5">
                         <Line data={this.state.data} options={options}/>

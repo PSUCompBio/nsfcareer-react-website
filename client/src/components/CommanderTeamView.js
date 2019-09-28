@@ -80,7 +80,7 @@ class CommanderTeamView extends React.Component {
       console.log(data);
       uploadSensorDataAndCompute(data)
       .then((response) => {
-          if(response.data.message == "success"){
+          if(response.data.message === "success"){
               this.setState({ isUploading: false, isFileUploaded: true });
           }
           else{
