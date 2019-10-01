@@ -300,6 +300,15 @@ input.team-edit-input {
   margin: 10px;
 }
 
+.military-version-btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2% 20% 2% 20%;
+  background: linear-gradient(45deg, #0000, #0b3b88, #0000);
+  box-shadow: 0 0 15px -1px rgba(0, 0, 0, 0.2);
+}
+
 @keyframes slideIn {
   0% {
     transform: translateY(400px);
@@ -340,7 +349,9 @@ input.team-edit-input {
   left: 50%;
   transform: translate(-50%, -50%) */
 }
-
+.ptf-team {
+  padding: 0 4% 0 4%;
+}
 .align-element-center {
   display: flex;
   align-items: center;
@@ -349,7 +360,7 @@ input.team-edit-input {
 }
 
 .contact__page-center-align {
-  padding-top: 5.7%;
+  padding-top: 5%;
 }
 
 input.fromTodate {
@@ -366,7 +377,8 @@ input.borderRight__fromTodate {
 .military-sidebar {
   height: 100vh;
   width: 15%;
-  background: linear-gradient(-30deg, rgb(8, 64, 97), rgb(47, 114, 223));
+  background: linear-gradient(0deg, #000, #1282d8, #000);
+  box-shadow: 5px 0 10px -1px rgba(0, 0, 0, 0.12);
 }
 .military-main-content {
   width: 85%;
@@ -375,13 +387,19 @@ input.borderRight__fromTodate {
   overflow-x: hidden;
   /* padding: 0 5% 0 5%; */
 }
+.military-dark-mode {
+  background: #171b25;
+}
 
-.penstate-university-bg {
+div.penstate-university-bg {
+  padding-top: 4%;
+  padding-bottom: 4%;
   background: rgb(2, 0, 36);
   background: radial-gradient(
     circle,
     rgba(2, 0, 36, 1) 0%,
-    rgba(5, 96, 169, 1) 0%,
+    rgba(8, 133, 233, 1) 0%,
+    rgba(2, 34, 67, 1) 50%,
     rgba(1, 8, 25, 1) 100%
   );
 }
@@ -424,6 +442,9 @@ input.borderRight__fromTodate {
 .list-two > li {
   padding: 5px 5px 5px 5px;
 }
+div.titles {
+  flex-flow: column;
+}
 
 @media screen and (max-width: 599px) {
   .head-acc-evnt-chart::after {
@@ -433,6 +454,10 @@ input.borderRight__fromTodate {
   }
   .acc-evnt {
     margin-top: 25%;
+  }
+  div.titiles input,
+  input.upload-btn {
+    width: 225px;
   }
   .acc-card-before::before {
     top: -6%;
@@ -457,13 +482,53 @@ input.borderRight__fromTodate {
     color: #fff;
     font-size: 12px;
   }
+  div.organization_team{
+    width: 105%;
+    height: 39vh!important;
+  }
+  div.t-roster{
+    margin-top: 10vh;
+  }
 }
-@media screen and (min-width: 1680px) and (max-width:3239px) {
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  div.titiles input,
+  input.upload-btn {
+    width: 225px;
+  }
+  div.t-roster{
+    margin-top: 10vh;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1500px) {
+  div.penstate-university-bg {
+    padding-top: 10% !important;
+  }
+}
+@media screen and (min-width: 2560px) and (max-width: 3238px) {
+  div.organization_team {
+    bottom: -35.4vh;
+  }
+  div.profile-mt{
+    height: 71.2vh;
+    align-items: center;
+    display: grid;
+  }
+  div.profile-container{
+    position: relative;
+  }
+}
+
+@media screen and (min-width: 1680px) and (max-width: 3239px) {
   div.t-roster {
     margin-top: 6% !important;
   }
 }
 @media screen and (min-width: 3240px) {
+  div.t-roster {
+    margin-top: 7% !important;
+  }
   .align-element-center {
     display: flex;
     align-items: center;
@@ -471,7 +536,7 @@ input.borderRight__fromTodate {
     height: 90.1vh;
   }
   .contact__page-center-align {
-    padding-top: 20%;
+    padding-top: 5%;
     padding-bottom: 6.4%;
   }
   div.profile-mt {
@@ -485,5 +550,11 @@ input.borderRight__fromTodate {
   }
   div.about__page {
     bottom: -189%;
+  }
+  div.contact__page {
+    bottom: -9.8vh !important;
+  }
+  div.pt-surface {
+    padding-top: 287px;
   }
 }

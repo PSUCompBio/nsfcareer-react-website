@@ -45,7 +45,7 @@ class HeadAccelerationEvents extends React.Component {
 
   render() {
     return (
-      <div  className="position-relative  bg-white acc-evnt">
+      <div  className="position-relative animated fadeInRight  bg-white acc-evnt">
       <div  data-descr={`Head Acceleration Events      ${new Date(Number(this.props.data.timestamp)).toDateString()} ${new Date(Number(this.props.data.timestamp)).toLocaleTimeString()}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
         <div className="row pl-4 pr-4 pb-4 dark-bg   text-center">
           <div className="col-md-6 d-flex align-items-center justify-content-center">

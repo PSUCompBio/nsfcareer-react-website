@@ -49,7 +49,7 @@ class BrainStrainChart extends React.Component {
 
     render() {
         return (
-            <div className="card  pt-3 pb-3 pl-2 pr-2 mb-5 acc-card acc-card-before">
+            <div className="card  pt-3 pb-3 pl-2 pr-2 mb-5 acc-card acc-card-before animated fadeInLeft">
                 <div className="row text-center">
                     <div className="col-md-4 d-flex align-items-center justify-content-center">
                         {(this.state.is_selfie_image_uploaded)?<div><img className={`svg img-fluid ${'svg'}`} src="/img/icon/accBrain.svg" alt="" /><img width="95%"  height="95%" className={`img fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import './Profile.css';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import {
   uploadProfilePic,
   getUserDetails,
@@ -23,7 +23,6 @@ import {
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
-import { withRouter } from 'react-router-dom';
 
 class Profile extends React.Component {
   constructor() {
@@ -204,6 +203,7 @@ class Profile extends React.Component {
     this.refs.profileBorder.style.border = `10px solid ${bgColor[1]}`;
     this.refs.nameColor.style.color = fontColor;
     this.refs.chooserColor.style.color = fontColor;
+    this.refs.darkMode.style.color = fontColor;
     const allInputs = this.state.inputs;
     allInputs.forEach((element) => {
       this.refs[element].setAttribute('id', darkModeColor);
@@ -222,6 +222,9 @@ class Profile extends React.Component {
             '#fff',
             'dark-mode-color'
           );
+          for (let i = 1; i <= 4; i++) {
+            this.refs['p' + i].style.color = '#fff';
+          }
         } else {
           this.setState({ mode: 'Dark mode' });
           this.elementsOfDarkMode(darkThemeInactiveSetter, ['', ''], '', '');
@@ -245,7 +248,7 @@ class Profile extends React.Component {
   showProfile = () => {
     return (
       <React.Fragment>
-        <div className="container pl-5 pr-5 profile-mt mb-5 pb-2">
+        <div className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2">
           <div
             ref="lightDark"
             className="row mb-5 text-center justify-content-center align-items-center profile-container"
@@ -379,7 +382,7 @@ class Profile extends React.Component {
             <div className="col-md-3 btns-heading text-left pt-4">
               <div className="row">
                 <div className="col-sm-7">
-                  <span ref="chooserColor" className="dark-mode">
+                  <span ref="darkMode" className="dark-mode">
                     {this.state.mode}
                   </span>
                 </div>
@@ -556,12 +559,13 @@ class Profile extends React.Component {
                 this.refs.profileBorder.style.border = '10px solid #171b25';
                 this.refs.nameColor.style.color = '#fff';
                 this.refs.chooserColor.style.color = '#fff';
+                this.refs.darkMode.style.color = '#fff';
                 const allInputs = this.state.inputs;
                 allInputs.forEach((element) => {
                   this.refs[element].setAttribute('id', 'dark-mode-color');
                 });
-                for (let i = 1; i <= 3; i++) {
-                  this.refs['h' + i].style.color = '#fff';
+                for (let i = 1; i <= 4; i++) {
+                  this.refs['p' + i].style.color = '#fff';
                 }
                 this.props.isDarkModeSet(this.state.isDarkMode);
               }
@@ -588,6 +592,9 @@ class Profile extends React.Component {
       .catch((err) => {
         this.setState({ isAuthenticated: false, isCheckingAuth: false });
       });
+    if (getStatusOfDarkmode().status) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    }
   }
 }
 

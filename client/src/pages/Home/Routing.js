@@ -2,7 +2,7 @@ import React from 'react';
 import ScrollIndicator from './ScrollIndicator';
 import { Route, withRouter } from 'react-router-dom';
 import { svgToInline } from '../../config/InlineSvgFromImg';
-
+import IRBLinkContent from '../../components/IRBLinkContent';
 import Nav from './Nav';
 import HomePage from './HomePage';
 import Login from '../Login/Login';
@@ -15,6 +15,9 @@ import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import TeamAdmin from '../../components/CommanderTeamView';
 import Military from '../../components/Military/Military';
+import GetUpdates from '../../components/GetUpdates';
+import Model from '../Model/ModelPage';
+import Sports from '../Sports';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -24,9 +27,24 @@ class Routing extends React.Component {
       windowWidth: 0,
       gotoPageNo: 0,
       isLoggedIn: false,
-      isDarkMode: false
+      isDarkMode: false,
+      isDisplay: { display: 'none' }
     };
   }
+
+  makeVisible = (data) => {
+    this.setState({ isDisplay: data });
+  };
+
+
+  showModal = () => {
+    if (this.state.isDisplay.display === 'none') {
+      this.setState({ isDisplay: {display:'flex'} });
+    } else {
+      this.setState({ isDisplay: {display:'none'} });
+    }
+  };
+
   checkDarkMode = (value) => {
     this.setState({ isDarkMode: value });
   };
@@ -77,6 +95,10 @@ class Routing extends React.Component {
           isAuthenticated={this.state.isLoggedIn}
           currentPage={this.state.currentPage}
         />
+        <GetUpdates
+          isVisible={this.state.isDisplay}
+          makeVisible={this.makeVisible}
+        />
         <Route
           exact
           path="/"
@@ -88,6 +110,7 @@ class Routing extends React.Component {
               gotoPage={this.state.gotoPageNo}
               currentPage={this.state.currentPage}
               onPageChange={this.onPageChange}
+              showformModal = {this.showModal}
             />
           )}
         />
@@ -102,6 +125,7 @@ class Routing extends React.Component {
               gotoPage={this.state.gotoPageNo}
               currentPage={this.state.currentPage}
               onPageChange={this.onPageChange}
+              showformModal = {this.showModal}
             />
           )}
         />
@@ -130,10 +154,13 @@ class Routing extends React.Component {
         />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
+        <Route exact path="/Model" component={Model} />
         <Route exact path="/Contact" component={Contact} />
         <Route exact path="/TeamAdmin" component={TeamAdmin} />
         <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />
         <Route exact path="/Military" component={Military} />
+        <Route exact path="/Sports" component={Sports} />
+        <Route exact path="/IRB" component={IRBLinkContent} />
       </React.Fragment>
     );
   }

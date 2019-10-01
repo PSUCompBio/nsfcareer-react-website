@@ -11,7 +11,7 @@ import { getOrganizationAdminData, getAllRosters, addTeam, deleteTeam, fetchAllT
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-
+import MilitaryVersionBtn from './MilitaryVersionBtn';
 
 class OrganizationAdmin extends React.Component {
   constructor() {
@@ -29,6 +29,8 @@ class OrganizationAdmin extends React.Component {
       showEditPen: { display: 'none' },
       toShowEditPen: '',
       showEditForm: false,
+      disableEditBtn: false,
+      editBtnStye: { background: '' },
       teamFormData:{},
       organizationAdminData : {},
       isFetching : true,
@@ -52,29 +54,12 @@ class OrganizationAdmin extends React.Component {
     if (getStatusOfDarkmode().status === true) {
       this.refs.rosterContainer.style.background = '#171b25';
       this.refs.cardContainer.style.background = '#232838';
-      // this.refs.smCard2.style.background = '#171b25';
-
       this.refs.loadCardParent.style.background = 'transparent';
-
       this.refs.loadCardParent.style.border = '0.5px solid #e8e8e8';
       this.refs.impactCardParent.style.border = '0.5px solid #e8e8e8';
-
       this.refs.impactCardParent.style.background = 'transparent';
-
       this.refs.loadCard.style.background = '#171b25';
       this.refs.impactCard.style.background = '#171b25';
-      for (let i = 1; i <= this.state.totalTeam; i++) {
-        // this.refs['smcard' + i].style.background = '#171b25';
-        // this.refs['parentChildTop' + i].style.borderBottom =
-        //   '0.5px solid #e8e8e8';
-        // this.refs['parentChildLeft' + i].style.borderRight =
-        //   '0.5px solid #e8e8e8';
-        // this.refs['parentChildLeft' + i].style.borderRight =
-        //   '0.5px solid #e8e8e8';
-      }
-      for (let i = 1; i <= this.state.totalTeam; i++) {
-        // this.refs['h' + i].style.color = '#fff';
-      }
 
       const elementsRequire = [
         'tech-football',
@@ -111,10 +96,8 @@ class OrganizationAdmin extends React.Component {
           }
         }
       });
-  }
-}
-
-
+    }
+  };
 
   componentDidMount() {
       fetchAllTeamsInOrganization({ organization : this.state.organization })
@@ -149,11 +132,13 @@ class OrganizationAdmin extends React.Component {
 
 
     this.checkIfDarkModeActive();
+    if (getStatusOfDarkmode().status) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    }
+
   };
 
-  componentDidUpdate() {
-    this.checkIfDarkModeActive();
-  }
+
 
 
   addTeam = () => {
@@ -164,19 +149,26 @@ class OrganizationAdmin extends React.Component {
       }));
   };
 
-  enableEditTeamOPtion = () => {
+  enableEditTeamOPtion = (e) => {
     if (this.state.editTeamClass === '') {
       this.setState({
         editTeamClass: 'edit-teams',
         closeBtn: { display: 'block' },
-        currentDeleteTarget: ''
+        currentDeleteTarget: '',
+        disableEditBtn: true,
+        editBtnStye: { background: '#000' }
       });
     }
   };
 
   disableEditTeamOPtion = () => {
     if (this.state.editTeamClass === 'edit-teams') {
-      this.setState({ editTeamClass: '', closeBtn: { display: 'none' } });
+      this.setState({
+        editTeamClass: '',
+        closeBtn: { display: 'none' },
+        disableEditBtn: false,
+        editBtnStye: { background: '' }
+      });
     }
   };
 
@@ -188,7 +180,6 @@ class OrganizationAdmin extends React.Component {
       organizationToDelete : organization,
       teamNameToDelete : team_name
     });
-
   };
   deleteCard = () => {
       this.setState({
@@ -216,7 +207,6 @@ class OrganizationAdmin extends React.Component {
               apiLoader : false
           });
       })
-
   };
 
   hideModal = () => {
@@ -225,11 +215,6 @@ class OrganizationAdmin extends React.Component {
 
   hideElementForEdit = (e) => {
     if (this.state.editTeamClass === 'edit-teams') {
-      // this.setState({
-      //   hideEditElement: { display: 'none' },
-      //   showEditPen: { display: 'block' },
-      //   toShowEditPen: 'hover_edit'
-      // });
       e.currentTarget.classList.add('hover_edit');
       e.currentTarget.firstChild.style = 'display:block';
       e.currentTarget.firstChild.nextSibling.style = 'display:none';
@@ -237,11 +222,6 @@ class OrganizationAdmin extends React.Component {
   };
 
   showElements = (e) => {
-    // this.setState({
-    //   hideEditElement: { display: 'block' },
-    //   showEditPen: { display: 'none' },
-    //   toShowEditPen: ''
-    // });
     e.currentTarget.classList.remove('hover_edit');
     e.currentTarget.firstChild.style = 'display:none';
     e.currentTarget.firstChild.nextSibling.style = 'display:block';
@@ -520,41 +500,60 @@ class OrganizationAdmin extends React.Component {
     return cards;
   };
 
-  militaryVersionOrNormalVersion = () => {
+  retunrnRosterBtn = () => {
+    return (
+      <React.Fragment>
+        <RostarBtn
+          tabActive={this.toggleTab}
+          makeActive={this.state.tabActive}
+          getBtn={this.getTargetBtn}
+          currentBtn={this.state.targetBtn}
+          content="Overview"
+        />
+        <RostarBtn
+          tabActive={this.toggleTab}
+          makeActive={this.state.tabActive}
+          getBtn={this.getTargetBtn}
+          currentBtn={this.state.targetBtn}
+          content="staff"
+        />
+      </React.Fragment>
+    );
+  };
 
+  militaryVersionOrNormalVersion = () => {
     return (
       <React.Fragment>
         {this.state.wantDeleteTeam === true ? this.showModal() : ''}
         {this.state.showEditForm === true ? this.showEditForm() : ''}
 
-        <div ref="rosterContainer" className="t-roster pt-5 mt-5">
+        <div ref="rosterContainer" className="t-roster animated zoomIn">
           <PenstateUniversity />
-          <div className="row text-center organization-pad__military">
+          {this.props.isMilitaryVersionActive ? (
+            <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
+          ) : (
+            ''
+          )}
+          <div className="row text-center  organization-pad__military">
             <div className="col-md-9">
               <div className="row">
                 <div
                   ref="cardContainer"
                   className="col-md-12 current-roster-card mb-5 mt-4 p-0"
                 >
-                  <div className="rostar-selector">
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="Overview"
-                    />
-                    <RostarBtn
-                      tabActive={this.toggleTab}
-                      makeActive={this.state.tabActive}
-                      getBtn={this.getTargetBtn}
-                      currentBtn={this.state.targetBtn}
-                      content="staff"
-                    />
-                  </div>
+                  {this.props.isMilitaryVersionActive === true ? (
+                    ''
+                  ) : (
+                    <div className="rostar-selector">
+                      {this.retunrnRosterBtn()}
+                    </div>
+                  )}
+
                   <div className="row">
                     <div className="col-md-12 text-right">
                       <button
+                        style={this.state.editBtnStye}
+                        disabled={this.state.disableEditBtn}
                         type="button"
                         onClick={this.enableEditTeamOPtion}
                         className="edit-team-btn"
@@ -603,7 +602,7 @@ class OrganizationAdmin extends React.Component {
                 </div>
               </div>
 
-              <div className="most-impacts">
+              <div className="most-impacts mb-5">
                 <div ref="impactCardParent" className="card">
                   <div ref="impactCard" className="impact-heading">
                     MOST IMPACTS
@@ -623,10 +622,14 @@ class OrganizationAdmin extends React.Component {
     );
   };
 
+  ifMilitaryVersionActive = () => {
+    return 'military-dark-mode';
+  };
+
   render() {
     console.log(this.props);
-    if(this.state.isFetching){
-        return <Spinner />;
+    if (this.state.isFetching) {
+      return <Spinner />;
     }
 
     return (
@@ -636,7 +639,9 @@ class OrganizationAdmin extends React.Component {
             <div className="military-sidebar">
               <SideBar />
             </div>
-            <div className="military-main-content">
+            <div
+              className={`military-main-content ${this.ifMilitaryVersionActive()}`}
+            >
               {this.militaryVersionOrNormalVersion()}
             </div>
           </div>

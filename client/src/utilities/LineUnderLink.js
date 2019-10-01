@@ -1,9 +1,7 @@
 import React from 'react'
 
 class LineUnderLink extends React.Component {
-  constructor() {
-    super();
-  }
+
   linkeMaker (segment){
     let addClassName = '';
     if (window.location.pathname === segment) {
@@ -14,4 +12,4 @@ class LineUnderLink extends React.Component {
 }
 
 
-export default new LineUnderLink;
+export default new LineUnderLink();

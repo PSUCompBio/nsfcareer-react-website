@@ -6,10 +6,14 @@ import { getStatusOfDarkmode } from '../reducer';
 import CommanderDataTable from './CommanderDataTable';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
-import { uploadSensorDataAndCompute, getTeamAdminData, getImpactHistory, getImpactSummary } from '../apis';
-import {Bar} from 'react-chartjs-2';
+import {
+  uploadSensorDataAndCompute,
+  getTeamAdminData,
+  getImpactHistory,
+  getImpactSummary
+} from '../apis';
+import { Bar } from 'react-chartjs-2';
 import Spinner from './Spinner/Spinner';
-
 
 const impactHistoryBarData = {
   labels: [],
@@ -39,7 +43,6 @@ const impactSummaryBarData = {
   ]
 };
 
-
 class CommanderTeamView extends React.Component {
   constructor() {
     super();
@@ -58,27 +61,31 @@ class CommanderTeamView extends React.Component {
       selectedFile: null,
       isLoading: true,
       isUploading: false,
-      isFileUploaded : false,
-      fileUploadError : "",
-      isLoaded : false,
-      impactSummaryData : {},
-      impactHistoryData : {}
+      isFileUploaded: false,
+      fileUploadError: '',
+      isLoaded: false,
+      impactSummaryData: {},
+      impactHistoryData: {}
     };
   }
 
   onChangeHandler = (event) => {
-      console.log(event.target.files[0]);
-      this.setState({
-          selectedFile: event.target.files[0]
-      });
+    console.log(event.target.files[0]);
+    this.setState({
+      selectedFile: event.target.files[0]
+    });
   };
 
   onClickHandler = () => {
-      const data = new FormData();
-      this.setState({ isUploading: true, isFileUploaded : false, fileUploadError : "" });
-      data.append('sensor_csv_file', this.state.selectedFile);
-      console.log(data);
-      uploadSensorDataAndCompute(data)
+    const data = new FormData();
+    this.setState({
+      isUploading: true,
+      isFileUploaded: false,
+      fileUploadError: ''
+    });
+    data.append('sensor_csv_file', this.state.selectedFile);
+    console.log(data);
+    uploadSensorDataAndCompute(data)
       .then((response) => {
           if(response.data.message === "success"){
               this.setState({ isUploading: false, isFileUploaded: true });
@@ -93,7 +100,7 @@ class CommanderTeamView extends React.Component {
           this.setState({ isUploading: false, fileUploadError : err });
           console.log(err);
       })
-  }
+  };
 
   toggleTab = (value) => {
     this.setState({ tabActive: value });
@@ -113,45 +120,59 @@ class CommanderTeamView extends React.Component {
     else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
   };
   componentDidMount() {
-    if (getStatusOfDarkmode().status === true) {
-      this.refs.rosterContainer.style.background = '#171b25';
-      for (let i = 1; i <= 7; i++) {
-        this.refs['card' + i].style.background = '#232838';
-        if ('card' + i === 'card5' || 'card' + i === 'card7') {
-          this.refs['card' + i].style.border = '1px solid #e8e8e8';
+    getImpactHistory(JSON.stringify({}))
+      .then((impactHistory) => {
+        console.log('History', impactHistory);
+        this.setState({
+          impactHistoryData: {
+            ...this.state.impactHistoryData,
+            ...impactHistory.data.data
+          }
+        });
+        return getImpactSummary(JSON.stringify({}));
+      })
+      .then((impactSummary) => {
+        console.log('Summary', impactSummary);
+        this.setState({
+          impactSummaryData: {
+            ...this.state.impactSummaryData,
+            ...impactSummary.data.data
+          }
+        });
+        return getTeamAdminData(JSON.stringify({}));
+      })
+      .then((response) => {
+        console.log(response.data.data);
+        this.setState({
+          adminData: { ...this.state.adminData, ...response.data.data },
+          isLoaded: true
+        });
+
+        if (getStatusOfDarkmode().status === true) {
+          this.refs.rosterContainer.style.background = '#171b25';
+          for (let i = 1; i <= 7; i++) {
+            this.refs['card' + i].style.background = '#232838';
+            if ('card' + i === 'card5' || 'card' + i === 'card7') {
+              this.refs['card' + i].style.border = '1px solid #e8e8e8';
+            }
+          }
         }
-      }
-    }
-        getImpactHistory(JSON.stringify({}))
-    .then(impactHistory => {
-        console.log("History",impactHistory);
-        this.setState({
-            impactHistoryData : { ...this.state.impactHistoryData, ...impactHistory.data.data }
-        });
-        return getImpactSummary(JSON.stringify({}))
-    })
-    .then(impactSummary => {
-        console.log("Summary",impactSummary);
-        this.setState({
-            impactSummaryData : { ...this.state.impactSummaryData, ...impactSummary.data.data }
-        });
-        return getTeamAdminData(JSON.stringify({}))
-    })
-    .then(response => {
-        console.log(response.data.data)
-        this.setState({
-            adminData : { ...this.state.adminData, ...response.data.data },
-            isLoaded : true
-        });
-    })
-    .catch(err => {
+      })
+      .catch((err) => {
         console.log(err);
-    })
+      });
+
+    if (getStatusOfDarkmode().status) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    }
   }
 
   militaryVersionOrNormal = () => {
     return (
-      <div ref="rosterContainer" className="container t-roster pt-5 mt-5">
+      <div
+        ref="rosterContainer"
+        className="container t-roster pt-5 mt-5 animated zoomIn"
+      >
         <PenstateUniversity />
         <div className="row text-center">
           <div className="col-md-8">
@@ -173,49 +194,63 @@ class CommanderTeamView extends React.Component {
                   </select>
                 </div>
                 <div className="col-auto">
-                    <div>
-                        <input
-                            onChange={this.onChangeHandler}
-                            type="file"
-                            className="btn upload-btn"
-                            name="sensor_csv_file"
-                            /> {' '}
-                            <button
-                                type="button"
-                                onClick={this.onClickHandler}
-                                className="btn \ upload-btn"
-                                >
-                                <i class="fa fa-cloud-upload"></i>
-                            </button>
-                            {
-                                this.state.isUploading ?
-                                <div className="d-flex justify-content-center center-spinner">
-                                    <div className="spinner-border text-primary" role="status" >
-                                    </div>
-                                </div>:null
-                            }
-                            {
-                                this.state.isFileUploaded ?
-                                <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible fade show" role="alert">
-                                    Successfully uploaded the CSV/ XLSX file
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-
-                                :null
-                            }
-                            {
-                                this.state.fileUploadError ?
-                                <div style={{marginTop : "5px"}} class="alert alert-success alert-dismissible api-response-alert fade show" role="alert">
-                                    Failed to upload CSV/ XLSX file
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                :null
-                            }
-                    </div>
+                  <div>
+                    <input
+                      onChange={this.onChangeHandler}
+                      type="file"
+                      className="btn upload-btn"
+                      name="sensor_csv_file"
+                    />{' '}
+                    <button
+                      type="button"
+                      onClick={this.onClickHandler}
+                      className="btn \ upload-btn"
+                    >
+                      <i className="fa fa-cloud-upload"></i>
+                    </button>
+                    {this.state.isUploading ? (
+                      <div className="d-flex justify-content-center center-spinner">
+                        <div
+                          className="spinner-border text-primary"
+                          role="status"
+                        ></div>
+                      </div>
+                    ) : null}
+                    {this.state.isFileUploaded ? (
+                      <div
+                        style={{ marginTop: '5px' }}
+                        className="alert alert-success alert-dismissible fade show"
+                        role="alert"
+                      >
+                        Successfully uploaded the CSV/ XLSX file
+                        <button
+                          type="button"
+                          className="close"
+                          data-dismiss="alert"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                    ) : null}
+                    {this.state.fileUploadError ? (
+                      <div
+                        style={{ marginTop: '5px' }}
+                        className="alert alert-success alert-dismissible api-response-alert fade show"
+                        role="alert"
+                      >
+                        Failed to upload CSV/ XLSX file
+                        <button
+                          type="button"
+                          className="close"
+                          data-dismiss="alert"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>
@@ -251,7 +286,8 @@ class CommanderTeamView extends React.Component {
                           HIGHEST LOAD
                         </div>
                         <p className="mt-4 ">
-                         John Sylvester <span>- {this.state.adminData.organization} </span>
+                          John Sylvester{' '}
+                          <span>- {this.state.adminData.organization} </span>
                         </p>
 
                         <div className="text-center">
@@ -277,10 +313,11 @@ class CommanderTeamView extends React.Component {
                           MOST IMPACTS
                         </div>
                         <p className="mt-4">
-                          John Sylvester <span>- {this.state.adminData.organization} </span>
+                          John Sylvester{' '}
+                          <span>- {this.state.adminData.organization} </span>
                         </p>
                         <div className="impact-count mt-3 mb-3">
-                           {this.state.adminData.impacts}
+                          {this.state.adminData.impacts}
                         </div>
                       </div>
                     </div>
@@ -298,9 +335,12 @@ class CommanderTeamView extends React.Component {
               </div>
             </div>
             <div ref="card2" className="impact-summary-card pt-3 pb-5">
-             <Bar data={impactSummaryBarData} options={{
-                          maintainAspectRatio: false,
-                    }} />
+              <Bar
+                data={impactSummaryBarData}
+                options={{
+                  maintainAspectRatio: false
+                }}
+              />
             </div>
           </div>
         </div>
@@ -312,10 +352,12 @@ class CommanderTeamView extends React.Component {
               </button>
             </div>
             <div ref="card3" className="impact-history-card p-4">
-                  <Bar data={impactHistoryBarData} options={{
-                          maintainAspectRatio: false,
-
-                    }} />
+              <Bar
+                data={impactHistoryBarData}
+                options={{
+                  maintainAspectRatio: false
+                }}
+              />
             </div>
             <CommanderDataTable />
           </div>
@@ -325,13 +367,13 @@ class CommanderTeamView extends React.Component {
   };
 
   render() {
-          if (!this.state.isLoaded){
-        return <Spinner />;
+    if (!this.state.isLoaded) {
+      return <Spinner />;
     }
-    impactHistoryBarData.labels = this.state.impactHistoryData.force ;
-    impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure ;
-    impactSummaryBarData.labels = this.state.impactSummaryData.force ;
-    impactSummaryBarData.datasets[0].data = this.state.impactSummaryData.pressure ;
+    impactHistoryBarData.labels = this.state.impactHistoryData.force;
+    impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure;
+    impactSummaryBarData.labels = this.state.impactSummaryData.force;
+    impactSummaryBarData.datasets[0].data = this.state.impactSummaryData.pressure;
 
     return (
       <React.Fragment>

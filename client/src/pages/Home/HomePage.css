@@ -141,9 +141,16 @@ div.section-one {
 .navbar-padding {
   padding-left: 10% !important;
   padding-right: 10% !important;
-  position: absolute !important;
+  position: fixed !important;
   width: 100% !important;
   z-index: 2 !important;
+  box-shadow: 0 5px 13px 8px rgba(0, 0, 0, 0.12) !important;
+}
+div.contact-img-container {
+  height: 79.6vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .navbar-padding a {
   color: #fff !important;
@@ -229,9 +236,18 @@ div.underlined-text p {
 .image-container__banner {
   display: flex;
 }
+
 .left-bubble-img {
   width: 50%;
+  text-align: left;
   height: 100vh;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+.left-bubble-img img {
+  width: 40%;
+  margin-left: -8%;
 }
 .right-brain-img {
   width: 50%;
@@ -586,6 +602,79 @@ nav {
   color: #707070 !important;
   opacity: 0.7;
 }
+.contact-query p {
+  color: #5c5c5c;
+  font-weight: 900;
+  font-size: 16px;
+}
+.sport-page {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  margin-top: 15vh;
+}
+.Collapsible__trigger{
+  width: 100%;
+  display: inline-block;
+}
+.Collapsible {
+  width: 100%;
+  background: linear-gradient(45deg, #174f86, #2196f3);
+  line-height: 50px;
+  /* border-radius: 10px; */
+  text-align: left;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #fff;
+  position: relative;
+  cursor: pointer;
+  padding-left: 20px;
+}
+.Collapsible::before{
+  content: "\f107";
+  font-family: FontAwesome;
+  position: absolute;
+  right: 2%;
+}
+div.Collapsible-changeIcon::before{
+  content: "\f106";
+}
+.Collapsible__contentInner {
+  background: linear-gradient(45deg, #0d1a25, #285888);
+  color: #fff;
+  font-weight: normal;
+}
+.Collapsible__contentInner p {
+  line-height: 26px;
+  font-weight: normal;
+  font-size: 15px;
+}
+.Collapsible__contentInner{
+  padding:10px;
+}
+.mi-mb {
+  margin-bottom: 30px !important;
+}
+.contact-query p span {
+  color: #258ecd;
+  font-weight: normal;
+}
+div.checkboxes label {
+  width: auto;
+}
+.get-cnt {
+  width: auto !important;
+}
+input.gt-up-email {
+  width: 100% !important;
+}
+.play-title {
+  border-bottom: 1px solid #fff;
+}
+
 .submit-now {
   border-radius: 10px;
   background-color: #0f81dc;
@@ -716,6 +805,10 @@ nav {
 }
 .tech-football::before {
   background: rebeccapurple;
+}
+.img-contact-us {
+  border-radius: 10px;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.15);
 }
 .plus {
   font-size: 100px;
@@ -1219,6 +1312,10 @@ nav {
 
 /* Commander team view end */
 
+.ip-irb-link{
+  cursor: pointer;
+}
+
 /* commander data table */
 .commander-data-table table thead tr th {
   font-family: 'Segoe UI Regular';
@@ -1320,13 +1417,28 @@ nav {
 /* mobile dashboard dropdown */
 .mobile-dashboard-dropdown {
   position: absolute;
-  top: 500px;
-  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2);
+  top: 5%;
+  /* box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2); */
   display: none;
   background: #13568d;
   width: 100%;
   right: 0;
+  animation: showPSUlinks 1s cubic-bezier(0.96, -0.15, 0, 0.98);
 }
+
+@keyframes showPSUlinks {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+i.mobile-back-option {
+  font-size: 30px;
+  color: #fff;
+}
+
 .mobile-dashboard-dropdown ul {
   list-style: none;
   text-align: center;
@@ -1390,7 +1502,7 @@ nav {
   border-right: 10px solid transparent;
   position: absolute;
   border-bottom: 10px solid #083c66;
-  top:-7%;
+  top: -7%;
   left: 50%;
   margin-left: -10px;
 }
@@ -1404,6 +1516,21 @@ i.close-mobile_nave {
   position: absolute;
   top: 0;
   left: 0;
+}
+.back-li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.goto-back {
+  display: inline-block;
+  text-align: center;
+  width: 50px;
+  height: 20px;
+  border-radius: 5px;
+  background: #078ae2;
+  margin-left: 10px;
+  color: #fff;
 }
 
 /* end of profile icon nav */
@@ -1465,10 +1592,22 @@ div.my-progress-bar {
 .user-profile-dropdown__mobile {
   position: absolute;
   background: #13568d;
-  top: 180px;
-  box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2);
+  top: 5%;
+  /* box-shadow: 1px 15px 8px 3px rgba(0, 0, 0, 0.2); */
   display: none;
+  animation: showProfileSection 1s cubic-bezier(1, 0.31, 0, 1.55);
 }
+
+@keyframes showProfileSection {
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
 .user-profile-dropdown__mobile ul {
   text-align: center;
   list-style: none;
@@ -1479,6 +1618,36 @@ div.my-progress-bar {
 /* .mobile-profile-container:hover .user-profile-dropdown__mobile {
   display: block;
 } */
+
+.hide-list-left {
+  position: relative;
+  right: 0;
+}
+
+div.show-mobile-links {
+  right: 0;
+  animation: showMobileLink 1s cubic-bezier(0.96, -0.15, 0, 0.98);
+}
+@keyframes showMobileLink {
+  from {
+    right: -100%;
+  }
+  to {
+    right: 0%;
+  }
+}
+.hide-list-onlink-click {
+  animation: hideMobileLink 1s cubic-bezier(0.96, -0.15, 0, 0.98);
+  right: -100%;
+}
+@keyframes hideMobileLink {
+  from {
+    right: 0;
+  }
+  to {
+    right: -100%;
+  }
+}
 /* end of mobile user profile */
 
 /* ======making responsive to navbar========= */
@@ -1520,6 +1689,10 @@ div.my-progress-bar {
       width: 150px;
     }
   }
+}
+
+.mobile-compo {
+  transform: translate(0, -100%);
 }
 
 @media (max-width: 575px) {
@@ -1635,9 +1808,106 @@ div.my-progress-bar {
   .section-four {
     height: 100vh;
     overflow-y: scroll;
+    overflow-x: hidden;
+    padding-top: 70px;
   }
   .header-navbar {
     top: 15%;
+  }
+}
+.mobile-scroll-1 {
+  transform: translateY(-100vh);
+  animation: scrolling1 1s ease-in-out;
+}
+
+@keyframes scrolling1 {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100vh);
+  }
+}
+
+.mobile-scroll-2 {
+  transform: translateY(-200vh);
+  animation: scrolling2 1s ease-in-out;
+}
+
+@keyframes scrolling2 {
+  from {
+    transform: translateY(-100vh);
+  }
+  to {
+    transform: translateY(-200vh);
+  }
+}
+
+.mobile-scroll-3 {
+  transform: translateY(-300vh);
+  animation: scrolling3 1s ease-in-out;
+}
+
+@keyframes scrolling3 {
+  from {
+    transform: translateY(-200vh);
+  }
+  to {
+    transform: translateY(-300vh);
+  }
+}
+
+.mobile-scroll-back-2 {
+  transform: translateY(-200vh);
+  animation: scrollingBack2 1s ease-in-out;
+}
+
+@keyframes scrollingBack2 {
+  from {
+    transform: translateY(-300vh);
+  }
+  to {
+    transform: translateY(-200vh);
+  }
+}
+.mobile-scroll-back-1 {
+  transform: translateY(-100vh);
+  animation: scrollingBack1 1s ease-in-out;
+}
+
+@keyframes scrollingBack1 {
+  from {
+    transform: translateY(-200vh);
+  }
+  to {
+    transform: translateY(-100vh);
+  }
+}
+.mobile-scroll-back-0 {
+  transform: translateY(0);
+  animation: scrollingBack0 1s ease-in-out;
+}
+.shift-technology-ms {
+  margin-top: -40vh;
+  animation: smothms 0.2s ease-in;
+}
+@keyframes smothms {
+  0% {
+    margin-top: 0;
+  }
+  50% {
+    margin-top: -10vh;
+  }
+  100% {
+    margin-top: -40vh;
+  }
+}
+@keyframes scrollingBack0 {
+  from {
+    transform: translateY(-100vh);
+  }
+  to {
+    transform: translateY(0);
   }
 }
 
@@ -1702,7 +1972,7 @@ div.my-progress-bar {
   }
 }
 .contact__page {
-  bottom: -29.4vh !important;
+  bottom: -27.8vh !important;
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
@@ -1729,8 +1999,20 @@ div.my-progress-bar {
   /* .section-one > img:nth-child(1){
     width: 1850px;
   } */
+  /* img.img-contact-us{
+    height: 650px!important;
+  } */
+  .contact__page {
+    bottom: -34% !important;
+  }
+  div.contact-img-container {
+    height: 64.6vh;
+  }
 }
 @media screen and (min-width: 2560px) and (max-width: 3000px) {
+  div.sport__page{
+    bottom: -41.6vh;
+  }
   .login-height {
     height: 85.1vh;
   }
@@ -1738,9 +2020,15 @@ div.my-progress-bar {
     /* top: 80%; */
     right: 7%;
   }
+  .contact__page {
+    bottom: -13% !important;
+  }
+  /* img.img-contact-us{
+    height: 1150px!important;
+  } */
 }
 
-@media (min-width: 1500px) and (max-width: 2560px) {
+@media (min-width: 1500px) and (max-width: 2559px) {
   .shift-technology-section {
     margin-top: -15%;
   }
@@ -1769,6 +2057,12 @@ div.my-progress-bar {
     width: 45% !important;
     margin-top: 20vh !important;
   }
+  /* img.img-contact-us{
+    height: 800px!important;
+  } */
+  .contact__page {
+    bottom: -18.8vh !important;
+  }
 }
 
 .research-card {
@@ -1786,7 +2080,10 @@ div.my-progress-bar {
 }
 
 @media screen and (min-width: 3240px) {
-  .sign-out{
+  div.footer.sport__page{
+    bottom: -56vh;
+  }
+  .sign-out {
     right: 7.5%;
   }
   div.login-height {

@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginComponent from './LoginComponent';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { formDataToJson } from '../../utilities/utility';
 import { signUp } from '../../apis';
 import '../../mixed_style.css';
@@ -9,7 +9,6 @@ import CountryCode from '../../config/CountryCode.json';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
-import { withRouter } from 'react-router-dom';
 
 class SignUpComponent extends React.Component {
   constructor() {
@@ -162,37 +161,6 @@ class SignUpComponent extends React.Component {
         {(this.props.location.pathname === '/SignUpElse')? this.forJsx('img/icon/user.svg', 'Organization', 'organization'): null}
         {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
 
-        {/* <div className="input-group mb-5">
-          <div className="input-group-prepend">
-            <span className="input-group-text" id="basic-addon1">
-              <img src="img/icon/user.svg" alt="" />
-            </span>
-          </div>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="First name"
-            name="first_name"
-            aria-label="first_name"
-            aria-describedby="basic-addon1"
-          />
-        </div>
-        <div className="input-group mb-5">
-          <div className="input-group-prepend">
-            <span className="input-group-text" id="basic-addon1">
-              <img src="img/icon/user.svg" alt="" />
-            </span>
-          </div>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Last name"
-            name="last_name"
-            aria-label="last_name"
-            aria-describedby="basic-addon1"
-          />
-        </div> */}
-
         <div className="input-group mb-5">
           <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon1">
@@ -259,7 +227,6 @@ class SignUpComponent extends React.Component {
           />
         </div>
         <div className="form-row">
-          {/*<div className="col-7">*/}
           <div className="input-group mb-5">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
@@ -275,43 +242,8 @@ class SignUpComponent extends React.Component {
               aria-describedby="basic-addon1"
             />
           </div>
-          {/*</div>*/}
-          {/*<div className="col-5">
-                    <button type="button" className="btn float-right sign-up-btn verification-btn-bg btn-primary">Send verification code</button>
-
-                  </div>
-                  */}
         </div>
 
-        {/*
-                <div className="form-row">
-                  <div className="col-7">
-                    <div className="input-group mb-5">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text" id="basic-addon1">
-                          <img src="img/icon/lock.svg" alt="" />
-                        </span>
-                      </div>
-                      <input type="text" className="form-control" placeholder="Verification code" aria-label="Username" aria-describedby="basic-addon1" />
-
-                    </div>
-                  </div>
-                  <div className="col-5 pl-3">
-                    <button
-                      type="button"
-                      className="btn float-right send-again-btn sign-up-btn btn-primary"
-                    >
-                      Send again
-                    </button>
-                    <button
-                      type="button"
-                      className="btn float-right  sign-up-btn mr-2 btn-primary"
-                    >
-                      Verify
-                    </button>
-                  </div>
-                </div>
-                */}
         <div className="form-row">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
@@ -333,25 +265,6 @@ class SignUpComponent extends React.Component {
             </select>
           </div>
         </div>
-        {/*
-                <div className="form-row">
-                  <div className="col pl-0">
-                    <input
-                      id="checkbox-1"
-                      className="checkbox-custom"
-                      name="checkbox-3"
-                      type="checkbox"
-                    />
-                    <label
-                      htmlFor="checkbox-1"
-                      className="checkbox-custom-label"
-                    >
-                      I agree to the{' '}
-                      <a className="sign-up">Terms and conditions</a>{' '}
-                    </label>
-                  </div>
-                </div>
-                */}
 
         <button
           type="submit"

@@ -1,6 +1,7 @@
 import React from 'react';
 import WebFont from 'webfontloader';
 import { InView } from 'react-intersection-observer';
+import screenWidth from '../../../utilities/ScreenWidth'
 
 WebFont.load({
   google: {
@@ -9,7 +10,7 @@ WebFont.load({
 });
 class Banner extends React.Component {
   removeAnimationMobileView(animation) {
-    if (this.props.screenWidth > 425) return animation;
+    if (this.props.screenWidth > screenWidth[0].screen425) return animation;
     else {
       return '';
     }
@@ -17,12 +18,14 @@ class Banner extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <div className="section-one-container">
           <div className="container-fluid pl-0 pr-0">
             <div className="section-one">
               <div className="image-container__banner">
-                <div className="left-bubble-img"></div>
+                <div className="left-bubble-img">
+                  <img className="svg img-fluid" src="/img/icon/bubble.png" alt=""/>
+                </div>
                 <div className="right-brain-img">
                     <img className="svg img-fluid" src="/img/BannerImg/b2.png" alt=""/>
                 </div>
@@ -38,9 +41,7 @@ class Banner extends React.Component {
                         <div
                           ref={ref}
                           style={{ overflow: 'hidden' }}
-                          className={`col-md-10 col-lg-10 header-heading ${
-                            this.props.screenWidth < 725 ? '' : ''
-                          }`}
+                          className={`col-md-10 col-lg-10 header-heading`}
                         >
                           <h1
                             className={`animated ${
@@ -154,7 +155,7 @@ class Banner extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
