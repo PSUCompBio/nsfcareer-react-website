@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginComponent from './LoginComponent';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, Redirect } from 'react-router-dom';
 import { formDataToJson } from '../../utilities/utility';
 import { signUp } from '../../apis';
 import '../../mixed_style.css';
@@ -276,12 +276,27 @@ class SignUpComponent extends React.Component {
     );
   };
   render() {
+    if(this.state.isSignUpConfirmed){
+        return <Redirect to="/IRB" />
+    }
     if (this.state.toLogIn) {
       return <LoginComponent></LoginComponent>;
     }
     return (
       <div className="container-fluid pl-0 pr-0 overflow-hidden">
-        <div className="row singup">
+        <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
+            <div className="col-md-6 col-lg-6 offset-md-3 mb-5">
+              <div className="text-center">
+                <p style={{  fontSize: "20px",
+                  fontWeight: "900"}} className="top-heading__login animated fadeInUp">
+                 Thanks for your interest.
+                 In order to obtain an account, you must agree our terms,
+                 policies and complete the Penn State University Institutional
+                 Review Board (IRB) consent form.
+                 This will be explained during the signup process.
+                </p>
+              </div>
+            </div>
           <div className="col-md-6 col-lg-6 offset-md-3">
             <div className="card card-border">
               <div className="card-body">

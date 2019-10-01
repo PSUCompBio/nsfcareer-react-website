@@ -2222,6 +2222,11 @@ div.show-mobile-links {
   -moz-transition: all 0.3s ease;
   transition: all 0.3s ease;
 }
+.sigCanvas{
+
+border: 2px solid #0a538c;
+}
+
 
 @media screen and (max-height: 26.375em) {
   .cbp-spmenu-vertical {
