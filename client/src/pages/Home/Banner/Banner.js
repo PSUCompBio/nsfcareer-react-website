@@ -27,8 +27,8 @@ class Banner extends React.Component {
               <img className="svg img-fluid" src="/img/BannerImg/b2.png" alt=""/>
                 </div>
               </div>
-              <div className="downpointer">
-              <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              <div className="downpointer" >
+              <i style={{color : "white"}} class="fa fa-angle-down fa-2x" aria-hidden="true"></i>
               </div>
               <div className="header-navbar">
                 <div className="container-fluid heading-container">
