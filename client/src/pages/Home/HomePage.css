@@ -260,13 +260,13 @@ div.underlined-text p {
 .downpointer {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
-  background: #083c66;
+  /* border-radius: 50%; */
+  color : #FFFF;
   position: absolute;
   bottom: 10%;
   left: 50%;
   margin-left: -25px;
-  box-shadow: 0 0 15px -2px rgba(0, 0, 0, 0.4);
+  /* box-shadow: 0 0 15px -2px rgba(0, 0, 0, 0.4); */
   text-align: center;
   display: flex;
   align-items: center;
@@ -282,7 +282,7 @@ div.underlined-text p {
   }
 }
 .downpointer i {
-  font-size: 30px;
+  font-size: 40px;
   color: #078ae2;
 }
 div.brain-over-blue img {
@@ -330,9 +330,9 @@ div.line_container div {
   font-family: Myriad Pro Regular;
 }
 .section-two p {
-  color: #929292;
+  color: #848484;
   font-size: 20px;
-  font-weight: 300;
+  font-weight: 400;
 }
 .dashed-border {
   margin-top: 10%;

@@ -7,8 +7,8 @@ import { compose } from 'redux';
 import LineUnderLink from '../../utilities/LineUnderLink.js';
 
 class Nav extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       isOpen: false,
       signOutClass: 'sign-out-hide',
@@ -19,7 +19,8 @@ class Nav extends React.Component {
       countMouseEnter: 0,
       userProfileIconLinksIsOpen: false,
       logoutBox: { display: 'none' },
-      psuLinks: { display: 'none' }
+      psuLinks: { display: 'none' },
+      userType : props.userType
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -348,7 +349,7 @@ class Nav extends React.Component {
           </div>
         ) : (
           ''
-        )}
+          )}
 
         <nav
           className="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right"

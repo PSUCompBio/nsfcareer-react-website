@@ -23,7 +23,8 @@ class SignUpComponent extends React.Component {
       selectedCountryCode: '+1',
       slectedCountryName: 'USA',
       startDate: '',
-      signupOrElse: { email: '', sex: '' }
+      signupOrElse: { email: '', sex: '' },
+      userType : "StandardUser"
     };
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -46,7 +47,8 @@ class SignUpComponent extends React.Component {
         signupOrElse: {
           email: 'Contact email for this individual',
           sex: "Select the individual's sex"
-        }
+      },
+      userType : "Admin"
       });
     }
   }
@@ -127,11 +129,37 @@ class SignUpComponent extends React.Component {
     );
   };
 
+  forJsxRole = (imgSrc) => {
+    return (
+      <div className="input-group mb-5">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            <img src={imgSrc} alt="" />
+          </span>
+        </div>
+        <select
+          type="text"
+          name="role"
+          className="custom-select select-gender"
+          aria-label="role"
+
+        >
+          <option defaultValue>Select your Role</option>
+          <option value="administrator"> Administrator</option>
+          <option value="coach"> Coach</option>
+          <option value="militiary_unit_leader"> Militiary Unit Leader</option>
+        </select>
+      </div>
+    );
+  };
+
   getForm = () => {
     return (
       <form className="mt-5" onSubmit={this.handleSubmit} ref="signUpForm">
         {this.forJsx('img/icon/user.svg', 'First name', 'first_name')}
         {this.forJsx('img/icon/user.svg', 'Last name', 'last_name')}
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsx('img/icon/user.svg', 'Organization', 'organization'): null}
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
 
         <div className="input-group mb-5">
           <div className="input-group-prepend">
@@ -159,7 +187,7 @@ class SignUpComponent extends React.Component {
             >
               <select
                 className="custom-select country-code"
-                value={this.state.selectedCountryCode}
+                defaultValue={this.state.selectedCountryCode}
                 onChange={this.handeChange}
                 name="country_code"
                 id=""
@@ -223,7 +251,7 @@ class SignUpComponent extends React.Component {
                 <img src="img/icon/gender.svg" alt="" />
               </span>
             </div>
-            <input type="hidden" name="user_type" value="StandardUser" />
+            <input type="hidden" name="user_type" defaultValue={this.state.userType} />
             <select
               type="text"
               name="gender"

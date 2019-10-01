@@ -373,7 +373,7 @@ function getUploadedInpFileList(user_name, cb) {
             //   console.log(err);
             cb(err, "");
         }
-        console.log(data);
+
         cb("", data.Contents);
     });
 
@@ -576,7 +576,7 @@ function adminCreateUser(User, cb) {
 
 
 function addUserToGroup(event, callback) {
-    console.log("********\n", event, "\n**********");
+
 
     var params = {
         UserPoolId: cognito.userPoolId,
@@ -596,7 +596,7 @@ function addUserToGroup(event, callback) {
 }
 function parseDate(date, arg, timezone) {
 	// var result = 0, arr = arg.split(':')
-	console.log(arg);
+
     arg = arg.replace(".",":");
     var t = arg.split(":");
     var milliseconds ;
@@ -829,7 +829,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_image_uploaded"] = false;
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
-    req.body.phone_number = req.body.country_code + req.body.phone_number ;
+    req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
+    req.body.country_code = req.body.country_code.split(" ")[0] ;
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
     adminCreateUser(req.body, function (err, data) {
         if (err) {
@@ -841,7 +842,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             });
         }
         else {
-            console.log(data);
+
             var UserData = data.User;
             //Now check type of User and give permission accordingly
             // res.send(data);
@@ -1807,7 +1808,7 @@ app.post(`${apiPrefix}getCumulativeEventLoadData`, (req,res) =>{
 app.post(`${apiPrefix}getHeadAccelerationEvents`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getHeadAccelerationEvents", json: req.body }, function (err, httpResponse, body) {
         if (err) {
-
+            console.log(err);
             res.send({ message: 'failure', error: err });
         }
         else {
@@ -1886,8 +1887,8 @@ app.post(`${apiPrefix}getAllRosters`, (req,res) =>{
     })
 })
 
-app.post(`${apiPrefix}addTeam`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "addTeam", json: req.body }, function (err, httpResponse, body) {
+app.post(`${apiPrefix}fetchAllTeamsInOrganization`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "fetchAllTeamsInOrganization", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
             res.send({ message: 'failure', error: err });
@@ -1898,7 +1899,22 @@ app.post(`${apiPrefix}addTeam`, (req,res) =>{
     })
 })
 
+app.post(`${apiPrefix}addTeam`, (req,res) =>{
+    console.log(req.body);
+    request.post({ url: config.ComputeInstanceEndpoint + "addTeam", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            console.log(err);
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+
 app.post(`${apiPrefix}deleteTeam`, (req,res) =>{
+    console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "deleteTeam", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 

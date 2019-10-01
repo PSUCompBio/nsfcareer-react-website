@@ -87,20 +87,19 @@ class CommanderTeamView extends React.Component {
     console.log(data);
     uploadSensorDataAndCompute(data)
       .then((response) => {
-        if (response.data.message === 'success') {
-          this.setState({ isUploading: false, isFileUploaded: true });
-        } else {
-          this.setState({
-            isUploading: false,
-            fileUploadError: response.data.error
-          });
-        }
-        console.log(response);
+          if(response.data.message === "success"){
+              this.setState({ isUploading: false, isFileUploaded: true });
+          }
+          else{
+              this.setState({ isUploading: false, fileUploadError : response.data.error });
+
+          }
+          console.log(response);
       })
-      .catch((err) => {
-        this.setState({ isUploading: false, fileUploadError: err });
-        console.log(err);
-      });
+      .catch(err => {
+          this.setState({ isUploading: false, fileUploadError : err });
+          console.log(err);
+      })
   };
 
   toggleTab = (value) => {

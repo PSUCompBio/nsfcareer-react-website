@@ -51,7 +51,7 @@ class Login extends React.Component {
     e.preventDefault();
     e.persist();
     //temporary setting authentication to change nav bar tabs
-    this.props.isAuthenticated(true);
+
     console.log('LOGIN API CALLED');
     const formData = new FormData(e.target);
     this.setState({
@@ -70,6 +70,7 @@ class Login extends React.Component {
               isLoading: false,
               isSignInSuccessed: true
             });
+            this.props.isAuthenticated(true);
           } else {
             // show error
             this.setState({
@@ -98,9 +99,9 @@ class Login extends React.Component {
                 isLoading: false,
                 isSignInSuccessed: true
               });
+              store.dispatch(setIsSignedInSucceeded());
+              store.dispatch(userDetails(response.data.user_type));
             }
-            store.dispatch(setIsSignedInSucceeded());
-            store.dispatch(userDetails(response.data.user_type));
           } else {
             this.setState({
               isLoginError: true,
@@ -190,7 +191,7 @@ class Login extends React.Component {
                       </div>
 
                       {this.state.tempPasswordRequired ? (
-                        <div className="input-group mb-1">
+                        <div style={{marginTop : "2rem"}} className="input-group mb-1">
                           <div className="input-group-prepend">
                             <span
                               className="input-group-text"
