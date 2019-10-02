@@ -336,7 +336,9 @@ class Nav extends React.Component {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon" />
+          <span className="navbar-toggler-icon" >
+          <i class="fa fa-bars" style={{color:"#fff" ,fontSize:"28px" }} ></i>
+      </span>
         </button>
 
         {this.props.screenWidth >= 768 ? (

@@ -238,10 +238,10 @@ class TechnologiesWeUse extends React.Component {
                 </div>
                 <hr />
               </div>
-              <div className="row">
-                <div className="col-sm-9 col-md-6 ">
+              <div className="row text-center">
+                <div className="col-sm-12 col-md-12 ">
                   <p>
-                    Contact Us: info@NSFCAREER.IO <br />
+                    <i class="fa fa-envelope" aria-hidden="true"></i> info@NSFCAREER.IO <br />
                     <span className="ip-irb-link" onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
                     Policy &amp;{' '}
                     <span className="ip-irb-link" onClick={() => this.props.history.push('/IRB')}> IRB </span> |

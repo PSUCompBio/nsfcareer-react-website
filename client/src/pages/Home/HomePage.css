@@ -107,6 +107,12 @@
     url('/font/MYRIADPRO-BOLDCONDIT.woff') format('woff');
 }
 
+
+
+html {
+    overflow-y: scroll;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -1510,12 +1516,12 @@ i.mobile-back-option {
   display: none;
 }
 i.close-mobile_nave {
-  font-size: 30px !important;
+  font-size: 50px !important;
   position: absolute;
   color: #fff;
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
 }
 .back-li {
   display: flex;
