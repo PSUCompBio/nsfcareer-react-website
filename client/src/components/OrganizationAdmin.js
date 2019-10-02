@@ -427,10 +427,11 @@ class OrganizationAdmin extends React.Component {
           ref={reference[0]}
           onMouseEnter={this.hideElementForEdit}
           onMouseLeave={this.showElements}
-          onClick={() => {
-            this.state.editTeamClass === 'edit-teams'
-              ? null
-              : this.props.history.push('/TeamAdmin');
+          onClick={(e) => {
+              if(this.state.editTeamClass !== 'edit-teams'){
+                this.props.history.push('/TeamAdmin')
+              }
+
           }}
           className={`tech-football m-3`}
         >
