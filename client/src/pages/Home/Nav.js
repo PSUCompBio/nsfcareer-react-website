@@ -326,7 +326,7 @@ class Nav extends React.Component {
         } ${this.props.screenWidth <= 768 ? 'navbar-bg-change' : ''}`}
       >
         <Link className="navbar-brand" to={'/Home'}>
-          <img src="img/icon/logo.png" alt="" />
+          <img className="logo-mobile" src="img/icon/logo.png" alt="" />
         </Link>
         <button
           onClick={this.handleClick}

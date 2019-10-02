@@ -1660,7 +1660,7 @@ div.show-mobile-links {
 
 @media (max-width: 320px) {
   .image-padding img {
-    width: 40%;
+    width: 60%;
     margin-bottom: 5px;
   }
   .section-one img:nth-child(1) {
@@ -1671,7 +1671,7 @@ div.show-mobile-links {
   }
 
   .image-padding img:nth-child(1) {
-    width: 40px !important;
+    width: 40% !important;
   }
   .footer {
     height: 36vh !important;
@@ -1702,6 +1702,25 @@ div.show-mobile-links {
 }
 
 @media (max-width: 575px) {
+  .logo-mobile {
+      width: 90% !important;
+  }
+  .row-margin{
+      margin-top: 1rem !important;
+  }
+  .mobile-head-title{
+      text-align: center;
+      font-size: 2.5rem !important;
+  }
+  .mobile-head-section{
+      font-size: 1.2rem !important;
+  }
+  .mobile-head-sub-section{
+      font-size: 1rem !important;
+  }
+  .mobile-head-sub-section-image{
+      width: 6em !important;
+  }
   .section-one > img:nth-child(1) {
     width: 530px !important;
   }
@@ -1736,12 +1755,12 @@ div.show-mobile-links {
     margin-top: 2px;
   }
   .image-padding img {
-    width: 40%;
+    width: 60%;
     margin-bottom: 5px;
   }
 
   .image-padding img:nth-child(1) {
-    width: 56px;
+    width: 40%;
   }
   .section-one > img {
     height: 100vh;
