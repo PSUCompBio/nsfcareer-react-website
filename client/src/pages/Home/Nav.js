@@ -410,7 +410,7 @@ class Nav extends React.Component {
             <div className={LineUnderLink.linkeMaker('/Contact')} />
             {this.props.location.pathname !== '/SignUp' ? (
               <React.Fragment>
-                <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
+                <Link onClick={this.handleClick} className="nav-link mobie-dashboard-hover" to={'/Login'}>
                   Dashboard <span className="sr-only">(current)</span>
                 </Link>
                 <div className={LineUnderLink.linkeMaker('/Login')} />

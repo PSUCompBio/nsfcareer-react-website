@@ -147,7 +147,7 @@ class TechnologiesWeUse extends React.Component {
                       ref={ref}
                       className={`col-md-4 animated   pt-5 ${
                         this.props.screenWidth < screenWidth[3].screen768
-                          ? 'order-first'
+                          ? ''
                           : ''
                       } ${
                         inView ? this.removeAnimationMobileView('zoomIn') : ''
@@ -167,7 +167,7 @@ class TechnologiesWeUse extends React.Component {
                       ref={ref}
                       className={`col-md-4 animated  ${
                         this.props.screenWidth <= screenWidth[3].screen768
-                          ? 'text-center'
+                          ? 'text-center order-first'
                           : 'text-right'
                       } ${
                         inView
