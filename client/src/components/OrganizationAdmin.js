@@ -238,10 +238,16 @@ class OrganizationAdmin extends React.Component {
   handleTeamEditSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
-    const formData = formDataToJson(data);
+    let formData = formDataToJson(data);
     this.setState({
         apiLoader : true
     });
+    formData = JSON.parse(formData);
+    formData["athletes"] = "0";
+    formData["impacts"] = "0";
+    formData["alerts"] = "0";
+
+    formData = JSON.stringify(formData);
 
     addTeam(formData)
     .then(response => {
@@ -328,24 +334,6 @@ class OrganizationAdmin extends React.Component {
               'Enter your team name',
               'team_name',
               'teamName'
-            )}
-            {this.teamForm(
-              'Athletes:',
-              'Enter number of athletes',
-              'athletes',
-              'athletesFor'
-            )}
-            {this.teamForm(
-              'Impacts:',
-              'Enter number of impacts',
-              'impacts',
-              'impactsFor'
-            )}
-            {this.teamForm(
-              'Alerts:',
-              'Enter number of alerts',
-              'alerts',
-              'alertsFor'
             )}
             {this.teamFormHidden(
                 'Organization:',

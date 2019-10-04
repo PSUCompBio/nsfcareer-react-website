@@ -9,6 +9,7 @@ import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile';
 import Dashboard from '../../components/Dashboard/Dashboard';
+import UserDashboarForAdmin from '../../components/Dashboard/UserDashboarForAdmin';
 import ForgotPassword from '../../components/ForgotPassword';
 import About from '../About/AboutPage';
 import Contact from '../Contact/ContactPage';
@@ -151,6 +152,11 @@ class Routing extends React.Component {
           exact
           path="/dashboard"
           render={() => <Dashboard isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
+          path="/TeamAdmin/user/dashboard"
+          render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />

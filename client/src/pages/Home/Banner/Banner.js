@@ -41,7 +41,7 @@ class Banner extends React.Component {
                         <div
                           ref={ref}
                           style={{ overflow: 'hidden', paddingRight : "10%" }}
-                          className={`col-md-10 col-lg-10 header-heading`}
+                          className={`centrify-mobile col-md-10 col-lg-10 header-heading`}
                         >
                           <h1
                             className={`mobile-head-title animated ${

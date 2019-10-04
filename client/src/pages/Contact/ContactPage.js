@@ -26,7 +26,7 @@ class ContactPage extends React.Component {
           <div className="row pt-surface  animated zoomIn text-center">
             <div  className="col-md-7 order-12 pr-0 contact-img-container">
               {/* <GoogleMap /> */}
-              <img className="img-fluid img-contact-us w-50" src="/img/contactus.png" alt=""/>
+              <img style={{width : "100% !important"}}className="img-fluid img-contact-us" src="/img/contactus.png" alt=""/>
             </div>
             <div className="col-md-5 order-1 my-auto contact-query">
               <h2 ref="h1">Have Questions? Need Help?</h2>

@@ -108,10 +108,10 @@
 }
 
 
-
+/*
 html {
     overflow-y: scroll;
-}
+} */
 
 * {
   margin: 0;
@@ -201,7 +201,7 @@ div.contact-img-container {
 .header-heading h1 {
   font-weight: 900;
   color: #fff;
-  font-size: 40px;
+  font-size: 4rem;
 }
 .header-heading h4 {
   font-weight: 900;
@@ -326,6 +326,10 @@ div.line_container div {
     margin-left: 0;
     width: 310px;
   }
+}
+
+h4.mobile-head-section.animated{
+    font-size: 2rem;
 }
 
 .section-three h5 {
@@ -1716,6 +1720,7 @@ div.show-mobile-links {
       font-size: 1.2rem !important;
   }
   .mobile-head-sub-section{
+      margin-top: 3rem !important;
       font-size: 1rem !important;
   }
   .mobile-head-sub-section-image{
@@ -2148,11 +2153,15 @@ div.show-mobile-links {
   }
 
   .heading-container {
-    margin-top: 15%;
+    margin-top: 10%;
   }
 
   .research-area-bg {
     height: 100vh;
+  }
+  .centrify-mobile {
+      margin : "0";
+      padding : "0";
   }
 }
 

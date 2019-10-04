@@ -37,7 +37,7 @@ function AboutTheProduct(props) {
       <div onWheel={(e)=>detectScroll(e)} className="section-two">
         <div className="row">
           <div className="col-md-12 col-lg-12 text-center">
-            <InView>
+            <InView rootMargin="2%">
               {({ inView, ref }) => (
                 <div className="mb-3" ref={ref}>
                   <h1

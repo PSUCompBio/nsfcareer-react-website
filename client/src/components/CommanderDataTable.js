@@ -1,17 +1,30 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom'
 import RostarBtn from './Buttons/RostarBtn';
 import { getStatusOfDarkmode } from '../reducer';
 import { getPlayersData } from '../apis';
 
 class CommanderDataTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       tabActive: 0,
       targetBtn: '',
-      users : []
+      users : [],
+      redirectData : {},
+      cognito_user_id : '',
+      player_name : ''
     };
-    console.log(this.props);
+    console.log(this.props," And state is ", this.state);
+
+  }
+
+  setRedirectData = (id, p_name) => {
+      this.setState({
+          cognito_user_id : id,
+          player_name : p_name
+      })
+
   }
 
   toggleTab = (value) => {
@@ -44,7 +57,15 @@ class CommanderDataTable extends React.Component {
   }
 
   render() {
-
+      if(this.state.cognito_user_id){
+          return <Redirect push to={{
+            pathname: '/TeamAdmin/user/dashboard',
+            state: {
+                cognito_user_id : this.state.cognito_user_id,
+                player_name : this.state.player_name
+            }
+        }} />
+      }
     return (
       <React.Fragment>
         {/* <div className="row"> */}
@@ -94,7 +115,7 @@ class CommanderDataTable extends React.Component {
                   {this.state.users.map(function(player, index){
                     return <tr key={index}>
                       <td>
-                        <input
+                        {/*<input
                           id="checkbox-1"
                           className="checkbox-custom"
                           name="checkbox-3"
@@ -104,6 +125,11 @@ class CommanderDataTable extends React.Component {
                           htmlFor="checkbox-1"
                           className="checkbox-custom-label"
                         ></label>
+                        */}
+                        <i class="fa fa-eye" aria-hidden="true" onClick={()=>{
+
+                                this.setRedirectData(Number(index + 1).toString(), player.player_name)
+                            }}></i>
                       </td>
                       <th scope="row">{index + 1}</th>
                       <td>{player.player_name}</td>
@@ -125,7 +151,7 @@ class CommanderDataTable extends React.Component {
                         </div>
                       </td>
                     </tr>;
-                  })}
+                },this)}
 
               </tbody>
             </table>
