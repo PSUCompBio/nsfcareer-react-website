@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import GLB from './SoldierMesh.glb';
+import ArrowGLB from './ArrowMesh.glb';
 import './Model.css';
 import { getStatusOfDarkmode } from '../../reducer';
 
@@ -605,7 +606,7 @@ class ModelPage extends React.Component {
 			dataPoints1: pointArray[0],
 			dataPoints2: pointArray[1],
 			dataPoints3: pointArray[2],
-			dataPoints4: pointArrayClone[0],
+			dataPoints4: pointArrayClone[0]
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
@@ -845,7 +846,7 @@ class ModelPage extends React.Component {
 		// Load a glTF resource
 		loader.load(
 			// resource URL
-			GLB,
+			ArrowGLB,
 			// called when the resource is loaded
 			function ( gltf ) {
 				scene.add( gltf.scene );
@@ -876,43 +877,6 @@ class ModelPage extends React.Component {
 				console.log( error );
 			}
 		);
-		
-		// Load a glTF resource
-		/* loader.load(
-			// resource URL
-			GLB,
-			// called when the resource is loaded
-			function ( gltf ) {
-				
-				gltf.scene.position.x = 1;
-				scene.add( gltf.scene );
-				
-				me.setState({
-					isLoadingClone: false
-				});
-
-				//gltf.animations; // Array<THREE.AnimationClip>
-				//gltf.scene; // THREE.Scene
-				//gltf.scenes; // Array<THREE.Scene>
-				//gltf.cameras; // Array<THREE.Camera>
-				//gltf.asset; // Object
-
-			},
-			// called while loading is progressing
-			function ( xhr ) {
-				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-			},
-			// called when loading has errors
-			function ( error ) {
-				
-				me.setState({
-					isLoading: false
-				});
-				
-				alert( 'An error happened' );
-				console.log( error );
-			}
-		); */
 	};
 
 	startAnimationLoopClone = () => {
@@ -943,13 +907,13 @@ class ModelPage extends React.Component {
 		
 	render() {
 		
-		const options = {
+		const graph1Options = {
 			title: "",
 			hAxis: { title: "Time (ms)", titleTextStyle: {
-				color: '#FF0000'
+				color: '#000000'
 			}},
 			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
-				color: '#FF0000'
+				color: '#000000'
 			}},
 			backgroundColor: { fill:'transparent' },
 			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
@@ -959,16 +923,57 @@ class ModelPage extends React.Component {
 			    startup: true,
 			    easing: 'linear',
 			    duration: 500,
-			}
+			},
+			colors: ['#1fc1f7']
 		};
 		
+		const graph2Options = {
+			title: "",
+			hAxis: { title: "Time (ms)", titleTextStyle: {
+				color: '#000000'
+			}},
+			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
+				color: '#000000'
+			}},
+			backgroundColor: { fill:'transparent' },
+			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
+			legend: "none",
+			pointSize: 2,
+			animation: {
+			    startup: true,
+			    easing: 'linear',
+			    duration: 500,
+			},
+			colors: ['#51fd21']
+		};
+		
+		const graph3Options = {
+			title: "",
+			hAxis: { title: "Time (ms)", titleTextStyle: {
+				color: '#000000'
+			}},
+			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
+				color: '#000000'
+			}},
+			backgroundColor: { fill:'transparent' },
+			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
+			legend: "none",
+			pointSize: 2,
+			animation: {
+			    startup: true,
+			    easing: 'linear',
+			    duration: 500,
+			},
+			colors: ['#f01e1e']
+		};
+				
 		const cloneOptions = {
 			title: "",
 			hAxis: { title: "Time (ms)", titleTextStyle: {
-				color: '#FF0000'
+				color: '#000000'
 			}},
 			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
-				color: '#FF0000'
+				color: '#000000'
 			}},
 			backgroundColor: { fill:'transparent' },
 			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
@@ -1013,7 +1018,7 @@ class ModelPage extends React.Component {
 								<Chart
 									chartType="LineChart"
 									data={this.state.dataPoints1}
-									options={options}
+									options={graph1Options}
 									rootProps={{ 'data-testid': '1' }}
 								/>
 							</div>
@@ -1021,7 +1026,7 @@ class ModelPage extends React.Component {
 								<Chart
 									chartType="LineChart"
 									data={this.state.dataPoints2}
-									options={options}
+									options={graph2Options}
 									rootProps={{ 'data-testid': '2' }}
 								/>
 
@@ -1030,7 +1035,7 @@ class ModelPage extends React.Component {
 								<Chart
 									chartType="LineChart"
 									data={this.state.dataPoints3}
-									options={options}
+									options={graph3Options}
 									rootProps={{ 'data-testid': '3' }}
 								/>
 							</div>
