@@ -9,8 +9,16 @@ import Footer from '../Footer';
 import 'jquery';
 import '../Buttons/Buttons.css';
 import './Dashboard.css';
-import { getUserDetails, isAuthenticated, getCumulativeEventPressureData, getHeadAccelerationEvents, getCumulativeEventLoadData } from '../../apis';
+import {
+  getUserDetails,
+  isAuthenticated,
+  getCumulativeEventPressureData,
+  getHeadAccelerationEvents,
+  getCumulativeEventLoadData
+} from '../../apis';
 import Spinner from '../Spinner/Spinner';
+import { getStatusOfDarkmode } from '../../reducer';
+
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -19,10 +27,10 @@ class Dashboard extends React.Component {
     this.state = {
       isAuthenticated: false,
       user: null,
-      isCheckingAuth : true,
-      cumulativeEventData : {},
-      headAccelerationEventsData : {},
-      cumulativeEventLoadData : {}
+      isCheckingAuth: true,
+      cumulativeEventData: {},
+      headAccelerationEventsData: {},
+      cumulativeEventLoadData: {}
     };
   }
 
@@ -30,15 +38,14 @@ class Dashboard extends React.Component {
     svgToInline();
   }
 
-
   gotoTop = () => {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
 
   render() {
     const isLoaded = this.state.user;
-    if(!this.state.isAuthenticated && !this.state.isCheckingAuth){
-        return <Redirect to="/Login" />;
+    if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+      return <Redirect to="/Login" />;
     }
     if (!isLoaded) return <Spinner />;
     return (
@@ -48,7 +55,7 @@ class Dashboard extends React.Component {
 
           <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>
           <HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>
-          <div className="row text-center pt-5 pb-5 mt-5 mb-5">
+          <div className="row text-center pt-5 pb-5 mt-5 mb-5 animated fadeInUp">
             <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
               <div
                 onClick={this.gotoTop}
@@ -123,12 +130,12 @@ class Dashboard extends React.Component {
         })
         .catch((err) => {
           this.setState({ isAuthenticated: false, isCheckingAuth: false });
-        });
+        })
+        if (getStatusOfDarkmode().status) {
+            document.getElementsByTagName('body')[0].style.background = '#171b25';
+        }
 
-  }
-
-
-
+    }
 }
 
 export default Dashboard;

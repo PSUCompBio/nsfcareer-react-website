@@ -7,15 +7,12 @@ class AboutPage extends React.Component {
     document.getElementsByTagName('body')[0].style.backgroundColor = hexCode;
   };
 
-  
-
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
-      console.log('dfsdgds')
-      this.refs.h1.style.color = "#fff"
+      this.refs.h1.style.color = '#fff';
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
     }
   }
-
 
   render() {
     return (
@@ -24,7 +21,9 @@ class AboutPage extends React.Component {
           <div className="row pt-5 mt-5">
             <div className="col-md-12 col-lg-12 padding-about__page text-center">
               <div className={`section-title animated zoomIn`}>
-                <h1 ref="h1" className="font-weight-bold">ABOUT US</h1>
+                <h1 ref="h1" className="font-weight-bold">
+                  ABOUT US
+                </h1>
               </div>
               <p className={`animated fadeInUp about-lines`}>
                 Lorem Ipsum is simply dummy text of the printing and typesetting

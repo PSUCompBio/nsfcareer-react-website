@@ -113,6 +113,17 @@ class Nav extends React.Component {
     }, 100);
   };
 
+  links = (linkText, routeName) => {
+    return (
+      <li className="nav-item make-active active">
+        <Link className="nav-link" to={routeName}>
+          {linkText} <span className="sr-only">(current)</span>
+        </Link>
+        <div className={LineUnderLink.linkeMaker(routeName)} />
+      </li>
+    );
+  };
+
   mobileNav = () => {
     return (
       <ul className="navbar-nav ml-auto text-center">
@@ -129,38 +140,16 @@ class Nav extends React.Component {
             }
           />
         </li>
-        <li className="nav-item make-active active">
-          <Link className="nav-link" to={'/About'}>
-            About <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/About')} />
-        </li>
-        <li className="nav-item make-active">
-          <Link className="nav-link" to={'/Contact'}>
-            Contact
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Contact')} />
-        </li>
-        {this.props.location.pathname !== '/SignUp' ? (
-          <li className="nav-item make-active active">
-            <Link className="nav-link" to={'/Login'}>
-              Dashboard <span className="sr-only">(current)</span>
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/Login')} />
-          </li>
-        ) : (
-          <li className="nav-item make-active">
-            <Link className="nav-link" to={'/SignUp'}>
-              Sign up
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/SignUp')} />
-          </li>
-        )}
+        {this.links('About us', '/About')}
+        {this.links('Contact us', '/Contact')}
+        {this.props.location.pathname !== '/SignUp'
+          ? this.links('Dashboard', '/Login')
+          : this.links('Sign up', '/SignUp')}
       </ul>
     );
   };
 
-  showLogOutOptions = () => {
+  profileLinks = () => {
     if (this.state.logoutBox.display === 'none') {
       this.setState({ logoutBox: { display: 'block' } });
     } else {
@@ -168,26 +157,55 @@ class Nav extends React.Component {
     }
   };
 
-  makePSUlinksVisible = () => {
-    if (this.state.psuLinks.display === 'none') {
-      this.setState({ psuLinks: { display: 'block' } });
-    } else {
-      this.setState({ psuLinks: { display: 'none' } });
-    }
+  showLogOutOptions = (e) => {
+    setTimeout(() => {
+      this.profileLinks();
+    }, 500);
+    this.refs.hideList.classList.remove('show-mobile-links');
+    this.refs.hideList.classList.add('hide-list-onlink-click');
+  };
+
+  makePSUlinksVisible = (e) => {
+    setTimeout(() => {
+      if (this.state.psuLinks.display === 'none') {
+        this.setState({ psuLinks: { display: 'block' } });
+      } else {
+        this.setState({ psuLinks: { display: 'none' } });
+      }
+    }, 500);
+    this.refs.hideList.classList.remove('show-mobile-links');
+    this.refs.hideList.classList.add('hide-list-onlink-click');
+  };
+
+  showMobileLinkOption = (e) => {
+    this.profileLinks();
+    this.refs.hideList.classList.remove('hide-list-onlink-click');
+    this.refs.hideList.classList.add('show-mobile-links');
+  };
+
+  hidePsuLinks = () => {
+    this.setState({ psuLinks: { display: 'none' } });
+    this.refs.hideList.classList.remove('hide-list-onlink-click');
+    this.refs.hideList.classList.add('show-mobile-links');
   };
 
   mobilePSUlinks = () => {
     if (this.props.userType === 'Admin') {
       return (
         <React.Fragment>
-          <div onClick={this.makePSUlinksVisible} className="psu-list">
-            PSU
-          </div>
           <div
             style={this.state.psuLinks}
             className="mobile-dashboard-dropdown"
           >
             <ul>
+              <li className="back-li">
+                <i
+                  onClick={this.hidePsuLinks}
+                  className="fa mobile-back-option fa-arrow-circle-left"
+                  aria-hidden="true"
+                ></i>
+                <span className="goto-back">Back</span>
+              </li>
               <li onClick={this.handleClick}>
                 <Link to="TeamAdmin">Team Admin</Link>
               </li>
@@ -237,25 +255,8 @@ class Nav extends React.Component {
             }
           />
         </li>
-        <li className="nav-item make-active active">
-          <Link className="nav-link" to={'/About'}>
-            About <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/About')} />
-        </li>
-        {/* <li className="nav-item make-active active">
-          <Link className="nav-link" to={'/Sports'}>
-            Sports <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Sports')} />
-        </li> */}
-
-        <li className="nav-item make-active">
-          <Link className="nav-link" to={'/Contact'}>
-            Contact
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Contact')} />
-        </li>
+        {this.links('About us', '/About')}
+        {this.links('Contact us', '/Contact')}
 
         {this.props.location.pathname !== '/SignUp' ? (
           <li
@@ -277,12 +278,7 @@ class Nav extends React.Component {
             {this.dashboardDropDownList()}
           </li>
         ) : (
-          <li className="nav-item make-active">
-            <Link className="nav-link" to={'/SignUp'}>
-              Sign up
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/SignUp')} />
-          </li>
+        this.links('Sign up','/SignUp')
         )}
         <li className=" nav-item profile-nav-icon">
           <div
@@ -300,7 +296,6 @@ class Nav extends React.Component {
             className={`${this.state.signOutClass}`}
           >
             <div className="nav-item make-active profile-user active">
-            {/* <div class="sign-out-box-arrow"></div> */}
               <Link className="nav-link" to={'/Profile'}>
                 Profile <span className="sr-only">(current)</span>
               </Link>
@@ -327,15 +322,11 @@ class Nav extends React.Component {
     return (
       <nav
         className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
-          (this.props.location.pathname !== '/Home' &&
-            this.props.location.pathname !== '/') ||
-          this.props.currentPage !== 1
-            ? 'navbar-bg-change'
-            : ''
-        }`}
+          'navbar-bg-change'
+        } ${this.props.screenWidth <= 768 ? 'navbar-bg-change' : ''}`}
       >
         <Link className="navbar-brand" to={'/Home'}>
-          <img src="img/icon/logo.png" alt="" />
+          <img className="logo-mobile" src="img/icon/logo.png" alt="" />
         </Link>
         <button
           onClick={this.handleClick}
@@ -345,7 +336,9 @@ class Nav extends React.Component {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon" />
+          <span className="navbar-toggler-icon" >
+          <i class="fa fa-bars" style={{color:"#fff" ,fontSize:"28px" }} ></i>
+      </span>
         </button>
 
         {this.props.screenWidth >= 768 ? (
@@ -364,100 +357,113 @@ class Nav extends React.Component {
           className="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-right"
           id="cbp-spmenu-s2"
         >
-          <div className="hide-list-left">
-          <div className="mobile-profile-container">
-            <i
-              onClick={this.handleClick}
-              className=" close-mobile_nave fa fa-times-circle"
-              aria-hidden="true"
-            ></i>
-            {/* <img src={localStore.userInfo.data.profile_picture_url} alt="" /> */}
-            {/* <p>
-              {localStore.userInfo.data.first_name +
-                ' ' +
-                localStore.userInfo.data.last_name}
-            </p> */}
-            <div
-              onClick={this.showLogOutOptions}
-              className="mobile-user-profile"
-            >
-              RK
+          <div ref="hideList" className="hide-list-left">
+            <div className="mobile-profile-container">
+              <i
+                onClick={this.handleClick}
+                className=" close-mobile_nave fa fa-times-circle"
+                aria-hidden="true"
+              ></i>
+              <div
+                onClick={this.showLogOutOptions}
+                className="mobile-user-profile"
+              >
+                RK
+              </div>
             </div>
 
-            <div
-              style={this.state.logoutBox}
-              className="user-profile-dropdown__mobile"
+            <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
+              Home <span className="sr-only">(current)</span>
+            </Link>
+            <div className={LineUnderLink.linkeMaker('/Home')} />
+            <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
+              About us <span className="sr-only">(current)</span>
+            </Link>
+            <div className={LineUnderLink.linkeMaker('/About')} />
+            {this.props.isLoggedIn === true ? (
+              <React.Fragment>
+                <Link className="nav-link" to={'/Sports'}>
+                  Sports <span className="sr-only">(current)</span>
+                </Link>
+                <div className={LineUnderLink.linkeMaker('/Sports')} />
+
+                <Link
+                  onClick={this.handleClick}
+                  className="nav-link"
+                  to={'/Profile'}
+                >
+                  Profile <span className="sr-only">(current)</span>
+                </Link>
+                <div className={LineUnderLink.linkeMaker('/Profile')} />
+              </React.Fragment>
+            ) : (
+              ''
+            )}
+
+            <Link
+              onClick={this.handleClick}
+              className="nav-link"
+              to={'/Contact'}
             >
-              <ul>
-                <li onClick={this.handleClick}>
-                  <Link to="profile">Profile</Link>
-                </li>
-                <img
-                  onClick={() => {
-                    this.signOut();
-                    this.handleClick();
-                  }}
-                  className=" mt-3 img-fluid w-25"
-                  src="/img/icon/powerBtn.svg"
-                  alt=""
-                />
-              </ul>
-            </div>
+              Contact us
+            </Link>
+            <div className={LineUnderLink.linkeMaker('/Contact')} />
+            {this.props.location.pathname !== '/SignUp' ? (
+              <React.Fragment>
+                <Link onClick={this.handleClick} className="nav-link mobie-dashboard-hover" to={'/Login'}>
+                  Dashboard <span className="sr-only">(current)</span>
+                </Link>
+                <div className={LineUnderLink.linkeMaker('/Login')} />
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <Link
+                  onClick={this.handleClick}
+                  className="nav-link"
+                  to={'/SignUp'}
+                >
+                  Sign up
+                </Link>
+                <div className={LineUnderLink.linkeMaker('/SignUp')} />
+              </React.Fragment>
+            )}
+            {this.props.isLoggedIn ? (
+              <div onClick={this.makePSUlinksVisible} className="psu-list">
+                PSU
+              </div>
+            ) : (
+              ''
+            )}
           </div>
 
-          <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
-            Home <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Home')} />
-          <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
-            About <span className="sr-only">(current)</span>
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/About')} />
-          {this.props.isLoggedIn === true ? (
-            <React.Fragment>
-              <Link className="nav-link" to={'/Sports'}>
-                Sports <span className="sr-only">(current)</span>
-              </Link>
-              <div className={LineUnderLink.linkeMaker('/Sports')} />
-
-              <Link
-                onClick={this.handleClick}
-                className="nav-link"
-                to={'/Profile'}
-              >
-                Profile <span className="sr-only">(current)</span>
-              </Link>
-              <div className={LineUnderLink.linkeMaker('/Profile')} />
-            </React.Fragment>
-          ) : (
-            ''
-          )}
-
-          <Link onClick={this.handleClick} className="nav-link" to={'/Contact'}>
-            Contact
-          </Link>
-          <div className={LineUnderLink.linkeMaker('/Contact')} />
-          {this.props.location.pathname !== '/SignUp' ? (
-            <React.Fragment>
-              <Link className="nav-link mobie-dashboard-hover" to={'/Login'}>
-                Dashboard <span className="sr-only">(current)</span>
-              </Link>
-              {this.mobilePSUlinks()}
-              <div className={LineUnderLink.linkeMaker('/Login')} />
-            </React.Fragment>
-          ) : (
-            <React.Fragment>
-              <Link
-                onClick={this.handleClick}
-                className="nav-link"
-                to={'/SignUp'}
-              >
-                Sign up
-              </Link>
-              <div className={LineUnderLink.linkeMaker('/SignUp')} />
-            </React.Fragment>
-              )}
-            </div>
+          <div
+            style={this.state.logoutBox}
+            className="user-profile-dropdown__mobile"
+          >
+            <ul>
+              <li className="back-li">
+                <i
+                  onClick={this.showMobileLinkOption}
+                  className="fa mobile-back-option fa-arrow-circle-left"
+                  aria-hidden="true"
+                ></i>
+                <span className="goto-back">Back</span>
+              </li>
+              <li onClick={this.handleClick}>
+                <Link to="profile">Profile</Link>
+              </li>
+              <img
+                onClick={() => {
+                  this.signOut();
+                  this.handleClick();
+                }}
+                className=" mt-3 img-fluid w-25"
+                src="/img/icon/powerBtn.svg"
+                alt=""
+              />
+            </ul>
+          </div>
+          {this.mobilePSUlinks()}
         </nav>
       </nav>
     );

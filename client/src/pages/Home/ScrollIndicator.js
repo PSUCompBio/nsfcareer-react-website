@@ -1,6 +1,6 @@
 import React from 'react';
 
-class scrollIndicator extends React.Component {
+class ScrollIndicator extends React.Component {
   constructor(props) {
     super();
     this.state = {
@@ -49,4 +49,4 @@ class scrollIndicator extends React.Component {
   }
 }
 
-export default scrollIndicator;
+export default ScrollIndicator;

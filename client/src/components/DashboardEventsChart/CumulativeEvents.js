@@ -22,7 +22,7 @@ class CumulativeEvents extends React.Component {
 
   render() {
     return (
-      <div className="row cumm mb-5">
+      <div className="row cumm mb-5 ">
         <div className="col-md-6 col-lg-7">
           <BrainStrainChart is_selfie_image_uploaded={this.state.is_selfie_image_uploaded}  imageUrl={this.state.imageUrl} data={this.props.data}/>
         </div>

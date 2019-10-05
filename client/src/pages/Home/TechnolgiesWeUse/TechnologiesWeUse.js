@@ -1,22 +1,53 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
+import screenWidth from '../../../utilities/ScreenWidth';
+import { withRouter } from 'react-router-dom';
 
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      showAndHideFooter: ''
+      showAndHideFooter: '',
+      isDisplay: { display: 'none' },
+      bottomTouched: false
     };
   }
 
-   removeAnimationMobileView(animation){
-    if (this.props.screenWidth > 425)
-      return animation;
+  makeVisible = (data) => {
+    this.setState({ isDisplay: data });
+  };
+
+  showModal = () => {
+    if (this.state.isDisplay.display === 'none') {
+      this.setState({ isDisplay: { display: 'flex' } });
+    } else {
+      this.setState({ isDisplay: { display: 'none' } });
+    }
+  };
+
+  removeAnimationMobileView(animation) {
+    if (this.props.screenWidth > screenWidth[0].screen425) return animation;
     else {
-      return ''
+      return '';
     }
   }
 
+  detectScroll(e) {
+    if (this.props.screenWidth < screenWidth[1].screen725) {
+      const scrollHeight = e.currentTarget.scrollHeight;
+      const scrollTop = e.currentTarget.scrollTop;
+      const clientHeight = e.currentTarget.clientHeight;
+      if (scrollHeight === Math.floor(scrollTop + clientHeight)) {
+        this.props.scrollBarTouchBottom();
+        this.setState({ bottomTouched: true });
+      } else if (scrollTop === 0) {
+        this.setState({ bottomTouched: false });
+        this.props.scrollBarTouchTop();
+      } else {
+        this.setState({ bottomTouched: false });
+      }
+    }
+  }
 
   render = (props) => {
     const makeFooterVisibeForSmallDevice = {
@@ -37,38 +68,40 @@ class TechnologiesWeUse extends React.Component {
         <div className={`section-four-container`} onWheel={this.props.onWheel}>
           <div className="container section">
             <div
+              onWheel={(e) => this.detectScroll(e)}
               className={`section-four text-center ${
-                this.props.screenWidth >= 725
+                this.props.screenWidth >= screenWidth[1].screen725
                   ? this.props.mouseScroll > 0 && this.props.currentPage === 4
                     ? 'shift-technology-section'
                     : ''
                   : ''
-              }`}
+              } ${this.state.bottomTouched === true ? 'shift-technology-ms' : ''}`}
             >
               <div className="col-md-12 col-lg-12 text-center">
                 <InView>
                   {({ inView, ref }) => (
                     <div ref={ref}>
                       <h1
-                    className={`font-weight-bold animated ${
-                      inView ? this.removeAnimationMobileView('zoomIn') : ''
-                    }`}
-                  >
-                    TECHNOLOGIES THAT WE USE
-                  </h1>
+                        className={`font-weight-bold animated ${
+                          inView ? this.removeAnimationMobileView('zoomIn') : ''
+                        }`}
+                      >
+                        TECHNOLOGIES THAT WE USE
+                      </h1>
 
-                  <div className="w-100 d-flex justify-content-center">
-                    <div className={inView ? 'line_container' : ''}>
-                      <div></div>
-                    </div>
-                  </div>
+                      <div className="w-100 d-flex justify-content-center">
+                        <div className={inView ? 'line_container' : ''}>
+                          <div></div>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </InView>
               </div>
               <div
                 className={`row ${
-                  this.props.screenWidth > 425 && this.props.screenWidth < 769
+                  this.props.screenWidth > screenWidth[0].screen425 &&
+                  this.props.screenWidth < screenWidth[2].screen769
                     ? ''
                     : ' py-5'
                 }`}
@@ -78,10 +111,14 @@ class TechnologiesWeUse extends React.Component {
                     <div
                       ref={ref}
                       className={`col-md-4 animated   ${
-                        this.props.screenWidth <= 768
+                        this.props.screenWidth <= screenWidth[3].screen768
                           ? 'text-center'
                           : 'text-left'
-                      } ${inView ? this.removeAnimationMobileView('slideInLeft') : ''}`}
+                      } ${
+                        inView
+                          ? this.removeAnimationMobileView('slideInLeft')
+                          : ''
+                      }`}
                     >
                       <img
                         className="py-3"
@@ -96,8 +133,10 @@ class TechnologiesWeUse extends React.Component {
                         companies to provide real-time brain response analytics.
                         We help transform their data into meaningful brain
                         health monitoring. Looking for a sensor? See our{' '}
-                        {this.props.screenWidth > 1024 ? '' : ''} recommended
-                        providers here.
+                        {this.props.screenWidth > screenWidth[4].screen1024
+                          ? ''
+                          : ''}{' '}
+                        recommended providers here.
                       </p>
                     </div>
                   )}
@@ -107,8 +146,12 @@ class TechnologiesWeUse extends React.Component {
                     <div
                       ref={ref}
                       className={`col-md-4 animated   pt-5 ${
-                        this.props.screenWidth < 768 ? 'order-first' : ''
-                      } ${inView ? this.removeAnimationMobileView('zoomIn') : ''}`}
+                        this.props.screenWidth < screenWidth[3].screen768
+                          ? ''
+                          : ''
+                      } ${
+                        inView ? this.removeAnimationMobileView('zoomIn') : ''
+                      }`}
                     >
                       <img
                         className="mb-5 img-fluid terminology-img"
@@ -123,10 +166,14 @@ class TechnologiesWeUse extends React.Component {
                     <div
                       ref={ref}
                       className={`col-md-4 animated  ${
-                        this.props.screenWidth <= 768
-                          ? 'text-center'
+                        this.props.screenWidth <= screenWidth[3].screen768
+                          ? 'text-center order-first'
                           : 'text-right'
-                      } ${inView ? this.removeAnimationMobileView('slideInRight') : ''}`}
+                      } ${
+                        inView
+                          ? this.removeAnimationMobileView('slideInRight')
+                          : ''
+                      }`}
                     >
                       <img
                         className="py-3"
@@ -162,14 +209,15 @@ class TechnologiesWeUse extends React.Component {
           </div>
           <footer
             style={
-              this.props.screenWidth < 725
+              this.props.screenWidth < screenWidth[5].screen725
                 ? makeFooterVisibeForSmallDevice.reset
                 : {}
             }
             className={`show-footer-mobile ${
-              this.props.mouseScroll > 0 && this.props.screenWidth >= 725
+              this.props.mouseScroll > 0 &&
+              this.props.screenWidth >= screenWidth[5].screen725
                 ? 'show-footer'
-                : this.props.screenWidth < 725
+                : this.props.screenWidth < screenWidth[5].screen725
                 ? ''
                 : 'hide-footer'
             }`}
@@ -180,43 +228,27 @@ class TechnologiesWeUse extends React.Component {
                   <img className="logo" src="/img/icon/logo.png" alt="" />
                 </div>
                 <div className="col-sm-6  col-md-6 ">
-                  <button type="button" className="btn btn-primary float-right">
+                  <button
+                    onClick={() => this.props.showmodal()}
+                    type="button"
+                    className="btn btn-primary float-right"
+                  >
                     Get Updates
                   </button>
                 </div>
                 <hr />
               </div>
-              <div className="row">
-                <div className="col-sm-9 col-md-6 ">
+              <div className="row text-center">
+                <div className="col-sm-12 col-md-12 ">
                   <p>
-                    Contact Us: info@NSFCAREER.IO <br />
-                    <span onClick={()=>window.open('')}>  IP </span> | Privacy Policy &amp; <span onClick={()=>window.open('')}>  IRB </span> | Collaborate
+                    <i class="fa fa-envelope" aria-hidden="true"></i> info@NSFCAREER.IO <br />
+                    <span className="ip-irb-link" onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
+                    Policy &amp;{' '}
+                    <span className="ip-irb-link" onClick={() => this.props.history.push('/IRB')}> IRB </span> |
+                    Collaborate
                   </p>
                 </div>
                 <div className="col-sm-3 col-md-6 ">
-                  {/* <div className="icon-container">
-                    <a href="">
-                      <img
-                        className="px-2"
-                        src="/img/FooterImg/facebook-logo.svg"
-                        alt=""
-                      />
-                    </a>
-                    <a href="">
-                      <img
-                        className="px-2"
-                        src="/img/FooterImg/twitter-logo-silhouette.svg"
-                        alt=""
-                      />
-                    </a>
-                    <a href="">
-                      <img
-                        className="px-2"
-                        src="/img/FooterImg/icon.svg"
-                        alt=""
-                      />
-                    </a>
-                  </div> */}
                 </div>
               </div>
               <div className="row text-center">
@@ -235,4 +267,4 @@ class TechnologiesWeUse extends React.Component {
   };
 }
 
-export default TechnologiesWeUse;
+export default withRouter(TechnologiesWeUse);

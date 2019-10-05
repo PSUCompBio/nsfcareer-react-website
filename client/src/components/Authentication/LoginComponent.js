@@ -36,6 +36,7 @@ class Login extends React.Component {
 
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
+      document.getElementsByTagName('body')[0].style.background = '#171b25';
       this.refs.loginForm.style.background = "rgb(35, 40, 56)";
       this.refs.dashboardView.src = "/img/icon/dashboardViewDark.png";
       this.refs.brainIcon.style.border = "5px solid rgb(23, 27, 37)";
@@ -120,16 +121,17 @@ class Login extends React.Component {
   }
 
   render() {
-    console.log(this.state);
+    console.log(JSON.parse(localStorage.getItem('state')));
     return (
       <React.Fragment>
         <div className="dynamic__height">
-          <div className="container pl-0 pr-0 login-height overflow-hidden">
+          <div className="container  pl-0 pr-0 login-height overflow-hidden">
             {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
-            <div className="row login">
+            <div style={{marginTop: "5vh", marginBottom: "2vh"}} className="row login">
               <div className="col-md-12  mb-5">
                 <div className="text-center">
-                  <p className="top-heading__login">
+                  <p style={{  fontSize: "20px",
+                    fontWeight: "900"}} className="top-heading__login animated fadeInUp">
                     The Dashboard gives users and administrators a cumulative
                     overview, as well as an in-depth analysis on each head
                     acceleration event.
@@ -137,7 +139,7 @@ class Login extends React.Component {
                 </div>
               </div>
 
-              <div className="col-md-6 mb-5 p-3">
+              {/*<div className="col-md-6 mb-5 p-3 animated fadeInLeft">
                 <div id="dashboard-view" className="text-right dashboard-mock">
                   <div className="text-center dashboard-example">
                     Dashboard Example
@@ -149,9 +151,12 @@ class Login extends React.Component {
                   />
                 </div>
               </div>
-
-              <div className="col-md-6 mb-5 p-3">
-                <div ref="loginForm" className="card card-border">
+              // Default div for Sign In section
+              <div className="col-md-6 mb-5 p-3 animated fadeInRight">
+              */
+          }
+              <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
+                <div ref="loginForm" style={{margin: "3%"}} className="card card-border">
                   <div className="card-body">
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />

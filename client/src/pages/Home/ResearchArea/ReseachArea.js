@@ -1,11 +1,13 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
 import { Link, withRouter } from 'react-router-dom';
+import screenWidth from '../../../utilities/ScreenWidth';
+
 
 function ResearchArea(props) {
 
   function removeAnimationMobileView(animation){
-    if (props.screenWidth > 425)
+    if (props.screenWidth > screenWidth[0].screen425)
       return animation;
     else {
       return ''
@@ -16,11 +18,28 @@ function ResearchArea(props) {
     props.history.push(pageName)
   }
 
+  function detectScroll(e) {
+    if (props.screenWidth < screenWidth[1].screen725) {
+      const scrollHeight = e.currentTarget.scrollHeight;
+      const scrollTop = e.currentTarget.scrollTop;
+      const clientHeight = e.currentTarget.clientHeight;
+      console.log("clientheight + scrollTOp==>",Math.floor(clientHeight + scrollTop),"scrollheight==>",scrollHeight)
+      if (scrollHeight === Math.floor(scrollTop + clientHeight) || scrollHeight === Math.floor(scrollTop + clientHeight)+1 ) {
+        console.log("inside bottmo")
+        props.scrollBarTouchBottom();
+      } else if (scrollTop === 0) {
+        console.log("inside top")
+
+        props.scrollBarTouchTop();
+      }
+    }
+  }
+
 
   return (
     <div className="research-area-bg">
       <div className="container section">
-        <div className="section-three">
+        <div onWheel={(e)=>detectScroll(e)} className="section-three">
           <div className="col-md-12 col-lg-12 text-center">
             <InView>
               {({ inView, ref }) => (

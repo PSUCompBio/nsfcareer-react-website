@@ -1,6 +1,7 @@
 import React from 'react';
 import WebFont from 'webfontloader';
 import { InView } from 'react-intersection-observer';
+import screenWidth from '../../../utilities/ScreenWidth'
 
 WebFont.load({
   google: {
@@ -9,7 +10,7 @@ WebFont.load({
 });
 class Banner extends React.Component {
   removeAnimationMobileView(animation) {
-    if (this.props.screenWidth > 425) return animation;
+    if (this.props.screenWidth > screenWidth[0].screen425) return animation;
     else {
       return '';
     }
@@ -17,18 +18,20 @@ class Banner extends React.Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <div className="section-one-container">
           <div className="container-fluid pl-0 pr-0">
             <div className="section-one">
               <div className="image-container__banner">
-                <div className="left-bubble-img"></div>
+                <div className="left-bubble-img">
+                  <img className="svg img-fluid" src="/img/icon/bubble.png" alt=""/>
+                </div>
                 <div className="right-brain-img">
-              <img className="svg img-fluid" src="/img/BannerImg/b2.png" alt=""/>
+                    <img className="svg img-fluid" src="/img/BannerImg/b2.png" alt=""/>
                 </div>
               </div>
-              <div className="downpointer">
-              <i class="fa fa-arrow-down" aria-hidden="true"></i>
+              <div className="downpointer" >
+              <i style={{color : "white"}} class="fa fa-angle-down fa-2x" aria-hidden="true"></i>
               </div>
               <div className="header-navbar">
                 <div className="container-fluid heading-container">
@@ -37,13 +40,11 @@ class Banner extends React.Component {
                       {({ inView, ref, entry }) => (
                         <div
                           ref={ref}
-                          style={{ overflow: 'hidden' }}
-                          className={`col-md-10 col-lg-10 header-heading ${
-                            this.props.screenWidth < 725 ? '' : ''
-                          }`}
+                          style={{ overflow: 'hidden', paddingRight : "10%" }}
+                          className={`centrify-mobile col-md-10 col-lg-10 header-heading`}
                         >
                           <h1
-                            className={`animated ${
+                            className={`mobile-head-title animated ${
                               inView
                                 ? this.removeAnimationMobileView('fadeInLeft')
                                 : ''
@@ -52,14 +53,14 @@ class Banner extends React.Component {
                             TRANSFORM YOUR SENSOR DATA
                           </h1>
                           <h4
-                            className={`animated ${
+                            className={`mobile-head-section animated ${
                               inView ? this.removeAnimationMobileView('fadeInRight') : ''
                             }`}
                           >
                             Accurate brain simulations help extend your{' '}
                           </h4>
                           <h4
-                            className={`animated ${
+                            className={`mobile-head-section animated ${
                               inView
                                 ? this.removeAnimationMobileView('fadeInUp')
                                 : ''
@@ -73,7 +74,7 @@ class Banner extends React.Component {
                             }`}
                           >
                             <p
-                              className={`animated ${
+                              className={`mobile-head-sub-section animated ${
                                 inView
                                   ? this.removeAnimationMobileView('fadeInUp')
                                   : ''
@@ -95,7 +96,7 @@ class Banner extends React.Component {
                           <React.Fragment>
                             <img
                               ref={ref}
-                              className={`img-fluid animated ${
+                              className={`mobile-head-sub-section-image  img-fluid animated ${
                                 inView ? this.removeAnimationMobileView('fadeIn') : ''
                               }`}
                               src="/img/BannerImg/NSF.png"
@@ -104,7 +105,7 @@ class Banner extends React.Component {
 
                             <img
                               ref={ref}
-                              className={`img-fluid animated ${
+                              className={` img-fluid animated ${
                                 inView ? this.removeAnimationMobileView('fadeIn') : ''
                               }`}
                               src="/img/BannerImg/penState.png"
@@ -123,7 +124,7 @@ class Banner extends React.Component {
                       </InView>
                     </div>
                   </div>
-                  <div className="row padding-mobile">
+                  <div className="row-margin row padding-mobile">
                     <div className="col-md-12   image-padding">
                       <InView>
                         {({ inView, ref, entry }) => (
@@ -154,7 +155,7 @@ class Banner extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
