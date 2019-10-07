@@ -49,6 +49,14 @@ class PlayerDetails extends React.Component {
   componentDidMount() {
     this.changeHeadingColor();
   }
+
+  onChangeHandler = (event) => {
+        console.log(event.target.files[0]);
+        this.setState({
+            selectedFile: event.target.files[0]
+        });
+    };
+    
   onClickHandler = () => {
     const data = new FormData();
     this.setState({
