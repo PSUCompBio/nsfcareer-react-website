@@ -1706,6 +1706,39 @@ div.show-mobile-links {
 }
 
 @media (max-width: 575px) {
+    .right-brain-img {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 80%;
+        text-align: right;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    .left-bubble-img {
+      display: none !important;
+      width: 50%;
+      text-align: left;
+      height: 100vh;
+      display: flex;
+      justify-content: left;
+      align-items: center;
+  }
+  .hide-element {
+      display: none !important;
+  }
+  .mobile-section-top-fix {
+      margin-top: 20%;
+  }
+  .mobile-section-top-map-fix {
+      margin-top: 5%;
+  }
+  .footer-mobile-fix{
+    padding-top: 45px;
+  }
   .logo-mobile {
       width: 90% !important;
   }
@@ -1717,11 +1750,15 @@ div.show-mobile-links {
       font-size: 2.5rem !important;
   }
   .mobile-head-section{
+      text-align: center;
       font-size: 1.2rem !important;
   }
   .mobile-head-sub-section{
       margin-top: 3rem !important;
       font-size: 1rem !important;
+  }
+  .toggle-card-padding{
+      padding : 0px 0px 0px 0px !important;
   }
   .mobile-head-sub-section-image{
       width: 6em !important;
@@ -1729,6 +1766,13 @@ div.show-mobile-links {
   .section-one > img:nth-child(1) {
     width: 530px !important;
   }
+  .mobile-section-mt-1{
+      text-align: center;
+      margin-top: 1em !important
+  }
+  h4.mobile-head-section.mobile-section-mt-1.animated {
+    margin-top: .4em !important;
+    }
   .section-one {
     overflow-x: hidden;
   }

@@ -283,6 +283,8 @@ class SignUpComponent extends React.Component {
       return <LoginComponent></LoginComponent>;
     }
     return (
+        <React.Fragment>
+          <div className="dynamic__height">
       <div className="container-fluid pl-0 pr-0 overflow-hidden">
         <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <div className="col-md-6 col-lg-6 offset-md-3 mb-5">
@@ -298,7 +300,7 @@ class SignUpComponent extends React.Component {
               </div>
             </div>
           <div className="col-md-6 col-lg-6 offset-md-3">
-            <div className="card card-border">
+            <div style={{marginLeft : "3%", marginRight : "3%"}}className="card card-border">
               <div className="card-body">
                 <div className="text-center brain-icon">
                   <img src="img/icon/brain.png" alt="" />
@@ -341,8 +343,14 @@ class SignUpComponent extends React.Component {
             </div>
           </div>
         </div>
-        <Footer />
+
       </div>
+      <div className="footer-mobile-fix" >
+          <Footer/>
+  </div>
+  </div>
+</React.Fragment>
+
     );
   }
 }

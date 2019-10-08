@@ -367,3 +367,27 @@ export const deleteTeam = (request) =>{
       });
   })
 }
+
+export const getCumulativeAccelerationData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getCumulativeAccelerationData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getCumulativeAccelerationTimeData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getCumulativeAccelerationTimeData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

@@ -156,7 +156,7 @@ class Login extends React.Component {
               */
           }
               <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
-                <div ref="loginForm" style={{margin: "3%"}} className="card card-border">
+                <div style={{paddingLeft : "0% !important"}}ref="loginForm" style={{margin: "3%"}} className="card card-border">
                   <div className="card-body">
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
@@ -173,7 +173,7 @@ class Login extends React.Component {
                           type="text"
                           className="form-control"
                           name="user_name"
-                          placeholder="Username"
+                          placeholder="E-mail"
                           aria-label="Username"
                           aria-describedby="basic-addon1"
                         />

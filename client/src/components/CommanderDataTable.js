@@ -128,16 +128,16 @@ class CommanderDataTable extends React.Component {
                         */}
                         <i class="fa fa-eye" aria-hidden="true" onClick={()=>{
 
-                                this.setRedirectData(Number(index + 1).toString(), player.player_name)
+                                this.setRedirectData(Number(index + 1).toString(), player.player_id)
                             }}></i>
                       </td>
                       <th scope="row">{index + 1}</th>
-                      <td>{player.player_name}</td>
-                      <td>{player.sport}</td>
+                      <td>{player.player_id}</td>
+                      <td>Football</td>
                       <td>{player.position}</td>
-                      <td>{Number(player.alerts)}</td>
-                      <td>{Number(player.impacts)}</td>
-                      <td>{Number(player.impacts)%(index + 1)*2}</td>
+                      <td>0</td>
+                      <td>{Number(player.impact)}</td>
+                      <td>{Number(player.impact)%(index + 1)*2}</td>
                       <td>
                         <div className="progress my-progress">
                           <div

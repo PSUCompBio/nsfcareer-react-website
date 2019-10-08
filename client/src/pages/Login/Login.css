@@ -25,12 +25,20 @@ input::placeholder {
   line-height: 2.64 !important;
   color: #000000 !important;
 }
+
 .card-border {
-  padding: 1% 15% 1% 15% !important;
-  border: none !important;
+  padding: 1% 15% 1% 15% ;
+  border: none;
   box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
-  border-radius: 12px !important;
+  border-radius: 12px;
 }
+
+@media (max-width: 575px) {
+    .card-border {
+      padding: 1% 0% 1% 0% ;
+    }
+}
+
 .login {
   height: 60%;
   padding-top: 10vh;

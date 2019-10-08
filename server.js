@@ -1782,6 +1782,29 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
     }
 })
 
+app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getCumulativeAccelerationTimeData`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
 app.post(`${apiPrefix}getCumulativeEventPressureData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeEventPressureData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
@@ -1852,7 +1875,7 @@ app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getPlayersData", json: req.body }, function (err, httpResponse, body) {
+    request.post({ url: config.ComputeInstanceEndpoint + "getPlayersDetails", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
             res.send({ message: 'failure', error: err });

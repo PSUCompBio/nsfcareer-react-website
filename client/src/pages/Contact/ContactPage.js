@@ -23,7 +23,7 @@ class ContactPage extends React.Component {
     return (
       <React.Fragment>
         <div className="container-fluid  contact__page-center-align pl-0">
-          <div className="row pt-surface  animated zoomIn text-center">
+          <div className="row mobile-section-top-fix pt-surface  animated zoomIn text-center">
             <div  className="col-md-7 order-12 pr-0 contact-img-container">
               {/* <GoogleMap /> */}
               <img style={{width : "100% !important"}}className="img-fluid img-contact-us" src="/img/contactus.png" alt=""/>
@@ -33,12 +33,13 @@ class ContactPage extends React.Component {
               <p ref="h2">
                 User Support: <span>support@nsfcareer.io</span>
               </p>
-              <p ref="h3">
+              {/*<p ref="h3">
                 Sales Inquiries: <span> sales@nsfcareer.io </span>
               </p>
               <p ref="h4" className="mi-mb">
                 Media Inquiries:<span> media@nsfcareer.io </span>
               </p>
+              */}
               <p ref="h5">
                 Call us at <span>814-867-4570</span>
               </p>

@@ -53,19 +53,22 @@ class Banner extends React.Component {
                             TRANSFORM YOUR SENSOR DATA
                           </h1>
                           <h4
-                            className={`mobile-head-section animated ${
+
+                            className={`mobile-head-section mobile-section-mt-1 animated ${
                               inView ? this.removeAnimationMobileView('fadeInRight') : ''
                             }`}
                           >
                             Accurate brain simulations help extend your{' '}
                           </h4>
                           <h4
+                              
                             className={`mobile-head-section animated ${
                               inView
                                 ? this.removeAnimationMobileView('fadeInUp')
                                 : ''
                             }`}
                           >
+
                             sensor data research.{' '}
                           </h4>
                           <div
@@ -74,7 +77,7 @@ class Banner extends React.Component {
                             }`}
                           >
                             <p
-                              className={`mobile-head-sub-section animated ${
+                              className={` hide-element mobile-head-sub-section animated ${
                                 inView
                                   ? this.removeAnimationMobileView('fadeInUp')
                                   : ''
@@ -89,7 +92,7 @@ class Banner extends React.Component {
                     <div className="col-md-2 " />
                   </div>
 
-                  <div className="row">
+                  <div className="row hide-element">
                     <div className="col-md-12 image-padding">
                       <InView>
                         {({ inView, ref, entry }) => (
@@ -124,7 +127,7 @@ class Banner extends React.Component {
                       </InView>
                     </div>
                   </div>
-                  <div className="row-margin row padding-mobile">
+                  <div className="row-margin row hide-element padding-mobile">
                     <div className="col-md-12   image-padding">
                       <InView>
                         {({ inView, ref, entry }) => (

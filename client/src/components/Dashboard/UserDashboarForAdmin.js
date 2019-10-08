@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import PlayerDetails from '../PlayerDetails/PlayerDetails';
 import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
+import CumulativeEventsAccelerationEvents from '../DashboardEventsChart/CumulativeEventsAccelerationEvents';
 import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
 import { svgToInline } from '../../config/InlineSvgFromImg';
 import DarkMode from '../DarkMode';
@@ -14,7 +15,9 @@ import {
   isAuthenticated,
   getCumulativeEventPressureData,
   getHeadAccelerationEvents,
-  getCumulativeEventLoadData
+  getCumulativeEventLoadData,
+  getCumulativeAccelerationData,
+  getCumulativeAccelerationTimeData
 } from '../../apis';
 import Spinner from '../Spinner/Spinner';
 import { getStatusOfDarkmode } from '../../reducer';
@@ -30,7 +33,9 @@ class UserDashboarForAdmin extends React.Component {
       isCheckingAuth: true,
       cumulativeEventData: {},
       headAccelerationEventsData: {},
-      cumulativeEventLoadData: {}
+      cumulativeEventLoadData: {},
+      cumulativeAccelerationEventData : {},
+      cumulativeAccelerationTimeData : {}
     };
     console.log("THIS IS PROPS ",this.props.location)
   }
@@ -67,7 +72,8 @@ class UserDashboarForAdmin extends React.Component {
             </div>
             </div>
 
-          <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>
+          <CumulativeEventsAccelerationEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
+          {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
           <HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>
           <div className="row text-center pt-5 pb-5 mt-5 mb-5 animated fadeInUp">
             <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
@@ -90,9 +96,20 @@ class UserDashboarForAdmin extends React.Component {
       isAuthenticated(JSON.stringify({}))
         .then((value) => {
           if (value.data.message === 'success') {
+              getCumulativeAccelerationTimeData({player_id : this.props.location.state.player_name })
+              .then(response => {
+                  this.setState({
+                      cumulativeAccelerationTimeData : { ...this.state.cumulativeAccelerationTimeData, ...response.data.data }
+                  });
+                    return getCumulativeAccelerationData({player_id : this.props.location.state.player_name })
+              })
+              .then(response => {
 
-
-              getCumulativeEventPressureData(JSON.stringify({}))
+                  this.setState({
+                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data }
+                  });
+                    return getCumulativeEventPressureData(JSON.stringify({}))
+              })
               .then(response => {
                   console.log(response.data);
                   this.setState({
