@@ -28,7 +28,7 @@ class HomePage extends React.Component {
   }
   componentDidMount() {
     if (this.props.screenWidth < screenWidth[1].screen725) {
-      document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+      document.getElementsByTagName('body')[0].style.overflow = 'auto';
     }
   }
   componentWillReceiveProps(nextProps) {
@@ -180,10 +180,11 @@ class HomePage extends React.Component {
             scrollUnavailable={this.lastSlide}
             blockScrollDown={this.state.blockScrollDown}
           >
-            <Banner screenWidth={this.props.screenWidth} />
+            <Banner style={{overflowY:"hidden"}} screenWidth={this.props.screenWidth} />
             <AboutTheProduct screenWidth={this.props.screenWidth} />
             <ResearchArea screenWidth={this.props.screenWidth} />
             <TechnologiesWeUse
+              style={{overflowY:"hidden"}}
               currentPage={this.props.currentPage}
               screenWidth={this.props.screenWidth}
               onWheel={this.onFooterScroll}

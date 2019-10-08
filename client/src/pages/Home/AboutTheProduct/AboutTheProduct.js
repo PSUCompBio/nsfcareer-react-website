@@ -37,7 +37,7 @@ function AboutTheProduct(props) {
       <div onWheel={(e)=>detectScroll(e)} className="section-two">
         <div className="row">
           <div className="col-md-12 col-lg-12 text-center">
-            <InView rootMargin="2%">
+            <InView >
               {({ inView, ref }) => (
                 <div className="mb-3" ref={ref}>
                   <h1
@@ -85,7 +85,7 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 animated ${
+                    className={`col-md-4 col-xs-4 col-sm-4 animated ${
                       inView ? removeAnimationMobileView('slideInLeft') : ''
                     }`}
                   >
@@ -106,7 +106,7 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 animated ${inView ? removeAnimationMobileView('zoomIn') : ''}`}
+                    className={`col-md-4 col-xs-4 col-sm-4 animated ${inView ? removeAnimationMobileView('zoomIn') : ''}`}
                   >
                     <img
                       className={`svg ${animateOnDesktop}`}
@@ -124,7 +124,7 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 animated ${
+                    className={`col-md-4 col-xs-4 col-sm-4 animated ${
                       inView ? removeAnimationMobileView('slideInRight') : ''
                     }`}
                   >

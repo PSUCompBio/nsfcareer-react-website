@@ -31,12 +31,7 @@ input::placeholder {
 .age {
   width: 84%;
 }
-.card-border {
-  padding: 1% 15% 1% 15% !important;
-  border: none !important;
-  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
-  border-radius: 12px !important;
-}
+
 .login {
   height: 60%;
   padding-top: 10vh;
@@ -272,10 +267,10 @@ input:-webkit-autofill {
 }
 
 @media (min-width: 992px) and (max-width: 1199px) {
-  
+
 }
 @media (min-width: 1200px) and (max-width: 1440px) {
- 
+
   .brain-icon-container {
     margin-top: -4%;
   }
@@ -284,7 +279,7 @@ input:-webkit-autofill {
   }
 }
 @media (min-width: 2560px) {
-  
+
   .brain-icon-container {
     margin-top: -4%;
   }
