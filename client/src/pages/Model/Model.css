@@ -1,3 +1,8 @@
+.container {
+    max-width: initial !important;
+    padding-left: 10% !important;
+    padding-right: 10% !important;
+}
 #model_block, #clone_model_block {
 	width: 100%;
 }
@@ -31,17 +36,81 @@
 }
 .graph3 {
 	position: absolute;
-	top: 40%;
+	top: 25%;
 	left: 2%;
 	width: 35%;
 }
 .graph4 {
 	position: absolute;
-	top: 30%;
-	right: 0;
+	bottom: 5%;
+	left: 2%;
 	width: 35%;
 }
+.sub_block {
+	border: 2px solid #000;
+	border-radius: 15px;
+}
+.button_outer {
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    max-width: 170px;
+}
+.button_outer span {
+	font-weight: 500;
+}
+.result_txt {
+	color: red;
+}
+.analyze_button_outer{
+	width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+.blast_block, .loading_block {
+	margin-left: 20px;
+}
+.blast_block span, .loading_block span{
+	font-weight: 500;
+}
+.loading_block {
+	margin-bottom: 17px;
+}
+.custom_btn {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.create_data_block h2, .analyze_data_block h2 {
+	font-size: 19px;
+    text-align: center;
+}
+.create_data_block {
+	margin-top: 60px;
+}
+.analyze_data_block{
+	margin-top: 20px;
+	margin-bottom: 60px;
+}
+.upload_data_block{
+	margin-top: 20px;
+}
+thead {
+	background:#000000;
+	color: #fff;
+}
+thead th{
+	font-size: 12px;
+}
+tbody {
+	background: #4472C4;
+	color: #fff;
+}
 
+tbody tr:nth-child(odd){
+   background-color: #34599C;
+}
+
+/*#4472C4*/
 /* @media only screen and (min-width: 1360px) and (max-width: 767px)  {
 	.model_container{
 		padding-top: 4rem !important;
@@ -79,5 +148,8 @@
 	}
 	.model_container{
 		padding-top: 4rem !important;
+	}
+	.create_data_block {
+		margin-top: 20px;
 	}
 }	
