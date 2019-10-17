@@ -12,6 +12,10 @@ import {
   getImpactHistory,
   getImpactSummary
 } from '../apis';
+
+import socketIOClient from 'socket.io-client'
+
+
 import { Bar } from 'react-chartjs-2';
 import Spinner from './Spinner/Spinner';
 
@@ -65,7 +69,8 @@ class CommanderTeamView extends React.Component {
       fileUploadError: '',
       isLoaded: false,
       impactSummaryData: {},
-      impactHistoryData: {}
+      impactHistoryData: {},
+      uploadMessageLog : ''
     };
   }
 
@@ -85,14 +90,18 @@ class CommanderTeamView extends React.Component {
     });
     data.append('sensor_csv_file', this.state.selectedFile);
     console.log(data);
+    this.setState({
+        uploadMessageLog : ''
+    });
+
     uploadSensorDataAndCompute(data)
       .then((response) => {
           if(response.data.message === "success"){
-              this.setState({ isUploading: false, isFileUploaded: true });
-              document.location.reload();
+              this.setState({ isUploading: false, isFileUploaded: true, uploadMessageLog : '' });
+              {/*document.location.reload();*/}
           }
           else{
-              this.setState({ isUploading: false, fileUploadError : response.data.error });
+              this.setState({ isUploading: false, fileUploadError : response.data.error ,uploadMessageLog : ''});
 
           }
           // reload function here
@@ -100,7 +109,7 @@ class CommanderTeamView extends React.Component {
           console.log(response);
       })
       .catch(err => {
-          this.setState({ isUploading: false, fileUploadError : err });
+          this.setState({ isUploading: false, fileUploadError : err ,uploadMessageLog : ''});
           console.log(err);
       })
   };
@@ -122,7 +131,21 @@ class CommanderTeamView extends React.Component {
       this.setState({ visibilityRosterValueSelector: { display: 'block' } });
     else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
   };
+  componentWillUnmount() {
+       const socket = socketIOClient();
+       socket.off('fileUploadLog');
+    }
   componentDidMount() {
+      // Scrolling winddow to top when user clicks on about us page
+      window.scrollTo(0, 0)
+
+      // Socket
+      const socket = socketIOClient();
+      socket.on("fileUploadLog", data => {this.setState({
+            uploadMessageLog : data
+        })
+    });
+
     getImpactHistory(JSON.stringify({}))
       .then((impactHistory) => {
         console.log('History', impactHistory);
@@ -178,26 +201,27 @@ class CommanderTeamView extends React.Component {
       >
         <PenstateUniversity />
         <div className="row text-center">
-          <div className="col-md-8">
+          <div className="col-md-12">
             <div className="row mt-3">
-              <div className="col-md-6"></div>
-              <div className="col-md-6">
-                <div className="season-position text-right ">
-                  <select name="" id="">
-                    <option value="">All session</option>
-                    <option value="">York tech football</option>
-                    <option value="">Lorem lipsum</option>
-                    <option value="">York tech football</option>
-                  </select>
-                  <select name="" id="">
-                    <option value="">All position</option>
-                    <option value="">York tech football</option>
-                    <option value="">Lorem lipsum</option>
-                    <option value="">York tech football</option>
-                  </select>
+                <div className="col-md-6">
+                    <div className="season-position text-left ">
+                      <select name="" id="">
+                        <option value="">All session</option>
+                        <option value="">York tech football</option>
+                        <option value="">Lorem lipsum</option>
+                        <option value="">York tech football</option>
+                      </select>
+                      <select name="" id="">
+                        <option value="">All position</option>
+                        <option value="">York tech football</option>
+                        <option value="">Lorem lipsum</option>
+                        <option value="">York tech football</option>
+                      </select>
+                    </div>
                 </div>
-                <div className="col-auto">
-                  <div>
+              <div className="col-md-6">
+                <div>
+                  <div class="team-upload-section-button">
                     <input
                       onChange={this.onChangeHandler}
                       type="file"
@@ -207,17 +231,18 @@ class CommanderTeamView extends React.Component {
                     <button
                       type="button"
                       onClick={this.onClickHandler}
-                      className="btn \ upload-btn"
+                      className="btn upload-btn"
                     >
                       <i className="fa fa-cloud-upload"></i>
                     </button>
                     {this.state.isUploading ? (
-                      <div className="d-flex justify-content-center center-spinner">
+                      <span><div className="d-flex justify-content-center center-spinner">
                         <div
                           className="spinner-border text-primary"
                           role="status"
                         ></div>
-                      </div>
+                      </div>{this.state.uploadMessageLog}
+                  </span>
                     ) : null}
                     {this.state.isFileUploaded ? (
                       <div
@@ -256,7 +281,9 @@ class CommanderTeamView extends React.Component {
                   </div>
                 </div>
               </div>
+
             </div>
+            {/*
             <div className="row">
               <div
                 ref="card1"
@@ -278,6 +305,7 @@ class CommanderTeamView extends React.Component {
                     content="Roster"
                   />
                 </div>
+
                 <div className="row mt-5">
                   <div className="col-md-6">
                     <div className="highest-load ml-3 mr-3 mt-3 mb-5">
@@ -326,9 +354,12 @@ class CommanderTeamView extends React.Component {
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
+            */}
           </div>
+          {/*
           <div className="col-md-4 pt-5 mb-3">
             <div className="row mt-2">
               <div className="col-md-12  text-left">
@@ -346,12 +377,13 @@ class CommanderTeamView extends React.Component {
               />
             </div>
           </div>
+          */}
         </div>
         <div className="row mb-5 mt-5">
           <div className="col-md-12">
             <div className="text-left">
               <button type="btn" className="impact-sumary-btn">
-                Impact History
+                Team History
               </button>
             </div>
             <div ref="card3" className="impact-history-card p-4">
@@ -392,7 +424,7 @@ class CommanderTeamView extends React.Component {
         ) : (
           <React.Fragment>
             {this.militaryVersionOrNormal()}
-            <Footer />
+            <Footer style={{display : "none"}} className="violent"/>
           </React.Fragment>
         )}
       </React.Fragment>

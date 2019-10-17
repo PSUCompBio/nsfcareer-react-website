@@ -150,8 +150,30 @@ div.section-one {
   position: fixed !important;
   width: 100% !important;
   z-index: 2 !important;
-  box-shadow: 0 5px 13px 8px rgba(0, 0, 0, 0.12) !important;
 }
+
+.navbar-hide {
+  padding-left: 10% !important;
+  padding-right: 10% !important;
+  position: fixed !important;
+  width: 100% !important;
+  z-index: 2 !important;
+  box-shadow: none !important;
+  color : transparent !important;
+  background : transparent !important;
+}
+
+.m-fadeOut {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 300ms, opacity 300ms;
+}
+.m-fadeIn {
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s linear 0s, opacity 300ms;
+}
+
 div.contact-img-container {
   height: 79.6vh;
   display: flex;
@@ -294,6 +316,11 @@ div.underlined-text p {
 div.brain-over-blue img {
   width: 45% !important;
   margin-top: 20vh !important;
+}
+
+.player-data-table-row{
+    cursor: pointer;
+    line-height: 1.8em !important;
 }
 
 .section-two h1,
@@ -539,6 +566,7 @@ footer p {
   position: fixed !important;
   top: 0;
   background-size: cover;
+
 }
 .navbar-container {
   height: 10vh;
@@ -1706,6 +1734,33 @@ div.show-mobile-links {
 }
 
 @media (max-width: 575px) {
+    .inline-row-divs-heading-four {
+        font-weight: 900;
+        color: #707070;
+        font-size: 0.6rem !important;
+        font-family: 'Segoe UI Bold';
+        /* margin: auto; */
+        width: 100%;
+    }
+    .inline-row-divs-svg {
+        height: 80px;
+        width: 80px;
+    }
+    .inline-row-divs {
+    display: inline-block;
+    width: 100px !important;
+    border-radius: 6px;
+    margin-left: auto;
+    margin-right: auto;
+    }
+    .footer-title {
+        text-align: center;
+    }
+    .footer-update-button {
+
+    margin-top: 5%;
+    display: grid;
+    }
     .right-brain-img {
         width: 80%;
         margin-left: auto;
@@ -1782,7 +1837,26 @@ div.show-mobile-links {
   }
   .penstate {
     text-align: center !important;
+    font-family: 'Segoe UI Regular';
+    font-size: 1.6em;
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.85;
+    letter-spacing: 3.45px;
+    color: #686868;
   }
+  .team-view-counter {
+    width: 4em;
+    height: 4em;
+    box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+    border: solid 2px #0f81dc;
+    border-radius: 50%;
+    position: relative;
+    }
+    .season-position.text-right {
+    margin-bottom: 1em;
+}
   div.season-position {
     text-align: center !important;
   }
@@ -1880,9 +1954,9 @@ div.show-mobile-links {
   .section-two,
   .section-three,
   .section-four {
-    height: 100vh;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    height: 100%;
+    /* overflow-y: scroll; */
+    /* overflow-x: hidden; */
     padding-top: 70px;
   }
   .header-navbar {
@@ -2189,6 +2263,15 @@ div.show-mobile-links {
   .dashed-border {
     visibility: hidden;
   }
+  .modal__show {
+    width: 80% !important;
+  }
+  div.modal_form {
+    height: 40% !important
+}
+.player-date-selection-button {
+    margin-top: 1.5rem !important;
+}
 }
 
 @media (min-width: 725px) {
@@ -2207,6 +2290,11 @@ div.show-mobile-links {
       margin : "0";
       padding : "0";
   }
+}
+
+input[type="text"],
+.add_idea_box_right_top textarea{
+box-sizing:border-box;
 }
 
 .section-title {

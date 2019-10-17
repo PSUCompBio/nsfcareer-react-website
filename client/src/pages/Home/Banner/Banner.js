@@ -58,18 +58,7 @@ class Banner extends React.Component {
                               inView ? this.removeAnimationMobileView('fadeInRight') : ''
                             }`}
                           >
-                            Accurate brain simulations help extend your{' '}
-                          </h4>
-                          <h4
-                              
-                            className={`mobile-head-section animated ${
-                              inView
-                                ? this.removeAnimationMobileView('fadeInUp')
-                                : ''
-                            }`}
-                          >
-
-                            sensor data research.{' '}
+                            Accurate brain simulations help extend your{' '}<br />sensor data research.{' '}
                           </h4>
                           <div
                             className={`underlined-text ${

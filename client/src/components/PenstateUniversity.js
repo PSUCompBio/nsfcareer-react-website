@@ -113,7 +113,7 @@ class PenstateUniversity extends React.Component {
               <p> {this.state.adminData.avg_load} </p>
             </div>
             <p ref="h6">
-              {this.props.isMilitaryVersionActive ? 'soldiers' : 'Athelets'}
+              {this.props.isMilitaryVersionActive ? 'soldiers' : 'Athletes'}
             </p>
           </div>
           <div className="counter-container ml-md-auto mr-md-auto text-center">

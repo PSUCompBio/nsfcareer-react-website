@@ -298,7 +298,7 @@ export const getImpactSummary = (request) =>{
 
 export const getPlayersData = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/getPlayersData`, {},{withCredentials: true})
+      axios.post(`/getPlayersData`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -371,6 +371,32 @@ export const deleteTeam = (request) =>{
 export const getCumulativeAccelerationData = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getCumulativeAccelerationData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
+export const getSimulationFilePath = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getSimulationFilePath`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
+export const getSimulationFilesOfPlayer = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getSimulationFilesOfPlayer`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

@@ -51,10 +51,10 @@ class Footer extends React.Component {
         <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
         <div style={{ background: '' }} className="container">
           <div className="row pt-4">
-            <div className="col-sm-6 col-md-6 col-lg-6">
+            <div className="col-sm-6 col-md-6 col-lg-6 footer-title">
               <img className="logo" src="/img/icon/logo.png" alt="" />
             </div>
-            <div className="col-sm-6  col-md-6 col-lg-6">
+            <div className="col-sm-6 col-md-6 col-lg-6 footer-update-button">
               <button
                 type="button"
                 onClick={this.showModal}

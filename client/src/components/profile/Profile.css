@@ -172,3 +172,35 @@ input::placeholder {
 color: #fff!important;
 opacity: 1!important;
 }
+
+.th {
+    white-space: nowrap;
+}
+.td {
+    white-space: nowrap;
+}
+
+.profile-pt-5 {
+    padding-top: 3rem ;
+}
+
+.profile-pb-1 {
+        padding-bottom: 0.25rem;
+}
+
+@media (max-width: 767px) {
+.profile {
+    display: none !important ;
+}
+
+.profile-pt-5 {
+    padding-top: 0rem !important;
+}
+.profile-mt {
+    margin-top: 15vh;
+}
+.team-upload-section-button {
+    margin-top: 1.5rem !important;
+}
+
+}

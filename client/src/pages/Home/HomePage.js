@@ -25,8 +25,10 @@ class HomePage extends React.Component {
       scrollTopTouched: false
     };
     this._pageScroller = null;
+
   }
   componentDidMount() {
+
     if (this.props.screenWidth < screenWidth[1].screen725) {
       document.getElementsByTagName('body')[0].style.overflow = 'auto';
     }
@@ -66,6 +68,8 @@ class HomePage extends React.Component {
   };
 
   pageOnChange = (number) => {
+      console.log(number);
+
     this.props.onPageChange(number);
   };
 
@@ -78,6 +82,7 @@ class HomePage extends React.Component {
   };
 
   updateAccToMouseWheel = (e) => {
+
     console.log(this.state.mobilePageCount);
     if (e.deltaY > 0 && this.state.mobilePageCount === 1) {
       this.setState(
@@ -164,6 +169,8 @@ class HomePage extends React.Component {
 
   topTouch() {
     console.log('Top touching');
+
+
     this.setState({ scrollTopTouched: true });
     setTimeout(() => {
       this.setState({ scrollTopTouched: false });

@@ -42,12 +42,15 @@ class CommanderDataTable extends React.Component {
       this.refs.table.classList.add('commander-dark-table');
     }
 
-    getPlayersData(JSON.stringify({}))
+    getPlayersData({
+        organization : "PSU",
+        team_name : "York Tech Football"
+    })
     .then(response => {
         console.log(response);
-        for(var i = 0 ; i < response.data.data.length ; i++){
+        for(var i = 0 ; i < response.data.data.player_list.length ; i++){
             this.setState(prevState => ({
-                users: [...prevState.users, response.data.data[i]]
+                users: [...prevState.users, response.data.data.player_list[i]]
             }));
         }
     })
@@ -71,7 +74,7 @@ class CommanderDataTable extends React.Component {
         {/* <div className="row"> */}
         <div
           ref="card"
-          className="col-md-12 pl-0 pr-0 mt-5  mb-5 data-table-view"
+          className="col-md-12 pl-0 pr-0 mt-5 data-table-view"
         >
           <div className="btns-group d-flex">
             <RostarBtn
@@ -97,7 +100,7 @@ class CommanderDataTable extends React.Component {
             />
           </div>
           <div ref="table" className="commander-data-table">
-            <table className="table">
+            <table style={{whiteSpace:"nowrap"}} className="table table-responsive">
               <thead>
                 <tr>
                   <th scope="col"></th>
@@ -108,13 +111,17 @@ class CommanderDataTable extends React.Component {
                   <th scope="col">Alerts</th>
                   <th scope="col">Impacts</th>
                   <th scope="col">Load</th>
-                  <th className="w-25" scope="col"></th>
+                  <th className="col" scope="col"></th>
                 </tr>
               </thead>
               <tbody>
                   {this.state.users.map(function(player, index){
-                    return <tr key={index}>
-                      <td>
+                    return <tr className="player-data-table-row" key={index} onClick={()=>{
+
+                            this.setRedirectData(Number(index + 1).toString(), player)
+                        }}
+                        >
+                      <td >
                         {/*<input
                           id="checkbox-1"
                           className="checkbox-custom"
@@ -128,16 +135,18 @@ class CommanderDataTable extends React.Component {
                         */}
                         <i class="fa fa-eye" aria-hidden="true" onClick={()=>{
 
-                                this.setRedirectData(Number(index + 1).toString(), player.player_id)
+                                this.setRedirectData(Number(index + 1).toString(), player)
                             }}></i>
                       </td>
                       <th scope="row">{index + 1}</th>
-                      <td>{player.player_id}</td>
+                      <td>{player}</td>
                       <td>Football</td>
-                      <td>{player.position}</td>
+                      <td>FE/DT</td>
                       <td>0</td>
-                      <td>{Number(player.impact)}</td>
-                      <td>{Number(player.impact)%(index + 1)*2}</td>
+                      {/*<td>{Number(player.impact)}</td>*/}
+                      <td>0</td>
+                      {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
+                      <td>0</td>
                       <td>
                         <div className="progress my-progress">
                           <div
