@@ -417,3 +417,15 @@ export const getCumulativeAccelerationTimeData = (request) =>{
       });
   })
 }
+
+export const uploadModelRealData= (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/uploadModelRealData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

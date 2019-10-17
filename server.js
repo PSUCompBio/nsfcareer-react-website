@@ -142,6 +142,27 @@ var uploadSensorData = multer({
     // }
 });
 
+var uploadModelRealData = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        //var ext = path.extname(file.originalname);
+        console.log("This is filename ------> \n",file.originalname);
+
+        let csv = new RegExp(".csv").test(file.originalname);
+        let csv_upper = new RegExp(".CSV").test(file.originalname);
+        let excel = new RegExp(".xlsx").test(file.originalname);
+        let excelx = new RegExp(".xls").test(file.originalname);
+        if (!csv && !csv_upper && !excel && !excelx) {
+            // res.send({message : "FAILURE"});
+            req.body["file_error"] = "Only .csv , .xlsx file is allowed"
+        }
+        callback(null, true)
+    }
+    // limits:{
+    //     fileSize: 1024 * 1024
+    // }
+});
+
 // AWS S3 & Other Controllers Configuration
 const awsWorker = require('./controllers/aws.controller.js');
 
@@ -808,6 +829,53 @@ function convertXLSXDataToJSON(buf,cb){
             data_array[i].player_id = data_array[i].player_id + "$" + data_array[i].timestamp;
         }
         cb(data_array);
+    });
+
+}
+
+function convertDataToJSON(buf,cb){
+    // york_data.xlsx
+
+    var wb = XLSX.read(buf, {type:'buffer'});
+    var sheet_name_list = wb.SheetNames;
+    sheet_name_list.forEach(function(y) {
+        var worksheet = wb.Sheets[y];
+        var headers = {};
+        var data = [];
+        for(z in worksheet) {
+            if(z[0] === '!') continue;
+            //parse out the column, row, and value
+            var col = z.substring(0,1);
+            var row = parseInt(z.substring(1));
+            var value = worksheet[z].v;
+
+            //store header names
+            if(row == 1) {
+
+                if(value == "Athlete"){
+                    value = "player_id"
+                }
+                 headers[col] = value
+                                .split(" ")
+                                .join("_")
+                                .replace(/[{()}]/g, '')
+                                .toLowerCase();
+                continue;
+            }
+
+            if(!data[row]) data[row]={};
+
+            data[row][headers[col]] = value;
+
+
+
+        }
+       
+		//drop those first two rows which are empty
+        data.shift();
+        data.shift();
+	   
+        cb(data);
     });
 
 }
@@ -2265,6 +2333,14 @@ app.post(`${apiPrefix}deleteTeam`, (req,res) =>{
             res.send(httpResponse.body);
         }
     })
+})
+
+app.post(`${apiPrefix}uploadModelRealData`, setConnectionTimeout('10m'), uploadModelRealData.single('file'), (req, res) => {
+	convertDataToJSON(req.file.buffer,function(items){
+		//console.log(items);
+		return res.status(200).send(items);
+    });
+
 })
 
 

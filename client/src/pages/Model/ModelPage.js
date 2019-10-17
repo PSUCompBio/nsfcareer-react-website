@@ -1,4 +1,6 @@
 import React from 'react';
+import { uploadModelRealData } from '../../apis';
+import { Button, Modal, Table } from 'react-bootstrap';
 import Footer from '../../components/Footer';
 import Chart from 'react-google-charts';
 import * as THREE from "three";
@@ -8,6 +10,7 @@ import GLB from './SoldierMesh.glb';
 import ArrowGLB from './ArrowMesh.glb';
 import './Model.css';
 import { getStatusOfDarkmode } from '../../reducer';
+
 
 let stage = 0;
 let oldx = 0;
@@ -601,8 +604,9 @@ class ModelPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			modalShow: false,
 			isLoading: false,
-			isLoadingClone: false,
+			show_graph: 'none',
 			dataPoints1: pointArray[0],
 			dataPoints2: pointArray[1],
 			dataPoints3: pointArray[2],
@@ -611,6 +615,9 @@ class ModelPage extends React.Component {
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
 		this.generateClone = this.generateClone.bind(this);
+		this.onChangeHandler = this.onChangeHandler.bind(this);
+		this.handleShowModal = this.handleShowModal.bind(this);
+		this.handleCloseModal = this.handleCloseModal.bind(this);
 	}
 	
 	componentDidMount() {
@@ -619,8 +626,78 @@ class ModelPage extends React.Component {
 		   this.refs.h1.style.color = "#fff"
 		}
 		this.sceneSetup();
-		this.loadModel();
+		this.loadModel(GLB, 'model');
 		this.startAnimationLoop();
+	}
+	
+	handleShowModal = () => {
+		this.setState({
+			modalShow: true
+		});
+	}
+	
+	handleCloseModal = () => {
+		this.setState({
+			modalShow: false
+		});
+	}
+	
+	onChangeHandler = (event) => {
+		var fileInput = document.getElementById('file');
+		var filePath = fileInput.value;
+		var allowedExtensions = /(\.csv|\.xlsx|\.xls|\.CSV)$/i;
+		if(!allowedExtensions.exec(filePath)){
+			alert('Please upload file having extensions .csv or .xls or .xls only.');
+			fileInput.value = '';
+			return false;
+		} 
+		
+		const data = new FormData();
+		data.append('file', event.target.files[0]);
+	
+		uploadModelRealData(data)
+			.then((response) => {
+				
+				const dataPointsHelmet = [];
+				dataPointsHelmet.push(['Time (ms)', 'Pressure (PSI)']);
+				
+				const dataPointsArm = [];
+				dataPointsArm.push(['Time (ms)', 'Pressure (PSI)']);
+				
+				const dataPointsChest = [];
+				dataPointsChest.push(['Time (ms)', 'Pressure (PSI)']);
+				
+				var results = response.data;
+				
+				for (var result in results) {
+					
+					const arr1 = [];
+					arr1.push(results[result]['time_msec']);
+					arr1.push(results[result]['head_pressure_psi']);
+					dataPointsHelmet.push(arr1);
+					
+					const arr2 = [];
+					arr2.push(results[result]['time_msec']);
+					arr2.push(results[result]['shoulder_pressure_psi']);
+					dataPointsArm.push(arr2);
+					
+					const arr3 = [];
+					arr3.push(results[result]['time_msec']);
+					arr3.push(results[result]['chest_pressure_psi']);
+					dataPointsChest.push(arr3);
+				}
+				
+				this.setState({
+					dataPoints1: dataPointsHelmet,
+					dataPoints2: dataPointsArm,
+					dataPoints3: dataPointsChest,
+					modalShow: false
+				});
+				
+			})
+			.catch((err) => {
+				alert('Error: ' + err);
+			});
 	}
   
 	sceneSetup = () => {
@@ -663,7 +740,7 @@ class ModelPage extends React.Component {
 		//this.controls.maxDistance = 10;
 	};
   
-	loadModel = () => {
+	loadModel = (model, type) => {
 		const scene  = this.scene;
 		const me  = this;
 		var loader = new GLTFLoader();
@@ -675,7 +752,7 @@ class ModelPage extends React.Component {
 		// Load a glTF resource
 		loader.load(
 			// resource URL
-			GLB,
+			model,
 			// called when the resource is loaded
 			function ( gltf ) {
 				scene.add( gltf.scene );
@@ -683,13 +760,12 @@ class ModelPage extends React.Component {
 				me.setState({
 					isLoading: false
 				});
-
-				//gltf.animations; // Array<THREE.AnimationClip>
-				//gltf.scene; // THREE.Scene
-				//gltf.scenes; // Array<THREE.Scene>
-				//gltf.cameras; // Array<THREE.Camera>
-				//gltf.asset; // Object
-
+				
+				if (type === 'arrow') {
+					me.setState({
+						show_graph: 'block'
+					});
+				}
 			},
 			// called while loading is progressing
 			function ( xhr ) {
@@ -785,128 +861,10 @@ class ModelPage extends React.Component {
 	}
 	
 	generateClone = () => {
-		
-		document.getElementById('clone_block').style.display = "block";
-		document.getElementById("clone_block").scrollIntoView();
-		
-		this.sceneSetupClone();
-		this.loadModelClone();
-		this.startAnimationLoopClone();
+		this.loadModel(ArrowGLB, 'arrow');
 	}
 	
-	sceneSetupClone = () => {
-		// get container dimensions and use them for scene sizing
-		const width = window.innerWidth;
-		const height = window.innerHeight;
-		
-		const canvas = document.querySelector('#clone_model_block');
-		
-		this.renderer1 = new THREE.WebGLRenderer({canvas, antialias:true});
-		this.renderer1.gammaOutput = true;
-		this.renderer1.gammaFactor = 2.2;
-
-		this.scene1 = new THREE.Scene();
-		//this.scene.background = new THREE.Color( 0x8FBCD4 );
-		this.scene1.background = new THREE.Color( "rgb(229, 229, 229)" );
-
-		var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-		this.scene1.add( light );
-		
-		light = new THREE.DirectionalLight( 0xffffff );
-		this.scene1.add( light );
-
-		this.camera1 = new THREE.PerspectiveCamera( 25, width / height, 1, 1000 );
-		this.camera1.position.set(0, 0, 4.8);
-			
-	    // prepare controls (OrbitControls)
-		this.controls1 = new OrbitControls(this.camera1, canvas);
-		//this.controls.autoRotate = true;
-		this.controls1.minPolarAngle = Math.PI * 0.5;
-		this.controls1.maxPolarAngle  = Math.PI * 0.5;
-		
-		// to disable zoom
-		this.controls1.enableZoom = false;
-
-		// to disable rotation
-		//this.controls.enableRotate = false;
-		
-		//this.controls.minDistance = 2;
-		//this.controls.maxDistance = 10;
-	};
-  
-	loadModelClone = () => {
-		const scene  = this.scene1;
-		const me  = this;
-		var loader = new GLTFLoader();
-		
-		this.setState({
-			isLoadingClone: true
-		});
-		
-		// Load a glTF resource
-		loader.load(
-			// resource URL
-			ArrowGLB,
-			// called when the resource is loaded
-			function ( gltf ) {
-				scene.add( gltf.scene );
-				
-				me.setState({
-					isLoadingClone: false
-				});
-
-				//gltf.animations; // Array<THREE.AnimationClip>
-				//gltf.scene; // THREE.Scene
-				//gltf.scenes; // Array<THREE.Scene>
-				//gltf.cameras; // Array<THREE.Camera>
-				//gltf.asset; // Object
-
-			},
-			// called while loading is progressing
-			function ( xhr ) {
-				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-			},
-			// called when loading has errors
-			function ( error ) {
-				
-				me.setState({
-					isLoading: false
-				});
-				
-				alert( 'An error happened' );
-				console.log( error );
-			}
-		);
-	};
-
-	startAnimationLoopClone = () => {
-		if (this.resizeRendererToDisplaySizeClone(this.renderer1)) {
-			const canvas = this.renderer1.domElement;
-			this.camera1.aspect = canvas.clientWidth / canvas.clientHeight;
-			this.camera1.updateProjectionMatrix();
-		}
-		
-		this.renderer1.render(this.scene1, this.camera1);
-
-		// The window.requestAnimationFrame() method tells the browser that you wish to perform
-		// an animation and requests that the browser call a specified function
-		// to update an animation before the next repaint
-		this.requestID1 = window.requestAnimationFrame(this.startAnimationLoopClone);
-	};
-
-	resizeRendererToDisplaySizeClone = (renderer)  => {
-		const canvas = renderer.domElement;
-		const width = canvas.clientWidth;
-		const height = canvas.clientHeight;
-		const needResize = canvas.width !== width || canvas.height !== height;
-		if (needResize) {
-			this.renderer1.setSize(width, height, false);
-		}
-		return needResize;
-    }
-		
 	render() {
-		
 		const graph1Options = {
 			title: "",
 			hAxis: { title: "Time (ms)", titleTextStyle: {
@@ -996,9 +954,9 @@ class ModelPage extends React.Component {
 		  <React.Fragment>
 			<div className="container align-center__about-page">
 				<div class="row">
-					 <div className="model_container col-md-9 col-sm-9 padding-about__page text-center">
+					 <div className="model_container col-md-8 col-sm-8 padding-about__page text-center">
 						<div className={`section-title animated zoomIn`}>
-							<h1 ref="h1" className="font-weight-bold">3D Model</h1>
+							<h1 ref="h1" className="font-weight-bold">BlastFX Simulator</h1>
 						</div>
 						<div id="canvas_container">
 							<canvas id="model_block" />
@@ -1039,45 +997,115 @@ class ModelPage extends React.Component {
 									rootProps={{ 'data-testid': '3' }}
 								/>
 							</div>
+							<div className="graph4" style={{ display: this.state.show_graph }}>
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints4}
+									options={cloneOptions}
+									rootProps={{ 'data-testid': '4' }}
+								/>
+							</div>
 						</div>
 					</div>
-					<div className="col-md-3 col-sm-3 padding-about__page">
-						<div>
+					<div className="col-md-4 col-sm-4 padding-about__page">
+					{/*<div>
 							<button type="submit" class="generate_graph btn btn-primary" onClick={this.generateGraphs}>Generate Graph</button>
 						</div>
 						<div>
 							<button type="submit" class="tringulate_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
 						</div>
-					</div>
-				</div>
-				
-				<div id="clone_block" style={{ display: 'none'}}>				
-					<div class="row">
-						<div className="col-md-12 col-sm-12 padding-about__page text-center">
-							<div id="canvas_container">
-								<canvas id="clone_model_block" />
-								{this.state.isLoadingClone ? (
-								<div className="model_loader_clone d-flex justify-content-center center-spinner">
-									<div
-									  className="spinner-border text-primary"
-									  role="status"
-									>
-									  <span  className="sr-only">Loading...</span>
-									</div>
-								 </div>
-								) : null}
-							</div>	
-							<div className="graph4">
-								<Chart
-									chartType="LineChart"
-									data={this.state.dataPoints4}
-									options={cloneOptions}
-									rootProps={{ 'data-testid': '3' }}
-								/>
+					<input type="file" name="file" onChange={this.onChangeHandler}/>*/}
+						<div className="create_data_block">
+							<h2>Create Data</h2>
+							<div className="sub_block">
+								<div className="button_outer">
+								<button type="submit" className="custom_btn btn btn-primary" onClick={this.generateGraphs}>Generate Test Data</button>
+									<span>OR</span>
+									<button type="button" onClick={this.handleShowModal} className="custom_btn btn btn-primary" >Upload Real Data</button>
+								</div>
+							</div>
+						</div>
+						<div className="analyze_data_block">
+							<h2>Analyze Data</h2>
+							<div className="sub_block">
+								<div className="analyze_button_outer">
+									<button type="submit" class="custom_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
+								</div>
+								<div className="blast_block">
+									<span>Blast Magnitude: </span>
+									<span className="result_txt">50 PSI</span>
+								</div>
+								<div className="loading_block">
+									<span>Loading Direction On Head: </span>
+									<span className="result_txt">(0.2, 0.34, 0.65)</span>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>	 
+					<Modal
+					size="lg"
+					aria-labelledby="contained-modal-title-vcenter"
+					backdrop="static"
+					show={this.state.modalShow}
+					onHide={this.handleCloseModal}
+					>
+						<Modal.Header closeButton>
+								<Modal.Title id="contained-modal-title-vcenter">
+								Upload Real Data
+								</Modal.Title> 
+						</Modal.Header>
+						<Modal.Body>
+							<h5>Upload a CSV or XLSX file with the following format</h5>
+							<div className="row upload_data_block">
+								<div className="col-md-7 col-sm-7">
+									<Table bordered >
+									  <thead>
+										<tr>
+										  <th>Time (msec)</th>
+										  <th>Head Pressure (Psi)</th>
+										  <th>Shoulder Pressure (Psi)</th>
+										  <th>Chest Pressure (Psi)</th>
+										</tr>
+									  </thead>
+									  <tbody>
+										<tr>
+										  <td>t<sub>1</sub></td>
+										  <td>p<sup>helmet</sup><sub>1</sub></td>
+										  <td>p<sup>arm</sup><sub>1</sub></td>
+										  <td>p<sup>chest</sup><sub>1</sub></td>
+										</tr>
+										<tr>
+										  <td>t<sub>2</sub></td>
+										  <td>p<sup>helmet</sup><sub>2</sub></td>
+										  <td>p<sup>arm</sup><sub>2</sub></td>
+										  <td>p<sup>chest</sup><sub>2</sub></td>
+										</tr>
+										<tr>
+										 <td>.</td>
+										  <td>.</td>
+										  <td>.</td>
+										  <td>.</td>
+										</tr>
+										<tr>
+										  <td>t<sub>N</sub></td>
+										  <td>p<sup>helmet</sup><sub>N</sub></td>
+										  <td>p<sup>arm</sup><sub>N</sub></td>
+										  <td>p<sup>chest</sup><sub>N</sub></td>
+										</tr>
+									  </tbody>
+									</Table>
+								</div>
+								<div className="col-md-5 col-sm-5">
+									<input type="file" id="file" name="file" accept=".csv,.xlsx,.xls" onChange={this.onChangeHandler} />
+								</div>
+							</div>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button onClick={this.handleCloseModal}>Close</Button>
+						</Modal.Footer>
+					</Modal>
+				</div>
+				
 			 </div>
 			<Footer />
 		  </React.Fragment>
