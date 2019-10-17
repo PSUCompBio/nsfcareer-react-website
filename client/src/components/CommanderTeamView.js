@@ -98,7 +98,7 @@ class CommanderTeamView extends React.Component {
       .then((response) => {
           if(response.data.message === "success"){
               this.setState({ isUploading: false, isFileUploaded: true, uploadMessageLog : '' });
-              {/*document.location.reload();*/}
+              document.location.reload();
           }
           else{
               this.setState({ isUploading: false, fileUploadError : response.data.error ,uploadMessageLog : ''});

@@ -870,11 +870,11 @@ function convertDataToJSON(buf,cb){
 
 
         }
-       
+
 		//drop those first two rows which are empty
         data.shift();
         data.shift();
-	   
+
         cb(data);
     });
 

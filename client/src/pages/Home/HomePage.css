@@ -2393,6 +2393,10 @@ box-sizing:border-box;
 border: 2px solid #0a538c;
 }
 
+tbody.player-table tr:nth-child(odd){
+   background-color: #fff;
+}
+
 
 @media screen and (max-height: 26.375em) {
   .cbp-spmenu-vertical {

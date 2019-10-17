@@ -114,7 +114,7 @@ class CommanderDataTable extends React.Component {
                   <th className="col" scope="col"></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="player-table">
                   {this.state.users.map(function(player, index){
                     return <tr className="player-data-table-row" key={index} onClick={()=>{
 
