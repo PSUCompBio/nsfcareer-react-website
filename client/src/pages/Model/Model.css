@@ -110,6 +110,23 @@ tbody tr:nth-child(odd){
    background-color: #34599C;
 }
 
+
+/*---Start added 17-10-2019-----*/
+.cu-margin-top {
+	margin-top:5px;
+}
+.brain-img {
+	height:400px;
+}
+
+.cu-margin-bottom {
+	margin-bottom: 2px !important;
+}
+
+
+/*---End added 17-10-2019-----*/
+
+
 /*#4472C4*/
 /* @media only screen and (min-width: 1360px) and (max-width: 767px)  {
 	.model_container{
@@ -153,3 +170,7 @@ tbody tr:nth-child(odd){
 		margin-top: 20px;
 	}
 }	
+
+
+
+
