@@ -121,7 +121,46 @@ tbody tr:nth-child(odd){
 
 .cu-margin-bottom {
 	margin-bottom: 2px !important;
+	text-align:center;
+	width: 100%;
 }
+.cu-align-center {
+	text-align:center;
+}
+
+.blinking{
+	animation:blinking 0.8s infinite;
+}
+.green{
+	animation:green 0.8s infinite;
+}
+.red {
+	animation:red 0.8s infinite;
+}
+
+@keyframes blinking{
+	0%{		color: #000;	}
+	49%{	color: transparent;	}
+	50%{	color: transparent;	}
+	99%{	color:transparent;	}
+	100%{	color: #000;	}
+}
+@keyframes green{
+	0%{		color: #008000;	}
+	49%{	color: transparent;	}
+	50%{	color: transparent;	}
+	99%{	color:transparent;	}
+	100%{	color: #008000;	}
+}
+@keyframes red{
+	0%{		color: #FF0000;	}
+	49%{	color: transparent;	}
+	50%{	color: transparent;	}
+	99%{	color:transparent;	}
+	100%{	color: #FF0000;	}
+}
+
+
 
 
 /*---End added 17-10-2019-----*/

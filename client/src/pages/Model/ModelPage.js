@@ -614,6 +614,7 @@ class ModelPage extends React.Component {
 			show_triangular_graph : 'none',
 			triangular_graph_text : 'Brain simulation pending',
 			show_triangular_graph_block : 'none',
+			triangular_graph_text_color : "red",
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
@@ -875,7 +876,8 @@ class ModelPage extends React.Component {
 		const timer = setTimeout(() => {
 			this.setState({
 				triangular_graph_text: 'Brain simulation completed',
-				show_triangular_graph_block : 'block'
+				show_triangular_graph_block : 'block',
+				triangular_graph_text_color : 'green'
 			});
 		}, 6000);
 		
@@ -1075,8 +1077,8 @@ class ModelPage extends React.Component {
 									<span>Loading Direction On Head: </span>
 									<span className="result_txt">(0.2, 0.34, 0.65)</span>
 								</div>
-								<div className="loading_block cu-margin-bottom" style={{ display: this.state.show_triangular_graph }}>
-									<span>{ this.state.triangular_graph_text }</span>
+								<div className="cu-margin-bottom" style={{ display: this.state.show_triangular_graph }}>
+									<span className={"blinking "+this.state.triangular_graph_text_color}>{ this.state.triangular_graph_text }</span>
 								</div>
 							</div>
 						</div>
@@ -1146,7 +1148,7 @@ class ModelPage extends React.Component {
 				</div>
 				
 				<div className="row">
-					<div style={{ display: this.state.show_triangular_graph_block }} className={`section-title animated zoomIn`}>
+					<div style={{ display: this.state.show_triangular_graph_block }} className={`section-title animated zoomIn cu-align-center`}>
 							<h1 ref="h1" className="font-weight-bold">Brain Simulation Results</h1>
 							<div className="brain-image-container" >
 								<img ref="dashboardView"

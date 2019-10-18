@@ -1,9 +1,16 @@
-import React, { Component, Fragment } from 'react';
-
+import React from 'react';
+import { uploadModelRealData } from '../../apis';
+import { Button, Modal, Table } from 'react-bootstrap';
+import Footer from '../../components/Footer';
 import Chart from 'react-google-charts';
-import "./military.css";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import GLB from './SoldierMesh.glb';
+import ArrowGLB from './ArrowMesh.glb';
+import './military.css';
+import { getStatusOfDarkmode } from '../../reducer';
 
-import { MDBBtn } from "mdbreact";
 
 let stage = 0;
 let oldx = 0;
@@ -580,129 +587,237 @@ let pointArray = [
 					[17.84670968,	-0.31876129],
 					]
 				];
-
-class Military extends Component {
+let pointArrayClone = [[
+    ['x', 'Curve1', 'Curve2', 'Curve3', 'Average'],
+    [0, 0, 0, 0, 0],
+    [1, 10, 5, 5, 6.3],
+    [2, 23, 15, 20, 19],
+    [3, 17, 9, 13, 13],
+    [4, 18, 10, 19, 16],
+    [5, 9, 5, 7, 6.3],
+    [6, 11, 3, 7, 7],
+    [7, 27, 19, 23, 23],
+ ]];			
+				
+class MilitaryPage extends React.Component {
+	
 	constructor(props) {
-        super(props);
-		this.rotateImage360 = this.rotateImage360.bind(this);
-		this.generateGraphs = this.generateGraphs.bind(this);
-
+		super(props);
 		this.state = {
+			modalShow: false,
+			isLoading: false,
+			show_graph: 'none',
 			dataPoints1: pointArray[0],
 			dataPoints2: pointArray[1],
-			dataPoints3: pointArray[2]
-		}
+			dataPoints3: pointArray[2],
+			dataPoints4: pointArrayClone[0],
+			show_triangular_graph : 'none',
+			triangular_graph_text : 'Brain simulation pending',
+			show_triangular_graph_block : 'none',
+			triangular_graph_text_color : "red",
+		};
+		
+		this.generateGraphs = this.generateGraphs.bind(this);
+		this.generateClone = this.generateClone.bind(this);
+		this.onChangeHandler = this.onChangeHandler.bind(this);
+		this.handleShowModal = this.handleShowModal.bind(this);
+		this.handleCloseModal = this.handleCloseModal.bind(this);
 	}
-
+	
 	componentDidMount() {
-		const canvas = this.refs.canvas;
-		const ctx = canvas.getContext("2d");
-		const img = document.getElementById('image' + stage);
-
-		img.onload = () => {
-			canvas.width = document.getElementById("left-container").offsetWidth;
-			canvas.height = document.getElementById("left-container").offsetHeight;
-			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-			//ctx.font = "40px Courier";
+		if (getStatusOfDarkmode().status === true) {
+		   console.log('dfsdgds')
+		   this.refs.h1.style.color = "#fff"
 		}
-
-		document.addEventListener('mousemove', this.handleMouseMove, false);
-		document.addEventListener('mousehover', this.handleMouseHover, false);
-		document.addEventListener('mouseup', this.handleMouseUp, false);
-
-		/*setInterval(() => {
-			stage++;
-			if (!document.getElementById('image' + stage)) {
-				stage = 0;
-			}
-			this.rotateImage360();
-		}, 300); */
-
-		this.refs.canvas.style.cursor='pointer';
+		this.sceneSetup();
+		this.loadModel(GLB, 'model');
+		this.startAnimationLoop();
 	}
-
-	componentWillUnmount = () => {
-		document.removeEventListener('mousemove', this.handleMouseMove, false);
-		document.removeEventListener('mousehover', this.handleMouseHover, false);
-		document.removeEventListener('mouseup', this.handleMouseUp, false);
-	};
-
-	handleMouseDown = event => {
-        event.preventDefault();
+	
+	handleShowModal = () => {
 		this.setState({
-			dragging: true,
-			dragStart: event.screenX,
+			modalShow: true
 		});
-
-		this.refs.canvas.style.cursor='w-resize';
-	};
-
-	handleMouseUp = () => {
-	    this.setState({ dragging: false });
-		this.refs.canvas.style.cursor='pointer';
-	};
-
-	handleMouseHover = () => {
-		this.refs.canvas.style.cursor='pointer';
 	}
+	
+	handleCloseModal = () => {
+		this.setState({
+			modalShow: false
+		});
+	}
+	
+	onChangeHandler = (event) => {
+		var fileInput = document.getElementById('file');
+		var filePath = fileInput.value;
+		var allowedExtensions = /(\.csv|\.xlsx|\.xls|\.CSV)$/i;
+		if(!allowedExtensions.exec(filePath)){
+			alert('Please upload file having extensions .csv or .xls or .xls only.');
+			fileInput.value = '';
+			return false;
+		} 
+		
+		const data = new FormData();
+		data.append('file', event.target.files[0]);
+	
+		uploadModelRealData(data)
+			.then((response) => {
+				
+				const dataPointsHelmet = [];
+				dataPointsHelmet.push(['Time (ms)', 'Pressure (PSI)']);
+				
+				const dataPointsArm = [];
+				dataPointsArm.push(['Time (ms)', 'Pressure (PSI)']);
+				
+				const dataPointsChest = [];
+				dataPointsChest.push(['Time (ms)', 'Pressure (PSI)']);
+				
+				var results = response.data;
+				
+				for (var result in results) {
+					
+					const arr1 = [];
+					arr1.push(results[result]['time_msec']);
+					arr1.push(results[result]['head_pressure_psi']);
+					dataPointsHelmet.push(arr1);
+					
+					const arr2 = [];
+					arr2.push(results[result]['time_msec']);
+					arr2.push(results[result]['shoulder_pressure_psi']);
+					dataPointsArm.push(arr2);
+					
+					const arr3 = [];
+					arr3.push(results[result]['time_msec']);
+					arr3.push(results[result]['chest_pressure_psi']);
+					dataPointsChest.push(arr3);
+				}
+				
+				this.setState({
+					dataPoints1: dataPointsHelmet,
+					dataPoints2: dataPointsArm,
+					dataPoints3: dataPointsChest,
+					modalShow: false
+				});
+				
+			})
+			.catch((err) => {
+				alert('Error: ' + err);
+			});
+	}
+  
+	sceneSetup = () => {
+		// get container dimensions and use them for scene sizing
+		const width = window.innerWidth;
+		const height = window.innerHeight;
+		
+		const canvas = document.querySelector('#model_block');
+		
+		this.renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+		this.renderer.gammaOutput = true;
+		this.renderer.gammaFactor = 2.2;
 
-	handleMouseMove = event => {
-	  if (this.state.dragging) {
+		this.scene = new THREE.Scene();
+		//this.scene.background = new THREE.Color( 0x8FBCD4 );
+		this.scene.background = new THREE.Color( "rgb(229, 229, 229)" );
 
-		//const position = event.screenX;
-		// <-- update your image index
+		var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+		this.scene.add( light );
+		
+		light = new THREE.DirectionalLight( 0xffffff );
+		this.scene.add( light );
 
-		if (event.pageX < oldx) {
-            stage--;
-			//console.log(stage);
-			if (!document.getElementById('image' + stage)) {
-				stage = 47;
+		this.camera = new THREE.PerspectiveCamera( 25, width / height, 1, 1000 );
+		this.camera.position.set(0, 0, 4.8);
+			
+	    // prepare controls (OrbitControls)
+		this.controls = new OrbitControls(this.camera, canvas);
+		//this.controls.autoRotate = true;
+		this.controls.minPolarAngle = Math.PI * 0.5;
+		this.controls.maxPolarAngle  = Math.PI * 0.5;
+		
+		// to disable zoom
+		this.controls.enableZoom = false;
+
+		// to disable rotation
+		//this.controls.enableRotate = false;
+		
+		//this.controls.minDistance = 2;
+		//this.controls.maxDistance = 10;
+	};
+  
+	loadModel = (model, type) => {
+		const scene  = this.scene;
+		const me  = this;
+		var loader = new GLTFLoader();
+		
+		this.setState({
+			isLoading: true
+		});
+		
+		// Load a glTF resource
+		loader.load(
+			// resource URL
+			model,
+			// called when the resource is loaded
+			function ( gltf ) {
+				scene.add( gltf.scene );
+				
+				me.setState({
+					isLoading: false
+				});
+				
+				if (type === 'arrow') {
+					me.setState({
+						show_graph: 'block'
+					});
+				}
+			},
+			// called while loading is progressing
+			function ( xhr ) {
+				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+			},
+			// called when loading has errors
+			function ( error ) {
+				
+				me.setState({
+					isLoading: false
+				});
+				
+				alert( 'An error happened' );
+				console.log( error );
 			}
-        } else if (event.pageX > oldx) {
-           stage++;
-
-			if (!document.getElementById('image' + stage)) {
-				stage = 0;
-			}
-        }
-
-		oldx = event.pageX;
-
-		this.rotateImage360();
-
-	  }
+		);
 	};
 
-	// Rotate Image 360
-    rotateImage360(e) {
+	startAnimationLoop = () => {
+		if (this.resizeRendererToDisplaySize(this.renderer)) {
+			const canvas = this.renderer.domElement;
+			this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
+			this.camera.updateProjectionMatrix();
+		}
+		
+		this.renderer.render(this.scene, this.camera);
 
-		//console.log(stage);
-		const canvas = this.refs.canvas;
-		const ctx = canvas.getContext("2d");
-		const img = document.getElementById('image' + stage);
+		// The window.requestAnimationFrame() method tells the browser that you wish to perform
+		// an animation and requests that the browser call a specified function
+		// to update an animation before the next repaint
+		this.requestID = window.requestAnimationFrame(this.startAnimationLoop);
+	};
 
-		canvas.width = document.getElementById("left-container").offsetWidth;
-		canvas.height = document.getElementById("left-container").offsetHeight;
-		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-		//ctx.font = "40px Courier";
-	}
+	resizeRendererToDisplaySize = (renderer)  => {
+		const canvas = renderer.domElement;
+		const width = canvas.clientWidth;
+		const height = canvas.clientHeight;
+		const needResize = canvas.width !== width || canvas.height !== height;
+		if (needResize) {
+			this.renderer.setSize(width, height, false);
+		}
+		return needResize;
+    }
 
-	// generateGraphs() {
-	// 	//const dataPoints1 = pointArray[Math.floor(Math.random() * pointArray.length)];
-	// 	const dataPoints1 = Math.multiply(pointArray[0],2.0);
-	// 	const dataPoints2 = pointArray[Math.floor(Math.random() * pointArray.length)];
-	// 	const dataPoints3 = pointArray[Math.floor(Math.random() * pointArray.length)];
-	//
-	// 	this.setState({
-	// 		dataPoints1: dataPoints1,
-	// 		dataPoints2: dataPoints2,
-	// 		dataPoints3: dataPoints3
-	// 	});
-	// }
-
-	generateGraphs() {
-	//const dataPoints1 = pointArray[Math.floor(Math.random() * pointArray.length)];
-	//const dataPoints1 = Math.multiply(pointArray[0],2.0);
+	generateGraphs = () => {
+		console.log("Graphic ckicked here");
+		
+		
 		pointArray[0] = pointArray[0].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -711,6 +826,7 @@ class Military extends Component {
 				return element1;
 			});
 		});
+		
 		pointArray[1] = pointArray[1].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -719,6 +835,7 @@ class Military extends Component {
 				return element1;
 			});
 		});
+		
 		pointArray[2] = pointArray[2].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -727,32 +844,60 @@ class Military extends Component {
 				return element1;
 			});
 		});
+		
+		pointArrayClone[0] = pointArrayClone[0].map(function(element) {
+			return element = element.map(function(element1) {
+				if (!isNaN(element1))
+				return element1*1.01;
+				else
+				return element1;
+			});
+		});
+		
 		const dataPoints1 = pointArray[0];
 		const dataPoints2 = pointArray[1];
 		const dataPoints3 = pointArray[2];
-		console.log(dataPoints1);
-		console.log(dataPoints1);
-		console.log(dataPoints1);
-		//const dataPoints2 = pointArray[Math.floor(Math.random() * pointArray.length)];
-		//const dataPoints3 = pointArray[Math.floor(Math.random() * pointArray.length)];
-
+		const dataPoints4 = pointArrayClone[0];
+		
 		this.setState({
-		dataPoints1: dataPoints1,
-		dataPoints2: dataPoints2,
-		dataPoints3: dataPoints3
+			dataPoints1: dataPoints1,
+			dataPoints2: dataPoints2,
+			dataPoints3: dataPoints3,
+			dataPoints4: dataPoints4
 		});
 	}
-
-
-    render() {
-
-		const options = {
-			title: "",
+	
+	generateClone = () => {
+		console.log("Hello here");
+		this.setState({
+			show_triangular_graph: 'inline-block'
+		});
+		
+		const timer = setTimeout(() => {
+			this.setState({
+				triangular_graph_text: 'Brain simulation completed',
+				show_triangular_graph_block : 'block',
+				triangular_graph_text_color : 'green'
+			});
+		}, 6000);
+		
+		
+		
+		this.loadModel(ArrowGLB, 'arrow');
+	}
+	
+	render() {
+		const graph1Options = {		
+			title: "HEAD SENSOR",
+			titleTextStyle: {
+				color: "#1fc1f7",
+				fontSize: 12,
+			},
 			hAxis: { title: "Time (ms)", titleTextStyle: {
-				color: '#FF0000'
+				color: '#000000'
 			}},
 			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
-				color: '#FF0000'
+				color: '#000000'
 			}},
 			backgroundColor: { fill:'transparent' },
 			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
@@ -763,112 +908,264 @@ class Military extends Component {
 			    easing: 'linear',
 			    duration: 500,
 			},
+			colors: ['#1fc1f7']
 		};
-
-	    return (
-			<Fragment>
-				<h1 className="topspace">Military</h1>
-				<div className="main-container">
-					<div className="left-container" id="left-container">
-						<div id="canvas-Container">
-							<div className="chart-container">
-								<div className="graph1">
-									<Chart
-										width={'300px'}
-										height={'200px'}
-										chartType="LineChart"
-										loader={<div>Loading Chart</div>}
-										data={this.state.dataPoints1}
-										options={options}
-										rootProps={{ 'data-testid': '1' }}
-									/>
+		
+		const graph2Options = {
+			title: "SHOULDER SENSOR",
+			titleTextStyle: {
+				color: "#51fd21",
+				fontSize: 12,
+			},
+			hAxis: { title: "Time (ms)", titleTextStyle: {
+				color: '#000000'
+			}},
+			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
+				color: '#000000'
+			}},
+			backgroundColor: { fill:'transparent' },
+			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
+			legend: "none",
+			pointSize: 2,
+			animation: {
+			    startup: true,
+			    easing: 'linear',
+			    duration: 500,
+			},
+			colors: ['#51fd21']
+		};
+		
+		const graph3Options = {
+			title: "CHEST SENSOR",
+			titleTextStyle: {
+				color: "#f01e1e",
+				fontSize: 12,
+			},
+			hAxis: { title: "Time (ms)", titleTextStyle: {
+				color: '#000000'
+			}},
+			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
+				color: '#000000'
+			}},
+			backgroundColor: { fill:'transparent' },
+			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
+			legend: "none",
+			pointSize: 2,
+			animation: {
+			    startup: true,
+			    easing: 'linear',
+			    duration: 500,
+			},
+			colors: ['#f01e1e']
+		};
+				
+		const cloneOptions = {
+			title: "TRIANGULAR APPLIED BLAST LOADING",
+			titleTextStyle: {
+				color: "#000000",
+				fontSize: 12,
+			},
+			hAxis: { title: "Time (ms)", titleTextStyle: {
+				color: '#000000'
+			}},
+			vAxis: { title: "Pressure (PSI)", titleTextStyle: {
+				color: '#000000'
+			}},
+			backgroundColor: { fill:'transparent' },
+			//tooltip: {textStyle: {color: '#FF0000'}, showColorCode: true},
+			legend: "none",
+			pointSize: 2,
+			animation: {
+			    startup: true,
+			    easing: 'linear',
+			    duration: 500,
+			},
+			series: {
+				0: { color: '#1c91c0' },
+				1: { color: '#1c91c0' },
+				2: { color: '#1c91c0' },
+				3: { color: '#00008b' },
+			}
+		};
+		
+		return (
+		  <React.Fragment>
+			<div className="container align-center__about-page">
+				<div className="row">
+					 <div className="model_container col-md-8 col-sm-8 padding-about__page text-center">
+						<div className={`section-title animated zoomIn`}>
+							<h1 ref="h1" className="font-weight-bold">BlastFX Simulator</h1>
+						</div>
+						<div id="canvas_container">
+							<canvas id="model_block" />
+							{this.state.isLoading ? (
+							<div className="model_loader d-flex justify-content-center center-spinner">
+								<div
+								  className="spinner-border text-primary"
+								  role="status"
+								>
+								  <span  className="sr-only">Loading...</span>
 								</div>
-								<div className="graph2">
-									<Chart
-										width={'300px'}
-										height={'200px'}
-										chartType="LineChart"
-										loader={<div>Loading Chart</div>}
-										data={this.state.dataPoints2}
-										options={options}
-										rootProps={{ 'data-testid': '2' }}
-									/>
-
-								</div>
-								<div className="graph3">
-									<Chart
-										width={'300px'}
-										height={'200px'}
-										chartType="LineChart"
-										loader={<div>Loading Chart</div>}
-										data={this.state.dataPoints3}
-										options={options}
-										rootProps={{ 'data-testid': '3' }}
-									/>
-								</div>
+							 </div>
+							) : null}
+						</div>
+						<div className="chart-container">
+							<div className="graph1 cu-margin-top">
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints1}
+									options={graph1Options}
+									rootProps={{ 'data-testid': '1' }}
+								/>
+							</div>
+							<div className="graph2 cu-margin-top">
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints2}
+									options={graph2Options}
+									rootProps={{ 'data-testid': '2' }}
+								/>
 
 							</div>
-							<canvas ref="canvas" onMouseDown={this.handleMouseDown} />
+							<div className="graph3 cu-margin-top">
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints3}
+									options={graph3Options}
+									rootProps={{ 'data-testid': '3' }}
+								/>
+							</div>
+							<div className="graph4 cu-margin-top" style={{ display: this.state.show_graph }}>
+								<Chart
+									chartType="LineChart"
+									data={this.state.dataPoints4}
+									options={cloneOptions}
+									rootProps={{ 'data-testid': '4' }}
+								/>
+							</div>
 						</div>
-
-						<div className="hidden">
-							<img id="image0" alt="img" src='360images/Render_00000.png' />
-							<img id="image1" alt="img" src='360images/Render_00001.png' />
-							<img id="image2" alt="img" src='360images/Render_00002.png' />
-							<img id="image3" alt="img" src='360images/Render_00003.png' />
-							<img id="image4" alt="img" src='360images/Render_00004.png' />
-							<img id="image5" alt="img" src='360images/Render_00005.png' />
-							<img id="image6" alt="img" src='360images/Render_00006.png' />
-							<img id="image7" alt="img" src='360images/Render_00007.png' />
-							<img id="image8" alt="img" src='360images/Render_00008.png' />
-							<img id="image9" alt="img" src='360images/Render_00009.png' />
-							<img id="image10" alt="img" src='360images/Render_00010.png' />
-							<img id="image11" alt="img" src='360images/Render_00011.png' />
-							<img id="image12" alt="img" src='360images/Render_00012.png' />
-							<img id="image13" alt="img" src='360images/Render_00013.png' />
-							<img id="image14" alt="img" src='360images/Render_00014.png' />
-							<img id="image15" alt="img" src='360images/Render_00015.png' />
-							<img id="image16" alt="img" src='360images/Render_00016.png' />
-							<img id="image17" alt="img" src='360images/Render_00017.png' />
-							<img id="image18" alt="img" src='360images/Render_00018.png' />
-							<img id="image19" alt="img" src='360images/Render_00019.png' />
-							<img id="image20" alt="img" src='360images/Render_00020.png' />
-							<img id="image21" alt="img" src='360images/Render_00021.png' />
-							<img id="image22" alt="img" src='360images/Render_00022.png' />
-							<img id="image23" alt="img" src='360images/Render_00023.png' />
-							<img id="image24" alt="img" src='360images/Render_00024.png' />
-							<img id="image25" alt="img" src='360images/Render_00025.png' />
-							<img id="image26" alt="img" src='360images/Render_00026.png' />
-							<img id="image27" alt="img" src='360images/Render_00027.png' />
-							<img id="image28" alt="img" src='360images/Render_00028.png' />
-							<img id="image29" alt="img" src='360images/Render_00029.png' />
-							<img id="image30" alt="img" src='360images/Render_00030.png' />
-							<img id="image31" alt="img" src='360images/Render_00031.png' />
-							<img id="image32" alt="img" src='360images/Render_00032.png' />
-							<img id="image33" alt="img" src='360images/Render_00033.png' />
-							<img id="image34" alt="img" src='360images/Render_00034.png' />
-							<img id="image35" alt="img" src='360images/Render_00035.png' />
-							<img id="image36" alt="img" src='360images/Render_00036.png' />
-							<img id="image37" alt="img" src='360images/Render_00037.png' />
-							<img id="image38" alt="img" src='360images/Render_00038.png' />
-							<img id="image39" alt="img" src='360images/Render_00039.png' />
-							<img id="image40" alt="img" src='360images/Render_00040.png' />
-							<img id="image41" alt="img" src='360images/Render_00041.png' />
-							<img id="image42" alt="img" src='360images/Render_00042.png' />
-							<img id="image43" alt="img" src='360images/Render_00043.png' />
-							<img id="image44" alt="img" src='360images/Render_00044.png' />
-							<img id="image45" alt="img" src='360images/Render_00045.png' />
-							<img id="image46" alt="img" src='360images/Render_00046.png' />
-							<img id="image47" alt="img" src='360images/Render_00047.png' />
-						</div>
-
 					</div>
-					<div className="right-container">
-						<MDBBtn color="light-green" className="generate-graph-section" title="Generate Graph" onClick={this.generateGraphs} >Generate Graph</MDBBtn>
+					<div className="col-md-4 col-sm-4 padding-about__page">
+					{/*<div>
+							<button type="submit" class="generate_graph btn btn-primary" onClick={this.generateGraphs}>Generate Graph</button>
+						</div>
+						<div>
+							<button type="submit" class="tringulate_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
+						</div>
+					<input type="file" name="file" onChange={this.onChangeHandler}/>*/}
+						<div className="create_data_block">
+							<h2>Create Data STEP 1</h2>
+							<div className="sub_block">
+								<div className="button_outer">
+								<button type="submit" className="custom_btn btn btn-primary" onClick={this.generateGraphs}>Generate Test Data</button>
+									<span>OR</span>
+									<button type="button" onClick={this.handleShowModal} className="custom_btn btn btn-primary" >Upload Real Data</button>
+								</div>
+							</div>
+						</div>
+						<div className="analyze_data_block">
+							<h2>Analyze Data STEP 2</h2>
+							<div className="sub_block">
+								<div className="analyze_button_outer">
+									<button type="submit" class="custom_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
+								</div>
+								<div className="blast_block">
+									<span>Blast Magnitude: </span>
+									<span className="result_txt">50 PSI</span>
+								</div>
+								<div className="loading_block">
+									<span>Loading Direction On Head: </span>
+									<span className="result_txt">(0.2, 0.34, 0.65)</span>
+								</div>
+								<div className="cu-margin-bottom" style={{ display: this.state.show_triangular_graph }}>
+									<span className={"blinking "+this.state.triangular_graph_text_color}>{ this.state.triangular_graph_text }</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<Modal
+					size="lg"
+					aria-labelledby="contained-modal-title-vcenter"
+					backdrop="static"
+					show={this.state.modalShow}
+					onHide={this.handleCloseModal}
+					>
+						<Modal.Header closeButton>
+								<Modal.Title id="contained-modal-title-vcenter">
+								Upload Real Data
+								</Modal.Title> 
+						</Modal.Header>
+						<Modal.Body>
+							<h5>Upload a CSV or XLSX file with the following format</h5>
+							<div className="row upload_data_block">
+								<div className="col-md-7 col-sm-7">
+									<Table bordered >
+									  <thead>
+										<tr>
+										  <th>Time (msec)</th>
+										  <th>Head Pressure (Psi)</th>
+										  <th>Shoulder Pressure (Psi)</th>
+										  <th>Chest Pressure (Psi)</th>
+										</tr>
+									  </thead>
+									  <tbody>
+										<tr>
+										  <td>t<sub>1</sub></td>
+										  <td>p<sup>helmet</sup><sub>1</sub></td>
+										  <td>p<sup>arm</sup><sub>1</sub></td>
+										  <td>p<sup>chest</sup><sub>1</sub></td>
+										</tr>
+										<tr>
+										  <td>t<sub>2</sub></td>
+										  <td>p<sup>helmet</sup><sub>2</sub></td>
+										  <td>p<sup>arm</sup><sub>2</sub></td>
+										  <td>p<sup>chest</sup><sub>2</sub></td>
+										</tr>
+										<tr>
+										 <td>.</td>
+										  <td>.</td>
+										  <td>.</td>
+										  <td>.</td>
+										</tr>
+										<tr>
+										  <td>t<sub>N</sub></td>
+										  <td>p<sup>helmet</sup><sub>N</sub></td>
+										  <td>p<sup>arm</sup><sub>N</sub></td>
+										  <td>p<sup>chest</sup><sub>N</sub></td>
+										</tr>
+									  </tbody>
+									</Table>
+								</div>
+								<div className="col-md-5 col-sm-5">
+									<input type="file" id="file" name="file" accept=".csv,.xlsx,.xls" onChange={this.onChangeHandler} />
+								</div>
+							</div>
+						</Modal.Body>
+						<Modal.Footer>
+							<Button onClick={this.handleCloseModal}>Close</Button>
+						</Modal.Footer>
+					</Modal>
+				</div>
+				
+				<div className="row">
+					<div style={{ display: this.state.show_triangular_graph_block }} className={`section-title animated zoomIn cu-align-center`}>
+							<h1 ref="h1" className="font-weight-bold">Brain Simulation Results</h1>
+							<div className="brain-image-container" >
+								<img ref="dashboardView"
+								className="img-fluid"
+								src="/img/brain_image_for_triangulated_loading.png"
+								alt=""
+								/>
+							</div>
 					</div>
 				</div>
-			</Fragment>
-	    )
-    }
+				
+				
+			 </div>
+			<Footer />
+		  </React.Fragment>
+		);
+	}
 }
-export default Military
+
+export default MilitaryPage;
