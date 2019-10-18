@@ -11,6 +11,9 @@ WebFont.load({
 
 class ContactPage extends React.Component {
   componentDidMount() {
+      // Scrolling the screen to top
+      window.scrollTo(0, 0)
+      
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
       for (let i = 1; i <= 8; i++){

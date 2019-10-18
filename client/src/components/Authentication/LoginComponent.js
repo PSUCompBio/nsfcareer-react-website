@@ -35,6 +35,8 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
+      // Scrolling winddow to top when user clicks on about us page
+      window.scrollTo(0, 0)
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
       this.refs.loginForm.style.background = "rgb(35, 40, 56)";
@@ -278,8 +280,9 @@ class Login extends React.Component {
               </div>
             </div>
           </div>
-          <Footer />
+
         </div>
+        <Footer />
       </React.Fragment>
     );
   }

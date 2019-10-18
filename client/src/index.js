@@ -9,6 +9,8 @@ import './index.css';
 import 'font-awesome/css/font-awesome.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
+
+
 // API
 // import { verifyUser } from './apis.js'
 
@@ -16,7 +18,9 @@ class Index extends React.Component {
   constructor(props) {
     super();
     const EVENTS_TO_MODIFY = ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'wheel'];
-
+    this.state = {
+        endpoint: "http://127.0.0.1:3001"
+    }
     const originalAddEventListener = document.addEventListener.bind();
     document.addEventListener = (type, listener, options, wantsUntrusted) => {
       let modOptions = options;
@@ -55,8 +59,7 @@ class Index extends React.Component {
       }
       return originalRemoveEventListener(type, listener, modOptions);
     };
-  }
-
+    }
 
   render() {
 

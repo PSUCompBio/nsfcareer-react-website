@@ -17,8 +17,16 @@ import {
   getHeadAccelerationEvents,
   getCumulativeEventLoadData,
   getCumulativeAccelerationData,
-  getCumulativeAccelerationTimeData
+  getCumulativeAccelerationTimeData,
+  getSimulationFilePath,
+  getSimulationFilesOfPlayer
 } from '../../apis';
+
+import { Form } from 'react-bootstrap';
+
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Carousel } from 'react-responsive-carousel';
+
 import Spinner from '../Spinner/Spinner';
 import { getStatusOfDarkmode } from '../../reducer';
 
@@ -35,7 +43,10 @@ class UserDashboarForAdmin extends React.Component {
       headAccelerationEventsData: {},
       cumulativeEventLoadData: {},
       cumulativeAccelerationEventData : {},
-      cumulativeAccelerationTimeData : {}
+      cumulativeAccelerationTimeData : {},
+      eventsDate : [],
+      eventDateValue : '-1',
+      simulationFilePaths : null
     };
     console.log("THIS IS PROPS ",this.props.location)
   }
@@ -47,6 +58,27 @@ class UserDashboarForAdmin extends React.Component {
   gotoTop = () => {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
+
+  onDateChange = (event) => {
+         this.setState({eventDateValue: event.target.value});
+         console.log("Value changed", event.target.value);
+         this.setState({
+             simulationFilePaths : []
+         })
+         if(event.target.value !="-1"){
+         getSimulationFilesOfPlayer({path : event.target.value})
+         .then(response => {
+             console.log("STATE IS ", this.state.simulationFilePaths);
+             this.setState({
+                   simulationFilePaths: this.state.simulationFilePaths.concat(response.data.data)
+               })
+               console.log("AFTER FIX IS ", this.state.simulationFilePaths);
+         })
+         .catch(err => {
+             alert("Internal Server Error !");
+         })
+     }
+     }
 
   render() {
     const isLoaded = this.state.user;
@@ -70,7 +102,43 @@ class UserDashboarForAdmin extends React.Component {
                 Player ID :<span>{this.props.location.state.cognito_user_id}</span>
               </p>
             </div>
+            <div className="col-md-4 ">
+                <Form.Group controlId="exampleForm.ControlSelect1">
+                    <Form.Control onChange={this.onDateChange} className="player-date-selection-button"  value={this.state.eventDateValue} as="select">
+                      <option value="-1">Please Select Event Date</option>
+                          {this.state.eventsDate.map(item => (
+
+                              <option key={item} value={item}>{item.split("/")[ 2 ]}</option>
+                            ))}
+                    </Form.Control>
+                  </Form.Group>
             </div>
+            </div>
+
+                {this.state.simulationFilePaths && this.state.simulationFilePaths.length !=0 ?
+                    <div className="row card  player-details">
+                        <div className="col-md-6" width="30%">
+                    <Carousel>
+                        {this.state.simulationFilePaths.map((item, index) => (
+
+                            <div>
+                                <img key={index} src={item} />
+                                <p className="legend">{index}</p>
+                            </div>
+                          ))}
+
+                    </Carousel>
+                    </div>
+                    <div className="col-auto"> ALL IMPACT RELATED INFO HERE</div>
+                    </div>
+
+
+                    : null
+                }
+
+
+
+
 
           <CumulativeEventsAccelerationEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
           {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
@@ -96,32 +164,39 @@ class UserDashboarForAdmin extends React.Component {
       isAuthenticated(JSON.stringify({}))
         .then((value) => {
           if (value.data.message === 'success') {
-              getCumulativeAccelerationTimeData({player_id : this.props.location.state.player_name })
+              getCumulativeAccelerationTimeData({player_id : this.props.location.state.player_name, team : "York Tech Football" })
               .then(response => {
                   this.setState({
                       cumulativeAccelerationTimeData : { ...this.state.cumulativeAccelerationTimeData, ...response.data.data }
                   });
-                    return getCumulativeAccelerationData({player_id : this.props.location.state.player_name })
+                    return getCumulativeAccelerationData({player_id : this.props.location.state.player_name, team : "York Tech Football" })
               })
               .then(response => {
 
                   this.setState({
-                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data }
+                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data, team : "York Tech Football" }
                   });
                     return getCumulativeEventPressureData(JSON.stringify({}))
               })
               .then(response => {
                   console.log(response.data);
                   this.setState({
-                      cumulativeEventData : { ...this.state.cumulativeEventData, ...response.data.data }
+                      cumulativeEventData : { ...this.state.cumulativeEventData, ...response.data.data, team : "York Tech Football" }
                   });
                   return getHeadAccelerationEvents(JSON.stringify({}))
               })
               .then(response => {
                   console.log("Head aceleration data",response.data);
                   this.setState({
-                      headAccelerationEventsData : { ...this.state.headAccelerationEventsData, ...response.data.data }
+                      headAccelerationEventsData : { ...this.state.headAccelerationEventsData, ...response.data.data, team : "York Tech Football" }
                   });
+                  return getSimulationFilePath({player_id : this.props.location.state.player_name.split(" ").join("-") })
+
+              })
+              .then(response => {
+                  this.setState({
+                        eventsDate: this.state.eventsDate.concat(response.data.data)
+                })
                   return getCumulativeEventLoadData(JSON.stringify({}))
               })
               .then(response => {

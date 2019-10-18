@@ -1,8 +1,8 @@
 // ======================================
 //         INITIALIZING DEPENDENCIES
 // ======================================
-const express = require('express');
-app = express(),
+const express = require('express'),
+    app = express(),
     bodyParser = require("body-parser"),
     AWS = require('aws-sdk'),
     cors = require('cors'),
@@ -14,13 +14,49 @@ app = express(),
     fs = require("fs"),
     path = require("path"),
     uploadFile = require("./upload.js"),
-    global.fetch = require('node-fetch'),
     config_env = require("./config/configuration_keys"),
     ms = require("ms"),
     multer = require('multer'),
     XLSX = require('xlsx'),
     request = require('request'),
-    moment = require('moment');
+    moment = require('moment'),
+    // Load the core build of Lodash.
+    _array = require('lodash/array');
+
+    global.fetch = require('node-fetch');
+
+var _ = require('lodash');
+
+
+// ================================================
+//          SOCKET <DOT> IO CONFIGURATION
+// ================================================
+
+const http = require('http')
+const socketIO = require('socket.io')
+
+// our server instance
+const server = http.createServer(app)
+
+// This creates our socket using the instance of the server
+const io = socketIO(server)
+
+// This is what the socket.io syntax is like, we will work this later
+let interval;
+
+io.on('connection', socket => {
+    console.log("New client connected");
+    socket.on("connection", ()=> {
+
+    })
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
+    });
+
+})
+
+
 
 // ================================================
 //            SERVER CONFIGURATION
@@ -145,6 +181,12 @@ const docClient = new AWS.DynamoDB.DocumentClient({
     convertEmptyValues: true
 });
 
+// Make io accessible to our router
+app.use(function(req,res,next){
+    req.io = io;
+    next();
+});
+
 // Express configured for POST Request handling of multiple types
 // xxx-url encoded (form type)  & json type
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -161,8 +203,8 @@ app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 function setConnectionTimeout(time) {
     var delay = typeof time === 'string'
-        ? ms(time)
-        : Number(time || 5000);
+    ? ms(time)
+    : Number(time || 5000);
 
     return function (req, res, next) {
         res.connection.setTimeout(delay);
@@ -342,6 +384,110 @@ function getUploadedImageFileList(user_name, cb) {
     });
 
 }
+
+// Function to get the path of all simulation directory stored with Date as folder name
+function getSimulationFilePath(user_name, cb) {
+    const s3Params = {
+        Bucket: BUCKET_NAME,
+        Delimiter: '/',
+        Prefix: `${user_name}/simulation/`
+        // Key: req.query.key + ''
+    };
+    s3.listObjectsV2(s3Params, (err, data) => {
+        if (err) {
+            //   console.log(err);
+            console.log(err);
+            cb(err,'');
+        }
+        console.log(data);
+        try {
+            var pathArray = data.CommonPrefixes ;
+            const simulationDirectoryPaths = pathArray.map(d => d.Prefix);
+            cb('',simulationDirectoryPaths);
+
+        } catch (e) {
+            cb(err,'');
+
+        }
+    });
+}
+
+function getSimulationFilesOfPlayer(path, cb) {
+    const s3Params = {
+        Bucket: BUCKET_NAME,
+        Delimiter: '/',
+        Prefix: path
+        // Key: req.query.key + ''
+    };
+    s3.listObjectsV2(s3Params, (err, data) => {
+        if (err) {
+            //   console.log(err);
+            console.log(err);
+            cb(err,'');
+        }
+
+
+        const imageList = data.Contents ;
+        var counter = 0 ;
+        var url_arrary = [];
+        imageList.forEach(function(image,index){
+            var params = {
+                Bucket: BUCKET_NAME,
+                Key: image.Key
+            };
+            s3.getSignedUrl('getObject', params, function (err, url) {
+                counter++;
+
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(url);
+                    url_arrary.push(url);
+                }
+                if(counter == imageList.length){
+                    cb('',url_arrary);
+                }
+            });
+        });
+    });
+}
+
+
+app.post(`${apiPrefix}getSimulationFilePath`, (req,res) =>{
+    console.log(req.body);
+    getSimulationFilePath(req.body.player_id,function(err, data){
+        if(err){
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }
+        else{
+            res.send({
+                message : "success",
+                data : data
+            })
+        }
+    })
+})
+
+app.post(`${apiPrefix}getSimulationFilesOfPlayer`, (req,res) =>{
+    console.log(req.body);
+    getSimulationFilesOfPlayer(req.body.path,function(err, data){
+        if(err){
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }
+        else{
+            res.send({
+                message : "success",
+                data : data
+            })
+        }
+    })
+})
 
 function getUploadedModelFileList(user_name, cb) {
     const s3Params = {
@@ -616,7 +762,7 @@ function addUserToGroup(event, callback) {
     });
 }
 function parseDate(date, arg, timezone) {
-	// var result = 0, arr = arg.split(':')
+    // var result = 0, arr = arg.split(':')
 
     arg = arg.replace(".",":");
     var t = arg.split(":");
@@ -654,11 +800,11 @@ function convertXLSXDataToJSON(buf,cb){
                 if(value == "Athlete"){
                     value = "player_id"
                 }
-                 headers[col] = value
-                                .split(" ")
-                                .join("_")
-                                .replace(/[{()}]/g, '')
-                                .toLowerCase();
+                headers[col] = value
+                .split(" ")
+                .join("_")
+                .replace(/[{()}]/g, '')
+                .toLowerCase();
                 continue;
             }
 
@@ -680,6 +826,7 @@ function convertXLSXDataToJSON(buf,cb){
             var d = data_array[i];
             // TODO : Parse Date here
             data_array[i]["timestamp"] = Number(parseDate(d.date, d.time, d.time_zone)).toString();
+            data_array[i].player_id = data_array[i].player_id + "$" + data_array[i].timestamp;
         }
         cb(data_array);
     });
@@ -723,11 +870,11 @@ function convertDataToJSON(buf,cb){
 
 
         }
-       
+
 		//drop those first two rows which are empty
         data.shift();
         data.shift();
-	   
+
         cb(data);
     });
 
@@ -841,6 +988,78 @@ function getINPFile(user_id) {
     })
 }
 
+function addPlayerToTeamInDDB(org, team, player_id) {
+    return new Promise((resolve, reject)=>{
+        // if flag is true it means data array is to be created
+        let params = {
+            TableName: "teams",
+            Key: {
+                "organization": org,
+                "team_name" : team
+            }
+        };
+        docClient.get(params, function (err, data) {
+            if (err) {
+                reject(err);
+            }
+            else {
+                if (Object.keys(data).length == 0 && data.constructor === Object) {
+                    var dbInsert = {
+                        TableName: "teams",
+                        Item: { organization : org,
+                            team_name : team,
+                            player_list : [player_id] }
+                        };
+                        docClient.put(dbInsert, function (err, data) {
+                            if (err) {
+                                console.log(err);
+                                reject(err);
+
+                            } else {
+                                resolve(data)
+                            }
+                        });
+                    }
+                    else {
+                        // If Player does not exists in Team
+                        if(data.Item.player_list.indexOf(player_id) <= -1){
+                            var dbInsert = {
+                                TableName: "teams",
+                                Key: { "organization" : org,
+                                "team_name" : team
+                            },
+                            UpdateExpression: "set #list = list_append(#list, :newItem)",
+                            ExpressionAttributeNames: {
+                                "#list": "player_list"
+                            },
+                            ExpressionAttributeValues: {
+                                ":newItem": [player_id]
+                            },
+                            ReturnValues: "UPDATED_NEW"
+                        }
+
+                        docClient.update(dbInsert, function (err, data) {
+                            if (err) {
+                                console.log("ERROR WHILE CREATING DATA",err);
+                                reject(err);
+
+                            } else {
+                                resolve(data)
+                            }
+                        });
+                    }
+                    else{
+                        resolve("PLAYER ALREADY EXISTS IN TEAM");
+                    }
+
+                }
+            }
+        });
+
+
+    })
+}
+
 // ============================================
 //     				ROUTES
 // ============================================
@@ -850,7 +1069,7 @@ function getINPFile(user_id) {
 // })
 
 app.get('/*', function(req, res) {
-  res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
 });
 
 
@@ -1135,10 +1354,10 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
 
                 }
             }
-            );
+        );
 
-        }
-    })
+    }
+})
 
 })
 
@@ -1327,437 +1546,437 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                                 })
 
                                                             }})
-                                                    }
+                                                        }
+                                                    })
                                                 })
-                                            })
                                                 .catch((err) => {
                                                     res.send({
                                                         message: "failure"
                                                     })
                                                 })
-                                        }
+                                            }
 
-                                    })
+                                        })
 
-                                }
-
-                            })
-                        }
-                    });
-
-
-                }
-            })
-        }
-    })
-});
-
-app.post(`${apiPrefix}getInpFileLink`, (req, res) => {
-    getINPFile(req.body.user_cognito_id).then((url) => {
-        res.send({
-            message: "success",
-            inp_file_link: url
-        })
-    }).catch((err) => {
-        res.send({
-            message: "failure"
-        })
-    })
-})
-app.post(`${apiPrefix}getSimulationFileLink`, (req, res) => {
-    getSimulationFile(req.body.user_cognito_id, function (err, list) {
-        if (err) {
-            res.send({
-                message: "failure",
-            })
-        }
-        else {
-            // Fetches the latest profile pic
-            var latestModel = list.reduce(function (oldest, latest_model) {
-                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-            }, {});
-            var model_key = "";
-
-            if (list.length != 0) {
-                model_key = latestModel.Key;
-            }
-            else {
-                model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
-            }
-
-            getFileSignedUrl(model_key, function (err, model_link) {
-                if (err) {
-                    console.log(err);
-                    res.send({
-                        message: "failure",
-                        simulation_file_url: ""
-                    })
-                }
-                else {
-                    res.send({
-                        message: "success",
-                        simulation_file_url: model_link
-                    })
-                }
-            })
-        }
-    })
-
-});
-
-app.post(`${apiPrefix}getModelFileLink`, (req, res) => {
-    getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
-
-        if (err) {
-            console.log(err);
-            res.send({
-                message: "failure",
-            })
-        }
-        else {
-
-
-            // Fetches the latest profile pic
-            var latestModel = list.reduce(function (oldest, latest_model) {
-                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-            }, {});
-            var model_key = "";
-
-            if (list.length != 0) {
-                model_key = latestModel.Key;
-            }
-            else {
-                model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
-            }
-
-            getFileSignedUrl(model_key, function (err, model_link) {
-                if (err) {
-                    console.log(err);
-                    res.send({
-                        message: "failure",
-                        avatar_url: "",
-                    })
-                }
-                else {
-                    res.send({
-                        message: "success",
-                        avatar_url: model_link
-                    })
-                }
-
-            })
-
-        }
-
-    })
-})
-
-app.post(`${apiPrefix}getProfilePicLink`, VerifyToken, (req, res) => {
-
-    getUploadedImageFileList(req.body.user_cognito_id, function (err, list) {
-        if (err) {
-            console.log(err);
-            res.send({
-                message: 'failure',
-                error: err
-            })
-        }
-        else {
-
-            // Now get the signed URL link  from S3
-            // if no S3 link is found then send empty data link
-            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-            // No file is uploaded
-
-            var latestProfilePic = list.reduce(function (oldest, profile_pic) {
-                return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
-            }, {});
-
-            var key
-            if (list.length != 0) {
-                key = latestProfilePic.Key;
-            }
-            else {
-                key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
-            }
-
-            getFileSignedUrl(key, function (err, url) {
-                if (err) {
-                    console.log(err);
-
-                    res.send({
-                        message: "success",
-                        profile_picture_url: ""
-                    })
-
-                }
-                else {
-                    var link = "";
-                    if (list.length == 0) {
-                        link = "";
-                    }
-                    else {
-                        link = url;
-                    }
-                    var profile_link = url;
-                    var model_link = "";
-                    // Getting Avatar URL
-                    getUploadedModelFileList(req.user_cognito_id, function (err, list) {
-
-                        if (err) {
-                            console.log(err);
-                            res.send({
-                                message: "failure",
-                                data: userData
-                            })
-
-                        }
-                        else {
-
-
-                            // Fetches the latest profile pic
-                            var latestModel = list.reduce(function (oldest, latest_model) {
-                                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-                            }, {});
-                            // Now get the signed URL link  from S3
-                            // if no S3 link is found then send empty data link
-                            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-                            // No file is uploaded
-
-                            if (list.length != 0) {
-                                model_key = latestModel.Key;
-                            }
-                            else {
-                                model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
-                            }
-
-                            getFileSignedUrl(model_key, function (err, model_link) {
-                                if (err) {
-                                    console.log(err);
-                                    res.send({
-                                        message: "failure",
-                                        profile_picture_url: profile_link,
-                                    })
-                                }
-                                else {
-                                    if (list.length == 0) {
-                                        model_link = "";
                                     }
-                                    else {
-                                        model_link = url;
-                                    }
-                                    res.send({
-                                        message: "success",
-                                        profile_picture_url: profile_link,
-                                        avatar_url: model_link
-                                    })
-                                }
 
-                            })
+                                })
+                            }
+                        });
 
-                        }
 
-                    })
-
-                }
-
-            })
-        }
+                    }
+                })
+            }
+        })
     });
 
-
-
-})
-
-
-app.post(`${apiPrefix}listUsers`, (req, res) => {
-    var attributes = ["name", "phone_number", "email"];
-    listAllUsers(attributes, function (err, data) {
-        if (err) {
-            res.send({
-                message: "failure",
-                error: err
-            })
-        }
-        else {
-            let users = utility.concatArrays(data);
-
-            let count = 0;
-            var tempArray = [];
-            for (let i = 0; i < users.length; i++) {
-
-                setTimeout(() => {
-                    getUser(users[i].Username, function (err, userData) {
-                        if (err) {
-                            console.log(err);
-
-                            res.send({
-                                message: "failed",
-                                error: err
-                            });
-                        } else {
-                            getUserDbData(users[i].Username, function (err, userDbData) {
-
-                                getListGroupForUser(users[i].Username, function (err, groupData) {
-
-                                    if (err) {
-                                        console.log("List group for user ", err);
-                                    }
-
-                                    count++;
-
-                                    // Now checking is user is ADMIN or not
-                                    var flag = false;
-                                    groupData.forEach(element => {
-                                        if (element.GroupName == "Admin") {
-                                            flag = true;
-                                        }
-                                    });
-                                    // var temp = {};
-                                    userDbData = userDbData.Item;
-                                    userDbData["Enabled"] = userData.Enabled;
-
-                                    if (flag) {
-                                        userDbData.user_type = "Admin"
-                                    }
-                                    else {
-                                        userDbData.user_type = "Standard"
-                                    }
-                                    tempArray.push(userDbData);
-                                    if (count == users.length) {
-                                        // console.log(data);
-
-                                        res.send(
-                                            {
-                                                message: "success",
-                                                data: tempArray
-                                            });
-                                    }
-
-                                });
-
-                            })
-
-
-                        }
-                    });
-
-                }, 20 * i);
-
-            }
-        }
-    })
-})
-
-// API To upload profile pic to S310m
-app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
-
-app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
-    // Fetch user group data and check if he is Admin or not
-    getListGroupForUser(req.user_cognito_id, function (err, groupData) {
-        if (err) {
-
-            res.send({
-                message: "failure",
-                error: err
-            });
-        } else {
-            // Now checking is user is ADMIN or not
-            var flag = false;
-            groupData.forEach(element => {
-                if (element.GroupName == "Admin") {
-                    flag = true;
-                }
-            });
+    app.post(`${apiPrefix}getInpFileLink`, (req, res) => {
+        getINPFile(req.body.user_cognito_id).then((url) => {
             res.send({
                 message: "success",
-                isAdmin: flag
+                inp_file_link: url
             })
-        }
+        }).catch((err) => {
+            res.send({
+                message: "failure"
+            })
+        })
+    })
+    app.post(`${apiPrefix}getSimulationFileLink`, (req, res) => {
+        getSimulationFile(req.body.user_cognito_id, function (err, list) {
+            if (err) {
+                res.send({
+                    message: "failure",
+                })
+            }
+            else {
+                // Fetches the latest profile pic
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+                var model_key = "";
+
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
+                }
+                else {
+                    model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(model_key, function (err, model_link) {
+                    if (err) {
+                        console.log(err);
+                        res.send({
+                            message: "failure",
+                            simulation_file_url: ""
+                        })
+                    }
+                    else {
+                        res.send({
+                            message: "success",
+                            simulation_file_url: model_link
+                        })
+                    }
+                })
+            }
+        })
+
     });
-})
 
-// Create Avatar 3D
-app.post(`${apiPrefix}createAvatar`, (req, res) => {
-    console.log("API CAlled createAvatar", req.body);
+    app.post(`${apiPrefix}getModelFileLink`, (req, res) => {
+        getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
 
-    // Delete user previous Avatar Directory
-    deleteDirectory(path.join(
-        __dirname,
-        "./avatars/" + req.body.user
-    ), function () {
-        //console.log('Directory deleted');
-    }
-    );
-
-    const spawn = require("child_process").spawn;
-    const pythonProcess = spawn("python", [
-        "./config/AvatarTest.py",
-        req.body.image,
-        config.avatar3dClientId,
-        config.avatar3dclientSecret,
-        req.body.user
-    ]);
-
-    pythonProcess.stdout.on("data", async data => {
-        console.log(data.toString());
-        try {
-            //archive zip
-            var output = fs.createWriteStream(data.toString() + ".zip");
-            var archive = archiver("zip");
-
-            output.on("close", async function () {
-                console.log(archive.pointer() + " total bytes");
-                console.log(
-                    "archiver has been finalized and the output file descriptor has closed."
-                );
-                console.log("zip file uploading");
-                let filePath = path.join(
-                    __dirname,
-                    "./" + data.toString() + ".zip"
-                );
-                let zipBuffer = fs.readFileSync(filePath);
-                returnedData = await uploadFile("zip", zipBuffer, data.toString(), {
-                    ext: "zip",
-                    mime: "application/zip"
-                });
-
-                let rData = {};
-                rData.plyPath = returnedData.Location;
-                return res.status(200).send(rData);
-            });
-            archive.on("error", function (err) {
+            if (err) {
                 console.log(err);
-                res.status(400).send(err);
-                throw err;
+                res.send({
+                    message: "failure",
+                })
+            }
+            else {
+
+
+                // Fetches the latest profile pic
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+                var model_key = "";
+
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
+                }
+                else {
+                    model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(model_key, function (err, model_link) {
+                    if (err) {
+                        console.log(err);
+                        res.send({
+                            message: "failure",
+                            avatar_url: "",
+                        })
+                    }
+                    else {
+                        res.send({
+                            message: "success",
+                            avatar_url: model_link
+                        })
+                    }
+
+                })
+
+            }
+
+        })
+    })
+
+    app.post(`${apiPrefix}getProfilePicLink`, VerifyToken, (req, res) => {
+
+        getUploadedImageFileList(req.body.user_cognito_id, function (err, list) {
+            if (err) {
+                console.log(err);
+                res.send({
+                    message: 'failure',
+                    error: err
+                })
+            }
+            else {
+
+                // Now get the signed URL link  from S3
+                // if no S3 link is found then send empty data link
+                // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                // No file is uploaded
+
+                var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                    return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                }, {});
+
+                var key
+                if (list.length != 0) {
+                    key = latestProfilePic.Key;
+                }
+                else {
+                    key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(key, function (err, url) {
+                    if (err) {
+                        console.log(err);
+
+                        res.send({
+                            message: "success",
+                            profile_picture_url: ""
+                        })
+
+                    }
+                    else {
+                        var link = "";
+                        if (list.length == 0) {
+                            link = "";
+                        }
+                        else {
+                            link = url;
+                        }
+                        var profile_link = url;
+                        var model_link = "";
+                        // Getting Avatar URL
+                        getUploadedModelFileList(req.user_cognito_id, function (err, list) {
+
+                            if (err) {
+                                console.log(err);
+                                res.send({
+                                    message: "failure",
+                                    data: userData
+                                })
+
+                            }
+                            else {
+
+
+                                // Fetches the latest profile pic
+                                var latestModel = list.reduce(function (oldest, latest_model) {
+                                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                }, {});
+                                // Now get the signed URL link  from S3
+                                // if no S3 link is found then send empty data link
+                                // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                // No file is uploaded
+
+                                if (list.length != 0) {
+                                    model_key = latestModel.Key;
+                                }
+                                else {
+                                    model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                                }
+
+                                getFileSignedUrl(model_key, function (err, model_link) {
+                                    if (err) {
+                                        console.log(err);
+                                        res.send({
+                                            message: "failure",
+                                            profile_picture_url: profile_link,
+                                        })
+                                    }
+                                    else {
+                                        if (list.length == 0) {
+                                            model_link = "";
+                                        }
+                                        else {
+                                            model_link = url;
+                                        }
+                                        res.send({
+                                            message: "success",
+                                            profile_picture_url: profile_link,
+                                            avatar_url: model_link
+                                        })
+                                    }
+
+                                })
+
+                            }
+
+                        })
+
+                    }
+
+                })
+            }
+        });
+
+
+
+    })
+
+
+    app.post(`${apiPrefix}listUsers`, (req, res) => {
+        var attributes = ["name", "phone_number", "email"];
+        listAllUsers(attributes, function (err, data) {
+            if (err) {
+                res.send({
+                    message: "failure",
+                    error: err
+                })
+            }
+            else {
+                let users = utility.concatArrays(data);
+
+                let count = 0;
+                var tempArray = [];
+                for (let i = 0; i < users.length; i++) {
+
+                    setTimeout(() => {
+                        getUser(users[i].Username, function (err, userData) {
+                            if (err) {
+                                console.log(err);
+
+                                res.send({
+                                    message: "failed",
+                                    error: err
+                                });
+                            } else {
+                                getUserDbData(users[i].Username, function (err, userDbData) {
+
+                                    getListGroupForUser(users[i].Username, function (err, groupData) {
+
+                                        if (err) {
+                                            console.log("List group for user ", err);
+                                        }
+
+                                        count++;
+
+                                        // Now checking is user is ADMIN or not
+                                        var flag = false;
+                                        groupData.forEach(element => {
+                                            if (element.GroupName == "Admin") {
+                                                flag = true;
+                                            }
+                                        });
+                                        // var temp = {};
+                                        userDbData = userDbData.Item;
+                                        userDbData["Enabled"] = userData.Enabled;
+
+                                        if (flag) {
+                                            userDbData.user_type = "Admin"
+                                        }
+                                        else {
+                                            userDbData.user_type = "Standard"
+                                        }
+                                        tempArray.push(userDbData);
+                                        if (count == users.length) {
+                                            // console.log(data);
+
+                                            res.send(
+                                                {
+                                                    message: "success",
+                                                    data: tempArray
+                                                });
+                                            }
+
+                                        });
+
+                                    })
+
+
+                                }
+                            });
+
+                        }, 20 * i);
+
+                    }
+                }
+            })
+        })
+
+        // API To upload profile pic to S310m
+        app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
+
+        app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
+            // Fetch user group data and check if he is Admin or not
+            getListGroupForUser(req.user_cognito_id, function (err, groupData) {
+                if (err) {
+
+                    res.send({
+                        message: "failure",
+                        error: err
+                    });
+                } else {
+                    // Now checking is user is ADMIN or not
+                    var flag = false;
+                    groupData.forEach(element => {
+                        if (element.GroupName == "Admin") {
+                            flag = true;
+                        }
+                    });
+                    res.send({
+                        message: "success",
+                        isAdmin: flag
+                    })
+                }
             });
-            archive.pipe(output);
-            archive.directory(path.join(__dirname, "/./" + data.toString() + "/"), false);
-            archive.finalize();
+        })
 
-        } catch (error) {
-            console.log(error);
-            return res.status(400).send(error);
-        }
+        // Create Avatar 3D
+        app.post(`${apiPrefix}createAvatar`, (req, res) => {
+            console.log("API CAlled createAvatar", req.body);
+
+            // Delete user previous Avatar Directory
+            deleteDirectory(path.join(
+                __dirname,
+                "./avatars/" + req.body.user
+            ), function () {
+                //console.log('Directory deleted');
+            }
+        );
+
+        const spawn = require("child_process").spawn;
+        const pythonProcess = spawn("python", [
+            "./config/AvatarTest.py",
+            req.body.image,
+            config.avatar3dClientId,
+            config.avatar3dclientSecret,
+            req.body.user
+        ]);
+
+        pythonProcess.stdout.on("data", async data => {
+            console.log(data.toString());
+            try {
+                //archive zip
+                var output = fs.createWriteStream(data.toString() + ".zip");
+                var archive = archiver("zip");
+
+                output.on("close", async function () {
+                    console.log(archive.pointer() + " total bytes");
+                    console.log(
+                        "archiver has been finalized and the output file descriptor has closed."
+                    );
+                    console.log("zip file uploading");
+                    let filePath = path.join(
+                        __dirname,
+                        "./" + data.toString() + ".zip"
+                    );
+                    let zipBuffer = fs.readFileSync(filePath);
+                    returnedData = await uploadFile("zip", zipBuffer, data.toString(), {
+                        ext: "zip",
+                        mime: "application/zip"
+                    });
+
+                    let rData = {};
+                    rData.plyPath = returnedData.Location;
+                    return res.status(200).send(rData);
+                });
+                archive.on("error", function (err) {
+                    console.log(err);
+                    res.status(400).send(err);
+                    throw err;
+                });
+                archive.pipe(output);
+                archive.directory(path.join(__dirname, "/./" + data.toString() + "/"), false);
+                archive.finalize();
+
+            } catch (error) {
+                console.log(error);
+                return res.status(400).send(error);
+            }
+        });
+
+        pythonProcess.stderr.on("data", async data => {
+            console.log(`error:${data}`);
+        });
+        pythonProcess.on("close", async data => {
+            console.log(`child process close with ${data}`);
+        });
     });
 
-    pythonProcess.stderr.on("data", async data => {
-        console.log(`error:${data}`);
-    });
-    pythonProcess.on("close", async data => {
-        console.log(`child process close with ${data}`);
-    });
-});
-
-// Delete Directory
-var deleteDirectory = function (path, callback) {
-    fs.readdir(path, function (err, files) {
-        if (err) {
-            // Pass the error on to callback
-            callback(err, []);
-            return;
-        }
-        var wait = files.length,
+    // Delete Directory
+    var deleteDirectory = function (path, callback) {
+        fs.readdir(path, function (err, files) {
+            if (err) {
+                // Pass the error on to callback
+                callback(err, []);
+                return;
+            }
+            var wait = files.length,
             count = 0,
             folderDone = function (err) {
                 count++;
@@ -1766,88 +1985,184 @@ var deleteDirectory = function (path, callback) {
                     fs.rmdir(path, callback);
                 }
             };
-        // Empty directory to bail early
-        if (!wait) {
-            folderDone();
-            return;
-        }
+            // Empty directory to bail early
+            if (!wait) {
+                folderDone();
+                return;
+            }
 
-        // Remove one or more trailing slash to keep from doubling up
-        path = path.replace(/\/+$/, "");
-        files.forEach(function (file) {
-            var curPath = path + "/" + file;
-            fs.lstat(curPath, function (err, stats) {
-                if (err) {
-                    callback(err, []);
-                    return;
-                }
-                if (stats.isDirectory()) {
-                    deleteDirectory(curPath, folderDone);
-                } else {
-                    fs.unlink(curPath, folderDone);
-                }
+            // Remove one or more trailing slash to keep from doubling up
+            path = path.replace(/\/+$/, "");
+            files.forEach(function (file) {
+                var curPath = path + "/" + file;
+                fs.lstat(curPath, function (err, stats) {
+                    if (err) {
+                        callback(err, []);
+                        return;
+                    }
+                    if (stats.isDirectory()) {
+                        deleteDirectory(curPath, folderDone);
+                    } else {
+                        fs.unlink(curPath, folderDone);
+                    }
+                });
             });
         });
-    });
-};
-// Uploading the Sensor Data (CSV) file
-app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
-    // Upload this data in Profile Bucket of USER
-    console.log("API Called to upload to upload Sensor Data")
-    var file_name = Date.now();
-
-    var uploadParams = {
-        Bucket: config.usersbucket,
-        Key: '', // pass key
-        Body: null, // pass file body
     };
-
-    // File Extensions
-    var file_extension = req.file.originalname.split(".");
-    file_extension = file_extension[file_extension.length - 1];
-
-    // Setting Attributes for file upload on S3
-    uploadParams.Key = req.user_cognito_id + "/sensor_data/" + file_name + "." + file_extension;
-    uploadParams.Body = req.file.buffer;
-
-    if (req.body.file_error) {
-        console.log(req.body.file_error);
-        res.status(500).send({
-            message: "failure",
-            status: "Invalid File type"
-        });
-    }
-    else{
-        // Uploading it on S3
-        s3.upload(uploadParams, (err, data) => {
+    // Uploading the Sensor Data (CSV) file
+    app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
+        // Upload this data in Profile Bucket of USER
+        console.log("API Called to upload to upload Sensor Data")
+        getUserDbData(req.user_cognito_id, function (err, user) {
             if (err) {
+                console.log(err);
+                res.send({
+                    message: "failure",
+                    error: err
+                })
+            }else{
+                var file_name = Date.now();
 
-                res.status(500).send({ message: 'failure' });
+                var uploadParams = {
+                    Bucket: config.usersbucket,
+                    Key: '', // pass key
+                    Body: null, // pass file body
+                };
+
+                // File Extensions
+                var file_extension = req.file.originalname.split(".");
+                file_extension = file_extension[file_extension.length - 1];
+
+                // Setting Attributes for file upload on S3
+                uploadParams.Key = req.user_cognito_id + "/sensor_data/" + file_name + "." + file_extension;
+                uploadParams.Body = req.file.buffer;
+
+                if (req.body.file_error) {
+                    console.log(req.body.file_error);
+                    res.status(500).send({
+                        message: "failure",
+                        status: "Invalid File type"
+                    });
+                }
+                else{
+                    // Uploading it on S3
+                    req.io.sockets.emit('fileUploadLog', "Uploading Sensor Data ..." )
+                    s3.upload(uploadParams, (err, data) => {
+                        if (err) {
+
+                            res.status(500).send({ message: 'failure' });
+                        }
+                        else{
+                            req.io.sockets.emit('fileUploadLog', "Parsing Sensor Data ..." )
+                            convertXLSXDataToJSON(req.file.buffer,function(items){
+                                // Store the Data in DynamoDB
+                                // now broadcast the updated foo..
+
+                                req.io.sockets.emit('fileUploadLog', "Populating Data-Base with Sensor Data ..." )
+                                // Appending organization in elements of array
+                                if(user.organization === undefined){
+                                    user["organization"] = "PSU"
+                                }
+                                console.log(items);
+                                items.map((element) => {
+                                    return element.organization = user.organization;
+                                });
+
+                                const new_items_array = _.map(items, o => _.extend({organization: user.organization}, o));
+
+                                storeSensorData(new_items_array)
+                                .then(flag => {
+
+                                    var players = items.map(function (player) {
+                                        return {    player_id : player.player_id.split("$")[0],
+                                        team : player.team,
+                                        organization : player.organization
+                                    }
+                                });
+
+
+
+                                var unique_players = _.uniq(players, 'player_id');
+                                const result = [];
+                                const map = new Map();
+
+                                for (const item of players) {
+                                    if(!map.has(item.player_id)){
+                                        map.set(item.player_id, true);    // set any value to Map
+                                        result.push(item);
+                                    }
+                                }
+                                if(result.length == 0){
+                                    res.send({
+                                        message : "success"
+                                    })
+                                }
+                                else{
+                                    // Run simulation here and send data
+                                    // {
+                                    //     "player_id" : "STRING",
+                                    //     "team" : "STRING",
+                                    //     "organization" : "STRING"
+                                    // }
+                                    var counter = 0 ;
+                                    console.log("UNIQUE PLAYERS ++++++++++++++ ",result);
+
+                                    for(var i =0 ; i< result.length ; i++){
+                                        var temp = result[i];
+
+                                        addPlayerToTeamInDDB(temp.organization, temp.team, temp.player_id)
+                                        .then(d => {
+                                            req.io.sockets.emit('fileUploadLog', `Running Simulation for ${temp.player_id} ...` )
+                                            request.post({ url: config.ComputeInstanceEndpoint + "generateSimulationForPlayer", json: temp }, function (err, httpResponse, body) {
+                                                counter++;
+                                                if (err) {
+                                                    console.log(err);
+
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                }
+                                                else {
+
+                                                    console.log(data);
+
+                                                }
+
+                                                if(counter == result.length){
+                                                    res.send({
+                                                        message : "success"
+                                                    })
+                                                }
+                                            })
+                                        })
+                                        .catch(err => {
+                                            counter = result.length ;
+                                            res.send({
+                                                message : "failure"
+                                            })
+                                        })
+                                    }
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.send({
+                                    message : 'failure',
+                                    error : err
+                                })
+                            })
+
+
+                        });
+
+
+                    }
+                })
             }
-            else{
+        }
+    })
 
-                convertXLSXDataToJSON(req.file.buffer,function(items){
-                    // Store the Data in DynamoDB
-                    storeSensorData(items)
-                    .then(flag => {
-                        res.send({
-                            message : 'success'
-                        })
-                    })
-                    .catch(err => {
-                        res.send({
-                            message : 'failure',
-                            error : err
-                        })
-                    })
-
-
-                });
-
-
-            }
-        })
-    }
 })
 
 app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
@@ -1942,13 +2257,16 @@ app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
     })
 })
 
+
 app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
+    console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "getPlayersDetails", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
             res.send({ message: 'failure', error: err });
         }
         else {
+            console.log(httpResponse.body);
             res.send(httpResponse.body);
         }
     })
@@ -2033,9 +2351,6 @@ app.post(`${apiPrefix}logOut`, (req, res) => {
         message: "success"
     });
 })
-
-// Configuring port for APP
 const port = 3001;
-const server = app.listen(port, function () {
-    console.log('Magic happens on ' + port);
-});
+// Configuring port for APP
+server.listen(port, () => console.log(`Listening on port ${port}`))

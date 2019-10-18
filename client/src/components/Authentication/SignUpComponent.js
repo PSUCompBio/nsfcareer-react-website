@@ -38,6 +38,9 @@ class SignUpComponent extends React.Component {
   }
 
   componentDidMount() {
+      // Scrolling the screen to top
+      window.scrollTo(0, 0)
+      
     if (this.props.location.pathname === '/SignUp') {
       this.setState({
         signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' }
