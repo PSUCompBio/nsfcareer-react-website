@@ -17,7 +17,8 @@ class Login extends React.Component {
       isLoginError: false,
       loginErrorCode: '',
       isLoading: false,
-      isSignInSuccessed: false
+      isSignInSuccessed: false,
+      userType : ''
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -99,10 +100,12 @@ class Login extends React.Component {
               // login redirect code here
               this.setState({
                 isLoading: false,
-                isSignInSuccessed: true
+                isSignInSuccessed: true,
+                userType: response.data.user_details.user_type
               });
               store.dispatch(setIsSignedInSucceeded());
-              store.dispatch(userDetails(response.data.user_type));
+              console.log("USER DETAILS ",response.data.user_details);
+              store.dispatch(userDetails(response.data.user_details));
             }
           } else {
             this.setState({
@@ -117,6 +120,11 @@ class Login extends React.Component {
         .catch((err) => {
           e.target.reset();
           // catch error
+          this.setState({
+            isLoginError: true,
+            isLoading: false,
+            loginError: err
+          });
           console.log('error : ', err);
         });
     }
@@ -128,7 +136,7 @@ class Login extends React.Component {
       <React.Fragment>
         <div className="dynamic__height">
           <div className="container  pl-0 pr-0 login-height overflow-hidden">
-            {this.state.isSignInSuccessed ? <Redirect to="/dashboard" /> : null}
+            {this.state.isSignInSuccessed ? this.state.userType == "Admin" ? <Redirect to="/OrganizationAdmin" /> : <Redirect to="/dashboard" />  : null}
             <div style={{marginTop: "5vh", marginBottom: "2vh"}} className="row login">
               <div className="col-md-12  mb-5">
                 <div className="text-center">

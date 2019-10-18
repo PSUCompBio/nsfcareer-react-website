@@ -14,7 +14,6 @@ class CumulativeEventsAccelerationEvents extends React.Component {
     };
   }
 
-
   componentDidMount() {
     svgToInline();
   }

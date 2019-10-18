@@ -2272,6 +2272,16 @@ div.show-mobile-links {
 .player-date-selection-button {
     margin-top: 1.5rem !important;
 }
+.player-top-margin-20-mobile{
+    margin-top: 20% !important;
+}
+.hide-widget-in-mobile{
+    display: none;
+}
+.center-scroll-up-mobile{
+    left : 0px !important ;
+    right : 0px !important;
+}
 }
 
 @media (min-width: 725px) {

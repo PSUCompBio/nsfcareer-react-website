@@ -104,7 +104,7 @@ class Index extends React.Component {
 // })
 
 ReactDOM.render(
-  <Index isAuthenticated={true} isAdmin={true} />,
+  <Index  />,
   document.getElementById('root')
 );
 

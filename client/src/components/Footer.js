@@ -47,7 +47,7 @@ class Footer extends React.Component {
       window.location.href = 'https://psucompbio.org/';
     };
     return (
-      <div className={`footer ${this.addFooterClass()}`}>
+      <div style={{zIndex : "999"}} className={`footer ${this.addFooterClass()}`}>
         <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
         <div style={{ background: '' }} className="container">
           <div className="row pt-4">

@@ -28,6 +28,9 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 
 import Spinner from '../Spinner/Spinner';
+
+import ScrollToTop  from 'react-scroll-up';
+
 import { getStatusOfDarkmode } from '../../reducer';
 
 
@@ -88,9 +91,51 @@ class UserDashboarForAdmin extends React.Component {
     if (!isLoaded) return <Spinner />;
     return (
       <React.Fragment>
+          <div className="center-scroll-up-mobile">
+          <ScrollToTop
+
+              showUnder={120}
+              style={{
+                  zIndex : "99"
+              }}
+              >
+              <div
+
+                className=" d-flex align-items-center justify-content-center "
+                style={{
+                    width : "50px",
+                    height : "50px",
+                    backgroundColor: "#0f81dc",
+                    marginLeft : "auto",
+                    marginRight : "auto",
+                    color: "#fff",
+                    borderRadius: "50%",
+                    boxShadow: "0 3px 6px 0 rgba(0, 0, 0, 0.14)",
+                    alignItems: "center !important"
+
+                }}
+              >
+                <img src="/img/icon/arrowUp.svg" alt="" />
+              </div>
+              <div
+                  style={{
+
+                      color: "#0f81dc",
+                      backgroundColor : "transparent",
+                      marginLeft : "auto",
+                      marginRight : "auto"
+                  }}
+                  >
+                  <p className="hide-widget-in-mobile">Back to top</p>
+              </div>
+
+
+</ScrollToTop>
+</div>
+
         <div id="dashboard" className="container dashboard">
           {/*<PlayerDetails user={this.state.user} />*/}
-          <div className="row p-4 mb-5 player-details animated fadeInDown ">
+          <div className="row p-4 mb-5 player-details animated fadeInDown player-top-margin-20-mobile">
             <div className="col-md-6 player-name">
               <p ref="p1">
                 Player Name :
@@ -143,7 +188,7 @@ class UserDashboarForAdmin extends React.Component {
           <CumulativeEventsAccelerationEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
           {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
           <HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>
-          <div className="row text-center pt-5 pb-5 mt-5 mb-5 animated fadeInUp">
+          {/*<div className="row text-center pt-5 pb-5 mt-5 mb-5 animated fadeInUp">
             <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
               <div
                 onClick={this.gotoTop}
@@ -153,7 +198,7 @@ class UserDashboarForAdmin extends React.Component {
               </div>
               <p>Back to top</p>
             </div>
-          </div>
+        </div>*/}
         </div>
         <DarkMode isDarkMode={this.props.isDarkModeSet} />
         <Footer />
