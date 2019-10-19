@@ -2118,6 +2118,7 @@ div.show-mobile-links {
   .shift-technology-section {
     margin-top: -35%;
   }
+
 }
 .contact__page {
   bottom: -27.8vh !important;
@@ -2282,6 +2283,14 @@ div.show-mobile-links {
     left : 0px !important ;
     right : 0px !important;
 }
+.organization-admin-table-margin-5-mobile{
+    margin-top: 5%;
+}
+
+.organization-admin-table-margin-5-mobile-overview{
+    margin: 5%;
+}
+
 }
 
 @media (min-width: 725px) {

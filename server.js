@@ -2187,6 +2187,17 @@ app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
     })
 })
 
+app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
 app.post(`${apiPrefix}getCumulativeAccelerationTimeData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeData", json: req.body }, function (err, httpResponse, body) {
         if (err) {

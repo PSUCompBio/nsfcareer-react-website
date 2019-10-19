@@ -4,6 +4,7 @@ import PlayerDetails from '../PlayerDetails/PlayerDetails';
 import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
 import CumulativeEventsAccelerationEvents from '../DashboardEventsChart/CumulativeEventsAccelerationEvents';
 import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
+import HeadAccelerationAllEvents from '../DashboardEventsChart/HeadAccelerationAllEvents';
 import { svgToInline } from '../../config/InlineSvgFromImg';
 import DarkMode from '../DarkMode';
 import Footer from '../Footer';
@@ -19,10 +20,13 @@ import {
   getCumulativeAccelerationData,
   getCumulativeAccelerationTimeData,
   getSimulationFilePath,
-  getSimulationFilesOfPlayer
+  getSimulationFilesOfPlayer,
+  getAllCumulativeAccelerationTimeRecords
 } from '../../apis';
 
 import { Form } from 'react-bootstrap';
+
+
 
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
@@ -49,7 +53,8 @@ class UserDashboarForAdmin extends React.Component {
       cumulativeAccelerationTimeData : {},
       eventsDate : [],
       eventDateValue : '-1',
-      simulationFilePaths : null
+      simulationFilePaths : null,
+      cumulativeAccelerationTimeAllRecords : []
     };
     console.log("THIS IS PROPS ",this.props.location)
   }
@@ -133,8 +138,9 @@ class UserDashboarForAdmin extends React.Component {
 </ScrollToTop>
 </div>
 
-        <div id="dashboard" className="container dashboard">
+        <div id="dashboard" className="container dashboard player-top-margin-20-mobile">
           {/*<PlayerDetails user={this.state.user} />*/}
+          {/*
           <div className="row p-4 mb-5 player-details animated fadeInDown player-top-margin-20-mobile">
             <div className="col-md-6 player-name">
               <p ref="p1">
@@ -159,9 +165,10 @@ class UserDashboarForAdmin extends React.Component {
                   </Form.Group>
             </div>
             </div>
+            */}
 
                 {this.state.simulationFilePaths && this.state.simulationFilePaths.length !=0 ?
-                    <div className="row card  player-details">
+                    <div className="row card   player-details">
                         <div className="col-md-6" width="30%">
                     <Carousel>
                         {this.state.simulationFilePaths.map((item, index) => (
@@ -187,7 +194,14 @@ class UserDashboarForAdmin extends React.Component {
 
           <CumulativeEventsAccelerationEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
           {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
-          <HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>
+
+          {this.state.cumulativeAccelerationTimeAllRecords.map(item => (
+
+              <HeadAccelerationAllEvents key={item} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item}/>
+            ))}
+
+          {/*<HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>*/}
+
           {/*<div className="row text-center pt-5 pb-5 mt-5 mb-5 animated fadeInUp">
             <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
               <div
@@ -228,7 +242,7 @@ class UserDashboarForAdmin extends React.Component {
                   this.setState({
                       cumulativeEventData : { ...this.state.cumulativeEventData, ...response.data.data, team : "York Tech Football" }
                   });
-                  return getHeadAccelerationEvents(JSON.stringify({}))
+                  return getHeadAccelerationEvents({player_id : this.props.location.state.player_name, team : "York Tech Football" })
               })
               .then(response => {
                   console.log("Head aceleration data",response.data);
@@ -242,7 +256,14 @@ class UserDashboarForAdmin extends React.Component {
                   this.setState({
                         eventsDate: this.state.eventsDate.concat(response.data.data)
                 })
-                  return getCumulativeEventLoadData(JSON.stringify({}))
+                return getAllCumulativeAccelerationTimeRecords({player_id : this.props.location.state.player_name, team : "York Tech Football" })
+
+              })
+              .then(response => {
+                  this.setState({
+                        cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data)
+                })
+                    return getCumulativeEventLoadData(JSON.stringify({}))
               })
               .then(response => {
                   console.log("Load event data",response.data);

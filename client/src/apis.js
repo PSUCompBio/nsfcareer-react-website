@@ -250,7 +250,7 @@ export const getCumulativeEventLoadData = (request) =>{
 
 export const getHeadAccelerationEvents = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/getHeadAccelerationEvents`, {},{withCredentials: true})
+      axios.post(`/getHeadAccelerationEvents`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -421,6 +421,18 @@ export const getCumulativeAccelerationTimeData = (request) =>{
 export const uploadModelRealData= (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/uploadModelRealData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getAllCumulativeAccelerationTimeRecords = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
