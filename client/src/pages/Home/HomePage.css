@@ -1705,9 +1705,9 @@ div.show-mobile-links {
   .image-padding img:nth-child(1) {
     width: 40% !important;
   }
-  .footer {
+  /*.footer {
     height: 36vh !important;
-  }
+  }*/
   .section-two {
     padding-top: 5%;
   }
@@ -1919,9 +1919,9 @@ div.show-mobile-links {
   .card-body p {
     font-size: 14px;
   }
-  .footer {
+  /*.footer {
     height: 36vh !important;
-  }
+  }*/
   .section-two {
     padding-top: 5%;
   }

@@ -615,6 +615,7 @@ class MilitaryPage extends React.Component {
 			triangular_graph_text : 'Brain simulation pending',
 			show_triangular_graph_block : 'none',
 			triangular_graph_text_color : "red",
+			triangular_blinking_class   : "blinking",
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
@@ -877,7 +878,8 @@ class MilitaryPage extends React.Component {
 			this.setState({
 				triangular_graph_text: 'Brain simulation completed',
 				show_triangular_graph_block : 'block',
-				triangular_graph_text_color : 'green'
+				triangular_graph_text_color : 'green',
+				triangular_blinking_class : ''
 			});
 		}, 6000);
 		
@@ -1078,7 +1080,7 @@ class MilitaryPage extends React.Component {
 									<span className="result_txt">(0.2, 0.34, 0.65)</span>
 								</div>
 								<div className="cu-margin-bottom" style={{ display: this.state.show_triangular_graph }}>
-									<span className={"blinking "+this.state.triangular_graph_text_color}>{ this.state.triangular_graph_text }</span>
+									<span className={ this.state.triangular_blinking_class+" "+this.state.triangular_graph_text_color}>{ this.state.triangular_graph_text }</span>
 								</div>
 							</div>
 						</div>

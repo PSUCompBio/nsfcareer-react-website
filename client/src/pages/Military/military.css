@@ -123,6 +123,7 @@ tbody tr:nth-child(odd){
 	margin-bottom: 2px !important;
 	text-align:center;
 	width: 100%;
+	font-weight: bold;
 }
 .cu-align-center {
 	text-align:center;
@@ -132,7 +133,7 @@ tbody tr:nth-child(odd){
 	animation:blinking 0.8s infinite;
 }
 .green{
-	animation:green 0.8s infinite;
+	color: #008000;
 }
 .red {
 	animation:red 0.8s infinite;
@@ -145,13 +146,7 @@ tbody tr:nth-child(odd){
 	99%{	color:transparent;	}
 	100%{	color: #000;	}
 }
-@keyframes green{
-	0%{		color: #008000;	}
-	49%{	color: transparent;	}
-	50%{	color: transparent;	}
-	99%{	color:transparent;	}
-	100%{	color: #008000;	}
-}
+
 @keyframes red{
 	0%{		color: #FF0000;	}
 	49%{	color: transparent;	}
