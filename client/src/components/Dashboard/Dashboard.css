@@ -568,3 +568,35 @@ div.titles {
     padding-top: 287px;
   }
 }
+.brain-card-pt-2-5{
+padding-top: 1.5rem !important;
+}
+
+@media (max-width: 768px){
+.brain-card-pt-2-5{
+padding-top: 2.5rem !important;
+}
+.cumm {
+    margin-top: 10%;
+}
+}
+
+.widget-subheading {
+    font-weight: 300;
+    color: #80878e;
+    font-size: smaller;
+    font-family: "Roboto",sans-serif;
+}
+
+.widget-numbers{
+    font-weight: 800;
+    text-decoration: overline;
+    font-size: 1.4em;
+    color: #0f81dc !important;
+}
+
+.chart-container {
+  position: relative !important;
+  height:90px;
+  width:100% !important;
+}

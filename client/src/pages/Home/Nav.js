@@ -9,7 +9,8 @@ import LineUnderLink from '../../utilities/LineUnderLink.js';
 class Nav extends React.Component {
   constructor(props) {
     super(props);
-    console.log("PROPS IS ",props);
+    console.log("NAV PROPS IS ",props);
+
     this.state = {
       isOpen: false,
       signOutClass: 'sign-out-hide',
@@ -22,7 +23,8 @@ class Nav extends React.Component {
       logoutBox: { display: 'none' },
       psuLinks: { display: 'none' },
       userType : props.userType,
-      isNavbarTransparent : props.isNavbarTransparent
+      isNavbarTransparent : props.isNavbarTransparent,
+      user_details : localStorage.getItem("user_details")
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -473,10 +475,11 @@ class Nav extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log(state);
+  console.log("IN MAP STATE" ,state);
   return {
     isLoggedIn: state.isSignedInSuccess,
-    userType: state.userInfo
+    userType: state.userInfo.user_type,
+    user_details : state.userInfo
   };
 }
 export default compose(

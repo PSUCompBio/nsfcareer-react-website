@@ -102,7 +102,7 @@ class OrganizationAdmin extends React.Component {
   componentDidMount() {
       // Scrolling winddow to top when user clicks on about us page
       window.scrollTo(0, 0)
-      
+
       fetchAllTeamsInOrganization({ organization : this.state.organization })
       .then(response => {
           var list = response.data.data ;
@@ -436,7 +436,7 @@ class OrganizationAdmin extends React.Component {
           <div style={this.state.hideEditElement}>
             <div ref={reference[1]} className="football-header ">
               <p className="teamName" ref={reference[2]}>
-                York tech football <img src="/img/icon/football.svg" alt="" />
+                Admin Dashboard <img src="/img/icon/football.svg" alt="" />
               </p>
               <p className="athletes" ref={reference[3]}>
                 {noOfAthletes} Athletes{' '}
@@ -528,8 +528,8 @@ class OrganizationAdmin extends React.Component {
             ''
           )}
           <div  className="organization-admin-pt-8 row text-center  organization-pad__military">
-              <p ref="h1" className="penstate">York Tech Football</p>
-            <div className="col-md-9">
+              <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate">Admin Dashboard</p>
+            <div className="col-md-9 organization-admin-table-margin-5-mobile-overview">
               <div className="row">
                 <div
                   ref="cardContainer"

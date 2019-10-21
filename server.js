@@ -407,7 +407,6 @@ function getSimulationFilePath(user_name, cb) {
 
         } catch (e) {
             cb(err,'');
-
         }
     });
 }
@@ -1241,7 +1240,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
             });
         } else {
 
-            console.log(data);
+            console.log("USER DATA is =====================> \n",data);
 
             // Now getting the list of Groups of user
             getListGroupForUser(data.Username, function (error, groupData) {
@@ -1285,10 +1284,22 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
 
                                 res.cookie("token", result.getIdToken().getJwtToken());
 
-                                res.send({
-                                    message: "success",
-                                    user_type: userType
-                                });
+                                getUserDbData(data.Username, function(err, user_details){
+                                    if(err){
+                                        res.send({
+                                            message : "failure",
+                                            error : err
+                                        })
+                                    }
+                                    else{
+                                        user_details.Item["user_type"] = userType ;
+                                        res.send({
+                                            message : "success",
+                                            user_details : user_details.Item,
+                                            user_type: userType
+                                        })
+                                    }
+                                })
                             }
                         })
                     }
@@ -2167,6 +2178,17 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
 
 app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
         }
