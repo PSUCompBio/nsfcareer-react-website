@@ -224,6 +224,10 @@ select.select-gender {
   box-shadow: -3px 0 10px rgba(0, 0, 0, 0.12);
 }
 
+.organization-admin-pt-8 {
+    margin-top: 8% !important;
+}
+
 .edit-team-btn {
   background: #0f81dc;
   padding: 5px 20px 5px 20px;
@@ -262,7 +266,7 @@ div.modal_form {
 
 .edit-your-team {
   font-size: 30px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: 2px;
   border-bottom: 1px solid #fff;
   margin-bottom: 10px !important;
@@ -271,7 +275,12 @@ div.modal_form {
 input.team-edit-input {
   background-color: transparent !important;
 }
-
+.team-form {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10%;
+    padding-right: 10%;
+}
 .modal__show {
   position: fixed;
   color: #fff;
@@ -499,11 +508,12 @@ div.titles {
   div.t-roster{
     margin-top: 10vh;
   }
+
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1500px) {
   div.penstate-university-bg {
-    padding-top: 10% !important;
+    padding-top: 8% !important;
   }
 }
 @media screen and (min-width: 2560px) and (max-width: 3238px) {

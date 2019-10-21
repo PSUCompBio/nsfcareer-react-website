@@ -9,6 +9,7 @@ import LineUnderLink from '../../utilities/LineUnderLink.js';
 class Nav extends React.Component {
   constructor(props) {
     super(props);
+    console.log("PROPS IS ",props);
     this.state = {
       isOpen: false,
       signOutClass: 'sign-out-hide',
@@ -20,7 +21,8 @@ class Nav extends React.Component {
       userProfileIconLinksIsOpen: false,
       logoutBox: { display: 'none' },
       psuLinks: { display: 'none' },
-      userType : props.userType
+      userType : props.userType,
+      isNavbarTransparent : props.isNavbarTransparent
     };
     this.handleClick = this.handleClick.bind(this);
   }
@@ -320,11 +322,20 @@ class Nav extends React.Component {
   render() {
     const localStore = JSON.parse(localStorage.getItem('state'));
     return (
-      <nav
-        className={`navbar navbar-dark  navbar-expand-lg navbar-padding ${
-          'navbar-bg-change'
-        } ${this.props.screenWidth <= 768 ? 'navbar-bg-change' : ''}`}
-      >
+        <div>
+
+
+
+                <nav
+
+              className={`navbar navbar-dark  navbar-expand-lg ${
+                'navbar-bg-change'
+                }
+                ${(( this.props.location.pathname == "/" || this.props.location.pathname == "/Home" || this.props.location.pathname == "/home") && this.props.screenWidth > 768 && this.props.isNavbarTransparent) ? 'navbar-hide ' : ' navbar-padding' } `
+                }
+              >
+
+
         <Link className="navbar-brand" to={'/Home'}>
           <img className="logo-mobile" src="img/icon/logo.png" alt="" />
         </Link>
@@ -332,6 +343,8 @@ class Nav extends React.Component {
           onClick={this.handleClick}
           className="navbar-toggler menu-toggler"
           type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
           aria-controls="navbarNav"
           aria-expanded="false"
           aria-label="Toggle navigation"
@@ -382,11 +395,6 @@ class Nav extends React.Component {
             <div className={LineUnderLink.linkeMaker('/About')} />
             {this.props.isLoggedIn === true ? (
               <React.Fragment>
-                <Link className="nav-link" to={'/Sports'}>
-                  Sports <span className="sr-only">(current)</span>
-                </Link>
-                <div className={LineUnderLink.linkeMaker('/Sports')} />
-
                 <Link
                   onClick={this.handleClick}
                   className="nav-link"
@@ -427,13 +435,6 @@ class Nav extends React.Component {
                 <div className={LineUnderLink.linkeMaker('/SignUp')} />
               </React.Fragment>
             )}
-            {this.props.isLoggedIn ? (
-              <div onClick={this.makePSUlinksVisible} className="psu-list">
-                PSU
-              </div>
-            ) : (
-              ''
-            )}
           </div>
 
           <div
@@ -466,6 +467,7 @@ class Nav extends React.Component {
           {this.mobilePSUlinks()}
         </nav>
       </nav>
+      </div>
     );
   }
 }

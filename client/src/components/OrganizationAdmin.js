@@ -100,6 +100,9 @@ class OrganizationAdmin extends React.Component {
   };
 
   componentDidMount() {
+      // Scrolling winddow to top when user clicks on about us page
+      window.scrollTo(0, 0)
+      
       fetchAllTeamsInOrganization({ organization : this.state.organization })
       .then(response => {
           var list = response.data.data ;
@@ -282,13 +285,14 @@ class OrganizationAdmin extends React.Component {
 
   teamForm = (fieldName, placeholder, name, labelFor) => {
     return (
-      <div className="input-group mb-2">
+      <div  className="input-group mb-2">
         <div className="input-group-prepend">
-          <div className="input-group-text">{fieldName}</div>
+          <div style={{color: "#ffffff"}} className="input-group-text">{fieldName}</div>
         </div>
         <input
           name={name}
           type="text"
+          style={{color: "#ffffff"}}
           className="form-control team-edit-input"
           id={labelFor}
           placeholder={placeholder}
@@ -327,8 +331,8 @@ class OrganizationAdmin extends React.Component {
             src="/img/icon/close.svg"
             alt=""
           />
-      <p className="edit-your-team">Add your team.</p>
-          <form onSubmit={this.handleTeamEditSubmit}>
+      <p style={{ fontWeight: "500 !important" }} className="edit-your-team">Add your team.</p>
+          <form className="team-form" onSubmit={this.handleTeamEditSubmit}>
             {this.teamForm(
               'Team Name:',
               'Enter your team name',
@@ -341,7 +345,7 @@ class OrganizationAdmin extends React.Component {
                 'organization',
                 'alertsFor'
             )}
-            <button type="submit" className="dynamic-white-btn">
+            <button style={{marginTop: "5%"}} type="submit" className="dynamic-white-btn">
               Submit
             </button>
             {this.state.apiLoader ?
@@ -517,13 +521,14 @@ class OrganizationAdmin extends React.Component {
         {this.state.showEditForm === true ? this.showEditForm() : ''}
 
         <div ref="rosterContainer" className="t-roster animated zoomIn">
-          <PenstateUniversity />
+
           {this.props.isMilitaryVersionActive ? (
             <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
           ) : (
             ''
           )}
-          <div className="row text-center  organization-pad__military">
+          <div  className="organization-admin-pt-8 row text-center  organization-pad__military">
+              <p ref="h1" className="penstate">York Tech Football</p>
             <div className="col-md-9">
               <div className="row">
                 <div
@@ -577,6 +582,7 @@ class OrganizationAdmin extends React.Component {
               </div>
             </div>
             <div className="col-md-3 pt-5 mb-3">
+            {/*
               <div className="highest-load mb-5">
                 <div ref="loadCardParent" className="card">
                   <div ref="loadCard" className="load-heading">
@@ -604,6 +610,7 @@ class OrganizationAdmin extends React.Component {
                   </div>
                 </div>
               </div>
+              */}
             </div>
           </div>
         </div>
@@ -623,6 +630,7 @@ class OrganizationAdmin extends React.Component {
 
     return (
       <React.Fragment>
+
         {this.props.isMilitaryVersionActive === true ? (
           <div className="militay-view">
             <div className="military-sidebar">
@@ -640,6 +648,7 @@ class OrganizationAdmin extends React.Component {
             <Footer />
           </React.Fragment>
         )}
+
       </React.Fragment>
     );
   }

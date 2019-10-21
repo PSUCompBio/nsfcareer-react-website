@@ -30,7 +30,8 @@ class Routing extends React.Component {
       gotoPageNo: 0,
       isLoggedIn: false,
       isDarkMode: false,
-      isDisplay: { display: 'none' }
+      isDisplay: { display: 'none' },
+      isNavbarTransparent : true
     };
   }
 
@@ -52,9 +53,20 @@ class Routing extends React.Component {
   };
 
   onPageChange = (pageNo) => {
-    this.setState({
-      currentPage: pageNo
-    });
+      console.log("ROUTING ,", pageNo);
+    if(pageNo != 1){
+        this.setState({
+          currentPage: pageNo,
+          isNavbarTransparent : false
+        });
+    }
+    else{
+        this.setState({
+          currentPage: pageNo,
+          isNavbarTransparent : true
+        });
+    }
+
   };
 
   gotoPage = (pageNumber) => {
@@ -93,6 +105,8 @@ class Routing extends React.Component {
           ''
         )}
         <Nav
+          
+          isNavbarTransparent={this.state.isNavbarTransparent}
           screenWidth={this.state.windowWidth}
           isAuthenticated={this.state.isLoggedIn}
           currentPage={this.state.currentPage}

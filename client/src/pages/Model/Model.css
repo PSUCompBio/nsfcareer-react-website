@@ -159,14 +159,10 @@ tbody tr:nth-child(odd){
 	99%{	color:transparent;	}
 	100%{	color: #FF0000;	}
 }
-
-
-
-
 /*---End added 17-10-2019-----*/
 
 
-/*#4472C4*/
+
 /* @media only screen and (min-width: 1360px) and (max-width: 767px)  {
 	.model_container{
 		padding-top: 4rem !important;
@@ -181,7 +177,7 @@ tbody tr:nth-child(odd){
 		margin-top: 20px;
 		margin-bottom: 50px;
 	}
-}	
+}
  */
 @media only screen and (max-width: 767px) {
 	.graph1, .graph2, .graph3, .graph4  {
@@ -208,8 +204,4 @@ tbody tr:nth-child(odd){
 	.create_data_block {
 		margin-top: 20px;
 	}
-}	
-
-
-
-
+}

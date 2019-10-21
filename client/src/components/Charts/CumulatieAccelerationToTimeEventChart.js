@@ -3,6 +3,7 @@ import {Line} from 'react-chartjs-2';
 var distinctColors = require('distinct-colors');
 
 const options = {
+    maintainAspectRatio: true,
     scales: {
         yAxes: [{
             scaleLabel: {

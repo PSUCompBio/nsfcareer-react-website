@@ -3,11 +3,17 @@ import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 
 class AboutPage extends React.Component {
+    constructor(props){
+        super(props);
+        
+    }
   changeHtmlBg = (hexCode) => {
     document.getElementsByTagName('body')[0].style.backgroundColor = hexCode;
   };
 
   componentDidMount() {
+    // Scrolling winddow to top when user clicks on about us page
+    window.scrollTo(0, 0)
     if (getStatusOfDarkmode().status === true) {
       this.refs.h1.style.color = '#fff';
       document.getElementsByTagName('body')[0].style.background = '#171b25';

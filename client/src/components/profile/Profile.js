@@ -251,7 +251,7 @@ class Profile extends React.Component {
         <div className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2">
           <div
             ref="lightDark"
-            className="row mb-5 text-center justify-content-center align-items-center profile-container"
+            className="row text-center justify-content-center align-items-center profile-container"
           >
             <div ref="profileBorder" className="profile">
               <img
@@ -261,7 +261,7 @@ class Profile extends React.Component {
               />
             </div>
             <div className="col-md-5 mt-5 pt-2  offset-md-3">
-              <p ref="nameColor" className="pt-5 pb-1">
+              <p ref="nameColor" className="profile-title profile-pt-5 pb-1">
                 {this.state.user.first_name + ' ' + this.state.user.last_name}
               </p>
               <div className="row text-center">

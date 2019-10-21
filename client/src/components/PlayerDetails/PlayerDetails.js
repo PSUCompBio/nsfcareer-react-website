@@ -56,7 +56,7 @@ class PlayerDetails extends React.Component {
             selectedFile: event.target.files[0]
         });
     };
-    
+
   onClickHandler = () => {
     const data = new FormData();
     this.setState({
@@ -93,17 +93,19 @@ class PlayerDetails extends React.Component {
         </div>
         <div className="col-md-6 text-right">
           <div className="text-center">
-            <DailyBtn />
+            {/*<DailyBtn />
             <WeeklyBtn />
             <MonthlyBtn />
             <ExportReportBtn />
+            */}
           </div>
           <div className="mt-4 text-left control">
-            <span>
-              <img src="/img/icon/backword.svg" alt="" />
-            </span>
+
             <span ref="h1">
               <div className="d-flex">
+                  <span>
+                    <img src="/img/icon/backword.svg" alt="" />
+                  </span>
               <DatePicker
                 showMonthDropdown
                 showYearDropdown
@@ -127,72 +129,15 @@ class PlayerDetails extends React.Component {
                 onChange={this.handleDateChange2}
                 placeholderText="To"
               />
-              </div>
+              <span>
+                <img src="/img/icon/farword.svg" alt="" />
+              </span>
+          </div>
             </span>
-            <span>
-              <img src="/img/icon/farword.svg" alt="" />
-            </span>
+
           </div>
         </div>
-        <div className="col-md-6">
-          <div>
-            <input
-              onChange={this.onChangeHandler}
-              type="file"
-              className="btn mt-5 upload-btn"
-              name="sensor_csv_file"
-            />{' '}
-            <button
-              type="button"
-              onClick={this.onClickHandler}
-              className="btn mt-5 upload-btn"
-            >
-              <i className="fa fa-cloud-upload"></i>
-            </button>
-            {this.state.isUploading ? (
-              <div className="d-flex justify-content-center center-spinner">
-                <div
-                  className="spinner-border text-primary"
-                  role="status"
-                ></div>
-              </div>
-            ) : null}
-            {this.state.isFileUploaded ? (
-              <div
-                style={{ marginTop: '5px' }}
-                className="alert alert-success alert-dismissible fade show"
-                role="alert"
-              >
-                Successfully uploaded the CSV/ XLSX file
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="alert"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            ) : null}
-            {this.state.fileUploadError ? (
-              <div
-                style={{ marginTop: '5px' }}
-                className="alert alert-success alert-dismissible api-response-alert fade show"
-                role="alert"
-              >
-                Failed to upload CSV/ XLSX file
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="alert"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-            ) : null}
-          </div>
-        </div>
+
       </div>
     );
   }

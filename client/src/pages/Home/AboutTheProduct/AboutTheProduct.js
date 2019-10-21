@@ -85,16 +85,16 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 col-xs-4 col-sm-4 animated ${
+                    className={`col-md-4 col-xs-4 col-sm-4 inline-row-divs animated ${
                       inView ? removeAnimationMobileView('slideInLeft') : ''
                     }`}
                   >
                     <img
-                      className={`svg ${animateOnDesktop}`}
+                      className={`inline-row-divs-svg svg ${animateOnDesktop}`}
                       src="/img/AboutTheProductImg/Cloud_white.svg"
                       alt=""
                     />
-                    <h4>
+                <h4 className="inline-row-divs-heading-four">
                       SENSOR ENABLED <br />
                       CLOUD-BASED BRAIN <br />
                       MODELING
@@ -106,14 +106,14 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 col-xs-4 col-sm-4 animated ${inView ? removeAnimationMobileView('zoomIn') : ''}`}
+                    className={`col-md-4 col-xs-4 col-sm-4 inline-row-divs animated ${inView ? removeAnimationMobileView('zoomIn') : ''}`}
                   >
                     <img
-                      className={`svg ${animateOnDesktop}`}
+                      className={`inline-row-divs-svg svg ${animateOnDesktop}`}
                       src="/img/AboutTheProductImg/Moniter_white.svg"
                       alt=""
                     />
-                    <h4>
+                    <h4 className="inline-row-divs-heading-four">
                       MONITOR AND TRACK BRAIN <br />
                       RESPONSE OVER TIME
                     </h4>
@@ -124,16 +124,16 @@ function AboutTheProduct(props) {
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    className={`col-md-4 col-xs-4 col-sm-4 animated ${
+                    className={`col-md-4 col-xs-4 col-sm-4 inline-row-divs  animated ${
                       inView ? removeAnimationMobileView('slideInRight') : ''
                     }`}
                   >
                     <img
-                      className={`svg ${animateOnDesktop}`}
+                      className={`inline-row-divs-svg svg ${animateOnDesktop}`}
                       src="/img/AboutTheProductImg/Analysis_White.svg"
                       alt=""
                     />
-                    <h4>
+                    <h4 className="inline-row-divs-heading-four">
                       TURN YOUR SENSOR DATA <br />
                       INTO MEANINGFUL BRAIN <br />
                       INJURY ANALYSIS
