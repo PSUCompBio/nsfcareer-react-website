@@ -6,11 +6,14 @@ class RostarBtn extends React.Component {
     this.state = {};
   }
   handleTab = (e) => {
-    console.log(this.props.makeActive);
+
     if (this.props.makeActive !== 0) {
-      this.props.getBtn(e.target);
-      this.props.currentBtn.classList.remove('active-tab');
-      e.target.classList.add('active-tab');
+          this.props.getBtn(e.target);
+          console.log(this.props.currentBtn);
+
+          this.props.currentBtn.classList.remove('active-tab');
+          e.target.classList.add('active-tab');
+          this.props.tabActive(0);
     } else {
       e.target.classList.add('active-tab');
       this.props.tabActive(1);

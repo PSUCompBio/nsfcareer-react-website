@@ -128,6 +128,10 @@ div.section-one {
   height: 100vh;
 }
 
+.org-team-team-card{
+    padding-top: 15% !important
+}
+
 /* .section-one > img:nth-child(1) {
   width: 100%;
   height: 100vh;
@@ -2289,6 +2293,9 @@ div.show-mobile-links {
 
 .organization-admin-table-margin-5-mobile-overview{
     margin: 5%;
+}
+.org-team-team-card{
+    padding-top: 10%
 }
 
 }

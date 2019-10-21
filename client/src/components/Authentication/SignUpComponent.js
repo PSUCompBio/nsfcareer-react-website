@@ -40,7 +40,7 @@ class SignUpComponent extends React.Component {
   componentDidMount() {
       // Scrolling the screen to top
       window.scrollTo(0, 0)
-      
+
     if (this.props.location.pathname === '/SignUp') {
       this.setState({
         signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' }
@@ -148,6 +148,7 @@ class SignUpComponent extends React.Component {
 
         >
           <option defaultValue>Select your Role</option>
+          <option value="staff"> Staff</option>
           <option value="administrator"> Administrator</option>
           <option value="coach"> Coach</option>
           <option value="militiary_unit_leader"> Militiary Unit Leader</option>
