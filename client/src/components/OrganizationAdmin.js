@@ -446,7 +446,12 @@ class OrganizationAdmin extends React.Component {
                                     onMouseLeave={this.showElements}
                                     onClick={(e) => {
                                         if(this.state.editTeamClass !== 'edit-teams'){
-                                            this.props.history.push('/TeamAdmin')
+                                            this.props.history.push({
+                                                    pathname : '/TeamAdmin',
+                                                    state: { team: { team_name : team_name,
+                                                                     organization : organization
+                                                                    } }
+                                            })
                                         }
 
                                     }}

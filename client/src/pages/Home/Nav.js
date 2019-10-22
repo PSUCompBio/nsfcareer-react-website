@@ -210,12 +210,15 @@ class Nav extends React.Component {
                 ></i>
                 <span className="goto-back">Back</span>
               </li>
+              {/*
               <li onClick={this.handleClick}>
                 <Link to="TeamAdmin">Team Admin</Link>
               </li>
               <li onClick={this.handleClick}>
                 <Link to="OrganizationAdmin">Organization Admin</Link>
               </li>
+              */}
+
             </ul>
           </div>
         </React.Fragment>
@@ -233,13 +236,17 @@ class Nav extends React.Component {
           className="dashboard-links"
         >
           <ul>
-            <li>PSU</li>
+
+            {/*
+                <li>PSU</li>
+            }
             <li>
               <Link to="TeamAdmin">Team Admin</Link>
             </li>
             <li>
               <Link to="OrganizationAdmin">Organization Admin</Link>
             </li>
+            */}
           </ul>
         </div>
       );
@@ -274,9 +281,7 @@ class Nav extends React.Component {
             <div
               className={
                 LineUnderLink.linkeMaker('/Login') ||
-                LineUnderLink.linkeMaker('/Dashboard') ||
-                LineUnderLink.linkeMaker('/TeamAdmin') ||
-                LineUnderLink.linkeMaker('/OrganizationAdmin')
+                LineUnderLink.linkeMaker('/Dashboard')
               }
             />
             {this.dashboardDropDownList()}

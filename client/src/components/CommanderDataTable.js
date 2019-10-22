@@ -7,6 +7,7 @@ import { getPlayersData } from '../apis';
 class CommanderDataTable extends React.Component {
   constructor(props) {
     super(props);
+    console.log("COMMANDER DATA TABLE ",props);
     this.state = {
       tabActive: 0,
       targetBtn: '',
@@ -43,8 +44,8 @@ class CommanderDataTable extends React.Component {
     }
 
     getPlayersData({
-        organization : "PSU",
-        team_name : "York Tech Football"
+        organization : this.props.organization,
+        team_name : this.props.team
     })
     .then(response => {
         console.log(response);

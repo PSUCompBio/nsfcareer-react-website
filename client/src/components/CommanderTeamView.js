@@ -51,8 +51,9 @@ const impactSummaryBarData = {
 };
 
 class CommanderTeamView extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    console.log("IN TEAM VIEW ",this.props.location)
     this.state = {
       avgLoad: 0.02,
       alerts: 0,
@@ -204,9 +205,7 @@ class CommanderTeamView extends React.Component {
       >
       <div className="col-md-7 my-auto">
         <p ref="h1" className="penstate">
-          {this.props.location.pathname === '/OrganizationAdmin'
-            ? 'Penn State University Research'
-            : 'York tech Football'}
+          {this.props.location.state.team.team_name}
         </p>
     </div>
         <div className="row text-center">
@@ -395,7 +394,7 @@ class CommanderTeamView extends React.Component {
               />
             </div>
             */}
-            <CommanderDataTable />
+            <CommanderDataTable team={this.props.location.state.team.team_name} organization={this.props.location.state.team.organization}/>
           </div>
         </div>
       </div>
