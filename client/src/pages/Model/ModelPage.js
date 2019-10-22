@@ -610,7 +610,12 @@ class ModelPage extends React.Component {
 			dataPoints1: pointArray[0],
 			dataPoints2: pointArray[1],
 			dataPoints3: pointArray[2],
-			dataPoints4: pointArrayClone[0]
+			dataPoints4: pointArrayClone[0],
+			show_triangular_graph : 'none',
+			triangular_graph_text : 'Brain simulation pending',
+			show_triangular_graph_block : 'none',
+			triangular_graph_text_color : "red",
+			triangular_blinking_class   : "blinking",
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
@@ -811,6 +816,9 @@ class ModelPage extends React.Component {
     }
 
 	generateGraphs = () => {
+		console.log("Graphic ckicked here");
+		
+		
 		pointArray[0] = pointArray[0].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -861,12 +869,32 @@ class ModelPage extends React.Component {
 	}
 	
 	generateClone = () => {
+		console.log("Hello here");
+		this.setState({
+			show_triangular_graph: 'inline-block'
+		});
+		
+		const timer = setTimeout(() => {
+			this.setState({
+				triangular_graph_text: 'Brain simulation completed',
+				show_triangular_graph_block : 'block',
+				triangular_graph_text_color : 'green',
+				triangular_blinking_class : '',
+			});
+		}, 6000);
+		
+		
+		
 		this.loadModel(ArrowGLB, 'arrow');
 	}
 	
 	render() {
-		const graph1Options = {
-			title: "",
+		const graph1Options = {		
+			title: "HEAD SENSOR",
+			titleTextStyle: {
+				color: "#1fc1f7",
+				fontSize: 12,
+			},
 			hAxis: { title: "Time (ms)", titleTextStyle: {
 				color: '#000000'
 			}},
@@ -886,7 +914,11 @@ class ModelPage extends React.Component {
 		};
 		
 		const graph2Options = {
-			title: "",
+			title: "SHOULDER SENSOR",
+			titleTextStyle: {
+				color: "#51fd21",
+				fontSize: 12,
+			},
 			hAxis: { title: "Time (ms)", titleTextStyle: {
 				color: '#000000'
 			}},
@@ -906,7 +938,11 @@ class ModelPage extends React.Component {
 		};
 		
 		const graph3Options = {
-			title: "",
+			title: "CHEST SENSOR",
+			titleTextStyle: {
+				color: "#f01e1e",
+				fontSize: 12,
+			},
 			hAxis: { title: "Time (ms)", titleTextStyle: {
 				color: '#000000'
 			}},
@@ -926,7 +962,11 @@ class ModelPage extends React.Component {
 		};
 				
 		const cloneOptions = {
-			title: "",
+			title: "TRIANGULAR APPLIED BLAST LOADING",
+			titleTextStyle: {
+				color: "#000000",
+				fontSize: 12,
+			},
 			hAxis: { title: "Time (ms)", titleTextStyle: {
 				color: '#000000'
 			}},
@@ -953,7 +993,7 @@ class ModelPage extends React.Component {
 		return (
 		  <React.Fragment>
 			<div className="container align-center__about-page">
-				<div class="row">
+				<div className="row">
 					 <div className="model_container col-md-8 col-sm-8 padding-about__page text-center">
 						<div className={`section-title animated zoomIn`}>
 							<h1 ref="h1" className="font-weight-bold">BlastFX Simulator</h1>
@@ -972,7 +1012,7 @@ class ModelPage extends React.Component {
 							) : null}
 						</div>
 						<div className="chart-container">
-							<div className="graph1">
+							<div className="graph1 cu-margin-top">
 								<Chart
 									chartType="LineChart"
 									data={this.state.dataPoints1}
@@ -980,7 +1020,7 @@ class ModelPage extends React.Component {
 									rootProps={{ 'data-testid': '1' }}
 								/>
 							</div>
-							<div className="graph2">
+							<div className="graph2 cu-margin-top">
 								<Chart
 									chartType="LineChart"
 									data={this.state.dataPoints2}
@@ -989,7 +1029,7 @@ class ModelPage extends React.Component {
 								/>
 
 							</div>
-							<div className="graph3">
+							<div className="graph3 cu-margin-top">
 								<Chart
 									chartType="LineChart"
 									data={this.state.dataPoints3}
@@ -997,7 +1037,7 @@ class ModelPage extends React.Component {
 									rootProps={{ 'data-testid': '3' }}
 								/>
 							</div>
-							<div className="graph4" style={{ display: this.state.show_graph }}>
+							<div className="graph4 cu-margin-top" style={{ display: this.state.show_graph }}>
 								<Chart
 									chartType="LineChart"
 									data={this.state.dataPoints4}
@@ -1016,7 +1056,7 @@ class ModelPage extends React.Component {
 						</div>
 					<input type="file" name="file" onChange={this.onChangeHandler}/>*/}
 						<div className="create_data_block">
-							<h2>Create Data</h2>
+							<h2>Create Data STEP 1</h2>
 							<div className="sub_block">
 								<div className="button_outer">
 								<button type="submit" className="custom_btn btn btn-primary" onClick={this.generateGraphs}>Generate Test Data</button>
@@ -1026,7 +1066,7 @@ class ModelPage extends React.Component {
 							</div>
 						</div>
 						<div className="analyze_data_block">
-							<h2>Analyze Data</h2>
+							<h2>Analyze Data STEP 2</h2>
 							<div className="sub_block">
 								<div className="analyze_button_outer">
 									<button type="submit" class="custom_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
@@ -1038,6 +1078,9 @@ class ModelPage extends React.Component {
 								<div className="loading_block">
 									<span>Loading Direction On Head: </span>
 									<span className="result_txt">(0.2, 0.34, 0.65)</span>
+								</div>
+								<div className="cu-margin-bottom" style={{ display: this.state.show_triangular_graph }}>
+									<span className={ this.state.triangular_blinking_class+" "+this.state.triangular_graph_text_color}>{ this.state.triangular_graph_text }</span>
 								</div>
 							</div>
 						</div>
@@ -1105,6 +1148,21 @@ class ModelPage extends React.Component {
 						</Modal.Footer>
 					</Modal>
 				</div>
+				
+				<div className="row">
+					<div style={{ display: this.state.show_triangular_graph_block }} className={`section-title animated zoomIn cu-align-center`}>
+							<h1 ref="h1" className="font-weight-bold">Brain Simulation Results</h1>
+							<div className="brain-image-container" >
+								<img ref="dashboardView"
+								className="img-fluid"
+								src="/img/brain_image_for_triangulated_loading.png"
+								alt=""
+								/>
+							</div>
+					</div>
+				
+				</div>
+				
 				
 			 </div>
 			<Footer />

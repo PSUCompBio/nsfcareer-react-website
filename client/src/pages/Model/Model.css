@@ -111,8 +111,55 @@ tbody tr:nth-child(odd){
 }
 
 
+/*---Start added 17-10-2019-----*/
+.container.align-center__about-page {
+    min-height: 80vh;
+}
+.cu-margin-top {
+	margin-top:5px;
+}
+.brain-img {
+	height:400px;
+}
 
-/*#4472C4*/
+.cu-margin-bottom {
+	margin-bottom: 2px !important;
+	text-align:center;
+	width: 100%;
+	font-weight: bold;
+}
+.cu-align-center {
+	text-align:center;
+}
+
+.blinking{
+	animation:blinking 0.8s infinite;
+}
+.green{
+	color: #008000;
+}
+.red {
+	animation:red 0.8s infinite;
+}
+
+@keyframes blinking{
+	0%{		color: #000;	}
+	49%{	color: transparent;	}
+	50%{	color: transparent;	}
+	99%{	color:transparent;	}
+	100%{	color: #000;	}
+}
+@keyframes red{
+	0%{		color: #FF0000;	}
+	49%{	color: transparent;	}
+	50%{	color: transparent;	}
+	99%{	color:transparent;	}
+	100%{	color: #FF0000;	}
+}
+/*---End added 17-10-2019-----*/
+
+
+
 /* @media only screen and (min-width: 1360px) and (max-width: 767px)  {
 	.model_container{
 		padding-top: 4rem !important;
