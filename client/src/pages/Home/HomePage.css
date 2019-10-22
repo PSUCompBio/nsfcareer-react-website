@@ -2428,6 +2428,14 @@ tbody.player-table tr:nth-child(odd){
    background-color: #fff;
 }
 
+.filepond--drop-label {
+    color: white !important;
+    background: #0F81DC;
+}
+.team-upload-section-button{
+    margin-top: 1.2rem !important;
+    transform: scale(1.2);
+}
 
 @media screen and (max-height: 26.375em) {
   .cbp-spmenu-vertical {

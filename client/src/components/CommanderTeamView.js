@@ -13,6 +13,9 @@ import {
   getImpactSummary
 } from '../apis';
 
+import { FilePond } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
+
 import socketIOClient from 'socket.io-client'
 
 
@@ -209,9 +212,15 @@ class CommanderTeamView extends React.Component {
         <div className="row text-center">
           <div className="col-md-12">
             <div className="row mt-3">
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <div>
                   <div class="team-upload-section-button">
+                     {/* <FilePond
+                          labelIdle='<i className="fa fa-cloud-upload"></i> Drag & Drop your Sensor file or <span class="filepond--label-action"> Browse </span>'
+                          name="sensor_csv_file"
+                          server="/uploadSensorDataAndCompute"
+                          processfile={() => {alert("File uploaded")} } />
+                          */}
                     <input
                       onChange={this.onChangeHandler}
                       type="file"
@@ -268,6 +277,7 @@ class CommanderTeamView extends React.Component {
                         </button>
                       </div>
                     ) : null}
+
                   </div>
                 </div>
               </div>

@@ -2328,7 +2328,6 @@ app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
     })
 })
 
-
 app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
     console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "getPlayersDetails", json: req.body }, function (err, httpResponse, body) {
