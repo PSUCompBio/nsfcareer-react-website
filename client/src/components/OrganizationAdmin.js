@@ -6,7 +6,12 @@ import { getStatusOfDarkmode } from '../reducer';
 import { withRouter } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
-import { getOrganizationAdminData, getAllRosters, addTeam, deleteTeam, fetchAllTeamsInOrganization } from '../apis';
+import { getOrganizationAdminData,
+        getAllRosters,
+        addTeam,
+        deleteTeam,
+        fetchAllTeamsInOrganization,
+        fetchStaffMembers } from '../apis';
 
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
@@ -40,7 +45,8 @@ class OrganizationAdmin extends React.Component {
             organizationToDelete : '',
             teamNameToDelete : '',
             apiLoader : false,
-            buttonSelected : 'overview'
+            buttonSelected : 'overview',
+            staffList : []
         };
     }
     toggleTab = (value) => {
@@ -120,6 +126,16 @@ class OrganizationAdmin extends React.Component {
             for(var j = 0 ; j < rostersResponse.data.data.rosters.length ; j++){
                 this.setState(prevState => ({
                     rostersArray: [...prevState.rostersArray, rostersResponse.data.data.rosters[j]]
+                }));
+            }
+            return fetchStaffMembers({})
+
+
+        })
+        .then(response => {
+            for(var i = 0 ; i < response.data.data.length ; i++){
+                this.setState(prevState => ({
+                    staffList: [...prevState.staffList, response.data.data[i]]
                 }));
             }
             return getOrganizationAdminData(JSON.stringify({}))
@@ -655,29 +671,19 @@ class OrganizationAdmin extends React.Component {
                                                           <tr>
                                                             <th scope="col">#</th>
                                                             <th scope="col">Name</th>
-                                                            <th scope="col">Role</th>
+                                                            <th scope="col">Organization</th>
                                                             <th scope="col">Department</th>
                                                           </tr>
                                                         </thead>
                                                         <tbody className="player-table">
-                                                            <tr className="player-data-table-row">
-                                                                <td>1</td>
-                                                                <td>David</td>
-                                                                <td>Researcher</td>
-                                                                <td>CTE</td>
-                                                            </tr>
-                                                            <tr className="player-data-table-row">
-                                                                <td>1</td>
-                                                                <td>David</td>
-                                                                <td>Researcher</td>
-                                                                <td>CTE</td>
-                                                            </tr>
-                                                            <tr className="player-data-table-row">
-                                                                <td>1</td>
-                                                                <td>David</td>
-                                                                <td>Researcher</td>
-                                                                <td>CTE</td>
-                                                            </tr>
+                                                            {this.state.staffList.map(function(staff, index){
+                                                                return <tr className="player-data-table-row" key={index}>
+                                                                    <td>{index + 1 }</td>
+                                                                    <td>{staff.first_name} {staff.last_name}</td>
+                                                                    <td>{staff.organization}</td>
+                                                                    <td>CTE</td>
+                                                                </tr>
+                                                            })}
                                                         </tbody>
 
                                                     </table>
@@ -763,7 +769,12 @@ class OrganizationAdmin extends React.Component {
                                 ) : (
                                     <React.Fragment>
                                         {this.militaryVersionOrNormalVersion()}
-                                        <Footer />
+                                        <div style={{bottom : "0",
+                                                     position : "absolute",
+                                                     width: "100%"}}>
+                                        <Footer/>
+                                        </div>
+
                                     </React.Fragment>
                                 )}
 

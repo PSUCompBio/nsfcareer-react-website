@@ -120,6 +120,9 @@ html {
 
 body {
   font-family: 'Segoe UI Regular';
+  display: flex;
+flex-direction: column;
+min-height: 100vh;
 }
 .section-one-container {
   background: linear-gradient(90deg, #083c66 10%, #078ae2);
@@ -1924,7 +1927,9 @@ div.show-mobile-links {
     font-size: 14px;
   }
   .footer {
-    height: 36vh !important;
+    /* height: 36vh !important; */
+    flex: 0 0 50px;/*or just height:50px;*/
+    margin-top: auto;
   }
   .section-two {
     padding-top: 5%;

@@ -929,6 +929,38 @@ const fetchNumbers = () => {
     })
 }
 
+const fetchStaffMembers = () => {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#role = :role",
+            ExpressionAttributeNames : {
+                "#role" : "role"
+            },
+			ExpressionAttributeValues: {
+				":role": "staff"
+			}
+        };
+        //   var items
+        var items = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(utility.concatArrays(items));
+            } else {
+                items.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+fetchStaffMembers()
+.then(value => {
+    console.log( value );
+})
+
 const putNumbers = (numbersData) => {
     return new Promise(function (resolve, reject) {
         let param = {
@@ -1401,6 +1433,23 @@ app.post(`${apiPrefix}disableUser`, (req, res) => {
                 message: "success"
             })
         }
+    })
+})
+
+app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
+    fetchStaffMembers()
+    .then(list => {
+        res.send({
+            message : "success",
+            data : list
+        })
+    })
+    .catch(err => {
+        res.send({
+            message : "failure",
+            error : err,
+            data : []
+        })
     })
 })
 

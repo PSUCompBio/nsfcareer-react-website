@@ -199,26 +199,16 @@ class CommanderTeamView extends React.Component {
         ref="rosterContainer"
         className="container t-roster pt-5 mt-5 animated zoomIn"
       >
-        <PenstateUniversity />
+      <div className="col-md-7 my-auto">
+        <p ref="h1" className="penstate">
+          {this.props.location.pathname === '/OrganizationAdmin'
+            ? 'Penn State University Research'
+            : 'York tech Football'}
+        </p>
+    </div>
         <div className="row text-center">
           <div className="col-md-12">
             <div className="row mt-3">
-                <div className="col-md-6">
-                    <div className="season-position text-left ">
-                      <select name="" id="">
-                        <option value="">All session</option>
-                        <option value="">York tech football</option>
-                        <option value="">Lorem lipsum</option>
-                        <option value="">York tech football</option>
-                      </select>
-                      <select name="" id="">
-                        <option value="">All position</option>
-                        <option value="">York tech football</option>
-                        <option value="">Lorem lipsum</option>
-                        <option value="">York tech football</option>
-                      </select>
-                    </div>
-                </div>
               <div className="col-md-6">
                 <div>
                   <div class="team-upload-section-button">
@@ -381,7 +371,7 @@ class CommanderTeamView extends React.Component {
         </div>
         <div className="row mb-5 mt-5">
           <div className="col-md-12">
-            <div className="text-left">
+            {/*<div className="text-left">
               <button type="btn" className="impact-sumary-btn">
                 Team History
               </button>
@@ -394,6 +384,7 @@ class CommanderTeamView extends React.Component {
                 }}
               />
             </div>
+            */}
             <CommanderDataTable />
           </div>
         </div>
