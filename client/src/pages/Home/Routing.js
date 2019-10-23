@@ -18,7 +18,7 @@ import TeamAdmin from '../../components/CommanderTeamView';
 //import Military from '../../components/Military/Military';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
-import Model from '../Model/ModelPage';
+//import Model from '../Model/ModelPage';
 import Sports from '../Sports';
 
 class Routing extends React.Component {
@@ -175,7 +175,7 @@ class Routing extends React.Component {
         />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
-        <Route exact path="/Model" component={Model} />
+     
         <Route exact path="/Contact" component={Contact} />
         <Route exact path="/TeamAdmin" component={TeamAdmin} />
         <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />
