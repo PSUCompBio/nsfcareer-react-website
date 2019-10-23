@@ -6,8 +6,15 @@
 #model_block, #clone_model_block {
 	width: 100%;
 }
+.section_block {
+	margin-bottom: 20px;
+}
 #canvas_container {
 	position:relative;
+}
+#canvas_container, .brain_section {
+    border: 3px solid #007bff;
+	margin-top: 20px;
 }
 .model_loader, .model_loader_clone {
 	position: absolute;
@@ -24,39 +31,40 @@
 }
 .graph1 {
 	position: absolute;
-	top: 25%;
+	top: 0;
 	right: 0;
 	width: 35%;
 }
 .graph2 {
 	position: absolute;
-	bottom: 5%;
+	bottom: 0;
 	right: 0;
 	width: 35%;
 }
 .graph3 {
 	position: absolute;
-	top: 25%;
+	top: 0;
 	left: 2%;
 	width: 35%;
 }
 .graph4 {
 	position: absolute;
-	bottom: 5%;
+	bottom: 0;
 	left: 2%;
 	width: 35%;
 }
 .sub_block {
 	border: 2px solid #000;
 	border-radius: 15px;
+	min-height: 200px;
 }
-.button_outer {
+.create_dat_button_outer, .brain_button_outer {
     width: 100%;
     text-align: center;
     margin: 0 auto;
-    max-width: 170px;
+    max-width: 250px;
 }
-.button_outer span {
+.create_dat_button_outer span {
 	font-weight: 500;
 }
 .result_txt {
@@ -80,7 +88,7 @@
 	margin-top: 20px;
 	margin-bottom: 20px;
 }
-.create_data_block h2, .analyze_data_block h2 {
+.create_data_block h2, .analyze_data_block h2, .brain_result_block h2 {
 	font-size: 19px;
     text-align: center;
 }
@@ -89,29 +97,41 @@
 }
 .analyze_data_block{
 	margin-top: 20px;
+}
+.brain_result_block{
+	margin-top: 20px;
 	margin-bottom: 60px;
+}
+.brain_result_block .sub_block {
+	min-height: 200px !important;
+}
+.brain_result_block .brain_button_outer {
+	margin-top: 10% !important;
 }
 .upload_data_block{
 	margin-top: 20px;
 }
-thead {
+.upload_data_block thead {
 	background:#000000;
 	color: #fff;
 }
-thead th{
+.upload_data_block thead th{
 	font-size: 12px;
 }
-tbody {
+.upload_data_block tbody {
 	background: #4472C4;
 	color: #fff;
 }
 
-tbody tr:nth-child(odd){
+.upload_data_block tbody tr:nth-child(odd){
    background-color: #34599C;
 }
 
 
 /*---Start added 17-10-2019-----*/
+.container.align-center__about-page {
+    min-height: 80vh;
+}
 .cu-margin-top {
 	margin-top:5px;
 }
@@ -124,19 +144,20 @@ tbody tr:nth-child(odd){
 	text-align:center;
 	width: 100%;
 	font-weight: bold;
+	font-size: 18px;
 }
 .cu-align-center {
 	text-align:center;
 }
 
 .blinking{
-	animation:blinking 0.8s infinite;
+	animation:blinking 1.5s infinite;
 }
 .green{
 	color: #008000;
 }
 .red {
-	animation:red 0.8s infinite;
+	animation:red 1.5s infinite;
 }
 
 @keyframes blinking{
@@ -146,7 +167,6 @@ tbody tr:nth-child(odd){
 	99%{	color:transparent;	}
 	100%{	color: #000;	}
 }
-
 @keyframes red{
 	0%{		color: #FF0000;	}
 	49%{	color: transparent;	}
@@ -155,13 +175,23 @@ tbody tr:nth-child(odd){
 	100%{	color: #FF0000;	}
 }
 
+.animation-img-container img {
+	height:40px;
+	float: left;
+    margin-left: -65px;
+    margin-top: -5px;
+}
 
+.blue-border {
+	border: 5px solid #022A97;
+	border-radius:1%;
+}
 
 
 /*---End added 17-10-2019-----*/
 
 
-/*#4472C4*/
+
 /* @media only screen and (min-width: 1360px) and (max-width: 767px)  {
 	.model_container{
 		padding-top: 4rem !important;
@@ -176,7 +206,7 @@ tbody tr:nth-child(odd){
 		margin-top: 20px;
 		margin-bottom: 50px;
 	}
-}	
+}
  */
 @media only screen and (max-width: 767px) {
 	.graph1, .graph2, .graph3, .graph4  {
@@ -203,4 +233,4 @@ tbody tr:nth-child(odd){
 	.create_data_block {
 		margin-top: 20px;
 	}
-}	
+}

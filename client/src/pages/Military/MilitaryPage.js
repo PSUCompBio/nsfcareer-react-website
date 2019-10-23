@@ -616,6 +616,7 @@ class MilitaryPage extends React.Component {
 			show_triangular_graph_block : 'none',
 			triangular_graph_text_color : "red",
 			triangular_blinking_class   : "blinking",
+			show_blinking_arrow   : 'block',
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
@@ -636,6 +637,10 @@ class MilitaryPage extends React.Component {
 	}
 	
 	handleShowModal = () => {
+		this.setState({
+			show_blinking_arrow: 'none'
+		});
+		
 		this.setState({
 			modalShow: true
 		});
@@ -816,7 +821,11 @@ class MilitaryPage extends React.Component {
     }
 
 	generateGraphs = () => {
-		console.log("Graphic ckicked here");
+		
+		
+		this.setState({
+			show_blinking_arrow: 'none'
+		});
 		
 		
 		pointArray[0] = pointArray[0].map(function(element) {
@@ -879,7 +888,7 @@ class MilitaryPage extends React.Component {
 				triangular_graph_text: 'Brain simulation completed',
 				show_triangular_graph_block : 'block',
 				triangular_graph_text_color : 'green',
-				triangular_blinking_class : ''
+				triangular_blinking_class : '',
 			});
 		}, 6000);
 		
@@ -916,7 +925,7 @@ class MilitaryPage extends React.Component {
 		const graph2Options = {
 			title: "SHOULDER SENSOR",
 			titleTextStyle: {
-				color: "#51fd21",
+				color: "#229702",
 				fontSize: 12,
 			},
 			hAxis: { title: "Time (ms)", titleTextStyle: {
@@ -962,7 +971,7 @@ class MilitaryPage extends React.Component {
 		};
 				
 		const cloneOptions = {
-			title: "TRIANGULAR APPLIED BLAST LOADING",
+			title: "TRIANGULATED",
 			titleTextStyle: {
 				color: "#000000",
 				fontSize: 12,
@@ -993,12 +1002,12 @@ class MilitaryPage extends React.Component {
 		return (
 		  <React.Fragment>
 			<div className="container align-center__about-page">
-				<div className="row">
-					 <div className="model_container col-md-8 col-sm-8 padding-about__page text-center">
+				<div className="row section_block">
+					 <div className="model_container section_block col-md-8 col-sm-8 padding-about__page text-center ">
 						<div className={`section-title animated zoomIn`}>
 							<h1 ref="h1" className="font-weight-bold">BlastFX Simulator</h1>
 						</div>
-						<div id="canvas_container">
+						<div id="canvas_container" >
 							<canvas id="model_block" />
 							{this.state.isLoading ? (
 							<div className="model_loader d-flex justify-content-center center-spinner">
@@ -1010,8 +1019,8 @@ class MilitaryPage extends React.Component {
 								</div>
 							 </div>
 							) : null}
-						</div>
-						<div className="chart-container">
+							
+							<div className="chart_container">
 							<div className="graph1 cu-margin-top">
 								<Chart
 									chartType="LineChart"
@@ -1046,30 +1055,45 @@ class MilitaryPage extends React.Component {
 								/>
 							</div>
 						</div>
+						</div>
+						
+						<div style={{ display: this.state.show_triangular_graph_block }} className="animated zoomIn brain_section cu-align-center">
+						<h1 ref="h1" className="font-weight-bold">Brain Simulation Results</h1>
+						<div className="brain-image-container" >
+							<img ref="dashboardView"
+							className="img-fluid"
+							src="/img/brain_image_for_triangulated_loading.png"
+							alt=""
+							/>
+						</div>
+					</div>
+						
 					</div>
 					<div className="col-md-4 col-sm-4 padding-about__page">
-					{/*<div>
-							<button type="submit" class="generate_graph btn btn-primary" onClick={this.generateGraphs}>Generate Graph</button>
-						</div>
-						<div>
-							<button type="submit" class="tringulate_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
-						</div>
-					<input type="file" name="file" onChange={this.onChangeHandler}/>*/}
 						<div className="create_data_block">
-							<h2>Create Data STEP 1</h2>
+							<h2>STEP 1: Create Data</h2>
 							<div className="sub_block">
-								<div className="button_outer">
-								<button type="submit" className="custom_btn btn btn-primary" onClick={this.generateGraphs}>Generate Test Data</button>
-									<span>OR</span>
+								<div className="create_dat_button_outer">
+								<button type="submit" className="custom_btn btn btn-primary" onClick={this.generateGraphs}>Generate Example Demo Data</button>
+									<span>
+										<div className="animation-img-container" style={{ display: this.state.show_blinking_arrow }}>
+											<img ref=""
+												className="img-fluid" 
+												src="/img/arrow_pointing.gif"
+												alt=""
+											/>
+											OR
+										</div>
+									</span>
 									<button type="button" onClick={this.handleShowModal} className="custom_btn btn btn-primary" >Upload Real Data</button>
 								</div>
 							</div>
 						</div>
 						<div className="analyze_data_block">
-							<h2>Analyze Data STEP 2</h2>
+							<h2>STEP 2: Analyze Data</h2>
 							<div className="sub_block">
 								<div className="analyze_button_outer">
-									<button type="submit" class="custom_btn btn btn-primary" onClick={this.generateClone}>Generate Tringulated Loading</button>
+									<button type="submit" class="custom_btn btn btn-primary" onClick={this.generateClone}>Tringulate Loading Signal</button>
 								</div>
 								<div className="blast_block">
 									<span>Blast Magnitude: </span>
@@ -1084,86 +1108,82 @@ class MilitaryPage extends React.Component {
 								</div>
 							</div>
 						</div>
-					</div>
-					<Modal
-					size="lg"
-					aria-labelledby="contained-modal-title-vcenter"
-					backdrop="static"
-					show={this.state.modalShow}
-					onHide={this.handleCloseModal}
-					>
-						<Modal.Header closeButton>
-								<Modal.Title id="contained-modal-title-vcenter">
-								Upload Real Data
-								</Modal.Title> 
-						</Modal.Header>
-						<Modal.Body>
-							<h5>Upload a CSV or XLSX file with the following format</h5>
-							<div className="row upload_data_block">
-								<div className="col-md-7 col-sm-7">
-									<Table bordered >
-									  <thead>
-										<tr>
-										  <th>Time (msec)</th>
-										  <th>Head Pressure (Psi)</th>
-										  <th>Shoulder Pressure (Psi)</th>
-										  <th>Chest Pressure (Psi)</th>
-										</tr>
-									  </thead>
-									  <tbody>
-										<tr>
-										  <td>t<sub>1</sub></td>
-										  <td>p<sup>helmet</sup><sub>1</sub></td>
-										  <td>p<sup>arm</sup><sub>1</sub></td>
-										  <td>p<sup>chest</sup><sub>1</sub></td>
-										</tr>
-										<tr>
-										  <td>t<sub>2</sub></td>
-										  <td>p<sup>helmet</sup><sub>2</sub></td>
-										  <td>p<sup>arm</sup><sub>2</sub></td>
-										  <td>p<sup>chest</sup><sub>2</sub></td>
-										</tr>
-										<tr>
-										 <td>.</td>
-										  <td>.</td>
-										  <td>.</td>
-										  <td>.</td>
-										</tr>
-										<tr>
-										  <td>t<sub>N</sub></td>
-										  <td>p<sup>helmet</sup><sub>N</sub></td>
-										  <td>p<sup>arm</sup><sub>N</sub></td>
-										  <td>p<sup>chest</sup><sub>N</sub></td>
-										</tr>
-									  </tbody>
-									</Table>
-								</div>
-								<div className="col-md-5 col-sm-5">
-									<input type="file" id="file" name="file" accept=".csv,.xlsx,.xls" onChange={this.onChangeHandler} />
+						<div style={{ display: this.state.show_triangular_graph_block }} className="section_block animated zoomIn ">
+						<div className="brain_result_block">
+							<h2>STEP 3: Report Brain Simulation Result</h2>
+							<div className="sub_block">
+								<div className="brain_button_outer">
+									<button type="button" className="custom_btn btn btn-primary" >Export and Download Brain Simulation Result</button>
 								</div>
 							</div>
-						</Modal.Body>
-						<Modal.Footer>
-							<Button onClick={this.handleCloseModal}>Close</Button>
-						</Modal.Footer>
-					</Modal>
-				</div>
-				
-				<div className="row">
-					<div style={{ display: this.state.show_triangular_graph_block }} className={`section-title animated zoomIn cu-align-center`}>
-							<h1 ref="h1" className="font-weight-bold">Brain Simulation Results</h1>
-							<div className="brain-image-container" >
-								<img ref="dashboardView"
-								className="img-fluid"
-								src="/img/brain_image_for_triangulated_loading.png"
-								alt=""
-								/>
-							</div>
+						</div>
+					</div>
 					</div>
 				</div>
-				
 				
 			 </div>
+			 <Modal
+				size="lg"
+				aria-labelledby="contained-modal-title-vcenter"
+				backdrop="static"
+				show={this.state.modalShow}
+				onHide={this.handleCloseModal}
+				>
+					<Modal.Header closeButton>
+							<Modal.Title id="contained-modal-title-vcenter">
+							Upload Real Data
+							</Modal.Title> 
+					</Modal.Header>
+					<Modal.Body>
+						<h5>Upload a CSV or XLSX file with the following format</h5>
+						<div className="row upload_data_block">
+							<div className="col-md-7 col-sm-7">
+								<Table bordered >
+								  <thead>
+									<tr>
+									  <th>Time (msec)</th>
+									  <th>Head Pressure (Psi)</th>
+									  <th>Shoulder Pressure (Psi)</th>
+									  <th>Chest Pressure (Psi)</th>
+									</tr>
+								  </thead>
+								  <tbody>
+									<tr>
+									  <td>t<sub>1</sub></td>
+									  <td>p<sup>helmet</sup><sub>1</sub></td>
+									  <td>p<sup>arm</sup><sub>1</sub></td>
+									  <td>p<sup>chest</sup><sub>1</sub></td>
+									</tr>
+									<tr>
+									  <td>t<sub>2</sub></td>
+									  <td>p<sup>helmet</sup><sub>2</sub></td>
+									  <td>p<sup>arm</sup><sub>2</sub></td>
+									  <td>p<sup>chest</sup><sub>2</sub></td>
+									</tr>
+									<tr>
+									 <td>.</td>
+									  <td>.</td>
+									  <td>.</td>
+									  <td>.</td>
+									</tr>
+									<tr>
+									  <td>t<sub>N</sub></td>
+									  <td>p<sup>helmet</sup><sub>N</sub></td>
+									  <td>p<sup>arm</sup><sub>N</sub></td>
+									  <td>p<sup>chest</sup><sub>N</sub></td>
+									</tr>
+								  </tbody>
+								</Table>
+							</div>
+							<div className="col-md-5 col-sm-5">
+								<input type="file" id="file" name="file" accept=".csv,.xlsx,.xls" onChange={this.onChangeHandler} />
+							</div>
+						</div>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button onClick={this.handleCloseModal}>Close</Button>
+					</Modal.Footer>
+				</Modal>
 			<Footer />
 		  </React.Fragment>
 		);
