@@ -582,6 +582,19 @@ footer p {
 nav {
   height: 10vh;
 }
+
+input::placeholder {
+  /* opacity: 0.44 !important;
+  font-size: 14px !important;
+  line-height: 2.64 !important;
+  color: #000000 !important; */
+    color: #757575;
+    height: calc(1.5em + 0.75rem + 2px) !important;
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+}
+
 .close-btn-box {
   height: 55px;
   padding: 10px;
@@ -2468,4 +2481,34 @@ tbody.player-table tr:nth-child(odd){
   /* .section-one > img:nth-child(1){
     height: 35%;
   } */
+}
+
+.upload-left-side-button{
+    border-bottom-left-radius: 10% !important;
+    border-top-left-radius: 10% !important;
+}
+
+.upload-right-side-button{
+    border-bottom-right-radius: 10% !important;
+    border-top-right-radius: 10% !important;
+}
+
+
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
 }
