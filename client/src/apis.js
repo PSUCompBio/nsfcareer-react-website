@@ -430,6 +430,18 @@ export const uploadModelRealData= (request) =>{
   })
 }
 
+export const fetchStaffMembers = (request) => {
+    return new Promise((resolve,reject)=>{
+        axios.post(`/fetchStaffMembers`, request, {withCredentials: true})
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error)
+        });
+    })
+}
+
 export const getAllCumulativeAccelerationTimeRecords = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})

@@ -138,7 +138,7 @@ class UserDashboarForAdmin extends React.Component {
 </ScrollToTop>
 </div>
 
-        <div id="dashboard" className="container dashboard player-top-margin-20-mobile">
+        <div className="container dashboard player-top-margin-20-mobile">
           {/*<PlayerDetails user={this.state.user} />*/}
           {/*
           <div className="row p-4 mb-5 player-details animated fadeInDown player-top-margin-20-mobile">

@@ -1,17 +1,22 @@
 import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
+import { Redirect } from 'react-router-dom'
 import Footer from './Footer';
 import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
-import CommanderDataTable from './CommanderDataTable';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
+import { UncontrolledAlert } from 'reactstrap';
 import {
   uploadSensorDataAndCompute,
   getTeamAdminData,
   getImpactHistory,
-  getImpactSummary
+  getImpactSummary,
+  getPlayersData
 } from '../apis';
+
+import { FilePond } from 'react-filepond';
+import 'filepond/dist/filepond.min.css';
 
 import socketIOClient from 'socket.io-client'
 
@@ -48,8 +53,9 @@ const impactSummaryBarData = {
 };
 
 class CommanderTeamView extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    console.log("IN TEAM VIEW ",this.props.location)
     this.state = {
       avgLoad: 0.02,
       alerts: 0,
@@ -70,7 +76,11 @@ class CommanderTeamView extends React.Component {
       isLoaded: false,
       impactSummaryData: {},
       impactHistoryData: {},
-      uploadMessageLog : ''
+      uploadMessageLog : '',
+      users : [],
+      redirectData : {},
+      cognito_user_id : '',
+      player_name : ''
     };
   }
 
@@ -97,8 +107,26 @@ class CommanderTeamView extends React.Component {
     uploadSensorDataAndCompute(data)
       .then((response) => {
           if(response.data.message === "success"){
-              this.setState({ isUploading: false, isFileUploaded: true, uploadMessageLog : '' });
-              document.location.reload();
+              getPlayersData({
+                  organization : this.props.location.state.team.organization,
+                  team_name : this.props.location.state.team.team_name
+              })
+              .then(response => {
+
+                  this.setState({users : []});
+
+                  for(var i = 0 ; i < response.data.data.length ; i++){
+                      this.setState(prevState => ({
+                          users: [...prevState.users, response.data.data[i]]
+                      }));
+                  }
+                  this.setState({ isUploading: false, isFileUploaded: true, uploadMessageLog : '' });
+              })
+              .catch(err => {
+                  this.setState({ isUploading: false, fileUploadError : response.data.error ,uploadMessageLog : ''});
+              })
+
+
           }
           else{
               this.setState({ isUploading: false, fileUploadError : response.data.error ,uploadMessageLog : ''});
@@ -121,11 +149,21 @@ class CommanderTeamView extends React.Component {
   getTargetBtn = (value) => {
     this.setState({ targetBtn: value });
   };
+
+  setRedirectData = (id, p_name) => {
+      this.setState({
+          cognito_user_id : id,
+          player_name : p_name
+      })
+
+  }
+
   setRosterValue = (e) => {
     this.setState({
       rosterValue: e.currentTarget.dataset.item
     });
   };
+
   makeVisibleSelector = () => {
     if (this.state.visibilityRosterValueSelector.display === 'none')
       this.setState({ visibilityRosterValueSelector: { display: 'block' } });
@@ -165,7 +203,21 @@ class CommanderTeamView extends React.Component {
             ...impactSummary.data.data
           }
         });
-        return getTeamAdminData(JSON.stringify({}));
+
+        return getPlayersData({
+            organization : this.props.location.state.team.organization,
+            team_name : this.props.location.state.team.team_name
+        })
+
+      })
+      .then(response => {
+          console.log(response);
+          for(var i = 0 ; i < response.data.data.length ; i++){
+              this.setState(prevState => ({
+                  users: [...prevState.users, response.data.data[i]]
+              }));
+          }
+          return getTeamAdminData(JSON.stringify({}));
       })
       .then((response) => {
         console.log(response.data.data);
@@ -199,29 +251,23 @@ class CommanderTeamView extends React.Component {
         ref="rosterContainer"
         className="container t-roster pt-5 mt-5 animated zoomIn"
       >
-        <PenstateUniversity />
+      <div className="col-md-7 my-auto">
+        <p ref="h1" className="penstate">
+          {this.props.location.state.team.team_name}
+        </p>
+    </div>
         <div className="row text-center">
           <div className="col-md-12">
             <div className="row mt-3">
-                <div className="col-md-6">
-                    <div className="season-position text-left ">
-                      <select name="" id="">
-                        <option value="">All session</option>
-                        <option value="">York tech football</option>
-                        <option value="">Lorem lipsum</option>
-                        <option value="">York tech football</option>
-                      </select>
-                      <select name="" id="">
-                        <option value="">All position</option>
-                        <option value="">York tech football</option>
-                        <option value="">Lorem lipsum</option>
-                        <option value="">York tech football</option>
-                      </select>
-                    </div>
-                </div>
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <div>
                   <div class="team-upload-section-button">
+                     {/* <FilePond
+                          labelIdle='<i className="fa fa-cloud-upload"></i> Drag & Drop your Sensor file or <span class="filepond--label-action"> Browse </span>'
+                          name="sensor_csv_file"
+                          server="/uploadSensorDataAndCompute"
+                          processfile={() => {alert("File uploaded")} } />
+                          */}
                     <input
                       onChange={this.onChangeHandler}
                       type="file"
@@ -245,39 +291,24 @@ class CommanderTeamView extends React.Component {
                   </span>
                     ) : null}
                     {this.state.isFileUploaded ? (
-                      <div
+                      <UncontrolledAlert
+                        color="success"
                         style={{ marginTop: '5px' }}
-                        className="alert alert-success alert-dismissible fade show"
-                        role="alert"
                       >
                         Successfully uploaded the CSV/ XLSX file
-                        <button
-                          type="button"
-                          className="close"
-                          data-dismiss="alert"
-                          aria-label="Close"
-                        >
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
+                      </UncontrolledAlert>
                     ) : null}
                     {this.state.fileUploadError ? (
-                      <div
+                      <UncontrolledAlert
                         style={{ marginTop: '5px' }}
-                        className="alert alert-success alert-dismissible api-response-alert fade show"
-                        role="alert"
+                        color="danger"
+
                       >
                         Failed to upload CSV/ XLSX file
-                        <button
-                          type="button"
-                          className="close"
-                          data-dismiss="alert"
-                          aria-label="Close"
-                        >
-                          <span aria-hidden="true">&times;</span>
-                        </button>
-                      </div>
+
+                      </UncontrolledAlert>
                     ) : null}
+
                   </div>
                 </div>
               </div>
@@ -381,7 +412,7 @@ class CommanderTeamView extends React.Component {
         </div>
         <div className="row mb-5 mt-5">
           <div className="col-md-12">
-            <div className="text-left">
+            {/*<div className="text-left">
               <button type="btn" className="impact-sumary-btn">
                 Team History
               </button>
@@ -394,7 +425,88 @@ class CommanderTeamView extends React.Component {
                 }}
               />
             </div>
-            <CommanderDataTable />
+            */}
+            <div
+              ref="card"
+              className="col-md-12 pl-0 pr-0 mt-5 data-table-view"
+            >
+              <div className="btns-group d-flex">
+                <RostarBtn
+                  tabActive={this.toggleTab}
+                  makeActive={this.state.tabActive}
+                  getBtn={this.getTargetBtn}
+                  currentBtn={this.state.targetBtn}
+                  content="Overview"
+                />
+                <RostarBtn
+                  tabActive={this.toggleTab}
+                  makeActive={this.state.tabActive}
+                  getBtn={this.getTargetBtn}
+                  currentBtn={this.state.targetBtn}
+                  content="Athletes"
+                />
+                <RostarBtn
+                  tabActive={this.toggleTab}
+                  makeActive={this.state.tabActive}
+                  getBtn={this.getTargetBtn}
+                  currentBtn={this.state.targetBtn}
+                  content="Staff"
+                />
+              </div>
+              <div ref="table" className="commander-data-table table-responsive ">
+                <table style={{whiteSpace:"nowrap"}} className="table ">
+                  <thead>
+                    <tr>
+
+                      <th scope="col">#</th>
+                      <th scope="col">Player Name</th>
+                      <th scope="col">Sport</th>
+                      <th scope="col">Position</th>
+                      <th scope="col">Brain Simulations</th>
+                      <th scope="col">Cumulative Simulation Overview</th>
+                    </tr>
+                  </thead>
+                  <tbody className="player-table">
+                      {this.state.users.map(function(player, index){
+
+                        return <tr className="player-data-table-row" key={index} onClick={()=>{
+
+                                this.setRedirectData(Number(index + 1).toString(), player.player_name)
+                            }}
+                            >
+                          <th style={{verticalAlign: "middle"}} scope="row">{index + 1}</th>
+                          <td>{player.player_name}</td>
+                          <td>Football</td>
+                          <td>{player.simulation_data[0].position}</td>
+                          <td>{player.simulation_data.length}</td>
+                          {/*<td>{Number(player.impact)}</td>*/}
+                          <td style={{alignItems : "center"}}>
+                              <img style={{
+                                  display:"block", width:"15%", height:"auto" , objectFit: "cover"
+                              }} className={`img-fluid `} src="/img/brain_simulation_image.png" alt="" /></td>
+                          {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
+                          {/*<td>0</td>
+                          <td>
+                            <div className="progress my-progress">
+                              <div
+                                style={{ width: '3%' }}
+                                className="progress-bar my-progress-bar "
+                                role="progressbar"
+                                aria-valuenow="0"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                              ></div>
+                            </div>
+                          </td>
+                          */}
+                        </tr>;
+                    },this)}
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -409,6 +521,17 @@ class CommanderTeamView extends React.Component {
     impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure;
     impactSummaryBarData.labels = this.state.impactSummaryData.force;
     impactSummaryBarData.datasets[0].data = this.state.impactSummaryData.pressure;
+
+    if(this.state.cognito_user_id){
+        return <Redirect push to={{
+          pathname: '/TeamAdmin/user/dashboard',
+          state: {
+              cognito_user_id : this.state.cognito_user_id,
+              player_name : this.state.player_name
+          }
+      }} />
+    }
+
 
     return (
       <React.Fragment>

@@ -42,14 +42,14 @@ class Nav extends React.Component {
   }
 
   handleClick() {
-    const body = document.getElementsByTagName('body')[0];
+    //const body = document.getElementsByTagName('body')[0];
     const menu = document.getElementById('cbp-spmenu-s2');
     if (!this.state.isOpen) {
-      body.classList.add('cbp-spmenu-push-toleft');
+      //body.classList.add('cbp-spmenu-push-toleft');
       menu.classList.add('cbp-spmenu-open');
       this.setState({ isOpen: true });
     } else {
-      body.classList.remove('cbp-spmenu-push-toleft');
+      //body.classList.remove('cbp-spmenu-push-toleft');
       menu.classList.remove('cbp-spmenu-open');
       this.setState({ isOpen: false });
     }
@@ -130,6 +130,7 @@ class Nav extends React.Component {
 
   mobileNav = () => {
     return (
+        <div class="collapse navbar-collapse flex-column" id="nav-content">
       <ul className="navbar-nav ml-auto text-center">
         <li className="nav-item make-active active">
           <Link className="nav-link" to={'/Home'}>
@@ -150,6 +151,7 @@ class Nav extends React.Component {
           ? this.links('Dashboard', '/Login')
           : this.links('Sign up', '/SignUp')}
       </ul>
+      </div>
     );
   };
 
@@ -210,12 +212,15 @@ class Nav extends React.Component {
                 ></i>
                 <span className="goto-back">Back</span>
               </li>
+              {/*
               <li onClick={this.handleClick}>
                 <Link to="TeamAdmin">Team Admin</Link>
               </li>
               <li onClick={this.handleClick}>
                 <Link to="OrganizationAdmin">Organization Admin</Link>
               </li>
+              */}
+
             </ul>
           </div>
         </React.Fragment>
@@ -233,13 +238,17 @@ class Nav extends React.Component {
           className="dashboard-links"
         >
           <ul>
-            <li>PSU</li>
+
+            {/*
+                <li>PSU</li>
+            }
             <li>
               <Link to="TeamAdmin">Team Admin</Link>
             </li>
             <li>
               <Link to="OrganizationAdmin">Organization Admin</Link>
             </li>
+            */}
           </ul>
         </div>
       );
@@ -248,6 +257,7 @@ class Nav extends React.Component {
 
   laptopNav = () => {
     return (
+        <div class="collapse navbar-collapse flex-column" id="nav-content">
       <ul className="navbar-nav ml-auto text-center">
         <li className="nav-item make-active active">
           <Link className="nav-link" to={'/Home'}>
@@ -274,9 +284,7 @@ class Nav extends React.Component {
             <div
               className={
                 LineUnderLink.linkeMaker('/Login') ||
-                LineUnderLink.linkeMaker('/Dashboard') ||
-                LineUnderLink.linkeMaker('/TeamAdmin') ||
-                LineUnderLink.linkeMaker('/OrganizationAdmin')
+                LineUnderLink.linkeMaker('/Dashboard')
               }
             />
             {this.dashboardDropDownList()}
@@ -318,6 +326,7 @@ class Nav extends React.Component {
           </div>
         </li>
       </ul>
+      </div>
     );
   };
 
@@ -348,7 +357,7 @@ class Nav extends React.Component {
           data-toggle="collapse"
           data-target="#navbarNav"
           aria-controls="navbarNav"
-          aria-expanded="false"
+          aria-expanded="true"
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon" >

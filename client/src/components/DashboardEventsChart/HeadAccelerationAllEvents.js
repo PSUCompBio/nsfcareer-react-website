@@ -54,7 +54,8 @@ class HeadAccelerationAllEvents extends React.Component {
           <div className="col-md-6 d-flex ">
 
           <div className="col-md-8">
-{(this.state.is_selfie_simulation_file_uploaded)?<div><img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" /><img width="95%"  height="95%" className={`img fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div> : <img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" />}
+{/*{(this.state.is_selfie_simulation_file_uploaded)?<div><img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" /><img width="95%"  height="95%" className={`img-fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div> : <img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" />}*/}
+{(this.state.is_selfie_simulation_file_uploaded)?<div><img className={`img fluid ${'svg'}`} src="/img/brain_simulation_image.png" alt="" /><img width="95%"  height="95%" className={`img-fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div> : <img className={`img-fluid ${'svg'}`} src="/img/brain_simulation_image.png" alt="" />}
           </div>
 {/*
           <div className="col-md-4">

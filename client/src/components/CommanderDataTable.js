@@ -7,6 +7,7 @@ import { getPlayersData } from '../apis';
 class CommanderDataTable extends React.Component {
   constructor(props) {
     super(props);
+    console.log("COMMANDER DATA TABLE ",props);
     this.state = {
       tabActive: 0,
       targetBtn: '',
@@ -43,19 +44,22 @@ class CommanderDataTable extends React.Component {
     }
 
     getPlayersData({
-        organization : "PSU",
-        team_name : "York Tech Football"
+        organization : this.props.organization,
+        team_name : this.props.team
     })
     .then(response => {
         console.log(response);
-        for(var i = 0 ; i < response.data.data.player_list.length ; i++){
+        for(var i = 0 ; i < response.data.data.length ; i++){
             this.setState(prevState => ({
-                users: [...prevState.users, response.data.data.player_list[i]]
+                users: [...prevState.users, response.data.data[i]]
             }));
         }
     })
     .catch(err => {
-
+        console.log(err);
+        this.setState(prevState => ({
+            users: []
+        }));
     })
   }
 
@@ -99,54 +103,39 @@ class CommanderDataTable extends React.Component {
               content="Staff"
             />
           </div>
-          <div ref="table" className="commander-data-table">
-            <table style={{whiteSpace:"nowrap"}} className="table table-responsive">
+          <div ref="table" className="commander-data-table table-responsive ">
+            <table style={{whiteSpace:"nowrap"}} className="table ">
               <thead>
                 <tr>
-                  <th scope="col"></th>
+
                   <th scope="col">#</th>
                   <th scope="col">Player Name</th>
                   <th scope="col">Sport</th>
                   <th scope="col">Position</th>
-                  <th scope="col">Alerts</th>
-                  <th scope="col">Impacts</th>
-                  <th scope="col">Load</th>
-                  <th className="col" scope="col"></th>
+                  <th scope="col">Brain Simulations</th>
+                  <th scope="col">Cumulative Simulation Overview</th>
                 </tr>
               </thead>
               <tbody className="player-table">
                   {this.state.users.map(function(player, index){
+
                     return <tr className="player-data-table-row" key={index} onClick={()=>{
 
-                            this.setRedirectData(Number(index + 1).toString(), player)
+                            this.setRedirectData(Number(index + 1).toString(), player.player_name)
                         }}
                         >
-                      <td >
-                        {/*<input
-                          id="checkbox-1"
-                          className="checkbox-custom"
-                          name="checkbox-3"
-                          type="checkbox"
-                        />
-                        <label
-                          htmlFor="checkbox-1"
-                          className="checkbox-custom-label"
-                        ></label>
-                        */}
-                        <i class="fa fa-eye" aria-hidden="true" onClick={()=>{
-
-                                this.setRedirectData(Number(index + 1).toString(), player)
-                            }}></i>
-                      </td>
-                      <th scope="row">{index + 1}</th>
-                      <td>{player}</td>
+                      <th style={{verticalAlign: "middle"}} scope="row">{index + 1}</th>
+                      <td>{player.player_name}</td>
                       <td>Football</td>
-                      <td>FE/DT</td>
-                      <td>0</td>
+                      <td>{player.simulation_data[0].position}</td>
+                      <td>{player.simulation_data.length}</td>
                       {/*<td>{Number(player.impact)}</td>*/}
-                      <td>0</td>
+                      <td style={{alignItems : "center"}}>
+                          <img style={{
+                              display:"block", width:"15%", height:"auto" , objectFit: "cover"
+                          }} className={`img-fluid `} src="/img/brain_simulation_image.png" alt="" /></td>
                       {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
-                      <td>0</td>
+                      {/*<td>0</td>
                       <td>
                         <div className="progress my-progress">
                           <div
@@ -159,6 +148,7 @@ class CommanderDataTable extends React.Component {
                           ></div>
                         </div>
                       </td>
+                      */}
                     </tr>;
                 },this)}
 
