@@ -15,11 +15,10 @@ import About from '../About/AboutPage';
 import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import TeamAdmin from '../../components/CommanderTeamView';
-//import Military from '../../components/Military/Military';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
-//import Model from '../Model/ModelPage';
-import Sports from '../Sports';
+//import Sports from '../Sports';
+import Sports from '../Sports/SportsPage';
 
 class Routing extends React.Component {
   constructor(props) {
