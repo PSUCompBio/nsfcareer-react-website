@@ -451,6 +451,56 @@ function getSimulationFilesOfPlayer(path, cb) {
     });
 }
 
+function getPlayersListFromTeamsDB(obj){
+    return new Promise((resolve, reject)=>{
+        var db_table = {
+        TableName: 'teams',
+        Key: {
+            "organization": obj.organization,
+            "team_name" : obj.team_name
+        }
+    };
+    docClient.get(db_table, function (err, data) {
+        if (err) {
+
+            reject(err)
+
+        } else {
+
+            resolve(data.Item)
+        }
+    });
+    })
+}
+
+app.post(`${apiPrefix}checkIfPlayerExists`, (req,res) =>{
+    console.log(req.body);
+        getPlayersListFromTeamsDB({
+            organization : "PSU",
+            team_name : "York Tech Football"
+        })
+        .then(data => {
+            console.log("USER EXISTS ",data.player_list.indexOf(req.body.name));
+            if(data.player_list.indexOf(req.body.name)>-1){
+                res.send({
+                    message : "success",
+                    flag : true
+                })
+            }
+            else{
+                res.send({
+                    message : "success",
+                    flag : false
+                })
+            }
+        })
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })
+})
 
 app.post(`${apiPrefix}getSimulationFilePath`, (req,res) =>{
     console.log(req.body);
@@ -825,6 +875,7 @@ function convertXLSXDataToJSON(buf,cb){
             var d = data_array[i];
             // TODO : Parse Date here
             data_array[i]["timestamp"] = Number(parseDate(d.date, d.time, d.time_zone)).toString();
+            data_array[i]["simulation_status"] = "pending";
             data_array[i].player_id = data_array[i].player_id + "$" + data_array[i].timestamp;
         }
         cb(data_array);
@@ -2223,6 +2274,18 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
     })
 
+})
+
+app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getSimulationStatusCount", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            console.log(httpResponse.body);
+            res.send(httpResponse.body);
+        }
+    })
 })
 
 app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{

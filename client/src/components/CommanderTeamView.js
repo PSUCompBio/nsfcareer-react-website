@@ -13,7 +13,8 @@
         getTeamAdminData,
         getImpactHistory,
         getImpactSummary,
-        getPlayersData
+        getPlayersData,
+        getSimulationStatusCount
     } from '../apis';
 
     import { FilePond } from 'react-filepond';
@@ -82,7 +83,10 @@
                 redirectData : {},
                 cognito_user_id : '',
                 player_name : '',
-                buttonSelected : 'overview'
+                buttonSelected : 'overview',
+                simulations_completed : 0,
+                simulations_pending : 0,
+                simulation_failed : 0
             };
         }
         activateTab = (value) =>{
@@ -129,7 +133,21 @@
                                 users: [...prevState.users, response.data.data[i]]
                             }));
                         }
-                        this.setState({ isUploading: false, isFileUploaded: true, uploadMessageLog : '' });
+                        this.setState({  });
+                        getSimulationStatusCount({team : this.props.location.state.team.team_name })
+                        .then(response => {
+                            this.setState({
+                                simulations_completed : response.data.data.completed,
+                                simulation_failed : response.data.data.failed,
+                                simulations_pending : response.data.data.pending,
+                                isUploading: false,
+                                isFileUploaded: true,
+                                uploadMessageLog : ''
+                            });
+                        })
+                        .catch(err => {
+                            this.setState({ isUploading: false, fileUploadError : response.data.error ,uploadMessageLog : ''});
+                        })
                     })
                     .catch(err => {
                         this.setState({ isUploading: false, fileUploadError : response.data.error ,uploadMessageLog : ''});
@@ -226,10 +244,21 @@
                     users: [...prevState.users, response.data.data[i]]
                 }));
             }
+            return getSimulationStatusCount({team : this.props.location.state.team.team_name })
+
+        })
+        .then(response => {
+
+            this.setState({
+                simulations_completed : response.data.data.completed,
+                simulation_failed : response.data.data.failed,
+                simulations_pending : response.data.data.pending
+            });
+
             return getTeamAdminData(JSON.stringify({}));
         })
         .then((response) => {
-            console.log(response.data.data);
+
             this.setState({
                 adminData: { ...this.state.adminData, ...response.data.data },
                 isLoaded: true
@@ -273,15 +302,52 @@
                             </div>
 
                             <div className="col-md-12">
-                                <div className="col-md-8">
-                                    <div className="row">
-                                        {/*<div className="col-md-4">
-                                            <button type="button" class="btn btn-warning btn-circle btn-xl">0
-                                            <br/>Simulations Complete </button>
-
-                                        </div>
-                                        */}
-                                    </div>
+                                <div className="col-md-8 d-flex mt-3 justify-content-center align-items-center">
+                                <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
+                                            <div
+                                            style = {{
+                                                background : "#c5e0b4",
+                                                borderColor: "#a7de85"
+                                            }}
+                                            className="team-view-counter mb-2 ">
+                                              <p
+                                              style = {{
+                                                  color : "#616060"
+                                              }}
+                                              >{this.state.simulations_completed}</p>
+                                            </div>
+                                            <p class="circle-sub-title" ref="h1">Simulations<br/>Complete</p>
+                                </div>
+                                <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
+                                <div
+                                style = {{
+                                    background : "#ffe699",
+                                    borderColor: "#ffc107"
+                                }}
+                                className="team-view-counter mb-2 ">
+                                  <p
+                                  style = {{
+                                      color : "#616060"
+                                  }}
+                                  >{this.state.simulations_pending}</p>
+                                </div>
+                                            <p class="circle-sub-title" ref="h1">Simulations<br/>Pending</p>
+                                </div>
+                                <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
+                                <div
+                                style = {{
+                                    background : "#f4b183",
+                                    borderColor: "#ff954c"
+                                }}
+                                className="team-view-counter mb-2 ">
+                                  <p
+                                  style = {{
+                                      color : "#616060"
+                                  }}
+                                  >{this.state.simulation_failed}</p>
+                                </div>
+                                            <p class="circle-sub-title" ref="h1">Simulations<br/>Failed</p>
+                                </div>
 
                                 </div>
 
