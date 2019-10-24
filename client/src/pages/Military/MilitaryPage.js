@@ -611,12 +611,14 @@ class MilitaryPage extends React.Component {
 			dataPoints2: pointArray[1],
 			dataPoints3: pointArray[2],
 			dataPoints4: pointArrayClone[0],
-			show_triangular_graph : 'none',
-			triangular_graph_text : 'Brain simulation pending',
-			show_triangular_graph_block : 'none',
-			triangular_graph_text_color : "red",
-			triangular_blinking_class   : "blinking",
-			show_blinking_arrow   : 'block',
+			show_triangular_graph: 'none',
+			triangular_graph_text: 'Brain simulation pending',
+			show_triangular_graph_block: 'none',
+			triangular_graph_text_color: "red",
+			triangular_blinking_class: "blinking",
+			show_blinking_arrow: 'block',
+			show_blinking_arrow_step2: 'none',
+			margin_left_trigulated: ''
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
@@ -638,7 +640,9 @@ class MilitaryPage extends React.Component {
 	
 	handleShowModal = () => {
 		this.setState({
-			show_blinking_arrow: 'none'
+			show_blinking_arrow: 'none',
+			show_blinking_arrow_step2: 'block',
+			margin_left_trigulated: 'margin_left_trigulated'
 		});
 		
 		this.setState({
@@ -824,7 +828,9 @@ class MilitaryPage extends React.Component {
 		
 		
 		this.setState({
-			show_blinking_arrow: 'none'
+			show_blinking_arrow: 'none',
+			show_blinking_arrow_step2: 'block',
+			margin_left_trigulated: 'margin_left_trigulated'
 		});
 		
 		
@@ -880,7 +886,9 @@ class MilitaryPage extends React.Component {
 	generateClone = () => {
 		console.log("Hello here");
 		this.setState({
-			show_triangular_graph: 'inline-block'
+			show_triangular_graph: 'inline-block',
+			show_blinking_arrow_step2: 'none',
+			margin_left_trigulated: ''
 		});
 		
 		const timer = setTimeout(() => {
@@ -971,7 +979,7 @@ class MilitaryPage extends React.Component {
 		};
 				
 		const cloneOptions = {
-			title: "TRIANGULATED",
+			title: "TRIANGULATED APPLIED BLAST LOADING",
 			titleTextStyle: {
 				color: "#000000",
 				fontSize: 12,
@@ -1001,9 +1009,9 @@ class MilitaryPage extends React.Component {
 		
 		return (
 		  <React.Fragment>
-			<div className="container align-center__about-page">
+			<div className="military_container align-center__about-page">
 				<div className="row section_block">
-					 <div className="model_container section_block col-md-8 col-sm-8 padding-about__page text-center ">
+					 <div className="model_container section_block col-md-8 col-sm-8 text-center ">
 						<div className={`section-title animated zoomIn`}>
 							<h1 ref="h1" className="font-weight-bold">BlastFX Simulator</h1>
 						</div>
@@ -1069,31 +1077,24 @@ class MilitaryPage extends React.Component {
 					</div>
 						
 					</div>
-					<div className="col-md-4 col-sm-4 padding-about__page">
+					<div className="col-md-4 col-sm-4">
 						<div className="create_data_block">
 							<h2>STEP 1: Create Data</h2>
 							<div className="sub_block">
 								<div className="create_dat_button_outer">
 								<button type="submit" className="custom_btn btn btn-primary" onClick={this.generateGraphs}>Generate Example Demo Data</button>
-									<span>
-										<div className="animation-img-container" style={{ display: this.state.show_blinking_arrow }}>
-											<img ref=""
-												className="img-fluid" 
-												src="/img/arrow_pointing.gif"
-												alt=""
-											/>
-											OR
-										</div>
-									</span>
+									<span>OR</span>
 									<button type="button" onClick={this.handleShowModal} className="custom_btn btn btn-primary" >Upload Real Data</button>
 								</div>
+								<div className="blink_arrow active blink_arrow-right  arrow_img animate-right-to-left" style={{ display: this.state.show_blinking_arrow }}></div>
 							</div>
 						</div>
 						<div className="analyze_data_block">
 							<h2>STEP 2: Analyze Data</h2>
 							<div className="sub_block">
 								<div className="analyze_button_outer">
-									<button type="submit" class="custom_btn btn btn-primary" onClick={this.generateClone}>Tringulate Loading Signal</button>
+									<div className="blink_arrow active blink_arrow-right arrow_img_step2 animate-right-to-left" style={{ display: this.state.show_blinking_arrow_step2 }}></div>
+									<button type="submit" className={ "custom_btn btn btn-primary " + this.state.margin_left_trigulated } onClick={this.generateClone}>Tringulate Loading Signal</button>
 								</div>
 								<div className="blast_block">
 									<span>Blast Magnitude: </span>
