@@ -453,3 +453,27 @@ export const getAllCumulativeAccelerationTimeRecords = (request) =>{
       });
   })
 }
+
+export const getSimulationStatusCount = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getSimulationStatusCount`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const checkIfPlayerExists = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/checkIfPlayerExists`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

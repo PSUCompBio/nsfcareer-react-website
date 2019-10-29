@@ -449,7 +449,8 @@ class OrganizationAdmin extends React.Component {
                                             this.props.history.push({
                                                     pathname : '/TeamAdmin',
                                                     state: { team: { team_name : team_name,
-                                                                     organization : organization
+                                                                     organization : organization,
+                                                                     staff : this.state.staffList
                                                                     } }
                                             })
                                         }

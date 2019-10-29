@@ -9,6 +9,15 @@
   margin-right: 25px;
 }
 
+.profile-download {
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: solid 1px #0f81dc;
+  color: #0f81dc;
+  background-color: #fff;
+  width: 100% !important;
+}
+
 .weekly-btn {
   background-color: #0f81dc;
   color: #fff;
@@ -47,5 +56,3 @@ button:focus {
   background: #fff;
   color: #0f81dc;
 }
-
-

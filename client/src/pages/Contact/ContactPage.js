@@ -13,7 +13,7 @@ class ContactPage extends React.Component {
   componentDidMount() {
       // Scrolling the screen to top
       window.scrollTo(0, 0)
-      
+
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
       for (let i = 1; i <= 8; i++){
@@ -34,7 +34,8 @@ class ContactPage extends React.Component {
             <div className="col-md-5 order-1 my-auto contact-query">
               <h2 ref="h1">Have Questions? Need Help?</h2>
               <p ref="h2">
-                User Support: <span>support@nsfcareer.io</span>
+                  <span>User Support: <a href="mailto:support@nsfcareer.io?" target="_top"> support@nsfcareer.io</a></span>
+
               </p>
               {/*<p ref="h3">
                 Sales Inquiries: <span> sales@nsfcareer.io </span>
@@ -45,12 +46,6 @@ class ContactPage extends React.Component {
               */}
               <p ref="h5">
                 Call us at <span>814-867-4570</span>
-              </p>
-              <p ref="h6">
-                <span>Monday – Friday</span>
-              </p>
-              <p ref="h6" className="mi-mb">
-                <span>8:00a – 5:00p CST</span>
               </p>
               <p ref="h7">NSFCAREER.IO Address</p>
               <p ref="h8">

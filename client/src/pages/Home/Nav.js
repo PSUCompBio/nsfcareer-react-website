@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import store from '../../Store';
-import { resetSignedInSucceeded } from '../../Actions';
+import { resetSignedInSucceeded, userDetails } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import LineUnderLink from '../../utilities/LineUnderLink.js';
@@ -11,6 +11,7 @@ class Nav extends React.Component {
     super(props);
     console.log("NAV PROPS IS ",props);
 
+       // store intervalId in the state so it can be accessed later:
     this.state = {
       isOpen: false,
       signOutClass: 'sign-out-hide',
@@ -24,9 +25,45 @@ class Nav extends React.Component {
       psuLinks: { display: 'none' },
       userType : props.userType,
       isNavbarTransparent : props.isNavbarTransparent,
-      user_details : localStorage.getItem("user_details")
+      user_details : {},
+      intervalId: ''
     };
+    console.log("STATE VALUES , ", this.state.user_details);
     this.handleClick = this.handleClick.bind(this);
+    this.timer = this.timer.bind(this);
+  }
+
+  isEquivalent = (a, b) => {
+    // Create arrays of property names
+    var aProps = Object.getOwnPropertyNames(a);
+    var bProps = Object.getOwnPropertyNames(b);
+
+    // If number of properties is different,
+    // objects are not equivalent
+    if (aProps.length != bProps.length) {
+        return false;
+    }
+
+    for (var i = 0; i < aProps.length; i++) {
+        var propName = aProps[i];
+
+        // If values of same property are not equal,
+        // objects are not equivalent
+        if (a[propName] !== b[propName]) {
+            return false;
+        }
+    }
+
+    // If we made it this far, objects
+    // are considered equivalent
+    return true;
+}
+
+
+  componentDidMount() {
+      this.setState({
+          intervalId : setInterval(this.timer, 1000)
+      })
   }
 
   componentWillUpdate() {
@@ -40,6 +77,25 @@ class Nav extends React.Component {
       false
     );
   }
+
+  componentWillUnmount() {
+      clearInterval(this.state.intervalId);
+  }
+
+  timer() {
+   // here timer function is being used to init the local storage data for User DETAILS
+   // TODO : Update it with parent based state change
+   if(JSON.parse(localStorage.getItem("state")) !== null ){
+       console.log(JSON.parse(localStorage.getItem("state")));
+   if(!this.isEquivalent(this.state.user_details, JSON.parse(localStorage.getItem("state")).userInfo)){
+       this.setState({
+           user_details : JSON.parse(localStorage.getItem("state")).userInfo
+       })
+   }
+    }
+
+  }
+
 
   handleClick() {
     //const body = document.getElementsByTagName('body')[0];
@@ -101,7 +157,13 @@ class Nav extends React.Component {
 
   signOut = () => {
     store.dispatch(resetSignedInSucceeded());
+    store.dispatch(userDetails({}));
     this.setState({ signOutClass: 'sign-out-hide' });
+    this.setState({
+        user_details : JSON.parse(localStorage.getItem("state")).userInfo
+    })
+    this.props.setIsAuth(false);
+
     this.props.history.push('/Home');
   };
 
@@ -298,7 +360,7 @@ class Nav extends React.Component {
             onMouseLeave={this.hideUserIconLinksIfnotEnter}
             className="name"
           >
-            R K
+            {( this.state.user_details !=null && Object.keys(this.state.user_details).length >0 ) ? `${this.state.user_details.first_name[0].toUpperCase()} ${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
           </div>
 
           <div
@@ -392,7 +454,7 @@ class Nav extends React.Component {
                 onClick={this.showLogOutOptions}
                 className="mobile-user-profile"
               >
-                RK
+                {( this.state.user_details !=null && Object.keys(this.state.user_details).length >0 )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
               </div>
             </div>
 

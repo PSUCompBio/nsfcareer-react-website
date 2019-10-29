@@ -5,7 +5,7 @@ import { getStatusOfDarkmode } from '../../reducer';
 class AboutPage extends React.Component {
     constructor(props){
         super(props);
-        
+
     }
   changeHtmlBg = (hexCode) => {
     document.getElementsByTagName('body')[0].style.backgroundColor = hexCode;
@@ -32,30 +32,23 @@ class AboutPage extends React.Component {
                 </h1>
               </div>
               <p className={`animated fadeInUp about-lines`}>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
+                  <span style={{fontSize : "1.5rem !important"}} className="top-heading__login">Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
                 <br />
                 <br />
+                 <span style={{color : "#595959", fontSize : "1.5rem !important"}} className="top-heading__login" >Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
+
                 <br />
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
                 <br />
+                    <div style={{marginBottom : "1rem", paddingLeft : "5%", paddingRight : "5%"}} className="col-md-12 col-sm-12">
+                        <iframe width="100%" height="400px"
+                            allowfullscreen="allowfullscreen"
+                            mozallowfullscreen="mozallowfullscreen"
+                            msallowfullscreen="msallowfullscreen"
+                            oallowfullscreen="oallowfullscreen"
+                            webkitallowfullscreen="webkitallowfullscreen"
+                            src="https://www.youtube.com/embed/afg_U1JDUQk?autoplay=1">
+                        </iframe>
+                    </div>
                 <br />
                 <br />
               </p>

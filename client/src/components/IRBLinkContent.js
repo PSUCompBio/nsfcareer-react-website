@@ -52,6 +52,11 @@ class IRBLinkContent extends React.Component {
                 </div>
                 <div style={{marginBottom : "1rem"}} className="col-md-6 col-sm-12">
                     <iframe width="100%" height="400px"
+                        allowfullscreen="allowfullscreen"
+                        mozallowfullscreen="mozallowfullscreen"
+                        msallowfullscreen="msallowfullscreen"
+                        oallowfullscreen="oallowfullscreen"
+                        webkitallowfullscreen="webkitallowfullscreen"
                         src="https://www.youtube.com/embed/i4HFc1NLFjo?autoplay=1">
                     </iframe>
                 </div>

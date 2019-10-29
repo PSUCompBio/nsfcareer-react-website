@@ -579,6 +579,26 @@ padding-top: 2.5rem !important;
 .cumm {
     margin-top: 10%;
 }
+.player-dashboard-sub-head{
+text-align: center !important;
+align-items: center !important;
+
+}
+.sub-head-button{
+    margin-top: 2% !important;
+    margin-bottom: 2% !important;
+    margin-right: 0px !important;
+    width:100%;
+    display:"block";
+}
+
+.player-dashboard-title{
+
+    margin-bottom: 5% !important;
+}
+
+
+
 }
 
 .widget-subheading {
@@ -599,4 +619,22 @@ padding-top: 2.5rem !important;
   position: relative !important;
   height:90px;
   width:100% !important;
+}
+
+.player-dashboard-sub-head{
+    padding-left: 5%;
+    font-size: 1.4rem !important;
+    font-weight: 900;
+    font-family: 'Segoe UI Regular';
+    font-weight: 600;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.94;
+    letter-spacing: 3.53px;
+    text-align: left;
+    color: #686868;
+
+}
+.sub-head-button{
+    margin-right: 5%;
 }

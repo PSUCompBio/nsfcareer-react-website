@@ -19,12 +19,6 @@ input:focus {
 
   box-shadow: none !important;
 }
-input::placeholder {
-  opacity: 0.44 !important;
-  font-size: 14px !important;
-  line-height: 2.64 !important;
-  color: #000000 !important;
-}
 
 .card-border {
   padding: 1% 15% 1% 15% ;

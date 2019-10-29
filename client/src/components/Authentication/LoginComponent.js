@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import Footer from '../Footer';
 import { formDataToJson } from '../../utilities/utility';
-import { logIn, logInFirstTime } from '../../apis';
+import { logIn, logInFirstTime, checkIfPlayerExists } from '../../apis';
 import { connect } from 'react-redux';
 import store from '../../Store';
 import '../../mixed_style.css';
@@ -18,7 +18,11 @@ class Login extends React.Component {
       loginErrorCode: '',
       isLoading: false,
       isSignInSuccessed: false,
-      userType : ''
+      userType : '',
+      userDetails : '',
+      isValidPlayer : false,
+      name : '',
+      cognito_user_id : ''
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -87,6 +91,7 @@ class Login extends React.Component {
           console.log(err);
         });
     } else {
+        var u_details = '';
       logIn(formJsonData)
         .then((response) => {
           console.log('Login ', response);
@@ -98,14 +103,34 @@ class Login extends React.Component {
               });
             } else {
               // login redirect code here
-              this.setState({
-                isLoading: false,
-                isSignInSuccessed: true,
-                userType: response.data.user_details.user_type
-              });
-              store.dispatch(setIsSignedInSucceeded());
-              console.log("USER DETAILS ",response.data.user_details);
-              store.dispatch(userDetails(response.data.user_details));
+              u_details = response.data.user_details;
+
+              checkIfPlayerExists({name : response.data.user_details.first_name + " " + response.data.user_details.last_name})
+              .then(res => {
+
+                    this.setState({
+                        isValidPlayer : res.data.flag,
+                        isLoading: false,
+                        isSignInSuccessed: true,
+                        userType: u_details.user_type,
+                        userDetails : u_details.user_details,
+                        name : u_details.first_name + " " + u_details.last_name,
+                        cognito_user_id : u_details.cognito_user_id
+                    })
+                    console.log("USER DETAILS ",u_details);
+                    store.dispatch(setIsSignedInSucceeded());
+                    store.dispatch(userDetails(u_details));
+                    
+                    this.props.isAuthenticated(true);
+              })
+              .catch(err => {
+                  this.setState({
+                    isLoginError: true,
+                    isLoading: false,
+                    loginError: response.data.error
+                  });
+              })
+
             }
           } else {
             this.setState({
@@ -136,7 +161,17 @@ class Login extends React.Component {
       <React.Fragment>
         <div className="dynamic__height">
           <div className="container  pl-0 pr-0 login-height overflow-hidden">
-            {this.state.isSignInSuccessed ? this.state.userType == "Admin" ? <Redirect to="/OrganizationAdmin" /> : <Redirect to="/dashboard" />  : null}
+            {this.state.isSignInSuccessed ? this.state.userType == "Admin" ? <Redirect to="/OrganizationAdmin" />
+                : this.state.isValidPlayer ?
+                    <Redirect to={{
+                            pathname: '/TeamAdmin/user/dashboard',
+                            state: {
+                                cognito_user_id : this.state.user_cognito_id,
+                                player_name : this.state.name
+                            }
+                    }} />
+                    :
+                    <Redirect to="/dashboard" />  : null}
             <div style={{marginTop: "5vh", marginBottom: "2vh"}} className="row login">
               <div className="col-md-12  mb-5">
                 <div className="text-center">

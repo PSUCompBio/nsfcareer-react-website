@@ -49,7 +49,35 @@ class CumulativeAccelerationEventChart extends React.Component {
 
     render() {
         return (
-            <div className="card  pt-3 pb-3 pl-2 pr-2 mb-5 acc-card acc-card-before animated fadeInLeft">
+            <React.Fragment>
+                <h1 ref="h1" style={{
+                        textAlign: "center",
+                        marginBottom : "2%"
+                    }} className="top-heading__login player-dashboard-title">
+                  Player Dashboard
+                </h1>
+            <div
+                className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated fadeInLeft"
+                style={{
+                    border: "2px solid #0F81DC",
+                    borderRadius: "1.8rem"
+                }}
+                >
+                <div className="row">
+                    <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                        <p
+                        ref="h1"
+                        className="player-dashboard-sub-head"
+                        >Cumulative Overview of All Events</p>
+                    </div>
+                    <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <button style={{
+                                marginRight : "5% !important"
+                            }} className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> Export Player Report</button>
+                    </div>
+
+                </div>
+
                 <div className="row text-center">
                     <div className="col-md-4 d-flex align-items-center justify-content-center">
                     {/*    {(this.state.is_selfie_image_uploaded)?<div><img className={`svg img-fluid ${'svg'}`} src="/img/icon/accBrain.svg" alt="" /><img width="95%"  height="95%" className={`img fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div>
@@ -76,7 +104,8 @@ class CumulativeAccelerationEventChart extends React.Component {
                         </div>
                     </div>
                 </div>
-            );
+                </React.Fragment>
+            )
         }
     }
 

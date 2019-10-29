@@ -194,11 +194,20 @@ class UserDashboarForAdmin extends React.Component {
 
           <CumulativeEventsAccelerationEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
           {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
+          <p
+          ref="h1"
+          style={{
+              paddingLeft : "0px"
+          }}
+          className="player-dashboard-sub-head">
+          Individual Head Acceleration Events
+          </p>
 
           {this.state.cumulativeAccelerationTimeAllRecords.map(item => (
 
               <HeadAccelerationAllEvents key={item} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item}/>
-            ))}
+            ))
+            }
 
           {/*<HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>*/}
 

@@ -95,8 +95,9 @@ exports.doUpload = (req, res) => {
                                     res.send({ message: 'failure', error: err });
                                 }
                                 else {
-                                    console.log("Ressponse is ", httpResponse.body)
-                                    res.send({ message: 'success' });
+
+                                    res.send(httpResponse.body)
+
                                 }
                             })
                     }

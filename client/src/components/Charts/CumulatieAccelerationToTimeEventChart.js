@@ -18,7 +18,7 @@ const options = {
 
             scaleLabel: {
                 display: true,
-                labelString: 'Time'
+                labelString: 'Time (ms)'
             }
         }]
     }
