@@ -1,4 +1,5 @@
 import React from 'react';
+
 import ScrollIndicator from './ScrollIndicator';
 import { Route, withRouter } from 'react-router-dom';
 import { svgToInline } from '../../config/InlineSvgFromImg';
@@ -20,6 +21,7 @@ import GetUpdates from '../../components/GetUpdates';
 //import Sports from '../Sports';
 import Sports from '../Sports/SportsPage';
 
+
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -30,8 +32,11 @@ class Routing extends React.Component {
       isLoggedIn: false,
       isDarkMode: false,
       isDisplay: { display: 'none' },
-      isNavbarTransparent : true
+      isNavbarTransparent : true,
+      udetails : null
     };
+    this.setUserDetails = this.setUserDetails.bind(this)
+    this.settingAuthentication = this.settingAuthentication.bind(this);
   }
 
   makeVisible = (data) => {
@@ -77,7 +82,8 @@ class Routing extends React.Component {
   };
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
-  }
+}
+
   componentWillMount() {
     this.setState({ windowWidth: window.innerWidth });
   }
@@ -87,10 +93,22 @@ class Routing extends React.Component {
   }
 
   settingAuthentication = (value) => {
-    this.setState({ isLoggedIn: value });
+
+    console.log("LOGIN INFORMATION", value, JSON.parse(localStorage.getItem("state")).userInfo);
+    this.setState({
+        isLoggedIn: value,
+        udetails :  JSON.parse(localStorage.getItem("state")).userInfo 
+    });
+
+  };
+
+  setUserDetails = (value) => {
+      console.log("USERDETAILS", value);
+
   };
 
   render() {
+      console.log("RENDERING COMPONENT");
     return (
       <React.Fragment>
         {this.props.location.pathname === '/Home' ||
@@ -104,11 +122,13 @@ class Routing extends React.Component {
           ''
         )}
         <Nav
-          
+
           isNavbarTransparent={this.state.isNavbarTransparent}
           screenWidth={this.state.windowWidth}
           isAuthenticated={this.state.isLoggedIn}
           currentPage={this.state.currentPage}
+          setIsAuth={(value) => this.settingAuthentication(value)}
+          userDetails={this.state.udetails}
         />
         <GetUpdates
           isVisible={this.state.isDisplay}
@@ -152,6 +172,7 @@ class Routing extends React.Component {
               {...props}
               screenWidth={this.state.windowWidth}
               isAuthenticated={(value) => this.settingAuthentication(value)}
+              setUserDetails={(value) => this.setUserDetails(value)}
             />
           )}
         />
@@ -174,7 +195,7 @@ class Routing extends React.Component {
         />
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
-     
+
         <Route exact path="/Contact" component={Contact} />
         <Route exact path="/TeamAdmin" component={TeamAdmin} />
         <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />

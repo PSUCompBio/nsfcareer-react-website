@@ -107,7 +107,7 @@ class Login extends React.Component {
 
               checkIfPlayerExists({name : response.data.user_details.first_name + " " + response.data.user_details.last_name})
               .then(res => {
-                  
+
                     this.setState({
                         isValidPlayer : res.data.flag,
                         isLoading: false,
@@ -120,6 +120,8 @@ class Login extends React.Component {
                     console.log("USER DETAILS ",u_details);
                     store.dispatch(setIsSignedInSucceeded());
                     store.dispatch(userDetails(u_details));
+                    
+                    this.props.isAuthenticated(true);
               })
               .catch(err => {
                   this.setState({
