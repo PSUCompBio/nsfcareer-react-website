@@ -11,7 +11,7 @@ import ArrowGLB from './ArrowMesh.glb';
 import './military.css';
 import { getStatusOfDarkmode } from '../../reducer';
 
-
+let obj;
 let stage = 0;
 let oldx = 0;
 let pointArray = [
@@ -622,7 +622,7 @@ class MilitaryPage extends React.Component {
 		};
 		
 		this.generateGraphs = this.generateGraphs.bind(this);
-		this.generateClone = this.generateClone.bind(this);
+		this.trigulateLoading = this.trigulateLoading.bind(this);
 		this.onChangeHandler = this.onChangeHandler.bind(this);
 		this.handleShowModal = this.handleShowModal.bind(this);
 		this.handleCloseModal = this.handleCloseModal.bind(this);
@@ -636,6 +636,20 @@ class MilitaryPage extends React.Component {
 		this.sceneSetup();
 		this.loadModel(GLB, 'model');
 		this.startAnimationLoop();
+		
+		let getHeight = document.querySelector('.navbar').clientHeight;
+		document.querySelector(".military_container").style.marginTop = getHeight + 'px';
+		
+		window.addEventListener('resize', this.resize);
+	}
+	
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.resize);
+	}
+	
+	resize = () => {
+		let getHeight = document.querySelector('.navbar').clientHeight;
+		document.querySelector(".military_container").style.marginTop = getHeight + 'px';
 	}
 	
 	handleShowModal = () => {
@@ -769,7 +783,12 @@ class MilitaryPage extends React.Component {
 			model,
 			// called when the resource is loaded
 			function ( gltf ) {
+				
+				scene.remove( obj );
+				
 				scene.add( gltf.scene );
+				
+				obj = gltf.scene;
 				
 				me.setState({
 					isLoading: false
@@ -883,7 +902,7 @@ class MilitaryPage extends React.Component {
 		});
 	}
 	
-	generateClone = () => {
+	trigulateLoading = () => {
 		console.log("Hello here");
 		this.setState({
 			show_triangular_graph: 'inline-block',
@@ -1094,7 +1113,7 @@ class MilitaryPage extends React.Component {
 							<div className="sub_block">
 								<div className="analyze_button_outer">
 									<div className="blink_arrow active blink_arrow-right arrow_img_step2 animate-right-to-left" style={{ display: this.state.show_blinking_arrow_step2 }}></div>
-									<button type="submit" className={ "custom_btn btn btn-primary " + this.state.margin_left_trigulated } onClick={this.generateClone}>Tringulate Loading Signal</button>
+									<button type="submit" className={ "custom_btn btn btn-primary " + this.state.margin_left_trigulated } onClick={this.trigulateLoading}>Tringulate Loading Signal</button>
 								</div>
 								<div className="blast_block">
 									<span>Blast Magnitude: </span>
