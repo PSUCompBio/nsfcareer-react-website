@@ -2,7 +2,7 @@
     max-width: initial !important;
     padding-left: 10% !important;
     padding-right: 10% !important;
-	margin-top: 80px;	
+	/* margin-top: 80px;	 */
 }
 #model_block, #clone_model_block {
 	width: 100%;
@@ -141,7 +141,7 @@
 }
 
 .cu-margin-bottom {
-	margin-bottom: 2px !important;
+	margin-bottom: 25px !important;
 	text-align:center;
 	width: 100%;
 	font-weight: bold;
