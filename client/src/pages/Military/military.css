@@ -17,12 +17,15 @@
     border: 3px solid #007bff;
 	margin-top: 20px;
 }
-.model_loader, .model_loader_clone {
+.model_loader, .model_loader_clone, modal_loader {
 	position: absolute;
 	top: 50%;
 	transform:translate(-50%, -50%);
 	left: 50%;
 	margin:0;
+}
+.modal_loader {
+	left: 75% !important;
 }
 .generate_graph {
 	margin-top: 87px;
