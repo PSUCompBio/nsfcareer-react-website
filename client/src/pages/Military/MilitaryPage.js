@@ -606,6 +606,7 @@ class MilitaryPage extends React.Component {
 		this.state = {
 			modalShow: false,
 			isLoading: false,
+			isModalLoading: false,
 			show_graph: 'none',
 			dataPoints1: pointArray[0],
 			dataPoints2: pointArray[1],
@@ -682,6 +683,10 @@ class MilitaryPage extends React.Component {
 		
 		const data = new FormData();
 		data.append('file', event.target.files[0]);
+		
+		this.setState({
+			isModalLoading: true
+		});
 	
 		uploadModelRealData(data)
 			.then((response) => {
@@ -719,12 +724,16 @@ class MilitaryPage extends React.Component {
 					dataPoints1: dataPointsHelmet,
 					dataPoints2: dataPointsArm,
 					dataPoints3: dataPointsChest,
-					modalShow: false
+					modalShow: false,
+					isModalLoading: false
 				});
 				
 			})
 			.catch((err) => {
 				alert('Error: ' + err);
+				this.setState({
+					isModalLoading: false
+				});
 			});
 	}
   
@@ -1203,6 +1212,16 @@ class MilitaryPage extends React.Component {
 					<Modal.Footer>
 						<Button onClick={this.handleCloseModal}>Close</Button>
 					</Modal.Footer>
+					{this.state.isModalLoading ? (
+					<div className="modal_loader d-flex justify-content-center center-spinner">
+						<div
+						  className="spinner-border text-primary"
+						  role="status"
+						>
+						  <span  className="sr-only">Loading...</span>
+						</div>
+					 </div>
+					) : null}
 				</Modal>
 			<Footer />
 		  </React.Fragment>

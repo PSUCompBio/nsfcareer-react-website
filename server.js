@@ -900,24 +900,33 @@ function convertDataToJSON(buf,cb){
             var value = worksheet[z].v;
 
             //store header names
-            if(row == 1) {
+            if (row == 1) {
 
-                if(value == "Athlete"){
-                    value = "player_id"
-                }
-                 headers[col] = value
+                /* headers[col] = value
                                 .split(" ")
                                 .join("_")
                                 .replace(/[{()}]/g, '')
-                                .toLowerCase();
+                                .toLowerCase(); */
+				switch(col) {
+					case "A":
+						headers[col] = 'time_msec';
+						break;
+					case "B":
+						headers[col] = 'head_pressure_psi';
+						break;
+					case "C":
+						headers[col] = 'shoulder_pressure_psi';
+						break;
+					case "D":
+						headers[col] = 'chest_pressure_psi';
+						break;
+				}			
                 continue;
             }
 
             if(!data[row]) data[row]={};
 
             data[row][headers[col]] = value;
-
-
 
         }
 

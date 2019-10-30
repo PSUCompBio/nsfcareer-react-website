@@ -1,58 +1,38 @@
-.military_container {
+.sports_container {
     max-width: initial !important;
     padding-left: 10% !important;
     padding-right: 10% !important;
-	margin-top: 80px;	
+/* 	margin-top: 80px;	 */
 }
-#model_block, #clone_model_block {
+#sport_model_block {
 	width: 100%;
+	min-height: 413px;
 }
 .section_block {
 	margin-bottom: 20px;
 }
-#canvas_container {
-	position:relative;
+#sports_canvas_container {
+	background: #E5E5E5;
 }
-#canvas_container, .brain_section {
+#sports_canvas_container, .brain_section {
     border: 3px solid #007bff;
 	margin-top: 20px;
 }
-.model_loader, .model_loader_clone {
+.model_loader, .model_loader_clone, .modal_loader {
 	position: absolute;
 	top: 50%;
 	transform:translate(-50%, -50%);
 	left: 50%;
 	margin:0;
 }
+.modal_loader {
+	left: 75% !important;
+}
 .generate_graph {
 	margin-top: 87px;
 }
 .tringulate_btn {
 	margin-top: 20px;
-}
-.graph1 {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 35%;
-}
-.graph2 {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: 35%;
-}
-.graph3 {
-	position: absolute;
-	top: 0;
-	left: 2%;
-	width: 35%;
-}
-.graph4 {
-	position: absolute;
-	bottom: 0;
-	left: 2%;
-	width: 35%;
 }
 .sub_block {
 	position: relative;
@@ -109,39 +89,25 @@
 .brain_result_block .brain_button_outer {
 	margin-top: 10% !important;
 }
-.upload_data_block{
-	margin-top: 20px;
+.upload_file_block {
+	background: #007bff;
+    color: #FFF;
+    padding: 10px 10px 10px 10px;
 }
-.upload_data_block thead {
-	background:#000000;
-	color: #fff;
-}
-.upload_data_block thead th{
-	font-size: 12px;
-}
-.upload_data_block tbody {
-	background: #4472C4;
-	color: #fff;
-}
-
-.upload_data_block tbody tr:nth-child(odd){
-   background-color: #34599C;
-}
-
 
 /*---Start added 17-10-2019-----*/
 .container.align-center__about-page {
     min-height: 80vh;
 }
 .cu-margin-top {
-	margin-top:5px;
+	margin-top:8px;
 }
 .brain-img {
 	height:400px;
 }
 
 .cu-margin-bottom {
-	margin-bottom: 2px !important;
+	margin-bottom: 25px !important;
 	text-align:center;
 	width: 100%;
 	font-weight: bold;
@@ -272,27 +238,26 @@
   border-left: 25px solid #007bff;
 }
 
-
-
-
-
-
-/* @media only screen and (min-width: 1360px) and (max-width: 767px)  {
-	.model_container{
-		padding-top: 4rem !important;
-	}
-	#model_block {
-		height: 400px;
-	}
-	.generate_graph {
-		margin-top: 20px;
-	}
-	.tringulate_btn {
-		margin-top: 20px;
-		margin-bottom: 50px;
-	}
+.cpm_block {
+	text-align: center;
+	margin-top: 30px;
 }
- */
+.cpm_block p {
+	color: #007bff;
+}
+.cpm_block a {
+	text-decoration: underline;
+}
+.sensor_logo_blk {
+	margin-top: 20px;
+}
+.sensor_logo_blk img {
+	width: 150px;
+}
+.margin-btm {
+	margin-bottom: 20px;
+}
+
 @media only screen and (max-width: 767px) {
 	.graph1, .graph2, .graph3, .graph4  {
 		position:relative;
@@ -302,7 +267,7 @@
 	.graph4 {
 		margin-bottom: 50px;
 	}
-	#model_block, #clone_model_block {
+	#sport_model_block {
 		height: 400px;
 	}
 	.generate_graph {
