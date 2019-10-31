@@ -14,7 +14,6 @@ class ListUserTableHead extends React.Component {
             <th scope="col">Name</th>
             <th scope="col">Mail-ID</th>
             <th scope="col">Type</th>
-            <th scope="col">Status</th>
           </tr>
         </thead>
       </React.Fragment>

@@ -133,7 +133,7 @@ export const uploadSensorDataAndCompute = (request) =>{
 
 export const getUserDetails = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/getUserDetails`, {},{withCredentials: true})
+      axios.post(`/getUserDetails`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -469,6 +469,18 @@ export const getSimulationStatusCount = (request) =>{
 export const checkIfPlayerExists = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/checkIfPlayerExists`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const listAllUsers = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/listAllUsers`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

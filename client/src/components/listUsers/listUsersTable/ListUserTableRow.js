@@ -3,10 +3,15 @@ import { enableUser, disableUser } from './../../../apis';
 
 class ListUserTableRow extends React.Component {
   constructor(props) {
-    super();
-    console.log(props);
+    super(props);
 
-    (this.state = props.userDetail), (this.state['index'] = props.index);
+    console.log(props.userDetail);
+    // this.state = {
+    //     userDetail : props.userDetail,
+    //     index : props.index
+    // }
+    this.state = props.userDetail
+    this.state['index'] = props.index
   }
 
   toggleUserAccountStatus = (event) => {
@@ -64,25 +69,19 @@ class ListUserTableRow extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <tr>
+        <tr className="player-data-table-row"
+            onClick={()=>{
+                var win = window.open(`/admin/view/user?id=${this.state.user_cognito_id}`, '_blank');
+                  win.focus();
+
+                }}
+                 >
           <td>{this.state.index + 1}</td>
           <td>
             {this.state.first_name} {this.state.last_name}
           </td>
           <td>{this.state.email}</td>
           <td>{this.state.user_type}</td>
-          <td>
-            <button
-              className={
-                this.isEnabled() ? 'btn btn-success' : 'btn btn-danger'
-              }
-              onClick={(e) => {
-                this.toggleUserAccountStatus(e);
-              }}
-            >
-              {this.getAccountStatus()}
-            </button>
-          </td>
         </tr>
       </React.Fragment>
     );

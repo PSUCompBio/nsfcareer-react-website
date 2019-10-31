@@ -36,8 +36,19 @@ import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 
 class Profile extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
+        let search = window.location.search;
+        let params = new URLSearchParams(search);
+
+        let user_profile_to_view = params.get('id') ;
+        if(!user_profile_to_view){
+            user_profile_to_view = '';
+        }
+
+        console.log("PROFILE PAGE ",user_profile_to_view);
+
         this.state = {
             selectedFile: null,
             isLoading: true,
@@ -53,7 +64,8 @@ class Profile extends React.Component {
             mode: 'Dark mode',
             militaryVersion: 'Military version',
             militaryStatus: false,
-            isFileUploaded: false
+            isFileUploaded: false,
+            profile_to_view : user_profile_to_view
         };
     }
     onChangeHandler = (event) => {
@@ -70,9 +82,18 @@ class Profile extends React.Component {
             isFileUploaded: false,
             fileUploadError: ''
         });
+        let user_id = '';
+        if(this.state.profile_to_view){
+            user_id = this.state.profile_to_view ;
+        }
+        else{
+            user_id = this.state.user_cognito_id ;
+        }
 
         data.append('profile_pic', this.state.selectedFile);
-        console.log(data);
+        data.append('user_cognito_id', user_id);
+
+        console.log("THIS IS FORM DATA ",data);
         uploadProfilePic(data)
         .then((response) => {
             console.log(response);
@@ -80,7 +101,7 @@ class Profile extends React.Component {
             if (response.data.message === 'success') {
                 // Fetch only image url again
                 getProfilePicLink(
-                    JSON.stringify({ user_cognito_id: this.state.user.user_cognito_id })
+                    JSON.stringify({ user_cognito_id: user_id })
                 )
                 .then((res) => {
                     console.log(res.data);
@@ -105,7 +126,7 @@ class Profile extends React.Component {
                     this.setState({ foundInpLink: false });
                     getInpFileLink(
                         JSON.stringify({
-                            user_cognito_id: this.state.user.user_cognito_id
+                            user_cognito_id: user_id
                         })
                     )
                     .then((response) => {
@@ -119,7 +140,7 @@ class Profile extends React.Component {
                             });
                             getModelLink(
                                 JSON.stringify({
-                                    user_cognito_id: this.state.user.user_cognito_id
+                                    user_cognito_id: user_id
                                 })
                             )
                             .then((response) => {
@@ -133,7 +154,7 @@ class Profile extends React.Component {
                                     });
                                     getSimulationFile(
                                         JSON.stringify({
-                                            user_cognito_id: this.state.user.user_cognito_id
+                                            user_cognito_id: user_id
                                         })
                                     )
                                     .then((response) => {
@@ -644,7 +665,7 @@ class Profile extends React.Component {
                                 .then((value) => {
                                     if (value.data.message === 'success') {
                                         this.setState({});
-                                        getUserDetails()
+                                        getUserDetails({user_cognito_id : this.state.profile_to_view})
                                         .then((response) => {
                                             // store.dispatch(userDetails(response.data))
                                             console.log(response.data);

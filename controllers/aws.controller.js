@@ -46,7 +46,13 @@ const docClient = new AWS.DynamoDB.DocumentClient({
 
 
 exports.doUpload = (req, res) => {
-    console.log("FILE UPLOAD CALLED");
+
+
+    if(req.body.user_cognito_id != undefined && req.body.user_cognito_id != 'undefined' && req.body.user_cognito_id != null && req.body.user_cognito_id != '' ){
+        req.user_cognito_id = req.body.user_cognito_id ;
+    }
+
+    console.log("FILE_UPLOAD ", req.body, " NEW_COGNITO_ID", req.user_cognito_id );
 
     const s3Client = s3.s3Client;
     const params = s3.uploadParams;
