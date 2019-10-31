@@ -6,13 +6,13 @@
 }
 #sport_model_block {
 	width: 100%;
-	min-height: 413px;
+	min-height: 400px;
 }
 .section_block {
 	margin-bottom: 20px;
 }
 #sports_canvas_container {
-	background: #E5E5E5;
+	background: #fff;
 }
 #sports_canvas_container, .brain_section {
     border: 3px solid #007bff;
@@ -75,6 +75,7 @@
 .create_data_block h2, .analyze_data_block h2, .brain_result_block h2 {
 	font-size: 19px;
     text-align: center;
+	font-weight: bold;
 }
 .create_data_block {
 	margin-top: 76px;

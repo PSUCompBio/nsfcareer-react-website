@@ -607,10 +607,11 @@ class MilitaryPage extends React.Component {
 			modalShow: false,
 			isLoading: false,
 			isModalLoading: false,
+			showAnalyzeData: 'none',
 			show_graph: 'none',
-			dataPoints1: pointArray[0],
-			dataPoints2: pointArray[1],
-			dataPoints3: pointArray[2],
+			dataPoints1: [['Time (ms)', 'Pressure (PSI)'], [0,0]],
+			dataPoints2: [['Time (ms)', 'Pressure (PSI)'], [0,0]],
+			dataPoints3: [['Time (ms)', 'Pressure (PSI)'], [0,0]],
 			dataPoints4: pointArrayClone[0],
 			show_triangular_graph: 'none',
 			triangular_graph_text: 'Brain simulation pending',
@@ -725,7 +726,8 @@ class MilitaryPage extends React.Component {
 					dataPoints2: dataPointsArm,
 					dataPoints3: dataPointsChest,
 					modalShow: false,
-					isModalLoading: false
+					isModalLoading: false,
+					showAnalyzeData: 'inline-block'
 				});
 				
 			})
@@ -854,11 +856,11 @@ class MilitaryPage extends React.Component {
 
 	generateGraphs = () => {
 		
-		
 		this.setState({
 			show_blinking_arrow: 'none',
 			show_blinking_arrow_step2: 'block',
-			margin_left_trigulated: 'margin_left_trigulated'
+			margin_left_trigulated: 'margin_left_trigulated',
+			showAnalyzeData: 'inline-block'
 		});
 		
 		
@@ -1126,11 +1128,11 @@ class MilitaryPage extends React.Component {
 								</div>
 								<div className="blast_block">
 									<span>Blast Magnitude: </span>
-									<span className="result_txt">50 PSI</span>
+									<span style={{ display: this.state.showAnalyzeData }} className="result_txt">50 PSI</span>
 								</div>
 								<div className="loading_block">
 									<span>Loading Direction On Head: </span>
-									<span className="result_txt">(0.2, 0.34, 0.65)</span>
+									<span style={{ display: this.state.showAnalyzeData }} className="result_txt">(0.2, 0.34, 0.65)</span>
 								</div>
 								<div className="cu-margin-bottom" style={{ display: this.state.show_triangular_graph }}>
 									<span className={ this.state.triangular_blinking_class+" "+this.state.triangular_graph_text_color}>{ this.state.triangular_graph_text }</span>
