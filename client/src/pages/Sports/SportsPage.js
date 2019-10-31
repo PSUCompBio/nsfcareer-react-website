@@ -1,5 +1,5 @@
 import React from 'react';
-import { uploadModelRealData } from '../../apis';
+//import { uploadModelRealData } from '../../apis';
 import { Button, Modal, Table } from 'react-bootstrap';
 import Footer from '../../components/Footer';
 import Chart from 'react-google-charts';
@@ -37,9 +37,10 @@ class SportsPage extends React.Component {
 			modalShow: false,
 			isLoading: false,
 			isModalLoading: false,
+			showAnalyzeData: 'none',
 			show_graph: 'none',
-			dataPoints1: pointArray[0],
-			dataPoints2: pointArray[1],
+			dataPoints1: [['Time (ms)', 'Linear Acceleration'], [0,0]],
+			dataPoints2: [['Time (ms)', 'Angular Acceleration'], [0,0]],
 			show_triangular_graph: 'none',
 			triangular_graph_text: 'Brain simulation pending',
 			show_triangular_graph_block: 'none',
@@ -67,7 +68,18 @@ class SportsPage extends React.Component {
 		this.startAnimationLoop();
 		
 		let getHeight = document.querySelector('.navbar').clientHeight;
-		document.querySelector(".sports_container").style.marginTop = getHeight + 'px' ;
+		document.querySelector(".sports_container").style.marginTop = getHeight + 'px';
+		
+		window.addEventListener('resize', this.resize);
+	}
+	
+	componentWillUnmount() {
+		window.removeEventListener('resize', this.resize);
+	}
+	
+	resize = () => {
+		let getHeight = document.querySelector('.navbar').clientHeight;
+		document.querySelector(".sports_container").style.marginTop = getHeight + 'px';
 	}
 	
 	handleShowModal = () => {
@@ -102,8 +114,11 @@ class SportsPage extends React.Component {
 		data.append('file', event.target.files[0]);
 		
 		this.setState({
+			dataPoints1: pointArray[0],
+			dataPoints2: pointArray[1],
 			modalShow: false,
-			isModalLoading: false
+			isModalLoading: false,
+			showAnalyzeData: 'inline-block'
 		});
 		
 		/*this.setState({
@@ -138,7 +153,9 @@ class SportsPage extends React.Component {
 					dataPoints1: dataPointsLinear,
 					dataPoints2: dataPointsAngular,
 					modalShow: false,
-					isModalLoading: false
+					isModalLoading: false,
+					isModalLoading: false,
+					showAnalyzeData: 'inline-block'
 				});
 				
 			})
@@ -162,8 +179,7 @@ class SportsPage extends React.Component {
 		this.renderer.gammaFactor = 2.2;
 
 		this.scene = new THREE.Scene();
-		//this.scene.background = new THREE.Color( 0x8FBCD4 );
-		this.scene.background = new THREE.Color( "rgb(229, 229, 229)" );
+		this.scene.background = new THREE.Color( "rgb(255, 255, 255)" );
 
 		var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 		this.scene.add( light );
@@ -171,15 +187,15 @@ class SportsPage extends React.Component {
 		light = new THREE.DirectionalLight( 0xffffff );
 		this.scene.add( light );
 
-		this.camera = new THREE.PerspectiveCamera( 25, width / height, 1, 1000 );
-		this.camera.position.set(0, 0, 4.8);
+		this.camera = new THREE.PerspectiveCamera( 25, width / height, 0.1, 2000 );
+		this.camera.position.set(0, 0, 1.5);
 			
 	    // prepare controls (OrbitControls)
 		this.controls = new OrbitControls(this.camera, canvas);
 		//this.controls.autoRotate = true;
 		this.controls.minPolarAngle = Math.PI * 0.5;
 		this.controls.maxPolarAngle = Math.PI * 0.5;
-		
+				
 		// to disable zoom
 		this.controls.enableZoom = false;
 
@@ -209,7 +225,7 @@ class SportsPage extends React.Component {
 				scene.remove( obj );
 				
 				gltf.scene.position.x = 0;
-				gltf.scene.position.y = 0;
+				gltf.scene.position.y = -0.7;
 				gltf.scene.position.z = 0;
 				
 				scene.add( gltf.scene );
@@ -274,7 +290,8 @@ class SportsPage extends React.Component {
 		this.setState({
 			show_blinking_arrow: 'none',
 			show_blinking_arrow_step2: 'block',
-			margin_left_trigulated: 'margin_left_trigulated'
+			margin_left_trigulated: 'margin_left_trigulated',
+			showAnalyzeData: 'inline-block'
 		});
 		
 		
@@ -445,15 +462,15 @@ class SportsPage extends React.Component {
 								</div>
 								<div className="blast_block">
 									<span>Max Linear Acceleration: </span>
-									<span className="result_txt">50 G</span>
+									<span style={{ display: this.state.showAnalyzeData }} className="result_txt">50 G</span>
 								</div>
 								<div className="blast_block">
 									<span>Max Angular Acceleration: </span>
-									<span className="result_txt">5000 rad/S<sup>2</sup></span>
+									<span style={{ display: this.state.showAnalyzeData }} className="result_txt">5000 rad/S<sup>2</sup></span>
 								</div>
 								<div className="loading_block">
 									<span>Loading Direction On Head: </span>
-									<span className="result_txt">(0.2, 0.34, 0.65)</span>
+									<span style={{ display: this.state.showAnalyzeData }} className="result_txt">(0.2, 0.34, 0.65)</span>
 								</div>
 								<div className="cu-margin-bottom" style={{ display: this.state.show_triangular_graph }}>
 									<span className={ this.state.triangular_blinking_class+" "+this.state.triangular_graph_text_color}>{ this.state.triangular_graph_text }</span>
