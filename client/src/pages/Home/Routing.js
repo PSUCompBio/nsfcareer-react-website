@@ -15,6 +15,7 @@ import ForgotPassword from '../../components/ForgotPassword';
 import About from '../About/AboutPage';
 import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
+import Users from '../../components/Users';
 import TeamAdmin from '../../components/CommanderTeamView';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
@@ -97,7 +98,7 @@ class Routing extends React.Component {
     console.log("LOGIN INFORMATION", value, JSON.parse(localStorage.getItem("state")).userInfo);
     this.setState({
         isLoggedIn: value,
-        udetails :  JSON.parse(localStorage.getItem("state")).userInfo 
+        udetails :  JSON.parse(localStorage.getItem("state")).userInfo
     });
 
   };
@@ -190,9 +191,21 @@ class Routing extends React.Component {
         />
         <Route
           exact
+          path="/Users"
+          render={() => <Users isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
           path="/TeamAdmin/user/dashboard"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
         />
+        <Route
+          exact
+          path="/admin/view/user"
+          render={(props) => <Profile {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+
+
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/About" component={About} />
 

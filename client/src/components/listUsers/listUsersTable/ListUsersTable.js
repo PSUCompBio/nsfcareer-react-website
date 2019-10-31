@@ -3,6 +3,8 @@ import ListUsersTableBody from './ListUsersTableBody';
 import ListUserTableHead from './ListUserTableHead';
 import { listUsers } from './../../../apis';
 
+import Spinner from './../../Spinner/Spinner';
+
 class ListUsersTable extends React.Component {
   constructor() {
     super();
@@ -13,12 +15,12 @@ class ListUsersTable extends React.Component {
   }
 
   render() {
-    if (this.state.isLoading) {
-      return <h3>Loading...</h3>;
-    }
-    return (
-      <React.Fragment>
-        <table className="table table-bordered">
+
+        if (this.state.isLoading) {
+            return <Spinner />;
+        }
+      return (<React.Fragment>
+        <table className="table">
           <ListUserTableHead />
           <ListUsersTableBody usersList={this.state.data} />
         </table>

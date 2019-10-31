@@ -8,8 +8,9 @@ class ListUsers extends React.Component {
 
   render() {
     return <React.Fragment>
-        <h1 className="topspace">Users</h1>
+        <div ref="table" className="commander-data-table table-responsive ">
         <ListUsersTable/>
+        </div>
     </React.Fragment>
   }
 

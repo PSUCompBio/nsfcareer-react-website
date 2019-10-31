@@ -920,7 +920,7 @@ function convertDataToJSON(buf,cb){
 					case "D":
 						headers[col] = 'chest_pressure_psi';
 						break;
-				}			
+				}
                 continue;
             }
 
@@ -1016,10 +1016,27 @@ const fetchStaffMembers = () => {
         });
     })
 }
-fetchStaffMembers()
-.then(value => {
-    console.log( value );
-})
+
+const fetchAllUsers = () => {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            TableName: 'users'
+        };
+        //   var items
+        var items = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(utility.concatArrays(items));
+            } else {
+                items.push(data.Items);
+            }
+            done();
+        });
+    })
+}
 
 const putNumbers = (numbersData) => {
     return new Promise(function (resolve, reject) {
@@ -1514,6 +1531,11 @@ app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
+    // If request comes to get detail of specific player
+    console.log(req.body);
+    if(req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
+    }
     getUserDbData(req.user_cognito_id, function (err, data) {
         if (err) {
             res.send({
@@ -1908,84 +1930,112 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
 
     })
 
+    app.post(`${apiPrefix}listAllUsers`, (req, res) => {
+        fetchAllUsers({})
+        .then(list => {
+            res.send({
+                message : "success",
+                data : list
+            })
+        })
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })
+    })
 
     app.post(`${apiPrefix}listUsers`, (req, res) => {
-        var attributes = ["name", "phone_number", "email"];
-        listAllUsers(attributes, function (err, data) {
-            if (err) {
-                res.send({
-                    message: "failure",
-                    error: err
-                })
-            }
-            else {
-                let users = utility.concatArrays(data);
-
-                let count = 0;
-                var tempArray = [];
-                for (let i = 0; i < users.length; i++) {
-
-                    setTimeout(() => {
-                        getUser(users[i].Username, function (err, userData) {
-                            if (err) {
-                                console.log(err);
-
-                                res.send({
-                                    message: "failed",
-                                    error: err
-                                });
-                            } else {
-                                getUserDbData(users[i].Username, function (err, userDbData) {
-
-                                    getListGroupForUser(users[i].Username, function (err, groupData) {
-
-                                        if (err) {
-                                            console.log("List group for user ", err);
-                                        }
-
-                                        count++;
-
-                                        // Now checking is user is ADMIN or not
-                                        var flag = false;
-                                        groupData.forEach(element => {
-                                            if (element.GroupName == "Admin") {
-                                                flag = true;
-                                            }
-                                        });
-                                        // var temp = {};
-                                        userDbData = userDbData.Item;
-                                        userDbData["Enabled"] = userData.Enabled;
-
-                                        if (flag) {
-                                            userDbData.user_type = "Admin"
-                                        }
-                                        else {
-                                            userDbData.user_type = "Standard"
-                                        }
-                                        tempArray.push(userDbData);
-                                        if (count == users.length) {
-                                            // console.log(data);
-
-                                            res.send(
-                                                {
-                                                    message: "success",
-                                                    data: tempArray
-                                                });
-                                            }
-
-                                        });
-
-                                    })
-
-
-                                }
-                            });
-
-                        }, 20 * i);
-
-                    }
-                }
+        // var attributes = ["name", "phone_number", "email"];
+        // listAllUsers(attributes, function (err, data) {
+        //     if (err) {
+        //         res.send({
+        //             message: "failure",
+        //             error: err
+        //         })
+        //     }
+        //     else {
+        //         let users = utility.concatArrays(data);
+        //
+        //         let count = 0;
+        //         var tempArray = [];
+        //         for (let i = 0; i < users.length; i++) {
+        //
+        //             setTimeout(() => {
+        //                 getUser(users[i].Username, function (err, userData) {
+        //                     if (err) {
+        //                         console.log(err);
+        //
+        //                         res.send({
+        //                             message: "failed",
+        //                             error: err
+        //                         });
+        //                     } else {
+        //                         getUserDbData(users[i].Username, function (err, userDbData) {
+        //
+        //                             getListGroupForUser(users[i].Username, function (err, groupData) {
+        //
+        //                                 if (err) {
+        //                                     console.log("List group for user ", err);
+        //                                 }
+        //
+        //                                 count++;
+        //
+        //                                 // Now checking is user is ADMIN or not
+        //                                 var flag = false;
+        //                                 groupData.forEach(element => {
+        //                                     if (element.GroupName == "Admin") {
+        //                                         flag = true;
+        //                                     }
+        //                                 });
+        //                                 // var temp = {};
+        //                                 userDbData = userDbData.Item;
+        //                                 userDbData["Enabled"] = userData.Enabled;
+        //
+        //                                 if (flag) {
+        //                                     userDbData.user_type = "Admin"
+        //                                 }
+        //                                 else {
+        //                                     userDbData.user_type = "Standard"
+        //                                 }
+        //                                 tempArray.push(userDbData);
+        //                                 if (count == users.length) {
+        //                                     // console.log(data);
+        //
+        //                                     res.send(
+        //                                         {
+        //                                             message: "success",
+        //                                             data: tempArray
+        //                                         });
+        //                                     }
+        //
+        //                                 });
+        //
+        //                             })
+        //
+        //
+        //                         }
+        //                     });
+        //
+        //                 }, 20 * i);
+        //
+        //             }
+        //         }
+        //     })
+        fetchAllUsers({})
+        .then(list => {
+            res.send({
+                message : "success",
+                data : list
             })
+        })
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })
         })
 
         // API To upload profile pic to S310m
