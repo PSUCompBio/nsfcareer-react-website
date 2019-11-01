@@ -36,7 +36,7 @@ small {
   border-radius: 10px;
 }
 .profile-mt {
-  margin-top: 200px;
+  margin-top: 6% !important;
 }
 
 .switch {
@@ -197,7 +197,7 @@ opacity: 1!important;
     padding-top: 0rem !important;
 }
 .profile-mt {
-    margin-top: 15vh;
+    margin-top: 15vh !important;
 }
 .team-upload-section-button {
     margin-top: 1.5rem !important;
@@ -211,4 +211,16 @@ opacity: 1!important;
     background-clip: "padding-box";
     border: 1px solid #ced4da !important;
     border-radius: 0.25rem !important;
+}
+
+.profile-edit-icon {
+    color: #B3D7F4;
+    margin-left: 5px;
+    vertical-align: sub;
+
+}
+
+.profile-upload-input-button{
+    border-bottom-color: rgb(15, 129, 220) !important;
+    border-radius: 8px 8px 0px 0px !important;
 }

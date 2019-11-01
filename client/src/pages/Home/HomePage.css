@@ -2167,6 +2167,9 @@ div.show-mobile-links {
   .padding-about__page {
     padding-top: 4%;
   }
+  .padding-about__page-new {
+    padding-top: 2%;
+  }
   /* .section-one > img:nth-child(1){
     width: 1850px;
   } */
@@ -2523,4 +2526,13 @@ tbody.player-table tr:nth-child(odd){
     text-align: center;
     font-size: 12px;
     line-height: 1.42857;
+}
+
+.about-us-section-application-border{
+    border: 2px solid #88C0EE;
+    border-color: #88C0EE;
+    border-radius: 8px;
+    background: #F2F1F2;
+    padding: 1%;
+    
 }
