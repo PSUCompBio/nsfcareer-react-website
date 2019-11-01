@@ -1,6 +1,7 @@
 import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
+import ResearchArea from './../Home/ResearchArea/ReseachArea';
 
 class AboutPage extends React.Component {
     constructor(props){
@@ -24,8 +25,10 @@ class AboutPage extends React.Component {
     return (
       <React.Fragment>
         <div className="container align-center__about-page">
-          <div className="row pt-5 mt-5">
-            <div className="col-md-12 col-lg-12 padding-about__page text-center">
+          <div
+              style={{marginTop : "10vh"}}
+              className="row">
+            <div className="col-md-12 col-lg-12 padding-about__page-new text-center">
               <div className={`section-title animated zoomIn`}>
                 <h1 ref="h1" className="font-weight-bold">
                   ABOUT US
@@ -39,20 +42,65 @@ class AboutPage extends React.Component {
 
                 <br />
                 <br />
-                    <div style={{marginBottom : "1rem", paddingLeft : "5%", paddingRight : "5%"}} className="col-md-12 col-sm-12">
-                        <iframe width="100%" height="400px"
-                            allowfullscreen="allowfullscreen"
-                            mozallowfullscreen="mozallowfullscreen"
-                            msallowfullscreen="msallowfullscreen"
-                            oallowfullscreen="oallowfullscreen"
-                            webkitallowfullscreen="webkitallowfullscreen"
-                            src="https://www.youtube.com/embed/afg_U1JDUQk?autoplay=1">
-                        </iframe>
+                <div className="row">
+                    <div className="col-md-6">
+                        <div className={`animated fadeInUp about-lines`} >
+                            <p  style={{fontSize : "1.2rem", marginBottom : "1rem"}} className="top-heading__login" >
+                                Learn  more about the vision of our <br/> effort in this video
+                            </p>
+                        </div>
+
+                        <div style={{marginBottom : "1rem",marginTop : "1rem", paddingLeft : "5%", paddingRight : "5%"}} className="col-md-12 col-sm-12">
+                            <iframe width="100%" height="300px"
+                                allowfullscreen="allowfullscreen"
+                                mozallowfullscreen="mozallowfullscreen"
+                                msallowfullscreen="msallowfullscreen"
+                                oallowfullscreen="oallowfullscreen"
+                                webkitallowfullscreen="webkitallowfullscreen"
+                                src="https://www.youtube.com/embed/afg_U1JDUQk">
+                            </iframe>
+                        </div>
                     </div>
+                    <div className="col-md-6">
+                        <div className={`animated fadeInUp about-lines`} >
+                            <p  style={{fontSize : "1.2rem", marginBottom : "1rem"}} className="top-heading__login" >
+                                Learn  more about the technology <br/> of our  effort in this video
+                            </p>
+                        </div>
+
+                        <div style={{marginBottom : "1rem",marginTop : "1rem", paddingLeft : "5%", paddingRight : "5%"}} className="col-md-12 col-sm-12">
+                            <iframe width="100%" height="300px"
+                                allowfullscreen="allowfullscreen"
+                                mozallowfullscreen="mozallowfullscreen"
+                                msallowfullscreen="msallowfullscreen"
+                                oallowfullscreen="oallowfullscreen"
+                                webkitallowfullscreen="webkitallowfullscreen"
+                                src="https://www.youtube.com/embed/afg_U1JDUQk">
+                            </iframe>
+                        </div>
+                    </div>
+                    <div
+                        style={{marginBottom : "5%"}}
+                        className="col-md-12 about-us-section-application-border" >
+                        <div>
+                            <span style={{
+                                    color : "black" ,
+                                    textDecoration : "underline"
+                                }}>Application: </span>
+                                <span style={{
+                                    color : "#0f81dc"
+                                }}>We provide solutions for both contact sports and occupational blast exposure.</span>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <ResearchArea hideTitle="true" screenWidth={this.props.screenWidth} />
+                </div>
                 <br />
                 <br />
               </p>
             </div>
+
           </div>
         </div>
         <Footer />

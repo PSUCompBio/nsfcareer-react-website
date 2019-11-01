@@ -297,13 +297,27 @@ class Profile extends React.Component {
     showProfile = () => {
         return (
             <React.Fragment>
-                <div className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2">
-
+                <div
+                    style={{
+                        marginTop : "10%"
+                    }}
+                    className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2">
+                    <div
+                        style={{
+                            alignContent: "center",
+                            textAlign : "center"
+                        }}
+                        className={`section-title animated zoomIn`}>
+                        <h1 ref="h1" className="font-weight-bold">
+                            Profile Page
+                        </h1>
+                    </div>
                     <div
                         ref="lightDark"
                         style={{
                             border: "2px solid rgb(15, 129, 220)",
                             borderRadius: "1.8rem"
+
                         }}
                         className="row profile-container"
                         >{/*
@@ -314,29 +328,48 @@ class Profile extends React.Component {
                             alt=""
                             />
                             </div>*/}
-                            <div className="col-md-8 ml-4 mt-2 pt-2 ">
+                            <div className="col-md-10 ml-4 mt-2 pt-2 ">
                                 <p
                                     ref="h1"
                                     style={{
                                         paddingLeft : "0px"
                                     }}
                                     className="player-dashboard-sub-head">
-                                    Contact Information and Settings
+                                    Contact Information
                                 </p>
 
                                 <Form className="mt-2">
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Name</Label>
 
-                                        <Col sm={10}>
+                                        <Col sm={6}>
                                             <Row>
                                                 <Col md={6} sm={12}>
-                                                    <Input
-                                                        className="profile-input" type="text" name="name" id="exampleEmail" value={this.state.user.first_name} placeholder="First Name" />
+                                                    <div class="input-group">
+                                                        <Input
+                                                            className="profile-input" type="text" name="name" id="exampleEmail" value={this.state.user.first_name} placeholder="First Name" />
+                                                        <span class="input-group-addon profile-edit-icon">
+                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                          </span>
+                                                    </div>
+
+                                                    {/*<img
+                                                            src="/img/icon/pencheck.svg"
+                                                            alt=""
+                                                          />
+                                                    */}
+
+
                                                 </Col>
                                                 <Col md={6} sm={12}>
+                                                    <div class="input-group">
                                                     <Input
                                                         className="profile-input" type="text" name="name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
+                                                        <span class="input-group-addon profile-edit-icon"
+                                                            >
+                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                          </span>
+                                                      </div>
                                                 </Col>
                                             </Row>
                                         </Col>
@@ -346,383 +379,489 @@ class Profile extends React.Component {
 
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Email</Label>
-                                        <Col sm={10}>
+                                        <Col sm={6}>
+                                            <div class="input-group">
                                             <Input
                                                 className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.user.email} placeholder="abc@example.com" />
+                                                <span class="input-group-addon profile-edit-icon"
+                                                    >
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                  </span>
+                                              </div>
                                         </Col>
+                                        <Col sm={4}>
+                                            <button className="btn btn-success btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Verified</button>
+                                        </Col>
+
+
+
                                     </FormGroup>
 
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Mobile Phone</Label>
-                                        <Col sm={10}>
+                                        <Col sm={6}>
+                                            <div class="input-group">
                                             <Input
                                                 className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.user.phone_number} placeholder="Phone number with country code" />
+                                                <span class="input-group-addon profile-edit-icon"
+                                                    >
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                  </span>
+                                              </div>
                                         </Col>
                                     </FormGroup>
 
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Organization</Label>
-                                        <Col sm={10}>
+                                        <Col sm={6}>
+                                            <div class="input-group">
                                             <Input
                                                 className="profile-input" type="email" name="email" id="exampleEmail" value={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" />
+                                                <span class="input-group-addon profile-edit-icon"
+                                                    >
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                  </span>
+                                              </div>
                                         </Col>
                                     </FormGroup>
 
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Birthday</Label>
-                                        <Col sm={10}>
+                                        <Col sm={6}>
+                                            <div class="input-group">
                                             <Input
                                                 className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.dob ? this.state.dob : "N/A"} placeholder="DOB" />
+                                                <span class="input-group-addon profile-edit-icon"
+                                                    >
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                  </span>
+                                              </div>
                                         </Col>
                                     </FormGroup>
 
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Sex</Label>
-                                        <Col sm={10}>
+                                        <Col sm={6}>
+                                            <div class="input-group">
                                             <Input
                                                 className="profile-input" type="text" name="email" id="exampleEmail" placeholder="Gender" value={this.state.user.gender} />
+                                                <span class="input-group-addon profile-edit-icon"
+                                                    >
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                  </span>
+                                              </div>
                                         </Col>
                                     </FormGroup>
 
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Type</Label>
-                                        <Col sm={10}>
+                                        <Col sm={6}>
+                                            <div class="input-group">
                                             <Input
-                                                className="profile-input" type="text" name="email" id="exampleEmail" placeholder="Gender" value={this.state.user.user_type} />
+                                                disabled="true"
+                                                className="profile-input" type="text" name="email" id="exampleEmail" placeholder="Gender" value={this.state.user.user_type == "StandardUser" ? "Standard" : "Admin"} />
+                                            </div>
                                         </Col>
+                                        <Col sm={4}>
+                                            <span
+                                                style={{
+                                                    fontSize : ".8em"
+                                                }}
+                                                >If you need Administration rights <br/> contact your account administrator.</span>
+                                        </Col>
+                                    </FormGroup>
+
+                                    <FormGroup row>
+                                        <Label for="exampleEmail" sm={12}>IRB Complete <span style={{
+                                                verticalAlign: "text-bottom",
+                                                fontSize: "1.4em"
+                                            }}>{this.state.isIRBComplete ? <i
+                                            style={{color : "green"}}
+                                            class="fa fa-check-circle profile-edit-icon" aria-hidden="true"></i>
+                                            :
+                                            <i
+                                                style={{color : "red"}}
+                                                class="fa fa-times-circle profile-edit-icon" aria-hidden="true"></i>  }
+                                            </span>
+                                            </Label>
+                                        <Col sm={8}>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+
+                                            </span>
+                                        </div>
+                                        </Col>
+
                                     </FormGroup>
 
                                 </Form>
 
 
-                                                </div>
-                                                <div className="col-md-3 btns-heading text-left pt-4">
-                                                    <div className="row">
-                                                        <div className="col-sm-7">
-                                                            <span ref="darkMode" className="dark-mode">
-                                                                {this.state.mode}
-                                                            </span>
-                                                        </div>
-                                                        <div className="col-sm-5  position-relative pt-1">
-                                                            <label className="switch" htmlFor="checkbox">
-                                                                <input
-                                                                    onChange={this.darkMode}
-                                                                    value={this.state.isDarkMode}
-                                                                    type="checkbox"
-                                                                    id="checkbox"
-                                                                    />
-                                                                <div className="slider round"></div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="row">
-                                                        <div className="col-sm-7">
-                                                            <span ref="chooserColor" className="dark-mode">
-                                                                {this.state.militaryVersion}
-                                                            </span>
-                                                        </div>
-                                                        <div className="col-sm-5  position-relative pt-1">
-                                                            <label className="switch" htmlFor="militaryVersion">
-                                                                <input
-                                                                    onChange={this.militaryVersionHandler}
-                                                                    value={this.state.militaryStatus}
-                                                                    type="checkbox"
-                                                                    id="militaryVersion"
-                                                                    />
-                                                                <div className="slider round"></div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
+                            </div>
+                            <div className="col-md-3 btns-heading text-left pt-4">
 
 
-                                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
+                        <div
+                            style={{
+                                border: "2px solid rgb(15, 129, 220)",
+                                borderRadius: "1.8rem"
+                            }}
+                            className="profile-container" >
+                            <p
+                                ref="h1"
+                                style={{
+                                    paddingLeft : "0px"
+                                }}
+                                className="ml-4 player-dashboard-sub-head">
+                                Simulation Information
+                            </p>
+                            <Row className="pt-2 pl-4 pr-4">
+                                <Col md={3}>
+
+                                    <p ref="p1">
+                                        {this.state.user.is_selfie_image_uploaded ? (
+                                            <span>
+                                                <img src="/img/icon/check.svg" alt="" />
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                <img
+                                                    className="cancel-icon"
+                                                    src="/img/icon/cancel.svg"
+                                                    alt=""
+                                                    />
+                                            </span>
+                                        )}{' '}
+                                        Selfie Uploaded{' '}
+
+                                    </p>
+                                    <input
+                                        onChange={this.onChangeHandler}
+                                        type="file"
+                                        className="mt-2 btn btn-primary profile-upload-input-button"
+                                        style={{lineHeight : "1",
+                                            backgroundColor: "#0f81dc",
+                                            width : "inherit",
+                                            borderBottomColor : "#0f81dc !important"
+    }}
+                                        name="profile_pic"
+                                        />
+                                    <button
+                                        type="button"
+                                        onClick={this.onClickHandler}
+                                        className="btn btn-primary"
+                                        style={{lineHeight : "1",
+                                            fontSize : "1.2em",
+                                            backgroundColor: "#0f81dc",
+                                            width : "inherit",
+                                            borderBottomLeftRadius: "8px",
+                                            borderBottomRightRadius: "8px",
+                                            borderTopLeftRadius: "0px",
+                                            borderTopRightRadius: "0px"}}
+
+                                        >
+                                        <i class="fa fa-upload" aria-hidden="true"> Upload</i>
+                                    </button>
+                                    <p className="jpg-png-only">* jpeg, jpg & png only</p>
+                                    {this.state.isUploading ? (
+                                        <div className="d-flex justify-content-center center-spinner">
+                                            <div
+                                                className="spinner-border text-primary"
+                                                role="status"
+                                                >
+                                                <span className="sr-only">Uploading...</span>
                                             </div>
                                         </div>
-                                        <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
-                                            <div
+                                    ) : null}
+
+                                    {this.state.isFileUploaded ? (
+                                        <UncontrolledAlert
+                                            color="success"
+                                            style={{ marginTop: '5px' }}
+                                            >
+                                            Successfully uploaded the Selfie Image
+                                        </UncontrolledAlert>
+                                    ) : null}
+                                    {this.state.fileUploadError ? (
+                                        <UncontrolledAlert
+                                            style={{ marginTop: '5px' }}
+                                            color="danger"
+
+                                            >
+                                            {this.state.fileUploadError}
+
+                                        </UncontrolledAlert>
+                                    ) : null}
+
+                                    {this.state.user.is_selfie_image_uploaded ? (
+                                        <div>
+                                            <img className="svg img-fluid" src={this.state.user.profile_picture_url} alt="" />
+                                            <DownloadBtn
+
                                                 style={{
-                                                    border: "2px solid rgb(15, 129, 220)",
-                                                    borderRadius: "1.8rem"
+                                                    width : "100%"
                                                 }}
-                                                className="profile-container" >
-                                                <p
-                                                    ref="h1"
-                                                    style={{
-                                                        paddingLeft : "0px"
-                                                    }}
-                                                    className="ml-4 player-dashboard-sub-head">
-                                                    Simulation Information
-                                                </p>
-                                            <Row className="pt-2 pl-4 pr-4">
-                                                <Col md={3}>
-
-                                                    <p ref="p1">
-                                                        {this.state.user.is_selfie_image_uploaded ? (
-                                                            <span>
-                                                                <img src="/img/icon/check.svg" alt="" />
-                                                            </span>
-                                                        ) : (
-                                                            <span>
-                                                                <img
-                                                                    className="cancel-icon"
-                                                                    src="/img/icon/cancel.svg"
-                                                                    alt=""
-                                                                    />
-                                                            </span>
-                                                        )}{' '}
-                                                        Selfie Uploaded{' '}
-
-                                                    </p>
-                                                    <input
-                                                        onChange={this.onChangeHandler}
-                                                        type="file"
-                                                        className="mt-2 btn btn-primary upload-left-side-button"
-                                                        style={{width : "30%", lineHeight : "1", backgroundColor: "#0f81dc"}}
-                                                        name="profile_pic"
-                                                        />
-                                                    <button
-                                                        type="button"
-                                                        onClick={this.onClickHandler}
-                                                        className="mt-2 btn btn-primary upload-right-side-button"
-                                                        style={{width : "70%",lineHeight : "1", fontSize : "1.2em", backgroundColor: "#0f81dc"}}
-
-                                                        >
-                                                        <i class="fa fa-upload" aria-hidden="true"></i>
-                                                    </button>
-                                                    <p className="jpg-png-only">* jpeg, jpg & png only</p>
-                                                    {this.state.isUploading ? (
-                                                        <div className="d-flex justify-content-center center-spinner">
-                                                            <div
-                                                                className="spinner-border text-primary"
-                                                                role="status"
-                                                                >
-                                                                <span className="sr-only">Uploading...</span>
-                                                            </div>
-                                                        </div>
-                                                    ) : null}
-
-                                                    {this.state.isFileUploaded ? (
-                                                        <UncontrolledAlert
-                                                            color="success"
-                                                            style={{ marginTop: '5px' }}
-                                                            >
-                                                            Successfully uploaded the Selfie Image
-                                                        </UncontrolledAlert>
-                                                    ) : null}
-                                                    {this.state.fileUploadError ? (
-                                                        <UncontrolledAlert
-                                                            style={{ marginTop: '5px' }}
-                                                            color="danger"
-
-                                                            >
-                                                            {this.state.fileUploadError}
-
-                                                        </UncontrolledAlert>
-                                                    ) : null}
-
-                                                    {this.state.user.is_selfie_image_uploaded ? (
-                                                        <div>
-                                                            <img className="svg img-fluid" src={this.state.user.profile_picture_url} alt="" />
-                                                        <DownloadBtn
-
-                                                            style={{
-                                                                width : "100%"
-                                                            }}
-                                                            url={this.state.user.profile_picture_url}
-                                                            content="Download 3d Selfie"
-                                                            />
-                                                        </div>
-                                                    ) : null}
-                                                </Col>
-
-                                                <Col md={3}>
-                                                    <p ref="p4">
-                                                        {this.state.user.is_selfie_simulation_file_uploaded ? (
-                                                            <span>
-                                                                <img src="/img/icon/check.svg" alt="" />
-                                                            </span>
-                                                        ) : (
-                                                            <span>
-                                                                <img
-                                                                    className="cancel-icon"
-                                                                    src="/img/icon/cancel.svg"
-                                                                    alt=""
-                                                                    />
-                                                            </span>
-                                                        )}{' '}
-                                                        Simulation File Generated{' '}
-
-                                                    </p>
-                                                    <br/>
-                                                    {this.state.user.is_selfie_simulation_file_uploaded ? (
-                                                        <div>
-                                                            <img className="svg img-fluid" src={this.state.user.simulation_file_url} alt="" />
-                                                        <DownloadBtn
-                                                            style={{
-                                                                width : "100%"
-                                                            }}
-                                                            url={this.state.user.simulation_file_url}
-                                                            content="Download Simulation File"
-                                                            />
-                                                        </div>
-                                                    ) : null}
-                                                </Col>
-
-                                                <Col md={3}>
-                                                    <p ref="p2">
-                                                        {this.state.user.is_selfie_model_uploaded ? (
-                                                            <span>
-                                                                <img src="/img/icon/check.svg" alt="" />
-                                                            </span>
-                                                        ) : (
-                                                            <span>
-                                                                <img
-                                                                    className="cancel-icon"
-                                                                    src="/img/icon/cancel.svg"
-                                                                    alt=""
-                                                                    />
-                                                            </span>
-                                                        )}{' '}
-                                                        3D Avatar Generated{' '}
-
-                                                    </p>
-                                                    <br/>
-                                                    {this.state.user.is_selfie_model_uploaded ? (
-                                                        <div>
-                                                            <img src={this.state.user.avatar_url} alt="" />
-                                                        <DownloadBtn
-                                                            style={{
-                                                                width : "100%"
-                                                            }}
-                                                            url={this.state.user.avatar_url}
-                                                            content="Download avatar"
-                                                            />
-                                                        </div>
-                                                    ) : null}
-                                                </Col>
-
-                                                <Col md={3}>
-                                                    <p ref="p3">
-                                                        {this.state.user.is_selfie_inp_uploaded ? (
-                                                            <span>
-                                                                <img src="/img/icon/check.svg" alt="" />
-                                                            </span>
-                                                        ) : (
-                                                            <span>
-                                                                <img
-                                                                    className="cancel-icon"
-                                                                    src="/img/icon/cancel.svg"
-                                                                    alt=""
-                                                                    />
-                                                            </span>
-                                                        )}{' '}
-                                                        Mesh File Generated
-
-                                                    </p>
-                                                    <br/>
-                                                    {this.state.user.is_selfie_inp_uploaded ? (
-                                                        <div>
-
-                                                        <DownloadBtn
-                                                            style={{
-                                                                width : "100%"
-                                                            }}
-                                                            url={this.state.user.inp_file_url}
-                                                            content="Download FE Mesh"
-                                                            />
-                                                        </div>
-                                                    ) : null}
-
-                                                </Col>
-                                            </Row>
+                                                url={this.state.user.profile_picture_url}
+                                                content="Download 3d Selfie"
+                                                />
                                         </div>
+                                    ) : null}
+                                </Col>
+
+                                <Col md={3}>
+                                    <p ref="p4">
+                                        {this.state.user.is_selfie_simulation_file_uploaded ? (
+                                            <span>
+                                                <img src="/img/icon/check.svg" alt="" />
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                <img
+                                                    className="cancel-icon"
+                                                    src="/img/icon/cancel.svg"
+                                                    alt=""
+                                                    />
+                                            </span>
+                                        )}{' '}
+                                        Simulation File Generated{' '}
+
+                                    </p>
+                                    <br/>
+                                    {this.state.user.is_selfie_simulation_file_uploaded ? (
+                                        <div>
+                                            <img className="svg img-fluid" src={this.state.user.simulation_file_url} alt="" />
+                                            <DownloadBtn
+                                                style={{
+                                                    width : "100%"
+                                                }}
+                                                url={this.state.user.simulation_file_url}
+                                                content="Download Simulation File"
+                                                />
                                         </div>
+                                    ) : null}
+                                </Col>
 
-                                        <Footer />
-                                    </React.Fragment>
-                                );
-                            };
+                                <Col md={3}>
+                                    <p ref="p2">
+                                        {this.state.user.is_selfie_model_uploaded ? (
+                                            <span>
+                                                <img src="/img/icon/check.svg" alt="" />
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                <img
+                                                    className="cancel-icon"
+                                                    src="/img/icon/cancel.svg"
+                                                    alt=""
+                                                    />
+                                            </span>
+                                        )}{' '}
+                                        3D Avatar Generated{' '}
 
-                            returnComponent = () => {
-                                console.log(this.state);
-                                if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
-                                    return <Redirect to="/Login" />;
-                                } else if (Object.entries(this.state.user).length === 0) {
-                                    return <Spinner />;
-                                }
+                                    </p>
+                                    <br/>
+                                    {this.state.user.is_selfie_model_uploaded ? (
+                                        <div>
+                                            <img src={this.state.user.avatar_url} alt="" />
+                                            <DownloadBtn
+                                                style={{
+                                                    width : "100%"
+                                                }}
+                                                url={this.state.user.avatar_url}
+                                                content="Download avatar (ZIP)"
+                                                />
+                                        </div>
+                                    ) : null}
+                                </Col>
 
-                                return this.showProfile();
-                            };
+                                <Col md={3}>
+                                    <p ref="p3">
+                                        {this.state.user.is_selfie_inp_uploaded ? (
+                                            <span>
+                                                <img src="/img/icon/check.svg" alt="" />
+                                            </span>
+                                        ) : (
+                                            <span>
+                                                <img
+                                                    className="cancel-icon"
+                                                    src="/img/icon/cancel.svg"
+                                                    alt=""
+                                                    />
+                                            </span>
+                                        )}{' '}
+                                        Mesh File Generated
 
-                            render() {
-                                return this.returnComponent();
+                                    </p>
+                                    <br/>
+                                    {this.state.user.is_selfie_inp_uploaded ? (
+                                        <div>
+
+                                            <DownloadBtn
+                                                style={{
+                                                    width : "100%"
+                                                }}
+                                                url={this.state.user.inp_file_url}
+                                                content="Download FE Mesh (INP)"
+                                                />
+                                        </div>
+                                    ) : null}
+
+                                </Col>
+                            </Row>
+                        </div>
+
+                    </div>
+                    <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
+                        <div
+                            style={{
+                                border: "2px solid rgb(15, 129, 220)",
+                                borderRadius: "1.8rem"
+                            }}
+                            className="profile-container" >
+                            <p
+                                ref="h1"
+                                style={{
+                                    paddingLeft : "0px"
+                                }}
+                                className="ml-4 player-dashboard-sub-head">
+                                App Settings
+                            </p>
+                            <Row className="pt-4 pl-4 pr-4 pb-4">
+                                <Col md={12}>
+                                    <div className="row">
+                                        <div className="col-sm-4">
+                                            <span ref="darkMode" className="dark-mode">
+                                                {this.state.mode}
+                                            </span>
+                                        </div>
+                                        <div className="col-sm-4  position-relative pt-1">
+                                            <label className="switch" htmlFor="checkbox">
+                                                <input
+                                                    onChange={this.darkMode}
+                                                    value={this.state.isDarkMode}
+                                                    type="checkbox"
+                                                    id="checkbox"
+                                                    />
+                                                <div className="slider round"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </Col>
+                                <Col md={12}>
+                                    <div className="row">
+                                        <div className="col-sm-4">
+                                            <span ref="chooserColor" className="dark-mode">
+                                                {this.state.militaryVersion}
+                                            </span>
+                                        </div>
+                                        <div className="col-sm-4  position-relative pt-1">
+                                            <label className="switch" htmlFor="militaryVersion">
+                                                <input
+                                                    onChange={this.militaryVersionHandler}
+                                                    value={this.state.militaryStatus}
+                                                    type="checkbox"
+                                                    id="militaryVersion"
+                                                    />
+                                                <div className="slider round"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>
+
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        returnComponent = () => {
+            console.log(this.state);
+            if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+                return <Redirect to="/Login" />;
+            } else if (Object.entries(this.state.user).length === 0) {
+                return <Spinner />;
+            }
+
+            return this.showProfile();
+        };
+
+        render() {
+            return this.returnComponent();
+        }
+
+        componentDidMount() {
+            this.setState({ isLoading: true });
+            isAuthenticated(JSON.stringify({}))
+            .then((value) => {
+                if (value.data.message === 'success') {
+                    this.setState({});
+                    getUserDetails({user_cognito_id : this.state.profile_to_view})
+                    .then((response) => {
+                        // store.dispatch(userDetails(response.data))
+                        console.log(response.data);
+                        this.setState({
+                            user: { ...this.state.user, ...response.data.data },
+                            isLoading: false,
+                            isAuthenticated: true,
+                            isCheckingAuth: false
+                        });
+
+                        if (getStatusOfDarkmode().status === true) {
+                            store.dispatch(darkThemeActiveSetter());
+                            this.refs.lightDark.style.background = '#232838';
+                            document.getElementsByTagName('html')[0].style.background =
+                            '#171b25';
+                            document.getElementsByTagName('body')[0].style.background =
+                            '#171b25';
+                            this.refs.profileBorder.style.border = '10px solid #171b25';
+                            this.refs.nameColor.style.color = '#fff';
+                            this.refs.chooserColor.style.color = '#fff';
+                            this.refs.darkMode.style.color = '#fff';
+                            const allInputs = this.state.inputs;
+                            allInputs.forEach((element) => {
+                                this.refs[element].setAttribute('id', 'dark-mode-color');
+                            });
+                            for (let i = 1; i <= 4; i++) {
+                                this.refs['p' + i].style.color = '#fff';
                             }
-
-                            componentDidMount() {
-                                this.setState({ isLoading: true });
-                                isAuthenticated(JSON.stringify({}))
-                                .then((value) => {
-                                    if (value.data.message === 'success') {
-                                        this.setState({});
-                                        getUserDetails({user_cognito_id : this.state.profile_to_view})
-                                        .then((response) => {
-                                            // store.dispatch(userDetails(response.data))
-                                            console.log(response.data);
-                                            this.setState({
-                                                user: { ...this.state.user, ...response.data.data },
-                                                isLoading: false,
-                                                isAuthenticated: true,
-                                                isCheckingAuth: false
-                                            });
-
-                                            if (getStatusOfDarkmode().status === true) {
-                                                store.dispatch(darkThemeActiveSetter());
-                                                this.refs.lightDark.style.background = '#232838';
-                                                document.getElementsByTagName('html')[0].style.background =
-                                                '#171b25';
-                                                document.getElementsByTagName('body')[0].style.background =
-                                                '#171b25';
-                                                this.refs.profileBorder.style.border = '10px solid #171b25';
-                                                this.refs.nameColor.style.color = '#fff';
-                                                this.refs.chooserColor.style.color = '#fff';
-                                                this.refs.darkMode.style.color = '#fff';
-                                                const allInputs = this.state.inputs;
-                                                allInputs.forEach((element) => {
-                                                    this.refs[element].setAttribute('id', 'dark-mode-color');
-                                                });
-                                                for (let i = 1; i <= 4; i++) {
-                                                    this.refs['p' + i].style.color = '#fff';
-                                                }
-                                                this.props.isDarkModeSet(this.state.isDarkMode);
-                                            }
-                                        })
-                                        .catch((error) => {
-                                            this.setState({
-                                                user: {},
-                                                isLoading: false,
-                                                isCheckingAuth: false
-                                            });
-                                        });
-                                    } else {
-                                        this.setState(
-                                            { isAuthenticated: false, isCheckingAuth: false },
-                                            () => {
-                                                if (this.state.isAuthenticated === false) {
-                                                    store.dispatch(resetSignedInSucceeded());
-                                                    this.props.history.push('/Home');
-                                                }
-                                            }
-                                        );
-                                    }
-                                })
-                                .catch((err) => {
-                                    this.setState({ isAuthenticated: false, isCheckingAuth: false });
-                                });
-                                if (getStatusOfDarkmode().status) {
-                                    document.getElementsByTagName('body')[0].style.background = '#171b25';
-                                }
+                            this.props.isDarkModeSet(this.state.isDarkMode);
+                        }
+                    })
+                    .catch((error) => {
+                        this.setState({
+                            user: {},
+                            isLoading: false,
+                            isCheckingAuth: false
+                        });
+                    });
+                } else {
+                    this.setState(
+                        { isAuthenticated: false, isCheckingAuth: false },
+                        () => {
+                            if (this.state.isAuthenticated === false) {
+                                store.dispatch(resetSignedInSucceeded());
+                                this.props.history.push('/Home');
                             }
                         }
+                    );
+                }
+            })
+            .catch((err) => {
+                this.setState({ isAuthenticated: false, isCheckingAuth: false });
+            });
+            if (getStatusOfDarkmode().status) {
+                document.getElementsByTagName('body')[0].style.background = '#171b25';
+            }
+        }
+    }
 
-                        export default withRouter(Profile);
+    export default withRouter(Profile);

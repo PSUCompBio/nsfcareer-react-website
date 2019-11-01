@@ -81,7 +81,7 @@ class ListUserTableRow extends React.Component {
             {this.state.first_name} {this.state.last_name}
           </td>
           <td>{this.state.email}</td>
-          <td>{this.state.user_type}</td>
+          <td>{this.state.user_type === 'StandardUser' ? "Standard" : "Admin"}</td>
         </tr>
       </React.Fragment>
     );

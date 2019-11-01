@@ -41,25 +41,28 @@ function ResearchArea(props) {
       <div className="container section">
         <div onWheel={(e)=>detectScroll(e)} className="section-three">
           <div className="col-md-12 col-lg-12 text-center">
-            <InView>
-              {({ inView, ref }) => (
-                <div className="mb-3" ref={ref}>
-                  <h1
-                    className={`font-weight-bold animated ${
-                      inView ? removeAnimationMobileView('zoomIn') : ''
-                    }`}
-                  >
-                    RESEARCH AREA
-                  </h1>
+                  {props.hideTitle ? null : <InView>
+                    {({ inView, ref }) => (
+                      <div className="mb-3" ref={ref}>
 
-                  <div className="w-100 d-flex justify-content-center">
-                    <div className={inView ? 'line_container' : ''}>
-                      <div></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </InView>
+                        <h1
+                          className={`font-weight-bold animated ${
+                            inView ? removeAnimationMobileView('zoomIn') : ''
+                          }`}
+                        >
+                          RESEARCH AREA
+                        </h1>
+
+                        <div className="w-100 d-flex justify-content-center">
+                          <div className={inView ? 'line_container' : ''}>
+                            <div></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </InView>
+               }
+
           </div>
           <div className="row text-center center-card">
             <InView>
