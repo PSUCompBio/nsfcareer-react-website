@@ -1,6 +1,12 @@
 import React from 'react';
 import './Profile.css';
 import { Redirect, withRouter } from 'react-router-dom';
+import CountryCode from '../../config/CountryCode.json';
+import { formDataToJson } from '../../utilities/utility';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { subYears } from 'date-fns';
+
 import {
     uploadProfilePic,
     getUserDetails,
@@ -34,6 +40,8 @@ import {
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
+import Img from 'react-fix-image-orientation'
+
 
 class Profile extends React.Component {
     constructor(props) {
@@ -65,14 +73,44 @@ class Profile extends React.Component {
             militaryVersion: 'Military version',
             militaryStatus: false,
             isFileUploaded: false,
-            profile_to_view : user_profile_to_view
+            profile_to_view : user_profile_to_view,
+            CountryCode: [CountryCode],
+            selectedCountryCode: '+1',
+            slectedCountryName: 'USA',
+            startDate: '',
         };
+        this.handleDateChange = this.handleDateChange.bind(this);
     }
     onChangeHandler = (event) => {
         this.setState({
             selectedFile: event.target.files[0]
         });
     };
+
+    handeChange = (e) => {
+      const eventValue = e.target.value.split(' ');
+      this.setState({
+        selectedCountryCode: eventValue[0],
+        slectedCountryName: eventValue[1]
+      });
+    };
+
+    handleDateChange = (date) => {
+
+      this.setState((prevState) => {
+          prevState = JSON.parse(JSON.stringify(this.state.user));
+          if("dob" in prevState){
+              prevState.dob = date ;
+          }
+          else{
+              prevState["dob"] = date ;
+          }
+          return { user: prevState };
+      });
+    };
+
+    getCountryName = (e) => {};
+
 
     onClickHandler = () => {
         const data = new FormData();
@@ -82,18 +120,19 @@ class Profile extends React.Component {
             isFileUploaded: false,
             fileUploadError: ''
         });
-        let user_id = '';
+        var user_id = '';
         if(this.state.profile_to_view){
             user_id = this.state.profile_to_view ;
         }
         else{
-            user_id = this.state.user_cognito_id ;
+            user_id = this.state.user.user_cognito_id ;
         }
 
         data.append('profile_pic', this.state.selectedFile);
         data.append('user_cognito_id', user_id);
 
         console.log("THIS IS FORM DATA ",data);
+        console.log("VALUE TO BE PRINTED ",user_id);
         uploadProfilePic(data)
         .then((response) => {
             console.log(response);
@@ -307,7 +346,7 @@ class Profile extends React.Component {
                             alignContent: "center",
                             textAlign : "center"
                         }}
-                        className={`section-title animated zoomIn`}>
+                        className={`section-title animated zoomIn profile-section-title`}>
                         <h1 ref="h1" className="font-weight-bold">
                             Profile Page
                         </h1>
@@ -400,14 +439,70 @@ class Profile extends React.Component {
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Mobile Phone</Label>
                                         <Col sm={6}>
-                                            <div class="input-group">
-                                            <Input
-                                                className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.user.phone_number} placeholder="Phone number with country code" />
-                                                <span class="input-group-addon profile-edit-icon"
+                                            <div class="input-group-prepend">
+                                                <div className="row">
+                                                    <div className="col-sm-2">
+                                                <span
+                                                    style={{
+                                                        height : "100%"
+                                                    }}
+                                                    className="input-group-text country-code-container country-code-outer-box">
+                                                    <select
+                                                      className="profile-input custom-select country-code country-code-input-box"
+                                                      defaultValue={this.state.user.country_code ? this.state.user.country_code : this.state.selectedCountryCode}
+                                                      onChange={this.handeChange}
+                                                      name="country_code"
+                                                      id=""
+
                                                     >
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    {this.state.CountryCode.map((index) => {
+                                                      return index.countries.map((key, value) => {
+                                                        if (key.code === '+1'){
+                                                          return (
+                                                            <option key={value} defaultValue={key.code + ' USA'}>
+                                                              {key.code}
+                                                            </option>
+                                                          );
+                                                        }else if( this.state.user.country_code && this.state.user.country_code === key.code ){
+                                                            return (
+                                                              <option key={value} value={key.code + ' ' + key.name} selected="true">
+                                                                {key.code}
+                                                              </option>
+                                                            );
+                                                        }
+                                                        else{
+                                                            return (
+                                                              <option key={value} value={key.code + ' ' + key.name}>
+                                                                {key.code}
+                                                              </option>
+                                                            );
+                                                        }
+
+                                                    }, this);
+                                                    })}
+                                                    </select>
+
+                                                </span>
+                                                </div>
+                                                <div className="col-sm-8 offset-sm-1">
+                                                <span className="profile-input input-group-text" id="basic-addon1">
+                                                  <span className="country-name">
+                                                    {this.state.slectedCountryName}
                                                   </span>
+                                                  <Input
+                                                      className="profile-input phone-number-input-box" type="text" name="email" id="exampleEmail" value={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
+                                                  <span class="input-group-addon profile-edit-icon"
+                                                      >
+                                                      <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </span>
+                                                </span>
+
+                                                 </div>
+                                                  </div>
                                               </div>
+                                        </Col>
+                                        <Col sm={4}>
+                                            <button className="btn btn-success btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Verified</button>
                                         </Col>
                                     </FormGroup>
 
@@ -416,7 +511,10 @@ class Profile extends React.Component {
                                         <Col sm={6}>
                                             <div class="input-group">
                                             <Input
-                                                className="profile-input" type="email" name="email" id="exampleEmail" value={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" />
+                                                className="profile-input" type="select" name="email" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
+                                            <option value={this.state.organization ? this.state.organization : "PSU"}  > {this.state.organization ? this.state.organization : "PSU"} </option>
+                                            <option value="NSF"  > NSF </option>
+                                            </Input>
                                                 <span class="input-group-addon profile-edit-icon"
                                                     >
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -429,8 +527,19 @@ class Profile extends React.Component {
                                         <Label for="exampleEmail" sm={2}>Birthday</Label>
                                         <Col sm={6}>
                                             <div class="input-group">
-                                            <Input
-                                                className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.dob ? this.state.dob : "N/A"} placeholder="DOB" />
+                                                <DatePicker
+                                                  showMonthDropdown
+                                                  showYearDropdown
+                                                  dropdownMode="select"
+                                                  className="form-control"
+                                                  name="dob"
+                                                  selected={this.state.user.dob ? new Date(this.state.user.dob) : ""}
+                                                  onChange={this.handleDateChange}
+                                                  maxDate={subYears(new Date(), 10)}
+                                                  placeholderText="Birthdate"
+                                                  className="profile-input form-control"
+                                                />
+
                                                 <span class="input-group-addon profile-edit-icon"
                                                     >
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -444,7 +553,12 @@ class Profile extends React.Component {
                                         <Col sm={6}>
                                             <div class="input-group">
                                             <Input
-                                                className="profile-input" type="text" name="email" id="exampleEmail" placeholder="Gender" value={this.state.user.gender} />
+                                                className="profile-input" type="select" name="email" id="exampleEmail" placeholder="Gender" defaultValue={this.state.user.gender} >
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                                <option value="other">Other</option>
+                                            </Input>
+
                                                 <span class="input-group-addon profile-edit-icon"
                                                     >
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -523,7 +637,7 @@ class Profile extends React.Component {
                                 Simulation Information
                             </p>
                             <Row className="pt-2 pl-4 pr-4">
-                                <Col md={3}>
+                                <Col md={4}>
 
                                     <p ref="p1">
                                         {this.state.user.is_selfie_image_uploaded ? (
@@ -542,6 +656,7 @@ class Profile extends React.Component {
                                         Selfie Uploaded{' '}
 
                                     </p>
+                                    <div className="file-upload-input-div">
                                     <input
                                         onChange={this.onChangeHandler}
                                         type="file"
@@ -550,9 +665,10 @@ class Profile extends React.Component {
                                             backgroundColor: "#0f81dc",
                                             width : "inherit",
                                             borderBottomColor : "#0f81dc !important"
-    }}
+                                        }}
                                         name="profile_pic"
                                         />
+                                    </div>
                                     <button
                                         type="button"
                                         onClick={this.onClickHandler}
@@ -602,7 +718,7 @@ class Profile extends React.Component {
 
                                     {this.state.user.is_selfie_image_uploaded ? (
                                         <div>
-                                            <img className="svg img-fluid" src={this.state.user.profile_picture_url} alt="" />
+                                            <Img className="svg img-fluid" src={this.state.user.profile_picture_url} alt="" />
                                             <DownloadBtn
 
                                                 style={{
@@ -614,8 +730,8 @@ class Profile extends React.Component {
                                         </div>
                                     ) : null}
                                 </Col>
-
-                                <Col md={3}>
+                                {/*
+                                <Col md={4}>
                                     <p ref="p4">
                                         {this.state.user.is_selfie_simulation_file_uploaded ? (
                                             <span>
@@ -642,13 +758,13 @@ class Profile extends React.Component {
                                                     width : "100%"
                                                 }}
                                                 url={this.state.user.simulation_file_url}
-                                                content="Download Simulation File"
+                                                content="Download Selfie Image"
                                                 />
                                         </div>
                                     ) : null}
                                 </Col>
-
-                                <Col md={3}>
+                */}
+                                <Col md={4}>
                                     <p ref="p2">
                                         {this.state.user.is_selfie_model_uploaded ? (
                                             <span>
@@ -681,7 +797,7 @@ class Profile extends React.Component {
                                     ) : null}
                                 </Col>
 
-                                <Col md={3}>
+                                <Col md={4}>
                                     <p ref="p3">
                                         {this.state.user.is_selfie_inp_uploaded ? (
                                             <span>

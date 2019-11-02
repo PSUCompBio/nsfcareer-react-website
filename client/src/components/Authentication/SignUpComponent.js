@@ -65,6 +65,7 @@ class SignUpComponent extends React.Component {
   };
 
   handleDateChange = (date) => {
+
     this.setState({
       startDate: date
     });
