@@ -25,7 +25,7 @@ const express = require('express'),
 
     global.fetch = require('node-fetch');
 
-var _ = require('lodash');
+    var _ = require('lodash');
 
 
 // ================================================
@@ -108,11 +108,17 @@ var upload = multer({
 
         let jpgFile = new RegExp(".jpg").test(file.originalname);
         let jpegFile = new RegExp(".jpeg").test(file.originalname);
+        let JPEGFile = new RegExp(".JPEG").test(file.originalname);
+        let JPGFile = new RegExp(".JPG").test(file.originalname);
         let pngFile = new RegExp(".png").test(file.originalname);
+        let PNGFile = new RegExp(".PNG").test(file.originalname);
+        let tiffFile = new RegExp(".tiff").test(file.originalname);
+        let TIFFFile = new RegExp(".TIFF").test(file.originalname);
 
-        if (!jpgFile && !jpegFile && !pngFile) {
-            // res.send({message : "FAILURE"});
-            req.body["file_error"] = "Only jpeg,jpg are allowed"
+        if (!jpgFile && !jpegFile && !pngFile && !JPEGFile && !JPGFile && !PNGFile && !TIFFFile && !tiffFile) {
+
+            req.body["file_error"] = "Only JPEG/ JPG/ jpeg/ jpg/ PNG/ png/ tiff/ TIFF format file is allowed";
+            
         }
         callback(null, true)
     }
@@ -1767,6 +1773,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     });
 
     app.post(`${apiPrefix}getModelFileLink`, (req, res) => {
+        console.log(req.body);
         getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
 
             if (err) {
