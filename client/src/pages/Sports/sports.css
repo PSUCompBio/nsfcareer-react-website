@@ -6,7 +6,7 @@
 }
 #sport_model_block {
 	width: 100%;
-	min-height: 400px;
+	min-height: 420px;
 }
 .section_block {
 	margin-bottom: 20px;
@@ -269,7 +269,7 @@
 		margin-bottom: 50px;
 	}
 	#sport_model_block {
-		height: 400px;
+		height: 400px !important;
 	}
 	.generate_graph {
 		margin-top: 20px;

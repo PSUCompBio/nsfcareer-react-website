@@ -80,22 +80,9 @@ class AboutPage extends React.Component {
                             </iframe>
                         </div>
                     </div>
-                    <div
-                        style={{marginBottom : "5%"}}
-                        className="col-md-12 about-us-section-application-border" >
-                        <div>
-                            <span style={{fontSize : "1.5rem", color : "#0f81dc"}} className="top-heading__login">We provide solutions for both contact sports and occupational blast exposure.</span>
-                                {/*<span style={{
-                                    color : "#0f81dc"
-                                }}>We provide solutions for both contact sports and occupational blast exposure.</span>
-                                */}
-
-
-                        </div>
-                    </div>
                     <br/>
                     <div className="col-md-12">
-                        <span style={{fontSize : "1.5rem", border : "none"}} className="top-heading__login">We provide solutins for both contact sports and occupational blast exposures.</span>
+                        <span style={{fontSize : "1.5rem", border : "none", marginTop : "1rem"}} className="top-heading__login">We provide solutions for both contact sports and occupational blast exposures.</span>
                     </div>
                     <ResearchArea hideTitle="true" screenWidth={this.props.screenWidth} />
                 </div>
