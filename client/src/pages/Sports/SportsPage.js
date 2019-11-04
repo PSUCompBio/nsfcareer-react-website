@@ -71,6 +71,8 @@ class SportsPage extends React.Component {
 		document.querySelector(".sports_container").style.marginTop = getHeight + 'px';
 		
 		window.addEventListener('resize', this.resize);
+		
+		this.setContainerHeight();
 	}
 	
 	componentWillUnmount() {
@@ -80,6 +82,14 @@ class SportsPage extends React.Component {
 	resize = () => {
 		let getHeight = document.querySelector('.navbar').clientHeight;
 		document.querySelector(".sports_container").style.marginTop = getHeight + 'px';
+	}
+	
+	setContainerHeight = () => {
+		let docHeight = document.body.clientHeight;
+		let headerHeight = document.querySelector('.navbar').clientHeight;
+		let footerHeight = document.querySelector('.footer').clientHeight;
+		let conatainerHeight = parseFloat(docHeight) - parseFloat(headerHeight) - parseFloat(footerHeight);
+		document.querySelector(".sports_container").style.minHeight = conatainerHeight + 'px';
 	}
 	
 	handleShowModal = () => {
@@ -428,7 +438,7 @@ class SportsPage extends React.Component {
 						</div>
 						
 						<div className="row">
-							<div style={{ display: this.state.show_triangular_graph_block }} className="animated zoomIn brain_section cu-align-center">
+							<div style={{ display: this.state.show_triangular_graph_block }} className="animated zoomIn brain_section cu-align-center col-md-12 col-sm-12">
 								<h1 ref="h1" className="font-weight-bold">Brain Simulation Results</h1>
 								<div className="brain-image-container" >
 									<img ref="dashboardView"

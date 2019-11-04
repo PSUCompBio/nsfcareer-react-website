@@ -1,0 +1,61 @@
+.developer_container {
+    max-width: initial !important;
+    padding-left: 10% !important;
+    padding-right: 10% !important;
+	margin-bottom: 50px;
+}
+.response_block {
+	background: #08416E;
+	color: #fff;
+}
+.response_block hr {
+	background: #fff;
+}
+.response_sub_block {
+	margin-left: 50px;
+}
+.response_title {
+	margin-left: 30px;
+	margin-top: 30px;
+}
+.res_headers_titls {
+	color: #F0A666 !important;
+}
+.request_block hr {
+	margin-bottom: 30px;
+}
+.response_code_block pre {
+	color: #fff !important;
+}
+.request_get_txt {
+	border: 1px solid #212529;
+    padding: 5px 15px 5px 15px;
+    margin-right: 40px;
+}
+.request_intro_txt {
+	color: #0F95F2;
+	font-weight: bold;
+}
+.font_txt_bold {
+	font-weight:bold;
+}
+
+@media only screen and (max-width: 767px) {
+	.get-blk {
+		margin-bottom: 20px;
+	}
+	.request_block, .request_code_block {
+		word-break: break-all;
+	}
+	.response_sub_block {
+		margin-left: 0;
+	}
+	.response_title {
+		margin-left: 0;
+		margin-top: 10px;;
+	}
+	.response_code_block {
+		overflow: auto;
+	}
+	
+}	
