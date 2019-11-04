@@ -209,6 +209,7 @@ class Nav extends React.Component {
         </li>
         {this.links('About us', '/About')}
         {this.links('Contact us', '/Contact')}
+		{this.links('For Developers', '/Developer')}
         {this.props.location.pathname !== '/SignUp'
           ? this.links('Dashboard', '/Login')
           : this.links('Sign up', '/SignUp')}
@@ -333,7 +334,8 @@ class Nav extends React.Component {
         </li>
         {this.links('About us', '/About')}
         {this.links('Contact us', '/Contact')}
-
+		{this.links('For Developers', '/Developer')}
+		
         {this.props.location.pathname !== '/SignUp' ? (
           <li
             onMouseEnter={this.hideSignOut}
@@ -487,6 +489,13 @@ class Nav extends React.Component {
               to={'/Contact'}
             >
               Contact us
+            </Link>
+			<Link
+              onClick={this.handleClick}
+              className="nav-link"
+              to={'/Developer'}
+            >
+              For Developers
             </Link>
             <div className={LineUnderLink.linkeMaker('/Contact')} />
             {this.props.location.pathname !== '/SignUp' ? (
