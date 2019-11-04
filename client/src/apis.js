@@ -489,3 +489,15 @@ export const listAllUsers = (request) =>{
       });
   })
 }
+
+export const getUserDetailsForIRB = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUserDetailsForIRB`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

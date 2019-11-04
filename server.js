@@ -118,7 +118,7 @@ var upload = multer({
         if (!jpgFile && !jpegFile && !pngFile && !JPEGFile && !JPGFile && !PNGFile && !TIFFFile && !tiffFile) {
 
             req.body["file_error"] = "Only JPEG/ JPG/ jpeg/ jpg/ PNG/ png/ tiff/ TIFF format file is allowed";
-            
+
         }
         callback(null, true)
     }
@@ -2341,6 +2341,20 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     })
 
 })
+
+app.post(`${apiPrefix}getUserDetailsForIRB`, (req,res) =>{
+    console.log("API HIT ", req.body, config.ComputeInstanceEndpoint + "getUserDetailsForIRB" );
+    request.post({ url: config.ComputeInstanceEndpoint + "getUserDetailsForIRB", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            console.log(httpResponse.body);
+            res.send(httpResponse.body);
+        }
+    })
+})
+
 
 app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getSimulationStatusCount", json: req.body }, function (err, httpResponse, body) {

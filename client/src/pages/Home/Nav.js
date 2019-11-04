@@ -207,7 +207,7 @@ class Nav extends React.Component {
             }
           />
         </li>
-        {this.links('About us', '/About')}
+        {this.links('Details', '/Details')}
         {this.links('Contact us', '/Contact')}
         {this.props.location.pathname !== '/SignUp'
           ? this.links('Dashboard', '/Login')
@@ -331,7 +331,7 @@ class Nav extends React.Component {
             }
           />
         </li>
-        {this.links('About us', '/About')}
+        {this.links('Details', '/Details')}
         {this.links('Contact us', '/Contact')}
 
         {this.props.location.pathname !== '/SignUp' ? (
@@ -462,8 +462,8 @@ class Nav extends React.Component {
               Home <span className="sr-only">(current)</span>
             </Link>
             <div className={LineUnderLink.linkeMaker('/Home')} />
-            <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
-              About us <span className="sr-only">(current)</span>
+            <Link onClick={this.handleClick} className="nav-link" to={'/Details'}>
+              Details <span className="sr-only">(current)</span>
             </Link>
             <div className={LineUnderLink.linkeMaker('/About')} />
             {this.props.isLoggedIn === true ? (

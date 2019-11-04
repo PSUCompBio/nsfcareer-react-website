@@ -4,6 +4,7 @@ import ScrollIndicator from './ScrollIndicator';
 import { Route, withRouter } from 'react-router-dom';
 import { svgToInline } from '../../config/InlineSvgFromImg';
 import IRBLinkContent from '../../components/IRBLinkContent';
+import IRBParentConsent from '../../components/IRBParentConsent';
 import Nav from './Nav';
 import HomePage from './HomePage';
 import Login from '../Login/Login';
@@ -207,7 +208,7 @@ class Routing extends React.Component {
 
 
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
-        <Route exact path="/About" component={About} />
+        <Route exact path="/Details" component={About} />
 
         <Route exact path="/Contact" component={Contact} />
         <Route exact path="/TeamAdmin" component={TeamAdmin} />
@@ -215,6 +216,7 @@ class Routing extends React.Component {
         <Route exact path="/Military" component={Military} />
         <Route exact path="/Sports" component={Sports} />
         <Route exact path="/IRB" component={IRBLinkContent} />
+        <Route exact path="/IRBParentConsent" component={IRBParentConsent} />
       </React.Fragment>
     );
   }

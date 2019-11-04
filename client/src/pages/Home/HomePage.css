@@ -2534,5 +2534,12 @@ tbody.player-table tr:nth-child(odd){
     border-radius: 8px;
     background: #F2F1F2;
     padding: 1%;
-    
+
+}
+.hide-background {
+    background: white !important ;
+}
+
+.show-shadow {
+    box-shadow: 10px 10px 5px #e6e4e4;
 }
