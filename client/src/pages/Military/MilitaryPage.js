@@ -643,15 +643,25 @@ class MilitaryPage extends React.Component {
 		document.querySelector(".military_container").style.marginTop = getHeight + 'px';
 		
 		window.addEventListener('resize', this.resize);
+		
+		this.setContainerHeight();
 	}
 	
 	componentWillUnmount() {
 		window.removeEventListener('resize', this.resize);
 	}
-	
+		
 	resize = () => {
 		let getHeight = document.querySelector('.navbar').clientHeight;
 		document.querySelector(".military_container").style.marginTop = getHeight + 'px';
+	}
+	
+	setContainerHeight = () => {
+		let docHeight = document.body.clientHeight;
+		let headerHeight = document.querySelector('.navbar').clientHeight;
+		let footerHeight = document.querySelector('.footer').clientHeight;
+		let conatainerHeight = parseFloat(docHeight) - parseFloat(headerHeight) - parseFloat(footerHeight);
+		document.querySelector(".military_container").style.minHeight = conatainerHeight + 'px';
 	}
 	
 	handleShowModal = () => {
@@ -914,7 +924,7 @@ class MilitaryPage extends React.Component {
 	}
 	
 	trigulateLoading = () => {
-		console.log("Hello here");
+		
 		this.setState({
 			show_triangular_graph: 'inline-block',
 			show_blinking_arrow_step2: 'none',
@@ -929,8 +939,6 @@ class MilitaryPage extends React.Component {
 				triangular_blinking_class : '',
 			});
 		}, 6000);
-		
-		
 		
 		this.loadModel(ArrowGLB, 'arrow');
 	}
@@ -1012,7 +1020,7 @@ class MilitaryPage extends React.Component {
 			title: "TRIANGULATED APPLIED BLAST LOADING",
 			titleTextStyle: {
 				color: "#000000",
-				fontSize: 12,
+				fontSize: 10,
 			},
 			hAxis: { title: "Time (ms)", titleTextStyle: {
 				color: '#000000'
