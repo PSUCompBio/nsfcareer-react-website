@@ -28,6 +28,11 @@ import Footer from './Footer';
 
 
 class IRBLinkContent extends React.Component {
+    constructor(props){
+        super(props);
+        
+        console.log(props);
+    }
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';

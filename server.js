@@ -371,6 +371,30 @@ function createUserDbEntry(event, callback) {
     });
 }
 
+function addRecordInUsersDDB(event) {
+    return new Promise((resolve, reject) =>{
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        dbInsert = {
+            TableName: "users",
+            Item: event
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                reject(dbErr)
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                resolve(dbData);
+            }
+        });
+    })
+}
+
 
 function getUploadedImageFileList(user_name, cb) {
     const s3Params = {
@@ -2353,6 +2377,67 @@ app.post(`${apiPrefix}getUserDetailsForIRB`, (req,res) =>{
             res.send(httpResponse.body);
         }
     })
+})
+
+app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
+    console.log("API HIT ", req.body );
+    // =======================================
+    // Check if IRB Is already done
+    // if yes then send failure
+    // else
+    // 2. call API TO create IRB Details & Send
+    // =======================================
+    getUserDbData(req.body.user_cognito_id, (err,data)=>{
+            if(err){
+                res.send({
+                    message : "failure",
+                    error : err
+                })
+            }
+            else{
+                let user_data = data.Item ;
+                if(user_data.isIRBComplete){
+                    res.send({
+                        message : "failure",
+                        error : {
+                            message : "IRB process is already completed."
+                        }
+                    })
+                }
+                else{
+                    // CHANGE it TO TRUE
+                    user_data["isIRBComplete"] = false ;
+                    user_data["guardian_first_name"] = req.body.guardian_first_name ;
+                    user_data["guardian_last_name"] = req.body.guardian_last_name ;
+                    user_data["guardian_signature"] = req.body.guardian_signature ;
+                    // Store the code in DynamoDB
+                    addRecordInUsersDDB(user_data)
+                    .then(value => {
+                                // CALL API TO Make IRB Form
+                                request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
+                                    if (err) {
+                                        res.send({ message: 'failure', error: err });
+                                    }
+                                    else {
+                                        console.log(httpResponse.body);
+                                        res.send(httpResponse.body);
+                                    }
+                                })
+                    })
+                    .catch(err => {
+                        res.send({
+                            message : "failure",
+                            error : err
+                        })
+                    })
+
+
+                }
+            }
+    })
+
+
+
 })
 
 

@@ -501,3 +501,15 @@ export const getUserDetailsForIRB = (request) =>{
       });
   })
 }
+
+export const confirmGuardianIRBConsent = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/confirmGuardianIRBConsent`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

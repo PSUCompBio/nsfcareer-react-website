@@ -3,13 +3,16 @@ import { getStatusOfDarkmode } from '../reducer';
 import SignatureCanvas from 'react-signature-canvas'
 import Footer from './Footer';
 
-import { getUserDetailsForIRB } from '../apis';
+import { getUserDetailsForIRB, confirmGuardianIRBConsent } from '../apis';
 
 import Spinner from './Spinner/Spinner';
+import { formDataToJson } from '../utilities/utility';
 
 
 
+let sigPad = {};
 class IRBParentConsent extends React.Component {
+
     constructor(props){
         super(props);
         let search = window.location.search;
@@ -21,7 +24,9 @@ class IRBParentConsent extends React.Component {
         }
         this.state = {
             consent_token : token,
-            consent_user : {}
+            consent_user : {},
+            error : '',
+            message : ''
         }
 
     }
@@ -47,6 +52,37 @@ class IRBParentConsent extends React.Component {
 
       }
     }
+  }
+
+  handleFormSubmit = (e) => {
+      e.preventDefault();
+      const data = new FormData(e.target);
+      let formData = formDataToJson(data);
+      this.setState({
+          apiLoader : true,
+          error : '',
+          message : ''
+      });
+      formData = JSON.parse(formData);
+      formData["guardian_signature"] = sigPad.toDataURL("base64string") ;
+      console.log(formData);
+      confirmGuardianIRBConsent(formData)
+      .then(response => {
+          if(response.data.message == "success"){
+              console.log(response.data);
+          }
+          else{
+              // error
+              console.log(response.data);
+          }
+      })
+      .catch(err => {
+            console.log(err);
+      })
+  }
+  
+  updateSignature = (e) =>{
+      console.log(e);
   }
   render() {
     if(Object.keys(this.state.consent_user).length ==  0 ){
@@ -83,46 +119,72 @@ class IRBParentConsent extends React.Component {
                     <div class="form-group row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">First Name</label>
                             <div class="col-sm-4">
-                                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.first_name}/>
+                                <input type="text" readOnly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.first_name}/>
                             </div>
                         <label for="staticEmail" class="col-sm-2 col-form-label">Last Name</label>
                             <div class="col-sm-4">
-                                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.last_name}/>
+                                <input type="text" readOnly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.last_name}/>
                             </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Gender</label>
                             <div class="col-sm-4">
-                                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.gender}/>
+                                <input type="text" readOnly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.gender}/>
                             </div>
                     </div>
                     <div class="form-group row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Date Of Birth (DOB)</label>
                             <div class="col-sm-4">
-                                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.dob}/>
+                                <input type="text" readOnly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.dob}/>
                             </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="staticEmail" class="col-sm-2 col-form-label">Phone Number</label>
                             <div class="col-sm-4">
-                                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.phone_number}/>
+                                <input type="text" readOnly class="form-control-plaintext" id="staticEmail" value={this.state.consent_user.phone_number}/>
                             </div>
                     </div>
                     </form>
                 </div>
-                <div style={{marginTop : "1rem" }} className="col-md-6 col-sm-12">
-                    <h6 ref="h1">Parent/Guardian signature here: </h6>
-                    <SignatureCanvas penColor='black'
-                        canvasProps={{width: 300, height: 100, className: 'sigCanvas'}} />
+                <div className="col-md-12">
+                    <br/>
+                    <h6 ref="h1">Parent/Guardian Details: </h6>
                 </div>
+                <form onSubmit={this.handleFormSubmit}>
+                <div className="col-md-12">
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-4 col-form-label">First Name</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" class="form-control-plaintext" id="staticEmail" name="user_cognito_id" value={this.state.consent_user.user_cognito_id}/>
+                                <input type="text" class="form-control-plaintext" id="staticEmail" name="guardian_first_name" placeholder="Enter Your First Name" required/>
+                            </div>
+                    </div>
+                </div>
+                <div className="col-md-12">
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-4 col-form-label">Last Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control-plaintext" id="staticEmail" name="guardian_last_name" placeholder="Enter Your Last Name" required/>
+                            </div>
+                    </div>
+                </div>
+
+                <div style={{marginTop : "1rem" }} className="col-md-12 col-sm-12">
+                    <h6 ref="h1">Your signature here: </h6>
+                    <SignatureCanvas penColor='black'
+                        canvasProps={{width: 300, height: 100, className: 'sigCanvas'}}
+                        ref={(ref) => { sigPad = ref}}
+                        />
+                </div>
+
                 <div className="col-md-12">
                 <div className="row">
                     <div className="col-md-6">
                     <button
-                        type="button"
-                        onClick={(e)=>{window.location.href="/Login"}}
+                        type="submit"
+
                         style={{
                             width: "100%",
                             background: "-webkit-linear-gradient(45deg, #174f86, #2196f3)",
@@ -133,7 +195,7 @@ class IRBParentConsent extends React.Component {
                             color: "#fff",
                             fontSize: "18px",
                             fontWeight: "900",
-                            webkitBoxShadow: "0 0 10px -1px rgba(0, 0, 0, 0.1)",
+                            WebkitBoxShadow: "0 0 10px -1px rgba(0, 0, 0, 0.1)",
                             boxShadow: "0 0 10px -1px rgba(0, 0, 0, 0.1)",
                             border: "1px solid #fff",
                             position: "relative",
@@ -143,8 +205,13 @@ class IRBParentConsent extends React.Component {
                         }}
                     >Submit</button>
                         </div>
+
+
                     </div>
+
+
                 </div>
+                </form>
 
             </div>
         </div>
