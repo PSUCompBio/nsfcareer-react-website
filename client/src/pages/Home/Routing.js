@@ -23,6 +23,7 @@ import GetUpdates from '../../components/GetUpdates';
 //import Sports from '../Sports';
 import Sports from '../Sports/SportsPage';
 import Developer from '../Developer/DeveloperPage';
+import Dash from '../Dash/DashPage';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -210,6 +211,7 @@ class Routing extends React.Component {
         <Route exact path="/Forgot-Password" component={ForgotPassword} />
         <Route exact path="/Details" component={About} />
 		<Route exact path="/Developer" component={Developer} />
+		<Route exact path="/Dash" component={Dash} />
         <Route exact path="/Contact" component={Contact} />
         <Route exact path="/TeamAdmin" component={TeamAdmin} />
         <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />
