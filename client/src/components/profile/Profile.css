@@ -223,4 +223,42 @@ opacity: 1!important;
 .profile-upload-input-button{
     border-bottom-color: rgb(15, 129, 220) !important;
     border-radius: 8px 8px 0px 0px !important;
+    font-size: .8em !important;
+    width: 70% !important ;
+
+}
+
+.profile-section-title h1::after {
+   content: '';
+   height: 1px;
+   width: 100% !important;
+   bottom: -.2e;
+   position: absolute;
+   border: 2px solid #4293f5;
+   bottom: -0.2em;
+   left: 50%;
+   -webkit-transform: translate(-50%);
+   transform: translate(-50%);
+   -webkit-transition: all 1s;
+   transition: all 1s;
+}
+.country-code-input-box {
+    height: 100% !important;
+
+}
+.country-code-outer-box {
+    border-bottom : 1px solid transparent !important ;
+    padding-right: 0px !important;
+}
+
+.phone-number-input-box {
+    border : none !important;
+}
+
+.file-upload-input-div {
+    margin-top: 5px !important;
+    text-align: center;
+    background: #0f81dc;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
 }

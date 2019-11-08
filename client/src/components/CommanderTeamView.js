@@ -5,6 +5,7 @@
     import Footer from './Footer';
     import PenstateUniversity from './PenstateUniversity';
     import { getStatusOfDarkmode } from '../reducer';
+    import DarkMode from './DarkMode';
     import SideBar from './SideBar';
     import { connect } from 'react-redux';
     import { UncontrolledAlert } from 'reactstrap';
@@ -366,7 +367,7 @@
                             }} className="btn btn-primary"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> Upload Data</button>
                             */}
                             <div class="input-group mb-3 input-group-sm">
-                                
+
                                 <div  class="input-group-prepend">
                                     <input
                                         onChange={this.onChangeHandler}
@@ -691,11 +692,13 @@
                                                             </div>
                                                             <div className="military-main-content">
                                                                 {this.militaryVersionOrNormal()}
+                                                                <DarkMode isDarkMode={this.props.isDarkModeSet} />
                                                             </div>
                                                         </div>
                                                     ) : (
                                                         <React.Fragment>
                                                             {this.militaryVersionOrNormal()}
+                                                            <DarkMode isDarkMode={this.props.isDarkModeSet} />
                                                             <Footer style={{display : "none"}} className="violent"/>
                                                         </React.Fragment>
                                                     )}

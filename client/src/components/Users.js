@@ -11,7 +11,7 @@ import { UncontrolledAlert } from 'reactstrap';
 
 import ListUsers from './listUsers/ListUsers';
 import { isAuthenticated } from './../apis';
-
+import DarkMode from './DarkMode';
 
 
 
@@ -105,12 +105,14 @@ class Users extends React.Component {
                                                         <SideBar />
                                                     </div>
                                                     <div className="military-main-content">
+                                                        <DarkMode isDarkMode={this.props.isDarkModeSet} />
                                                         {this.militaryVersionOrNormal()}
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <React.Fragment>
                                                     {this.militaryVersionOrNormal()}
+                                                    <DarkMode isDarkMode={this.props.isDarkModeSet} />
                                                     <Footer style={{display : "none"}} className="violent"/>
                                                 </React.Fragment>
                                             )}

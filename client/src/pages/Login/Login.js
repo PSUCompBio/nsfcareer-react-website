@@ -5,7 +5,7 @@ import './Login.css';
 
 class Login extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       someKey: 'someValue'
     };
@@ -21,7 +21,7 @@ class Login extends React.Component {
         ) : checkIfUserLoggedIn.isSignedInSuccess ? (
           <Redirect to="/Dashboard" />
         ) : (
-          */<LoginComponent isAuthenticated={this.props.isAuthenticated} />
+          */<LoginComponent {...this.props} isAuthenticated={this.props.isAuthenticated} />
         }
       </React.Fragment>
     );

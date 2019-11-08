@@ -1,5 +1,5 @@
 import React from 'react';
-
+import ToggleToken from './Buttons/ToggleToken';
 class GetUpdates extends React.Component {
   constructor() {
     super();
@@ -23,91 +23,52 @@ class GetUpdates extends React.Component {
             your monitoring data.
           </p>
 
+
           <h5>Who are you?</h5>
           <div className="checkboxes">
             <label htmlFor="checkbox-1" className="checkbox-custom-label">
-              <input
-                id="checkbox-1"
-                className="checkbox-custom"
-                name="athletes"
-                type="checkbox"
-              />
-              Researcher
+                <ToggleToken buttonText="Researcher"/>
+
             </label>
 
-            <input
-              id="checkbox-2"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
+
             <label htmlFor="checkbox-2" className="checkbox-custom-label">
-              Athlete
+                <ToggleToken buttonText="Athlete"/>
             </label>
 
-            <input
-              id="checkbox-3"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
+
             <label htmlFor="checkbox-3" className="checkbox-custom-label">
-              Soldier
+              <ToggleToken buttonText="Soldier"/>
             </label>
 
-            <input
-              id="checkbox-4"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
             <label htmlFor="checkbox-4" className="checkbox-custom-label">
-              Coach
+              <ToggleToken buttonText="Coach"/>
+
             </label>
-            <input
-              id="checkbox-5"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
+
+
             <label htmlFor="checkbox-5" className="checkbox-custom-label">
-              Military Team Leader
+              <ToggleToken buttonText="Military Team Leader"/>
             </label>
-            <input
-              id="checkbox-5"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
+
             <label htmlFor="checkbox-5" className="checkbox-custom-label">
-              Parent
+
+              <ToggleToken buttonText="Parent"/>
+
             </label>
-            <input
-              id="checkbox-5"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
+
             <label htmlFor="checkbox-5" className="checkbox-custom-label">
-              Athletic Trainer
+                <ToggleToken buttonText="Athletic Trainer"/>
             </label>
-            <input
-              id="checkbox-5"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
+
             <label htmlFor="checkbox-5" className="checkbox-custom-label">
-              Medic
+
+              <ToggleToken buttonText="Medic"/>
             </label>
-            <input
-              id="checkbox-5"
-              className="checkbox-custom"
-              name="Parent"
-              type="checkbox"
-            />
+
             <label htmlFor="checkbox-5" className="checkbox-custom-label">
-              Other
+
+                <ToggleToken buttonText="Other"/>
             </label>
           </div>
           <div className="row pl-5 pr-5">

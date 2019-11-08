@@ -3,12 +3,13 @@ import React from 'react';
 class Download3dProfile extends React.Component {
   constructor(props) {
     super(props);
+    console.log("DOWNLOAD BUTTON URL ",props.url);
     this.state = {
-        url : this.props.url
+        url : props.url
     };
+
   }
   openURL = ()=>{
-
     window.open(this.state.url, '_blank');
     }
 

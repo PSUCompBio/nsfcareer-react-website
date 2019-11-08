@@ -2,6 +2,9 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import WebFont from 'webfontloader';
+import DarkMode from './../../components/DarkMode';
+import { svgToInline } from './../../config/InlineSvgFromImg';
+
 
 WebFont.load({
   google: {
@@ -16,10 +19,14 @@ class ContactPage extends React.Component {
 
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
-      for (let i = 1; i <= 8; i++){
+      for (let i = 1; i <= 5; i++){
         this.refs['h' + i].style.color = '#fff';
       }
     }
+  }
+  
+  componentDidUpdate() {
+    svgToInline();
   }
 
   render() {
@@ -44,17 +51,19 @@ class ContactPage extends React.Component {
                 Media Inquiries:<span> media@nsfcareer.io </span>
               </p>
               */}
-              <p ref="h5">
+
+              <p ref="h3">
                 Call us at <span>814-867-4570</span>
               </p>
-              <p ref="h7">NSFCAREER.IO Address</p>
-              <p ref="h8">
+              <p ref="h4">NSFCAREER.IO Address</p>
+              <p ref="h5">
                 <span> 320 Leonhard Building</span> <br />
                 <span> University Park,</span> <br /> <span> PA 16802</span>
               </p>
             </div>
           </div>
         </div>
+        <DarkMode isDarkMode={this.props.isDarkModeSet} />
         <Footer />
       </React.Fragment>
     );

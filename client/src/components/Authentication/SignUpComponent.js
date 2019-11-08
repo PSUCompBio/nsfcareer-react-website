@@ -9,6 +9,10 @@ import CountryCode from '../../config/CountryCode.json';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
+import { getStatusOfDarkmode } from '../../reducer';
+
+import DarkMode from '../DarkMode';
+
 
 class SignUpComponent extends React.Component {
   constructor() {
@@ -65,6 +69,7 @@ class SignUpComponent extends React.Component {
   };
 
   handleDateChange = (date) => {
+
     this.setState({
       startDate: date
     });
@@ -248,6 +253,27 @@ class SignUpComponent extends React.Component {
           </div>
         </div>
 
+        {this.props.location.pathname === '/SignUp' ?
+            <div className="form-row">
+              <div className="input-group mb-5">
+                <div className="input-group-prepend">
+                  <span className="input-group-text" id="basic-addon1">
+                    <img src="img/icon/envelop.svg" alt="" />
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Parent/Guardian mail ID"
+                  name="guardian_mail"
+                  aria-label="Parent/Guardian Mail"
+                  aria-describedby="basic-addon1"
+                />
+              </div>
+            </div>
+            : null
+        }
+
         <div className="form-row">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
@@ -350,6 +376,7 @@ class SignUpComponent extends React.Component {
 
       </div>
       <div className="footer-mobile-fix" >
+          <DarkMode isDarkMode={this.props.isDarkModeSet} />
           <Footer/>
   </div>
   </div>

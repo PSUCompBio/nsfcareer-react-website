@@ -86,7 +86,7 @@ class Nav extends React.Component {
    // here timer function is being used to init the local storage data for User DETAILS
    // TODO : Update it with parent based state change
    if(JSON.parse(localStorage.getItem("state")) !== null ){
-       console.log(JSON.parse(localStorage.getItem("state")));
+       
    if(!this.isEquivalent(this.state.user_details, JSON.parse(localStorage.getItem("state")).userInfo)){
        this.setState({
            user_details : JSON.parse(localStorage.getItem("state")).userInfo
@@ -207,7 +207,7 @@ class Nav extends React.Component {
             }
           />
         </li>
-        {this.links('About us', '/About')}
+        {this.links('Details', '/Details')}
         {this.links('Contact us', '/Contact')}
 		{this.links('For Developers', '/Developer')}
         {this.props.location.pathname !== '/SignUp'
@@ -332,10 +332,10 @@ class Nav extends React.Component {
             }
           />
         </li>
-        {this.links('About us', '/About')}
+        {this.links('Details', '/Details')}
         {this.links('Contact us', '/Contact')}
 		{this.links('For Developers', '/Developer')}
-		
+
         {this.props.location.pathname !== '/SignUp' ? (
           <li
             onMouseEnter={this.hideSignOut}
@@ -464,8 +464,8 @@ class Nav extends React.Component {
               Home <span className="sr-only">(current)</span>
             </Link>
             <div className={LineUnderLink.linkeMaker('/Home')} />
-            <Link onClick={this.handleClick} className="nav-link" to={'/About'}>
-              About us <span className="sr-only">(current)</span>
+            <Link onClick={this.handleClick} className="nav-link" to={'/Details'}>
+              Details <span className="sr-only">(current)</span>
             </Link>
             <div className={LineUnderLink.linkeMaker('/About')} />
             {this.props.isLoggedIn === true ? (

@@ -2,6 +2,7 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import ResearchArea from './../Home/ResearchArea/ReseachArea';
+import DarkMode from './../../components/DarkMode';
 
 class AboutPage extends React.Component {
     constructor(props){
@@ -31,14 +32,14 @@ class AboutPage extends React.Component {
             <div className="col-md-12 col-lg-12 padding-about__page-new text-center">
               <div className={`section-title animated zoomIn`}>
                 <h1 ref="h1" className="font-weight-bold">
-                  ABOUT US
+                  Details
                 </h1>
               </div>
               <p className={`animated fadeInUp about-lines`}>
-                  <span style={{fontSize : "1.5rem !important"}} className="top-heading__login">Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
+                  <span style={{fontSize : "1.5rem"}} className="top-heading__login">Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
                 <br />
                 <br />
-                 <span style={{color : "#595959", fontSize : "1.5rem !important"}} className="top-heading__login" >Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
+                 <span style={{color : "#595959", fontSize : "1.5rem"}} className="top-heading__login" >Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
 
                 <br />
                 <br />
@@ -57,7 +58,7 @@ class AboutPage extends React.Component {
                                 msallowfullscreen="msallowfullscreen"
                                 oallowfullscreen="oallowfullscreen"
                                 webkitallowfullscreen="webkitallowfullscreen"
-                                src="https://www.youtube.com/embed/afg_U1JDUQk">
+                                src="https://www.youtube.com/embed/ZlxsK5JRPrQ?rel=0">
                             </iframe>
                         </div>
                     </div>
@@ -66,6 +67,7 @@ class AboutPage extends React.Component {
                             <p  style={{fontSize : "1.2rem", marginBottom : "1rem"}} className="top-heading__login" >
                                 Learn  more about the technology <br/> of our  effort in this video
                             </p>
+
                         </div>
 
                         <div style={{marginBottom : "1rem",marginTop : "1rem", paddingLeft : "5%", paddingRight : "5%"}} className="col-md-12 col-sm-12">
@@ -75,25 +77,14 @@ class AboutPage extends React.Component {
                                 msallowfullscreen="msallowfullscreen"
                                 oallowfullscreen="oallowfullscreen"
                                 webkitallowfullscreen="webkitallowfullscreen"
-                                src="https://www.youtube.com/embed/afg_U1JDUQk">
+                                src="https://www.youtube.com/embed/CdCvEOWjK9Q?rel=0">
                             </iframe>
                         </div>
                     </div>
-                    <div
-                        style={{marginBottom : "5%"}}
-                        className="col-md-12 about-us-section-application-border" >
-                        <div>
-                            <span style={{
-                                    color : "black" ,
-                                    textDecoration : "underline"
-                                }}>Application: </span>
-                                <span style={{
-                                    color : "#0f81dc"
-                                }}>We provide solutions for both contact sports and occupational blast exposure.</span>
-                        </div>
-                    </div>
                     <br/>
-
+                    <div className="col-md-12">
+                        <span style={{fontSize : "1.5rem", border : "none", marginTop : "1rem"}} className="top-heading__login">We provide solutions for both contact sports and occupational blast exposures.</span>
+                    </div>
                     <ResearchArea hideTitle="true" screenWidth={this.props.screenWidth} />
                 </div>
                 <br />
@@ -103,6 +94,7 @@ class AboutPage extends React.Component {
 
           </div>
         </div>
+        <DarkMode isDarkMode={this.props.isDarkModeSet} />
         <Footer />
       </React.Fragment>
     );

@@ -37,7 +37,7 @@ function ResearchArea(props) {
 
 
   return (
-    <div className="research-area-bg">
+    <div className={props.hideTitle ? 'research-area-bg hide-background' : 'research-area-bg'}>
       <div className="container section">
         <div onWheel={(e)=>detectScroll(e)} className="section-three">
           <div className="col-md-12 col-lg-12 text-center">
@@ -73,7 +73,7 @@ function ResearchArea(props) {
                     inView ? removeAnimationMobileView('slideInLeft') : ''
                   }`}
                 >
-                  <div onClick={()=>gotoPage('/Military')}  className="card mx-4 research-card rounded-img">
+                  <div onClick={()=>gotoPage('/Military')}  className={"card mx-4 research-card rounded-img " + (props.hideTitle ? 'show-shadow' : '') }>
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2491.svg"
@@ -99,7 +99,7 @@ function ResearchArea(props) {
                     inView ? removeAnimationMobileView('slideInRight') : ''
                   }`}
                 >
-                  <div onClick={()=>gotoPage('/Sports')} className="card mx-4 research-card rounded-img">
+                  <div onClick={()=>gotoPage('/Sports')} className={"card mx-4 research-card rounded-img " + (props.hideTitle ? 'show-shadow' : '') }>
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2492.svg"

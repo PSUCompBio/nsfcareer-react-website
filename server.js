@@ -25,7 +25,7 @@ const express = require('express'),
 
     global.fetch = require('node-fetch');
 
-var _ = require('lodash');
+    var _ = require('lodash');
 
 
 // ================================================
@@ -108,11 +108,17 @@ var upload = multer({
 
         let jpgFile = new RegExp(".jpg").test(file.originalname);
         let jpegFile = new RegExp(".jpeg").test(file.originalname);
+        let JPEGFile = new RegExp(".JPEG").test(file.originalname);
+        let JPGFile = new RegExp(".JPG").test(file.originalname);
         let pngFile = new RegExp(".png").test(file.originalname);
+        let PNGFile = new RegExp(".PNG").test(file.originalname);
+        let tiffFile = new RegExp(".tiff").test(file.originalname);
+        let TIFFFile = new RegExp(".TIFF").test(file.originalname);
 
-        if (!jpgFile && !jpegFile && !pngFile) {
-            // res.send({message : "FAILURE"});
-            req.body["file_error"] = "Only jpeg,jpg are allowed"
+        if (!jpgFile && !jpegFile && !pngFile && !JPEGFile && !JPGFile && !PNGFile && !TIFFFile && !tiffFile) {
+
+            req.body["file_error"] = "Only JPEG/ JPG/ jpeg/ jpg/ PNG/ png/ tiff/ TIFF format file is allowed";
+
         }
         callback(null, true)
     }
@@ -363,6 +369,30 @@ function createUserDbEntry(event, callback) {
             callback(null, event);
         }
     });
+}
+
+function addRecordInUsersDDB(event) {
+    return new Promise((resolve, reject) =>{
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        dbInsert = {
+            TableName: "users",
+            Item: event
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                reject(dbErr)
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                resolve(dbData);
+            }
+        });
+    })
 }
 
 
@@ -1767,6 +1797,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     });
 
     app.post(`${apiPrefix}getModelFileLink`, (req, res) => {
+        console.log(req.body);
         getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
 
             if (err) {
@@ -2335,6 +2366,81 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
 
 })
 
+app.post(`${apiPrefix}getUserDetailsForIRB`, (req,res) =>{
+    console.log("API HIT ", req.body, config.ComputeInstanceEndpoint + "getUserDetailsForIRB" );
+    request.post({ url: config.ComputeInstanceEndpoint + "getUserDetailsForIRB", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            console.log(httpResponse.body);
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
+    console.log("API HIT ", req.body );
+    // =======================================
+    // Check if IRB Is already done
+    // if yes then send failure
+    // else
+    // 2. call API TO create IRB Details & Send
+    // =======================================
+    getUserDbData(req.body.user_cognito_id, (err,data)=>{
+            if(err){
+                res.send({
+                    message : "failure",
+                    error : err
+                })
+            }
+            else{
+                let user_data = data.Item ;
+                if(user_data.isIRBComplete){
+                    res.send({
+                        message : "failure",
+                        error : {
+                            message : "IRB process is already completed."
+                        }
+                    })
+                }
+                else{
+                    // CHANGE it TO TRUE
+                    user_data["isIRBComplete"] = false ;
+                    user_data["guardian_first_name"] = req.body.guardian_first_name ;
+                    user_data["guardian_last_name"] = req.body.guardian_last_name ;
+                    user_data["guardian_signature"] = req.body.guardian_signature ;
+                    // Store the code in DynamoDB
+                    addRecordInUsersDDB(user_data)
+                    .then(value => {
+                                // CALL API TO Make IRB Form
+                                request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
+                                    if (err) {
+                                        res.send({ message: 'failure', error: err });
+                                    }
+                                    else {
+                                        console.log(httpResponse.body);
+                                        res.send(httpResponse.body);
+                                    }
+                                })
+                    })
+                    .catch(err => {
+                        res.send({
+                            message : "failure",
+                            error : err
+                        })
+                    })
+
+
+                }
+            }
+    })
+
+
+
+})
+
+
 app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getSimulationStatusCount", json: req.body }, function (err, httpResponse, body) {
         if (err) {
@@ -2464,7 +2570,9 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
     })
 })
 
+
 app.post(`${apiPrefix}getOrganizationAdminData`, (req,res) =>{
+    console.log("REQUEST RECEIVED ");
     request.post({ url: config.ComputeInstanceEndpoint + "getOrganizationAdminData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
