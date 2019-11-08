@@ -5,7 +5,7 @@ import "./SignUp.css";
 
 class SignUp extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = { someKey: 'someValue' };
   }
 
@@ -13,7 +13,7 @@ class SignUp extends React.Component {
     return (
       <React.Fragment>
 
-          <SignUpComponent/>
+          <SignUpComponent {...this.props}/>
         </React.Fragment>
     );
   }

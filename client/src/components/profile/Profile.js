@@ -6,7 +6,7 @@ import { formDataToJson } from '../../utilities/utility';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
-
+import DarkMode from '../DarkMode';
 import {
     uploadProfilePic,
     getUserDetails,
@@ -893,7 +893,7 @@ class Profile extends React.Component {
                             </Row>
                         </div>
                     </div>
-
+                    <DarkMode isDarkMode={this.props.isDarkModeSet} />
                     <Footer />
                 </React.Fragment>
             );

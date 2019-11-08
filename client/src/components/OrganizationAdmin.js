@@ -17,6 +17,7 @@ import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
+import DarkMode from './DarkMode';
 
 class OrganizationAdmin extends React.Component {
     constructor() {
@@ -60,14 +61,14 @@ class OrganizationAdmin extends React.Component {
 
     checkIfDarkModeActive = () => {
         if (getStatusOfDarkmode().status === true) {
-            this.refs.rosterContainer.style.background = '#171b25';
-            this.refs.cardContainer.style.background = '#232838';
-            this.refs.loadCardParent.style.background = 'transparent';
-            this.refs.loadCardParent.style.border = '0.5px solid #e8e8e8';
-            this.refs.impactCardParent.style.border = '0.5px solid #e8e8e8';
-            this.refs.impactCardParent.style.background = 'transparent';
-            this.refs.loadCard.style.background = '#171b25';
-            this.refs.impactCard.style.background = '#171b25';
+            // this.refs.rosterContainer.style.background = '#171b25';
+            // this.refs.cardContainer.style.background = '#232838';
+            // this.refs.loadCardParent.style.background = 'transparent';
+            // this.refs.loadCardParent.style.border = '0.5px solid #e8e8e8';
+            // this.refs.impactCardParent.style.border = '0.5px solid #e8e8e8';
+            // this.refs.impactCardParent.style.background = 'transparent';
+            // this.refs.loadCard.style.background = '#171b25';
+            // this.refs.impactCard.style.background = '#171b25';
 
             const elementsRequire = [
                 'tech-football',
@@ -141,7 +142,7 @@ class OrganizationAdmin extends React.Component {
             return getOrganizationAdminData(JSON.stringify({}))
         })
         .then(organizationResponseData => {
-            console.log("IN ORG", organizationResponseData);
+            console.log("VOID ", organizationResponseData);
             this.setState({
                 organizationAdminData : { ...this.state.organizationAdminData, ...organizationResponseData.data.data },
                 isFetching : false
@@ -770,11 +771,13 @@ class OrganizationAdmin extends React.Component {
                                             className={`military-main-content ${this.ifMilitaryVersionActive()}`}
                                             >
                                             {this.militaryVersionOrNormalVersion()}
+                                            <DarkMode isDarkMode={this.props.isDarkModeSet} />
                                         </div>
                                     </div>
                                 ) : (
                                     <React.Fragment>
                                         {this.militaryVersionOrNormalVersion()}
+                                        <DarkMode isDarkMode={this.props.isDarkModeSet} />
                                         <div style={{bottom : "0",
                                                      position : "absolute",
                                                      width: "100%"}}>

@@ -2,6 +2,7 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import ResearchArea from './../Home/ResearchArea/ReseachArea';
+import DarkMode from './../../components/DarkMode';
 
 class AboutPage extends React.Component {
     constructor(props){
@@ -57,7 +58,7 @@ class AboutPage extends React.Component {
                                 msallowfullscreen="msallowfullscreen"
                                 oallowfullscreen="oallowfullscreen"
                                 webkitallowfullscreen="webkitallowfullscreen"
-                                src="https://www.youtube.com/embed/afg_U1JDUQk">
+                                src="https://www.youtube.com/embed/ZlxsK5JRPrQ?rel=0">
                             </iframe>
                         </div>
                     </div>
@@ -76,7 +77,7 @@ class AboutPage extends React.Component {
                                 msallowfullscreen="msallowfullscreen"
                                 oallowfullscreen="oallowfullscreen"
                                 webkitallowfullscreen="webkitallowfullscreen"
-                                src="https://www.youtube.com/embed/afg_U1JDUQk">
+                                src="https://www.youtube.com/embed/CdCvEOWjK9Q?rel=0">
                             </iframe>
                         </div>
                     </div>
@@ -93,6 +94,7 @@ class AboutPage extends React.Component {
 
           </div>
         </div>
+        <DarkMode isDarkMode={this.props.isDarkModeSet} />
         <Footer />
       </React.Fragment>
     );

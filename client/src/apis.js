@@ -310,7 +310,7 @@ export const getPlayersData = (request) =>{
 
 export const getOrganizationAdminData = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/getOrganizationAdminData`, {},{withCredentials: true})
+      axios.post(`/getOrganizationAdminData`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

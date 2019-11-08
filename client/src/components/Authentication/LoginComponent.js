@@ -8,10 +8,12 @@ import store from '../../Store';
 import '../../mixed_style.css';
 import { getStatusOfDarkmode } from '../../reducer';
 import { setIsSignedInSucceeded, userDetails } from '../../Actions';
+import DarkMode from '../DarkMode';
 
 class Login extends React.Component {
   constructor(props) {
     super(props);
+    console.log("Login Props",props);
     this.state = {
       tempPasswordRequired: false,
       isLoginError: false,
@@ -45,7 +47,7 @@ class Login extends React.Component {
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
       this.refs.loginForm.style.background = "rgb(35, 40, 56)";
-      this.refs.dashboardView.src = "/img/icon/dashboardViewDark.png";
+      // this.refs.dashboardView.src = "/img/icon/dashboardViewDark.png";
       this.refs.brainIcon.style.border = "5px solid rgb(23, 27, 37)";
       for (let i = 1; i <= 2; i++){
         this.refs[`p${i}`].style.color = "#fff";
@@ -120,7 +122,7 @@ class Login extends React.Component {
                     console.log("USER DETAILS ",u_details);
                     store.dispatch(setIsSignedInSucceeded());
                     store.dispatch(userDetails(u_details));
-                    
+
                     this.props.isAuthenticated(true);
               })
               .catch(err => {
@@ -171,7 +173,13 @@ class Login extends React.Component {
                             }
                     }} />
                     :
-                    <Redirect to="/dashboard" />  : null}
+                    <Redirect to={{
+                            pathname: '/TeamAdmin/user/dashboard',
+                            state: {
+                                cognito_user_id : this.state.user_cognito_id,
+                                player_name : this.state.name
+                            }
+                    }} />  : null}
             <div style={{marginTop: "5vh", marginBottom: "2vh"}} className="row login">
               <div className="col-md-12  mb-5">
                 <div className="text-center">
@@ -325,6 +333,7 @@ class Login extends React.Component {
           </div>
 
         </div>
+        <DarkMode isDarkMode={this.props.isDarkModeSet} />
         <Footer />
       </React.Fragment>
     );
@@ -332,6 +341,7 @@ class Login extends React.Component {
 }
 
 function mapStateToProps(state) {
+    console.log("ARMIN",state);
   return {
     // dispatching actions
     signedIn: state.isSignedInSuccess

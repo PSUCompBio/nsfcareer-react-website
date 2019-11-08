@@ -10,6 +10,7 @@ import GLB from './SoldierMesh.glb';
 import ArrowGLB from './ArrowMesh.glb';
 import './military.css';
 import { getStatusOfDarkmode } from '../../reducer';
+import DarkMode from './../../components/DarkMode';
 
 let obj;
 let stage = 0;
@@ -597,10 +598,10 @@ let pointArrayClone = [[
     [5, 9, 5, 7, 6.3],
     [6, 11, 3, 7, 7],
     [7, 27, 19, 23, 23],
- ]];			
-				
+ ]];
+
 class MilitaryPage extends React.Component {
-	
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -622,14 +623,14 @@ class MilitaryPage extends React.Component {
 			show_blinking_arrow_step2: 'none',
 			margin_left_trigulated: ''
 		};
-		
+
 		this.generateGraphs = this.generateGraphs.bind(this);
 		this.trigulateLoading = this.trigulateLoading.bind(this);
 		this.onChangeHandler = this.onChangeHandler.bind(this);
 		this.handleShowModal = this.handleShowModal.bind(this);
 		this.handleCloseModal = this.handleCloseModal.bind(this);
 	}
-	
+
 	componentDidMount() {
 		if (getStatusOfDarkmode().status === true) {
 		   console.log('dfsdgds')
@@ -638,24 +639,24 @@ class MilitaryPage extends React.Component {
 		this.sceneSetup();
 		this.loadModel(GLB, 'model');
 		this.startAnimationLoop();
-		
+
 		let getHeight = document.querySelector('.navbar').clientHeight;
 		document.querySelector(".military_container").style.marginTop = getHeight + 'px';
-		
+
 		window.addEventListener('resize', this.resize);
-		
+
 		this.setContainerHeight();
 	}
-	
+
 	componentWillUnmount() {
 		window.removeEventListener('resize', this.resize);
 	}
-		
+
 	resize = () => {
 		let getHeight = document.querySelector('.navbar').clientHeight;
 		document.querySelector(".military_container").style.marginTop = getHeight + 'px';
 	}
-	
+
 	setContainerHeight = () => {
 		let docHeight = document.body.clientHeight;
 		let headerHeight = document.querySelector('.navbar').clientHeight;
@@ -663,25 +664,25 @@ class MilitaryPage extends React.Component {
 		let conatainerHeight = parseFloat(docHeight) - parseFloat(headerHeight) - parseFloat(footerHeight);
 		document.querySelector(".military_container").style.minHeight = conatainerHeight + 'px';
 	}
-	
+
 	handleShowModal = () => {
 		this.setState({
 			show_blinking_arrow: 'none',
 			show_blinking_arrow_step2: 'block',
 			margin_left_trigulated: 'margin_left_trigulated'
 		});
-		
+
 		this.setState({
 			modalShow: true
 		});
 	}
-	
+
 	handleCloseModal = () => {
 		this.setState({
 			modalShow: false
 		});
 	}
-	
+
 	onChangeHandler = (event) => {
 		var fileInput = document.getElementById('file');
 		var filePath = fileInput.value;
@@ -690,47 +691,47 @@ class MilitaryPage extends React.Component {
 			alert('Please upload file having extensions .csv or .xls or .xls only.');
 			fileInput.value = '';
 			return false;
-		} 
-		
+		}
+
 		const data = new FormData();
 		data.append('file', event.target.files[0]);
-		
+
 		this.setState({
 			isModalLoading: true
 		});
-	
+
 		uploadModelRealData(data)
 			.then((response) => {
-				
+
 				const dataPointsHelmet = [];
 				dataPointsHelmet.push(['Time (ms)', 'Pressure (PSI)']);
-				
+
 				const dataPointsArm = [];
 				dataPointsArm.push(['Time (ms)', 'Pressure (PSI)']);
-				
+
 				const dataPointsChest = [];
 				dataPointsChest.push(['Time (ms)', 'Pressure (PSI)']);
-				
+
 				var results = response.data;
-				
+
 				for (var result in results) {
-					
+
 					const arr1 = [];
 					arr1.push(results[result]['time_msec']);
 					arr1.push(results[result]['head_pressure_psi']);
 					dataPointsHelmet.push(arr1);
-					
+
 					const arr2 = [];
 					arr2.push(results[result]['time_msec']);
 					arr2.push(results[result]['shoulder_pressure_psi']);
 					dataPointsArm.push(arr2);
-					
+
 					const arr3 = [];
 					arr3.push(results[result]['time_msec']);
 					arr3.push(results[result]['chest_pressure_psi']);
 					dataPointsChest.push(arr3);
 				}
-				
+
 				this.setState({
 					dataPoints1: dataPointsHelmet,
 					dataPoints2: dataPointsArm,
@@ -739,7 +740,7 @@ class MilitaryPage extends React.Component {
 					isModalLoading: false,
 					showAnalyzeData: 'inline-block'
 				});
-				
+
 			})
 			.catch((err) => {
 				alert('Error: ' + err);
@@ -748,14 +749,14 @@ class MilitaryPage extends React.Component {
 				});
 			});
 	}
-  
+
 	sceneSetup = () => {
 		// get container dimensions and use them for scene sizing
 		const width = window.innerWidth;
 		const height = window.innerHeight;
-		
+
 		const canvas = document.querySelector('#model_block');
-		
+
 		this.renderer = new THREE.WebGLRenderer({canvas, antialias:true});
 		this.renderer.gammaOutput = true;
 		this.renderer.gammaFactor = 2.2;
@@ -766,55 +767,55 @@ class MilitaryPage extends React.Component {
 
 		var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
 		this.scene.add( light );
-		
+
 		light = new THREE.DirectionalLight( 0xffffff );
 		this.scene.add( light );
 
 		this.camera = new THREE.PerspectiveCamera( 25, width / height, 1, 1000 );
 		this.camera.position.set(0, 0, 4.8);
-			
+
 	    // prepare controls (OrbitControls)
 		this.controls = new OrbitControls(this.camera, canvas);
 		//this.controls.autoRotate = true;
 		this.controls.minPolarAngle = Math.PI * 0.5;
 		this.controls.maxPolarAngle  = Math.PI * 0.5;
-		
+
 		// to disable zoom
 		this.controls.enableZoom = false;
 
 		// to disable rotation
 		//this.controls.enableRotate = false;
-		
+
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
 	};
-  
+
 	loadModel = (model, type) => {
 		const scene  = this.scene;
 		const me  = this;
 		var loader = new GLTFLoader();
-		
+
 		this.setState({
 			isLoading: true
 		});
-		
+
 		// Load a glTF resource
 		loader.load(
 			// resource URL
 			model,
 			// called when the resource is loaded
 			function ( gltf ) {
-				
+
 				scene.remove( obj );
-				
+
 				scene.add( gltf.scene );
-				
+
 				obj = gltf.scene;
-				
+
 				me.setState({
 					isLoading: false
 				});
-				
+
 				if (type === 'arrow') {
 					me.setState({
 						show_graph: 'block'
@@ -827,11 +828,11 @@ class MilitaryPage extends React.Component {
 			},
 			// called when loading has errors
 			function ( error ) {
-				
+
 				me.setState({
 					isLoading: false
 				});
-				
+
 				alert( 'An error happened' );
 				console.log( error );
 			}
@@ -844,7 +845,7 @@ class MilitaryPage extends React.Component {
 			this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			this.camera.updateProjectionMatrix();
 		}
-		
+
 		this.renderer.render(this.scene, this.camera);
 
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
@@ -865,15 +866,15 @@ class MilitaryPage extends React.Component {
     }
 
 	generateGraphs = () => {
-		
+
 		this.setState({
 			show_blinking_arrow: 'none',
 			show_blinking_arrow_step2: 'block',
 			margin_left_trigulated: 'margin_left_trigulated',
 			showAnalyzeData: 'inline-block'
 		});
-		
-		
+
+
 		pointArray[0] = pointArray[0].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -882,7 +883,7 @@ class MilitaryPage extends React.Component {
 				return element1;
 			});
 		});
-		
+
 		pointArray[1] = pointArray[1].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -891,7 +892,7 @@ class MilitaryPage extends React.Component {
 				return element1;
 			});
 		});
-		
+
 		pointArray[2] = pointArray[2].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -900,7 +901,7 @@ class MilitaryPage extends React.Component {
 				return element1;
 			});
 		});
-		
+
 		pointArrayClone[0] = pointArrayClone[0].map(function(element) {
 			return element = element.map(function(element1) {
 				if (!isNaN(element1))
@@ -909,12 +910,12 @@ class MilitaryPage extends React.Component {
 				return element1;
 			});
 		});
-		
+
 		const dataPoints1 = pointArray[0];
 		const dataPoints2 = pointArray[1];
 		const dataPoints3 = pointArray[2];
 		const dataPoints4 = pointArrayClone[0];
-		
+
 		this.setState({
 			dataPoints1: dataPoints1,
 			dataPoints2: dataPoints2,
@@ -922,15 +923,15 @@ class MilitaryPage extends React.Component {
 			dataPoints4: dataPoints4
 		});
 	}
-	
+
 	trigulateLoading = () => {
-		
+
 		this.setState({
 			show_triangular_graph: 'inline-block',
 			show_blinking_arrow_step2: 'none',
 			margin_left_trigulated: ''
 		});
-		
+
 		const timer = setTimeout(() => {
 			this.setState({
 				triangular_graph_text: 'Brain simulation completed',
@@ -939,12 +940,12 @@ class MilitaryPage extends React.Component {
 				triangular_blinking_class : '',
 			});
 		}, 6000);
-		
+
 		this.loadModel(ArrowGLB, 'arrow');
 	}
-	
+
 	render() {
-		const graph1Options = {		
+		const graph1Options = {
 			title: "HEAD SENSOR",
 			titleTextStyle: {
 				color: "#1fc1f7",
@@ -967,7 +968,7 @@ class MilitaryPage extends React.Component {
 			},
 			colors: ['#1fc1f7']
 		};
-		
+
 		const graph2Options = {
 			title: "SHOULDER SENSOR",
 			titleTextStyle: {
@@ -991,7 +992,7 @@ class MilitaryPage extends React.Component {
 			},
 			colors: ['#51fd21']
 		};
-		
+
 		const graph3Options = {
 			title: "CHEST SENSOR",
 			titleTextStyle: {
@@ -1015,7 +1016,7 @@ class MilitaryPage extends React.Component {
 			},
 			colors: ['#f01e1e']
 		};
-				
+
 		const cloneOptions = {
 			title: "TRIANGULATED APPLIED BLAST LOADING",
 			titleTextStyle: {
@@ -1044,7 +1045,7 @@ class MilitaryPage extends React.Component {
 				3: { color: '#00008b' },
 			}
 		};
-		
+
 		return (
 		  <React.Fragment>
 			<div className="military_container align-center__about-page">
@@ -1065,7 +1066,7 @@ class MilitaryPage extends React.Component {
 								</div>
 							 </div>
 							) : null}
-							
+
 							<div className="chart_container">
 							<div className="graph1 cu-margin-top">
 								<Chart
@@ -1102,7 +1103,7 @@ class MilitaryPage extends React.Component {
 							</div>
 						</div>
 						</div>
-						
+
 						<div style={{ display: this.state.show_triangular_graph_block }} className="animated zoomIn brain_section cu-align-center">
 						<h1 ref="h1" className="font-weight-bold">Brain Simulation Results</h1>
 						<div className="brain-image-container" >
@@ -1113,7 +1114,7 @@ class MilitaryPage extends React.Component {
 							/>
 						</div>
 					</div>
-						
+
 					</div>
 					<div className="col-md-4 col-sm-4">
 						<div className="create_data_block">
@@ -1159,7 +1160,7 @@ class MilitaryPage extends React.Component {
 					</div>
 					</div>
 				</div>
-				
+
 			 </div>
 			 <Modal
 				size="lg"
@@ -1171,7 +1172,7 @@ class MilitaryPage extends React.Component {
 					<Modal.Header closeButton>
 							<Modal.Title id="contained-modal-title-vcenter">
 							Upload Real Data
-							</Modal.Title> 
+							</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<h5>Upload a CSV or XLSX file with the following format</h5>
@@ -1233,6 +1234,7 @@ class MilitaryPage extends React.Component {
 					 </div>
 					) : null}
 				</Modal>
+                <DarkMode isDarkMode={this.props.isDarkModeSet} />
 			<Footer />
 		  </React.Fragment>
 		);

@@ -170,31 +170,41 @@ class Routing extends React.Component {
         <Route
           exact
           path="/Login"
-          render={(props) => (
+          render={(props) =>
             <Login
-              {...props}
+              {...this.props}
               screenWidth={this.state.windowWidth}
+              isDarkModeSet={this.checkDarkMode}
               isAuthenticated={(value) => this.settingAuthentication(value)}
               setUserDetails={(value) => this.setUserDetails(value)}
+
             />
-          )}
+          }
         />
         <Route
           exact
           path="/Profile"
-          render={() => <Profile isDarkModeSet={this.checkDarkMode} />}
+          render={(props) => <Profile {...props} isDarkModeSet={this.checkDarkMode} />}
         />
-        <Route exact path="/SignUp" component={SignUp} />
-        <Route exact path="/SignUpElse" component={SignUp} />
+        <Route
+            exact
+            path="/SignUp"
+            render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+            exact
+            path="/SignUpElse"
+            render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
         <Route
           exact
           path="/dashboard"
-          render={() => <Dashboard isDarkModeSet={this.checkDarkMode} />}
+          render={(props) => <Dashboard {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact
           path="/Users"
-          render={() => <Users isDarkModeSet={this.checkDarkMode} />}
+          render={(props) => <Users {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact
@@ -206,19 +216,61 @@ class Routing extends React.Component {
           path="/admin/view/user"
           render={(props) => <Profile {...props} isDarkModeSet={this.checkDarkMode} />}
         />
-
-
-        <Route exact path="/Forgot-Password" component={ForgotPassword} />
-        <Route exact path="/Details" component={About} />
-		<Route exact path="/Developer" component={Developer} />
-		<Route exact path="/Dash" component={Dash} />
-        <Route exact path="/Contact" component={Contact} />
-        <Route exact path="/TeamAdmin" component={TeamAdmin} />
-        <Route exact path="/OrganizationAdmin" component={OrganizationAdmin} />
-        <Route exact path="/Military" component={Military} />
-        <Route exact path="/Sports" component={Sports} />
-        <Route exact path="/IRB" component={IRBLinkContent} />
-        <Route exact path="/IRBParentConsent" component={IRBParentConsent} />
+        <Route
+            exact
+            path="/Forgot-Password"
+            render={(props) => <ForgotPassword {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+            exact
+            path="/Details"
+            render={(props) => <About {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+		<Route
+            exact
+            path="/Developer"
+            render={(props) => <Developer {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+		<Route
+            exact
+            path="/Dash"
+            render={(props) => <Dash {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+            exact
+            path="/Contact"
+            render={(props) => <Contact {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/TeamAdmin"
+            render={(props) => <TeamAdmin {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/OrganizationAdmin"
+            render={(props) => <OrganizationAdmin {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/Military"
+            render={(props) => <Military {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/Sports"
+            render={(props) => <Sports {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/IRB"
+            render={(props) => <IRBLinkContent {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/IRBParentConsent"
+            render={(props) => <IRBParentConsent {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
       </React.Fragment>
     );
   }

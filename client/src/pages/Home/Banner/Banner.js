@@ -58,7 +58,7 @@ class Banner extends React.Component {
                               inView ? this.removeAnimationMobileView('fadeInRight') : ''
                             }`}
                           >
-                            Accurate brain simulations help extend your{' '}<br />sensor data research.{' '}
+                            Accurate brain simulations help extend your sensor data research.
                           </h4>
                           <div
                             className={`underlined-text ${
@@ -103,7 +103,7 @@ class Banner extends React.Component {
                               src="/img/BannerImg/penState.png"
                               alt=""
                             />
-                            <img
+                        {/*<img
                               ref={ref}
                               className={`img-fluid animated ${
                                 inView ? this.removeAnimationMobileView('fadeIn') : ''
@@ -111,6 +111,7 @@ class Banner extends React.Component {
                               src="/img/BannerImg/ibm.png"
                               alt=""
                             />
+                            */}
                           </React.Fragment>
                         )}
                       </InView>

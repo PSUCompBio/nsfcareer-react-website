@@ -86,7 +86,7 @@ class Nav extends React.Component {
    // here timer function is being used to init the local storage data for User DETAILS
    // TODO : Update it with parent based state change
    if(JSON.parse(localStorage.getItem("state")) !== null ){
-       console.log(JSON.parse(localStorage.getItem("state")));
+       
    if(!this.isEquivalent(this.state.user_details, JSON.parse(localStorage.getItem("state")).userInfo)){
        this.setState({
            user_details : JSON.parse(localStorage.getItem("state")).userInfo
@@ -335,7 +335,7 @@ class Nav extends React.Component {
         {this.links('Details', '/Details')}
         {this.links('Contact us', '/Contact')}
 		{this.links('For Developers', '/Developer')}
-		
+
         {this.props.location.pathname !== '/SignUp' ? (
           <li
             onMouseEnter={this.hideSignOut}

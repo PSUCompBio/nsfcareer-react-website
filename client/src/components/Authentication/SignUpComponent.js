@@ -9,6 +9,10 @@ import CountryCode from '../../config/CountryCode.json';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
+import { getStatusOfDarkmode } from '../../reducer';
+
+import DarkMode from '../DarkMode';
+
 
 class SignUpComponent extends React.Component {
   constructor() {
@@ -269,7 +273,7 @@ class SignUpComponent extends React.Component {
             </div>
             : null
         }
-        
+
         <div className="form-row">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
@@ -372,6 +376,7 @@ class SignUpComponent extends React.Component {
 
       </div>
       <div className="footer-mobile-fix" >
+          <DarkMode isDarkMode={this.props.isDarkModeSet} />
           <Footer/>
   </div>
   </div>

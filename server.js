@@ -2570,7 +2570,9 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
     })
 })
 
+
 app.post(`${apiPrefix}getOrganizationAdminData`, (req,res) =>{
+    console.log("REQUEST RECEIVED ");
     request.post({ url: config.ComputeInstanceEndpoint + "getOrganizationAdminData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 

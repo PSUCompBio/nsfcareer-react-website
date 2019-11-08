@@ -2537,7 +2537,7 @@ tbody.player-table tr:nth-child(odd){
 
 }
 .hide-background {
-    background: white !important ;
+    background: transparent !important ;
 }
 
 .show-shadow {
