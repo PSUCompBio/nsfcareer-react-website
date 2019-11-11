@@ -2,7 +2,8 @@ import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import GLB from './Brain.glb';
+import GLB from './brain.gltf';
+import textureSrc from './Br_color2_2k.jpg';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import {Line} from 'react-chartjs-2';
@@ -92,10 +93,10 @@ class DashPage extends React.Component {
 		//this.scene.background = new THREE.Color( 0x8FBCD4 );
 		this.scene.background = new THREE.Color( "rgb(255, 255, 255)" );
 
-		var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+		var light = new THREE.HemisphereLight( 0xffffff, 0x444444, 0.5 );
 		this.scene.add( light );
 		
-		light = new THREE.DirectionalLight( 0xffffff );
+		light = new THREE.AmbientLight( 0x404040, 2);
 		this.scene.add( light );
 
 		this.camera = new THREE.PerspectiveCamera( 25, width / height, 1, 1000 );
@@ -135,9 +136,16 @@ class DashPage extends React.Component {
 			function ( gltf ) {
 				
 				scene.remove( obj );
+						
+				obj = gltf.scene;
+				
 				scene.add( gltf.scene );
 				
-				obj = gltf.scene;
+				var material = new THREE.MeshPhongMaterial({ transparent:true, color:0xB7956E, opacity: 0.7});
+				obj.traverse( function ( node ) {
+					node.material = material;
+					node.material.needsUpdate = true;
+				});
 				
 				me.setState({
 					isLoading: false
@@ -159,6 +167,34 @@ class DashPage extends React.Component {
 			}
 		);
 	};
+	
+	loadTexture = () => {
+		var manager = new THREE.LoadingManager();
+		var textureLoader = new THREE.TextureLoader(manager);
+		const me  = this;
+		manager.onStart = function () {
+			console.log('Loading started');
+			me.setState({
+				isLoading: true
+			});
+		};
+		
+		var map = textureLoader.load(textureSrc);
+		manager.onLoad = function () {
+			console.log('loaded');
+			me.setState({
+				isLoading: false
+			});
+			var material = new THREE.MeshPhongMaterial({map: map, side: THREE.DoubleSide});
+			obj.traverse( function ( node ) {
+				node.material = material;
+				node.material.needsUpdate = true;
+				node.castShadow = true;
+				node.receiveShadow = true;
+			});
+			console.log('change texture');
+		};
+	}
 
 	startAnimationLoop = () => {
 		if (this.resizeRendererToDisplaySize(this.renderer)) {
@@ -233,8 +269,18 @@ class DashPage extends React.Component {
 										) : null}
 								</div>
 								<div className="col-md-8 mb-5">
-								  <Line data={data} options={options}/>
+								   <Line data={data} options={options}/>
 								</div>
+							</div>
+							<div className="row text-center">
+								<div className="col-md-4">
+								</div>
+								<div className="col-md-8">
+								  <button style={{
+											float : "left",
+											marginLeft: "50px"
+										}} onClick={ this.loadTexture } className="btn btn-primary">Front Region</button>
+								</div>		
 							</div>
 						</div>
 					</div>
