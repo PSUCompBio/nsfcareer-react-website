@@ -10,13 +10,13 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
 import { getStatusOfDarkmode } from '../../reducer';
-
+import Spinner from '../Spinner/Spinner';
 import DarkMode from '../DarkMode';
 
 
 class SignUpComponent extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       toLogIn: false,
       isSignUpConfirmed: false,
@@ -30,6 +30,9 @@ class SignUpComponent extends React.Component {
       signupOrElse: { email: '', sex: '' },
       userType : "StandardUser"
     };
+    if(this.props.location.state && this.props.location.state.message ) {
+      this.state.message = this.props.location.state.message;
+    }
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -85,36 +88,44 @@ class SignUpComponent extends React.Component {
     this.setState({
       isSignUpError: false,
       isSignUpConfirmed: false,
-      isLoading: true
+      isLoading: true,
+      isSignUpInProgress : true
     });
     // converting formData to JSON
     const formJsonData = formDataToJson(formData);
     console.log(formJsonData);
-    signUp(formJsonData)
-      .then((response) => {
-        this.refs.signUpForm.reset();
-        // Now update the state with data that we added
-        if (response.data.message === 'success') {
-          // show alert
-          this.setState({
-            isSignUpError: false,
-            isSignUpConfirmed: true,
-            isLoading: false
-          });
-        } else {
-          this.setState({
-            isSignUpError: true,
-            isSignUpConfirmed: false,
-            isLoading: false,
-            signUpError: response.data.error
-          });
-        }
-      })
-      .catch((err) => {
-        e.target.reset();
-        // catch error
-        console.log('error : ', err);
-      });
+    // signUp(formJsonData)
+    //   .then((response) => {
+    //     this.refs.signUpForm.reset();
+    //     // Now update the state with data that we added
+    //     if (response.data.message === 'success') {
+    //       // show alert
+    //       this.setState({
+    //         isSignUpError: false,
+    //         isSignUpConfirmed: true,
+    //         isLoading: false
+    //       });
+    //     } else {
+    //       this.setState({
+    //         isSignUpError: true,
+    //         isSignUpConfirmed: false,
+    //         isLoading: false,
+    //         signUpError: response.data.error
+    //       });
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     e.target.reset();
+    //     // catch error
+    //     console.log('error : ', err);
+    //   });
+
+    // Redirect User to IRB form
+    this.props.history.push({
+        pathname : '/IRB',
+        state : { formData : formJsonData }
+    });
+
   }
 
   forJsx = (imgSrc, placeholder, name) => {
@@ -306,6 +317,9 @@ class SignUpComponent extends React.Component {
     );
   };
   render() {
+    if(this.state.isSignUpInProgress) {
+      return <Spinner/>
+    }
     if(this.state.isSignUpConfirmed){
         return <Redirect to="/IRB" />
     }
@@ -332,6 +346,14 @@ class SignUpComponent extends React.Component {
           <div className="col-md-6 col-lg-6 offset-md-3">
             <div style={{marginLeft : "3%", marginRight : "3%"}}className="card card-border">
               <div className="card-body">
+              {this.state.message ? (
+                <div
+                  className="alert alert-info api-response-alert"
+                  role="alert"
+                >
+                  <strong > Failure !</strong> {this.state.message}.
+                </div>
+              ) : null}
                 <div className="text-center brain-icon">
                   <img src="img/icon/brain.png" alt="" />
                 </div>

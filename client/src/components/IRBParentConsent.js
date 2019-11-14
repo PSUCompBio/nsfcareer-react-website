@@ -30,16 +30,24 @@ class IRBParentConsent extends React.Component {
         }
 
     }
+
+  componentWillMount() {
+
+    getUserDetailsForIRB({consent_token : this.state.consent_token})
+    .then(response => {
+          console.log("Inside set state of irb", JSON.stringify(response));
+        this.setState({
+            consent_user : response.data.data.Item
+        })
+    })
+    .catch(err => {
+        console.log(err);
+    })
+  }
+
   componentDidMount() {
-      getUserDetailsForIRB({consent_token : this.state.consent_token})
-      .then(response => {
-          this.setState({
-              consent_user : response.data.data.Item
-          })
-      })
-      .catch(err => {
-          console.log(err);
-      })
+
+
 
     // API to get the details of user whose consent is being approves
     if (getStatusOfDarkmode().status === true) {
@@ -61,7 +69,8 @@ class IRBParentConsent extends React.Component {
       this.setState({
           apiLoader : true,
           error : '',
-          message : ''
+          message : '',
+          isLoading : true
       });
       formData = JSON.parse(formData);
       formData["guardian_signature"] = sigPad.toDataURL("base64string") ;
@@ -69,18 +78,39 @@ class IRBParentConsent extends React.Component {
       confirmGuardianIRBConsent(formData)
       .then(response => {
           if(response.data.message == "success"){
-              console.log(response.data);
+
+              this.props.history.push({
+                pathname : '/Login',
+                state : {
+                  message : "Successfully approved consent form. Please login using the credentials your ward received in the mail"
+                }
+              })
+
+
           }
           else{
+            this.props.history.push({
+              pathname : '/SignUp',
+              state : {
+                message : "Error while signing up"
+              }
+            })
               // error
               console.log(response.data);
           }
       })
       .catch(err => {
+
+        this.props.history.push({
+          pathname : '/SignUp',
+          state : {
+            message : "Error while signing up"
+          }
+        })
             console.log(err);
       })
   }
-  
+
   updateSignature = (e) =>{
       console.log(e);
   }
@@ -93,6 +123,9 @@ class IRBParentConsent extends React.Component {
         )
     }
     else {
+      if(this.state.isSignUpInProgress) {
+        return <Spinner/>
+      }
     return (
       <React.Fragment>
         <div style={{ justifyContent: "center", alignItems: "center", gridTemplateColumns: "1fr auto", marginTop: "15vh"}} className="container">
@@ -114,6 +147,8 @@ class IRBParentConsent extends React.Component {
                     <h6 ref="h1">Minor's Details: </h6>
 
                 </div>
+
+
                 <div className="col-md-12">
                 <form>
                     <div class="form-group row">
@@ -204,6 +239,7 @@ class IRBParentConsent extends React.Component {
                             marginBottom : "5%"
                         }}
                     >Submit</button>
+
                         </div>
 
 
@@ -215,6 +251,13 @@ class IRBParentConsent extends React.Component {
 
             </div>
         </div>
+        {this.state.isLoading ? (
+          <div className="d-flex justify-content-center center-spinner">
+            <div className="spinner-border text-primary" role="status">
+              <span  className="sr-only">Approving Consent !!...</span>
+            </div>
+          </div>
+        ) : null}
         <Footer />
       </React.Fragment>
   );
