@@ -168,6 +168,27 @@ input::placeholder {
   border-radius: 10px !important;
   color: #fff !important;
 }
+
+.inspect-btn {
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: solid 1px #0f81dc;
+  color: #fff;
+  background-color: #1e76b9;
+  width: 100% !important;
+}
+
+.load-time-btn {
+  padding: 3px 10px;
+  border-radius: 12px;
+  line-height: 22px;
+  border: solid 1px #9abfda;
+  color: "black";
+  background-color: #9abfda;
+  width: 100% !important;
+  font-size: 14px;
+}
+
 #dark-mode-color::placeholder{
 color: #fff!important;
 opacity: 1!important;
