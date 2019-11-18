@@ -25,14 +25,21 @@ import Section22 from './IRBcontent/Section22';
 import { getStatusOfDarkmode } from '../reducer';
 import SignatureCanvas from 'react-signature-canvas'
 import Footer from './Footer';
+import { signUp } from '../apis';
+import Spinner from './Spinner/Spinner';
+import { Redirect } from 'react-router-dom';
 
-
+let userSignature = {}
 class IRBLinkContent extends React.Component {
     constructor(props){
         super(props);
-        
-        console.log(props);
+        this.state = {
+          user_details : JSON.parse(this.props.location.state.formData),
+          isLoading : false
+        }
+        console.log('IRB link props', props);
     }
+
   componentDidMount() {
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
@@ -46,6 +53,8 @@ class IRBLinkContent extends React.Component {
     }
   }
   render() {
+
+
     return (
       <React.Fragment>
         <div style={{ justifyContent: "center", alignItems: "center", gridTemplateColumns: "1fr auto", marginTop: "15vh"}} className="container">
@@ -53,11 +62,11 @@ class IRBLinkContent extends React.Component {
 
                 <div  className="col-md-6 col-sm-12">
                     <h2 ref="h1">Institutional Review Board Consent Process (IRB)</h2>
-                    <p style={{ color : "#848484", fontWeight: "400", fontSize : "1.6rem"}}>IRB Introducation here ... </p>
+                    <p style={{ color : "#848484", fontWeight: "400", fontSize : "1.6rem"}}>IRB Introduction here ... </p>
                 </div>
                 <div style={{marginBottom : "1rem"}} className="col-md-6 col-sm-12">
                     <iframe width="100%" height="400px"
-                        allowfullscreen="allowfullscreen"
+                        allowFullScreen="allowFullScreen"
                         mozallowfullscreen="mozallowfullscreen"
                         msallowfullscreen="msallowfullscreen"
                         oallowfullscreen="oallowfullscreen"
@@ -95,36 +104,95 @@ class IRBLinkContent extends React.Component {
                 <div style={{marginTop : "1rem" }} className="col-md-6 col-sm-12">
                     <h3>Your signature here </h3>
                     <SignatureCanvas penColor='black'
-    canvasProps={{width: 300, height: 100, className: 'sigCanvas'}} />
-<div><button
-  type="button"
-  onClick={(e)=>{window.location.href="/Login"}}
-  style={{
-      width: "100%",
-    background: "-webkit-linear-gradient(45deg, #174f86, #2196f3)",
-    background: "-o-linear-gradient(45deg, #174f86, #2196f3)",
-    background: "linear-gradient(45deg, #174f86, #2196f3)",
-    lineHeight: "50px",
-    textAlign: "left",
-    color: "#fff",
-    fontSize: "18px",
-    fontWeight: "900",
-    webkitBoxShadow: "0 0 10px -1px rgba(0, 0, 0, 0.1)",
-    boxShadow: "0 0 10px -1px rgba(0, 0, 0, 0.1)",
-    border: "1px solid #fff",
-    position: "relative",
-    cursor: "pointer",
-    paddingLeft: "20px"
-  }}
->Submit</button></div>
+                      canvasProps={{width: 300, height: 100, className: 'sigCanvas'}} ref={(ref) => { userSignature = ref}}/>
+                    <div>
+                        <button type="button"
+                          onClick={(e)=> {
+                              let user_details = this.state.user_details
+                              user_details["user_signature"] = userSignature.toDataURL("base64string");
+                              console.log("USER DETAILS ARE ", user_details)
+                              this.setState({
+                                isLoading : true
+                              })
+                              signUp(JSON.stringify(user_details))
+                                .then((response) => {
+                                  console.log("RESPONSE FROM SERVER IS ", response)
+                                    if(response.data.message == "success") {
+                                      this.props.history.push({
+                                        pathname : '/Login',
+                                        state : {
+                                          message : response.data.message_details
+                                        }
+                                      })
+                                    } else {
+                                      this.props.history.push({
+                                          pathname : '/SignUp',
+                                        state : {
+                                          message : "Error while signing up!"
+                                        }
+                                      })
+                                    }
 
+                                  }
+                                  // Now update the state with data that we added
+                                  // if (response.data.message === 'success') {
+                                  //   // show alert
+                                  //   // this.setState({
+                                  //   //   isSignUpError: false,
+                                  //   //   isSignUpConfirmed: true,
+                                  //   //   isLoading: false
+                                  //   // });
+                                  //   window.location.href = "/Login"
+                                  //
+                                  // } else {
+                                  //   // this.setState({
+                                  //   //   isSignUpError: true,
+                                  //   //   isSignUpConfirmed: false,
+                                  //   //   isLoading: false,
+                                  //   //   signUpError: response.data.error
+                                  //   // });
+                                  //   window.location.href="/SignUp"
+                                  // }
+                                )
+                                .catch((err) => {
+
+                                  this.props.history.push({
+                                      pathname : '/SignUp',
+                                    state : {
+                                      message : "Error while signing up!"
+                                    }
+                                  })
+                                });
+                            }
+                          }
+                          style={{
+                            width: "100%",
+                            background: "-webkit-linear-gradient(45deg, #174f86, #2196f3)",
+                            background: "-o-linear-gradient(45deg, #174f86, #2196f3)",
+                            background: "linear-gradient(45deg, #174f86, #2196f3)",
+                            lineHeight: "50px",
+                            textAlign: "left",
+                            color: "#fff",
+                            fontSize: "18px",
+                            fontWeight: "900",
+                            webkitBoxShadow: "0 0 10px -1px rgba(0, 0, 0, 0.1)",
+                            boxShadow: "0 0 10px -1px rgba(0, 0, 0, 0.1)",
+                            border: "1px solid #fff",
+                            position: "relative",
+                            cursor: "pointer",
+                            paddingLeft: "20px"
+                          }}> Submit</button>
+                    </div>
+                </div>
             </div>
-
-            </div>
-
-
-
         </div>
+        {this.state.isLoading ? (
+          <div className="d-flex justify-content-center center-spinner">
+            <div className="spinner-border text-primary" role="status">
+              <span  className="sr-only">Signing You Up !!...</span>
+            </div>
+          </div>
+        ) : null}
         <Footer />
       </React.Fragment>
     );

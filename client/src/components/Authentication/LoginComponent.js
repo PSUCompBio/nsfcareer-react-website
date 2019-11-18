@@ -24,8 +24,13 @@ class Login extends React.Component {
       userDetails : '',
       isValidPlayer : false,
       name : '',
-      cognito_user_id : ''
+      cognito_user_id : '',
+      signUpStatus : false
     };
+    if(this.props.location.state && this.props.location.state.message ) {
+      this.state.message = this.props.location.state.message;
+    }
+    console.log("JSON.STRINGIFY(THIS.STATE)", this.state);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -211,10 +216,18 @@ class Login extends React.Component {
               <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
                 <div style={{paddingLeft : "0% !important"}}ref="loginForm" style={{margin: "3%"}} className="card card-border">
                   <div className="card-body">
+
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
                     </div>
-
+                    {this.state.message ? (
+                      <div
+                        className="alert alert-info api-response-alert"
+                        role="alert"
+                      >
+                        <strong > Success !</strong> {this.state.message}.
+                      </div>
+                    ) : null}
                     <form onSubmit={this.handleSubmit} ref="signInForm">
                       <div className="input-group mt-3 mb-5">
                         <div className="input-group-prepend">

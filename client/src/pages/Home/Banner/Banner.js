@@ -9,6 +9,14 @@ WebFont.load({
   }
 });
 class Banner extends React.Component {
+
+  isBrowser() {
+    if(this.props.screenWidth >= screenWidth[4].screen1024) return true;
+    else {
+      return false;
+    }
+  }
+
   removeAnimationMobileView(animation) {
     if (this.props.screenWidth > screenWidth[0].screen425) return animation;
     else {
@@ -48,7 +56,7 @@ class Banner extends React.Component {
                               inView
                                 ? this.removeAnimationMobileView('fadeInLeft')
                                 : ''
-                            }`}
+                            }`} style = {{ paddingRight : this.isBrowser() ? '30%' : '' }}
                           >
                             TRANSFORM YOUR SENSOR DATA
                           </h1>
@@ -56,7 +64,7 @@ class Banner extends React.Component {
 
                             className={`mobile-head-section mobile-section-mt-1 animated ${
                               inView ? this.removeAnimationMobileView('fadeInRight') : ''
-                            }`}
+                            }`} style = {{ paddingRight : this.isBrowser() ? '25%' : '' }}
                           >
                             Accurate brain simulations help extend your sensor data research.
                           </h4>

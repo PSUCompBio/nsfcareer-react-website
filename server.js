@@ -775,7 +775,16 @@ function getUserDbData(user_name, cb) {
     });
 }
 
-
+function getAge(dob) {
+  let currentDate = new Date();
+  let birthDate = new Date(dob);
+  let age = currentDate.getFullYear() - birthDate.getFullYear()
+  let month = currentDate.getMonth() - birthDate.getMonth()
+  if ( month < 0 || ( month === 0 && currentDate.getDate() < birthDate.getDate() )) {
+    age = age - 1
+  }
+  return age;
+}
 
 
 
@@ -881,8 +890,8 @@ function convertXLSXDataToJSON(buf,cb){
                 }
                 headers[col] = value
                 .split(" ")
-                .join("_")
                 .replace(/[{()}]/g, '')
+                .join("_")
                 .toLowerCase();
                 continue;
             }
@@ -1244,6 +1253,7 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
         })
     })
 });
+
 app.post(`${apiPrefix}signUp`, (req, res) => {
 
 
@@ -1269,6 +1279,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
         else {
 
             var UserData = data.User;
+            req.body["user_cognito_id"] = UserData.Username;
             //Now check type of User and give permission accordingly
             // res.send(data);
             // user_type
@@ -1331,7 +1342,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                         console.log("DB ERRRRRR =============================== \n", err);
 
                         res.send({
-                            message: "faiure",
+                            message: "failure",
                             error: dberr.code
                         });
                     }
@@ -1339,20 +1350,74 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                         // Add user to corresponding group...
                         // event.user_type
                         // event.user_name
-                        console.log(tempData);
+                        // console.log(tempData);
 
                         addUserToGroup(tempData, function (groupAddErr, groupData) {
                             if (groupAddErr) {
 
                                 res.send({
-                                    message: "faiure",
+                                    message: "failure",
                                     error: groupAddErr.message
                                 })
                             }
                             else {
-                                res.send({
-                                    message: "success"
-                                })
+
+                              let age = getAge(mergedObject.dob);
+                              console.log("actual age is ", age);
+                              // Adding user's age in details
+                              mergedObject["age"] = age;
+
+                              if( age < 18) {
+
+                                // Disable user account
+
+
+
+
+                              }
+
+                              // Sending request to service to generate IRB form
+                              request.post({
+                                url: config.ComputeInstanceEndpoint + "IRBFormGenerate",
+                                json: mergedObject
+                              }, function (err, httpResponse, body) {
+                                  if (err) {
+                                      console.log('irb error is : ', err);
+                                      res.send({
+                                          message: "failure",
+                                          error: err
+                                      })
+                                  }
+                                  else {
+                                      console.log("response body from irb", httpResponse.body);
+                                      if( age > 18 ) {
+                                        res.send({
+                                            message: "success",
+                                            message_details : "Successfully created account ! Check your mail for temporary login credentials"
+                                        })
+                                      } else {
+
+                                        disableUser(req.body.user_name, function (err, data) {
+                                            if (err) {
+                                               console.log("Failed to disable user",req.body.user_name )
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err
+                                                })
+                                            }
+                                            else {
+                                              res.send({
+                                                message : "success",
+                                                message_details : "Your request has been successfully mailed to your guardian for approval"
+                                              })
+                                            }
+                                        })
+
+                                      }
+
+                                  }
+                              })
+
 
                             }
                         });
@@ -1364,6 +1429,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
         }
     })
+
+
 });
 
 app.post(`${apiPrefix}logIn`, (req, res) => {
@@ -2406,23 +2473,37 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
                 }
                 else{
                     // CHANGE it TO TRUE
-                    user_data["isIRBComplete"] = false ;
+                    user_data["isIRBComplete"] = true ;
                     user_data["guardian_first_name"] = req.body.guardian_first_name ;
                     user_data["guardian_last_name"] = req.body.guardian_last_name ;
                     user_data["guardian_signature"] = req.body.guardian_signature ;
+
                     // Store the code in DynamoDB
                     addRecordInUsersDDB(user_data)
                     .then(value => {
-                                // CALL API TO Make IRB Form
-                                request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
-                                    if (err) {
-                                        res.send({ message: 'failure', error: err });
-                                    }
-                                    else {
-                                        console.log(httpResponse.body);
-                                        res.send(httpResponse.body);
-                                    }
-                                })
+
+                          // Call API To Make IRB Form
+                          request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
+                              if (err) {
+                                  res.send({ message: 'failure', error: err });
+                              }
+                              else {
+                                  console.log(httpResponse.body);
+                                  enableUser(req.body.user_cognito_id, function (err, data) {
+                                      if (err) {
+                                          res.send({
+                                              message: "failure",
+                                              error: err
+                                          })
+                                      }
+                                      else {
+                                          res.send(httpResponse.body);
+                                      }
+                                  })
+
+                              }
+                          })
+
                     })
                     .catch(err => {
                         res.send({

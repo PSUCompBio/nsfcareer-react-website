@@ -82,9 +82,12 @@ class Profile extends React.Component {
         this.handleDateChange = this.handleDateChange.bind(this);
     }
     onChangeHandler = (event) => {
+        event.persist();
+
         this.setState({
             selectedFile: event.target.files[0]
         });
+        this.onClickHandler(event.target.files[0]);
     };
 
     handeChange = (e) => {
@@ -112,7 +115,7 @@ class Profile extends React.Component {
     getCountryName = (e) => {};
 
 
-    onClickHandler = () => {
+    onClickHandler = (profile_pic) => {
         const data = new FormData();
         this.setState({
             isFileBeingUploaded: true,
@@ -128,11 +131,11 @@ class Profile extends React.Component {
             user_id = this.state.user.user_cognito_id ;
         }
 
-        data.append('profile_pic', this.state.selectedFile);
+        data.append('profile_pic', profile_pic);
         data.append('user_cognito_id', user_id);
 
-        console.log("THIS IS FORM DATA ",data);
-        console.log("VALUE TO BE PRINTED ",user_id);
+        // console.log("THIS IS FORM DATA ",data);
+        // console.log("VALUE TO BE PRINTED ",user_id);
         uploadProfilePic(data)
         .then((response) => {
             console.log(response);
@@ -144,8 +147,10 @@ class Profile extends React.Component {
                 )
                 .then((res) => {
                     console.log(res.data);
+
                     this.setState({
                         profile_picture_url: res.data.profile_picture_url
+
                     });
                     this.setState({ isUploading: false });
 
@@ -405,7 +410,7 @@ class Profile extends React.Component {
                                                     <Input
                                                         className="profile-input" type="text" name="name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
                                                         <span class="input-group-addon profile-edit-icon"
-                                                            >
+                                                        >
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
                                                           </span>
                                                       </div>
@@ -656,36 +661,8 @@ class Profile extends React.Component {
                                         Selfie Uploaded{' '}
 
                                     </p>
-                                    <div className="file-upload-input-div">
-                                    <input
-                                        onChange={this.onChangeHandler}
-                                        type="file"
-                                        className="mt-2 btn btn-primary profile-upload-input-button"
-                                        style={{lineHeight : "1",
-                                            backgroundColor: "#0f81dc",
-                                            width : "inherit",
-                                            borderBottomColor : "#0f81dc !important"
-                                        }}
-                                        name="profile_pic"
-                                        />
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={this.onClickHandler}
-                                        className="btn btn-primary"
-                                        style={{lineHeight : "1",
-                                            fontSize : "1.2em",
-                                            backgroundColor: "#0f81dc",
-                                            width : "inherit",
-                                            borderBottomLeftRadius: "8px",
-                                            borderBottomRightRadius: "8px",
-                                            borderTopLeftRadius: "0px",
-                                            borderTopRightRadius: "0px"}}
 
-                                        >
-                                        <i class="fa fa-upload" aria-hidden="true"> Upload</i>
-                                    </button>
-                                    <p className="jpg-png-only">* jpeg, jpg & png only</p>
+
                                     {this.state.isUploading ? (
                                         <div className="d-flex justify-content-center center-spinner">
                                             <div
@@ -715,10 +692,33 @@ class Profile extends React.Component {
 
                                         </UncontrolledAlert>
                                     ) : null}
-
+                                    <br/>
                                     {this.state.user.is_selfie_image_uploaded ? (
                                         <div>
-                                            <Img className="svg img-fluid" src={this.state.user.profile_picture_url} alt="" />
+                                        <button className = {`load-time-btn mt-1 mb-4`}>
+                                        <p>
+                                        Last Updated : {this.state.selfie_latest_upload_details[0]}
+                                        </p>
+                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.selfie_latest_upload_details[1]}
+                                        </p>
+
+                                        </button>
+                                        <div>
+                                        <input
+                                            onChange={this.onChangeHandler}
+                                            type="file"
+                                            name="profile_pic"
+                                            id="file"
+                                            style = {{
+                                              display : "none"
+                                            }}
+                                            />
+                                        <label for="file" className = "inspect-btn mt-1 mb-4" style={{
+                                          textAlign : "center"
+                                        }}>
+                                        Update
+                                        </label>
+                                        </div>
                                             <DownloadBtn
 
                                                 style={{
@@ -728,7 +728,22 @@ class Profile extends React.Component {
                                                 content="Download 3d Selfie"
                                                 />
                                         </div>
-                                    ) : null}
+                                    ) : (<div>
+                                    <input
+                                        onChange={this.onChangeHandler}
+                                        type="file"
+                                        name="profile_pic"
+                                        id="file"
+                                        style = {{
+                                          display : "none"
+                                        }}
+                                        />
+                                    <label for="file" className = "inspect-btn mt-1 mb-4" style={{
+                                      textAlign : "center"
+                                    }}>
+                                    Upload
+                                    </label>
+                                    </div>)}
                                 </Col>
                                 {/*
                                 <Col md={4}>
@@ -785,7 +800,20 @@ class Profile extends React.Component {
                                     <br/>
                                     {this.state.user.is_selfie_model_uploaded ? (
                                         <div>
+                                        <button className = {`load-time-btn mt-1 mb-4`}>
+                                        <p>
+                                        Last Updated : {this.state.simulation_file_latest_upload_details[0]}
+                                        </p>
+                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.simulation_file_latest_upload_details[1]}</p>
+                                        </button>
                                             <img src={this.state.user.avatar_url} alt="" />
+                                            <button
+                                              style={{
+                                                  width : "100%"
+                                              }}
+                                              className={`inspect-btn mt-1 mb-4`} type="button">
+                                              Inspect
+                                            </button>
                                             <DownloadBtn
                                                 style={{
                                                     width : "100%"
@@ -818,7 +846,19 @@ class Profile extends React.Component {
                                     <br/>
                                     {this.state.user.is_selfie_inp_uploaded ? (
                                         <div>
-
+                                        <button className = {`load-time-btn mt-1 mb-4`}>
+                                        <p >
+                                        Last Updated : {this.state.inp_latest_upload_details[0]}
+                                        </p>
+                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.inp_latest_upload_details[1]}</p>
+                                        </button>
+                                            <button
+                                              style={{
+                                                  width : "100%"
+                                              }}
+                                              className={`inspect-btn mt-1 mb-4`} type="button">
+                                              Inspect
+                                            </button>
                                             <DownloadBtn
                                                 style={{
                                                     width : "100%"
@@ -900,7 +940,7 @@ class Profile extends React.Component {
         };
 
         returnComponent = () => {
-            console.log(this.state);
+
             if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
                 return <Redirect to="/Login" />;
             } else if (Object.entries(this.state.user).length === 0) {
@@ -923,12 +963,40 @@ class Profile extends React.Component {
                     getUserDetails({user_cognito_id : this.state.profile_to_view})
                     .then((response) => {
                         // store.dispatch(userDetails(response.data))
-                        console.log(response.data);
+                        console.log('RESPONSE DATA IS ', response.data);
+                        let inp_latest_url_details = ""
+                        let selfie_latest_url_details = ""
+                        let simulation_file_url_details = ""
+                        if(response.data.data.inp_file_url) {
+                          let details = response.data.data.inp_file_url.split(".inp")[0].split('/');
+                          let timestamp = details[details.length - 1]
+                          let date = new Date(parseInt(timestamp))
+                          inp_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+
+                        }
+                        if(response.data.data.profile_picture_url) {
+                          let details = response.data.data.profile_picture_url.split(".png")[0].split('/');
+
+                          let timestamp = details[details.length - 1]
+
+                          let date = new Date(parseInt(timestamp));
+
+                          selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                        }
+                        if(response.data.data.simulation_file_url) {
+                          let details = response.data.data.simulation_file_url.split(".png")[0].split('/');
+                          let timestamp = details[details.length - 1]
+                          let date = new Date(parseInt(timestamp))
+                          simulation_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                        }
                         this.setState({
                             user: { ...this.state.user, ...response.data.data },
                             isLoading: false,
                             isAuthenticated: true,
-                            isCheckingAuth: false
+                            isCheckingAuth: false,
+                            inp_latest_upload_details : inp_latest_url_details,
+                            selfie_latest_upload_details : selfie_latest_url_details,
+                            simulation_file_latest_upload_details : simulation_file_url_details
                         });
 
                         if (getStatusOfDarkmode().status === true) {
