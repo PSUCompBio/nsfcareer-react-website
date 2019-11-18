@@ -2,7 +2,9 @@ import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import GLB from './Brain.glb';
+import GLB from './brain_with_spheres.glb';
+import textureSrc from './Br_color.jpg';
+import yellowTextureSrc from './Br_color_mixed.jpg';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import {Line} from 'react-chartjs-2';
@@ -43,12 +45,16 @@ const data = {
 
 let obj;
 
+var manager = new THREE.LoadingManager();
+var textureLoader = new THREE.TextureLoader(manager);
+
 class DashPage extends React.Component {
 	
 	constructor(props) {
 		super(props);
 		this.state = {
 			isLoading: false,
+			condition: false
 		};
 	}
 	
@@ -91,15 +97,16 @@ class DashPage extends React.Component {
 		this.scene = new THREE.Scene();
 		//this.scene.background = new THREE.Color( 0x8FBCD4 );
 		this.scene.background = new THREE.Color( "rgb(255, 255, 255)" );
-
-		var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-		this.scene.add( light );
 		
-		light = new THREE.DirectionalLight( 0xffffff );
-		this.scene.add( light );
+		this.camera = new THREE.PerspectiveCamera( 25, width / height, 0.01, 1000 );
+		this.camera.position.set(-0.3, 0.3, 0.3);
 
-		this.camera = new THREE.PerspectiveCamera( 25, width / height, 1, 1000 );
-		this.camera.position.set(0, 0, 3);
+		this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		this.light.position.copy( this.camera.position );
+		this.scene.add( this.light );
+		
+		const ambientLight = new THREE.AmbientLight( 0x404040, 1);
+		this.scene.add( ambientLight );
 			
 	    // prepare controls (OrbitControls)
 		this.controls = new OrbitControls(this.camera, canvas);
@@ -107,8 +114,10 @@ class DashPage extends React.Component {
 		//this.controls.minPolarAngle = Math.PI * 0.5;
 		//this.controls.maxPolarAngle  = Math.PI * 0.5;
 		
+		this.controls.addEventListener( 'change', this.lightUpdate );
+		
 		// to disable zoom
-		this.controls.enableZoom = false;
+		//this.controls.enableZoom = false;
 
 		// to disable rotation
 		//this.controls.enableRotate = false;
@@ -116,6 +125,10 @@ class DashPage extends React.Component {
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
 	};
+	
+	lightUpdate = () => {
+		this.light.position.copy( this.camera.position );
+	}
   
 	loadModel = (model) => {
 		const scene  = this.scene;
@@ -135,13 +148,35 @@ class DashPage extends React.Component {
 			function ( gltf ) {
 				
 				scene.remove( obj );
-				scene.add( gltf.scene );
-				
+						
 				obj = gltf.scene;
+								
+				var map = textureLoader.load(textureSrc);
+				map.encoding = THREE.sRGBEncoding;
+				//map.flipY = false;
 				
-				me.setState({
-					isLoading: false
-				});
+				manager.onStart = function () {
+					console.log('Loading started');
+					me.setState({
+						isLoading: true
+					});
+				};
+				
+				manager.onLoad = function () {
+					console.log('loaded');
+					me.setState({
+						isLoading: false
+					});
+					var material = new THREE.MeshPhongMaterial({map: map, cache: true});
+					obj.traverse( function ( node ) {
+						node.material = material;
+						node.material.needsUpdate = true;
+						node.castShadow = true;
+						node.receiveShadow = true;
+					});
+					
+					scene.add( gltf.scene );
+				};
 				
 			},
 			// called while loading is progressing
@@ -159,6 +194,51 @@ class DashPage extends React.Component {
 			}
 		);
 	};
+	
+	loadTexture = () => {
+		
+		if (this.state.isLoading) {
+			return false;
+		}
+		
+		this.setState( { condition : !this.state.condition } );
+				
+		const src = this.state.condition ? textureSrc : yellowTextureSrc;
+		
+		const me  = this;
+		manager.onStart = function () {
+			console.log('Loading started');
+			me.setState({
+				isLoading: true
+			});
+		};
+		
+		var map = textureLoader.load(src);
+		map.encoding = THREE.sRGBEncoding;
+		//map.flipY = false;
+		
+		this.camera.position.set(-0.3, 0.3, 0.3);
+		this.controls.update();
+		
+		manager.onLoad = function () {
+			console.log('loaded');
+			me.setState({
+				isLoading: false
+			});
+			var material = new THREE.MeshPhongMaterial({map: map, cache: true});
+			obj.traverse( function ( node ) {
+				node.material = material;
+				node.material.needsUpdate = true;
+				node.castShadow = true;
+				node.receiveShadow = true;
+			});
+			
+			console.log('change texture');
+		};
+		
+		
+		
+	}
 
 	startAnimationLoop = () => {
 		if (this.resizeRendererToDisplaySize(this.renderer)) {
@@ -233,8 +313,18 @@ class DashPage extends React.Component {
 										) : null}
 								</div>
 								<div className="col-md-8 mb-5">
-								  <Line data={data} options={options}/>
+								   <Line data={data} options={options}/>
 								</div>
+							</div>
+							<div className="row text-center">
+								<div className="col-md-4">
+								</div>
+								<div className="col-md-8">
+								  <button style={{
+											float : "left",
+											marginLeft: "50px"
+										}} onClick={ this.loadTexture } id="add_remove_texture" className="btn btn-primary">Front Region</button>
+								</div>		
 							</div>
 						</div>
 					</div>
