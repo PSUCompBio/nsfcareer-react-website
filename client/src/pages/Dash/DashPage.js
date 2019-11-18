@@ -2,9 +2,9 @@ import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import GLB from './brain.glb';
-import textureSrc from './Brain_texture1.jpg';
-import yellowTextureSrc from './Br_color_2K_yellow.jpg';
+import GLB from './brain_with_spheres.glb';
+import textureSrc from './Br_color.jpg';
+import yellowTextureSrc from './Br_color_mixed.jpg';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import {Line} from 'react-chartjs-2';
@@ -98,8 +98,8 @@ class DashPage extends React.Component {
 		//this.scene.background = new THREE.Color( 0x8FBCD4 );
 		this.scene.background = new THREE.Color( "rgb(255, 255, 255)" );
 		
-		this.camera = new THREE.PerspectiveCamera( 25, width / height, 1, 1000 );
-		this.camera.position.set(0, 0, 3);
+		this.camera = new THREE.PerspectiveCamera( 25, width / height, 0.01, 1000 );
+		this.camera.position.set(-0.3, 0.3, 0.3);
 
 		this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		this.light.position.copy( this.camera.position );
@@ -127,7 +127,7 @@ class DashPage extends React.Component {
 	};
 	
 	lightUpdate = () => {
-		 this.light.position.copy( this.camera.position );
+		this.light.position.copy( this.camera.position );
 	}
   
 	loadModel = (model) => {
@@ -153,7 +153,7 @@ class DashPage extends React.Component {
 								
 				var map = textureLoader.load(textureSrc);
 				map.encoding = THREE.sRGBEncoding;
-				map.flipY = false;
+				//map.flipY = false;
 				
 				manager.onStart = function () {
 					console.log('Loading started');
@@ -215,7 +215,10 @@ class DashPage extends React.Component {
 		
 		var map = textureLoader.load(src);
 		map.encoding = THREE.sRGBEncoding;
-		map.flipY = false;
+		//map.flipY = false;
+		
+		this.camera.position.set(-0.3, 0.3, 0.3);
+		this.controls.update();
 		
 		manager.onLoad = function () {
 			console.log('loaded');
@@ -229,8 +232,11 @@ class DashPage extends React.Component {
 				node.castShadow = true;
 				node.receiveShadow = true;
 			});
+			
 			console.log('change texture');
 		};
+		
+		
 		
 	}
 
