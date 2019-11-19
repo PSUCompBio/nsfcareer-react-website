@@ -101,20 +101,22 @@
         }
 
         onChangeHandler = (event) => {
+            event.persist();
             console.log(event.target.files[0]);
             this.setState({
                 selectedFile: event.target.files[0]
             });
+            this.onClickHandler(event.target.files[0])
         };
 
-        onClickHandler = () => {
+        onClickHandler = (selected_file) => {
             const data = new FormData();
             this.setState({
                 isUploading: true,
                 isFileUploaded: false,
                 fileUploadError: ''
             });
-            data.append('sensor_csv_file', this.state.selectedFile);
+            data.append('sensor_csv_file', selected_file);
             console.log(data);
             this.setState({
                 uploadMessageLog : ''
@@ -366,25 +368,25 @@
                             width : "100%"
                             }} className="btn btn-primary"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> Upload Data</button>
                             */}
-                            <div class="input-group mb-3 input-group-sm">
+                            <div class="input-group mb-3 input-group-sm" style={{marginTop:"1rem"}}>
 
                                 <div  class="input-group-prepend">
                                     <input
                                         onChange={this.onChangeHandler}
                                         type="file"
-                                        className="btn btn-primary upload-left-side-button"
                                         name="sensor_csv_file"
-                                        style={{width : "30%", lineHeight : "3", backgroundColor: "#0f81dc"
+                                        id="file"
+                                        style={{
+                                          display:"none",
+                                          margin:"auto"
                                         }}
                                         />{' '}
-                                        <button
-                                            type="button"
-                                            onClick={this.onClickHandler}
-                                            className="btn btn-primary upload-right-side-button"
-                                            style={{width : "70%",lineHeight : "3", fontSize : "1.2em", backgroundColor: "#0f81dc"}}
-                                            >
-                                            <i className="fa fa-cloud-upload"></i> UPLOAD DATA
-                                            </button>
+                                        <label for="file" className = "upload-csv-file-button mt-1 mb-4" style={{
+                                          textAlign : "center"
+                                        }}>
+                                        <i className="fa fa-cloud-upload"></i> UPLOAD DATA
+                                        </label>
+
                                         </div>
                                     </div>
 
@@ -419,15 +421,16 @@
                                 ) : null}
                                 <div style={{
                                         alignItems : "center",
-                                        textAlign : "center"
+                                        textAlign : "center",
+                                        marginTop : "-2rem"
                                     }}>
 
                                     <br/>
                                     <span style={{fontSize : "1.2rem", weight : "900"}} className="top-heading__login" >Are you a sensor company ?</span> <br/>
-                                    <span style={{fontSize : "1rem", weight : "400"}} className="top-heading__login" >
+                                    <span style={{fontSize : "1rem", weight : "400", color:"grey"}} className="top-heading__login" >
                                         Our API is available that can be readily incorporated into your own platform.
                                         <br/>
-                                        <Link style={{fontSize : "1.2rem", weight : "900"}} className="top-heading__login" to={'/Home'} >Read More Here</Link>
+                                        <Link style={{fontSize : "1.2rem", weight : "900"}} className="top-heading__login" to={'/Developer'} >Read More Here</Link>
                                     </span>
 
                                 </div>

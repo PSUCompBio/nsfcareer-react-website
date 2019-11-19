@@ -17,3 +17,7 @@ margin-top: .75em;
     background-color: #28a745 !important;
     border-color: #e1e1e1 !important;
 }
+
+.underline {
+  text-decoration: underline;
+}

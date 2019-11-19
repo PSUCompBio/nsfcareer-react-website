@@ -2503,6 +2503,16 @@ tbody.player-table tr:nth-child(odd){
     border-top-left-radius: 10% !important;
 }
 
+.upload-csv-file-button{
+  padding: 3px 15px;
+  border-radius: 18px;
+  border: solid 1px #0f81dc;
+  color: #fff;
+  background-color: #1e76b9;
+  width: 100% !important;
+  margin-left: 5rem;
+}
+
 .upload-right-side-button{
     border-bottom-right-radius: 10% !important;
     border-top-right-radius: 10% !important;

@@ -336,10 +336,15 @@ class SignUpComponent extends React.Component {
                 <p style={{  fontSize: "20px",
                   fontWeight: "900"}} className="top-heading__login animated fadeInUp">
                  Thanks for your interest.
-                 In order to obtain an account, you must agree our terms,
+                 In order to obtain an account, you must agree to our terms,
                  policies and complete the Penn State University Institutional
                  Review Board (IRB) consent form.
                  This will be explained during the signup process.
+                 If you do not want to create an account, you can see demos
+                 {' '}
+                 <Link to="Details" className="underline">
+                   here
+                 </Link>
                 </p>
               </div>
             </div>

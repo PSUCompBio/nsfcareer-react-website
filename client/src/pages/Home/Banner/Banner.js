@@ -56,7 +56,7 @@ class Banner extends React.Component {
                               inView
                                 ? this.removeAnimationMobileView('fadeInLeft')
                                 : ''
-                            }`} style = {{ paddingRight : this.isBrowser() ? '30%' : '' }}
+                            }`} style = {{ paddingRight : this.isBrowser() ? '25%' : '' }}
                           >
                             TRANSFORM YOUR SENSOR DATA
                           </h1>
