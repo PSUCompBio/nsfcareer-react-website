@@ -2,7 +2,7 @@ import React from 'react';
 import WebFont from 'webfontloader';
 import { InView } from 'react-intersection-observer';
 import screenWidth from '../../../utilities/ScreenWidth'
-
+import { Link } from 'react-router-dom';
 WebFont.load({
   google: {
     families: ['Roboto', 'sans-serif']
@@ -68,6 +68,11 @@ class Banner extends React.Component {
                           >
                             Accurate brain simulations help extend your sensor data research.
                           </h4>
+                          <Link to="/Login">
+                            <button className = "signIn-btn" >
+                             SIGN IN
+                            </button>
+                          </Link>
                           <div
                             className={`underlined-text ${
                               inView ? 'fadeIn' : ''

@@ -41,7 +41,7 @@ import { getStatusOfDarkmode } from '../../reducer';
 class UserDashboarForAdmin extends React.Component {
   constructor(props) {
     super(props);
-
+    // console.log('User Dashboard For Admin Is ',this.props);
     this.state = {
       isAuthenticated: false,
       user: null,
@@ -56,7 +56,6 @@ class UserDashboarForAdmin extends React.Component {
       simulationFilePaths : null,
       cumulativeAccelerationTimeAllRecords : []
     };
-    console.log("THIS IS PROPS ",this.props.location)
   }
 
   componentDidUpdate() {
@@ -242,7 +241,7 @@ class UserDashboarForAdmin extends React.Component {
               .then(response => {
 
                   this.setState({
-                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data, team : "York Tech Football" }
+                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data, team : "York Tech Football", redirection_detail : this.props.location.state.team }
                   });
                     return getCumulativeEventPressureData(JSON.stringify({}))
               })

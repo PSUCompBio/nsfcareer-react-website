@@ -1,6 +1,8 @@
 import React from 'react';
 import {Line} from 'react-chartjs-2';
-
+import { Link } from 'react-router-dom';
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
+import MyDocument from '../ReportContent/Report0';
 
 const options = {
     scales: {
@@ -28,7 +30,7 @@ const options = {
 class CumulativeAccelerationEventChart extends React.Component {
     constructor(props) {
         super(props);
-        console.log("THIS IS DATA RECEIVED",props);
+        console.log("THIS IS DATA RECEIVED CumulativeAccelerationEventChart",this.props);
         this.state = {
             data : {
 
@@ -50,7 +52,27 @@ class CumulativeAccelerationEventChart extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <h1 ref="h1" style={{
+            <div className="row" style= {{
+              marginTop : 0,
+              marginBottom : "8px"
+            }}>
+                <div className="col-md-2">
+                  <Link to="/OrganizationAdmin">
+                    <h1 className="top-heading__login player-dashboard-title">Organization</h1>
+                  </Link>
+                </div>
+                <div className="col-md-5">
+                  <Link to={{
+                      pathname: "/TeamAdmin",
+                      state: {
+                          team: this.props.data.redirection_detail
+                      }
+                     }}>
+                    <h1 className="top-heading__login player-dashboard-title">> York Tech Football</h1>
+                  </Link>
+                </div>
+            </div>
+          <h1 ref="h1" style={{
                         textAlign: "center",
                         marginBottom : "2%"
                     }} className="top-heading__login player-dashboard-title">
@@ -73,7 +95,15 @@ class CumulativeAccelerationEventChart extends React.Component {
                     <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                         <button style={{
                                 marginRight : "5% !important"
-                            }} className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> Export Player Report</button>
+                            }}
+                            className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+                            <PDFDownloadLink document={<MyDocument/>} fileName="report.pdf" style={{
+                              color : 'white'
+                            }}>
+                              Export Player Report
+                              {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                            </PDFDownloadLink>
+                          </button>
                     </div>
 
                 </div>
