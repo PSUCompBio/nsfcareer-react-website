@@ -2,7 +2,7 @@ import React from 'react';
 import {Line} from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-import MyDocument from '../ReportContent/Report0';
+import Report from '../ReportContent/Report0';
 
 const options = {
     scales: {
@@ -97,7 +97,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                 marginRight : "5% !important"
                             }}
                             className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
-                            <PDFDownloadLink document={<MyDocument/>} fileName="report.pdf" style={{
+                            <PDFDownloadLink document={<Report {...this.props}/>} fileName="report.pdf" style={{
                               color : 'white'
                             }}>
                               Export Player Report

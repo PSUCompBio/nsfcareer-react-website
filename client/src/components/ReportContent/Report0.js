@@ -61,119 +61,133 @@ const styles = StyleSheet.create({
   }
 });
 
-// Create Document Component
-const MyDocument = () => (
-  <Document>
-    <Page object-fit="fill" size="A4">
-                    <View style={{
-                      width : '100%',
-                      height: '18%',
-                      padding : 0,
-                      backgroundColor : 'white',
-                      marginBottom : 0
-                    }}>
-                      <Image style={styles.image}  src={header1} alt="images" />
-                   </View>
+class Report extends React.Component {
+  constructor(props) {
+    super(props);
+    console.log('props are ', this.props);
+  }
 
 
-                   <View style= {{
-                     marginBottom : '10px'
-                   }}>
-                         <Text style={{
-                           margin : 'auto',
-                           alignItems : 'center',
-                           marginTop : 0,
-                           color : 'blue',
-                           marginBottom : '8px'
-                         }}>
-                         Doe, John
-                         </Text>
-
-                        <View style={styles.tableRow}>
-
-                            <Text style={styles.tableColLeft}> DOB: 14/82/1264 </Text>
+  render() {
+  
+    return (
+          <Document>
+      <Page object-fit="fill" size="A4">
+                      <View style={{
+                        width : '100%',
+                        height: '18%',
+                        padding : 0,
+                        backgroundColor : 'white',
+                        marginBottom : 0
+                      }}>
+                        <Image style={styles.image}  src={header1} alt="images" />
+                     </View>
 
 
-                            <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
+                     <View style= {{
+                       marginBottom : '10px'
+                     }}>
+                           <Text style={{
+                             margin : 'auto',
+                             alignItems : 'center',
+                             marginTop : 0,
+                             color : 'blue',
+                             marginBottom : '8px'
+                           }}>
+                           {this.props.data.player_id}
+                           </Text>
 
-                        </View>
-                        <View style={styles.tableRow}>
+                          <View style={styles.tableRow}>
 
-                            <Text style={styles.tableColLeft}> Patient ID : 1452462 </Text>
+                              <Text style={styles.tableColLeft}> DOB: 14/82/1264 </Text>
 
-                            <Text style={styles.tableColRight}> Organization : York Technical High School </Text>
 
-                        </View>
+                              <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
+
+                          </View>
+                          <View style={styles.tableRow}>
+
+                              <Text style={styles.tableColLeft}> Patient ID : 1452462 </Text>
+
+                              <Text style={styles.tableColRight}> Organization : York Technical High School </Text>
+
+                          </View>
+                      </View>
+
+                     <View style={{
+                       width : '100%',
+                       padding : 0,
+                       backgroundColor : 'white',
+                       marginBottom : '10'
+                     }}>
+                       <Image style={styles.image}  src={footer1} alt="images" />
                     </View>
 
-                   <View style={{
-                     width : '100%',
-                     padding : 0,
-                     backgroundColor : 'white',
-                     marginBottom : '10'
-                   }}>
-                     <Image style={styles.image}  src={footer1} alt="images" />
-                  </View>
+                    <View>
+                      <Text style = {{
+                        fontSize : 15,
+                        textAlign : 'center'
+                      }}>EXAMPLE OVERVIEW, NOT FOR CLINICAL USE</Text>
+                    </View>
+      </Page>
+      <Page object-fit="fill" size="A4">
 
-                  <View>
-                    <Text style = {{
-                      fontSize : 15,
-                      textAlign : 'center'
-                    }}>EXAMPLE OVERVIEW, NOT FOR CLINICAL USE</Text>
-                  </View>
-    </Page>
-    <Page object-fit="fill" size="A4">
-
-    <View style={{
-      width : '100%',
-      height: '18%',
-      padding : 0,
-      backgroundColor : 'white',
-      marginBottom : 0
-    }}>
-      <Image style={styles.image}  src={header2} alt="images" />
-   </View>
-
-    <View style= {{
-      marginBottom : '12px'
-    }}>
-         <View style={styles.tableRow}>
-
-             <Text style={styles.tableColLeft}> DOB: 14/82/1264 </Text>
-
-
-             <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
-
-         </View>
-         <View style={styles.tableRow}>
-
-             <Text style={styles.tableColLeft}> Patient ID : 1452462 </Text>
-
-             <Text style={styles.tableColRight}> Organization : York Technical High School </Text>
-
-         </View>
+      <View style={{
+        width : '100%',
+        height: '18%',
+        padding : 0,
+        backgroundColor : 'white',
+        marginBottom : 0
+      }}>
+        <Image style={styles.image}  src={header2} alt="images" />
      </View>
-     <View style={{
-       width : '100%',
-       padding : 0,
-       backgroundColor : 'white'
-     }}>
-       <Image style={styles.image}  src={footer2} alt="images" />
-    </View>
 
-    </Page>
-    <Page object-fit="fill" size="A4">
-    <View style={styles.view}>
-                      <Image style={styles.image}  src={page3} alt="images" />
-                  </View>
-    </Page>
+      <View style= {{
+        marginBottom : '12px'
+      }}>
+           <View style={styles.tableRow}>
 
-  </Document>
-);
+               <Text style={styles.tableColLeft}> DOB: 14/82/1264 </Text>
 
 
+               <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
+
+           </View>
+           <View style={styles.tableRow}>
+
+               <Text style={styles.tableColLeft}> Patient ID : 1452462 </Text>
+
+               <Text style={styles.tableColRight}> Organization : York Technical High School </Text>
+
+           </View>
+       </View>
+       <View style={{
+         width : '100%',
+         padding : 0,
+         backgroundColor : 'white'
+       }}>
+         <Image style={styles.image}  src={footer2} alt="images" />
+      </View>
+
+      </Page>
+      <Page object-fit="fill" size="A4">
+      <View style={styles.view}>
+                        <Image style={styles.image}  src={page3} alt="images" />
+                    </View>
+      </Page>
+
+    </Document>
+    );
+
+  }
+
+}
 
 
 
 
-export default MyDocument;
+
+
+
+
+export default Report;

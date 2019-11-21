@@ -241,7 +241,7 @@ class UserDashboarForAdmin extends React.Component {
               .then(response => {
 
                   this.setState({
-                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data, team : "York Tech Football", redirection_detail : this.props.location.state.team }
+                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data, team : "York Tech Football", redirection_detail : this.props.location.state.team , player_id : this.props.location.state.player_name}
                   });
                     return getCumulativeEventPressureData(JSON.stringify({}))
               })
