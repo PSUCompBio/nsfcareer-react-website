@@ -2,13 +2,23 @@ import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import GLB from './brain_with_spheres.glb';
-import textureSrc from './Br_color.jpg';
-import yellowTextureSrc from './Br_color_mixed.jpg';
+import brain from './brain.glb';
+import front from './front.glb';
+import pariental from './pariental.glb';
+import occipital from './occipital.glb';
+import temporal from './temporal.glb';
+import cerebellum from './cerebellum.glb';
+import modelTexture from './textures/Br_color.jpg';
+import frontTexture from './textures/front.jpg';
+import parientalTexture from './textures/pariental.jpg';
+import occipitalTexture from './textures/occipital.jpg';
+import temporalTexture from './textures/temporal.jpg';
+import cerebellumTexture from './textures/cerebellum.jpg';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
-import {Line} from 'react-chartjs-2';
+import {Bar} from 'react-chartjs-2';
 import WebFont from 'webfontloader';
+import './dash.css';
 
 const options = {
     scales: {
@@ -32,13 +42,13 @@ const options = {
 };
 
 const data = {
-	labels: [857, 1173, 3043, 1173],
+	labels: [857, 1173, 3043, 1173, 1200],
 	datasets: [{
 		label: "Linear VS Angular Acceleration",
 		lineTension: 0.1,
 		backgroundColor: '#7CB5EC',
 		borderColor: '#1987DD',
-		data: [23, 14, 32, 14]
+		data: [10, 8, 6, 11, 4]
 	}]
 };
 
@@ -70,7 +80,7 @@ class DashPage extends React.Component {
 		}
 		
 		this.sceneSetup();
-		this.loadModel(GLB);
+		this.loadModel(brain, frontTexture, 'onLoad');
 		this.startAnimationLoop();
 		this.setContainerHeight();
 	}
@@ -88,18 +98,41 @@ class DashPage extends React.Component {
 		const width = window.innerWidth;
 		const height = window.innerHeight;
 		
-		const canvas = document.querySelector('#brain_model_block');
+		const canvas1 = document.querySelector('#brain_model_block_1');
 		
-		this.renderer = new THREE.WebGLRenderer({canvas, antialias:true});
-		this.renderer.gammaOutput = true;
-		this.renderer.gammaFactor = 2.2;
+		this.renderer1 = new THREE.WebGLRenderer();
+		//this.renderer1.setSize( window.innerWidth, window.innerHeight / 2 );
+		canvas1.appendChild( this.renderer1.domElement );
+		this.renderer1.gammaOutput = true;
+		this.renderer1.gammaFactor = 2.2;
+		
+		const canvas2 = document.querySelector('#brain_model_block_2');
+		
+		this.renderer2 = new THREE.WebGLRenderer({antialias:true});
+		canvas2.appendChild( this.renderer2.domElement );
+		this.renderer2.gammaOutput = true;
+		this.renderer2.gammaFactor = 2.2;
+		
+		const canvas3 = document.querySelector('#brain_model_block_3');
+		
+		this.renderer3 = new THREE.WebGLRenderer({antialias:true});
+		canvas3.appendChild( this.renderer3.domElement );
+		this.renderer3.gammaOutput = true;
+		this.renderer3.gammaFactor = 2.2;
+		
+		const canvas4 = document.querySelector('#brain_model_block_4');
+		
+		this.renderer4 = new THREE.WebGLRenderer({antialias:true});
+		canvas4.appendChild( this.renderer4.domElement );
+		this.renderer4.gammaOutput = true;
+		this.renderer4.gammaFactor = 2.2;
 
 		this.scene = new THREE.Scene();
 		//this.scene.background = new THREE.Color( 0x8FBCD4 );
 		this.scene.background = new THREE.Color( "rgb(255, 255, 255)" );
 		
 		this.camera = new THREE.PerspectiveCamera( 25, width / height, 0.01, 1000 );
-		this.camera.position.set(-0.3, 0.3, 0.3);
+		this.camera.position.set(0, 0, 0.3);
 
 		this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		this.light.position.copy( this.camera.position );
@@ -109,18 +142,21 @@ class DashPage extends React.Component {
 		this.scene.add( ambientLight );
 			
 	    // prepare controls (OrbitControls)
-		this.controls = new OrbitControls(this.camera, canvas);
+		this.controls = new OrbitControls(this.camera);
 		//this.controls.autoRotate = true;
 		//this.controls.minPolarAngle = Math.PI * 0.5;
 		//this.controls.maxPolarAngle  = Math.PI * 0.5;
 		
 		this.controls.addEventListener( 'change', this.lightUpdate );
 		
+		// to disable keyboard keys
+		this.controls.enableKeys = false;
+		
 		// to disable zoom
-		//this.controls.enableZoom = false;
+		this.controls.enableZoom = false;
 
 		// to disable rotation
-		//this.controls.enableRotate = false;
+		this.controls.enableRotate = false;
 		
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
@@ -130,9 +166,11 @@ class DashPage extends React.Component {
 		this.light.position.copy( this.camera.position );
 	}
   
-	loadModel = (model) => {
+	loadModel = (model, texture, type) => {
 		const scene  = this.scene;
 		const me  = this;
+		
+		scene.remove( obj );
 		
 		me.setState({
 			isLoading: true
@@ -146,11 +184,10 @@ class DashPage extends React.Component {
 			model,
 			// called when the resource is loaded
 			function ( gltf ) {
-				
-				scene.remove( obj );
 						
 				obj = gltf.scene;
-								
+				
+				var textureSrc = type == 'onLoad' ? modelTexture : texture;								
 				var map = textureLoader.load(textureSrc);
 				map.encoding = THREE.sRGBEncoding;
 				//map.flipY = false;
@@ -167,7 +204,7 @@ class DashPage extends React.Component {
 					me.setState({
 						isLoading: false
 					});
-					var material = new THREE.MeshPhongMaterial({map: map, cache: true});
+					var material = new THREE.MeshPhongMaterial({map: map, transparent: true, opacity: 0.5, cache: true});
 					obj.traverse( function ( node ) {
 						node.material = material;
 						node.material.needsUpdate = true;
@@ -195,7 +232,7 @@ class DashPage extends React.Component {
 		);
 	};
 	
-	loadTexture = () => {
+	loadTexture = (type) => {
 		
 		if (this.state.isLoading) {
 			return false;
@@ -203,7 +240,7 @@ class DashPage extends React.Component {
 		
 		this.setState( { condition : !this.state.condition } );
 				
-		const src = this.state.condition ? textureSrc : yellowTextureSrc;
+		const src = this.state.condition ? modelTexture : front;
 		
 		const me  = this;
 		manager.onStart = function () {
@@ -216,10 +253,7 @@ class DashPage extends React.Component {
 		var map = textureLoader.load(src);
 		map.encoding = THREE.sRGBEncoding;
 		//map.flipY = false;
-		
-		this.camera.position.set(-0.3, 0.3, 0.3);
-		this.controls.update();
-		
+				
 		manager.onLoad = function () {
 			console.log('loaded');
 			me.setState({
@@ -235,19 +269,35 @@ class DashPage extends React.Component {
 			
 			console.log('change texture');
 		};
-		
-		
-		
 	}
 
 	startAnimationLoop = () => {
-		if (this.resizeRendererToDisplaySize(this.renderer)) {
-			const canvas = this.renderer.domElement;
+		if (this.resizeRendererToDisplaySize(this.renderer1)) {
+			const canvas = this.renderer1.domElement;
 			this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			this.camera.updateProjectionMatrix();
 		}
 		
-		this.renderer.render(this.scene, this.camera);
+		this.camera.position.set(0, 0, 0.3);
+		this.controls.update();
+		
+		this.renderer1.render(this.scene, this.camera);
+		
+		this.camera.position.set(0, 0.36, 0);
+		this.controls.update();
+		
+		this.renderer2.render(this.scene, this.camera);
+		
+		this.camera.position.set(-0.3, 0.2, 0);
+		this.controls.update();
+		
+		this.renderer3.render(this.scene, this.camera);
+				
+		this.camera.position.set(-0.2, 0.2, 0.2);
+		this.controls.update();
+		
+		this.renderer4.render(this.scene, this.camera);
+		
 
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
@@ -261,7 +311,8 @@ class DashPage extends React.Component {
 		const height = canvas.clientHeight;
 		const needResize = canvas.width !== width || canvas.height !== height;
 		if (needResize) {
-			this.renderer.setSize(width, height, false);
+			this.renderer1.setSize(width, height, false);
+			this.renderer2.setSize(width, height, false);
 		}
 		return needResize;
     }
@@ -299,8 +350,7 @@ class DashPage extends React.Component {
 							</div>
 
 							<div className="row text-center">
-								<div className="col-md-4 d-flex align-items-center justify-content-center" >
-									<canvas id="brain_model_block" style={{ width: '100%', height: '400px'}} />
+								<div className="col-md-5 d-flex align-items-center justify-content-center" >
 									{this.state.isLoading ? (
 										<div className="model_loader d-flex justify-content-center center-spinner">
 											<div
@@ -311,21 +361,28 @@ class DashPage extends React.Component {
 											</div>
 										 </div>
 										) : null}
+										<div>
+											<div id="brain_model_block_1" className="brain_model" ></div>
+											<div id="brain_model_block_2" className="brain_model"></div><br/>
+											<div id="brain_model_block_3" className="brain_model"></div>
+											<div id="brain_model_block_4" className="brain_model"></div>
+										</div>
 								</div>
-								<div className="col-md-8 mb-5">
-								   <Line data={data} options={options}/>
+								<div className="col-md-7">
+								    <Bar data={data} options={options}/>
+									<div className="action_btn_block">
+										<button onClick={() => this.loadModel(front, frontTexture, 'onClick')} className="btn btn-primary lobe_btn">Front Lobe</button>
+										<button onClick={() => this.loadModel(pariental, parientalTexture, 'onClick')} className="btn btn-primary lobe_btn">Pariental Lobe</button>
+										<button onClick={() => this.loadModel(occipital, occipitalTexture, 'onClick')} className="btn btn-primary lobe_btn">Occipital Lobe</button>
+										<button onClick={() => this.loadModel(temporal, temporalTexture, 'onClick')} className="btn btn-primary lobe_btn">Temporal Lobe</button>
+										<button onClick={() => this.loadModel(cerebellum, cerebellumTexture, 'onClick')} className="btn btn-primary lobe_btn">Cerebellum Lobe</button>	
+									</div>
+									<div>
+										<button onClick={() => this.loadModel(brain, cerebellumTexture, 'onLoad')} className="btn btn-primary reset_btn">Reset</button>	
+									</div>
 								</div>
 							</div>
-							<div className="row text-center">
-								<div className="col-md-4">
-								</div>
-								<div className="col-md-8">
-								  <button style={{
-											float : "left",
-											marginLeft: "50px"
-										}} onClick={ this.loadTexture } id="add_remove_texture" className="btn btn-primary">Front Region</button>
-								</div>		
-							</div>
+						
 						</div>
 					</div>
 				</div>

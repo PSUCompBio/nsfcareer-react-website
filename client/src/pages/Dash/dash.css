@@ -1,0 +1,32 @@
+.brain_model {
+    float: left;
+    width: 50%;
+    text-align: center;
+}
+.brain_model canvas {
+  /*  width: 100%;
+    min-width: 229px;*/
+}
+.lobe_btn {
+	width: 100px;
+	margin-left: 10px;
+}
+.action_btn_block {
+	margin-left: 40px;
+}
+.reset_btn {
+	margin-top: 10px;
+	background-color: #d3d3d3 !important;
+	padding-left: 40px !important;
+	padding-right: 40px !important;
+}
+
+@media only screen and (max-width: 480px) {
+
+	.brain_model {
+		float: none;
+		width: 100%;
+		text-align: center;
+	}
+
+}
