@@ -3,11 +3,6 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import brain from './brain.glb';
-import front from './front.glb';
-import pariental from './pariental.glb';
-import occipital from './occipital.glb';
-import temporal from './temporal.glb';
-import cerebellum from './cerebellum.glb';
 import modelTexture from './textures/Br_color.jpg';
 import frontTexture from './textures/front.jpg';
 import parientalTexture from './textures/pariental.jpg';
@@ -25,20 +20,25 @@ const options = {
         yAxes: [{
             scaleLabel: {
                 display: true,
-                labelString: 'Linear Acceleration'
+                labelString: 'Number of MASxSR 7.5  Thresholds Exceeded'
             },
             ticks: {
                 min: 0
             }
         }],
         xAxes: [{
-
-            scaleLabel: {
-                display: true,
+			scaleLabel: {
+                display: false,
                 labelString: 'Angular Acceleration'
-            }
+            },
+			ticks: {
+				display: false //this will remove only the label
+			}
         }]
-    }
+    },
+	legend: {
+		display: false
+	}
 };
 
 const data = {
@@ -80,7 +80,7 @@ class DashPage extends React.Component {
 		}
 		
 		this.sceneSetup();
-		this.loadModel(brain, frontTexture, 'onLoad');
+		this.loadModel();
 		this.startAnimationLoop();
 		this.setContainerHeight();
 	}
@@ -166,7 +166,7 @@ class DashPage extends React.Component {
 		this.light.position.copy( this.camera.position );
 	}
   
-	loadModel = (model, texture, type) => {
+	loadModel = () => {
 		const scene  = this.scene;
 		const me  = this;
 		
@@ -181,14 +181,13 @@ class DashPage extends React.Component {
 		// Load a glTF resource
 		loader.load(
 			// resource URL
-			model,
+			brain,
 			// called when the resource is loaded
 			function ( gltf ) {
 						
 				obj = gltf.scene;
 				
-				var textureSrc = type == 'onLoad' ? modelTexture : texture;								
-				var map = textureLoader.load(textureSrc);
+				var map = textureLoader.load(modelTexture);
 				map.encoding = THREE.sRGBEncoding;
 				//map.flipY = false;
 				
@@ -211,8 +210,21 @@ class DashPage extends React.Component {
 						node.castShadow = true;
 						node.receiveShadow = true;
 					});
+								
+					scene.add( obj);
+				
+					var cube = me.generateSphere();
+					cube.position.set(0, 2, -10);
+					scene.add( cube);
 					
-					scene.add( gltf.scene );
+					var cube = me.generateSphere();	
+					cube.position.set(0, 1.5, -11);
+					scene.add( cube);
+					
+					var cube = me.generateSphere();	
+					cube.position.set(0, 1, -11);
+					scene.add( cube);
+					
 				};
 				
 			},
@@ -232,15 +244,20 @@ class DashPage extends React.Component {
 		);
 	};
 	
-	loadTexture = (type) => {
+	generateSphere = () => {
+		var geometry = new THREE.SphereGeometry(0.2, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
+		var material = new THREE.MeshNormalMaterial();
+		var cube = new THREE.Mesh(geometry, material);
+		return cube;
+	}
+	
+	loadTexture = (texture) => {
 		
 		if (this.state.isLoading) {
 			return false;
 		}
 		
 		this.setState( { condition : !this.state.condition } );
-				
-		const src = this.state.condition ? modelTexture : front;
 		
 		const me  = this;
 		manager.onStart = function () {
@@ -250,7 +267,7 @@ class DashPage extends React.Component {
 			});
 		};
 		
-		var map = textureLoader.load(src);
+		var map = textureLoader.load(texture);
 		map.encoding = THREE.sRGBEncoding;
 		//map.flipY = false;
 				
@@ -259,7 +276,7 @@ class DashPage extends React.Component {
 			me.setState({
 				isLoading: false
 			});
-			var material = new THREE.MeshPhongMaterial({map: map, cache: true});
+			var material = new THREE.MeshPhongMaterial({map: map, transparent: true, opacity: 0.5, cache: true});
 			obj.traverse( function ( node ) {
 				node.material = material;
 				node.material.needsUpdate = true;
@@ -298,7 +315,8 @@ class DashPage extends React.Component {
 		
 		this.renderer4.render(this.scene, this.camera);
 		
-
+		
+		
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
 		// to update an animation before the next repaint
@@ -371,14 +389,15 @@ class DashPage extends React.Component {
 								<div className="col-md-7">
 								    <Bar data={data} options={options}/>
 									<div className="action_btn_block">
-										<button onClick={() => this.loadModel(front, frontTexture, 'onClick')} className="btn btn-primary lobe_btn">Front Lobe</button>
-										<button onClick={() => this.loadModel(pariental, parientalTexture, 'onClick')} className="btn btn-primary lobe_btn">Pariental Lobe</button>
-										<button onClick={() => this.loadModel(occipital, occipitalTexture, 'onClick')} className="btn btn-primary lobe_btn">Occipital Lobe</button>
-										<button onClick={() => this.loadModel(temporal, temporalTexture, 'onClick')} className="btn btn-primary lobe_btn">Temporal Lobe</button>
-										<button onClick={() => this.loadModel(cerebellum, cerebellumTexture, 'onClick')} className="btn btn-primary lobe_btn">Cerebellum Lobe</button>	
+										<button onClick={() => this.loadTexture(frontTexture)} className="btn btn-primary lobe_btn">Front Lobe</button>
+										<button onClick={() => this.loadTexture(parientalTexture)} className="btn btn-primary lobe_btn">Pariental Lobe</button>
+										<button onClick={() => this.loadTexture(occipitalTexture)} className="btn btn-primary lobe_btn">Occipital Lobe</button>
+										<button onClick={() => this.loadTexture(temporalTexture)} className="btn btn-primary lobe_btn">Temporal Lobe</button>
+										<button onClick={() => this.loadTexture(cerebellumTexture)} className="btn btn-primary lobe_btn cerebellum_btn">Cerebellum Lobe</button>	
 									</div>
 									<div>
-										<button onClick={() => this.loadModel(brain, cerebellumTexture, 'onLoad')} className="btn btn-primary reset_btn">Reset</button>	
+										<span className="brain_txt">Select a Brain Region </span>
+										<button onClick={() => this.loadTexture(modelTexture)} className="btn btn-primary reset_btn">Reset</button>	
 									</div>
 								</div>
 							</div>
