@@ -17,7 +17,6 @@ import cerebellumTexture from './textures/cerebellum.jpg';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import {Bar} from 'react-chartjs-2';
-import WebFont from 'webfontloader';
 import './dash.css';
 
 const options = {
@@ -43,23 +42,23 @@ const options = {
     },
 	legend: {
 		display: false
+	},
+	tooltips: {
+		callbacks: {
+			title: function(tooltipItem, data) {
+				//return data['labels'][tooltipItem[0]['index']];
+			},
+			label: function(tooltipItem, data) {
+				return ' ' + data['datasets'][0]['data'][tooltipItem['index']] + ' Events';
+			}
+		},
+		displayColors: false
 	}
 };
 
-const data = {
-	labels: [857, 1173, 3043, 1173, 1200],
-	datasets: [{
-		label: "Linear VS Angular Acceleration",
-		lineTension: 0.1,
-		backgroundColor: '#7CB5EC',
-		borderColor: '#1987DD',
-		data: [10, 8, 6, 11, 4]
-	}]
-};
-
-
 let obj;
 let sphereObj;
+let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 
 var manager = new THREE.LoadingManager();
 var textureLoader = new THREE.TextureLoader(manager);
@@ -70,7 +69,8 @@ class DashPage extends React.Component {
 		super(props);
 		this.state = {
 			isLoading: false,
-			condition: false
+			condition: false,
+			barColors: defaultBarColors
 		};
 	}
 	
@@ -89,7 +89,7 @@ class DashPage extends React.Component {
 		this.loadModel(brain);
 		
 		this.startAnimationLoop();
-		this.setContainerHeight();
+		//this.setContainerHeight();
 	}
   
 	setContainerHeight = () => {
@@ -160,10 +160,10 @@ class DashPage extends React.Component {
 		this.controls.enableKeys = false;
 		
 		// to disable zoom
-		//this.controls.enableZoom = false;
+		this.controls.enableZoom = false;
 
 		// to disable rotation
-		//this.controls.enableRotate = false;
+		this.controls.enableRotate = false;
 		
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
@@ -275,14 +275,46 @@ class DashPage extends React.Component {
 		);
 	};
 	
-	loadTexture = (texture, spheres) => {
-		
+	loadTexture = (texture, spheres, type) => {
+
 		if (this.state.isLoading) {
 			return false;
 		}
 		
 		this.setState( { condition : !this.state.condition } );
 		
+		let barColors = defaultBarColors;
+		
+		switch(type) {
+			case "ront_btn":
+				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				break;
+			case "pariental_btn":
+				barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				break;
+			case "occipital_btn":
+				barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC'];
+				break;
+			case "temporal_btn":
+				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC']
+				break;
+			case "cerebellum_btn":
+				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
+				break;
+		}
+	
+		this.setState({
+			barColors: barColors
+		});
+		
+		var x = document.getElementsByClassName("lobe_btn");
+		var i;
+		for (i = 0; i < x.length; i++) {
+			x[i].classList.remove("active");
+		}
+		
+		document.getElementById(type).classList.add("active");
+				
 		const me  = this;
 		manager.onStart = function () {
 			console.log('Loading started');
@@ -360,6 +392,20 @@ class DashPage extends React.Component {
     }
 
   render() {
+	  
+	 const data = {
+		labels: [857, 1173, 3043, 1173, 1200],
+		datasets: [{
+			label: "Events",
+			lineTension: 0.1,
+			backgroundColor: this.state.barColors,
+			borderColor: '#1987DD',
+			hoverBackgroundColor: 'rgba(255,255,102)',
+			hoverBorderColor: 'rgba(255,255,102)',
+			data: [10, 8, 6, 11, 4]
+		}]
+	}; 
+	  
     return (
 		<React.Fragment>
 			<div class="container dashboard player-top-margin-20-mobile">
@@ -413,15 +459,15 @@ class DashPage extends React.Component {
 								<div className="col-md-7">
 								    <Bar data={data} options={options}/>
 									<div className="action_btn_block">
-										<button onClick={() => this.loadTexture(frontTexture, frontSpheres)} className="btn btn-primary lobe_btn">Front Lobe</button>
-										<button onClick={() => this.loadTexture(parientalTexture, backSpheres)} className="btn btn-primary lobe_btn">Pariental Lobe</button>
-										<button onClick={() => this.loadTexture(occipitalTexture, midSpheres)} className="btn btn-primary lobe_btn">Occipital Lobe</button>
-										<button onClick={() => this.loadTexture(temporalTexture, midTopSpheres)} className="btn btn-primary lobe_btn">Temporal Lobe</button>
-										<button onClick={() => this.loadTexture(cerebellumTexture, sideSpheres)} className="btn btn-primary lobe_btn cerebellum_btn">Cerebellum Lobe</button>	
+										<button onClick={() => this.loadTexture(frontTexture, frontSpheres, 'ront_btn')} className="btn btn-primary lobe_btn" id="ront_btn">Front Lobe</button>
+										<button onClick={() => this.loadTexture(parientalTexture, backSpheres, 'pariental_btn')} className="btn btn-primary lobe_btn" id="pariental_btn">Pariental Lobe</button>
+										<button onClick={() => this.loadTexture(occipitalTexture, midSpheres, 'occipital_btn')} className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
+										<button onClick={() => this.loadTexture(temporalTexture, midTopSpheres, 'temporal_btn')} className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
+										<button onClick={() => this.loadTexture(cerebellumTexture, sideSpheres, 'cerebellum_btn')} className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>	
 									</div>
 									<div>
 										<span className="brain_txt">Select a Brain Region </span>
-										<button onClick={() => this.loadTexture(modelTexture, frontSpheres)} className="btn btn-primary reset_btn">Reset</button>	
+										<button onClick={() => this.loadTexture(modelTexture, frontSpheres, 'reset_btn')} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>	
 									</div>
 								</div>
 							</div>

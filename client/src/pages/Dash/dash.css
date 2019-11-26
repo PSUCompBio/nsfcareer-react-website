@@ -28,12 +28,21 @@
 	padding-left: 40px !important;
 	padding-right: 40px !important;
 }
+.action_btn_block .lobe_btn.active {
+	/* background-color: red !important;
+	border-color: red !important; */
+}
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: 767px) {
 
 	.brain_model {
 		width: 100%;
 		text-align: center;
 	}
-
+	.lobe_btn, .cerebellum_btn {
+		width: 92px !important;
+		margin-right: 5px !important;
+		margin-bottom: 5px !important;
+		font-size: 10px !important;
+	}
 }
