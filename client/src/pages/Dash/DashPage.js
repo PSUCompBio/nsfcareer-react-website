@@ -3,11 +3,6 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import brain from './brain.glb';
-import frontSpheres from './spheres/spheres.glb';
-import backSpheres from './spheres/balls_back.glb';
-import midSpheres from './spheres/balls_mid.glb';
-import midTopSpheres from './spheres/balls_mid_top.glb';
-import sideSpheres from './spheres/balls_side.glb';
 import modelTexture from './textures/Br_color.jpg';
 import frontTexture from './textures/front.jpg';
 import parientalTexture from './textures/pariental.jpg';
@@ -57,7 +52,6 @@ const options = {
 };
 
 let obj;
-let sphereObj;
 let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 
 var manager = new THREE.LoadingManager();
@@ -217,10 +211,15 @@ class DashPage extends React.Component {
 						node.castShadow = true;
 						node.receiveShadow = true;
 					});
+				
+					scene.add( obj );
 					
-					scene.add( obj);
+					me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
+					me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
+					me.generateSphere(0.03, 0, -0.07, 'sphere3');
+					me.generateSphere(0.03, -0.03, 0, 'sphere4');
+					me.generateSphere(-0.03, -0.05, -0.03, 'sphere5');
 					
-					me.loadSphereModel(frontSpheres);
 				};
 			},
 			// called while loading is progressing
@@ -238,44 +237,26 @@ class DashPage extends React.Component {
 			}
 		);
 	};
+	
+	generateSphere = (x, y, z, sphereName) => {
+		var geometry = new THREE.SphereGeometry( 0.005, 32, 32 );
+		var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+		var sphere = new THREE.Mesh( geometry, material );
+		sphere.position.set(x, y, z);
+		sphere.name = sphereName;
 
-	loadSphereModel = (model) => {
-		const scene  = this.scene;
-		const me  = this;
-		
-		scene.remove( sphereObj );
-		
-		var loader = new GLTFLoader();
-				
-		// Load a glTF resource
-		loader.load(
-			// resource URL
-			model,
-			// called when the resource is loaded
-			function ( gltf ) {
-						
-				sphereObj = gltf.scene;
-				
-				scene.add( sphereObj);
-				
-			},
-			// called while loading is progressing
-			function ( xhr ) {
-				console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-			},
-			// called when loading has errors
-			function ( error ) {
-				alert( 'An error happened' );
-				console.log( error );
-				me.setState({
-					isLoading: false
-				});
-				
-			}
-		);
+		this.scene.add(sphere);
 	};
 	
-	loadTexture = (texture, spheres, type) => {
+	removeSpheres = (x, y, z, sphereName) => {
+		var k;
+		for (k = 1; k <= 5; k++ ) {
+			var sphereObject = this.scene.getObjectByName("sphere" + k);
+			this.scene.remove(sphereObject);
+		}
+	};
+	
+	loadTexture = (texture, type) => {
 
 		if (this.state.isLoading) {
 			return false;
@@ -286,7 +267,7 @@ class DashPage extends React.Component {
 		let barColors = defaultBarColors;
 		
 		switch(type) {
-			case "ront_btn":
+			case "front_btn":
 				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 				break;
 			case "pariental_btn":
@@ -340,7 +321,37 @@ class DashPage extends React.Component {
 				node.receiveShadow = true;
 			});
 			
-			me.loadSphereModel(spheres);
+			// Remove prev spheres
+			me.removeSpheres();
+			
+			// Add new spheres
+			switch(type) {
+				case "front_btn":
+					me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
+					me.generateSphere(-0.02, 0.02, 0.05, 'sphere2');
+					me.generateSphere(0, 0.05, 0.03, 'sphere3');
+					break;
+				case "pariental_btn":
+					me.generateSphere(0.01, 0.02, -0.06, 'sphere1');
+					me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
+					me.generateSphere(-0.03, 0.05, -0.03, 'sphere3');
+					break;
+				case "occipital_btn":
+					me.generateSphere(0.03, 0, -0.07, 'sphere1');
+					me.generateSphere(0, 0, -0.07, 'sphere2');
+					me.generateSphere(-0.03, 0, -0.07, 'sphere3');
+					break;
+				case "temporal_btn":
+					me.generateSphere(-0.04, -0.03, 0.01, 'sphere1');
+					me.generateSphere(0.04, -0.03, 0.01, 'sphere2');
+					me.generateSphere(0.03, -0.03, 0, 'sphere3');
+					break;
+				case "cerebellum_btn":
+					me.generateSphere(0.03, -0.05, -0.03, 'sphere1');
+					me.generateSphere(0, -0.05, -0.03, 'sphere2');
+					me.generateSphere(-0.03, -0.05, -0.03, 'sphere3');
+					break;
+			}
 			
 			console.log('change texture');
 		};
@@ -372,6 +383,7 @@ class DashPage extends React.Component {
 		this.controls.update();
 		
 		this.renderer4.render(this.scene, this.camera);
+				
 				
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
@@ -459,15 +471,15 @@ class DashPage extends React.Component {
 								<div className="col-md-7">
 								    <Bar data={data} options={options}/>
 									<div className="action_btn_block">
-										<button onClick={() => this.loadTexture(frontTexture, frontSpheres, 'ront_btn')} className="btn btn-primary lobe_btn" id="ront_btn">Front Lobe</button>
-										<button onClick={() => this.loadTexture(parientalTexture, backSpheres, 'pariental_btn')} className="btn btn-primary lobe_btn" id="pariental_btn">Pariental Lobe</button>
-										<button onClick={() => this.loadTexture(occipitalTexture, midSpheres, 'occipital_btn')} className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
-										<button onClick={() => this.loadTexture(temporalTexture, midTopSpheres, 'temporal_btn')} className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
-										<button onClick={() => this.loadTexture(cerebellumTexture, sideSpheres, 'cerebellum_btn')} className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>	
+										<button onClick={() => this.loadTexture(frontTexture, 'front_btn')} className="btn btn-primary lobe_btn" id="front_btn">Front Lobe</button>
+										<button onClick={() => this.loadTexture(parientalTexture, 'pariental_btn')} className="btn btn-primary lobe_btn" id="pariental_btn">Pariental Lobe</button>
+										<button onClick={() => this.loadTexture(occipitalTexture, 'occipital_btn')} className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
+										<button onClick={() => this.loadTexture(temporalTexture, 'temporal_btn')} className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
+										<button onClick={() => this.loadTexture(cerebellumTexture, 'cerebellum_btn')} className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>	
 									</div>
 									<div>
 										<span className="brain_txt">Select a Brain Region </span>
-										<button onClick={() => this.loadTexture(modelTexture, frontSpheres, 'reset_btn')} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>	
+										<button onClick={() => this.loadTexture(modelTexture, 'reset_btn')} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>	
 									</div>
 								</div>
 							</div>
