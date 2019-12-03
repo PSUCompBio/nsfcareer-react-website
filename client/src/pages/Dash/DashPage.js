@@ -143,7 +143,7 @@ class DashPage extends React.Component {
 		this.scene.add( ambientLight );
 			
 	    // prepare controls (OrbitControls)
-		this.controls = new OrbitControls(this.camera);
+		this.controls = new OrbitControls(this.camera, canvas1);
 		//this.controls.autoRotate = true;
 		//this.controls.minPolarAngle = Math.PI * 0.5;
 		//this.controls.maxPolarAngle  = Math.PI * 0.5;
