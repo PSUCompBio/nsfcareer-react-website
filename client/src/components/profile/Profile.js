@@ -14,6 +14,7 @@ import {
     getInpFileLink,
     getModelLink,
     getSimulationFile,
+    getVtkFileLink,
     isAuthenticated
 } from '../../apis';
 
@@ -215,9 +216,34 @@ class Profile extends React.Component {
                                                 return { user: prevState };
                                             });
 
-                                            this.setState( {
-                                                isFileUploaded : true
-                                            });
+                                            getVtkFileLink(JSON.stringify({
+                                                user_cognito_id : user_id
+                                            }))
+                                            .then(response => {
+                                                if(response.data.message == "success"){
+                                                    this.setState((prevState) => {
+                                                        prevState = JSON.parse(
+                                                            JSON.stringify(this.state.user)
+                                                        );
+
+                                                        prevState.vtk_file_url =
+                                                        response.data.vtk_file_url;
+                                                        return { user: prevState };
+                                                    });
+                                                    this.setState( {
+                                                        isFileUploaded : true
+                                                    });
+                                                }
+                                                else{
+                                                    this.setState({ isUploading: false, fileUploadError : "Invalid Request to fetch VTK File"});
+                                                }
+
+                                            })
+                                            .catch(err => {
+                                                this.setState({ isUploading: false, fileUploadError : "Failed to find the VTK File Link"});
+                                            })
+
+
                                         } else {
 
                                             this.setState({ isUploading: false, fileUploadError : "Failed to find the simulation link"});
@@ -863,8 +889,8 @@ class Profile extends React.Component {
                                                 style={{
                                                     width : "100%"
                                                 }}
-                                                url={this.state.user.inp_file_url}
-                                                content="Download FE Mesh (INP)"
+                                                url={this.state.user.vtk_file_url}
+                                                content="Download FE Mesh (VTK)"
                                                 />
                                         </div>
                                     ) : null}

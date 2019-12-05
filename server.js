@@ -2,30 +2,30 @@
 //         INITIALIZING DEPENDENCIES
 // ======================================
 const express = require('express'),
-    app = express(),
-    bodyParser = require("body-parser"),
-    AWS = require('aws-sdk'),
-    cors = require('cors'),
-    AmazonCognitoIdentity = require('amazon-cognito-identity-js'),
-    utility = require('./utilities/utility'),
-    VerifyToken = require('./verify_user'),
-    cookieParser = require('cookie-parser'),
-    archiver = require("archiver"),
-    fs = require("fs"),
-    path = require("path"),
-    uploadFile = require("./upload.js"),
-    config_env = require("./config/configuration_keys"),
-    ms = require("ms"),
-    multer = require('multer'),
-    XLSX = require('xlsx'),
-    request = require('request'),
-    moment = require('moment'),
-    // Load the core build of Lodash.
-    _array = require('lodash/array');
+app = express(),
+bodyParser = require("body-parser"),
+AWS = require('aws-sdk'),
+cors = require('cors'),
+AmazonCognitoIdentity = require('amazon-cognito-identity-js'),
+utility = require('./utilities/utility'),
+VerifyToken = require('./verify_user'),
+cookieParser = require('cookie-parser'),
+archiver = require("archiver"),
+fs = require("fs"),
+path = require("path"),
+uploadFile = require("./upload.js"),
+config_env = require("./config/configuration_keys"),
+ms = require("ms"),
+multer = require('multer'),
+XLSX = require('xlsx'),
+request = require('request'),
+moment = require('moment'),
+// Load the core build of Lodash.
+_array = require('lodash/array');
 
-    global.fetch = require('node-fetch');
+global.fetch = require('node-fetch');
 
-    var _ = require('lodash');
+var _ = require('lodash');
 
 
 // ================================================
@@ -484,52 +484,52 @@ function getSimulationFilesOfPlayer(path, cb) {
 function getPlayersListFromTeamsDB(obj){
     return new Promise((resolve, reject)=>{
         var db_table = {
-        TableName: 'teams',
-        Key: {
-            "organization": obj.organization,
-            "team_name" : obj.team_name
-        }
-    };
-    docClient.get(db_table, function (err, data) {
-        if (err) {
+            TableName: 'teams',
+            Key: {
+                "organization": obj.organization,
+                "team_name" : obj.team_name
+            }
+        };
+        docClient.get(db_table, function (err, data) {
+            if (err) {
 
-            reject(err)
+                reject(err)
 
-        } else {
+            } else {
 
-            resolve(data.Item)
-        }
-    });
+                resolve(data.Item)
+            }
+        });
     })
 }
 
 app.post(`${apiPrefix}checkIfPlayerExists`, (req,res) =>{
     console.log(req.body);
-        getPlayersListFromTeamsDB({
-            organization : "PSU",
-            team_name : "York Tech Football"
-        })
-        .then(data => {
-            console.log("USER EXISTS ",data.player_list.indexOf(req.body.name));
-            if(data.player_list.indexOf(req.body.name)>-1){
-                res.send({
-                    message : "success",
-                    flag : true
-                })
-            }
-            else{
-                res.send({
-                    message : "success",
-                    flag : false
-                })
-            }
-        })
-        .catch(err => {
+    getPlayersListFromTeamsDB({
+        organization : "PSU",
+        team_name : "York Tech Football"
+    })
+    .then(data => {
+        console.log("USER EXISTS ",data.player_list.indexOf(req.body.name));
+        if(data.player_list.indexOf(req.body.name)>-1){
             res.send({
-                message : "failure",
-                error : err
+                message : "success",
+                flag : true
             })
+        }
+        else{
+            res.send({
+                message : "success",
+                flag : false
+            })
+        }
+    })
+    .catch(err => {
+        res.send({
+            message : "failure",
+            error : err
         })
+    })
 })
 
 app.post(`${apiPrefix}getSimulationFilePath`, (req,res) =>{
@@ -611,6 +611,25 @@ function getUploadedInpFileList(user_name, cb) {
         Bucket: BUCKET_NAME,
         Delimiter: '/',
         Prefix: user_name + '/profile/rbf/'
+        // Key: req.query.key + ''
+    };
+
+    s3.listObjectsV2(s3Params, (err, data) => {
+        if (err) {
+            //   console.log(err);
+            cb(err, "");
+        }
+
+        cb("", data.Contents);
+    });
+
+}
+
+function getUploadedVtkFileList(user_name, cb) {
+    const s3Params = {
+        Bucket: BUCKET_NAME,
+        Delimiter: '/',
+        Prefix: user_name + '/profile/rbf/vtk/'
         // Key: req.query.key + ''
     };
 
@@ -776,14 +795,14 @@ function getUserDbData(user_name, cb) {
 }
 
 function getAge(dob) {
-  let currentDate = new Date();
-  let birthDate = new Date(dob);
-  let age = currentDate.getFullYear() - birthDate.getFullYear()
-  let month = currentDate.getMonth() - birthDate.getMonth()
-  if ( month < 0 || ( month === 0 && currentDate.getDate() < birthDate.getDate() )) {
-    age = age - 1
-  }
-  return age;
+    let currentDate = new Date();
+    let birthDate = new Date(dob);
+    let age = currentDate.getFullYear() - birthDate.getFullYear()
+    let month = currentDate.getMonth() - birthDate.getMonth()
+    if ( month < 0 || ( month === 0 && currentDate.getDate() < birthDate.getDate() )) {
+        age = age - 1
+    }
+    return age;
 }
 
 
@@ -942,24 +961,24 @@ function convertDataToJSON(buf,cb){
             if (row == 1) {
 
                 /* headers[col] = value
-                                .split(" ")
-                                .join("_")
-                                .replace(/[{()}]/g, '')
-                                .toLowerCase(); */
-				switch(col) {
-					case "A":
-						headers[col] = 'time_msec';
-						break;
-					case "B":
-						headers[col] = 'head_pressure_psi';
-						break;
-					case "C":
-						headers[col] = 'shoulder_pressure_psi';
-						break;
-					case "D":
-						headers[col] = 'chest_pressure_psi';
-						break;
-				}
+                .split(" ")
+                .join("_")
+                .replace(/[{()}]/g, '')
+                .toLowerCase(); */
+                switch(col) {
+                    case "A":
+                    headers[col] = 'time_msec';
+                    break;
+                    case "B":
+                    headers[col] = 'head_pressure_psi';
+                    break;
+                    case "C":
+                    headers[col] = 'shoulder_pressure_psi';
+                    break;
+                    case "D":
+                    headers[col] = 'chest_pressure_psi';
+                    break;
+                }
                 continue;
             }
 
@@ -969,7 +988,7 @@ function convertDataToJSON(buf,cb){
 
         }
 
-		//drop those first two rows which are empty
+        //drop those first two rows which are empty
         data.shift();
         data.shift();
 
@@ -1036,9 +1055,9 @@ const fetchStaffMembers = () => {
             ExpressionAttributeNames : {
                 "#role" : "role"
             },
-			ExpressionAttributeValues: {
-				":role": "staff"
-			}
+            ExpressionAttributeValues: {
+                ":role": "staff"
+            }
         };
         //   var items
         var items = [];
@@ -1119,6 +1138,43 @@ function getINPFile(user_id) {
                 }
                 else {
                     model_key = user_id + "/profile/rbf/";
+                }
+                // Generate SignedURL of the image
+                getFileSignedUrl(model_key, (err, url) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        resolve(url);
+                    }
+                })
+            }
+        })
+
+    })
+}
+
+
+function getVtkFileLink(user_id) {
+    return new Promise((resolve, reject) => {
+
+        getUploadedVtkFileList(user_id, (err, list) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                // Fetches the latest Model
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+
+                // Getting the model key
+                var model_key;
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
+                }
+                else {
+                    model_key = user_id + "/profile/rbf/vtk/";
                 }
                 // Generate SignedURL of the image
                 getFileSignedUrl(model_key, (err, url) => {
@@ -1362,61 +1418,61 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                             }
                             else {
 
-                              let age = getAge(mergedObject.dob);
-                              console.log("actual age is ", age);
-                              // Adding user's age in details
-                              mergedObject["age"] = age;
+                                let age = getAge(mergedObject.dob);
+                                console.log("actual age is ", age);
+                                // Adding user's age in details
+                                mergedObject["age"] = age;
 
-                              if( age < 18) {
+                                if( age < 18) {
 
-                                // Disable user account
-
-
+                                    // Disable user account
 
 
-                              }
 
-                              // Sending request to service to generate IRB form
-                              request.post({
-                                url: config.ComputeInstanceEndpoint + "IRBFormGenerate",
-                                json: mergedObject
-                              }, function (err, httpResponse, body) {
-                                  if (err) {
-                                      console.log('irb error is : ', err);
-                                      res.send({
-                                          message: "failure",
-                                          error: err
-                                      })
-                                  }
-                                  else {
-                                      console.log("response body from irb", httpResponse.body);
-                                      if( age > 18 ) {
+
+                                }
+
+                                // Sending request to service to generate IRB form
+                                request.post({
+                                    url: config.ComputeInstanceEndpoint + "IRBFormGenerate",
+                                    json: mergedObject
+                                }, function (err, httpResponse, body) {
+                                    if (err) {
+                                        console.log('irb error is : ', err);
                                         res.send({
-                                            message: "success",
-                                            message_details : "Successfully created account ! Check your mail for temporary login credentials"
+                                            message: "failure",
+                                            error: err
                                         })
-                                      } else {
+                                    }
+                                    else {
+                                        console.log("response body from irb", httpResponse.body);
+                                        if( age > 18 ) {
+                                            res.send({
+                                                message: "success",
+                                                message_details : "Successfully created account ! Check your mail for temporary login credentials"
+                                            })
+                                        } else {
 
-                                        disableUser(req.body.user_name, function (err, data) {
-                                            if (err) {
-                                               console.log("Failed to disable user",req.body.user_name )
-                                                res.send({
-                                                    message: "failure",
-                                                    error: err
-                                                })
-                                            }
-                                            else {
-                                              res.send({
-                                                message : "success",
-                                                message_details : "Your request has been successfully mailed to your guardian for approval"
-                                              })
-                                            }
-                                        })
+                                            disableUser(req.body.user_name, function (err, data) {
+                                                if (err) {
+                                                    console.log("Failed to disable user",req.body.user_name )
+                                                    res.send({
+                                                        message: "failure",
+                                                        error: err
+                                                    })
+                                                }
+                                                else {
+                                                    res.send({
+                                                        message : "success",
+                                                        message_details : "Your request has been successfully mailed to your guardian for approval"
+                                                    })
+                                                }
+                                            })
 
-                                      }
+                                        }
 
-                                  }
-                              })
+                                    }
+                                })
 
 
                             }
@@ -1735,58 +1791,72 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                             getINPFile(req.user_cognito_id).then((url) => {
                                                 userData["inp_file_url"] = url;
 
-                                                getSimulationFile(req.user_cognito_id,function(err,list){
-                                                    userData["simulation_file_url"] = "";
-                                                    if (err) {
-                                                        console.log(err);
-                                                        res.send({
-                                                            message: "failure",
-                                                            data: userData
-                                                        })
+                                                getVtkFileLink(req.user_cognito_id)
+                                                .then(url => {
+                                                    userData["vtk_file_url"] = url;
 
-                                                    }
-                                                    else {
+                                                    getSimulationFile(req.user_cognito_id,function(err,list){
+                                                        userData["simulation_file_url"] = "";
+                                                        if (err) {
+                                                            console.log(err);
+                                                            res.send({
+                                                                message: "failure",
+                                                                data: userData
+                                                            })
 
-
-                                                        // Fetches the latest profile pic
-                                                        var latestModel = list.reduce(function (oldest, latest_model) {
-                                                            return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-                                                        }, {});
-                                                        // Now get the signed URL link  from S3
-                                                        // if no S3 link is found then send empty data link
-                                                        // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-                                                        // No file is uploaded
-                                                        var model_key
-                                                        if (list.length != 0) {
-                                                            model_key = latestModel.Key;
                                                         }
                                                         else {
-                                                            model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
-                                                        }
-                                                        getFileSignedUrl(model_key, function (err, url) {
-                                                            if (err) {
-                                                                console.log(err);
-                                                                userData["simulation_file_url"] = "";
-                                                                res.send({
-                                                                    message: "failure",
-                                                                    data: userData
-                                                                })
+
+                                                            // Fetches the latest profile pic
+                                                            var latestModel = list.reduce(function (oldest, latest_model) {
+                                                                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                                            }, {});
+                                                            // Now get the signed URL link  from S3
+                                                            // if no S3 link is found then send empty data link
+                                                            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                                            // No file is uploaded
+                                                            var model_key
+                                                            if (list.length != 0) {
+                                                                model_key = latestModel.Key;
                                                             }
                                                             else {
-                                                                if (list.length == 0) {
+                                                                model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
+                                                            }
+                                                            getFileSignedUrl(model_key, function (err, url) {
+                                                                if (err) {
+                                                                    console.log(err);
                                                                     userData["simulation_file_url"] = "";
+                                                                    res.send({
+                                                                        message: "failure",
+                                                                        data: userData
+                                                                    })
                                                                 }
                                                                 else {
-                                                                    userData["simulation_file_url"] = url;
-                                                                }
-                                                                res.send({
-                                                                    message: "success",
-                                                                    data: userData
-                                                                })
+                                                                    if (list.length == 0) {
+                                                                        userData["simulation_file_url"] = "";
+                                                                    }
+                                                                    else {
+                                                                        userData["simulation_file_url"] = url;
+                                                                    }
+                                                                    res.send({
+                                                                        message: "success",
+                                                                        data: userData
+                                                                    })
 
-                                                            }})
-                                                        }
+                                                                }})
+                                                            }
+                                                        })
+
+
                                                     })
+                                                    .catch(err => {
+                                                        res.send({
+                                                            message: "failure",
+                                                            error : err
+                                                        })
+                                                    })
+
+
                                                 })
                                                 .catch((err) => {
                                                     res.send({
@@ -1815,6 +1885,18 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
             res.send({
                 message: "success",
                 inp_file_link: url
+            })
+        }).catch((err) => {
+            res.send({
+                message: "failure"
+            })
+        })
+    })
+    app.post(`${apiPrefix}getVtkFileLink`, (req, res) => {
+        getVtkFileLink(req.body.user_cognito_id).then((url) => {
+            res.send({
+                message: "success",
+                vtk_file_url: url
             })
         }).catch((err) => {
             res.send({
@@ -2134,302 +2216,302 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                 error : err
             })
         })
-        })
+    })
 
-        // API To upload profile pic to S310m
-        app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
+    // API To upload profile pic to S310m
+    app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
 
-        app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
-            // Fetch user group data and check if he is Admin or not
-            getListGroupForUser(req.user_cognito_id, function (err, groupData) {
-                if (err) {
-
-                    res.send({
-                        message: "failure",
-                        error: err
-                    });
-                } else {
-                    // Now checking is user is ADMIN or not
-                    var flag = false;
-                    groupData.forEach(element => {
-                        if (element.GroupName == "Admin") {
-                            flag = true;
-                        }
-                    });
-                    res.send({
-                        message: "success",
-                        isAdmin: flag
-                    })
-                }
-            });
-        })
-
-        // Create Avatar 3D
-        app.post(`${apiPrefix}createAvatar`, (req, res) => {
-            console.log("API CAlled createAvatar", req.body);
-
-            // Delete user previous Avatar Directory
-            deleteDirectory(path.join(
-                __dirname,
-                "./avatars/" + req.body.user
-            ), function () {
-                //console.log('Directory deleted');
-            }
-        );
-
-        const spawn = require("child_process").spawn;
-        const pythonProcess = spawn("python", [
-            "./config/AvatarTest.py",
-            req.body.image,
-            config.avatar3dClientId,
-            config.avatar3dclientSecret,
-            req.body.user
-        ]);
-
-        pythonProcess.stdout.on("data", async data => {
-            console.log(data.toString());
-            try {
-                //archive zip
-                var output = fs.createWriteStream(data.toString() + ".zip");
-                var archive = archiver("zip");
-
-                output.on("close", async function () {
-                    console.log(archive.pointer() + " total bytes");
-                    console.log(
-                        "archiver has been finalized and the output file descriptor has closed."
-                    );
-                    console.log("zip file uploading");
-                    let filePath = path.join(
-                        __dirname,
-                        "./" + data.toString() + ".zip"
-                    );
-                    let zipBuffer = fs.readFileSync(filePath);
-                    returnedData = await uploadFile("zip", zipBuffer, data.toString(), {
-                        ext: "zip",
-                        mime: "application/zip"
-                    });
-
-                    let rData = {};
-                    rData.plyPath = returnedData.Location;
-                    return res.status(200).send(rData);
-                });
-                archive.on("error", function (err) {
-                    console.log(err);
-                    res.status(400).send(err);
-                    throw err;
-                });
-                archive.pipe(output);
-                archive.directory(path.join(__dirname, "/./" + data.toString() + "/"), false);
-                archive.finalize();
-
-            } catch (error) {
-                console.log(error);
-                return res.status(400).send(error);
-            }
-        });
-
-        pythonProcess.stderr.on("data", async data => {
-            console.log(`error:${data}`);
-        });
-        pythonProcess.on("close", async data => {
-            console.log(`child process close with ${data}`);
-        });
-    });
-
-    // Delete Directory
-    var deleteDirectory = function (path, callback) {
-        fs.readdir(path, function (err, files) {
+    app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
+        // Fetch user group data and check if he is Admin or not
+        getListGroupForUser(req.user_cognito_id, function (err, groupData) {
             if (err) {
-                // Pass the error on to callback
-                callback(err, []);
-                return;
-            }
-            var wait = files.length,
-            count = 0,
-            folderDone = function (err) {
-                count++;
-                // If we cleaned out all the files, continue
-                if (count >= wait || err) {
-                    fs.rmdir(path, callback);
-                }
-            };
-            // Empty directory to bail early
-            if (!wait) {
-                folderDone();
-                return;
-            }
 
-            // Remove one or more trailing slash to keep from doubling up
-            path = path.replace(/\/+$/, "");
-            files.forEach(function (file) {
-                var curPath = path + "/" + file;
-                fs.lstat(curPath, function (err, stats) {
-                    if (err) {
-                        callback(err, []);
-                        return;
-                    }
-                    if (stats.isDirectory()) {
-                        deleteDirectory(curPath, folderDone);
-                    } else {
-                        fs.unlink(curPath, folderDone);
-                    }
-                });
-            });
-        });
-    };
-    // Uploading the Sensor Data (CSV) file
-    app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
-        // Upload this data in Profile Bucket of USER
-        console.log("API Called to upload to upload Sensor Data")
-        getUserDbData(req.user_cognito_id, function (err, user) {
-            if (err) {
-                console.log(err);
                 res.send({
                     message: "failure",
                     error: err
-                })
-            }else{
-                var file_name = Date.now();
-
-                var uploadParams = {
-                    Bucket: config.usersbucket,
-                    Key: '', // pass key
-                    Body: null, // pass file body
-                };
-
-                // File Extensions
-                var file_extension = req.file.originalname.split(".");
-                file_extension = file_extension[file_extension.length - 1];
-
-                // Setting Attributes for file upload on S3
-                uploadParams.Key = req.user_cognito_id + "/sensor_data/" + file_name + "." + file_extension;
-                uploadParams.Body = req.file.buffer;
-
-                if (req.body.file_error) {
-                    console.log(req.body.file_error);
-                    res.status(500).send({
-                        message: "failure",
-                        status: "Invalid File type"
-                    });
-                }
-                else{
-                    // Uploading it on S3
-                    req.io.sockets.emit('fileUploadLog', "Uploading Sensor Data ..." )
-                    s3.upload(uploadParams, (err, data) => {
-                        if (err) {
-
-                            res.status(500).send({ message: 'failure' });
-                        }
-                        else{
-                            req.io.sockets.emit('fileUploadLog', "Parsing Sensor Data ..." )
-                            convertXLSXDataToJSON(req.file.buffer,function(items){
-                                // Store the Data in DynamoDB
-                                // now broadcast the updated foo..
-
-                                req.io.sockets.emit('fileUploadLog', "Populating Data-Base with Sensor Data ..." )
-                                // Appending organization in elements of array
-                                if(user.organization === undefined){
-                                    user["organization"] = "PSU"
-                                }
-                                console.log(items);
-                                items.map((element) => {
-                                    return element.organization = user.organization;
-                                });
-
-                                const new_items_array = _.map(items, o => _.extend({organization: user.organization}, o));
-
-                                storeSensorData(new_items_array)
-                                .then(flag => {
-
-                                    var players = items.map(function (player) {
-                                        return {    player_id : player.player_id.split("$")[0],
-                                        team : player.team,
-                                        organization : player.organization
-                                    }
-                                });
-
-
-
-                                var unique_players = _.uniq(players, 'player_id');
-                                const result = [];
-                                const map = new Map();
-
-                                for (const item of players) {
-                                    if(!map.has(item.player_id)){
-                                        map.set(item.player_id, true);    // set any value to Map
-                                        result.push(item);
-                                    }
-                                }
-                                if(result.length == 0){
-                                    res.send({
-                                        message : "success"
-                                    })
-                                }
-                                else{
-                                    // Run simulation here and send data
-                                    // {
-                                    //     "player_id" : "STRING",
-                                    //     "team" : "STRING",
-                                    //     "organization" : "STRING"
-                                    // }
-                                    var counter = 0 ;
-                                    console.log("UNIQUE PLAYERS ++++++++++++++ ",result);
-
-                                    for(var i =0 ; i< result.length ; i++){
-                                        var temp = result[i];
-
-                                        addPlayerToTeamInDDB(temp.organization, temp.team, temp.player_id)
-                                        .then(d => {
-                                            req.io.sockets.emit('fileUploadLog', `Running Simulation for ${temp.player_id} ...` )
-                                            request.post({ url: config.ComputeInstanceEndpoint + "generateSimulationForPlayer", json: temp }, function (err, httpResponse, body) {
-                                                counter++;
-                                                if (err) {
-                                                    console.log(err);
-
-                                                    res.send({
-                                                        message : "failure",
-                                                        error : err
-                                                    })
-                                                }
-                                                else {
-
-                                                    console.log(data);
-
-                                                }
-
-                                                if(counter == result.length){
-                                                    res.send({
-                                                        message : "success"
-                                                    })
-                                                }
-                                            })
-                                        })
-                                        .catch(err => {
-                                            counter = result.length ;
-                                            res.send({
-                                                message : "failure"
-                                            })
-                                        })
-                                    }
-                                }
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                res.send({
-                                    message : 'failure',
-                                    error : err
-                                })
-                            })
-
-
-                        });
-
-
+                });
+            } else {
+                // Now checking is user is ADMIN or not
+                var flag = false;
+                groupData.forEach(element => {
+                    if (element.GroupName == "Admin") {
+                        flag = true;
                     }
+                });
+                res.send({
+                    message: "success",
+                    isAdmin: flag
                 })
             }
-        }
+        });
     })
+
+    // Create Avatar 3D
+    app.post(`${apiPrefix}createAvatar`, (req, res) => {
+        console.log("API CAlled createAvatar", req.body);
+
+        // Delete user previous Avatar Directory
+        deleteDirectory(path.join(
+            __dirname,
+            "./avatars/" + req.body.user
+        ), function () {
+            //console.log('Directory deleted');
+        }
+    );
+
+    const spawn = require("child_process").spawn;
+    const pythonProcess = spawn("python", [
+        "./config/AvatarTest.py",
+        req.body.image,
+        config.avatar3dClientId,
+        config.avatar3dclientSecret,
+        req.body.user
+    ]);
+
+    pythonProcess.stdout.on("data", async data => {
+        console.log(data.toString());
+        try {
+            //archive zip
+            var output = fs.createWriteStream(data.toString() + ".zip");
+            var archive = archiver("zip");
+
+            output.on("close", async function () {
+                console.log(archive.pointer() + " total bytes");
+                console.log(
+                    "archiver has been finalized and the output file descriptor has closed."
+                );
+                console.log("zip file uploading");
+                let filePath = path.join(
+                    __dirname,
+                    "./" + data.toString() + ".zip"
+                );
+                let zipBuffer = fs.readFileSync(filePath);
+                returnedData = await uploadFile("zip", zipBuffer, data.toString(), {
+                    ext: "zip",
+                    mime: "application/zip"
+                });
+
+                let rData = {};
+                rData.plyPath = returnedData.Location;
+                return res.status(200).send(rData);
+            });
+            archive.on("error", function (err) {
+                console.log(err);
+                res.status(400).send(err);
+                throw err;
+            });
+            archive.pipe(output);
+            archive.directory(path.join(__dirname, "/./" + data.toString() + "/"), false);
+            archive.finalize();
+
+        } catch (error) {
+            console.log(error);
+            return res.status(400).send(error);
+        }
+    });
+
+    pythonProcess.stderr.on("data", async data => {
+        console.log(`error:${data}`);
+    });
+    pythonProcess.on("close", async data => {
+        console.log(`child process close with ${data}`);
+    });
+});
+
+// Delete Directory
+var deleteDirectory = function (path, callback) {
+    fs.readdir(path, function (err, files) {
+        if (err) {
+            // Pass the error on to callback
+            callback(err, []);
+            return;
+        }
+        var wait = files.length,
+        count = 0,
+        folderDone = function (err) {
+            count++;
+            // If we cleaned out all the files, continue
+            if (count >= wait || err) {
+                fs.rmdir(path, callback);
+            }
+        };
+        // Empty directory to bail early
+        if (!wait) {
+            folderDone();
+            return;
+        }
+
+        // Remove one or more trailing slash to keep from doubling up
+        path = path.replace(/\/+$/, "");
+        files.forEach(function (file) {
+            var curPath = path + "/" + file;
+            fs.lstat(curPath, function (err, stats) {
+                if (err) {
+                    callback(err, []);
+                    return;
+                }
+                if (stats.isDirectory()) {
+                    deleteDirectory(curPath, folderDone);
+                } else {
+                    fs.unlink(curPath, folderDone);
+                }
+            });
+        });
+    });
+};
+// Uploading the Sensor Data (CSV) file
+app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
+    // Upload this data in Profile Bucket of USER
+    console.log("API Called to upload to upload Sensor Data")
+    getUserDbData(req.user_cognito_id, function (err, user) {
+        if (err) {
+            console.log(err);
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }else{
+            var file_name = Date.now();
+
+            var uploadParams = {
+                Bucket: config.usersbucket,
+                Key: '', // pass key
+                Body: null, // pass file body
+            };
+
+            // File Extensions
+            var file_extension = req.file.originalname.split(".");
+            file_extension = file_extension[file_extension.length - 1];
+
+            // Setting Attributes for file upload on S3
+            uploadParams.Key = req.user_cognito_id + "/sensor_data/" + file_name + "." + file_extension;
+            uploadParams.Body = req.file.buffer;
+
+            if (req.body.file_error) {
+                console.log(req.body.file_error);
+                res.status(500).send({
+                    message: "failure",
+                    status: "Invalid File type"
+                });
+            }
+            else{
+                // Uploading it on S3
+                req.io.sockets.emit('fileUploadLog', "Uploading Sensor Data ..." )
+                s3.upload(uploadParams, (err, data) => {
+                    if (err) {
+
+                        res.status(500).send({ message: 'failure' });
+                    }
+                    else{
+                        req.io.sockets.emit('fileUploadLog', "Parsing Sensor Data ..." )
+                        convertXLSXDataToJSON(req.file.buffer,function(items){
+                            // Store the Data in DynamoDB
+                            // now broadcast the updated foo..
+
+                            req.io.sockets.emit('fileUploadLog', "Populating Data-Base with Sensor Data ..." )
+                            // Appending organization in elements of array
+                            if(user.organization === undefined){
+                                user["organization"] = "PSU"
+                            }
+                            console.log(items);
+                            items.map((element) => {
+                                return element.organization = user.organization;
+                            });
+
+                            const new_items_array = _.map(items, o => _.extend({organization: user.organization}, o));
+
+                            storeSensorData(new_items_array)
+                            .then(flag => {
+
+                                var players = items.map(function (player) {
+                                    return {    player_id : player.player_id.split("$")[0],
+                                    team : player.team,
+                                    organization : player.organization
+                                }
+                            });
+
+
+
+                            var unique_players = _.uniq(players, 'player_id');
+                            const result = [];
+                            const map = new Map();
+
+                            for (const item of players) {
+                                if(!map.has(item.player_id)){
+                                    map.set(item.player_id, true);    // set any value to Map
+                                    result.push(item);
+                                }
+                            }
+                            if(result.length == 0){
+                                res.send({
+                                    message : "success"
+                                })
+                            }
+                            else{
+                                // Run simulation here and send data
+                                // {
+                                //     "player_id" : "STRING",
+                                //     "team" : "STRING",
+                                //     "organization" : "STRING"
+                                // }
+                                var counter = 0 ;
+                                console.log("UNIQUE PLAYERS ++++++++++++++ ",result);
+
+                                for(var i =0 ; i< result.length ; i++){
+                                    var temp = result[i];
+
+                                    addPlayerToTeamInDDB(temp.organization, temp.team, temp.player_id)
+                                    .then(d => {
+                                        req.io.sockets.emit('fileUploadLog', `Running Simulation for ${temp.player_id} ...` )
+                                        request.post({ url: config.ComputeInstanceEndpoint + "generateSimulationForPlayer", json: temp }, function (err, httpResponse, body) {
+                                            counter++;
+                                            if (err) {
+                                                console.log(err);
+
+                                                res.send({
+                                                    message : "failure",
+                                                    error : err
+                                                })
+                                            }
+                                            else {
+
+                                                console.log(data);
+
+                                            }
+
+                                            if(counter == result.length){
+                                                res.send({
+                                                    message : "success"
+                                                })
+                                            }
+                                        })
+                                    })
+                                    .catch(err => {
+                                        counter = result.length ;
+                                        res.send({
+                                            message : "failure"
+                                        })
+                                    })
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.send({
+                                message : 'failure',
+                                error : err
+                            })
+                        })
+
+
+                    });
+
+
+                }
+            })
+        }
+    }
+})
 
 })
 
@@ -2455,66 +2537,66 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
     // 2. call API TO create IRB Details & Send
     // =======================================
     getUserDbData(req.body.user_cognito_id, (err,data)=>{
-            if(err){
+        if(err){
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }
+        else{
+            let user_data = data.Item ;
+            if(user_data.isIRBComplete){
                 res.send({
                     message : "failure",
-                    error : err
+                    error : {
+                        message : "IRB process is already completed."
+                    }
                 })
             }
             else{
-                let user_data = data.Item ;
-                if(user_data.isIRBComplete){
-                    res.send({
-                        message : "failure",
-                        error : {
-                            message : "IRB process is already completed."
+                // CHANGE it TO TRUE
+                user_data["isIRBComplete"] = true ;
+                user_data["guardian_first_name"] = req.body.guardian_first_name ;
+                user_data["guardian_last_name"] = req.body.guardian_last_name ;
+                user_data["guardian_signature"] = req.body.guardian_signature ;
+
+                // Store the code in DynamoDB
+                addRecordInUsersDDB(user_data)
+                .then(value => {
+
+                    // Call API To Make IRB Form
+                    request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
+                        if (err) {
+                            res.send({ message: 'failure', error: err });
+                        }
+                        else {
+                            console.log(httpResponse.body);
+                            enableUser(req.body.user_cognito_id, function (err, data) {
+                                if (err) {
+                                    res.send({
+                                        message: "failure",
+                                        error: err
+                                    })
+                                }
+                                else {
+                                    res.send(httpResponse.body);
+                                }
+                            })
+
                         }
                     })
-                }
-                else{
-                    // CHANGE it TO TRUE
-                    user_data["isIRBComplete"] = true ;
-                    user_data["guardian_first_name"] = req.body.guardian_first_name ;
-                    user_data["guardian_last_name"] = req.body.guardian_last_name ;
-                    user_data["guardian_signature"] = req.body.guardian_signature ;
 
-                    // Store the code in DynamoDB
-                    addRecordInUsersDDB(user_data)
-                    .then(value => {
-
-                          // Call API To Make IRB Form
-                          request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
-                              if (err) {
-                                  res.send({ message: 'failure', error: err });
-                              }
-                              else {
-                                  console.log(httpResponse.body);
-                                  enableUser(req.body.user_cognito_id, function (err, data) {
-                                      if (err) {
-                                          res.send({
-                                              message: "failure",
-                                              error: err
-                                          })
-                                      }
-                                      else {
-                                          res.send(httpResponse.body);
-                                      }
-                                  })
-
-                              }
-                          })
-
+                })
+                .catch(err => {
+                    res.send({
+                        message : "failure",
+                        error : err
                     })
-                    .catch(err => {
-                        res.send({
-                            message : "failure",
-                            error : err
-                        })
-                    })
+                })
 
 
-                }
             }
+        }
     })
 
 
@@ -2717,9 +2799,9 @@ app.post(`${apiPrefix}deleteTeam`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}uploadModelRealData`, setConnectionTimeout('10m'), uploadModelRealData.single('file'), (req, res) => {
-	convertDataToJSON(req.file.buffer,function(items){
-		//console.log(items);
-		return res.status(200).send(items);
+    convertDataToJSON(req.file.buffer,function(items){
+        //console.log(items);
+        return res.status(200).send(items);
     });
 
 })
