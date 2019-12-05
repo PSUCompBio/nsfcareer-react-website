@@ -181,6 +181,14 @@ div.section-one {
   transition: visibility 0s linear 0s, opacity 300ms;
 }
 
+.signIn-btn {
+  padding: 3px 10px;
+  border-radius: 8px;
+  border: solid 1px #0f81dc;
+  color: #fff;
+  background-color: #1e76b9;
+}
+
 div.contact-img-container {
   height: 79.6vh;
   display: flex;

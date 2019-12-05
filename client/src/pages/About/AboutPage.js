@@ -36,12 +36,11 @@ class AboutPage extends React.Component {
                 </h1>
               </div>
               <p className={`animated fadeInUp about-lines`}>
-                  <span style={{fontSize : "1.5rem"}} className="top-heading__login">Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
-                <br />
-                <br />
-                 <span style={{color : "#595959", fontSize : "1.5rem"}} className="top-heading__login" >Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
+                  <span style={{fontSize : "0.95rem"}} className="top-heading__login">Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
+              </p>
+          
+                 <span style={{color : "#595959", fontSize : "0.95rem"}} className="top-heading__login" >Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
 
-                <br />
                 <br />
                 <div className="row">
                     <div className="col-md-6">
@@ -89,7 +88,7 @@ class AboutPage extends React.Component {
                 </div>
                 <br />
                 <br />
-              </p>
+              
             </div>
 
           </div>

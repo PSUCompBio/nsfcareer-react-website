@@ -1,8 +1,8 @@
 import React from 'react';
 import { InView } from 'react-intersection-observer';
 import screenWidth from '../../../utilities/ScreenWidth';
-import { withRouter } from 'react-router-dom';
-
+import { withRouter, Link } from 'react-router-dom';
+import Footer from '../../../components/Footer';
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
     super();
@@ -103,7 +103,7 @@ class TechnologiesWeUse extends React.Component {
                   this.props.screenWidth > screenWidth[0].screen425 &&
                   this.props.screenWidth < screenWidth[2].screen769
                     ? ''
-                    : ' py-5'
+                    : ''
                 }`}
               >
                 <InView>
@@ -131,12 +131,6 @@ class TechnologiesWeUse extends React.Component {
                       <p>
                         We partner with leading impact and blast sensor
                         companies to provide real-time brain response analytics.
-                        We help transform their data into meaningful brain
-                        health monitoring. Looking for a sensor? See our{' '}
-                        {this.props.screenWidth > screenWidth[4].screen1024
-                          ? ''
-                          : ''}{' '}
-                        recommended providers here.
                       </p>
                     </div>
                   )}
@@ -154,7 +148,7 @@ class TechnologiesWeUse extends React.Component {
                       }`}
                     >
                       <img
-                        className="mb-5 img-fluid terminology-img"
+                        className="img-fluid terminology-img"
                         src="/img/TechnologiesWeUseImg/cloud.svg"
                         alt=""
                       />
@@ -184,10 +178,7 @@ class TechnologiesWeUse extends React.Component {
                         Computational Brain Medicine
                       </h4>
                       <p>
-                        Computational Brain Medicine (CBM) is a transformative
-                        and emerging discipline that uses computers to
-                        understand, diagnose, develop treatment options, and
-                        monitor brain health. It leverages engineering,
+                        Computational Brain Medicine leverages engineering,
                         mathematics and computational science to develop
                         quantitative approaches for brain health applications.
                       </p>
@@ -197,71 +188,21 @@ class TechnologiesWeUse extends React.Component {
               </div>
               <div className="row text-center">
                 <div className="col-md-12 mb-3 col-lg-12">
+                <Link to="/Details">
                   <button
                     type="button"
-                    className="btn btn-outline-blue  px-5 mt-5"
+                    className="btn btn-outline-blue  px-5 mt-2"
                   >
                     Read More
                   </button>
+                </Link>
                 </div>
               </div>
             </div>
           </div>
-          <footer
-            style={
-              this.props.screenWidth < screenWidth[5].screen725
-                ? makeFooterVisibeForSmallDevice.reset
-                : {}
-            }
-            className={`show-footer-mobile ${
-              this.props.mouseScroll > 0 &&
-              this.props.screenWidth >= screenWidth[5].screen725
-                ? 'show-footer'
-                : this.props.screenWidth < screenWidth[5].screen725
-                ? ''
-                : 'hide-footer'
-            }`}
-          >
-            <div className="container">
-              <div className="row pt-4">
-                <div className="col-sm-6 col-md-6 footer-title ">
-                  <img className="logo" src="/img/icon/logo.png" alt="" />
-                </div>
-                <div className="col-sm-6 col-md-6 footer-update-button">
-                  <button
-                    onClick={() => this.props.showmodal()}
-                    type="button"
-                    className="btn btn-primary float-right"
-                  >
-                    Get Updates
-                  </button>
-                </div>
-                <hr />
-              </div>
-              <div className="row text-center">
-                <div className="col-sm-12 col-md-12 ">
-                  <p>
-                    <i class="fa fa-envelope" aria-hidden="true"></i> info@NSFCAREER.IO <br />
-                    <span className="ip-irb-link" onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
-                    Policy &amp;{' '}
-                    <span className="ip-irb-link" onClick={() => this.props.history.push('/IRB')}> IRB </span> |
-                    Collaborate
-                  </p>
-                </div>
-                <div className="col-sm-3 col-md-6 ">
-                </div>
-              </div>
-              <div className="row text-center">
-                <div className="col-md-12 pb-3 ">
-                  <p onClick={redirectToOther} className="copyright">
-                    © 2019 Copyright: Penn State Computational Biomechanics
-                    Group
-                  </p>
-                </div>
-              </div>
-            </div>
-          </footer>
+          
         </div>
+        <Footer/>
       </React.Fragment>
     );
   };

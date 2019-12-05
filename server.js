@@ -1310,6 +1310,39 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
     })
 });
 
+
+app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
+    
+    let update_details = {
+                    
+        TableName : 'users',
+        Key : {
+            "user_cognito_id": req.body.user_cognito_id
+        },
+        UpdateExpression : "set first_name = :fname, last_name = :lname, dob = :dob, gender = :gender, phone_number = :phone_number",
+        ExpressionAttributeValues : {
+            ":fname" : req.body.first_name,
+            ":lname" : req.body.last_name,
+            ":dob" : req.body.dob,
+            ":gender" : req.body.sex,
+            ":phone_number" : req.body.country_code + req.body.phone_number
+        },
+        ReturnValues: "UPDATED_NEW"
+    };    
+
+    docClient.update(update_details, function(err, data){
+        if(err) {
+            res.send({
+                message : 'failure'
+            })
+        } else {
+            res.send({
+                message : 'success'
+            })
+        }
+    })
+})
+
 app.post(`${apiPrefix}signUp`, (req, res) => {
 
 

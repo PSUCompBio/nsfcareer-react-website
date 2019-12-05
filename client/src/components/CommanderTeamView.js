@@ -187,7 +187,6 @@
                 cognito_user_id : id,
                 player_name : p_name
             })
-
         }
 
         setRosterValue = (e) => {
@@ -294,7 +293,7 @@
                 ref="rosterContainer"
                 className="container t-roster pt-5 mt-5 animated zoomIn"
                 >
-                <div className="row">
+                <div className="row" >
                     <div className="col-md-8">
                         <div className="row">
                             <div className="col-md-12">
@@ -680,7 +679,12 @@
                                                     pathname: '/TeamAdmin/user/dashboard',
                                                     state: {
                                                         cognito_user_id : this.state.cognito_user_id,
-                                                        player_name : this.state.player_name
+                                                        player_name : this.state.player_name,
+                                                        team: {
+                                                           team_name : this.props.location.state.team.team_name,
+                                                           organization : this.props.location.state.team.organization,
+                                                           staff : this.props.location.state.team.staff
+                                                        }
                                                     }
                                                 }} />
                                             }

@@ -48,6 +48,20 @@ export const logIn = (request) =>{
       });
   })
 }
+
+export const updateUserDetails = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/updateUserDetails`, JSON.parse(request),{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
 export const logInFirstTime = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/logInFirstTime`, JSON.parse(request),{withCredentials: true})
