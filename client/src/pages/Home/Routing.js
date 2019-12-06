@@ -24,6 +24,7 @@ import GetUpdates from '../../components/GetUpdates';
 import Sports from '../Sports/SportsPage';
 import Developer from '../Developer/DeveloperPage';
 import Dash from '../Dash/DashPage';
+import Report from '../../components/ReportContent/Report0';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -260,6 +261,11 @@ class Routing extends React.Component {
             exact
             path="/Sports"
             render={(props) => <Sports {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/pdf"
+            render={(props) => < Report /> }
         />
         <Route
             exact

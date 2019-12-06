@@ -192,7 +192,9 @@ class Nav extends React.Component {
 
   mobileNav = () => {
     return (
-        <div class="collapse navbar-collapse flex-column" id="nav-content">
+        <div class="collapse navbar-collapse flex-column" style= {{
+          zIndex : 999
+        }} id="nav-content">
       <ul className="navbar-nav ml-auto text-center">
         <li className="nav-item make-active active">
           <Link className="nav-link" to={'/Home'}>

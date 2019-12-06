@@ -34,7 +34,9 @@ class ContactPage extends React.Component {
       <React.Fragment>
         <div className="container-fluid  contact__page-center-align pl-0">
           <div className="row mobile-section-top-fix pt-surface  animated zoomIn text-center">
-            <div  className="col-md-7 order-12 pr-0 contact-img-container">
+            <div  className="col-md-7 order-12 pr-0 contact-img-container" style = {{
+              height : "auto"
+            }}>
               {/* <GoogleMap /> */}
               <img style={{width : "100% !important"}}className="img-fluid img-contact-us" src="/img/contactus.png" alt=""/>
             </div>

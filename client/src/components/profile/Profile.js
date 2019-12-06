@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
 import DarkMode from '../DarkMode';
+
 import {
     uploadProfilePic,
     getUserDetails,
@@ -14,6 +15,8 @@ import {
     getInpFileLink,
     getModelLink,
     getSimulationFile,
+    getVtkFileLink,
+    updateUserDetails,
     isAuthenticated
 } from '../../apis';
 
@@ -55,8 +58,6 @@ class Profile extends React.Component {
             user_profile_to_view = '';
         }
 
-        console.log("PROFILE PAGE ",user_profile_to_view);
-
         this.state = {
             selectedFile: null,
             isLoading: true,
@@ -80,6 +81,7 @@ class Profile extends React.Component {
             startDate: '',
         };
         this.handleDateChange = this.handleDateChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     onChangeHandler = (event) => {
         event.persist();
@@ -215,9 +217,34 @@ class Profile extends React.Component {
                                                 return { user: prevState };
                                             });
 
-                                            this.setState( {
-                                                isFileUploaded : true
-                                            });
+                                            getVtkFileLink(JSON.stringify({
+                                                user_cognito_id : user_id
+                                            }))
+                                            .then(response => {
+                                                if(response.data.message == "success"){
+                                                    this.setState((prevState) => {
+                                                        prevState = JSON.parse(
+                                                            JSON.stringify(this.state.user)
+                                                        );
+
+                                                        prevState.vtk_file_url =
+                                                        response.data.vtk_file_url;
+                                                        return { user: prevState };
+                                                    });
+                                                    this.setState( {
+                                                        isFileUploaded : true
+                                                    });
+                                                }
+                                                else{
+                                                    this.setState({ isUploading: false, fileUploadError : "Invalid Request to fetch VTK File"});
+                                                }
+
+                                            })
+                                            .catch(err => {
+                                                this.setState({ isUploading: false, fileUploadError : "Failed to find the VTK File Link"});
+                                            })
+
+
                                         } else {
 
                                             this.setState({ isUploading: false, fileUploadError : "Failed to find the simulation link"});
@@ -338,6 +365,49 @@ class Profile extends React.Component {
         }
     };
 
+    handleSubmit(e) {
+    console.log('Update user details clicked');
+    e.preventDefault();
+    e.persist();
+    //temporary setting authentication to change nav bar tabs
+
+    console.log('update User Details api called');
+    const formData = new FormData(e.target);
+    this.setState({
+      isLoginError: false,
+      isLoading: true
+    });
+    // converting formData to JSON
+    const formJsonData = JSON.parse(formDataToJson(formData));
+
+    formJsonData["user_cognito_id"] = this.state.user.user_cognito_id
+
+      // Calling update user details api
+      updateUserDetails(JSON.stringify(formJsonData))
+        .then((response) => {
+          if (response.data.message === 'success') {
+            this.setState({
+              isLoading: false,
+              isSignInSuccessed: true,
+              message : true
+            });
+
+          } else {
+            // show error
+            this.setState({
+              loginError: response.data.error,
+              isLoginError: true,
+              isLoading: false
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+  }
+
+
     showProfile = () => {
         return (
             <React.Fragment>
@@ -382,7 +452,7 @@ class Profile extends React.Component {
                                     Contact Information
                                 </p>
 
-                                <Form className="mt-2">
+                                <Form className="mt-2" onSubmit = {this.handleSubmit} >
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Name</Label>
 
@@ -391,7 +461,7 @@ class Profile extends React.Component {
                                                 <Col md={6} sm={12}>
                                                     <div class="input-group">
                                                         <Input
-                                                            className="profile-input" type="text" name="name" id="exampleEmail" value={this.state.user.first_name} placeholder="First Name" />
+                                                            className="profile-input" type="text" name="first_name" id="exampleEmail" value={this.state.user.first_name} placeholder="First Name" />
                                                         <span class="input-group-addon profile-edit-icon">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
                                                           </span>
@@ -408,7 +478,7 @@ class Profile extends React.Component {
                                                 <Col md={6} sm={12}>
                                                     <div class="input-group">
                                                     <Input
-                                                        className="profile-input" type="text" name="name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
+                                                        className="profile-input" type="text" name="last_name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
                                                         <span class="input-group-addon profile-edit-icon"
                                                         >
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -425,12 +495,9 @@ class Profile extends React.Component {
                                         <Label for="exampleEmail" sm={2}>Email</Label>
                                         <Col sm={6}>
                                             <div class="input-group">
-                                            <Input
+                                            <Input readOnly
                                                 className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.user.email} placeholder="abc@example.com" />
-                                                <span class="input-group-addon profile-edit-icon"
-                                                    >
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                  </span>
+
                                               </div>
                                         </Col>
                                         <Col sm={4}>
@@ -495,7 +562,7 @@ class Profile extends React.Component {
                                                     {this.state.slectedCountryName}
                                                   </span>
                                                   <Input
-                                                      className="profile-input phone-number-input-box" type="text" name="email" id="exampleEmail" value={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
+                                                      className="profile-input phone-number-input-box" type="text" name="phone_number" id="exampleEmail" value={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
                                                   <span class="input-group-addon profile-edit-icon"
                                                       >
                                                       <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -507,7 +574,7 @@ class Profile extends React.Component {
                                               </div>
                                         </Col>
                                         <Col sm={4}>
-                                            <button className="btn btn-success btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Verified</button>
+                                            <button className="btn btn-warning btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Not Verified</button>
                                         </Col>
                                     </FormGroup>
 
@@ -515,8 +582,8 @@ class Profile extends React.Component {
                                         <Label for="exampleEmail" sm={2}>Organization</Label>
                                         <Col sm={6}>
                                             <div class="input-group">
-                                            <Input
-                                                className="profile-input" type="select" name="email" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
+                                            <Input readOnly
+                                                className="profile-input" type="select" name="organization" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
                                             <option value={this.state.organization ? this.state.organization : "PSU"}  > {this.state.organization ? this.state.organization : "PSU"} </option>
                                             <option value="NSF"  > NSF </option>
                                             </Input>
@@ -529,7 +596,7 @@ class Profile extends React.Component {
                                     </FormGroup>
 
                                     <FormGroup row>
-                                        <Label for="exampleEmail" sm={2}>Birthday</Label>
+                                        <Label for="dob" sm={2}>Birthday</Label>
                                         <Col sm={6}>
                                             <div class="input-group">
                                                 <DatePicker
@@ -558,7 +625,7 @@ class Profile extends React.Component {
                                         <Col sm={6}>
                                             <div class="input-group">
                                             <Input
-                                                className="profile-input" type="select" name="email" id="exampleEmail" placeholder="Gender" defaultValue={this.state.user.gender} >
+                                                className="profile-input" type="select" name="sex" id="exampleEmail" placeholder="Gender" defaultValue={this.state.user.gender} >
                                                 <option value="male">Male</option>
                                                 <option value="female">Female</option>
                                                 <option value="other">Other</option>
@@ -578,7 +645,7 @@ class Profile extends React.Component {
                                             <div class="input-group">
                                             <Input
                                                 disabled="true"
-                                                className="profile-input" type="text" name="email" id="exampleEmail" placeholder="Gender" value={this.state.user.user_type == "StandardUser" ? "Standard" : "Admin"} />
+                                                className="profile-input" type="text" name="user_type" id="" placeholder="Gender" value={this.state.user.user_type == "StandardUser" ? "Standard" : "Admin"} />
                                             </div>
                                         </Col>
                                         <Col sm={4}>
@@ -612,6 +679,35 @@ class Profile extends React.Component {
                                         </Col>
 
                                     </FormGroup>
+
+                                    <div className="text-center">
+                                        <Button color="primary"> Save Changes </Button>
+                                         {this.state.isLoading ? (
+                                              <div className="d-flex justify-content-center center-spinner">
+                                                <div
+                                                  className="spinner-border text-primary"
+                                                  role="status"
+                                                >
+                                                  <span  className="sr-only">Loading...</span>
+                                                </div>
+                                              </div>
+                                            ) : null}
+                                         {this.state.message ? (
+                                          <div
+                                            className="alert alert-info api-response-alert"
+                                            role="alert">
+                                            <strong > Success !</strong> {this.state.message}
+                                          </div>
+                                        ) : null}
+                                        {this.state.isLoginError ? (
+                                          <div
+                                            className="alert alert-info api-response-alert"
+                                            role="alert"
+                                          >
+                                            <strong >Failed! </strong> {this.state.loginError}
+                                          </div>
+                                        ) : null}
+                                    </div>
 
                                 </Form>
 
@@ -863,8 +959,8 @@ class Profile extends React.Component {
                                                 style={{
                                                     width : "100%"
                                                 }}
-                                                url={this.state.user.inp_file_url}
-                                                content="Download FE Mesh (INP)"
+                                                url={this.state.user.vtk_file_url}
+                                                content="Download FE Mesh (VTK)"
                                                 />
                                         </div>
                                     ) : null}
