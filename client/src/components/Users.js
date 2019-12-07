@@ -105,14 +105,16 @@ class Users extends React.Component {
                                                         <SideBar />
                                                     </div>
                                                     <div className="military-main-content">
-                                                        <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                                                        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+
                                                         {this.militaryVersionOrNormal()}
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <React.Fragment>
                                                     {this.militaryVersionOrNormal()}
-                                                    <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                                                    {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+                                                    
                                                     <Footer style={{display : "none"}} className="violent"/>
                                                 </React.Fragment>
                                             )}

@@ -131,7 +131,8 @@ class DeveloperPage extends React.Component {
             </div>
           </div>
         </div>
-        <DarkMode isDarkMode={this.props.isDarkModeSet} />
+        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+        
 
         <Footer />
       </React.Fragment>

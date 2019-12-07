@@ -680,6 +680,7 @@
                                                     state: {
                                                         cognito_user_id : this.state.cognito_user_id,
                                                         player_name : this.state.player_name,
+                                                        isRedirectedFromAdminPanel : true,
                                                         team: {
                                                            team_name : this.props.location.state.team.team_name,
                                                            organization : this.props.location.state.team.organization,
@@ -699,13 +700,13 @@
                                                             </div>
                                                             <div className="military-main-content">
                                                                 {this.militaryVersionOrNormal()}
-                                                                <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                                                                {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
                                                             </div>
                                                         </div>
                                                     ) : (
                                                         <React.Fragment>
                                                             {this.militaryVersionOrNormal()}
-                                                            <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                                                            {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
                                                             <Footer style={{display : "none"}} className="violent"/>
                                                         </React.Fragment>
                                                     )}

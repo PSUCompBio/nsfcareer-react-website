@@ -1234,7 +1234,8 @@ class MilitaryPage extends React.Component {
 					 </div>
 					) : null}
 				</Modal>
-                <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+                
 			<Footer />
 		  </React.Fragment>
 		);

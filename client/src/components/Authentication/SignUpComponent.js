@@ -72,10 +72,11 @@ class SignUpComponent extends React.Component {
   };
 
   handleDateChange = (date) => {
-
+      console.log("Received date is ", date, "Actual date is", this.state.startDate);
     this.setState({
       startDate: date
     });
+    console.log("Changed value is ", this.state.startDate);
   };
 
   getCountryName = (e) => {};
@@ -403,7 +404,7 @@ class SignUpComponent extends React.Component {
 
       </div>
       <div className="footer-mobile-fix" >
-          <DarkMode isDarkMode={this.props.isDarkModeSet} />
+          {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
           <Footer/>
   </div>
   </div>

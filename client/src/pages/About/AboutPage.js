@@ -38,7 +38,7 @@ class AboutPage extends React.Component {
               <p className={`animated fadeInUp about-lines`}>
                   <span style={{fontSize : "0.95rem"}} className="top-heading__login">Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
               </p>
-          
+
                  <span style={{color : "#595959", fontSize : "0.95rem"}} className="top-heading__login" >Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
 
                 <br />
@@ -88,12 +88,13 @@ class AboutPage extends React.Component {
                 </div>
                 <br />
                 <br />
-              
+
             </div>
 
           </div>
         </div>
-        <DarkMode isDarkMode={this.props.isDarkModeSet} />
+        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+        
         <Footer />
       </React.Fragment>
     );

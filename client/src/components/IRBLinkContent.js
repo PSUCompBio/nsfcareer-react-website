@@ -125,12 +125,24 @@ class IRBLinkContent extends React.Component {
                                         }
                                       })
                                     } else {
-                                      this.props.history.push({
-                                          pathname : '/SignUp',
-                                        state : {
-                                          message : "Error while signing up!"
+                                        // Check if error is valid object
+                                        if(response.data.error){
+                                            this.props.history.push({
+                                                pathname : '/SignUp',
+                                              state : {
+                                                message : response.data.error
+                                              }
+                                            })
                                         }
-                                      })
+                                        else{
+                                            this.props.history.push({
+                                                pathname : '/SignUp',
+                                              state : {
+                                                message : "Failed to Sign Up!"
+                                              }
+                                            })
+                                        }
+
                                     }
 
                                   }
@@ -159,7 +171,7 @@ class IRBLinkContent extends React.Component {
                                   this.props.history.push({
                                       pathname : '/SignUp',
                                     state : {
-                                      message : "Error while signing up!"
+                                      message : "Failed to Sign Up !"
                                     }
                                   })
                                 });

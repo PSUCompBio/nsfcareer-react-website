@@ -504,7 +504,7 @@ function getPlayersListFromTeamsDB(obj){
 }
 
 app.post(`${apiPrefix}checkIfPlayerExists`, (req,res) =>{
-    console.log(req.body);
+    console.log("Checking player",req.body);
     getPlayersListFromTeamsDB({
         organization : "PSU",
         team_name : "York Tech Football"
@@ -1312,9 +1312,9 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
 
 
 app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
-    
+
     let update_details = {
-                    
+
         TableName : 'users',
         Key : {
             "user_cognito_id": req.body.user_cognito_id
@@ -1328,7 +1328,7 @@ app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
             ":phone_number" : req.body.country_code + req.body.phone_number
         },
         ReturnValues: "UPDATED_NEW"
-    };    
+    };
 
     docClient.update(update_details, function(err, data){
         if(err) {
@@ -1353,6 +1353,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_image_uploaded"] = false;
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
+    // Hardcoding Done Here need to be replaced with actual organization in request.
+    req.body["organization"] = "PSU";
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
