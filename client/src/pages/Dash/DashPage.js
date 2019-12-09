@@ -60,6 +60,8 @@ var textureLoader = new THREE.TextureLoader(manager);
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2(), INTERSECTED;
+mouse.x = 0;
+mouse.y = 0;
 
 class DashPage extends React.Component {
 	
@@ -68,6 +70,7 @@ class DashPage extends React.Component {
 		this.state = {
 			isLoading: false,
 			condition: false,
+			isMouseEvent: false,
 			barColors: defaultBarColors
 		};
 	}
@@ -88,8 +91,21 @@ class DashPage extends React.Component {
 		
 		this.startAnimationLoop();
 		//this.setContainerHeight();
-		
-		window.addEventListener( 'mousemove', this.onMouseMove, false );
+	
+		var me = this;
+		document.getElementById("brain_model_block_1").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_1');
+		}, false);
+		document.getElementById("brain_model_block_2").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_2');
+		}, false);
+		document.getElementById("brain_model_block_3").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_3');
+		}, false);
+		document.getElementById("brain_model_block_4").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_4');
+		}, false);
+	
 	}
   
 	setContainerHeight = () => {
@@ -105,22 +121,38 @@ class DashPage extends React.Component {
 		const width = window.innerWidth;
 		const height = window.innerHeight;
 		
-		const brain_model_block = document.querySelector('#brain_model_block');
+		const canvas1 = document.querySelector('#brain_model_block_1');
+		this.renderer1 = new THREE.WebGLRenderer({antialias:true});
+		//this.renderer1.setSize( window.innerWidth, window.innerHeight / 2 );
+		canvas1.appendChild( this.renderer1.domElement );
+		this.renderer1.gammaOutput = true;
+		this.renderer1.gammaFactor = 2.2;
 		
-		this.renderer = new THREE.WebGLRenderer();
-		//this.renderer.setSize( window.innerWidth, window.innerHeight / 2 );
-		brain_model_block.appendChild( this.renderer.domElement );
-		this.renderer.gammaOutput = true;
-		this.renderer.gammaFactor = 2.2;
+		const canvas2 = document.querySelector('#brain_model_block_2');
+		this.renderer2 = new THREE.WebGLRenderer({antialias:true});
+		canvas2.appendChild( this.renderer2.domElement );
+		this.renderer2.gammaOutput = true;
+		this.renderer2.gammaFactor = 2.2;
+			
+		const canvas3 = document.querySelector('#brain_model_block_3');
+		this.renderer3 = new THREE.WebGLRenderer({antialias:true});
+		canvas3.appendChild( this.renderer3.domElement );
+		this.renderer3.gammaOutput = true;
+		this.renderer3.gammaFactor = 2.2;
 		
+		const canvas4 = document.querySelector('#brain_model_block_4');
+		this.renderer4 = new THREE.WebGLRenderer({antialias:true});
+		canvas4.appendChild( this.renderer4.domElement );
+		this.renderer4.gammaOutput = true;
+		this.renderer4.gammaFactor = 2.2;
+	
+
 		this.scene = new THREE.Scene();
 		//this.scene.background = new THREE.Color( 0x8FBCD4 );
 		this.scene.background = new THREE.Color( "rgb(255, 255, 255)" );
 		
-		this.camera = new THREE.PerspectiveCamera( 25, width / height, 0.1, 1000 );
-		this.camera.position.set(0, 0, 0.35);
-		this.camera.lookAt(this.scene.position);
-		this.camera.updateProjectionMatrix();
+		this.camera = new THREE.PerspectiveCamera( 25, width / height, 0.01, 1000 );
+		this.camera.position.set(0, 0, 0.3);
 
 		this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		this.light.position.copy( this.camera.position );
@@ -129,8 +161,10 @@ class DashPage extends React.Component {
 		const ambientLight = new THREE.AmbientLight( 0x404040, 1);
 		this.scene.add( ambientLight );
 		
+		const brain_model = document.querySelector('.brain_model');
+			
 	    // prepare controls (OrbitControls)
-		this.controls = new OrbitControls(this.camera, brain_model_block);
+		this.controls = new OrbitControls(this.camera, canvas1);
 		//this.controls.autoRotate = true;
 		//this.controls.minPolarAngle = Math.PI * 0.5;
 		//this.controls.maxPolarAngle  = Math.PI * 0.5;
@@ -144,14 +178,15 @@ class DashPage extends React.Component {
 		this.controls.enableZoom = false;
 
 		// to disable rotation
-		this.controls.enableRotate = true;
+		this.controls.enableRotate = false;
 		
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
 	};
 	
-	onMouseMove = ( event ) => {
+	onMouseMove = ( event, type ) => {
 
+		// calculate mouse position in normalized device coordinates
 		// calculate mouse position in normalized device coordinates
 		// (-1 to +1) for both components
 		
@@ -160,8 +195,12 @@ class DashPage extends React.Component {
 		if (this.state.isLoading) {
 			return false;
 		}
-	
-		const canvas = document.querySelector('#brain_model_block');
+		
+		this.setState({
+			isMouseEvent: true
+		});
+				
+		const canvas = document.querySelector(type);
 		
 		// returns the size of an element and its position relative to the viewport
 		var rect = canvas.getBoundingClientRect();
@@ -173,12 +212,10 @@ class DashPage extends React.Component {
 
 	}
 	
-	// update light position on rotation of camera 
 	lightUpdate = () => {
 		this.light.position.copy( this.camera.position );
 	}
   
-	// Load model
 	loadModel = (model) => {
 		const scene  = this.scene;
 		const me  = this;
@@ -199,6 +236,7 @@ class DashPage extends React.Component {
 			function ( gltf ) {
 						
 				obj = gltf.scene;
+				
 				var p = 1;
 				obj.traverse(function (child) {
 					//console.log('child: ', child);
@@ -208,7 +246,7 @@ class DashPage extends React.Component {
 						p++;
 					}
 				});
-								
+				
 				var map = textureLoader.load(modelTexture);
 				map.encoding = THREE.sRGBEncoding;
 				//map.flipY = false;
@@ -232,7 +270,7 @@ class DashPage extends React.Component {
 						node.castShadow = true;
 						node.receiveShadow = true;
 					});
-				
+									
 					scene.add( obj );
 					
 					me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
@@ -259,10 +297,9 @@ class DashPage extends React.Component {
 		);
 	};
 	
-	// Create sphere
 	generateSphere = (x, y, z, sphereName) => {
 		var geometry = new THREE.SphereGeometry( 0.005, 32, 32 );
-		var material = new THREE.MeshLambertMaterial( {color: 0xff0000} );
+		var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
 		var sphere = new THREE.Mesh( geometry, material );
 		sphere.position.set(x, y, z);
 		sphere.name = sphereName;
@@ -270,7 +307,6 @@ class DashPage extends React.Component {
 		this.scene.add(sphere);
 	};
 	
-	// Remove spheres
 	removeSpheres = (x, y, z, sphereName) => {
 		var k;
 		for (k = 1; k <= 5; k++ ) {
@@ -279,9 +315,8 @@ class DashPage extends React.Component {
 		}
 	};
 	
-	// Load texture of model
 	loadTexture = (texture, type) => {
-		
+
 		if (this.state.isLoading) {
 			return false;
 		}
@@ -292,31 +327,21 @@ class DashPage extends React.Component {
 		
 		switch(type) {
 			case "front_btn":
-				this.camera.position.set(0, 0, 0.35);
 				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 				break;
 			case "pariental_btn":
-				this.camera.position.set(0, 0.35, 0);
 				barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 				break;
 			case "occipital_btn":
-				this.camera.position.set(-0.3, 0.2, 0);
 				barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC'];
 				break;
 			case "temporal_btn":
-				this.camera.position.set(-0.2, 0.2, 0.2);
 				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC']
 				break;
 			case "cerebellum_btn":
-				this.camera.position.set(-0.25, -0.25, 0);
 				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
 				break;
 		}
-		
-		// Remove prev spheres
-		this.removeSpheres();
-		
-		this.controls.update();
 	
 		this.setState({
 			barColors: barColors
@@ -355,6 +380,9 @@ class DashPage extends React.Component {
 				node.receiveShadow = true;
 			});
 			
+			// Remove prev spheres
+			me.removeSpheres();
+			
 			// Add new spheres
 			switch(type) {
 				case "front_btn":
@@ -389,59 +417,90 @@ class DashPage extends React.Component {
 	}
 
 	startAnimationLoop = () => {
-		if (this.resizeRendererToDisplaySize(this.renderer)) {
-			const canvas = this.renderer.domElement;
+		if (this.resizeRendererToDisplaySize(this.renderer1)) {
+			const canvas = this.renderer1.domElement;
 			this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
 			this.camera.updateProjectionMatrix();
 		}
 		
-		this.camera.updateMatrixWorld();
+		console.log('dsdasdas: ', this.state.isMouseEvent);
+		if (this.state.isMouseEvent) {
 		
-		// update the picking ray with the camera and mouse position
-		raycaster.setFromCamera( mouse, this.camera );
+			// update the picking ray with the camera and mouse position
+			raycaster.setFromCamera( mouse, this.camera );
 
-		// calculate objects intersecting the picking ray
-		var intersects = raycaster.intersectObjects( objects );
+			// calculate objects intersecting the picking ray
+			var intersects = raycaster.intersectObjects( objects );
 
-		if ( intersects.length > 0 ) {
-						
-			if ( INTERSECTED !== intersects[ 0 ].object ) {
+			if ( intersects.length > 0 ) {
+							
+				if ( INTERSECTED !== intersects[ 0 ].object ) {
+					if ( INTERSECTED ) {
+						INTERSECTED.material = INTERSECTED.currentHex;
+					}
+					
+					const hightlightMaterial = new THREE.MeshPhongMaterial( {
+						color: 0xffff00,
+						opacity: 0.5,
+						transparent: true
+					});
+
+					INTERSECTED = intersects[ 0 ].object;
+					INTERSECTED.currentHex = INTERSECTED.material;
+					INTERSECTED.material = hightlightMaterial;
+				}
+			} else {
 				if ( INTERSECTED ) {
 					INTERSECTED.material = INTERSECTED.currentHex;
-				}
-				
-				const hightlightMaterial = new THREE.MeshPhongMaterial( {
-					color: 0xffff00,
-					opacity: 0.5,
-					transparent: true
-				});
-
-				INTERSECTED = intersects[ 0 ].object;
-				INTERSECTED.currentHex = INTERSECTED.material;
-				INTERSECTED.material = hightlightMaterial;
+				}	
+				INTERSECTED = null;
 			}
-		} else {
-			if ( INTERSECTED ) {
-				INTERSECTED.material = INTERSECTED.currentHex;
-			}	
-			INTERSECTED = null;
 		}
+		
+		this.camera.position.set(0, 0.36, 0);
+		this.controls.update();
+		
+		this.renderer2.render(this.scene, this.camera);
+		
+ 		this.camera.position.set(-0.3, 0.2, 0);
+		this.controls.update();
+		
+		this.renderer3.render(this.scene, this.camera);
 				
-		this.renderer.render(this.scene, this.camera);
+		this.camera.position.set(-0.2, 0.2, 0.2);
+		this.controls.update();
+		
+		this.renderer4.render(this.scene, this.camera);
+		
+		this.camera.position.set(0, 0, 0.3);
+		this.controls.update();
+		
+		this.renderer1.render(this.scene, this.camera);
+	
+		
+		/* this.renderer1.render(this.scene, this.camera);
+		this.renderer2.render(this.scene, this.camera);
+		this.renderer3.render(this.scene, this.camera);
+		this.renderer4.render(this.scene, this.camera); */
+
+		
 				
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
 		// to update an animation before the next repaint
 		this.requestID = window.requestAnimationFrame(this.startAnimationLoop);
 	};
-
+	
 	resizeRendererToDisplaySize = (renderer)  => {
 		const canvas = renderer.domElement;
 		const width = canvas.clientWidth;
 		const height = canvas.clientHeight;
 		const needResize = canvas.width !== width || canvas.height !== height;
 		if (needResize) {
-			this.renderer.setSize(width, height, false);
+			this.renderer1.setSize(width, height, false);
+			this.renderer2.setSize(width, height, false);
+			this.renderer3.setSize(width, height, false);
+			this.renderer4.setSize(width, height, false);
 		}
 		return needResize;
     }
@@ -504,8 +563,11 @@ class DashPage extends React.Component {
 											</div>
 										 </div>
 										) : null}
-										<div className="model_views">
-											<div id="brain_model_block" className="brain_model" ></div>
+										<div>
+											<div id="brain_model_block_1" className="brain_model"></div>
+											<div id="brain_model_block_2" className="brain_model"></div><br/>
+											<div id="brain_model_block_3" className="brain_model"></div>
+											<div id="brain_model_block_4" className="brain_model"></div>
 										</div>
 								</div>
 								<div className="col-md-7">

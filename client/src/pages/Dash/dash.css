@@ -1,11 +1,11 @@
 .brain_model {
     float: left;
-    width: 100%;
+    width: 50%;
     text-align: center;
 }
 .brain_model canvas {
     width: 100%;
-    min-height: 220px;
+    min-height: 150px;
 }
 .lobe_btn {
 	width: 100px;
