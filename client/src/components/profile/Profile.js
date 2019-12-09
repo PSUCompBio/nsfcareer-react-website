@@ -138,6 +138,18 @@ class Profile extends React.Component {
 
         // console.log("THIS IS FORM DATA ",data);
         // console.log("VALUE TO BE PRINTED ",user_id);
+        var profile_data = {
+            profile_picture_url :'', // Not a user key
+            avatar_url : '',
+            is_selfie_image_uploaded : false,
+            is_selfie_model_uploaded : false,
+            foundInpLink: false,
+            isUploading: false,
+            is_selfie_inp_uploaded: false,
+            inp_file_url:'',
+            avatar_url : '',
+            vtk_file_url : ''
+        }
         uploadProfilePic(data)
         .then((response) => {
             console.log(response);
@@ -149,27 +161,36 @@ class Profile extends React.Component {
                 )
                 .then((res) => {
                     console.log(res.data);
+                    profile_data.profile_picture_url = res.data.profile_picture_url ;
+                    if (
+                        res.data.avatar_url !== undefined &&
+                        res.data.avatar_url.length !== 0
+                    ) {
+                        profile_data.avatar_url = res.data.avatar_url;
+                        profile_data.is_selfie_image_uploaded = true;
+                        profile_data.is_selfie_model_uploaded = true;
+                    }
 
-                    this.setState({
-                        profile_picture_url: res.data.profile_picture_url
+                    // this.setState({
+                    //     profile_picture_url: res.data.profile_picture_url
+                    //
+                    // });
+                    // this.setState({ isUploading: false });
 
-                    });
-                    this.setState({ isUploading: false });
-
-                    this.setState((prevState) => {
-                        prevState = JSON.parse(JSON.stringify(this.state.user));
-                        prevState.profile_picture_url = res.data.profile_picture_url;
-                        if (
-                            res.data.avatar_url !== undefined &&
-                            res.data.avatar_url.length !== 0
-                        ) {
-                            prevState.avatar_url = res.data.avatar_url;
-                            prevState.is_selfie_image_uploaded = true;
-                            prevState.is_selfie_model_uploaded = true;
-                        }
-                        return { user: prevState };
-                    });
-                    this.setState({ foundInpLink: false });
+                    // this.setState((prevState) => {
+                    //     prevState = JSON.parse(JSON.stringify(this.state.user));
+                    //     prevState.profile_picture_url = res.data.profile_picture_url;
+                    //     if (
+                    //         res.data.avatar_url !== undefined &&
+                    //         res.data.avatar_url.length !== 0
+                    //     ) {
+                    //         prevState.avatar_url = res.data.avatar_url;
+                    //         prevState.is_selfie_image_uploaded = true;
+                    //         prevState.is_selfie_model_uploaded = true;
+                    //     }
+                        // return { user: prevState };
+                    // });
+                    // this.setState({ foundInpLink: false });
                     getInpFileLink(
                         JSON.stringify({
                             user_cognito_id: user_id
@@ -178,12 +199,14 @@ class Profile extends React.Component {
                     .then((response) => {
                         if (response.data.message === 'success') {
                             // Updating status for inp file
-                            this.setState((prevState) => {
-                                prevState = JSON.parse(JSON.stringify(this.state.user));
-                                prevState.is_selfie_inp_uploaded = true;
-                                prevState.inp_file_url = response.data.inp_file_link;
-                                return { user: prevState };
-                            });
+                            profile_data.is_selfie_inp_uploaded =true ;
+                            profile_data.inp_file_url = response.data.inp_file_link ;
+                            // this.setState((prevState) => {
+                            //     prevState = JSON.parse(JSON.stringify(this.state.user));
+                            //     prevState.is_selfie_inp_uploaded = true;
+                            //     prevState.inp_file_url = response.data.inp_file_link;
+                            //     return { user: prevState };
+                            // });
                             getModelLink(
                                 JSON.stringify({
                                     user_cognito_id: user_id
@@ -191,69 +214,51 @@ class Profile extends React.Component {
                             )
                             .then((response) => {
                                 if (response.data.message === 'success') {
-                                    this.setState((prevState) => {
-                                        prevState = JSON.parse(
-                                            JSON.stringify(this.state.user)
-                                        );
-                                        prevState.avatar_url = response.data.avatar_url;
-                                        return { user: prevState };
-                                    });
-                                    getSimulationFile(
-                                        JSON.stringify({
-                                            user_cognito_id: user_id
-                                        })
-                                    )
-                                    .then((response) => {
-                                        if (response.data.message === 'success') {
+                                    profile_data.inp_file_url = response.data.avatar_url ;
+                                    // this.setState((prevState) => {
+                                    //     prevState = JSON.parse(
+                                    //         JSON.stringify(this.state.user)
+                                    //     );
+                                    //
+                                    //     prevState.avatar_url = response.data.avatar_url;
+                                    //     return { user: prevState };
+                                    // });
+                                    getVtkFileLink(JSON.stringify({
+                                        user_cognito_id : user_id
+                                    }))
+                                    .then(response => {
+                                        if(response.data.message == "success"){
+                                            profile_data.vtk_file_url = response.data.vtk_file_url;
                                             this.setState((prevState) => {
                                                 prevState = JSON.parse(
                                                     JSON.stringify(this.state.user)
                                                 );
-                                                prevState[
-                                                    'is_selfie_simulation_file_uploaded'
-                                                ] = true;
-                                                prevState.simulation_file_url =
-                                                response.data.simulation_file_url;
+                                                prevState.profile_picture_url = profile_data.profile_picture_url
+                                                prevState.is_selfie_image_uploaded = profile_data.is_selfie_image_uploaded;
+                                                prevState.is_selfie_model_uploaded = profile_data.is_selfie_model_uploaded;
+                                                prevState.is_selfie_inp_uploaded = profile_data.is_selfie_inp_uploaded;
+                                                prevState.inp_file_url = profile_data.inp_file_link;
+                                                prevState.vtk_file_url =
+                                                profile_data.vtk_file_url;
+                                                prevState.avatar_url = profile_data.avatar_url;
                                                 return { user: prevState };
                                             });
-
-                                            getVtkFileLink(JSON.stringify({
-                                                user_cognito_id : user_id
-                                            }))
-                                            .then(response => {
-                                                if(response.data.message == "success"){
-                                                    this.setState((prevState) => {
-                                                        prevState = JSON.parse(
-                                                            JSON.stringify(this.state.user)
-                                                        );
-
-                                                        prevState.vtk_file_url =
-                                                        response.data.vtk_file_url;
-                                                        return { user: prevState };
-                                                    });
-                                                    this.setState( {
-                                                        isFileUploaded : true
-                                                    });
-                                                }
-                                                else{
-                                                    this.setState({ isUploading: false, fileUploadError : "Invalid Request to fetch VTK File"});
-                                                }
-
-                                            })
-                                            .catch(err => {
-                                                this.setState({ isUploading: false, fileUploadError : "Failed to find the VTK File Link"});
-                                            })
-
-
-                                        } else {
-
-                                            this.setState({ isUploading: false, fileUploadError : "Failed to find the simulation link"});
+                                            this.setState( {
+                                                profile_picture_url: profile_data.profile_picture_url,
+                                                isUploading : false,
+                                                isFileUploaded : true,
+                                                foundInpLink: false
+                                            });
                                         }
-                                    })
-                                    .catch((err) => {
+                                        else{
+                                            this.setState({ isUploading: false, fileUploadError : "Invalid Request to fetch VTK File"});
+                                        }
 
-                                        this.setState({ isUploading: false, fileUploadError : "Failed to find the simulation link"});
-                                    });
+                                    })
+                                    .catch(err => {
+                                        this.setState({ isUploading: false, fileUploadError : "Failed to find the VTK File Link"});
+                                    })
+
                                 } else {
 
                                     this.setState({ isUploading: false, fileUploadError : "Failed to find the model link"});
@@ -902,7 +907,7 @@ class Profile extends React.Component {
                                         </p>
                                         <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.simulation_file_latest_upload_details[1]}</p>
                                         </button>
-                                            <img src={this.state.user.avatar_url} alt="" />
+                                            <div class="avatar-url-image-center" ><img class="avatar-img-fix" src={this.state.user.avatar_url} alt="" /></div>
                                             <button
                                               style={{
                                                   width : "100%"
@@ -1029,7 +1034,7 @@ class Profile extends React.Component {
                             </Row>
                         </div>
                     </div>
-                    <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                    {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
                     <Footer />
                 </React.Fragment>
             );

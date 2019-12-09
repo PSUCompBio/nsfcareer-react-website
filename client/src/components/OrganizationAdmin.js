@@ -771,13 +771,14 @@ class OrganizationAdmin extends React.Component {
                                             className={`military-main-content ${this.ifMilitaryVersionActive()}`}
                                             >
                                             {this.militaryVersionOrNormalVersion()}
-                                            <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                                            {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+
                                         </div>
                                     </div>
                                 ) : (
                                     <React.Fragment>
                                         {this.militaryVersionOrNormalVersion()}
-                                        <DarkMode isDarkMode={this.props.isDarkModeSet} />
+                                        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
                                         <div style={{bottom : "0",
                                                      position : "absolute",
                                                      width: "100%"}}>

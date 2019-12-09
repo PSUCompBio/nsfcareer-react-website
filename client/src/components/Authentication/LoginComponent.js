@@ -111,6 +111,7 @@ class Login extends React.Component {
             } else {
               // login redirect code here
               u_details = response.data.user_details;
+              console.log("Cognito ", u_details);
 
               checkIfPlayerExists({name : response.data.user_details.first_name + " " + response.data.user_details.last_name})
               .then(res => {
@@ -122,7 +123,7 @@ class Login extends React.Component {
                         userType: u_details.user_type,
                         userDetails : u_details.user_details,
                         name : u_details.first_name + " " + u_details.last_name,
-                        cognito_user_id : u_details.cognito_user_id
+                        cognito_user_id : u_details.user_cognito_id
                     })
                     console.log("USER DETAILS ",u_details);
                     store.dispatch(setIsSignedInSucceeded());
@@ -173,7 +174,7 @@ class Login extends React.Component {
                     <Redirect to={{
                             pathname: '/TeamAdmin/user/dashboard',
                             state: {
-                                cognito_user_id : this.state.user_cognito_id,
+                                cognito_user_id : this.state.cognito_user_id,
                                 player_name : this.state.name
                             }
                     }} />
@@ -181,7 +182,7 @@ class Login extends React.Component {
                     <Redirect to={{
                             pathname: '/TeamAdmin/user/dashboard',
                             state: {
-                                cognito_user_id : this.state.user_cognito_id,
+                                cognito_user_id : this.state.cognito_user_id,
                                 player_name : this.state.name
                             }
                     }} />  : null}
@@ -346,7 +347,7 @@ class Login extends React.Component {
           </div>
 
         </div>
-        <DarkMode isDarkMode={this.props.isDarkModeSet} />
+        
         <Footer />
       </React.Fragment>
     );

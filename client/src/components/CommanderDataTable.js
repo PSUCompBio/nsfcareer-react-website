@@ -69,7 +69,8 @@ class CommanderDataTable extends React.Component {
             pathname: '/TeamAdmin/user/dashboard',
             state: {
                 cognito_user_id : this.state.cognito_user_id,
-                player_name : this.state.player_name
+                player_name : this.state.player_name,
+                isRedirectedFromAdminPanel : true
             }
         }} />
       }

@@ -36,10 +36,15 @@ class AboutPage extends React.Component {
                 </h1>
               </div>
               <p className={`animated fadeInUp about-lines`}>
-                  <span style={{fontSize : "0.95rem"}} className="top-heading__login">Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
+                  <span style={{fontSize : "0.95rem"}} className="top-heading__login">
+                      <img className="svg img-fluid details-section-svg" style={{width : "5%"}} src="/img/icon/bullseye-with-arrow.svg" alt="" /> {this.props.screenWidth > 768 ? '' : <br></br> } Mission: Provide a sensor-enabled, cloud-based platform for modeling brain injuries.</span>
               </p>
-          
-                 <span style={{color : "#595959", fontSize : "0.95rem"}} className="top-heading__login" >Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
+
+                 <span style={{color : "#595959", fontSize : "0.95rem"}} className="top-heading__login" >
+                     {this.props.screenWidth > 768 ? '' : <br></br> }
+                     <img className="svg img-fluid details-section-svg" style={{width : "5%"}} src="/img/icon/eye.svg" alt="" />
+                     {this.props.screenWidth > 768 ? '' : <br></br> }
+                         Vision: To be used by the sports and militiary communities in order to develop an FDA-approved medically diagnostic tool.</span>
 
                 <br />
                 <div className="row">
@@ -82,18 +87,32 @@ class AboutPage extends React.Component {
                     </div>
                     <br/>
                     <div className="col-md-12">
-                        <span style={{fontSize : "1.5rem", border : "none", marginTop : "1rem"}} className="top-heading__login">We provide solutions for both contact sports and occupational blast exposures.</span>
+                        <span style={{fontSize : "1.5rem", border : "none", marginTop : "1rem"}} className="top-heading__login">
+
+                            <img className="svg img-fluid details-section-bulb-svg" style={{width : "5%"}} src="/img/icon/intelligence.svg" alt="" />
+                            {this.props.screenWidth > 768 ? '' : <br></br> }We provide solutions for both contact sports and occupational blast exposures.</span>
+                        
                     </div>
-                    <ResearchArea hideTitle="true" screenWidth={this.props.screenWidth} />
+                    <div
+                        style={{
+                            background: "#f5f5f5",
+                            paddingTop: "2%",
+                            marginTop: "3%"
+                        }}
+                        className="col-md-12">
+                        <ResearchArea hideTitle="true" screenWidth={this.props.screenWidth} />
+                    </div>
+
                 </div>
                 <br />
                 <br />
-              
+
             </div>
 
           </div>
         </div>
-        <DarkMode isDarkMode={this.props.isDarkModeSet} />
+        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+
         <Footer />
       </React.Fragment>
     );

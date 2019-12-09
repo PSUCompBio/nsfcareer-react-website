@@ -42,6 +42,7 @@ class UserDashboarForAdmin extends React.Component {
   constructor(props) {
     super(props);
     // console.log('User Dashboard For Admin Is ',this.props);
+    console.log("USER DASHBOARD PROPS", this.props)
     this.state = {
       isAuthenticated: false,
       user: null,
@@ -190,8 +191,9 @@ class UserDashboarForAdmin extends React.Component {
 
 
 
+                
 
-          <CumulativeEventsAccelerationEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
+          <CumulativeEventsAccelerationEvents  team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
           {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
           <p
           ref="h1"
@@ -222,7 +224,8 @@ class UserDashboarForAdmin extends React.Component {
             </div>
         </div>*/}
         </div>
-        <DarkMode isDarkMode={this.props.isDarkModeSet} />
+        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+
         <Footer />
       </React.Fragment>
     );
@@ -268,7 +271,7 @@ class UserDashboarForAdmin extends React.Component {
 
               })
               .then(response => {
-                  this.setState({
+                 this.setState({
                         cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data)
                 })
                     return getCumulativeEventLoadData(JSON.stringify({}))
@@ -278,15 +281,39 @@ class UserDashboarForAdmin extends React.Component {
                   this.setState({
                       cumulativeEventLoadData : { ...this.state.cumulativeEventLoadData, ...response.data.data }
                   });
-                  {/*return getUserDetails()*/}
-
-                  this.setState({
-                    user: response.data.data,
-                    isLoading: false,
-                    isAuthenticated: true,
-                    isCheckingAuth: false
-                  });
+                  if(!this.props.location.state.isRedirectedFromAdminPanel){
+                      getUserDetails({user_cognito_id : this.props.location.state.cognito_user_id })
+                      .then(response => {
+                          delete response.data.data.is_selfie_image_uploaded;
+                          delete response.data.data.is_selfie_simulation_file_uploaded;
+                          delete response.data.data.is_selfie_model_uploaded;
+                          delete response.data.data.profile_picture_url
+                          delete response.data.data.simulation_file_url
+                          this.setState({
+                            user: response.data.data,
+                            isLoading: false,
+                            isAuthenticated: true,
+                            isCheckingAuth: false
+                          });
+                      })
+                      .catch(err => {
+                          this.setState({
+                            user: {},
+                            isLoading: false,
+                            isCheckingAuth: false
+                          });
+                      })
+                  }
+                  else{
+                      this.setState({
+                        user: response.data.data,
+                        isLoading: false,
+                        isAuthenticated: true,
+                        isCheckingAuth: false
+                      });
+                  }
               })
+
               .catch((error) => {
 
                 console.log(error);

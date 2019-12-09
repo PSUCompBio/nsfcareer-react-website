@@ -2291,6 +2291,17 @@ div.show-mobile-links {
     transition: transform 200ms;
     transition-timing-function: ease-out;
   }
+
+}
+
+@media (max-width: 726px) {
+
+  .details-section-svg {
+      width: 15% !important ;
+  }
+  .details-section-bulb-svg {
+      width: 20% !important ;
+  }
 }
 
 @media (max-width: 767px) {
@@ -2560,4 +2571,11 @@ tbody.player-table tr:nth-child(odd){
 
 .show-shadow {
     box-shadow: 10px 10px 5px #e6e4e4;
+}
+
+.details-section-svg {
+    width: 5%;
+}
+.details-section-bulb-svg {
+    width: 6% ;
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Line} from 'react-chartjs-2';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import Report from '../ReportContent/Report0';
 
@@ -74,10 +74,52 @@ class CumulativeAccelerationEventChart extends React.Component {
             </div>
           <h1 ref="h1" style={{
                         textAlign: "center",
-                        marginBottom : "2%"
+                        marginBottom : "2%",
+                        color : "black"
                     }} className="top-heading__login player-dashboard-title">
                   Player Dashboard
                 </h1>
+                <div
+                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated fadeInLeft"
+                    style={{
+                        border: "2px solid #0F81DC",
+                        borderRadius: "1.8rem"
+                    }}>
+
+                    <div className="row">
+                        <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                            <p
+                            ref="h1"
+                            className="player-dashboard-sub-head"
+                            >Name : {(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name }</p>
+                            <p
+                            ref="h1"
+                            className="player-dashboard-sub-head"
+                            >Position : <span style={{color : "black"}}>RB, QB</span></p>
+                        </div>
+                        {
+                            !(this.props.data.player_id && this.props.data.player_id.length > 0)?
+                            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                    <button style={{
+                                            marginRight : "5% !important",
+                                            paddingLeft : "15%",
+                                            paddingRight : "15%"
+                                        }}
+                                        onClick={()=>{
+                                            this.props.history.push('/Profile')
+
+                                        }}
+
+                                        className="btn btn-primary pull-right sub-head-button">
+                                            Profile
+                                    </button>
+                            </div>
+
+                             : null
+                        }
+
+                    </div>
+                </div>
             <div
                 className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated fadeInLeft"
                 style={{
@@ -96,7 +138,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                         <button style={{
                                 marginRight : "5% !important"
                             }}
-                            className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>
+                            className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
                             <PDFDownloadLink document={<Report {...this.props}/>} fileName="report.pdf" style={{
                               color : 'white'
                             }}>
@@ -139,4 +181,4 @@ class CumulativeAccelerationEventChart extends React.Component {
         }
     }
 
-    export default CumulativeAccelerationEventChart;
+    export default withRouter(CumulativeAccelerationEventChart);

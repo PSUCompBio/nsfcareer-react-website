@@ -86,7 +86,7 @@ class Nav extends React.Component {
    // here timer function is being used to init the local storage data for User DETAILS
    // TODO : Update it with parent based state change
    if(JSON.parse(localStorage.getItem("state")) !== null ){
-       
+
    if(!this.isEquivalent(this.state.user_details, JSON.parse(localStorage.getItem("state")).userInfo)){
        this.setState({
            user_details : JSON.parse(localStorage.getItem("state")).userInfo
@@ -364,7 +364,7 @@ class Nav extends React.Component {
             onMouseLeave={this.hideUserIconLinksIfnotEnter}
             className="name"
           >
-            {( this.state.user_details !=null && Object.keys(this.state.user_details).length >0 ) ? `${this.state.user_details.first_name[0].toUpperCase()} ${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
+            {( (this.state.user_details !=null || this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0 ) ? `${this.state.user_details.first_name[0].toUpperCase()} ${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
           </div>
 
           <div
@@ -458,7 +458,7 @@ class Nav extends React.Component {
                 onClick={this.showLogOutOptions}
                 className="mobile-user-profile"
               >
-                {( this.state.user_details !=null && Object.keys(this.state.user_details).length >0 )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
+                {( (this.state.user_details !=null || typeof this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0 )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
               </div>
             </div>
 

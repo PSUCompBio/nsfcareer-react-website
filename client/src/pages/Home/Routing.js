@@ -225,7 +225,13 @@ class Routing extends React.Component {
         <Route
             exact
             path="/Details"
-            render={(props) => <About {...props} isDarkModeSet={this.checkDarkMode} />}
+            render={(props) =>
+                <About
+                {...props}
+                screenWidth={this.state.windowWidth}
+                isDarkModeSet={this.checkDarkMode}
+                />
+        }
         />
 		<Route
             exact

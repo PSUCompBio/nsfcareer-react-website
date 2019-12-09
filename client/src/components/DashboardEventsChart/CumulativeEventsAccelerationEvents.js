@@ -10,7 +10,9 @@ class CumulativeEventsAccelerationEvents extends React.Component {
     console.log("Received in Props", props)
     this.state = {
         is_selfie_image_uploaded : props.is_selfie_image_uploaded,
-        imageUrl : props.imageUrl
+        imageUrl : props.imageUrl,
+        user : props.user,
+        team : props.team
     };
   }
 
@@ -23,7 +25,7 @@ class CumulativeEventsAccelerationEvents extends React.Component {
     return (
       <div className="row cumm mb-5 ">
         <div className="col-md-12 col-lg-12">
-          <CumulativeAccelerationEventChart is_selfie_image_uploaded={this.state.is_selfie_image_uploaded}  imageUrl={this.state.imageUrl} data={this.props.data}/>;
+          <CumulativeAccelerationEventChart user={this.state.user} team={this.state.team} is_selfie_image_uploaded={this.state.is_selfie_image_uploaded}  imageUrl={this.state.imageUrl} data={this.props.data}/>;
 
         </div>
         {/*
