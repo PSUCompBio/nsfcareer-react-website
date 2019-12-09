@@ -191,6 +191,7 @@ class UserDashboarForAdmin extends React.Component {
 
 
 
+                
 
           <CumulativeEventsAccelerationEvents  team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
           {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
@@ -224,7 +225,7 @@ class UserDashboarForAdmin extends React.Component {
         </div>*/}
         </div>
         {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-        
+
         <Footer />
       </React.Fragment>
     );

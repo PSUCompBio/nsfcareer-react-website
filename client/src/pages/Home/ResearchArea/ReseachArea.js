@@ -73,7 +73,7 @@ function ResearchArea(props) {
                     inView ? removeAnimationMobileView('slideInLeft') : ''
                   }`}
                 >
-                  <div onClick={()=>gotoPage('/Military')}  className={"card mx-4 research-card rounded-img " + (props.hideTitle ? 'show-shadow' : '') }>
+                  <div onClick={()=>gotoPage('/Military')}  className={"card mx-4 research-card rounded-img " }>
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2491.svg"
@@ -99,7 +99,7 @@ function ResearchArea(props) {
                     inView ? removeAnimationMobileView('slideInRight') : ''
                   }`}
                 >
-                  <div onClick={()=>gotoPage('/Sports')} className={"card mx-4 research-card rounded-img " + (props.hideTitle ? 'show-shadow' : '') }>
+                  <div onClick={()=>gotoPage('/Sports')} className={"card mx-4 research-card rounded-img " }>
                     <img
                       className="card-img-top"
                       src="/img/ResearchAreaImg/Group-2492.svg"
