@@ -14,54 +14,18 @@ import { getStatusOfDarkmode } from '../../reducer';
 import {Bar} from 'react-chartjs-2';
 import './dash.css';
 
-const options = {
-    scales: {
-        yAxes: [{
-            scaleLabel: {
-                display: true,
-                labelString: 'Number of MASxSR 7.5  Thresholds Exceeded'
-            },
-            ticks: {
-                min: 0
-            }
-        }],
-        xAxes: [{
-			scaleLabel: {
-                display: false,
-                labelString: 'Angular Acceleration'
-            },
-			ticks: {
-				display: false //this will remove only the label
-			}
-        }]
-    },
-	legend: {
-		display: false
-	},
-	tooltips: {
-		callbacks: {
-			title: function(tooltipItem, data) {
-				//return data['labels'][tooltipItem[0]['index']];
-			},
-			label: function(tooltipItem, data) {
-				return ' ' + data['datasets'][0]['data'][tooltipItem['index']] + ' Events';
-			}
-		},
-		displayColors: false
-	}
-};
 
 let obj;
 let objects = [];
+let cloneObjects = [];
 let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 
 var manager = new THREE.LoadingManager();
 var textureLoader = new THREE.TextureLoader(manager);
 
 var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2(), INTERSECTED;
-mouse.x = 0;
-mouse.y = 0;
+var mouse = new THREE.Vector2();
+var INTERSECTED = null;
 
 class DashPage extends React.Component {
 	
@@ -93,6 +57,8 @@ class DashPage extends React.Component {
 		//this.setContainerHeight();
 	
 		var me = this;
+		
+		// Highlight brain model on mouse hover on brain model
 		document.getElementById("brain_model_block_1").addEventListener('mousemove', function(event) {
 			me.onMouseMove(event, '#brain_model_block_1');
 		}, false);
@@ -105,7 +71,109 @@ class DashPage extends React.Component {
 		document.getElementById("brain_model_block_4").addEventListener('mousemove', function(event) {
 			me.onMouseMove(event, '#brain_model_block_4');
 		}, false);
+		
+		// Highlight brain model on mouse hover on brain button
+		document.getElementById("front_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Frontal_Lobe');
+		}, false);
+		document.getElementById("pariental_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Pariental_Lobe');
+		}, false);
+		document.getElementById("occipital_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Occipital_Lobe');
+		}, false);
+		document.getElementById("temporal_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Temporal_Lobe');
+		}, false);
+		document.getElementById("cerebellum_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Cerebellum_Lobe');
+		}, false);
+		
+		// Remove Highlight brain model on mouse out from brain button
+		document.getElementById("front_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("pariental_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("occipital_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("temporal_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("cerebellum_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+	}
 	
+	onMouseHover = ( event, type ) => {
+		
+		if (event !== '') event.preventDefault();
+		
+		const hightlightMaterial = new THREE.MeshPhongMaterial( {
+			color: 0xffff00,
+			opacity: 0.5,
+			transparent: true
+		});
+		
+		objects.forEach(function(object, index) {
+						
+			if (object.name == type) {
+				
+				object.currentHex = object.material;
+				object.material = hightlightMaterial;
+			}
+		});
+		
+		if (event !== '') {
+			this.highlightGraphBar(type);
+		}
+	}
+	
+	onMouseOut = ( event ) => {
+		
+		if (event !== '') event.preventDefault();
+		
+		cloneObjects.forEach(function(cloneObject, index) {
+			if (cloneObject.currentHex != undefined) {
+				objects[index].material = cloneObject.currentHex;
+			}
+		});
+		
+		if (event !== '') {
+			let barColors = defaultBarColors;
+			
+			this.setState({
+				barColors: barColors
+			});
+		}
+	}
+	
+	highlightGraphBar = (type) => {
+		let barColors = defaultBarColors;
+		
+		switch(type) {
+			case "Frontal_Lobe":
+				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				break;
+			case "Pariental_Lobe":
+				barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				break;
+			case "Occipital_Lobe":
+				barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC'];
+				break;
+			case "Temporal_Lobe":
+				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC']
+				break;
+			case "Cerebellum_Lobe":
+				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
+				break;
+		}
+		
+		this.setState({
+			barColors: barColors
+		});
 	}
   
 	setContainerHeight = () => {
@@ -160,9 +228,7 @@ class DashPage extends React.Component {
 		
 		const ambientLight = new THREE.AmbientLight( 0x404040, 1);
 		this.scene.add( ambientLight );
-		
-		const brain_model = document.querySelector('.brain_model');
-			
+					
 	    // prepare controls (OrbitControls)
 		this.controls = new OrbitControls(this.camera, canvas1);
 		//this.controls.autoRotate = true;
@@ -175,10 +241,10 @@ class DashPage extends React.Component {
 		this.controls.enableKeys = false;
 		
 		// to disable zoom
-		this.controls.enableZoom = false;
+		//this.controls.enableZoom = false;
 
 		// to disable rotation
-		this.controls.enableRotate = false;
+		//this.controls.enableRotate = false;
 		
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
@@ -241,8 +307,11 @@ class DashPage extends React.Component {
 				obj.traverse(function (child) {
 					//console.log('child: ', child);
 					if (child.isMesh) {
-						child.name = 'modelMesh' + p;
+						//child.name = 'modelMesh' + p;
+						
+						//console.log('Mesh: ', child.name);
 						objects.push(child);
+						cloneObjects.push(child);
 						p++;
 					}
 				});
@@ -316,104 +385,48 @@ class DashPage extends React.Component {
 	};
 	
 	loadTexture = (texture, type) => {
-
-		if (this.state.isLoading) {
-			return false;
+		
+		if (type === 'reset_btn') {
+			cloneObjects.forEach(function(cloneObject, index) {
+				if (cloneObject.currentHex != undefined) {
+					objects[index].material = cloneObject.currentHex;
+				}
+			});
 		}
 		
-		this.setState( { condition : !this.state.condition } );
+		var me = this;
 		
-		let barColors = defaultBarColors;
+		// Remove prev spheres
+		me.removeSpheres();
 		
+		// Add new spheres
 		switch(type) {
 			case "front_btn":
-				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
+				me.generateSphere(-0.02, 0.02, 0.05, 'sphere2');
+				me.generateSphere(0, 0.05, 0.03, 'sphere3');
 				break;
 			case "pariental_btn":
-				barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				me.generateSphere(0.01, 0.02, -0.06, 'sphere1');
+				me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
+				me.generateSphere(-0.03, 0.05, -0.03, 'sphere3');
 				break;
 			case "occipital_btn":
-				barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC'];
+				me.generateSphere(0.03, 0, -0.07, 'sphere1');
+				me.generateSphere(0, 0, -0.07, 'sphere2');
+				me.generateSphere(-0.03, 0, -0.07, 'sphere3');
 				break;
 			case "temporal_btn":
-				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC']
+				me.generateSphere(-0.04, -0.03, 0.01, 'sphere1');
+				me.generateSphere(0.04, -0.03, 0.01, 'sphere2');
+				me.generateSphere(0.03, -0.03, 0, 'sphere3');
 				break;
 			case "cerebellum_btn":
-				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
+				me.generateSphere(0.03, -0.05, -0.03, 'sphere1');
+				me.generateSphere(0, -0.05, -0.03, 'sphere2');
+				me.generateSphere(-0.03, -0.05, -0.03, 'sphere3');
 				break;
 		}
-	
-		this.setState({
-			barColors: barColors
-		});
-		
-		var x = document.getElementsByClassName("lobe_btn");
-		var i;
-		for (i = 0; i < x.length; i++) {
-			x[i].classList.remove("active");
-		}
-		
-		document.getElementById(type).classList.add("active");
-				
-		const me  = this;
-		manager.onStart = function () {
-			console.log('Loading started');
-			me.setState({
-				isLoading: true
-			});
-		};
-		
-		var map = textureLoader.load(texture);
-		map.encoding = THREE.sRGBEncoding;
-		//map.flipY = false;
-				
-		manager.onLoad = function () {
-			console.log('loaded');
-			me.setState({
-				isLoading: false
-			});
-			var material = new THREE.MeshPhongMaterial({map: map, transparent: true, opacity: 0.5, cache: true});
-			obj.traverse( function ( node ) {
-				node.material = material;
-				node.material.needsUpdate = true;
-				node.castShadow = true;
-				node.receiveShadow = true;
-			});
-			
-			// Remove prev spheres
-			me.removeSpheres();
-			
-			// Add new spheres
-			switch(type) {
-				case "front_btn":
-					me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
-					me.generateSphere(-0.02, 0.02, 0.05, 'sphere2');
-					me.generateSphere(0, 0.05, 0.03, 'sphere3');
-					break;
-				case "pariental_btn":
-					me.generateSphere(0.01, 0.02, -0.06, 'sphere1');
-					me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
-					me.generateSphere(-0.03, 0.05, -0.03, 'sphere3');
-					break;
-				case "occipital_btn":
-					me.generateSphere(0.03, 0, -0.07, 'sphere1');
-					me.generateSphere(0, 0, -0.07, 'sphere2');
-					me.generateSphere(-0.03, 0, -0.07, 'sphere3');
-					break;
-				case "temporal_btn":
-					me.generateSphere(-0.04, -0.03, 0.01, 'sphere1');
-					me.generateSphere(0.04, -0.03, 0.01, 'sphere2');
-					me.generateSphere(0.03, -0.03, 0, 'sphere3');
-					break;
-				case "cerebellum_btn":
-					me.generateSphere(0.03, -0.05, -0.03, 'sphere1');
-					me.generateSphere(0, -0.05, -0.03, 'sphere2');
-					me.generateSphere(-0.03, -0.05, -0.03, 'sphere3');
-					break;
-			}
-			
-			console.log('change texture');
-		};
 	}
 
 	startAnimationLoop = () => {
@@ -423,7 +436,6 @@ class DashPage extends React.Component {
 			this.camera.updateProjectionMatrix();
 		}
 		
-		console.log('dsdasdas: ', this.state.isMouseEvent);
 		if (this.state.isMouseEvent) {
 		
 			// update the picking ray with the camera and mouse position
@@ -431,12 +443,17 @@ class DashPage extends React.Component {
 
 			// calculate objects intersecting the picking ray
 			var intersects = raycaster.intersectObjects( objects );
+			
+			let barColors = defaultBarColors;
 
 			if ( intersects.length > 0 ) {
 							
 				if ( INTERSECTED !== intersects[ 0 ].object ) {
 					if ( INTERSECTED ) {
 						INTERSECTED.material = INTERSECTED.currentHex;
+						this.setState({
+							isMouseEvent: false
+						});
 					}
 					
 					const hightlightMaterial = new THREE.MeshPhongMaterial( {
@@ -446,14 +463,46 @@ class DashPage extends React.Component {
 					});
 
 					INTERSECTED = intersects[ 0 ].object;
+					
+					console.log('INTERSECTED Mesh: ', INTERSECTED.name);
+					
+					switch(INTERSECTED.name) {
+						case "Frontal_Lobe":
+							barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+							break;
+						case "Pariental_Lobe":
+							barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+							break;
+						case "Occipital_Lobe":
+							barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC'];
+							break;
+						case "Temporal_Lobe":
+							barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC']
+							break;
+						case "Cerebellum_Lobe":
+							barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
+							break;
+					}
+					
+					this.setState({
+						barColors: barColors
+					});
+										
 					INTERSECTED.currentHex = INTERSECTED.material;
 					INTERSECTED.material = hightlightMaterial;
 				}
 			} else {
 				if ( INTERSECTED ) {
 					INTERSECTED.material = INTERSECTED.currentHex;
+					this.setState({
+						isMouseEvent: false
+					});
 				}	
 				INTERSECTED = null;
+				
+				this.setState({
+					barColors: barColors
+				});
 			}
 		}
 		
@@ -476,14 +525,6 @@ class DashPage extends React.Component {
 		this.controls.update();
 		
 		this.renderer1.render(this.scene, this.camera);
-	
-		
-		/* this.renderer1.render(this.scene, this.camera);
-		this.renderer2.render(this.scene, this.camera);
-		this.renderer3.render(this.scene, this.camera);
-		this.renderer4.render(this.scene, this.camera); */
-
-		
 				
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
@@ -507,6 +548,8 @@ class DashPage extends React.Component {
 
   render() {
 	  
+	 var me = this;
+	 
 	 const data = {
 		labels: [857, 1173, 3043, 1173, 1200],
 		datasets: [{
@@ -518,7 +561,80 @@ class DashPage extends React.Component {
 			hoverBorderColor: 'rgba(255,255,102)',
 			data: [10, 8, 6, 11, 4]
 		}]
-	}; 
+	};
+	
+	const options = {
+		scales: {
+			yAxes: [{
+				scaleLabel: {
+					display: true,
+					labelString: 'Number of MASxSR 7.5  Thresholds Exceeded'
+				},
+				ticks: {
+					min: 0
+				}
+			}],
+			xAxes: [{
+				scaleLabel: {
+					display: false,
+					labelString: 'Angular Acceleration'
+				},
+				ticks: {
+					display: false //this will remove only the label
+				}
+			}]
+		},
+		legend: {
+			display: false
+		},
+		tooltips: {
+			callbacks: {
+				title: function(tooltipItem, data) {
+					//return data['labels'][tooltipItem[0]['index']];
+				},
+				label: function(tooltipItem, data) {
+					//console.log('tooltipItem: ', tooltipItem);
+					
+					var event = data['datasets'][0]['data'][tooltipItem['index']];
+					
+					if (INTERSECTED === null) {
+						
+						me.onMouseOut('');
+					
+						switch(event) {
+							case 10:
+								me.onMouseHover('', 'Frontal_Lobe');
+								break;
+							case 8:
+								me.onMouseHover('', 'Pariental_Lobe');
+								break;
+							case 6:
+								me.onMouseHover('', 'Occipital_Lobe');
+								break;
+							case 11:
+								me.onMouseHover('', 'Temporal_Lobe');
+								break;
+							case 4:
+								me.onMouseHover('', 'Cerebellum_Lobe');
+								break;
+						}
+					}
+					
+					return ' ' + event + ' Events';
+				}
+			},
+			displayColors: false,
+			custom: function( tooltip ) {
+				if( tooltip.opacity > 0 ) {
+					//console.log( "Tooltip is showing" );
+				} else {
+					console.log( "Tooltip is hidden");
+					me.onMouseOut('');
+				}
+				return;
+			}
+		}
+	};
 	  
     return (
 		<React.Fragment>
@@ -574,7 +690,7 @@ class DashPage extends React.Component {
 								    <Bar data={data} options={options}/>
 									<div className="action_btn_block">
 										<button onClick={() => this.loadTexture(frontTexture, 'front_btn')} className="btn btn-primary lobe_btn" id="front_btn">Front Lobe</button>
-										<button onClick={() => this.loadTexture(parientalTexture, 'pariental_btn')} className="btn btn-primary lobe_btn" id="pariental_btn">Pariental Lobe</button>
+										<button onClick={() => this.loadTexture(parientalTexture, 'pariental_btn')} className="btn btn-primary lobe_btn" id="pariental_btn">Parietal Lobe</button>
 										<button onClick={() => this.loadTexture(occipitalTexture, 'occipital_btn')} className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
 										<button onClick={() => this.loadTexture(temporalTexture, 'temporal_btn')} className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
 										<button onClick={() => this.loadTexture(cerebellumTexture, 'cerebellum_btn')} className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>	
