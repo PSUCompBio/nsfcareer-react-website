@@ -13,6 +13,7 @@ class ToggleToken extends React.Component{
     }
     handleClick = (state) => {
         console.log(state);
+        this.props.updateUserType(this.props.buttonText);
         this.setState({
             isActive : state
         })

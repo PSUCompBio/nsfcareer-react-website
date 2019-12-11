@@ -2394,6 +2394,22 @@ var deleteDirectory = function (path, callback) {
         });
     });
 };
+
+app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res)=> {
+    request.post({ url: config.ComputeInstanceEndpoint + "getUpdatesAndNotifications", json: req.body }, function (err, httpResponse, body) {
+
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            console.log(httpResponse.body);
+            res.send(httpResponse.body);
+        }
+    })
+
+
+})
+
 // Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
     // Upload this data in Profile Bucket of USER

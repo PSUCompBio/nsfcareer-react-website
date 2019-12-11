@@ -539,3 +539,15 @@ export const getVtkFileLink = (request) =>{
       });
   })
 }
+
+export const getUpdatesAndNotifications = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUpdatesAndNotifications`, request)
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

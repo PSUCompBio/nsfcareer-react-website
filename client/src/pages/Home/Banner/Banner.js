@@ -68,13 +68,15 @@ class Banner extends React.Component {
                           >
                             Accurate brain simulations help extend your sensor data research.
                           </h4>
-                          <Link to="/Login">
-                            <button className = "signIn-btn" >
-                             SIGN IN
-                            </button>
-                          </Link>
+                          <div style={{float : "right"}} className="banner-sign-in-button">
+                              <Link to="/Login">
+                                <button  className = "signIn-btn btn-lg" >
+                                 SIGN IN
+                                </button>
+                              </Link>
+                          </div>
                           <div
-                            className={`underlined-text ${
+                            className={`underlined-text support-text-mt ${
                               inView ? 'fadeIn' : ''
                             }`}
                           >

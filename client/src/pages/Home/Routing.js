@@ -251,7 +251,7 @@ class Routing extends React.Component {
         <Route
             exact
             path="/TeamAdmin"
-            render={(props) => <TeamAdmin {...props} isDarkModeSet={this.checkDarkMode} /> }
+            render={(props) => <TeamAdmin {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact
