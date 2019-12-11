@@ -2302,6 +2302,17 @@ div.show-mobile-links {
   .details-section-bulb-svg {
       width: 20% !important ;
   }
+  .mobile-dashboard-card {
+      font-size: 1.2em !important;
+      color: #0F81DC !important;
+  }
+  .team-view-brain-image-row-picture {
+
+      width: 50% !important ;
+  }
+  .banner-sign-in-button{
+      padding-right: 0 !important;
+  }
 }
 
 @media (max-width: 767px) {
@@ -2578,4 +2589,12 @@ tbody.player-table tr:nth-child(odd){
 }
 .details-section-bulb-svg {
     width: 6% ;
+}
+
+.banner-sign-in-button{
+    padding-right: 30% !important;
+}
+
+.support-text-mt {
+    margin-top: 9% !important;
 }

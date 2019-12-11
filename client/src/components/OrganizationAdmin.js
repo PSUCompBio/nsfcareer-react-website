@@ -467,8 +467,8 @@ class OrganizationAdmin extends React.Component {
                                         />
                                     <div style={this.state.hideEditElement}>
                                         <div ref={reference[1]} className="football-header ">
-                                            <p className="teamName" ref={reference[2]}>
-                                                {team_name} <img src="/img/icon/football.svg" alt="" />
+                                            <p className="teamName mobile-dashboard-card" ref={reference[2]}>
+                                                {team_name}
                                         </p>
                                         <p className="athletes" ref={reference[3]}>
                                             {noOfAthletes} Athletes{' '}

@@ -586,9 +586,9 @@
 
                                                                     <th scope="col">#</th>
                                                                     <th scope="col">Player Name</th>
-                                                                    <th scope="col">Sport</th>
-                                                                    <th scope="col">Position</th>
-                                                                    <th scope="col">Brain Simulations</th>
+                                                                    {this.props.screenWidth <= 768 ? null :  <th scope="col">Sport</th> }
+                                                                    {this.props.screenWidth <= 768 ? null :  <th scope="col">Position</th> }
+                                                                    {this.props.screenWidth <= 768 ? null :  <th scope="col">Brain Simulations</th> }
                                                                     <th scope="col">Cumulative Simulation Overview</th>
                                                                 </tr>
                                                             </thead>
@@ -602,14 +602,15 @@
                                                                         >
                                                                         <th style={{verticalAlign: "middle"}} scope="row">{index + 1}</th>
                                                                         <td>{player.player_name}</td>
-                                                                        <td>Football</td>
-                                                                        <td>{player.simulation_data[0].position}</td>
-                                                                        <td>{player.simulation_data.length}</td>
+                                                                        {this.props.screenWidth <= 768 ? null :  <td>Football</td> }
+                                                                        {this.props.screenWidth <= 768 ? null :  <td>{player.simulation_data[0].position}</td> }
+                                                                        {this.props.screenWidth <= 768 ? null :  <td>{player.simulation_data.length}</td> }
+
                                                                         {/*<td>{Number(player.impact)}</td>*/}
                                                                         <td style={{alignItems : "center"}}>
                                                                             <img style={{
-                                                                                    display:"block", width:"15%", height:"auto" , objectFit: "cover"
-                                                                                }} className={`img-fluid `} src="/img/brain_simulation_image.png" alt="" /></td>
+                                                                                    display:"block", width: "15%", height:"auto" , objectFit: "cover"
+                                                                                }} className={`img-fluid team-view-brain-image-row-picture`} src="/img/brain_simulation_image.png" alt="" /></td>
                                                                                 {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                                 {/*<td>0</td>
                                                                                 <td>
