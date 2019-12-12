@@ -61,15 +61,16 @@ class CumulativeAccelerationEventChart extends React.Component {
                     <h1 className="top-heading__login player-dashboard-title">Organization</h1>
                   </Link>
                 </div>
-                <div className="col-md-5">
+                <div className="col-md-10 adminDashboardTop" >
                   <Link to={{
                       pathname: "/TeamAdmin",
                       state: {
                           team: this.props.data.redirection_detail
                       }
                      }}>
-                    <h1 className="top-heading__login player-dashboard-title">> York Tech Football</h1>
+                    <h1 className="top-heading__login player-dashboard-title">> York Tech Football > </h1>
                   </Link>
+                  <h1 style={{paddingLeft : "4px", color : "black"}} className="top-heading__login player-dashboard-title" >{(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name }</h1>
                 </div>
             </div>
           <h1 ref="h1" style={{

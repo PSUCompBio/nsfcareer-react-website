@@ -17,7 +17,7 @@
 }
 .dashboard {
   font-family: 'Segoe UI Regular';
-  margin-top: 10%;
+  margin-top: 8%;
 }
 .control {
   padding-left: 15%;
@@ -511,6 +511,13 @@ div.titles {
 
 }
 
+@media (min-width : 768px){
+    .adminDashboardTop {
+        display: inline-flex;
+    }
+
+}
+
 @media screen and (min-width: 1024px) and (max-width: 1500px) {
   div.penstate-university-bg {
     padding-top: 8% !important;
@@ -573,6 +580,10 @@ padding-top: 1.5rem !important;
 }
 
 @media (max-width: 768px){
+.adminDashboardTop {
+        display: block !important;
+    }
+
 .brain-card-pt-2-5{
 padding-top: 2.5rem !important;
 }
