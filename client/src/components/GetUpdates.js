@@ -69,7 +69,7 @@ class GetUpdates extends React.Component {
 
     }
     scrollToTop(){
-        window.scrollTo(0, 0)
+      //  window.scrollTo(0, 0)
     }
   clearUserTypeArray(){
       USER_TYPES = [];
