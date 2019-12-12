@@ -19,6 +19,7 @@ let obj;
 let objects = [];
 let cloneObjects = [];
 let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+let hoveredElement = '';
 
 var manager = new THREE.LoadingManager();
 var textureLoader = new THREE.TextureLoader(manager);
@@ -192,24 +193,28 @@ class DashPage extends React.Component {
 		const canvas1 = document.querySelector('#brain_model_block_1');
 		this.renderer1 = new THREE.WebGLRenderer({antialias:true});
 		//this.renderer1.setSize( window.innerWidth, window.innerHeight / 2 );
+		this.renderer1.domElement.setAttribute("id", "canvas1");
 		canvas1.appendChild( this.renderer1.domElement );
 		this.renderer1.gammaOutput = true;
 		this.renderer1.gammaFactor = 2.2;
 		
 		const canvas2 = document.querySelector('#brain_model_block_2');
 		this.renderer2 = new THREE.WebGLRenderer({antialias:true});
+		this.renderer2.domElement.setAttribute("id", "canvas2");
 		canvas2.appendChild( this.renderer2.domElement );
 		this.renderer2.gammaOutput = true;
 		this.renderer2.gammaFactor = 2.2;
 			
 		const canvas3 = document.querySelector('#brain_model_block_3');
 		this.renderer3 = new THREE.WebGLRenderer({antialias:true});
+		this.renderer3.domElement.setAttribute("id", "canvas3");
 		canvas3.appendChild( this.renderer3.domElement );
 		this.renderer3.gammaOutput = true;
 		this.renderer3.gammaFactor = 2.2;
 		
 		const canvas4 = document.querySelector('#brain_model_block_4');
 		this.renderer4 = new THREE.WebGLRenderer({antialias:true});
+		this.renderer4.domElement.setAttribute("id", "canvas4");
 		canvas4.appendChild( this.renderer4.domElement );
 		this.renderer4.gammaOutput = true;
 		this.renderer4.gammaFactor = 2.2;
@@ -241,10 +246,10 @@ class DashPage extends React.Component {
 		this.controls.enableKeys = false;
 		
 		// to disable zoom
-		//this.controls.enableZoom = false;
+		this.controls.enableZoom = false;
 
 		// to disable rotation
-		//this.controls.enableRotate = false;
+		this.controls.enableRotate = false;
 		
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
@@ -257,6 +262,10 @@ class DashPage extends React.Component {
 		// (-1 to +1) for both components
 		
 		event.preventDefault();
+		
+		console.log('event: ', event.target.id);
+		
+		hoveredElement = event.target.id;
 		
 		if (this.state.isLoading) {
 			return false;
@@ -451,9 +460,6 @@ class DashPage extends React.Component {
 				if ( INTERSECTED !== intersects[ 0 ].object ) {
 					if ( INTERSECTED ) {
 						INTERSECTED.material = INTERSECTED.currentHex;
-						this.setState({
-							isMouseEvent: false
-						});
 					}
 					
 					const hightlightMaterial = new THREE.MeshPhongMaterial( {
@@ -494,10 +500,8 @@ class DashPage extends React.Component {
 			} else {
 				if ( INTERSECTED ) {
 					INTERSECTED.material = INTERSECTED.currentHex;
-					this.setState({
-						isMouseEvent: false
-					});
 				}	
+				
 				INTERSECTED = null;
 				
 				this.setState({
@@ -506,25 +510,92 @@ class DashPage extends React.Component {
 			}
 		}
 		
-		this.camera.position.set(0, 0.36, 0);
-		this.controls.update();
+		if (hoveredElement === 'canvas1') {
+			this.camera.position.set(0, 0.36, 0);
+			this.controls.update();
+			
+			this.renderer2.render(this.scene, this.camera);
+			
+			this.camera.position.set(-0.3, 0.2, 0);
+			this.controls.update();
+			
+			this.renderer3.render(this.scene, this.camera);
+					
+			this.camera.position.set(-0.2, 0.2, 0.2);
+			this.controls.update();
+			
+			this.renderer4.render(this.scene, this.camera);
+			
+			this.camera.position.set(0, 0, 0.3);
+			this.controls.update();
+			
+			this.renderer1.render(this.scene, this.camera);
+		} else if (hoveredElement === 'canvas2') {
+			
+			this.camera.position.set(0, 0, 0.3);
+			this.controls.update();
+			
+			this.renderer1.render(this.scene, this.camera);
+			
+			this.camera.position.set(-0.3, 0.2, 0);
+			this.controls.update();
+			
+			this.renderer3.render(this.scene, this.camera);
+					
+			this.camera.position.set(-0.2, 0.2, 0.2);
+			this.controls.update();
+			
+			this.renderer4.render(this.scene, this.camera);
+			
+			this.camera.position.set(0, 0.36, 0);
+			this.controls.update();
+			
+			this.renderer2.render(this.scene, this.camera);
+		} else if (hoveredElement === 'canvas3') {
+			
+			this.camera.position.set(0, 0, 0.3);
+			this.controls.update();
+			
+			this.renderer1.render(this.scene, this.camera);
+			
+			this.camera.position.set(0, 0.36, 0);
+			this.controls.update();
+			
+			this.renderer2.render(this.scene, this.camera);
+					
+			this.camera.position.set(-0.2, 0.2, 0.2);
+			this.controls.update();
+			
+			this.renderer4.render(this.scene, this.camera);
+			
+			this.camera.position.set(-0.3, 0.2, 0);
+			this.controls.update();
+			
+			this.renderer3.render(this.scene, this.camera);
+		} else {
+			
+			this.camera.position.set(0, 0, 0.3);
+			this.controls.update();
+			
+			this.renderer1.render(this.scene, this.camera);
+			
+			this.camera.position.set(0, 0.36, 0);
+			this.controls.update();
+			
+			this.renderer2.render(this.scene, this.camera);
+			
+			this.camera.position.set(-0.3, 0.2, 0);
+			this.controls.update();
+			
+			this.renderer3.render(this.scene, this.camera);
+					
+			this.camera.position.set(-0.2, 0.2, 0.2);
+			this.controls.update();
+			
+			this.renderer4.render(this.scene, this.camera);
+		}
 		
-		this.renderer2.render(this.scene, this.camera);
 		
- 		this.camera.position.set(-0.3, 0.2, 0);
-		this.controls.update();
-		
-		this.renderer3.render(this.scene, this.camera);
-				
-		this.camera.position.set(-0.2, 0.2, 0.2);
-		this.controls.update();
-		
-		this.renderer4.render(this.scene, this.camera);
-		
-		this.camera.position.set(0, 0, 0.3);
-		this.controls.update();
-		
-		this.renderer1.render(this.scene, this.camera);
 				
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
@@ -564,6 +635,7 @@ class DashPage extends React.Component {
 	};
 	
 	const options = {
+		animation: false,
 		scales: {
 			yAxes: [{
 				scaleLabel: {
