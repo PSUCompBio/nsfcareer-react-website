@@ -221,9 +221,6 @@ function setConnectionTimeout(time) {
 // ============================================
 //     FUNCTIONS OR IMPLEMENTATIONS
 // ============================================
-
-
-
 let users = [];
 let paginationToken = "";
 
