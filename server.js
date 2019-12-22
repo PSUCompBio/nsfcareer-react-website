@@ -20,6 +20,7 @@ multer = require('multer'),
 XLSX = require('xlsx'),
 request = require('request'),
 moment = require('moment'),
+jwt = require('jsonwebtoken'),
 // Load the core build of Lodash.
 _array = require('lodash/array');
 
@@ -258,6 +259,74 @@ function listAllUsers(user_attributes, cb) {
             }
         }
     });
+}
+
+function getSimulationImageRecord(image_id){
+    return new Promise((resolve, reject) =>{
+        var db_table = {
+            TableName: 'simulation_images',
+            Key: {
+                "image_id": image_id
+            }
+        };
+        docClient.get(db_table, function (err, data) {
+            if (err) {
+
+                reject(err)
+
+            } else {
+                resolve(data.Item)
+            }
+        });
+    })
+}
+
+function verifyImageToken(token, item){
+    console.log(token, item);
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, item.secret, function(err, decoded) {
+            if(err){
+                console.log(err);
+                reject({
+                    err : err,
+                    authorized : false
+                })
+            }
+            else{
+                resolve(decoded);
+            }
+        });
+    })
+}
+
+function getImageFromS3(image_record){
+    return new Promise((resolve, reject) =>{
+        var params = {
+            Bucket: config_env.usersbucket,
+            Key: image_record.path
+        };
+        s3.getObject(params, function(err, data) {
+            if (err) {
+                reject(err)
+            }
+            else{
+                resolve(data);
+            }
+        });
+    })
+}
+
+function getImageFromS3Buffer(image_data){
+    return new Promise((resolve, reject) => {
+        console.log(image_data.Body);
+            try{
+                resolve(image_data.Body.toString('base64'))
+            }
+            catch (e){
+                reject(e)
+            }
+
+    })
 }
 
 
@@ -1270,6 +1339,44 @@ function addPlayerToTeamInDDB(org, team, player_id) {
 // app.get(`${apiPrefix}`, (req, res) => {
 //     res.send("NSFCareeIO");
 // })
+
+
+app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
+    const { image_id, token } = req.params;
+    var imageData = '';
+    // console.log(process.env.BRAIN_SIM_SERVICE_TOKEN)
+    getSimulationImageRecord(req.params.image_id)
+    .then(image_data => {
+        imageData = image_data;
+        // convert Buffer to Image
+        return verifyImageToken(token, image_data)
+    })
+    .then(decoded_token => {
+        return getImageFromS3(imageData)
+    })
+    .then(image_s3 => {
+        return getImageFromS3Buffer(image_s3)
+    })
+    .then(image => {
+
+        res.send(`<h6>Image ID : ${image_id}</h6><img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`);
+    })
+    .catch(err => {
+        // res.removeHeader('X-Frame-Options');
+        if("authorized" in err){
+            res.send({
+                message : "failure",
+                error : "You are not authorized to access this resource."
+            })
+        }
+        else{
+            res.send({
+                message : "Simulation is in proceess "
+            })
+        }
+    })
+
+})
 
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
@@ -2855,6 +2962,37 @@ app.post(`${apiPrefix}uploadModelRealData`, setConnectionTimeout('10m'), uploadM
         return res.status(200).send(items);
     });
 
+})
+
+
+
+app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req, res) => {
+    // TODO : Start receiving user type or remove user type from this function
+    var user_type = "standard";
+    login(req.body.user_name, req.body.password, user_type, (err,data) => {
+        if(err){
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }
+        else{
+            request.post({
+                url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                json: req.body
+            }, function (err, httpResponse, body) {
+                if (err) {
+                    res.send({
+                        message: "failure",
+                        error: err
+                    })
+                }
+                else {
+                    res.send(httpResponse.body);
+                }
+            })
+        }
+    })
 })
 
 
