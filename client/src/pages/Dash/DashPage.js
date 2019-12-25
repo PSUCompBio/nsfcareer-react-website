@@ -4,11 +4,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import brain from './brain.glb';
 import modelTexture from './textures/Br_color.jpg';
-import frontTexture from './textures/front.jpg';
-import parientalTexture from './textures/pariental.jpg';
-import occipitalTexture from './textures/occipital.jpg';
-import temporalTexture from './textures/temporal.jpg';
-import cerebellumTexture from './textures/cerebellum.jpg';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import {Bar} from 'react-chartjs-2';
@@ -17,16 +12,29 @@ import './dash.css';
 
 let obj;
 let objects = [];
-let cloneObjects = [];
-let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 let hoveredElement = '';
 
-var manager = new THREE.LoadingManager();
-var textureLoader = new THREE.TextureLoader(manager);
+var frontal_Lobe_json = require('./Frontal_Lobe.json');
+var cerebellum_Lobe_json = require('./Cerebellum_Lobe.json');
+var middle_Part_of_the_Brain_json = require('./Middle_Part_of_the_Brain.json');
+var Occipital_Lobe_json = require('./Occipital_Lobe.json');
+var Pariental_Lobe_json = require('./Pariental_Lobe.json');
+var Temporal_Lobe_json = require('./Temporal_Lobe.json');
+var Brain_sphere = require('./Brain_sphere.json');
 
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2();
-var INTERSECTED = null;
+let hightlightMaterial = new THREE.MeshPhongMaterial( {
+	color: 0xffff00,
+	opacity: 0.5,
+	transparent: true
+});
+
+let manager = new THREE.LoadingManager();
+let textureLoader = new THREE.TextureLoader(manager);
+
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2();
+let INTERSECTED = null;
 
 class DashPage extends React.Component {
 	
@@ -55,9 +63,9 @@ class DashPage extends React.Component {
 		this.loadModel(brain);
 		
 		this.startAnimationLoop();
-		//this.setContainerHeight();
+		this.setContainerHeight();
 	
-		var me = this;
+		let me = this;
 		
 		// Highlight brain model on mouse hover on brain model
 		document.getElementById("brain_model_block_1").addEventListener('mousemove', function(event) {
@@ -89,6 +97,9 @@ class DashPage extends React.Component {
 		document.getElementById("cerebellum_btn").addEventListener('mouseover', function(event) {
 			me.onMouseHover(event, 'Cerebellum_Lobe');
 		}, false);
+		document.getElementById("motor_and_sensor_cortex").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Middle_Part_of_the_Brain');
+		}, false);
 		
 		// Remove Highlight brain model on mouse out from brain button
 		document.getElementById("front_btn").addEventListener('mouseout', function(event) {
@@ -106,23 +117,23 @@ class DashPage extends React.Component {
 		document.getElementById("cerebellum_btn").addEventListener('mouseout', function(event) {
 			me.onMouseOut(event);
 		}, false);
+		document.getElementById("motor_and_sensor_cortex").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
 	}
 	
 	onMouseHover = ( event, type ) => {
 		
 		if (event !== '') event.preventDefault();
 		
-		const hightlightMaterial = new THREE.MeshPhongMaterial( {
-			color: 0xffff00,
-			opacity: 0.5,
-			transparent: true
-		});
-		
 		objects.forEach(function(object, index) {
 						
 			if (object.name == type) {
 				
-				object.currentHex = object.material;
+				if (object.currentHex == undefined) {
+					object.currentHex = object.material;
+				}
+				
 				object.material = hightlightMaterial;
 			}
 		});
@@ -130,15 +141,17 @@ class DashPage extends React.Component {
 		if (event !== '') {
 			this.highlightGraphBar(type);
 		}
+		
+		this.createLobeSheres(type);
 	}
 	
 	onMouseOut = ( event ) => {
 		
 		if (event !== '') event.preventDefault();
 		
-		cloneObjects.forEach(function(cloneObject, index) {
-			if (cloneObject.currentHex != undefined) {
-				objects[index].material = cloneObject.currentHex;
+		objects.forEach(function(object, index) {
+			if (object.currentHex != undefined) {
+				object.material = object.currentHex;
 			}
 		});
 		
@@ -149,6 +162,9 @@ class DashPage extends React.Component {
 				barColors: barColors
 			});
 		}
+		
+		// Remove prev spheres
+		this.removeSpheres();
 	}
 	
 	highlightGraphBar = (type) => {
@@ -156,19 +172,22 @@ class DashPage extends React.Component {
 		
 		switch(type) {
 			case "Frontal_Lobe":
-				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 				break;
 			case "Pariental_Lobe":
-				barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+				barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 				break;
 			case "Occipital_Lobe":
-				barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC'];
+				barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 				break;
 			case "Temporal_Lobe":
-				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC']
+				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC']
 				break;
 			case "Cerebellum_Lobe":
-				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
+				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC'];
+				break;
+			case "Middle_Part_of_the_Brain":
+				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
 				break;
 		}
 		
@@ -219,7 +238,6 @@ class DashPage extends React.Component {
 		this.renderer4.gammaOutput = true;
 		this.renderer4.gammaFactor = 2.2;
 	
-
 		this.scene = new THREE.Scene();
 		//this.scene.background = new THREE.Color( 0x8FBCD4 );
 		this.scene.background = new THREE.Color( "rgb(255, 255, 255)" );
@@ -246,10 +264,10 @@ class DashPage extends React.Component {
 		this.controls.enableKeys = false;
 		
 		// to disable zoom
-		this.controls.enableZoom = false;
+		//this.controls.enableZoom = false;
 
 		// to disable rotation
-		this.controls.enableRotate = false;
+		//this.controls.enableRotate = false;
 		
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
@@ -278,7 +296,7 @@ class DashPage extends React.Component {
 		const canvas = document.querySelector(type);
 		
 		// returns the size of an element and its position relative to the viewport
-		var rect = canvas.getBoundingClientRect();
+		let rect = canvas.getBoundingClientRect();
 		
 		//console.log('rect: ', rect);
 
@@ -301,7 +319,7 @@ class DashPage extends React.Component {
 			isLoading: true
 		});
 		
-		var loader = new GLTFLoader();
+		let loader = new GLTFLoader();
 				
 		// Load a glTF resource
 		loader.load(
@@ -312,20 +330,14 @@ class DashPage extends React.Component {
 						
 				obj = gltf.scene;
 				
-				var p = 1;
 				obj.traverse(function (child) {
 					//console.log('child: ', child);
 					if (child.isMesh) {
-						//child.name = 'modelMesh' + p;
-						
-						//console.log('Mesh: ', child.name);
 						objects.push(child);
-						cloneObjects.push(child);
-						p++;
 					}
 				});
 				
-				var map = textureLoader.load(modelTexture);
+				let map = textureLoader.load(modelTexture);
 				map.encoding = THREE.sRGBEncoding;
 				//map.flipY = false;
 				
@@ -341,21 +353,27 @@ class DashPage extends React.Component {
 					me.setState({
 						isLoading: false
 					});
-					var material = new THREE.MeshPhongMaterial({map: map, transparent: true, opacity: 0.5, cache: true});
+					let material = new THREE.MeshPhongMaterial({map: map, transparent: true, opacity: 0.5, cache: true});
 					obj.traverse( function ( node ) {
 						node.material = material;
 						node.material.needsUpdate = true;
 						node.castShadow = true;
 						node.receiveShadow = true;
 					});
-									
+														
 					scene.add( obj );
+
+
+					Brain_sphere.forEach(function(object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+					});
 					
-					me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
-					me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
-					me.generateSphere(0.03, 0, -0.07, 'sphere3');
-					me.generateSphere(0.03, -0.03, 0, 'sphere4');
-					me.generateSphere(-0.03, -0.05, -0.03, 'sphere5');
+					//me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
+					//me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
+					//me.generateSphere(0.03, 0, -0.07, 'sphere3');
+					//me.generateSphere(0.03, -0.03, 0, 'sphere4');
+					//me.generateSphere(-0.03, -0.05, -0.03, 'sphere5');
 					
 				};
 			},
@@ -376,66 +394,98 @@ class DashPage extends React.Component {
 	};
 	
 	generateSphere = (x, y, z, sphereName) => {
-		var geometry = new THREE.SphereGeometry( 0.005, 32, 32 );
-		var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
-		var sphere = new THREE.Mesh( geometry, material );
+		let geometry = new THREE.SphereGeometry( 0.005, 32, 32 );
+		let material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+		let sphere = new THREE.Mesh( geometry, material );
 		sphere.position.set(x, y, z);
 		sphere.name = sphereName;
 
 		this.scene.add(sphere);
 	};
 	
-	removeSpheres = (x, y, z, sphereName) => {
-		var k;
+	removeSpheres = () => {
+		let k;
 		for (k = 1; k <= 5; k++ ) {
-			var sphereObject = this.scene.getObjectByName("sphere" + k);
+			let sphereObject = this.scene.getObjectByName("sphere" + k);
 			this.scene.remove(sphereObject);
 		}
 	};
 	
-	loadTexture = (texture, type) => {
-		
-		if (type === 'reset_btn') {
-			cloneObjects.forEach(function(cloneObject, index) {
-				if (cloneObject.currentHex != undefined) {
-					objects[index].material = cloneObject.currentHex;
-				}
-			});
-		}
-		
-		var me = this;
+	createLobeSheres = (type) => {
+		let me = this;
 		
 		// Remove prev spheres
 		me.removeSpheres();
 		
 		// Add new spheres
 		switch(type) {
-			case "front_btn":
-				me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
-				me.generateSphere(-0.02, 0.02, 0.05, 'sphere2');
-				me.generateSphere(0, 0.05, 0.03, 'sphere3');
+			case "Frontal_Lobe":			
+				frontal_Lobe_json.forEach(function(object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+				});
 				break;
-			case "pariental_btn":
-				me.generateSphere(0.01, 0.02, -0.06, 'sphere1');
-				me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
-				me.generateSphere(-0.03, 0.05, -0.03, 'sphere3');
+			case "Pariental_Lobe":
+				Pariental_Lobe_json.forEach(function(object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+				});
 				break;
-			case "occipital_btn":
-				me.generateSphere(0.03, 0, -0.07, 'sphere1');
-				me.generateSphere(0, 0, -0.07, 'sphere2');
-				me.generateSphere(-0.03, 0, -0.07, 'sphere3');
+			case "Occipital_Lobe":
+				Occipital_Lobe_json.forEach(function(object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+				});
 				break;
-			case "temporal_btn":
-				me.generateSphere(-0.04, -0.03, 0.01, 'sphere1');
-				me.generateSphere(0.04, -0.03, 0.01, 'sphere2');
-				me.generateSphere(0.03, -0.03, 0, 'sphere3');
+			case "Temporal_Lobe":
+				Temporal_Lobe_json.forEach(function(object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+				});
 				break;
-			case "cerebellum_btn":
-				me.generateSphere(0.03, -0.05, -0.03, 'sphere1');
-				me.generateSphere(0, -0.05, -0.03, 'sphere2');
-				me.generateSphere(-0.03, -0.05, -0.03, 'sphere3');
+			case "Cerebellum_Lobe":
+				cerebellum_Lobe_json.forEach(function(object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+				});
+				break;
+			case "Middle_Part_of_the_Brain":
+				middle_Part_of_the_Brain_json.forEach(function(object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+				});
 				break;
 		}
+	} 
+	
+	resetHighLight = () => {
+		let me = this;
+		
+		objects.forEach(function(object, index) {
+			if (object.currentHex != undefined) {
+				object.material = object.currentHex;
+			}
+		});
+		
+		let barColors = defaultBarColors;
+		
+		this.setState({
+			barColors: barColors
+		});
+		
+		// Remove prev spheres
+		me.removeSpheres();
+
+		Brain_sphere.forEach(function(object, index) {
+			var i = parseInt(index + 1);
+			me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+		});
+		
+		//me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
+		//me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
+		//me.generateSphere(0.03, 0, -0.07, 'sphere3');
+		//me.generateSphere(0.03, -0.03, 0, 'sphere4');
+		//me.generateSphere(-0.03, -0.05, -0.03, 'sphere5');
 	}
 
 	startAnimationLoop = () => {
@@ -451,7 +501,7 @@ class DashPage extends React.Component {
 			raycaster.setFromCamera( mouse, this.camera );
 
 			// calculate objects intersecting the picking ray
-			var intersects = raycaster.intersectObjects( objects );
+			let intersects = raycaster.intersectObjects( objects );
 			
 			let barColors = defaultBarColors;
 
@@ -462,53 +512,57 @@ class DashPage extends React.Component {
 						INTERSECTED.material = INTERSECTED.currentHex;
 					}
 					
-					const hightlightMaterial = new THREE.MeshPhongMaterial( {
-						color: 0xffff00,
-						opacity: 0.5,
-						transparent: true
-					});
-
 					INTERSECTED = intersects[ 0 ].object;
-					
-					console.log('INTERSECTED Mesh: ', INTERSECTED.name);
+
+
+					//console.log('INTERSECTED Mesh: ', INTERSECTED.name);
 					
 					switch(INTERSECTED.name) {
 						case "Frontal_Lobe":
-							barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+							barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 							break;
 						case "Pariental_Lobe":
-							barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+							barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 							break;
 						case "Occipital_Lobe":
-							barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC'];
+							barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 							break;
 						case "Temporal_Lobe":
-							barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC']
+							barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC']
 							break;
 						case "Cerebellum_Lobe":
-							barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
+							barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC'];
+							break;
+						case "Middle_Part_of_the_Brain":
+							barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
 							break;
 					}
 					
 					this.setState({
 						barColors: barColors
 					});
-										
-					INTERSECTED.currentHex = INTERSECTED.material;
+					
+					this.createLobeSheres(INTERSECTED.name);
+					
+					if (INTERSECTED.currentHex == undefined) {
+						INTERSECTED.currentHex = INTERSECTED.material;
+					}
 					INTERSECTED.material = hightlightMaterial;
 				}
 			} else {
 				if ( INTERSECTED ) {
 					INTERSECTED.material = INTERSECTED.currentHex;
+					this.removeSpheres();
+					
+					this.setState({
+						barColors: barColors
+					});
 				}	
-				
 				INTERSECTED = null;
-				
-				this.setState({
-					barColors: barColors
-				});
 			}
 		}
+
+		//this.renderer1.render(this.scene, this.camera);
 		
 		if (hoveredElement === 'canvas1') {
 			this.camera.position.set(0, 0.36, 0);
@@ -594,8 +648,6 @@ class DashPage extends React.Component {
 			
 			this.renderer4.render(this.scene, this.camera);
 		}
-		
-		
 				
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
 		// an animation and requests that the browser call a specified function
@@ -615,14 +667,14 @@ class DashPage extends React.Component {
 			this.renderer4.setSize(width, height, false);
 		}
 		return needResize;
-    }
+    } 
 
   render() {
 	  
-	 var me = this;
+	 let me = this;
 	 
 	 const data = {
-		labels: [857, 1173, 3043, 1173, 1200],
+		labels: [857, 1173, 3043, 1173, 1200, 1400],
 		datasets: [{
 			label: "Events",
 			lineTension: 0.1,
@@ -630,7 +682,7 @@ class DashPage extends React.Component {
 			borderColor: '#1987DD',
 			hoverBackgroundColor: 'rgba(255,255,102)',
 			hoverBorderColor: 'rgba(255,255,102)',
-			data: [10, 8, 6, 11, 4]
+			data: [10, 8, 6, 11, 4, 7]
 		}]
 	};
 	
@@ -665,33 +717,31 @@ class DashPage extends React.Component {
 					//return data['labels'][tooltipItem[0]['index']];
 				},
 				label: function(tooltipItem, data) {
-					//console.log('tooltipItem: ', tooltipItem);
+			
+					let event = data['datasets'][0]['data'][tooltipItem['index']];
 					
-					var event = data['datasets'][0]['data'][tooltipItem['index']];
-					
-					if (INTERSECTED === null) {
-						
-						me.onMouseOut('');
-					
-						switch(event) {
-							case 10:
-								me.onMouseHover('', 'Frontal_Lobe');
-								break;
-							case 8:
-								me.onMouseHover('', 'Pariental_Lobe');
-								break;
-							case 6:
-								me.onMouseHover('', 'Occipital_Lobe');
-								break;
-							case 11:
-								me.onMouseHover('', 'Temporal_Lobe');
-								break;
-							case 4:
-								me.onMouseHover('', 'Cerebellum_Lobe');
-								break;
-						}
+					me.onMouseOut('');
+				
+					switch(event) {
+						case 10:
+							me.onMouseHover('', 'Frontal_Lobe');
+							break;
+						case 8:
+							me.onMouseHover('', 'Pariental_Lobe');
+							break;
+						case 6:
+							me.onMouseHover('', 'Occipital_Lobe');
+							break;
+						case 11:
+							me.onMouseHover('', 'Temporal_Lobe');
+							break;
+						case 4:
+							me.onMouseHover('', 'Cerebellum_Lobe');
+							break;
+						case 7:
+							me.onMouseHover('', 'Middle_Part_of_the_Brain');
+							break;
 					}
-					
 					return ' ' + event + ' Events';
 				}
 			},
@@ -719,7 +769,7 @@ class DashPage extends React.Component {
 							}} className="top-heading__login player-dashboard-title">
 						  Player Dashboard
 						</h1>
-						<div className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated fadeInLeft"
+						<div className="card  pt-3 pb-3 pl-2 pr-2 mb-5"
 						style={{
 							border: "2px solid #0F81DC",
 							borderRadius: "1.8rem"
@@ -761,15 +811,16 @@ class DashPage extends React.Component {
 								<div className="col-md-7">
 								    <Bar data={data} options={options}/>
 									<div className="action_btn_block">
-										<button onClick={() => this.loadTexture(frontTexture, 'front_btn')} className="btn btn-primary lobe_btn" id="front_btn">Front Lobe</button>
-										<button onClick={() => this.loadTexture(parientalTexture, 'pariental_btn')} className="btn btn-primary lobe_btn" id="pariental_btn">Parietal Lobe</button>
-										<button onClick={() => this.loadTexture(occipitalTexture, 'occipital_btn')} className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
-										<button onClick={() => this.loadTexture(temporalTexture, 'temporal_btn')} className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
-										<button onClick={() => this.loadTexture(cerebellumTexture, 'cerebellum_btn')} className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>	
+										<button className="btn btn-primary lobe_btn" id="front_btn">Front Lobe</button>
+										<button className="btn btn-primary lobe_btn" id="pariental_btn">Parietal Lobe</button>
+										<button className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
+										<button className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
+										<button className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>	
+										<button className="btn btn-primary lobe_btn motor_and_sensor_cortex" id="motor_and_sensor_cortex">Motor and Sensor Cortex</button>	
 									</div>
 									<div>
 										<span className="brain_txt">Select a Brain Region </span>
-										<button onClick={() => this.loadTexture(modelTexture, 'reset_btn')} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>	
+										<button onClick={this.resetHighLight} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>	
 									</div>
 								</div>
 							</div>

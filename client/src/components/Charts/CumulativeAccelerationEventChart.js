@@ -3,6 +3,7 @@ import {Line} from 'react-chartjs-2';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import Report from '../ReportContent/Report0';
+import ExportPlayerReport from './ExportPlayerReport';
 
 const options = {
     scales: {
@@ -122,12 +123,13 @@ class CumulativeAccelerationEventChart extends React.Component {
                     </div>
                 </div>
             <div
-                className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated fadeInLeft"
+                className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft"
                 style={{
                     border: "2px solid #0F81DC",
                     borderRadius: "1.8rem"
                 }}
                 >
+                
                 <div className="row">
                     <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                         <p
@@ -140,7 +142,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                 marginRight : "5% !important"
                             }}
                             className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
-                            <PDFDownloadLink document={<Report {...this.props}/>} fileName="report.pdf" style={{
+                            <PDFDownloadLink document={<Report {...this.props}/>} className="export-cumulative-player" fileName="report.pdf" style={{
                               color : 'white'
                             }}>
                               Export Player Report
@@ -151,31 +153,8 @@ class CumulativeAccelerationEventChart extends React.Component {
 
                 </div>
 
-                <div className="row text-center">
-                    <div className="col-md-4 d-flex align-items-center justify-content-center">
-                    {/*    {(this.state.is_selfie_image_uploaded)?<div><img className={`svg img-fluid ${'svg'}`} src="/img/icon/accBrain.svg" alt="" /><img width="95%"  height="95%" className={`img fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div>
-                        : <img className={`svg img-fluid`} src="/img/icon/accBrain.svg" alt="" />}
-                        */}
+                <ExportPlayerReport />
 
-                        {(this.state.is_selfie_image_uploaded)?<div><img className={`svg img-fluid ${'svg'}`} src="/img/brain_simulation_image.png" alt="" /><img width="95%"  height="95%" className={`img fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div>
-                    : <img width="95%" height="95%" className={`svg img-fluid`} src="/img/brain_simulation_image.png" alt="" />}
-                        {/*<img
-                            className="svg img-fluid"
-                            src="/img/icon/accBrain.svg"
-                            alt=""
-                            />
-                            */}
-                    </div>
-                    <div className="col-md-8 mb-5">
-                        <Line data={this.state.data} options={options}/>
-                        {/*<img
-                            className="svg img-fluid"
-                            src="/img/icon/accBrainChart.svg"
-                            alt=""
-                            />*/}
-                            {/*<p ref="h3">Time</p> */}
-                        </div>
-                    </div>
                 </div>
                 </React.Fragment>
             )
