@@ -7,6 +7,7 @@ import modelTexture from './textures/Br_color.jpg';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import {Bar} from 'react-chartjs-2';
+import 'chartjs-plugin-datalabels';
 import './dash.css';
 
 
@@ -50,8 +51,8 @@ class DashPage extends React.Component {
 	
 	componentDidMount() {
 		// Scrolling the screen to top
-		window.scrollTo(0, 0)
-
+		window.scrollTo(0, 0);
+		
 		if (getStatusOfDarkmode().status === true) {
 			document.getElementsByTagName('body')[0].style.background = '#171b25';
 			for (let i = 1; i <= 8; i++){
@@ -264,10 +265,10 @@ class DashPage extends React.Component {
 		this.controls.enableKeys = false;
 		
 		// to disable zoom
-		//this.controls.enableZoom = false;
+		this.controls.enableZoom = false;
 
 		// to disable rotation
-		//this.controls.enableRotate = false;
+		this.controls.enableRotate = false;
 		
 		//this.controls.minDistance = 2;
 		//this.controls.maxDistance = 10;
@@ -363,17 +364,10 @@ class DashPage extends React.Component {
 														
 					scene.add( obj );
 
-
 					Brain_sphere.forEach(function(object, index) {
 						var i = parseInt(index + 1);
 						me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
 					});
-					
-					//me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
-					//me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
-					//me.generateSphere(0.03, 0, -0.07, 'sphere3');
-					//me.generateSphere(0.03, -0.03, 0, 'sphere4');
-					//me.generateSphere(-0.03, -0.05, -0.03, 'sphere5');
 					
 				};
 			},
@@ -405,7 +399,7 @@ class DashPage extends React.Component {
 	
 	removeSpheres = () => {
 		let k;
-		for (k = 1; k <= 5; k++ ) {
+		for (k = 1; k <= 25; k++ ) {
 			let sphereObject = this.scene.getObjectByName("sphere" + k);
 			this.scene.remove(sphereObject);
 		}
@@ -688,6 +682,41 @@ class DashPage extends React.Component {
 	
 	const options = {
 		animation: false,
+		responsive: true,
+		plugins: {
+			datalabels: {
+				color: '#007bff',
+			    font: {
+					weight: 'bold',
+				    size: 24,
+				},
+				formatter: function(value, context){
+					//console.log(context.dataIndex);
+					//return value;
+					
+					switch(context.dataIndex) {
+						case 0:
+							return frontal_Lobe_json.length;
+							break;
+						case 1:
+							return Pariental_Lobe_json.length;
+							break;
+						case 2:
+							return Occipital_Lobe_json.length;
+							break;
+						case 3:
+							return Temporal_Lobe_json.length;
+							break;
+						case 4:
+							return cerebellum_Lobe_json.length;
+							break;
+						case 5:
+							return middle_Part_of_the_Brain_json.length;
+							break;
+					}
+				}
+			}
+        },
 		scales: {
 			yAxes: [{
 				scaleLabel: {
@@ -722,23 +751,23 @@ class DashPage extends React.Component {
 					
 					me.onMouseOut('');
 				
-					switch(event) {
-						case 10:
+					switch(tooltipItem['index']) {
+						case 0:
 							me.onMouseHover('', 'Frontal_Lobe');
 							break;
-						case 8:
+						case 1:
 							me.onMouseHover('', 'Pariental_Lobe');
 							break;
-						case 6:
+						case 2:
 							me.onMouseHover('', 'Occipital_Lobe');
 							break;
-						case 11:
+						case 3:
 							me.onMouseHover('', 'Temporal_Lobe');
 							break;
 						case 4:
 							me.onMouseHover('', 'Cerebellum_Lobe');
 							break;
-						case 7:
+						case 5:
 							me.onMouseHover('', 'Middle_Part_of_the_Brain');
 							break;
 					}
@@ -820,6 +849,8 @@ class DashPage extends React.Component {
 									</div>
 									<div>
 										<span className="brain_txt">Select a Brain Region </span>
+									</div>
+									<div>
 										<button onClick={this.resetHighLight} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>	
 									</div>
 								</div>
