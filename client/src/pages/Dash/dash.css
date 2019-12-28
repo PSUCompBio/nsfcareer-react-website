@@ -13,7 +13,10 @@
 	font-size: 12px !important;
 	vertical-align: baseline !important;
 }
-
+#motor_and_sensor_cortex {
+	padding: 6px 0px 6px 0px;
+    width: 83px !important;
+}
 .action_btn_block .lobe_btn:not(:first-child) {
     margin-left: 19px;
 }
@@ -32,6 +35,7 @@
 }
 .reset_btn {
 	background-color: #d3d3d3 !important;
+	margin-top: 10px !important;
 	padding-left: 40px !important;
 	padding-right: 40px !important;
 }
