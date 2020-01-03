@@ -1,0 +1,132 @@
+.brain_model {
+    float: left;
+    width: 50%;
+    text-align: center;
+}
+.brain_model canvas {
+    width: 100%;
+    min-height: 150px;
+}
+.lobe_btn {
+	width: 77px;
+	/*width: 100px;*/	
+	font-size: 12px !important;
+	vertical-align: baseline !important;
+}
+#motor_and_sensor_cortex {
+	padding: 6px 0px 6px 0px;
+    width: 83px !important;
+}
+.action_btn_block .lobe_btn:not(:first-child) {
+    margin-left: 19px;
+}
+
+.cerebellum_btn {
+	width: 87px !important;
+}
+.brain_txt {
+	font-size: 24px;
+    margin-top: 17px;
+    display: inline-block;
+    margin-right: 20px;
+}
+.action_btn_block {
+	margin-left: 27px;
+}
+.reset_btn {
+	background-color: #d3d3d3 !important;
+	margin-top: 10px !important;
+	padding-left: 40px !important;
+	padding-right: 40px !important;
+}
+.action_btn_block .lobe_btn.active {
+	/* background-color: red !important;
+	border-color: red !important; */
+}
+
+.lobe_btn:first-child {
+    margin-left: 25px;
+    margin-right: 2px;
+}
+
+.lobe_btn:nth-last-child(1), .lobe_btn:nth-last-child(2) , .lobe_btn:nth-last-child(3), .lobe_btn:nth-last-child(4), .lobe_btn:nth-last-child(5) {
+    margin-left: 15px !important;
+}
+
+span#sphere_count {    
+    top: 168px;
+    left: 109px;   
+}
+
+span#sphere1_count {
+    left: 203px;
+    top: 195px;
+}
+
+span#sphere2_count {
+    left: 300px;
+    top: 218px;
+}
+
+span#sphere3_count {
+    left: 394px;
+    top: 152px;
+}
+
+span#sphere4_count {
+    right: 152px;
+    bottom: 192px;
+}
+
+span#sphere5_count {
+    right: 56px;
+    bottom: 225px;
+}
+
+span.sphere_count {
+	position: absolute;
+	font-size: 21px;
+    font-weight: 700;
+}
+
+@media only screen and (max-width: 1200px) {
+
+	.action_btn_block {
+	    margin-left: 60px;
+	}
+
+	.lobe_btn{
+		padding: 0.375rem 0.20rem !important;
+	}
+
+    .action_btn_block .lobe_btn:not(:first-child) {
+	    margin-left: 9px !important;
+	}
+
+	.lobe_btn {
+	    width: 65px;
+	}
+
+	.lobe_btn:nth-last-child(1), .lobe_btn:nth-last-child(2), .lobe_btn:nth-last-child(3), .lobe_btn:nth-last-child(4), .lobe_btn:nth-last-child(5) {
+	    margin-left: 0px !important;
+	    margin-right: 0px;
+	}
+	.lobe_btn:first-child {
+	    margin-left: 0px;
+	    margin-right: 0px;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+
+	.brain_model {
+		width: 100%;
+		text-align: center;
+	}
+	.lobe_btn, .cerebellum_btn {
+		width: 92px !important;
+		margin-right: 5px !important;
+		margin-bottom: 5px !important;
+		font-size: 10px !important;
+	}
+}
