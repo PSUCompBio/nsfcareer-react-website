@@ -16,13 +16,19 @@ let objects = [];
 let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 let hoveredElement = '';
 
-var frontal_Lobe_json = require('./Frontal_Lobe.json');
-var cerebellum_Lobe_json = require('./Cerebellum_Lobe.json');
-var middle_Part_of_the_Brain_json = require('./Middle_Part_of_the_Brain.json');
-var Occipital_Lobe_json = require('./Occipital_Lobe.json');
-var Pariental_Lobe_json = require('./Pariental_Lobe.json');
-var Temporal_Lobe_json = require('./Temporal_Lobe.json');
-var Brain_sphere = require('./Brain_sphere.json');
+let frontal_Lobe_json = require('./Frontal_Lobe.json');
+let cerebellum_Lobe_json = require('./Cerebellum_Lobe.json');
+let middle_Part_of_the_Brain_json = require('./Middle_Part_of_the_Brain.json');
+let Occipital_Lobe_json = require('./Occipital_Lobe.json');
+let Pariental_Lobe_json = require('./Pariental_Lobe.json');
+let Temporal_Lobe_json = require('./Temporal_Lobe.json');
+let all_spheres_json = frontal_Lobe_json.concat(Pariental_Lobe_json);
+all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
+all_spheres_json = all_spheres_json.concat(Temporal_Lobe_json);
+all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
+all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
+
+console.log('Merge: ', all_spheres_json);
 
 let hightlightMaterial = new THREE.MeshPhongMaterial( {
 	color: 0xffff00,
@@ -166,6 +172,9 @@ class DashPage extends React.Component {
 		
 		// Remove prev spheres
 		this.removeSpheres();
+		
+		// Show all spheres
+		this.showAllSpheres();
 	}
 	
 	highlightGraphBar = (type) => {
@@ -203,6 +212,14 @@ class DashPage extends React.Component {
 		let footerHeight = document.querySelector('.footer').clientHeight;
 		let conatainerHeight = parseFloat(docHeight) - parseFloat(headerHeight) - parseFloat(footerHeight);
 		document.querySelector(".dash_container").style.minHeight = conatainerHeight + 'px';
+	}
+	
+	showAllSpheres = () => {
+		const me = this;
+		all_spheres_json.forEach(function(object, index) {
+			var i = parseInt(index + 1);
+			me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
+		});
 	}
 	
 	sceneSetup = () => {
@@ -364,10 +381,7 @@ class DashPage extends React.Component {
 														
 					scene.add( obj );
 
-					Brain_sphere.forEach(function(object, index) {
-						var i = parseInt(index + 1);
-						me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
-					});
+					me.showAllSpheres();
 					
 				};
 			},
@@ -470,10 +484,8 @@ class DashPage extends React.Component {
 		// Remove prev spheres
 		me.removeSpheres();
 
-		Brain_sphere.forEach(function(object, index) {
-			var i = parseInt(index + 1);
-			me.generateSphere(object.x, object.y, object.z, 'sphere'+i);
-		});
+		// Show all spheres
+		me.showAllSpheres();
 		
 		//me.generateSphere(0.01, 0.02, 0.05, 'sphere1');
 		//me.generateSphere(-0.03, 0.02, -0.06, 'sphere2');
@@ -547,6 +559,7 @@ class DashPage extends React.Component {
 				if ( INTERSECTED ) {
 					INTERSECTED.material = INTERSECTED.currentHex;
 					this.removeSpheres();
+					this.showAllSpheres();
 					
 					this.setState({
 						barColors: barColors
@@ -676,7 +689,7 @@ class DashPage extends React.Component {
 			borderColor: '#1987DD',
 			hoverBackgroundColor: 'rgba(255,255,102)',
 			hoverBorderColor: 'rgba(255,255,102)',
-			data: [10, 8, 6, 11, 4, 7]
+			data: [parseFloat(frontal_Lobe_json.length), parseFloat(Pariental_Lobe_json.length), parseFloat(Occipital_Lobe_json.length), parseFloat(Temporal_Lobe_json.length), parseFloat(cerebellum_Lobe_json.length), parseFloat(middle_Part_of_the_Brain_json.length)]
 		}]
 	};
 	
@@ -840,7 +853,7 @@ class DashPage extends React.Component {
 								<div className="col-md-7">
 								    <Bar data={data} options={options}/>
 									<div className="action_btn_block">
-										<button className="btn btn-primary lobe_btn" id="front_btn">Front Lobe</button>
+										<button className="btn btn-primary lobe_btn" id="front_btn">Frontal Lobe</button>
 										<button className="btn btn-primary lobe_btn" id="pariental_btn">Parietal Lobe</button>
 										<button className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
 										<button className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
