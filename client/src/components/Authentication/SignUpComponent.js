@@ -12,6 +12,7 @@ import { subYears } from 'date-fns';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import DarkMode from '../DarkMode';
+import moment from 'moment';
 
 
 class SignUpComponent extends React.Component {
@@ -28,7 +29,8 @@ class SignUpComponent extends React.Component {
       slectedCountryName: 'USA',
       startDate: '',
       signupOrElse: { email: '', sex: '' },
-      userType : "StandardUser"
+      userType : "StandardUser",
+      selectedAge: null
     };
     if(this.props.location.state && this.props.location.state.message ) {
       this.state.message = this.props.location.state.message;
@@ -36,6 +38,19 @@ class SignUpComponent extends React.Component {
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleGuardianEmailChange = this.handleGuardianEmailChange.bind(this);
+
+    this.usernameEmail = React.createRef();
+    this.guardianEmail = React.createRef();
+  }
+
+  handleGuardianEmailChange(e){
+      console.log("Vioolent");
+      if (this.usernameEmail.current.value == this.guardianEmail.current.value) {
+          alert("Guardian/Parent Email can't be same as your personal email.")
+          this.guardianEmail.current.value = "";
+
+      } 
   }
 
   handleClick() {
@@ -73,8 +88,15 @@ class SignUpComponent extends React.Component {
 
   handleDateChange = (date) => {
       console.log("Received date is ", date, "Actual date is", this.state.startDate);
+      const startDate = moment(date);
+const timeEnd =moment();
+const diff = timeEnd.diff(startDate);
+const diffDuration = moment.duration(diff);
+const year =diffDuration.years();
+console.log(year, timeEnd, diff)
     this.setState({
-      startDate: date
+      startDate: date,
+      selectedAge : year
     });
     console.log("Changed value is ", this.state.startDate);
   };
@@ -261,28 +283,34 @@ class SignUpComponent extends React.Component {
               name="user_name"
               aria-label="Username"
               aria-describedby="basic-addon1"
+              ref={this.usernameEmail}
             />
           </div>
         </div>
 
         {this.props.location.pathname === '/SignUp' ?
-            <div className="form-row">
-              <div className="input-group mb-5">
-                <div className="input-group-prepend">
-                  <span className="input-group-text" id="basic-addon1">
-                    <img src="img/icon/envelop.svg" alt="" />
-                  </span>
+            (this.state.selectedAge != null && this.state.selectedAge < 18) ?
+
+                <div className="form-row">
+                  <div className="input-group mb-5">
+                    <div className="input-group-prepend">
+                      <span className="input-group-text" id="basic-addon1">
+                        <img src="img/icon/envelop.svg" alt="" />
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Parent/Guardian mail ID"
+                      name="guardian_mail"
+                      aria-label="Parent/Guardian Mail"
+                      aria-describedby="basic-addon1"
+                      ref={this.guardianEmail}
+                      onChange={this.handleGuardianEmailChange}
+                    />
+                  </div>
                 </div>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter Parent/Guardian mail ID"
-                  name="guardian_mail"
-                  aria-label="Parent/Guardian Mail"
-                  aria-describedby="basic-addon1"
-                />
-              </div>
-            </div>
+                : null
             : null
         }
 
@@ -318,6 +346,7 @@ class SignUpComponent extends React.Component {
     );
   };
   render() {
+
     if(this.state.isSignUpInProgress) {
       return <Spinner/>
     }
