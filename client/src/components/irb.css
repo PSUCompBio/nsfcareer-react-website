@@ -1,0 +1,44 @@
+
+.bold-400{
+    font-size: 1em;
+    color: rgb(0,0,0);
+    font-weight: bold;
+    font-style: normal;
+    text-decoration: none;
+    text-align: center;
+    font-family: Calibri;
+}
+.center{
+    text-align: center;
+}
+.border-box {
+    border: 2px solid black;
+    padding: 1%;
+    font-weight: 600;
+}
+.section-title{
+    text-decoration: underline;
+    font-weight: 600;
+}
+.signs-pad {
+    padding-right: 2%;
+    text-decoration: overline;
+}
+.name {    padding-left: 485px;
+/* top: 5px; */
+margin-top: -15px;
+position: absolute;
+}
+.date {
+padding-left: 308px;
+position: absolute;
+margin-top: -15px;
+}
+
+.top-title{
+color: #3174B9 !important;
+font-size: 1.2em !important;
+}
+.center-text {
+text-align : center
+}
