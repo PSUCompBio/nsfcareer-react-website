@@ -65,15 +65,15 @@ class IRBLinkContent extends React.Component {
 
                 <br></br>
                 <br></br>
-                <div class="bold-400 top-title">CONSENT FOR RESEARCH</div>
-                <div class="bold-400 center top-title">The Pennsylvania State University</div>
+                <div class="irb-bold-400 irb-top-title">CONSENT FOR RESEARCH</div>
+                <div class="irb-bold-400 irb-center irb-top-title">The Pennsylvania State University</div>
                 <br></br>
-                <div class="center-text">Title of Project: CAREER: Multiscale Modeling of Axonal Fiber Bundles in the Brain</div>
-                <div class="center-text">    Principal Investigator: Dr. Reuben H. Kraft</div>
-                <div class="center-text">Address: 320 Leonhard Building, University Park, PA 16802</div>
-                <div class="center-text">Telephone Number: 814-867-4570</div>
+                <div class="irb-center-text">Title of Project: CAREER: Multiscale Modeling of Axonal Fiber Bundles in the Brain</div>
+                <div class="irb-center-text">    Principal Investigator: Dr. Reuben H. Kraft</div>
+                <div class="irb-center-text">Address: 320 Leonhard Building, University Park, PA 16802</div>
+                <div class="irb-center-text">Telephone Number: 814-867-4570</div>
                 <br></br>
-                <div style={{border : "none", padding : "0px"}} class="border-box">
+                <div style={{border : "none", padding : "0px"}} class="irb-border-box">
                     <p>
                         We are asking you to be in a research study. This form gives you information about the research.
                         Whether or not you take part is up to you. You can choose not to take part. You can agree to take part
