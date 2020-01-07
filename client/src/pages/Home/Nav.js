@@ -9,6 +9,7 @@ import LineUnderLink from '../../utilities/LineUnderLink.js';
 class Nav extends React.Component {
   constructor(props) {
     super(props);
+    console.log("PATH IS ", this.props.location.pathname)
     console.log("NAV PROPS IS ",props);
 
        // store intervalId in the state so it can be accessed later:
@@ -399,7 +400,7 @@ class Nav extends React.Component {
   render() {
     const localStore = JSON.parse(localStorage.getItem('state'));
     return (
-        <div>
+        <div style={(this.props.location.pathname == "/IRB" || this.props.location.pathname == "/irb" ) ? { display : "none"} : { display : "block"} }>
 
 
 

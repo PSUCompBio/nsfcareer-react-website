@@ -1603,7 +1603,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                                 else {
                                                     res.send({
                                                         message : "success",
-                                                        message_details : "Your request has been successfully mailed to your guardian for approval"
+                                                        message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, youw will be a part of the study!"
                                                     })
                                                 }
                                             })
