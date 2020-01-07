@@ -7,7 +7,9 @@ import { getUserDetailsForIRB, confirmGuardianIRBConsent } from '../apis';
 
 import Spinner from './Spinner/Spinner';
 import { formDataToJson } from '../utilities/utility';
-
+import {
+  Link
+} from "react-router-dom";
 
 
 let sigPad = {};
@@ -26,7 +28,8 @@ class IRBParentConsent extends React.Component {
             consent_token : token,
             consent_user : {},
             error : '',
-            message : ''
+            message : '',
+            isGuardianSigned : false
         }
 
     }
@@ -79,34 +82,37 @@ class IRBParentConsent extends React.Component {
       .then(response => {
           if(response.data.message == "success"){
 
-              this.props.history.push({
-                pathname : '/Login',
-                state : {
-                  message : "Successfully approved consent form. Please login using the credentials your ward received in the mail"
-                }
-              })
+
+              this.setState({ isGuardianSigned : true });
+              // this.props.history.push({
+              //   pathname : '/Login',
+              //   state : {
+              //     message : "Successfully approved consent form. Please login using the credentials your ward received in the mail"
+              //   }
+              // })
 
 
           }
           else{
-            this.props.history.push({
-              pathname : '/SignUp',
-              state : {
-                message : "Error while signing up"
-              }
-            })
-              // error
-              console.log(response.data);
+              this.setState({ isGuardianSigned : true, error : "Error while approving the consent" });
+            // this.props.history.push({
+            //   pathname : '/SignUp',
+            //   state : {
+            //     message : "Error while signing up"
+            //   }
+            // })
+            //   // error
+            //   console.log(response.data);
           }
       })
       .catch(err => {
-
-        this.props.history.push({
-          pathname : '/SignUp',
-          state : {
-            message : "Error while signing up"
-          }
-        })
+          this.setState({ isGuardianSigned : true, error : "Error while approving the consent" });
+        // this.props.history.push({
+        //   pathname : '/SignUp',
+        //   state : {
+        //     message : "Error while signing up"
+        //   }
+        // })
             console.log(err);
       })
   }
@@ -115,6 +121,7 @@ class IRBParentConsent extends React.Component {
       console.log(e);
   }
   render() {
+      console.log("IS GUARDIAN SIGNED ", this.state.isGuardianSigned);
     if(Object.keys(this.state.consent_user).length ==  0 ){
         return (
             <React.Fragment>
@@ -123,8 +130,50 @@ class IRBParentConsent extends React.Component {
         )
     }
     else {
+
       if(this.state.isSignUpInProgress) {
         return <Spinner/>
+      }
+      if(this.state.isGuardianSigned === true){
+          return (
+              <React.Fragment>
+                  <div
+                      style={{marginTop : "10vh"}}
+                      className="row">
+                  <div className="col-md-12 col-lg-12 padding-about__page-new text-center">
+                    <div className={`section-title animated zoomIn`}>
+                        {(this.state.error.length > 0) ?<span style={{color : "#dc3545", fontSize : "1.4rem"}} className="top-heading__login" >
+                                Failed !
+                        </span> : <span style={{color : "#24BB68", fontSize : "1.4rem"}} className="top-heading__login" >
+                                Success !
+                        </span>}
+                        {(this.state.error.length > 0) ?<span style={{color : "black", fontSize : "1.4rem"}} className="top-heading__login" >
+                            {" "}{this.state.error}
+                        </span>
+                        :
+                        <span style={{color : "black", fontSize : "1.4rem"}} className="top-heading__login" >
+                            {" "}You successfully approved the consent form. Thanks for taking part in the study.
+                        </span> }
+
+
+
+                    </div>
+                </div>
+                {(this.state.error.length == 0 ) ?
+                    <div style={{ marginTop : "15%"}}
+                        class="col-md-12 col-lg-12 text-center">
+                        <p className={`animated fadeInUp about-lines`}>
+                            <span style={{fontSize : "1.4rem",fontWeight : "normal"}} className="top-heading__login">
+                             Please continue to <span style={{fontWeight : "800"}}><Link to="/SignUp"  >sign up</Link></span>{" "} in order to receive information about your child</span>
+                        </p>
+                    </div>
+                    : null
+                }
+
+            </div>
+
+              </React.Fragment>
+          )
       }
     return (
       <React.Fragment>

@@ -200,7 +200,7 @@ class TechnologiesWeUse extends React.Component {
               </div>
             </div>
           </div>
-          
+
         </div>
         <Footer/>
       </React.Fragment>
