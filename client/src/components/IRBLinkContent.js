@@ -83,7 +83,7 @@ class IRBLinkContent extends React.Component {
 
         return (
             <React.Fragment>
-            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll"}} class="container">
+            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll",overflowX: "hidden"}} class="container">
 
                 <br></br>
                 <br></br>
