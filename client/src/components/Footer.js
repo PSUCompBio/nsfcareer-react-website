@@ -5,6 +5,7 @@ import GetUpdates from '../components/GetUpdates';
 class Footer extends React.Component {
   constructor(props) {
     super(props);
+    console.log("Footer props", props);
     this.state = {
       isDisplay: { display: 'none' }
     };
@@ -51,7 +52,7 @@ class Footer extends React.Component {
       window.location.href = 'https://psucompbio.org/';
     };
     return (
-      <div style={{position : "relative", height : "inherit"}} className={`footer ${this.addFooterClass()}`}>
+      <div style={(this.props.screenWidth && this.props.screenWidth < 765) ? {position : "relative"} : {position : "relative", height : "inherit"}} className={`footer ${this.addFooterClass()}`}>
 
         <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
         <div style={{ background: '' }} className="container">

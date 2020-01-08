@@ -202,7 +202,7 @@ class TechnologiesWeUse extends React.Component {
           </div>
 
         </div>
-        <Footer goToPage={this.props.goToPage}/>
+        <Footer screenWidth={this.props.screenWidth} goToPage={this.props.goToPage}/>
       </React.Fragment>
     );
   };
