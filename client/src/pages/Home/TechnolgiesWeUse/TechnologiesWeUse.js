@@ -5,7 +5,7 @@ import { withRouter, Link } from 'react-router-dom';
 import Footer from '../../../components/Footer';
 class TechnologiesWeUse extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       showAndHideFooter: '',
       isDisplay: { display: 'none' },
@@ -202,7 +202,7 @@ class TechnologiesWeUse extends React.Component {
           </div>
 
         </div>
-        <Footer/>
+        <Footer goToPage={this.props.goToPage}/>
       </React.Fragment>
     );
   };

@@ -3,8 +3,8 @@ import { withRouter } from 'react-router-dom';
 import GetUpdates from '../components/GetUpdates';
 
 class Footer extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       isDisplay: { display: 'none' }
     };
@@ -35,6 +35,10 @@ class Footer extends React.Component {
   };
 
   showModal = () => {
+    if(this.props.goToPage) {
+    this.props.goToPage(0)
+    }
+
     if (this.state.isDisplay.display === 'none') {
       this.setState({ isDisplay: {display:'flex'} });
     } else {
@@ -47,7 +51,8 @@ class Footer extends React.Component {
       window.location.href = 'https://psucompbio.org/';
     };
     return (
-      <div style={{position : "relative"}} className={`footer ${this.addFooterClass()}`}>
+      <div style={{position : "relative", height : "inherit"}} className={`footer ${this.addFooterClass()}`}>
+
         <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
         <div style={{ background: '' }} className="container">
           <div className="row pt-4">

@@ -952,8 +952,8 @@ function parseDate(date, arg, timezone) {
 
 
 function convertXLSXDataToJSON(buf,cb){
-    // york_data.xlsx
 
+    // york_data.xlsx
     var wb = XLSX.read(buf, {type:'buffer'});
     var sheet_name_list = wb.SheetNames;
     sheet_name_list.forEach(function(y) {
@@ -973,9 +973,13 @@ function convertXLSXDataToJSON(buf,cb){
                 if(value == "Athlete"){
                     value = "player_id"
                 }
+
+                 if ((/[{()}]/g).test(value)) {
+                     value = value.replace(/[{()}]/g, '')
+                 }
+
                 headers[col] = value
                 .split(" ")
-                .replace(/[{()}]/g, '')
                 .join("_")
                 .toLowerCase();
                 continue;
@@ -2560,6 +2564,7 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
                     else{
                         req.io.sockets.emit('fileUploadLog', "Parsing Sensor Data ..." )
                         convertXLSXDataToJSON(req.file.buffer,function(items){
+                            console.log(items)
                             // Store the Data in DynamoDB
                             // now broadcast the updated foo..
 

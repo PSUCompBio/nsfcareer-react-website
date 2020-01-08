@@ -31,21 +31,33 @@ import { Redirect } from 'react-router-dom';
 import template_data from './../config/template_images.json'
 import "./irb.css"
 
-let userSignature = {}
+
 class IRBLinkContent extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             user_details : JSON.parse(this.props.location.state.formData),
-            isLoading : false
+            isLoading : false,
+            signatureTemplate : template_data.template_image.sign_here,
+            blankSignTemplate : template_data.template_image.blank_sign_here
         }
+
         console.log('IRB link props', props, );
+        this.cleanPlaceholderTemplate = this.cleanPlaceholderTemplate.bind(this);
+    }
+    userSignature = {}
+    flag = 0
+
+    clear = () => {
+        this.userSignature.clear()
     }
     clearPlaceholder(){
         alert("HELLO");
+        this.clear();
     }
 
     componentDidMount() {
+        this.userSignature.fromDataURL(this.state.signatureTemplate);
         if (getStatusOfDarkmode().status === true) {
             document.getElementsByTagName('body')[0].style.background = '#171b25';
         } else {
@@ -57,11 +69,21 @@ class IRBLinkContent extends React.Component {
             }
         }
     }
+    cleanPlaceholderTemplate(){
+        console.log("Hello");
+        if(this.flag == 0){
+            this.flag = 1
+            this.userSignature.fromDataURL(this.state.blankSignTemplate);
+
+        }
+
+    }
     render() {
 
 
         return (
-            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh"}} class="container">
+            <React.Fragment>
+            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll"}} class="container">
 
                 <br></br>
                 <br></br>
@@ -287,22 +309,22 @@ class IRBLinkContent extends React.Component {
                                 <div style={{fontWeight : "bold"}} > If you have questions or concerns about this research study, whom should you call?</div>
                                 <span style={{fontWeight : "normal"}} >
                                     <p>
-                                                        Please call the head of the research study (principal investigator), Reuben Kraft at 814-867-4570 if you:
-                                                    </p>
-                                                    <ul>
-                                                        <li>Have questions, complaints or concerns about the research.</li>
-                                                        <li>Believe you may have been harmed by being in the research study.</li>
-                                                    </ul>
-                                                    <br></br>
-                                                    <div>You may also contact the Office for Research Protections at (814) 865-1775, ORProtections@psu.edu
-                                                        if you:
-                                                    </div>
-                                                    <ul>
-                                                        <li>Have questions regarding your rights as a person in a research study.</li>
-                                                        <li>Have concerns or general questions about the research.</li>
-                                                        <li>You may also call this number if you cannot reach the research team or wish to offer input or
-                                                            to talk to someone else about any concerns related to the research.</li>
-                                                        </ul>
+                                        Please call the head of the research study (principal investigator), Reuben Kraft at 814-867-4570 if you:
+                                    </p>
+                                    <ul>
+                                        <li>Have questions, complaints or concerns about the research.</li>
+                                        <li>Believe you may have been harmed by being in the research study.</li>
+                                    </ul>
+                                    <br></br>
+                                    <div>You may also contact the Office for Research Protections at (814) 865-1775, ORProtections@psu.edu
+                                        if you:
+                                    </div>
+                                    <ul>
+                                        <li>Have questions regarding your rights as a person in a research study.</li>
+                                        <li>Have concerns or general questions about the research.</li>
+                                        <li>You may also call this number if you cannot reach the research team or wish to offer input or
+                                            to talk to someone else about any concerns related to the research.</li>
+                                    </ul>
                                 </span>
                             </li>
                             <li style={{fontWeight : "bold"}}>
@@ -317,114 +339,119 @@ class IRBLinkContent extends React.Component {
 
                         </ol>
                         <br></br>
-                        <div style={{fontWeight : "bold"}} >Sign inside Blue Box & Submit :</div>
-                            <SignatureCanvas penColor='black'
-                                canvasProps={{height: 100, className: 'sigCanvas'}} ref={(ref) => { userSignature = ref}}/>
+
+
+                                </div>
+                                <div style={{gridTemplateColumns: "1fr auto", marginTop:"1%"}} class="container">
+
+                                <SignatureCanvas penColor='black'
+                                    onBegin={this.cleanPlaceholderTemplate}
+                                    canvasProps={{height: 100, className: 'sigCanvas'}} ref={(ref) => { this.userSignature = ref;}}/>
                                 <button type="button"
-                              onClick={(e)=> {
-                                  let user_details = this.state.user_details
-                                  user_details["user_signature"] = userSignature.toDataURL("base64string");
-                                  console.log("USER DETAILS ARE ", user_details)
-                                  this.setState({
-                                    isLoading : true
-                                  })
-                                  signUp(JSON.stringify(user_details))
-                                    .then((response) => {
-                                      console.log("RESPONSE FROM SERVER IS ", response)
-                                        if(response.data.message == "success") {
-                                          this.props.history.push({
-                                            pathname : '/Login',
-                                            state : {
-                                              message : response.data.message_details
-                                            }
-                                          })
-                                        } else {
-                                            // Check if error is valid object
-                                            if(response.data.error){
+                                    onClick={(e)=> {
+                                        let user_details = this.state.user_details
+                                        user_details["user_signature"] = this.userSignature.toDataURL("base64string");
+                                        console.log("USER DETAILS ARE ", user_details)
+                                        this.setState({
+                                            isLoading : true
+                                        })
+                                        signUp(JSON.stringify(user_details))
+                                        .then((response) => {
+                                            console.log("RESPONSE FROM SERVER IS ", response)
+                                            if(response.data.message == "success") {
                                                 this.props.history.push({
-                                                    pathname : '/SignUp',
-                                                  state : {
-                                                    message : response.data.error
-                                                  }
+                                                    pathname : '/Login',
+                                                    state : {
+                                                        message : response.data.message_details
+                                                    }
                                                 })
-                                            }
-                                            else{
-                                                this.props.history.push({
-                                                    pathname : '/SignUp',
-                                                  state : {
-                                                    message : "Failed to Sign Up!"
-                                                  }
-                                                })
+                                            } else {
+                                                // Check if error is valid object
+                                                if(response.data.error){
+                                                    this.props.history.push({
+                                                        pathname : '/SignUp',
+                                                        state : {
+                                                            message : response.data.error
+                                                        }
+                                                    })
+                                                }
+                                                else{
+                                                    this.props.history.push({
+                                                        pathname : '/SignUp',
+                                                        state : {
+                                                            message : "Failed to Sign Up!"
+                                                        }
+                                                    })
+                                                }
+
                                             }
 
                                         }
+                                        // Now update the state with data that we added
+                                        // if (response.data.message === 'success') {
+                                        //   // show alert
+                                        //   // this.setState({
+                                        //   //   isSignUpError: false,
+                                        //   //   isSignUpConfirmed: true,
+                                        //   //   isLoading: false
+                                        //   // });
+                                        //   window.location.href = "/Login"
+                                        //
+                                        // } else {
+                                        //   // this.setState({
+                                        //   //   isSignUpError: true,
+                                        //   //   isSignUpConfirmed: false,
+                                        //   //   isLoading: false,
+                                        //   //   signUpError: response.data.error
+                                        //   // });
+                                        //   window.location.href="/SignUp"
+                                        // }
+                                        )
+                                        .catch((err) => {
 
-                                      }
-                                      // Now update the state with data that we added
-                                      // if (response.data.message === 'success') {
-                                      //   // show alert
-                                      //   // this.setState({
-                                      //   //   isSignUpError: false,
-                                      //   //   isSignUpConfirmed: true,
-                                      //   //   isLoading: false
-                                      //   // });
-                                      //   window.location.href = "/Login"
-                                      //
-                                      // } else {
-                                      //   // this.setState({
-                                      //   //   isSignUpError: true,
-                                      //   //   isSignUpConfirmed: false,
-                                      //   //   isLoading: false,
-                                      //   //   signUpError: response.data.error
-                                      //   // });
-                                      //   window.location.href="/SignUp"
-                                      // }
-                                    )
-                                    .catch((err) => {
-
-                                      this.props.history.push({
-                                          pathname : '/SignUp',
+                                        this.props.history.push({
+                                        pathname : '/SignUp',
                                         state : {
-                                          message : "Failed to Sign Up !"
+                                        message : "Failed to Sign Up !"
                                         }
-                                      })
-                                    });
+                                        })
+                                        });
+                                        }
+                                        }
+                                        style={{
+                                        width: "100%",
+                                        background: "#174f86",
+                                        lineHeight: "50px",
+                                        textAlign: "center",
+                                        color: "#fff",
+                                        fontSize: "18px",
+                                        fontWeight: "900",
+                                        border: "1px solid #fff",
+                                        cursor: "pointer",
+                                        marginTop: "1%",
+
+                                        }}> Submit</button>
+                                        {this.state.isLoading ? (
+                                        <div style={{textAlign : "center", marginTop: "1%",
+                                        marginBottom: "10%"}}>
+                                        <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                        </div>
+                                        <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                        </div>
+                                        <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                        </div>
+
+                                        </div>
+
+
+                                        ) : null}
+                                        </div>
+                                        </React.Fragment>
+                                );
                                 }
-                              }
-                              style={{
-                                width: "100%",
-                                background: "#174f86",
-                                lineHeight: "50px",
-                                textAlign: "center",
-                                color: "#fff",
-                                fontSize: "18px",
-                                fontWeight: "900",
-                                border: "1px solid #fff",
-                                cursor: "pointer",
-                                marginTop: "1%",
+                                }
 
-                              }}> Submit</button>
-                              {this.state.isLoading ? (
-            <div style={{textAlign : "center", marginTop: "1%",
-            marginBottom: "10%"}}>
-                <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
-                <span class="sr-only">Loading...</span>
-                </div>
-                <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
-                <span class="sr-only">Loading...</span>
-                </div>
-                <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
-                <span class="sr-only">Loading...</span>
-                </div>
-
-            </div>
-
-
-        ) : null}
-
-                    </div>
-                );
-                }
-            }
-
-            export default IRBLinkContent;
+                                export default IRBLinkContent;

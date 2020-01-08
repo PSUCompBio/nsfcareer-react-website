@@ -64,12 +64,20 @@ class HomePage extends React.Component {
   }
 
   goToPage = (eventKey) => {
+      console.log("CALLED GOTO", eventKey);
     this._pageScroller.goToPage(eventKey);
   };
 
   pageOnChange = (number) => {
-      console.log(number);
-
+      console.log("PAGE",number);
+    if(number == 4){
+        this.setState({blockScrollDown : true})
+    }
+    else{
+        if(this.state.blockScrollDown == true){
+            this.setState({blockScrollDown : false})
+        }
+    }
     this.props.onPageChange(number);
   };
 
@@ -192,10 +200,10 @@ class HomePage extends React.Component {
             <ResearchArea screenWidth={this.props.screenWidth} />
             <TechnologiesWeUse
               style={{overflowY:"hidden"}}
-              currentPage={this.props.currentPage}
+
               screenWidth={this.props.screenWidth}
-              onWheel={this.onFooterScroll}
-              mouseScroll={this.state.scrollY}
+
+              goToPage={this.goToPage}
               showmodal={this.props.showformModal}
             />
           </ReactPageScroller>
