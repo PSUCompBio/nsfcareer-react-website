@@ -14,7 +14,7 @@ class Download3dProfile extends React.Component {
     }
 
   render() {
-    console.log(this.props.file)
+    console.log(this.props.url)
     return (
       <button onClick={() => this.openURL() } className={`profile-download mt-1 mb-4`} type="button">
         {this.props.content}

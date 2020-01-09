@@ -10,7 +10,7 @@ import 'animate.css/animate.min.css';
 import { getStatusOfDarkmode } from '../../reducer';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import screenWidth from '../../utilities/ScreenWidth';
-
+import GetUpdates from './../../components/GetUpdates';
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -22,11 +22,25 @@ class HomePage extends React.Component {
       styleMobileScroll: '',
       mobilePageCount: 1,
       scrollBottomTouched: false,
-      scrollTopTouched: false
+      scrollTopTouched: false,
+      isDisplay: { display: 'none' }
     };
     this._pageScroller = null;
 
   }
+  makeVisible = (data) => {
+      
+    this.setState({ isDisplay: data });
+  }
+  showModal = () => {
+      console.log("SHOW MODEL CALLED");
+    if (this.state.isDisplay.display === 'none') {
+      this.setState({ isDisplay: {display:'flex'} });
+    } else {
+      this.setState({ isDisplay: {display:'none'} });
+    }
+  };
+
   componentDidMount() {
 
     if (this.props.screenWidth < screenWidth[1].screen725) {
@@ -189,6 +203,7 @@ class HomePage extends React.Component {
     if (this.props.screenWidth >= screenWidth[1].screen725) {
       return (
         <React.Fragment>
+            <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
           <ReactPageScroller
             ref={(c) => (this._pageScroller = c)}
             pageOnChange={this.pageOnChange}
@@ -202,9 +217,10 @@ class HomePage extends React.Component {
               style={{overflowY:"hidden"}}
 
               screenWidth={this.props.screenWidth}
-
+              makeVisible={this.makeVisible}
               goToPage={this.goToPage}
               showmodal={this.props.showformModal}
+              showGetUpdateModal={this.showModal}
             />
           </ReactPageScroller>
         </React.Fragment>
@@ -212,6 +228,7 @@ class HomePage extends React.Component {
     } else {
       return (
         <React.Fragment>
+            <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
           <div
             ref="box"
             style={{ height: '100vh' }}
@@ -236,6 +253,7 @@ class HomePage extends React.Component {
               scrollBarTouchTop={() => this.topTouch()}
               onWheel={this.onFooterScroll}
               mouseScroll={this.state.scrollY}
+
             />
           </div>
         </React.Fragment>

@@ -36,9 +36,6 @@ class Footer extends React.Component {
   };
 
   showModal = () => {
-    if(this.props.goToPage) {
-    this.props.goToPage(0)
-    }
 
     if (this.state.isDisplay.display === 'none') {
       this.setState({ isDisplay: {display:'flex'} });
@@ -54,7 +51,7 @@ class Footer extends React.Component {
     return (
       <div style={(this.props.screenWidth && this.props.screenWidth < 765) ? {position : "relative"} : {position : "relative", height : "inherit"}} className={`footer ${this.addFooterClass()}`}>
 
-        <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
+        <GetUpdates isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />
         <div style={{ background: '' }} className="container">
           <div className="row pt-4">
             <div className="col-sm-6 col-md-6 col-lg-6 footer-title">
@@ -63,7 +60,7 @@ class Footer extends React.Component {
             <div className="col-sm-6 col-md-6 col-lg-6 footer-update-button">
               <button
                 type="button"
-                onClick={this.showModal}
+                onClick={(this.props.showGetUpdateModal)? this.props.showGetUpdateModal : this.showModal}
                 className="btn btn-primary float-right"
               >
                 Get Updates

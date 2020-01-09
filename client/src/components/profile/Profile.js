@@ -79,9 +79,13 @@ class Profile extends React.Component {
             selectedCountryCode: '+1',
             slectedCountryName: 'USA',
             startDate: '',
+            avatar_zip_file_url_details : '',
+            vtk_file_url_details : '',
+            isRefreshing : false
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.refreshProfileData = this.refreshProfileData.bind(this);
     }
     onChangeHandler = (event) => {
         event.persist();
@@ -93,26 +97,54 @@ class Profile extends React.Component {
     };
 
     handeChange = (e) => {
-      const eventValue = e.target.value.split(' ');
-      this.setState({
-        selectedCountryCode: eventValue[0],
-        slectedCountryName: eventValue[1]
-      });
+        const eventValue = e.target.value.split(' ');
+        this.setState({
+            selectedCountryCode: eventValue[0],
+            slectedCountryName: eventValue[1]
+        });
     };
 
     handleDateChange = (date) => {
 
-      this.setState((prevState) => {
-          prevState = JSON.parse(JSON.stringify(this.state.user));
-          if("dob" in prevState){
-              prevState.dob = date ;
-          }
-          else{
-              prevState["dob"] = date ;
-          }
-          return { user: prevState };
-      });
+        this.setState((prevState) => {
+            prevState = JSON.parse(JSON.stringify(this.state.user));
+            if("dob" in prevState){
+                prevState.dob = date ;
+            }
+            else{
+                prevState["dob"] = date ;
+            }
+            return { user: prevState };
+        });
     };
+
+    getUploadFileExtension(url){
+
+        if(new RegExp(".jpg").test(url)){
+            return ".jpg";
+        }
+        if(new RegExp(".jpeg").test(url)){
+            return ".jpeg";
+        }
+        if(new RegExp(".JPEG").test(url)){
+            return ".JPEG";
+        }
+        if(new RegExp(".JPG").test(url)){
+            return ".JPG";
+        }
+        if(new RegExp(".png").test(url)){
+            return ".png";
+        }
+        if(new RegExp(".PNG").test(url)){
+            return ".PNG";
+        }
+        if(new RegExp(".tiff").test(url)){
+            return ".tiff";
+        }
+        if(new RegExp(".TIFF").test(url)){
+            return ".TIFF";
+        }
+    }
 
     getCountryName = (e) => {};
 
@@ -148,7 +180,12 @@ class Profile extends React.Component {
             is_selfie_inp_uploaded: false,
             inp_file_url:'',
             avatar_url : '',
-            vtk_file_url : ''
+            vtk_file_url : '',
+            inp_latest_url_details : '',
+            selfie_latest_url_details : '',
+            simulation_file_url_details : '',
+            avatar_zip_file_url_details : '',
+            vtk_file_url_details : ''
         }
         uploadProfilePic(data)
         .then((response) => {
@@ -168,115 +205,57 @@ class Profile extends React.Component {
                     ) {
                         profile_data.avatar_url = res.data.avatar_url;
                         profile_data.is_selfie_image_uploaded = true;
-                        profile_data.is_selfie_model_uploaded = true;
+
+                        // profile_data.is_selfie_model_uploaded = true;
+                        if(res.data.profile_picture_url) {
+                            let file_extension = this.getUploadFileExtension(res.data.profile_picture_url);
+                            let details = res.data.profile_picture_url.split(file_extension)[0].split('/');
+
+                            let timestamp = details[details.length - 1]
+
+                            let date = new Date(parseInt(timestamp));
+
+                            profile_data.selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                        }
+                        else{
+                            if (
+                                res.data.avatar_url !== undefined &&
+                                res.data.avatar_url.length !== 0
+                            ) {
+                                let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                                let details = res.data.avatar_url.split(".png")[0].split('/');
+
+                                let timestamp = details[details.length - 1]
+
+                                let date = new Date(parseInt(timestamp));
+
+                                profile_data.selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                            }
+                        }
+
+                        this.setState((prevState) => {
+                            prevState = JSON.parse(JSON.stringify(this.state.user));
+                            prevState.profile_picture_url = res.data.profile_picture_url;
+                            if (
+                                res.data.avatar_url !== undefined &&
+                                res.data.avatar_url.length !== 0
+                            ) {
+                                prevState.avatar_url = res.data.avatar_url;
+                                prevState.is_selfie_image_uploaded = true;
+                            }
+                            return { user: prevState, selfie_latest_upload_details : profile_data.selfie_latest_url_details };
+                        });
                     }
 
                     // this.setState({
                     //     profile_picture_url: res.data.profile_picture_url
                     //
                     // });
-                    // this.setState({ isUploading: false });
+                    this.setState({ isUploading: false, isFileUploaded : true });
 
-                    // this.setState((prevState) => {
-                    //     prevState = JSON.parse(JSON.stringify(this.state.user));
-                    //     prevState.profile_picture_url = res.data.profile_picture_url;
-                    //     if (
-                    //         res.data.avatar_url !== undefined &&
-                    //         res.data.avatar_url.length !== 0
-                    //     ) {
-                    //         prevState.avatar_url = res.data.avatar_url;
-                    //         prevState.is_selfie_image_uploaded = true;
-                    //         prevState.is_selfie_model_uploaded = true;
-                    //     }
-                        // return { user: prevState };
-                    // });
+
                     // this.setState({ foundInpLink: false });
-                    getInpFileLink(
-                        JSON.stringify({
-                            user_cognito_id: user_id
-                        })
-                    )
-                    .then((response) => {
-                        if (response.data.message === 'success') {
-                            // Updating status for inp file
-                            profile_data.is_selfie_inp_uploaded =true ;
-                            profile_data.inp_file_url = response.data.inp_file_link ;
-                            // this.setState((prevState) => {
-                            //     prevState = JSON.parse(JSON.stringify(this.state.user));
-                            //     prevState.is_selfie_inp_uploaded = true;
-                            //     prevState.inp_file_url = response.data.inp_file_link;
-                            //     return { user: prevState };
-                            // });
-                            getModelLink(
-                                JSON.stringify({
-                                    user_cognito_id: user_id
-                                })
-                            )
-                            .then((response) => {
-                                if (response.data.message === 'success') {
-                                    profile_data.inp_file_url = response.data.avatar_url ;
-                                    // this.setState((prevState) => {
-                                    //     prevState = JSON.parse(
-                                    //         JSON.stringify(this.state.user)
-                                    //     );
-                                    //
-                                    //     prevState.avatar_url = response.data.avatar_url;
-                                    //     return { user: prevState };
-                                    // });
-                                    getVtkFileLink(JSON.stringify({
-                                        user_cognito_id : user_id
-                                    }))
-                                    .then(response => {
-                                        if(response.data.message == "success"){
-                                            profile_data.vtk_file_url = response.data.vtk_file_url;
-                                            this.setState((prevState) => {
-                                                prevState = JSON.parse(
-                                                    JSON.stringify(this.state.user)
-                                                );
-                                                prevState.profile_picture_url = profile_data.profile_picture_url
-                                                prevState.is_selfie_image_uploaded = profile_data.is_selfie_image_uploaded;
-                                                prevState.is_selfie_model_uploaded = profile_data.is_selfie_model_uploaded;
-                                                prevState.is_selfie_inp_uploaded = profile_data.is_selfie_inp_uploaded;
-                                                prevState.inp_file_url = profile_data.inp_file_link;
-                                                prevState.vtk_file_url =
-                                                profile_data.vtk_file_url;
-                                                prevState.avatar_url = profile_data.avatar_url;
-                                                return { user: prevState };
-                                            });
-                                            this.setState( {
-                                                profile_picture_url: profile_data.profile_picture_url,
-                                                isUploading : false,
-                                                isFileUploaded : true,
-                                                foundInpLink: false
-                                            });
-                                        }
-                                        else{
-                                            this.setState({ isUploading: false, fileUploadError : "Invalid Request to fetch VTK File"});
-                                        }
 
-                                    })
-                                    .catch(err => {
-                                        this.setState({ isUploading: false, fileUploadError : "Failed to find the VTK File Link"});
-                                    })
-
-                                } else {
-
-                                    this.setState({ isUploading: false, fileUploadError : "Failed to find the model link"});
-                                }
-                            })
-                            .catch((err) => {
-
-                                this.setState({ isUploading: false, fileUploadError : "Failed to find the model link"});
-                            });
-                        } else {
-
-                            this.setState({ isUploading: false, fileUploadError : "Failed to get Inp File Link!"});
-                        }
-                    })
-                    .catch((err) => {
-
-                        this.setState({ isUploading: false, fileUploadError : "Internal service error while fetching Inp Link!"});
-                    });
                 })
                 .catch((err) => {
                     console.log(err);
@@ -295,7 +274,172 @@ class Profile extends React.Component {
 
         });
     };
+    refreshProfileData(){
+        if(this.state.isRefreshing){
+            return ;
+        }
+        this.setState({
+            isRefreshing : true
+        })
+        var user_id = '';
+        if(this.state.profile_to_view){
+            user_id = this.state.profile_to_view ;
+        }
+        else{
+            user_id = this.state.user.user_cognito_id ;
+        }
 
+        // console.log("THIS IS FORM DATA ",data);
+        // console.log("VALUE TO BE PRINTED ",user_id);
+        var profile_data = {
+            profile_picture_url :'', // Not a user key
+            avatar_url : '',
+            is_selfie_image_uploaded : false,
+            is_selfie_model_uploaded : false,
+            foundInpLink: false,
+            isUploading: false,
+            is_selfie_inp_uploaded: false,
+            inp_file_url:'',
+            avatar_url : '',
+            vtk_file_url : '',
+            inp_latest_url_details : '',
+            selfie_latest_url_details : '',
+            simulation_file_url_details : '',
+            avatar_zip_file_url_details : '',
+            vtk_file_url_details : ''
+        }
+        getUserDetails({user_cognito_id : user_id})
+        .then(response => {
+            // If Selfie is uploaded
+            var user_data = response.data.data;
+            getProfilePicLink(
+                JSON.stringify({ user_cognito_id: user_id })
+            )
+            .then(res => {
+                profile_data.profile_picture_url = res.data.profile_picture_url ;
+                if (
+                    res.data.avatar_url !== undefined &&
+                    res.data.avatar_url.length !== 0
+                ) {
+                    profile_data.avatar_url = res.data.avatar_url;
+                    profile_data.is_selfie_image_uploaded = true;
+
+                    // profile_data.is_selfie_model_uploaded = true;
+                    if(res.data.profile_picture_url) {
+                        let file_extension = this.getUploadFileExtension(res.data.profile_picture_url);
+                        let details = res.data.profile_picture_url.split(file_extension)[0].split('/');
+
+                        let timestamp = details[details.length - 1]
+
+                        let date = new Date(parseInt(timestamp));
+
+                        profile_data.selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                    }
+                    else{
+                        if (
+                            res.data.avatar_url !== undefined &&
+                            res.data.avatar_url.length !== 0
+                        ) {
+                            let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                            let details = res.data.avatar_url.split(".png")[0].split('/');
+
+                            let timestamp = details[details.length - 1]
+
+                            let date = new Date(parseInt(timestamp));
+
+                            profile_data.selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                        }
+                    }
+                }
+
+                getModelLink(
+                    JSON.stringify({
+                        user_cognito_id: user_id
+                    })
+                )
+                .then((response) => {
+                    if (response.data.message === 'success') {
+                        if(user_data.is_selfie_model_uploaded){
+                            profile_data.avatar_url = response.data.avatar_url ;
+                            let details = response.data.avatar_url.split(".zip")[0].split('/');
+                            let timestamp = details[details.length - 1]
+                            let date = new Date(parseInt(timestamp))
+                            profile_data.avatar_zip_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                        }
+
+                        // this.setState((prevState) => {
+                        //     prevState = JSON.parse(
+                        //         JSON.stringify(this.state.user)
+                        //     );
+                        //
+                        //     prevState.avatar_url = response.data.avatar_url;
+                        //     return { user: prevState };
+                        // });
+                        getVtkFileLink(JSON.stringify({
+                            user_cognito_id : user_id
+                        }))
+                        .then(response => {
+                            if(response.data.message == "success"){
+                                if(user_data.is_selfie_inp_uploaded){
+                                    profile_data.vtk_file_url = response.data.vtk_file_url;
+                                    let details = response.data.vtk_file_url.split(".vtk")[0].split('/');
+                                    let timestamp = details[details.length - 1]
+                                    let date = new Date(parseInt(timestamp))
+                                    profile_data.vtk_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+
+                                }
+
+                                this.setState((prevState) => {
+                                    prevState = JSON.parse(
+                                        JSON.stringify(this.state.user)
+                                    );
+                                    prevState.profile_picture_url = profile_data.profile_picture_url
+                                    prevState.is_selfie_image_uploaded = user_data.is_selfie_image_uploaded;
+                                    prevState.is_selfie_model_uploaded = user_data.is_selfie_model_uploaded;
+                                    prevState.is_selfie_inp_uploaded = user_data.is_selfie_inp_uploaded;
+                                    prevState.inp_file_url = profile_data.inp_file_link;
+                                    prevState.vtk_file_url =
+                                    profile_data.vtk_file_url;
+                                    prevState.avatar_url = profile_data.avatar_url;
+                                    return { user: prevState,
+                                        profile_picture_url: profile_data.profile_picture_url,
+                                        foundInpLink: false,
+                                        selfie_latest_upload_details : profile_data.selfie_latest_url_details,
+                                        simulation_file_latest_upload_details : profile_data.simulation_file_url_details,
+                                        avatar_zip_file_url_details : profile_data.avatar_zip_file_url_details,
+                                        vtk_file_url_details : profile_data.vtk_file_url_details,
+                                        isRefreshing : false
+                                    };
+                                });
+                            }
+                            else{
+                                this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Invalid Request to fetch VTK File"});
+                            }
+
+                        })
+                        .catch(err => {
+                            this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the VTK File Link"});
+                        })
+
+                    } else {
+
+                        this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the model link"});
+                    }
+                })
+                .catch((err) => {
+
+                    this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the model link"});
+                });
+            })
+            .catch(err => {
+                this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to Fetch User Details"});
+            })
+        })
+        .catch(err => {
+            this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to Fetch User Details"});
+        })
+
+    }
     isProfilePictureExists = () => {
         if (this.state.user.profile_picture_url !== '') {
             return true;
@@ -371,46 +515,46 @@ class Profile extends React.Component {
     };
 
     handleSubmit(e) {
-    console.log('Update user details clicked');
-    e.preventDefault();
-    e.persist();
-    //temporary setting authentication to change nav bar tabs
+        console.log('Update user details clicked');
+        e.preventDefault();
+        e.persist();
+        //temporary setting authentication to change nav bar tabs
 
-    console.log('update User Details api called');
-    const formData = new FormData(e.target);
-    this.setState({
-      isLoginError: false,
-      isLoading: true
-    });
-    // converting formData to JSON
-    const formJsonData = JSON.parse(formDataToJson(formData));
+        console.log('update User Details api called');
+        const formData = new FormData(e.target);
+        this.setState({
+            isLoginError: false,
+            isLoading: true
+        });
+        // converting formData to JSON
+        const formJsonData = JSON.parse(formDataToJson(formData));
 
-    formJsonData["user_cognito_id"] = this.state.user.user_cognito_id
+        formJsonData["user_cognito_id"] = this.state.user.user_cognito_id
 
-      // Calling update user details api
-      updateUserDetails(JSON.stringify(formJsonData))
+        // Calling update user details api
+        updateUserDetails(JSON.stringify(formJsonData))
         .then((response) => {
-          if (response.data.message === 'success') {
-            this.setState({
-              isLoading: false,
-              isSignInSuccessed: true,
-              message : true
-            });
+            if (response.data.message === 'success') {
+                this.setState({
+                    isLoading: false,
+                    isSignInSuccessed: true,
+                    message : true
+                });
 
-          } else {
-            // show error
-            this.setState({
-              loginError: response.data.error,
-              isLoginError: true,
-              isLoading: false
-            });
-          }
+            } else {
+                // show error
+                this.setState({
+                    loginError: response.data.error,
+                    isLoginError: true,
+                    isLoading: false
+                });
+            }
         })
         .catch((err) => {
-          console.log(err);
+            console.log(err);
         });
 
-  }
+    }
 
 
     showProfile = () => {
@@ -469,684 +613,717 @@ class Profile extends React.Component {
                                                             className="profile-input" type="text" name="first_name" id="exampleEmail" value={this.state.user.first_name} placeholder="First Name" />
                                                         <span class="input-group-addon profile-edit-icon">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                          </span>
+                                                        </span>
                                                     </div>
 
                                                     {/*<img
-                                                            src="/img/icon/pencheck.svg"
-                                                            alt=""
-                                                          />
-                                                    */}
+                                                        src="/img/icon/pencheck.svg"
+                                                        alt=""
+                                                        />
+                                                        */}
 
 
-                                                </Col>
-                                                <Col md={6} sm={12}>
-                                                    <div class="input-group">
-                                                    <Input
-                                                        className="profile-input" type="text" name="last_name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
-                                                        <span class="input-group-addon profile-edit-icon"
+                                                    </Col>
+                                                    <Col md={6} sm={12}>
+                                                        <div class="input-group">
+                                                            <Input
+                                                                className="profile-input" type="text" name="last_name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
+                                                            <span class="input-group-addon profile-edit-icon"
+                                                                >
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                            </span>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+
+
+                                        </FormGroup>
+
+                                        <FormGroup row>
+                                            <Label for="exampleEmail" sm={2}>Email</Label>
+                                            <Col sm={6}>
+                                                <div class="input-group">
+                                                    <Input readOnly
+                                                        className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.user.email} placeholder="abc@example.com" />
+
+                                                </div>
+                                            </Col>
+                                            <Col sm={4}>
+                                                <button className="btn btn-success btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Verified</button>
+                                            </Col>
+
+
+
+                                        </FormGroup>
+
+                                        <FormGroup row>
+                                            <Label for="exampleEmail" sm={2}>Mobile Phone</Label>
+                                            <Col sm={6}>
+                                                <div class="input-group-prepend">
+                                                    <div className="row">
+                                                        <div className="col-sm-2">
+                                                            <span
+                                                                style={{
+                                                                    height : "100%"
+                                                                }}
+                                                                className="input-group-text country-code-container country-code-outer-box">
+                                                                <select
+                                                                    className="profile-input custom-select country-code country-code-input-box"
+                                                                    defaultValue={this.state.user.country_code ? this.state.user.country_code : this.state.selectedCountryCode}
+                                                                    onChange={this.handeChange}
+                                                                    name="country_code"
+                                                                    id=""
+
+                                                                    >
+                                                                    {this.state.CountryCode.map((index) => {
+                                                                        return index.countries.map((key, value) => {
+                                                                            if (key.code === '+1'){
+                                                                                return (
+                                                                                    <option key={value} defaultValue={key.code + ' USA'}>
+                                                                                        {key.code}
+                                                                                    </option>
+                                                                                );
+                                                                            }else if( this.state.user.country_code && this.state.user.country_code === key.code ){
+                                                                                return (
+                                                                                    <option key={value} value={key.code + ' ' + key.name} selected="true">
+                                                                                        {key.code}
+                                                                                    </option>
+                                                                                );
+                                                                            }
+                                                                            else{
+                                                                                return (
+                                                                                    <option key={value} value={key.code + ' ' + key.name}>
+                                                                                        {key.code}
+                                                                                    </option>
+                                                                                );
+                                                                            }
+
+                                                                        }, this);
+                                                                    })}
+                                                                </select>
+
+                                                            </span>
+                                                        </div>
+                                                        <div className="col-sm-8 offset-sm-1">
+                                                            <span className="profile-input input-group-text" id="basic-addon1">
+                                                                <span className="country-name">
+                                                                    {this.state.slectedCountryName}
+                                                                </span>
+                                                                <Input
+                                                                    className="profile-input phone-number-input-box" type="text" name="phone_number" id="exampleEmail" value={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
+                                                                <span class="input-group-addon profile-edit-icon"
+                                                                    >
+                                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                </span>
+                                                            </span>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                            <Col sm={4}>
+                                                <button className="btn btn-warning btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Not Verified</button>
+                                            </Col>
+                                        </FormGroup>
+
+                                        <FormGroup row>
+                                            <Label for="exampleEmail" sm={2}>Organization</Label>
+                                            <Col sm={6}>
+                                                <div class="input-group">
+                                                    <Input readOnly
+                                                        className="profile-input" type="select" name="organization" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
+                                                        <option value={this.state.organization ? this.state.organization : "PSU"}  > {this.state.organization ? this.state.organization : "PSU"} </option>
+                                                        <option value="NSF"  > NSF </option>
+                                                    </Input>
+                                                    <span class="input-group-addon profile-edit-icon"
                                                         >
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                          </span>
-                                                      </div>
-                                                </Col>
-                                            </Row>
-                                        </Col>
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </Col>
+                                        </FormGroup>
 
+                                        <FormGroup row>
+                                            <Label for="dob" sm={2}>Birthday</Label>
+                                            <Col sm={6}>
+                                                <div class="input-group">
+                                                    <DatePicker
+                                                        showMonthDropdown
+                                                        showYearDropdown
+                                                        dropdownMode="select"
+                                                        className="form-control"
+                                                        name="dob"
+                                                        selected={this.state.user.dob ? new Date(this.state.user.dob) : ""}
+                                                        onChange={this.handleDateChange}
+                                                        maxDate={subYears(new Date(), 10)}
+                                                        placeholderText="Birthdate"
+                                                        className="profile-input form-control"
+                                                        />
 
-                                    </FormGroup>
+                                                    <span class="input-group-addon profile-edit-icon"
+                                                        >
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </Col>
+                                        </FormGroup>
 
-                                    <FormGroup row>
-                                        <Label for="exampleEmail" sm={2}>Email</Label>
-                                        <Col sm={6}>
-                                            <div class="input-group">
-                                            <Input readOnly
-                                                className="profile-input" type="text" name="email" id="exampleEmail" value={this.state.user.email} placeholder="abc@example.com" />
+                                        <FormGroup row>
+                                            <Label for="exampleEmail" sm={2}>Sex</Label>
+                                            <Col sm={6}>
+                                                <div class="input-group">
+                                                    <Input
+                                                        className="profile-input" type="select" name="sex" id="exampleEmail" placeholder="Gender" defaultValue={this.state.user.gender} >
+                                                        <option value="male">Male</option>
+                                                        <option value="female">Female</option>
+                                                        <option value="other">Other</option>
+                                                    </Input>
 
-                                              </div>
-                                        </Col>
-                                        <Col sm={4}>
-                                            <button className="btn btn-success btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Verified</button>
-                                        </Col>
+                                                    <span class="input-group-addon profile-edit-icon"
+                                                        >
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </Col>
+                                        </FormGroup>
 
-
-
-                                    </FormGroup>
-
-                                    <FormGroup row>
-                                        <Label for="exampleEmail" sm={2}>Mobile Phone</Label>
-                                        <Col sm={6}>
-                                            <div class="input-group-prepend">
-                                                <div className="row">
-                                                    <div className="col-sm-2">
+                                        <FormGroup row>
+                                            <Label for="exampleEmail" sm={2}>Type</Label>
+                                            <Col sm={6}>
+                                                <div class="input-group">
+                                                    <Input
+                                                        disabled="true"
+                                                        className="profile-input" type="text" name="user_type" id="" placeholder="Gender" value={this.state.user.user_type == "StandardUser" ? "Standard" : "Admin"} />
+                                                </div>
+                                            </Col>
+                                            <Col sm={4}>
                                                 <span
                                                     style={{
-                                                        height : "100%"
+                                                        fontSize : ".8em"
                                                     }}
-                                                    className="input-group-text country-code-container country-code-outer-box">
-                                                    <select
-                                                      className="profile-input custom-select country-code country-code-input-box"
-                                                      defaultValue={this.state.user.country_code ? this.state.user.country_code : this.state.selectedCountryCode}
-                                                      onChange={this.handeChange}
-                                                      name="country_code"
-                                                      id=""
+                                                    >If you need Administration rights <br/> contact your account administrator.</span>
+                                            </Col>
+                                        </FormGroup>
 
-                                                    >
-                                                    {this.state.CountryCode.map((index) => {
-                                                      return index.countries.map((key, value) => {
-                                                        if (key.code === '+1'){
-                                                          return (
-                                                            <option key={value} defaultValue={key.code + ' USA'}>
-                                                              {key.code}
-                                                            </option>
-                                                          );
-                                                        }else if( this.state.user.country_code && this.state.user.country_code === key.code ){
-                                                            return (
-                                                              <option key={value} value={key.code + ' ' + key.name} selected="true">
-                                                                {key.code}
-                                                              </option>
-                                                            );
-                                                        }
-                                                        else{
-                                                            return (
-                                                              <option key={value} value={key.code + ' ' + key.name}>
-                                                                {key.code}
-                                                              </option>
-                                                            );
-                                                        }
-
-                                                    }, this);
-                                                    })}
-                                                    </select>
-
+                                        <FormGroup row>
+                                            <Label for="exampleEmail" sm={12}>IRB Complete <span style={{
+                                                    verticalAlign: "text-bottom",
+                                                    fontSize: "1.4em"
+                                                }}>{this.state.isIRBComplete ? <i
+                                                    style={{color : "green"}}
+                                                    class="fa fa-check-circle profile-edit-icon" aria-hidden="true"></i>
+                                                :
+                                                <i
+                                                    style={{color : "red"}}
+                                                    class="fa fa-times-circle profile-edit-icon" aria-hidden="true"></i>  }
                                                 </span>
-                                                </div>
-                                                <div className="col-sm-8 offset-sm-1">
-                                                <span className="profile-input input-group-text" id="basic-addon1">
-                                                  <span className="country-name">
-                                                    {this.state.slectedCountryName}
-                                                  </span>
-                                                  <Input
-                                                      className="profile-input phone-number-input-box" type="text" name="phone_number" id="exampleEmail" value={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
-                                                  <span class="input-group-addon profile-edit-icon"
-                                                      >
-                                                      <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                    </span>
-                                                </span>
-
-                                                 </div>
-                                                  </div>
-                                              </div>
-                                        </Col>
-                                        <Col sm={4}>
-                                            <button className="btn btn-warning btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Not Verified</button>
-                                        </Col>
-                                    </FormGroup>
-
-                                    <FormGroup row>
-                                        <Label for="exampleEmail" sm={2}>Organization</Label>
-                                        <Col sm={6}>
-                                            <div class="input-group">
-                                            <Input readOnly
-                                                className="profile-input" type="select" name="organization" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
-                                            <option value={this.state.organization ? this.state.organization : "PSU"}  > {this.state.organization ? this.state.organization : "PSU"} </option>
-                                            <option value="NSF"  > NSF </option>
-                                            </Input>
-                                                <span class="input-group-addon profile-edit-icon"
-                                                    >
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                  </span>
-                                              </div>
-                                        </Col>
-                                    </FormGroup>
-
-                                    <FormGroup row>
-                                        <Label for="dob" sm={2}>Birthday</Label>
-                                        <Col sm={6}>
-                                            <div class="input-group">
-                                                <DatePicker
-                                                  showMonthDropdown
-                                                  showYearDropdown
-                                                  dropdownMode="select"
-                                                  className="form-control"
-                                                  name="dob"
-                                                  selected={this.state.user.dob ? new Date(this.state.user.dob) : ""}
-                                                  onChange={this.handleDateChange}
-                                                  maxDate={subYears(new Date(), 10)}
-                                                  placeholderText="Birthdate"
-                                                  className="profile-input form-control"
-                                                />
-
-                                                <span class="input-group-addon profile-edit-icon"
-                                                    >
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                  </span>
-                                              </div>
-                                        </Col>
-                                    </FormGroup>
-
-                                    <FormGroup row>
-                                        <Label for="exampleEmail" sm={2}>Sex</Label>
-                                        <Col sm={6}>
-                                            <div class="input-group">
-                                            <Input
-                                                className="profile-input" type="select" name="sex" id="exampleEmail" placeholder="Gender" defaultValue={this.state.user.gender} >
-                                                <option value="male">Male</option>
-                                                <option value="female">Female</option>
-                                                <option value="other">Other</option>
-                                            </Input>
-
-                                                <span class="input-group-addon profile-edit-icon"
-                                                    >
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                  </span>
-                                              </div>
-                                        </Col>
-                                    </FormGroup>
-
-                                    <FormGroup row>
-                                        <Label for="exampleEmail" sm={2}>Type</Label>
-                                        <Col sm={6}>
-                                            <div class="input-group">
-                                            <Input
-                                                disabled="true"
-                                                className="profile-input" type="text" name="user_type" id="" placeholder="Gender" value={this.state.user.user_type == "StandardUser" ? "Standard" : "Admin"} />
-                                            </div>
-                                        </Col>
-                                        <Col sm={4}>
-                                            <span
-                                                style={{
-                                                    fontSize : ".8em"
-                                                }}
-                                                >If you need Administration rights <br/> contact your account administrator.</span>
-                                        </Col>
-                                    </FormGroup>
-
-                                    <FormGroup row>
-                                        <Label for="exampleEmail" sm={12}>IRB Complete <span style={{
-                                                verticalAlign: "text-bottom",
-                                                fontSize: "1.4em"
-                                            }}>{this.state.isIRBComplete ? <i
-                                            style={{color : "green"}}
-                                            class="fa fa-check-circle profile-edit-icon" aria-hidden="true"></i>
-                                            :
-                                            <i
-                                                style={{color : "red"}}
-                                                class="fa fa-times-circle profile-edit-icon" aria-hidden="true"></i>  }
-                                            </span>
                                             </Label>
-                                        <Col sm={8}>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
+                                            <Col sm={8}>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
 
-                                            </span>
-                                        </div>
-                                        </Col>
-
-                                    </FormGroup>
-
-                                    <div className="text-center">
-                                        <Button color="primary"> Save Changes </Button>
-                                         {this.state.isLoading ? (
-                                              <div className="d-flex justify-content-center center-spinner">
-                                                <div
-                                                  className="spinner-border text-primary"
-                                                  role="status"
-                                                >
-                                                  <span  className="sr-only">Loading...</span>
+                                                    </span>
                                                 </div>
-                                              </div>
+                                            </Col>
+
+                                        </FormGroup>
+
+                                        <div className="text-center">
+                                            <Button color="primary"> Save Changes </Button>
+                                            {this.state.isLoading ? (
+                                                <div className="d-flex justify-content-center center-spinner">
+                                                    <div
+                                                        className="spinner-border text-primary"
+                                                        role="status"
+                                                        >
+                                                        <span  className="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
                                             ) : null}
-                                         {this.state.message ? (
-                                          <div
-                                            className="alert alert-info api-response-alert"
-                                            role="alert">
-                                            <strong > Success !</strong> {this.state.message}
-                                          </div>
-                                        ) : null}
-                                        {this.state.isLoginError ? (
-                                          <div
-                                            className="alert alert-info api-response-alert"
-                                            role="alert"
-                                          >
-                                            <strong >Failed! </strong> {this.state.loginError}
-                                          </div>
-                                        ) : null}
+                                            {this.state.message ? (
+                                                <div
+                                                    className="alert alert-info api-response-alert"
+                                                    role="alert">
+                                                    <strong > Success !</strong> {this.state.message}
+                                                    </div>
+                                                ) : null}
+                                                {this.state.isLoginError ? (
+                                                    <div
+                                                        className="alert alert-info api-response-alert"
+                                                        role="alert"
+                                                        >
+                                                        <strong >Failed! </strong> {this.state.loginError}
+                                                        </div>
+                                                    ) : null}
+                                                </div>
+
+                                            </Form>
+
+
+                                        </div>
+                                        <div className="col-md-3 btns-heading text-left pt-4">
+
+
+
+
+
+                                        </div>
                                     </div>
+                                </div>
+                                <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
+                                    <div
+                                        style={{
+                                            border: "2px solid rgb(15, 129, 220)",
+                                            borderRadius: "1.8rem"
+                                        }}
+                                        className="profile-container" >
+                                        <div className="row">
+                                            <div ref="h1"
+                                                className="col-md-8 ml-4 player-dashboard-sub-head ">
+                                                Simulation Information
+                                            </div>
+                                            <div className="col-md-3">
 
-                                </Form>
-
-
-                            </div>
-                            <div className="col-md-3 btns-heading text-left pt-4">
-
-
-
-
-
-                            </div>
-                        </div>
-                    </div>
-                    <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
-                        <div
-                            style={{
-                                border: "2px solid rgb(15, 129, 220)",
-                                borderRadius: "1.8rem"
-                            }}
-                            className="profile-container" >
-                            <p
-                                ref="h1"
-                                style={{
-                                    paddingLeft : "0px"
-                                }}
-                                className="ml-4 player-dashboard-sub-head">
-                                Simulation Information
-                            </p>
-                            <Row className="pt-2 pl-4 pr-4">
-                                <Col md={4}>
-
-                                    <p ref="p1">
-                                        {this.state.user.is_selfie_image_uploaded ? (
-                                            <span>
-                                                <img src="/img/icon/check.svg" alt="" />
-                                            </span>
-                                        ) : (
-                                            <span>
                                                 <img
-                                                    className="cancel-icon"
-                                                    src="/img/icon/cancel.svg"
+                                                    className={ "cancel-icon refresh-icon " + (this.state.isRefreshing ? 'rotate-icon' : '')}
+                                                    src="/img/icon/refresh.png"
                                                     alt=""
+                                                    onClick={this.refreshProfileData}
+                                                    style={{
+                                                        marginLeft: "auto",
+                                                        marginRight: "0",
+                                                        marginTop: "8%",
+                                                        display: "flex",
+                                                        width : "36px",
+                                                        height : "36px"
+                                                    }}
                                                     />
-                                            </span>
-                                        )}{' '}
-                                        Selfie Uploaded{' '}
 
-                                    </p>
-
-
-                                    {this.state.isUploading ? (
-                                        <div className="d-flex justify-content-center center-spinner">
-                                            <div
-                                                className="spinner-border text-primary"
-                                                role="status"
-                                                >
-                                                <span className="sr-only">Uploading...</span>
                                             </div>
                                         </div>
-                                    ) : null}
+                                        <Row className="pt-2 pl-4 pr-4">
+                                            <Col md={4}>
 
-                                    {this.state.isFileUploaded ? (
-                                        <UncontrolledAlert
-                                            color="success"
-                                            style={{ marginTop: '5px' }}
-                                            >
-                                            Successfully uploaded the Selfie Image
-                                        </UncontrolledAlert>
-                                    ) : null}
-                                    {this.state.fileUploadError ? (
-                                        <UncontrolledAlert
-                                            style={{ marginTop: '5px' }}
-                                            color="danger"
+                                                <p ref="p1">
+                                                    {this.state.user.is_selfie_image_uploaded ? (
+                                                        <span>
+                                                            <img src="/img/icon/check.svg" alt="" />
+                                                        </span>
+                                                    ) : (
+                                                        <span>
+                                                            <img
+                                                                className="cancel-icon"
+                                                                src="/img/icon/cancel.svg"
+                                                                alt=""
+                                                                />
+                                                        </span>
+                                                    )}{' '}
+                                                    Selfie Uploaded{' '}
 
-                                            >
-                                            {this.state.fileUploadError}
+                                                </p>
 
-                                        </UncontrolledAlert>
-                                    ) : null}
-                                    <br/>
-                                    {this.state.user.is_selfie_image_uploaded ? (
-                                        <div>
-                                        <button className = {`load-time-btn mt-1 mb-4`}>
-                                        <p>
-                                        Last Updated : {this.state.selfie_latest_upload_details[0]}
-                                        </p>
-                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.selfie_latest_upload_details[1]}
-                                        </p>
 
-                                        </button>
-                                        <div>
-                                        <input
-                                            onChange={this.onChangeHandler}
-                                            type="file"
-                                            name="profile_pic"
-                                            id="file"
-                                            style = {{
-                                              display : "none"
-                                            }}
-                                            />
-                                        <label for="file" className = "inspect-btn mt-1 mb-4" style={{
-                                          textAlign : "center"
-                                        }}>
-                                        Update
-                                        </label>
-                                        </div>
-                                            <DownloadBtn
+                                                {this.state.isUploading ? (
+                                                    <div className="d-flex justify-content-center center-spinner">
+                                                        <div
+                                                            className="spinner-border text-primary"
+                                                            role="status"
+                                                            >
+                                                            <span className="sr-only">Uploading...</span>
+                                                        </div>
+                                                    </div>
+                                                ) : null}
 
-                                                style={{
-                                                    width : "100%"
-                                                }}
-                                                url={this.state.user.profile_picture_url}
-                                                content="Download 3d Selfie"
-                                                />
-                                        </div>
-                                    ) : (<div>
-                                    <input
-                                        onChange={this.onChangeHandler}
-                                        type="file"
-                                        name="profile_pic"
-                                        id="file"
-                                        style = {{
-                                          display : "none"
-                                        }}
-                                        />
-                                    <label for="file" className = "inspect-btn mt-1 mb-4" style={{
-                                      textAlign : "center"
-                                    }}>
-                                    Upload
-                                    </label>
-                                    </div>)}
-                                </Col>
-                                {/*
-                                <Col md={4}>
-                                    <p ref="p4">
-                                        {this.state.user.is_selfie_simulation_file_uploaded ? (
-                                            <span>
+                                                {this.state.isFileUploaded ? (
+                                                    <UncontrolledAlert
+                                                        color="success"
+                                                        style={{ marginTop: '5px' }}
+                                                        >
+                                                        Successfully uploaded the Selfie Image
+                                                    </UncontrolledAlert>
+                                                ) : null}
+                                                {this.state.fileUploadError ? (
+                                                    <UncontrolledAlert
+                                                        style={{ marginTop: '5px' }}
+                                                        color="danger"
+
+                                                        >
+                                                        {this.state.fileUploadError}
+
+                                                    </UncontrolledAlert>
+                                                ) : null}
+                                                <br/>
+                                                {this.state.user.is_selfie_image_uploaded ? (
+                                                    <div>
+                                                        <button className = {`load-time-btn mt-1 mb-4`}>
+                                                            <p>
+                                                                Last Updated : {this.state.selfie_latest_upload_details[0]}
+                                                            </p>
+                                                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.selfie_latest_upload_details[1]}
+                                                            </p>
+
+                                                        </button>
+                                                        <div>
+                                                            <input
+                                                                onChange={this.onChangeHandler}
+                                                                type="file"
+                                                                name="profile_pic"
+                                                                id="file"
+                                                                style = {{
+                                                                    display : "none"
+                                                                }}
+                                                                />
+                                                            <label for="file" className = "inspect-btn mt-1 mb-4" style={{
+                                                                    textAlign : "center"
+                                                                }}>
+                                                                Update
+                                                            </label>
+                                                        </div>
+                                                        <DownloadBtn
+
+                                                            style={{
+                                                                width : "100%"
+                                                            }}
+                                                            url={this.state.user.profile_picture_url}
+                                                            content="Download 3d Selfie"
+                                                            />
+                                                    </div>
+                                                ) : (<div>
+                                                    <input
+                                                        onChange={this.onChangeHandler}
+                                                        type="file"
+                                                        name="profile_pic"
+                                                        id="file"
+                                                        style = {{
+                                                            display : "none"
+                                                        }}
+                                                        />
+                                                    <label for="file" className = "inspect-btn mt-1 mb-4" style={{
+                                                            textAlign : "center"
+                                                        }}>
+                                                        Upload
+                                                    </label>
+                                                </div>)}
+                                            </Col>
+                                            {/*
+                                                <Col md={4}>
+                                                <p ref="p4">
+                                                {this.state.user.is_selfie_simulation_file_uploaded ? (
+                                                <span>
                                                 <img src="/img/icon/check.svg" alt="" />
-                                            </span>
-                                        ) : (
-                                            <span>
+                                                </span>
+                                                ) : (
+                                                <span>
                                                 <img
-                                                    className="cancel-icon"
-                                                    src="/img/icon/cancel.svg"
-                                                    alt=""
-                                                    />
-                                            </span>
-                                        )}{' '}
-                                        Simulation File Generated{' '}
+                                                className="cancel-icon"
+                                                src="/img/icon/cancel.svg"
+                                                alt=""
+                                                />
+                                                </span>
+                                                )}{' '}
+                                                Simulation File Generated{' '}
 
-                                    </p>
-                                    <br/>
-                                    {this.state.user.is_selfie_simulation_file_uploaded ? (
-                                        <div>
-                                            <img className="svg img-fluid" src={this.state.user.simulation_file_url} alt="" />
-                                            <DownloadBtn
+                                                </p>
+                                                <br/>
+                                                {this.state.user.is_selfie_simulation_file_uploaded ? (
+                                                <div>
+                                                <img className="svg img-fluid" src={this.state.user.simulation_file_url} alt="" />
+                                                <DownloadBtn
                                                 style={{
-                                                    width : "100%"
+                                                width : "100%"
                                                 }}
                                                 url={this.state.user.simulation_file_url}
                                                 content="Download Selfie Image"
                                                 />
-                                        </div>
-                                    ) : null}
-                                </Col>
-                */}
-                                <Col md={4}>
-                                    <p ref="p2">
-                                        {this.state.user.is_selfie_model_uploaded ? (
-                                            <span>
-                                                <img src="/img/icon/check.svg" alt="" />
-                                            </span>
-                                        ) : (
-                                            <span>
-                                                <img
-                                                    className="cancel-icon"
-                                                    src="/img/icon/cancel.svg"
-                                                    alt=""
-                                                    />
-                                            </span>
-                                        )}{' '}
-                                        3D Avatar Generated{' '}
+                                                </div>
+                                                ) : null}
+                                                </Col>
+                                                */}
+                                                <Col md={4}>
+                                                    <p ref="p2">
+                                                        {this.state.user.is_selfie_model_uploaded ? (
+                                                            <span>
+                                                                <img src="/img/icon/check.svg" alt="" />
+                                                            </span>
+                                                        ) : (
+                                                            <span>
+                                                                <img
+                                                                    className="cancel-icon"
+                                                                    src="/img/icon/cancel.svg"
+                                                                    alt=""
+                                                                    />
+                                                            </span>
+                                                        )}{' '}
+                                                        3D Avatar Generated{' '}
 
-                                    </p>
-                                    <br/>
-                                    {this.state.user.is_selfie_model_uploaded ? (
-                                        <div>
-                                        <button className = {`load-time-btn mt-1 mb-4`}>
-                                        <p>
-                                        Last Updated : {this.state.simulation_file_latest_upload_details[0]}
-                                        </p>
-                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.simulation_file_latest_upload_details[1]}</p>
-                                        </button>
-                                            <div class="avatar-url-image-center" ><img class="avatar-img-fix" src={this.state.user.avatar_url} alt="" /></div>
-                                            <button
-                                              style={{
-                                                  width : "100%"
-                                              }}
-                                              className={`inspect-btn mt-1 mb-4`} type="button">
-                                              Inspect
-                                            </button>
-                                            <DownloadBtn
+                                                    </p>
+                                                    <br/>
+                                                    {this.state.user.is_selfie_model_uploaded ? (
+                                                        <div>
+                                                            <button className = {`load-time-btn mt-1 mb-4`}>
+                                                                <p>
+                                                                    Last Updated : {this.state.avatar_zip_file_url_details[0]}
+                                                                </p>
+                                                                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.avatar_zip_file_url_details[1]}</p>
+                                                            </button>
+
+                                                            <button
+                                                                style={{
+                                                                    width : "100%"
+                                                                }}
+                                                                className={`inspect-btn mt-1 mb-4`} type="button">
+                                                                Inspect
+                                                            </button>
+                                                            <DownloadBtn
+                                                                style={{
+                                                                    width : "100%"
+                                                                }}
+                                                                url={this.state.user.avatar_url}
+                                                                content="Download avatar (ZIP)"
+                                                                />
+                                                        </div>
+                                                    ) : null}
+                                                </Col>
+
+                                                <Col md={4}>
+                                                    <p ref="p3">
+                                                        {this.state.user.is_selfie_inp_uploaded ? (
+                                                            <span>
+                                                                <img src="/img/icon/check.svg" alt="" />
+                                                            </span>
+                                                        ) : (
+                                                            <span>
+                                                                <img
+                                                                    className="cancel-icon"
+                                                                    src="/img/icon/cancel.svg"
+                                                                    alt=""
+                                                                    />
+                                                            </span>
+                                                        )}{' '}
+                                                        Mesh File Generated
+
+                                                    </p>
+                                                    <br/>
+                                                    {this.state.user.is_selfie_inp_uploaded ? (
+                                                        <div>
+                                                            <button className = {`load-time-btn mt-1 mb-4`}>
+                                                                <p >
+                                                                    Last Updated : {this.state.inp_latest_upload_details[0]}
+                                                                </p>
+                                                                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.inp_latest_upload_details[1]}</p>
+                                                            </button>
+                                                            <button
+                                                                style={{
+                                                                    width : "100%"
+                                                                }}
+                                                                className={`inspect-btn mt-1 mb-4`} type="button">
+                                                                Inspect
+                                                            </button>
+                                                            <DownloadBtn
+                                                                style={{
+                                                                    width : "100%"
+                                                                }}
+                                                                url={this.state.user.vtk_file_url}
+                                                                content="Download FE Mesh (VTK)"
+                                                                />
+                                                        </div>
+                                                    ) : null}
+
+                                                </Col>
+                                            </Row>
+                                        </div>
+
+                                    </div>
+                                    <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
+                                        <div
+                                            style={{
+                                                border: "2px solid rgb(15, 129, 220)",
+                                                borderRadius: "1.8rem"
+                                            }}
+                                            className="profile-container" >
+                                            <p
+                                                ref="h1"
                                                 style={{
-                                                    width : "100%"
+                                                    paddingLeft : "0px"
                                                 }}
-                                                url={this.state.user.avatar_url}
-                                                content="Download avatar (ZIP)"
-                                                />
-                                        </div>
-                                    ) : null}
-                                </Col>
+                                                className="ml-4 player-dashboard-sub-head">
+                                                App Settings
+                                            </p>
+                                            <Row className="pt-4 pl-4 pr-4 pb-4">
+                                                <Col md={12}>
+                                                    <div className="row">
+                                                        <div className="col-sm-4">
+                                                            <span ref="darkMode" className="dark-mode">
+                                                                {this.state.mode}
+                                                            </span>
+                                                        </div>
+                                                        <div className="col-sm-4  position-relative pt-1">
+                                                            <label className="switch" htmlFor="checkbox">
+                                                                <input
 
-                                <Col md={4}>
-                                    <p ref="p3">
-                                        {this.state.user.is_selfie_inp_uploaded ? (
-                                            <span>
-                                                <img src="/img/icon/check.svg" alt="" />
-                                            </span>
-                                        ) : (
-                                            <span>
-                                                <img
-                                                    className="cancel-icon"
-                                                    src="/img/icon/cancel.svg"
-                                                    alt=""
-                                                    />
-                                            </span>
-                                        )}{' '}
-                                        Mesh File Generated
-
-                                    </p>
-                                    <br/>
-                                    {this.state.user.is_selfie_inp_uploaded ? (
-                                        <div>
-                                        <button className = {`load-time-btn mt-1 mb-4`}>
-                                        <p >
-                                        Last Updated : {this.state.inp_latest_upload_details[0]}
-                                        </p>
-                                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.inp_latest_upload_details[1]}</p>
-                                        </button>
-                                            <button
-                                              style={{
-                                                  width : "100%"
-                                              }}
-                                              className={`inspect-btn mt-1 mb-4`} type="button">
-                                              Inspect
-                                            </button>
-                                            <DownloadBtn
-                                                style={{
-                                                    width : "100%"
-                                                }}
-                                                url={this.state.user.vtk_file_url}
-                                                content="Download FE Mesh (VTK)"
-                                                />
-                                        </div>
-                                    ) : null}
-
-                                </Col>
-                            </Row>
-                        </div>
-
-                    </div>
-                    <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
-                        <div
-                            style={{
-                                border: "2px solid rgb(15, 129, 220)",
-                                borderRadius: "1.8rem"
-                            }}
-                            className="profile-container" >
-                            <p
-                                ref="h1"
-                                style={{
-                                    paddingLeft : "0px"
-                                }}
-                                className="ml-4 player-dashboard-sub-head">
-                                App Settings
-                            </p>
-                            <Row className="pt-4 pl-4 pr-4 pb-4">
-                                <Col md={12}>
-                                    <div className="row">
-                                        <div className="col-sm-4">
-                                            <span ref="darkMode" className="dark-mode">
-                                                {this.state.mode}
-                                            </span>
-                                        </div>
-                                        <div className="col-sm-4  position-relative pt-1">
-                                            <label className="switch" htmlFor="checkbox">
-                                                <input
-                                                    onChange={this.darkMode}
-                                                    value={this.state.isDarkMode}
-                                                    type="checkbox"
-                                                    id="checkbox"
-                                                    />
-                                                <div className="slider round"></div>
-                                            </label>
+                                                                    value={this.state.isDarkMode}
+                                                                    type="checkbox"
+                                                                    id="checkbox"
+                                                                    />
+                                                                <div className="slider round"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </Col>
+                                                <Col md={12}>
+                                                    <div className="row">
+                                                        <div className="col-sm-4">
+                                                            <span ref="chooserColor" className="dark-mode">
+                                                                {this.state.militaryVersion}
+                                                            </span>
+                                                        </div>
+                                                        <div className="col-sm-4  position-relative pt-1">
+                                                            <label className="switch" htmlFor="militaryVersion">
+                                                                <input
+                                                                    onChange={this.militaryVersionHandler}
+                                                                    value={this.state.militaryStatus}
+                                                                    type="checkbox"
+                                                                    id="militaryVersion"
+                                                                    />
+                                                                <div className="slider round"></div>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </Col>
+                                            </Row>
                                         </div>
                                     </div>
-                                </Col>
-                                <Col md={12}>
-                                    <div className="row">
-                                        <div className="col-sm-4">
-                                            <span ref="chooserColor" className="dark-mode">
-                                                {this.state.militaryVersion}
-                                            </span>
-                                        </div>
-                                        <div className="col-sm-4  position-relative pt-1">
-                                            <label className="switch" htmlFor="militaryVersion">
-                                                <input
-                                                    onChange={this.militaryVersionHandler}
-                                                    value={this.state.militaryStatus}
-                                                    type="checkbox"
-                                                    id="militaryVersion"
-                                                    />
-                                                <div className="slider round"></div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </Col>
-                            </Row>
-                        </div>
-                    </div>
-                    {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-                    <Footer />
-                </React.Fragment>
-            );
-        };
+                                    {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+                                    <Footer />
+                                </React.Fragment>
+                            );
+                        };
 
-        returnComponent = () => {
+                        returnComponent = () => {
 
-            if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
-                return <Redirect to="/Login" />;
-            } else if (Object.entries(this.state.user).length === 0) {
-                return <Spinner />;
-            }
+                            if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+                                return <Redirect to="/Login" />;
+                            } else if (Object.entries(this.state.user).length === 0) {
+                                return <Spinner />;
+                            }
 
-            return this.showProfile();
-        };
+                            return this.showProfile();
+                        };
 
-        render() {
-            return this.returnComponent();
-        }
-
-        componentDidMount() {
-            this.setState({ isLoading: true });
-            isAuthenticated(JSON.stringify({}))
-            .then((value) => {
-                if (value.data.message === 'success') {
-                    this.setState({});
-                    getUserDetails({user_cognito_id : this.state.profile_to_view})
-                    .then((response) => {
-                        // store.dispatch(userDetails(response.data))
-                        console.log('RESPONSE DATA IS ', response.data);
-                        let inp_latest_url_details = ""
-                        let selfie_latest_url_details = ""
-                        let simulation_file_url_details = ""
-                        if(response.data.data.inp_file_url) {
-                          let details = response.data.data.inp_file_url.split(".inp")[0].split('/');
-                          let timestamp = details[details.length - 1]
-                          let date = new Date(parseInt(timestamp))
-                          inp_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
-
+                        render() {
+                            return this.returnComponent();
                         }
-                        if(response.data.data.profile_picture_url) {
-                          let details = response.data.data.profile_picture_url.split(".png")[0].split('/');
 
-                          let timestamp = details[details.length - 1]
+                        componentDidMount() {
+                            this.setState({ isLoading: true });
+                            isAuthenticated(JSON.stringify({}))
+                            .then((value) => {
+                                if (value.data.message === 'success') {
+                                    this.setState({});
+                                    getUserDetails({user_cognito_id : this.state.profile_to_view})
+                                    .then((response) => {
+                                        // store.dispatch(userDetails(response.data))
+                                        console.log('RESPONSE DATA IS ', response.data);
+                                        let inp_latest_url_details = ""
+                                        let selfie_latest_url_details = ""
+                                        let simulation_file_url_details = ""
+                                        let avatar_zip_file_url_details = ""
+                                        let vtk_file_url_details = ""
+                                        if(response.data.data.inp_file_url) {
+                                            let details = response.data.data.inp_file_url.split(".inp")[0].split('/');
+                                            let timestamp = details[details.length - 1]
+                                            let date = new Date(parseInt(timestamp))
+                                            inp_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
 
-                          let date = new Date(parseInt(timestamp));
+                                        }
+                                        if(response.data.data.profile_picture_url) {
+                                            let file_extension = this.getUploadFileExtension(response.data.data.profile_picture_url);
+                                            let details = response.data.data.profile_picture_url.split(file_extension)[0].split('/');
 
-                          selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
-                        }
-                        if(response.data.data.simulation_file_url) {
-                          let details = response.data.data.simulation_file_url.split(".png")[0].split('/');
-                          let timestamp = details[details.length - 1]
-                          let date = new Date(parseInt(timestamp))
-                          simulation_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
-                        }
-                        this.setState({
-                            user: { ...this.state.user, ...response.data.data },
-                            isLoading: false,
-                            isAuthenticated: true,
-                            isCheckingAuth: false,
-                            inp_latest_upload_details : inp_latest_url_details,
-                            selfie_latest_upload_details : selfie_latest_url_details,
-                            simulation_file_latest_upload_details : simulation_file_url_details
-                        });
+                                            let timestamp = details[details.length - 1]
 
-                        if (getStatusOfDarkmode().status === true) {
-                            store.dispatch(darkThemeActiveSetter());
-                            this.refs.lightDark.style.background = '#232838';
-                            document.getElementsByTagName('html')[0].style.background =
-                            '#171b25';
-                            document.getElementsByTagName('body')[0].style.background =
-                            '#171b25';
-                            this.refs.profileBorder.style.border = '10px solid #171b25';
-                            this.refs.nameColor.style.color = '#fff';
-                            this.refs.chooserColor.style.color = '#fff';
-                            this.refs.darkMode.style.color = '#fff';
-                            const allInputs = this.state.inputs;
-                            allInputs.forEach((element) => {
-                                this.refs[element].setAttribute('id', 'dark-mode-color');
+                                            let date = new Date(parseInt(timestamp));
+
+                                            selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                                        }
+                                        if(response.data.data.simulation_file_url) {
+                                            let details = response.data.data.simulation_file_url.split(".png")[0].split('/');
+                                            let timestamp = details[details.length - 1]
+                                            let date = new Date(parseInt(timestamp))
+                                            simulation_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                                        }
+                                        if(response.data.data.avatar_url) {
+                                            let details = response.data.data.avatar_url.split(".zip")[0].split('/');
+                                            let timestamp = details[details.length - 1]
+                                            let date = new Date(parseInt(timestamp))
+                                            avatar_zip_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                                        }
+                                        if(response.data.data.vtk_file_url) {
+                                            let details = response.data.data.vtk_file_url.split(".vtk")[0].split('/');
+                                            let timestamp = details[details.length - 1]
+                                            let date = new Date(parseInt(timestamp))
+                                            vtk_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                                        }
+                                        this.setState({
+                                            user: { ...this.state.user, ...response.data.data },
+                                            isLoading: false,
+                                            isAuthenticated: true,
+                                            isCheckingAuth: false,
+                                            inp_latest_upload_details : inp_latest_url_details,
+                                            selfie_latest_upload_details : selfie_latest_url_details,
+                                            simulation_file_latest_upload_details : simulation_file_url_details,
+                                            avatar_zip_file_url_details : avatar_zip_file_url_details,
+                                            vtk_file_url_details : vtk_file_url_details
+                                        });
+
+                                        if (getStatusOfDarkmode().status === true) {
+                                            store.dispatch(darkThemeActiveSetter());
+                                            this.refs.lightDark.style.background = '#232838';
+                                            document.getElementsByTagName('html')[0].style.background =
+                                            '#171b25';
+                                            document.getElementsByTagName('body')[0].style.background =
+                                            '#171b25';
+                                            this.refs.profileBorder.style.border = '10px solid #171b25';
+                                            this.refs.nameColor.style.color = '#fff';
+                                            this.refs.chooserColor.style.color = '#fff';
+                                            this.refs.darkMode.style.color = '#fff';
+                                            const allInputs = this.state.inputs;
+                                            allInputs.forEach((element) => {
+                                                this.refs[element].setAttribute('id', 'dark-mode-color');
+                                            });
+                                            for (let i = 1; i <= 4; i++) {
+                                                this.refs['p' + i].style.color = '#fff';
+                                            }
+                                            this.props.isDarkModeSet(this.state.isDarkMode);
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        this.setState({
+                                            user: {},
+                                            isLoading: false,
+                                            isCheckingAuth: false
+                                        });
+                                    });
+                                } else {
+                                    this.setState(
+                                        { isAuthenticated: false, isCheckingAuth: false },
+                                        () => {
+                                            if (this.state.isAuthenticated === false) {
+                                                store.dispatch(resetSignedInSucceeded());
+                                                this.props.history.push('/Home');
+                                            }
+                                        }
+                                    );
+                                }
+                            })
+                            .catch((err) => {
+                                this.setState({ isAuthenticated: false, isCheckingAuth: false });
                             });
-                            for (let i = 1; i <= 4; i++) {
-                                this.refs['p' + i].style.color = '#fff';
-                            }
-                            this.props.isDarkModeSet(this.state.isDarkMode);
-                        }
-                    })
-                    .catch((error) => {
-                        this.setState({
-                            user: {},
-                            isLoading: false,
-                            isCheckingAuth: false
-                        });
-                    });
-                } else {
-                    this.setState(
-                        { isAuthenticated: false, isCheckingAuth: false },
-                        () => {
-                            if (this.state.isAuthenticated === false) {
-                                store.dispatch(resetSignedInSucceeded());
-                                this.props.history.push('/Home');
+                            if (getStatusOfDarkmode().status) {
+                                document.getElementsByTagName('body')[0].style.background = '#171b25';
                             }
                         }
-                    );
-                }
-            })
-            .catch((err) => {
-                this.setState({ isAuthenticated: false, isCheckingAuth: false });
-            });
-            if (getStatusOfDarkmode().status) {
-                document.getElementsByTagName('body')[0].style.background = '#171b25';
-            }
-        }
-    }
+                    }
 
-    export default withRouter(Profile);
+                    export default withRouter(Profile);
