@@ -357,7 +357,7 @@ class DashPage extends React.Component {
 				
 				let map = textureLoader.load(modelTexture);
 				map.encoding = THREE.sRGBEncoding;
-				//map.flipY = false;
+				map.flipY = false;
 				
 				manager.onStart = function () {
 					console.log('Loading started');
