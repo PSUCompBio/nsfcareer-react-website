@@ -2479,6 +2479,8 @@ box-sizing:border-box;
 .sigCanvas{
 
 border: 2px solid #0a538c;
+width: 100% !important;
+border-radius: 8px;
 }
 
 tbody.player-table tr:nth-child(odd){

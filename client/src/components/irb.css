@@ -1,0 +1,26 @@
+
+.irb-bold-400{
+    font-size: 1em;
+    color: rgb(0,0,0);
+    font-weight: bold;
+    font-style: normal;
+    text-decoration: none;
+    text-align: center;
+    font-family: Calibri;
+}
+.irb-center{
+    text-align: center;
+}
+.irb-border-box {
+    border: 2px solid black;
+    padding: 1%;
+    font-weight: 600;
+}
+
+.irb-top-title{
+color: #3174B9 !important;
+font-size: 1.2em !important;
+}
+.irb-center-text {
+text-align : center
+}

@@ -210,6 +210,13 @@ opacity: 1!important;
 }
 
 @media (max-width: 767px) {
+.refresh-icon {
+    margin-left: 50% !important;
+    margin-right: 50% !important;
+    display: block;
+    margin-top: 2% !important;
+    margin-bottom: 2% !important;
+}
 .profile {
     display: none !important ;
 }
@@ -292,4 +299,17 @@ opacity: 1!important;
 
 .avatar-img-fix {
     height: 70%;
+}
+
+.rotate-icon {
+  animation: rotation 2s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }

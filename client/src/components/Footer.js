@@ -3,8 +3,9 @@ import { withRouter } from 'react-router-dom';
 import GetUpdates from '../components/GetUpdates';
 
 class Footer extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    console.log("Footer props", props);
     this.state = {
       isDisplay: { display: 'none' }
     };
@@ -35,6 +36,7 @@ class Footer extends React.Component {
   };
 
   showModal = () => {
+
     if (this.state.isDisplay.display === 'none') {
       this.setState({ isDisplay: {display:'flex'} });
     } else {
@@ -47,8 +49,9 @@ class Footer extends React.Component {
       window.location.href = 'https://psucompbio.org/';
     };
     return (
-      <div style={{position : "relative"}} className={`footer ${this.addFooterClass()}`}>
-        <GetUpdates isVisible={this.state.isDisplay} makeVisible={this.makeVisible} />
+      <div style={(this.props.screenWidth && this.props.screenWidth < 765) ? {position : "relative"} : {position : "relative", height : "inherit"}} className={`footer ${this.addFooterClass()}`}>
+
+        <GetUpdates isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />
         <div style={{ background: '' }} className="container">
           <div className="row pt-4">
             <div className="col-sm-6 col-md-6 col-lg-6 footer-title">
@@ -57,7 +60,7 @@ class Footer extends React.Component {
             <div className="col-sm-6 col-md-6 col-lg-6 footer-update-button">
               <button
                 type="button"
-                onClick={this.showModal}
+                onClick={(this.props.showGetUpdateModal)? this.props.showGetUpdateModal : this.showModal}
                 className="btn btn-primary float-right"
               >
                 Get Updates

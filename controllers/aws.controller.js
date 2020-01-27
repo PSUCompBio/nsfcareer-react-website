@@ -98,14 +98,20 @@ exports.doUpload = (req, res) => {
                             request.post({ url: config.ComputeInstanceEndpoint + "computeImageData", json: { image_url : url , user_cognito_id: req.user_cognito_id } }, function (err, httpResponse, body) {
                                 if (err) {
                                     console.log("ERROR in Generating INP File");
-                                    res.send({ message: 'failure', error: err });
+                                    // res.send({ message: 'failure', error: err });
+                                    console.log({ message: 'failure', error: err });
                                 }
                                 else {
-
-                                    res.send(httpResponse.body)
+                                    console.log(httpResponse.body);
+                                    // res.send(httpResponse.body)
 
                                 }
                             })
+
+                        res.send({
+                            message : "success"
+                        })
+
                     }
 
                 })

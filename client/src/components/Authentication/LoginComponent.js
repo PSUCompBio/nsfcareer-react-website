@@ -25,10 +25,11 @@ class Login extends React.Component {
       isValidPlayer : false,
       name : '',
       cognito_user_id : '',
-      signUpStatus : false
+      signUpStatus : false,
+      IRBProcessMessage : ''
     };
     if(this.props.location.state && this.props.location.state.message ) {
-      this.state.message = this.props.location.state.message;
+      this.state.IRBProcessMessage = this.props.location.state.message;
     }
     console.log("JSON.STRINGIFY(THIS.STATE)", this.state);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -221,6 +222,14 @@ class Login extends React.Component {
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
                     </div>
+                    {this.state.IRBProcessMessage.length > 0 ? (
+                      <div
+                        className="alert alert-info api-response-alert-success"
+                        role="alert"
+                      >
+                        <strong > Success !</strong> {this.state.IRBProcessMessage}.
+                      </div>
+                    ) : null}
                     {this.state.message ? (
                       <div
                         className="alert alert-info api-response-alert"
@@ -347,7 +356,7 @@ class Login extends React.Component {
           </div>
 
         </div>
-        
+
         <Footer />
       </React.Fragment>
     );
