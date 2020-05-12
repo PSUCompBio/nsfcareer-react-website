@@ -1360,9 +1360,25 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
     })
     .then(image => {
 
-        res.send(`<h6>Image ID : ${image_id}</h6><img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`);
+        //res.send(`<h6>Image ID : ${image_id}</h6><img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`);
+        let computed_time = imageData.computed_time !== undefined ? timeConversion(imageData.computed_time) : ''
+        res.send(`<table style="text-align:left;">
+        <tbody><tr>
+          <th>Image Id</th>
+          <th>:</th>
+          <td>${imageData.image_id}</td>
+        </tr>
+        <tr>
+          <th>Player Id</th>
+          <th>:</th>
+          <td>${imageData.player_name}</td>
+        </tr>
+        <tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>
+        <tr><th>Computed Time</th><th>:</th><td>${computed_time}</td></tr>
+      </tbody></table><img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`);
     })
     .catch(err => {
+        console.log(err);
         // res.removeHeader('X-Frame-Options');
         if("authorized" in err){
             res.send({
