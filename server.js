@@ -1333,6 +1333,80 @@ function addPlayerToTeamInDDB(org, team, player_id) {
     })
 }
 
+function getPlayerCgValues(player_id) {
+  return new Promise((resolve, reject) =>{
+      var db_table = {
+          TableName: 'users',
+          Key: {
+              "user_cognito_id": player_id
+          },
+          ProjectionExpression: "cg_coordinates"
+      };
+      docClient.get(db_table, function (err, data) {
+          if (err) {
+              reject(err)
+
+          } else {
+               console.log('cg data is ',data);
+              if(JSON.stringify(data).length==2) {
+                resolve([]);
+              } else {
+                resolve(data.Item.cg_coordinates);
+              }
+          }
+      });
+  })
+}
+
+
+function getPresignedMovieUrl(image_details) {
+  return new Promise((resolve, reject) => {
+    const { movie_path } = image_details;
+    if(movie_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: movie_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
+}
+
+// Miliseconds to Human readable 
+function timeConversion(duration) {
+    const portions = [];
+    duration = parseFloat(duration);
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(duration / msInHour);
+    if (hours > 0) {
+        portions.push(hours + ' Hours');
+        duration = duration - (hours * msInHour);
+    }
+
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(duration / msInMinute);
+    if (minutes > 0) {
+        portions.push(minutes + ' Minutes');
+        duration = duration - (minutes * msInMinute);
+    }
+
+    const seconds = Math.trunc(duration / 1000);
+    if (seconds > 0) {
+        portions.push(seconds + ' Seconds');
+    }
+
+    return portions.join(' ');
+}
+
 // ============================================
 //     				ROUTES
 // ============================================
@@ -1341,7 +1415,6 @@ function addPlayerToTeamInDDB(org, team, player_id) {
 //     res.send("NSFCareeIO");
 // })
 
-
 app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
     const { image_id, token } = req.params;
     var imageData = '';
@@ -1349,36 +1422,63 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
     getSimulationImageRecord(req.params.image_id)
     .then(image_data => {
         imageData = image_data;
-        // convert Buffer to Image
-        return verifyImageToken(token, image_data)
+        return getPlayerCgValues(image_data.player_name);
+    })
+    .then(cg_coordinates => {
+      // Setting cg values
+      if(cg_coordinates) {
+        imageData["cg_coordinates"] = cg_coordinates;
+      }
+      // convert Buffer to Image
+      return verifyImageToken(token, imageData);
     })
     .then(decoded_token => {
-        return getImageFromS3(imageData)
+      return getPresignedMovieUrl(imageData);
+    })
+    .then(movie_link => {
+        if(movie_link) {
+          imageData["movie_link"] = movie_link;
+        }
+        return getImageFromS3(imageData);
     })
     .then(image_s3 => {
-        return getImageFromS3Buffer(image_s3)
+        return getImageFromS3Buffer(image_s3);
     })
     .then(image => {
+        let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+        res.send(`
+          <table style="text-align:left;">
+            <tr>
+              <th>Image Id</th>
+              <th>:</th>
+              <td>${image_id}</td>
+            </tr>
+            <tr>
+              <th>Player Id</th>
+              <th>:</th>
+              <td>${imageData.player_name}</td>
+            </tr>
+            ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
+            ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
+            ${computed_time ? `<tr><th>Computed Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
+          </table>
 
-        //res.send(`<h6>Image ID : ${image_id}</h6><img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`);
-        let computed_time = imageData.computed_time !== undefined ? timeConversion(imageData.computed_time) : ''
-        res.send(`<table style="text-align:left;">
-        <tbody><tr>
-          <th>Image Id</th>
-          <th>:</th>
-          <td>${imageData.image_id}</td>
-        </tr>
-        <tr>
-          <th>Player Id</th>
-          <th>:</th>
-          <td>${imageData.player_name}</td>
-        </tr>
-        <tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>
-        <tr><th>Computed Time</th><th>:</th><td>${computed_time}</td></tr>
-      </tbody></table><img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`);
+            ${imageData.movie_link ?
+              `<div style="display:flex;">
+                <div style="flex:50%">
+                  <img style="transform : scale(0.5);transform-origin: top center" src="data:image/png;base64,${image}"/>
+                </div>
+                <div style="flex:50%">
+                  <video src=${imageData.movie_link} style="width:100%;" controls>
+                  </video>
+                </div>
+              </div>`
+              :
+              `<img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`
+            }
+          </div>`);
     })
     .catch(err => {
-        console.log(err);
         // res.removeHeader('X-Frame-Options');
         if("authorized" in err){
             res.send({
@@ -1393,7 +1493,8 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
         }
     })
 
-})
+});
+
 
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
@@ -2982,31 +3083,58 @@ app.post(`${apiPrefix}uploadModelRealData`, setConnectionTimeout('10m'), uploadM
 
 })
 
-
-
 app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req, res) => {
     // TODO : Start receiving user type or remove user type from this function
     var user_type = "standard";
-    login(req.body.user_name, req.body.password, user_type, (err,data) => {
-        if(err){
+    login(req.body.user_name, req.body.password, user_type, (err, data) => {
+        if (err) {
             res.send({
-                message : "failure",
-                error : err
+                message: "failure",
+                error: err
             })
         }
-        else{
-            request.post({
-                url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
-                json: req.body
-            }, function (err, httpResponse, body) {
+        else {
+            getUser(req.body.user_name, function (err, data) {
                 if (err) {
+                    console.log(err);
+
                     res.send({
                         message: "failure",
                         error: err
+                    });
+                } else {
+                    getUserDbData(data.Username, function (err, user_details) {
+                        if (err) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                        else {
+                            if (user_details.Item["is_sensor_company"]) {
+                                // console.log(user_details.Item);
+                                request.post({
+                                    url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                    json: req.body
+                                }, function (err, httpResponse, body) {
+                                    if (err) {
+                                        res.send({
+                                            message: "failure",
+                                            error: err
+                                        })
+                                    }
+                                    else {
+                                        res.send(httpResponse.body);
+                                    }
+                                })
+                            } else {
+                                res.send({
+                                    message: "failure",
+                                    error: 'User is not sensor company.'
+                                })
+                            }
+                        }
                     })
-                }
-                else {
-                    res.send(httpResponse.body);
                 }
             })
         }
@@ -3021,6 +3149,6 @@ app.post(`${apiPrefix}logOut`, (req, res) => {
         message: "success"
     });
 })
-const port = 3001;
+const port = process.env.PORT || 3001;
 // Configuring port for APP
 server.listen(port, () => console.log(`Listening on port ${port}`))
