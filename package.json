@@ -42,17 +42,17 @@
     "three": "^0.108.0",
     "uuid": "^3.3.2",
     "webfontloader": "^1.6.28",
-    "xlsx": "^0.15.1"
+    "xlsx": "^0.15.1",
+    "concurrently": "^4.1.2"
   },
   "devDependencies": {
-    "concurrently": "^4.1.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.0",
-    "nodemon": "^1.19.1",
+    "nodemon": "^1.19.4",
     "prettier": "^1.18.2"
   },
   "scripts": {

@@ -82,7 +82,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                   Player Dashboard
                 </h1>
                 <div
-                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated fadeInLeft"
+                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1"
                     style={{
                         border: "2px solid #0F81DC",
                         borderRadius: "1.8rem"
