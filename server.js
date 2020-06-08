@@ -196,9 +196,10 @@ app.use(function(req,res,next){
 
 // Express configured for POST Request handling of multiple types
 // xxx-url encoded (form type)  & json type
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(cookieParser());
+
 // app.use(cors(
 //     {
 //         origin: [process.env.DOMAIN],
