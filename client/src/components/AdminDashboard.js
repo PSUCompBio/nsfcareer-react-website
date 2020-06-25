@@ -2,11 +2,12 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
-import { withRouter } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import {
-    getAllOrganizationsOfSensorBrand,
+    isAuthenticated,
+    getAllSensorBrands,
     fetchStaffMembers
 } from '../apis';
 
@@ -15,22 +16,24 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
 
-class OrganizationAdmin extends React.Component {
+class AdminDashboard extends React.Component {
     constructor() {
         super();
         this.state = {
+            isAuthenticated: false,
+            isCheckingAuth: true,
+            userDetails: '',
+            isAdmin: '',
             tabActive: 0,
             targetBtn: '',
             totalTeam: 0,
-            totalOrganization: 0,
+            totalBrand: 0,
             editTeamClass: '',
             hideEditElement: { display: 'block' },
             isFetching: true,
-            rostersArray: [],
-            organization: 'PSU',
             buttonSelected: 'overview',
             staffList: [],
-            sensorOrgList: []
+            sensorBrandList: []
         };
     }
     toggleTab = (value) => {
@@ -85,25 +88,49 @@ class OrganizationAdmin extends React.Component {
     componentDidMount() {
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0)
-        getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
-            .then(orgs => {
-                this.setState(prevState => ({
-                    totalOrganization: orgs.data.data.length,
-                    sensorOrgList: orgs.data.data
-                }));
+        isAuthenticated(JSON.stringify({}))
+            .then((value) => {
+                if (value.data.message === 'success') {
 
-                return fetchStaffMembers({})
-            })
-            .then(response => {
-                for(var i = 0 ; i < response.data.data.length ; i++){
-                    this.setState(prevState => ({
-                        staffList: [...prevState.staffList, response.data.data[i]],
-                        isFetching: false,
-                    }));
+                    this.setState({
+                        userDetails: JSON.parse(localStorage.getItem("state")).userInfo
+                    });
+
+                    if (this.state.userDetails.user_type === 'Admin') {
+                        this.setState({
+                            isAdmin: true
+                        });
+                        getAllSensorBrands()
+                        .then(brands => {
+                            this.setState(prevState => ({
+                                totalBrand: brands.data.data.length,
+                                sensorBrandList: brands.data.data
+                            }));
+
+                            return fetchStaffMembers({})
+                        })
+                        .then(response => {
+                            for (var i = 0; i < response.data.data.length; i++) {
+                                this.setState(prevState => ({
+                                    staffList: [...prevState.staffList, response.data.data[i]],
+                                    isFetching: false,
+                                }));
+                            }
+                        })
+                        .catch(err => {
+                            alert(err);
+                        })
+                    } else {
+                        this.setState({
+                            isAdmin: false
+                        });
+                    }
+                } else {
+                    this.setState({ isAuthenticated: false, isCheckingAuth: false });
                 }
             })
-            .catch(err => {
-                alert(err);
+            .catch((err) => {
+                this.setState({ isAuthenticated: false, isCheckingAuth: false });
             })
 
 
@@ -114,7 +141,7 @@ class OrganizationAdmin extends React.Component {
 
     };
 
-    smallCards = (reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+    smallCards = (reference, brand, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
@@ -122,11 +149,10 @@ class OrganizationAdmin extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/OrganizationAdmin',
                             state: {
                                 brand: {
                                     brand: brand,
-                                    organization: organization,
                                     user_cognito_id: user_cognito_id
                                 }
                             }
@@ -138,9 +164,9 @@ class OrganizationAdmin extends React.Component {
                     <div style={this.state.hideEditElement}>
                         <div ref={reference[1]} className="football-header ">
                             <p className="teamName mobile-dashboard-card" ref={reference[2]}>
-                                <b>{organization}</b>
+                                <b>{brand}</b>
                             </p>
-                            
+
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
@@ -165,10 +191,14 @@ class OrganizationAdmin extends React.Component {
     }
 
     iterateTeam = () => {
+        console.log('getAllSensorBrands', this.state.sensorBrandList);
         let inc = 1;
-        var cards = new Array(this.state.totalOrganization);
+        var cards = new Array(this.state.totalBrand);
         let j = 1;
-        for (let i = 0; i < this.state.totalOrganization; i++) {
+        for (let i = 0; i < this.state.totalBrand; i++) {
+
+            const brand = this.state.sensorBrandList[i];
+            console.log("POP IT ", brand);
             cards[i] = this.smallCards(
                 [
                     'smCard' + i,
@@ -179,21 +209,16 @@ class OrganizationAdmin extends React.Component {
                     'h' + inc++,
                     'h' + inc++
                 ],
-                this.props.location.state.brand.brand,
-                this.state.sensorOrgList[i].organization,
-                this.state.sensorOrgList[i].user_cognito_id,
-                Number(this.state.sensorOrgList[i].simulation_count),
+                this.state.sensorBrandList[i].sensor,
+                this.state.sensorBrandList[i].user_cognito_id,
+                Number(this.state.sensorBrandList[i].simulation_count),
                 i
             );
             j++;
         }
 
-        if (this.state.totalOrganization === 0) {
-            return  <div style={{marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center'}}>No Organization added yet.</div>
-        }
-
         return cards;
-        
+
     };
 
     retunrnRosterBtn = () => {
@@ -231,7 +256,7 @@ class OrganizationAdmin extends React.Component {
                             ''
                         )}
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
-                    <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{color: '#0f81dc', fontSize: '30px'}}>{this.props.location.state.brand.brand}</p>
+                        <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{ textAlign: 'center', fontSize: '30px' }}>Admin Dashboard</p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
@@ -306,7 +331,12 @@ class OrganizationAdmin extends React.Component {
     };
 
     render() {
-        console.log(this.props);
+
+        if ((!this.state.isAuthenticated && !this.state.isCheckingAuth) || this.state.isAdmin === false) {
+            return <Redirect to="/Login" />;
+        }
+        
+
         if (this.state.isFetching) {
             return <Spinner />;
         }
@@ -347,13 +377,14 @@ class OrganizationAdmin extends React.Component {
 }
 
 function mapStateToProps(state) {
-    console.log(state);
+    console.log('state', state);
     return {
-        isMilitaryVersionActive: state.militaryVersion
+        isMilitaryVersionActive: state.militaryVersion,
+        user_details : state.userInfo
     };
 }
 
 export default compose(
     withRouter,
     connect(mapStateToProps)
-)(OrganizationAdmin);
+)(AdminDashboard);

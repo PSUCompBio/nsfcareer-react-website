@@ -161,7 +161,7 @@ class Nav extends React.Component {
     store.dispatch(userDetails({}));
     this.setState({ signOutClass: 'sign-out-hide' });
     this.setState({
-        user_details : JSON.parse(localStorage.getItem("state")).userInfo
+        user_details : ''
     })
     this.props.setIsAuth(false);
 
@@ -214,7 +214,7 @@ class Nav extends React.Component {
         {this.links('Contact us', '/Contact')}
 		{this.links('For Developers', '/Developer')}
         {this.props.location.pathname !== '/SignUp'
-          ? this.links('Dashboard', '/Login')
+          ? this.links('Dashboard', '/Dashboard')
           : this.links('Sign up', '/SignUp')}
       </ul>
       </div>
@@ -345,7 +345,7 @@ class Nav extends React.Component {
             onMouseLeave={this.hideDashboardsLinkIfNotEnter}
             className="nav-item dashboard-hover make-active active"
           >
-            <Link className="nav-link" to={'/Login'}>
+            <Link className="nav-link" to={'/Dashboard'}>
               Dashboard <span className="sr-only">(current)</span>
             </Link>
             <div
@@ -503,7 +503,7 @@ class Nav extends React.Component {
             <div className={LineUnderLink.linkeMaker('/Contact')} />
             {this.props.location.pathname !== '/SignUp' ? (
               <React.Fragment>
-                <Link onClick={this.handleClick} className="nav-link mobie-dashboard-hover" to={'/Login'}>
+                <Link onClick={this.handleClick} className="nav-link mobie-dashboard-hover" to={'/Dashboard'}>
                   Dashboard <span className="sr-only">(current)</span>
                 </Link>
                 <div className={LineUnderLink.linkeMaker('/Login')} />

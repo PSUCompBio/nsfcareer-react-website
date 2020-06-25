@@ -551,3 +551,39 @@ export const getUpdatesAndNotifications = (request) =>{
       });
   })
 }
+
+export const getAllSensorBrands = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllSensorBrands`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getAllOrganizationsOfSensorBrand = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllOrganizationsOfSensorBrand`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getAllteamsOfOrganizationOfSensorBrand = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllteamsOfOrganizationOfSensorBrand`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
