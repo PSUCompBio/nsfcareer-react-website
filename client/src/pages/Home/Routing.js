@@ -16,8 +16,11 @@ import ForgotPassword from '../../components/ForgotPassword';
 import About from '../About/AboutPage';
 import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
+import AdminDashboard from '../../components/AdminDashboard';
 import Users from '../../components/Users';
-import TeamAdmin from '../../components/CommanderTeamView';
+// import TeamAdmin from '../../components/CommanderTeamView';
+import TeamAdmin from '../../components/TeamAdmin';
+import TeamPlayers from '../../components/CommanderTeamView';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
 //import Sports from '../Sports';
@@ -255,8 +258,18 @@ class Routing extends React.Component {
         />
         <Route
             exact
+            path="/TeamAdmin/team/players"
+            render={(props) => <TeamPlayers {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
             path="/OrganizationAdmin"
             render={(props) => <OrganizationAdmin {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/AdminDashboard"
+            render={(props) => <AdminDashboard {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact

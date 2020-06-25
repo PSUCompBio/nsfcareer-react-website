@@ -13,22 +13,22 @@ import DarkMode from '../DarkMode';
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    console.log("Login Props",props);
+    console.log("Login Props", props);
     this.state = {
       tempPasswordRequired: false,
       isLoginError: false,
       loginErrorCode: '',
       isLoading: false,
       isSignInSuccessed: false,
-      userType : '',
-      userDetails : '',
-      isValidPlayer : false,
-      name : '',
-      cognito_user_id : '',
-      signUpStatus : false,
-      IRBProcessMessage : ''
+      userType: '',
+      userDetails: '',
+      isValidPlayer: false,
+      name: '',
+      cognito_user_id: '',
+      signUpStatus: false,
+      IRBProcessMessage: ''
     };
-    if(this.props.location.state && this.props.location.state.message ) {
+    if (this.props.location.state && this.props.location.state.message) {
       this.state.IRBProcessMessage = this.props.location.state.message;
     }
     console.log("JSON.STRINGIFY(THIS.STATE)", this.state);
@@ -48,14 +48,14 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-      // Scrolling winddow to top when user clicks on about us page
-      window.scrollTo(0, 0)
+    // Scrolling winddow to top when user clicks on about us page
+    window.scrollTo(0, 0)
     if (getStatusOfDarkmode().status === true) {
       document.getElementsByTagName('body')[0].style.background = '#171b25';
       this.refs.loginForm.style.background = "rgb(35, 40, 56)";
       // this.refs.dashboardView.src = "/img/icon/dashboardViewDark.png";
       this.refs.brainIcon.style.border = "5px solid rgb(23, 27, 37)";
-      for (let i = 1; i <= 2; i++){
+      for (let i = 1; i <= 2; i++) {
         this.refs[`p${i}`].style.color = "#fff";
       }
     }
@@ -99,7 +99,7 @@ class Login extends React.Component {
           console.log(err);
         });
     } else {
-        var u_details = '';
+      var u_details = '';
       logIn(formJsonData)
         .then((response) => {
           console.log('Login ', response);
@@ -114,31 +114,31 @@ class Login extends React.Component {
               u_details = response.data.user_details;
               console.log("Cognito ", u_details);
 
-              checkIfPlayerExists({name : response.data.user_details.first_name + " " + response.data.user_details.last_name})
-              .then(res => {
+              checkIfPlayerExists({ name: response.data.user_details.first_name + " " + response.data.user_details.last_name })
+                .then(res => {
 
-                    this.setState({
-                        isValidPlayer : res.data.flag,
-                        isLoading: false,
-                        isSignInSuccessed: true,
-                        userType: u_details.user_type,
-                        userDetails : u_details.user_details,
-                        name : u_details.first_name + " " + u_details.last_name,
-                        cognito_user_id : u_details.user_cognito_id
-                    })
-                    console.log("USER DETAILS ",u_details);
-                    store.dispatch(setIsSignedInSucceeded());
-                    store.dispatch(userDetails(u_details));
+                  this.setState({
+                    isValidPlayer: res.data.flag,
+                    isLoading: false,
+                    isSignInSuccessed: true,
+                    userType: u_details.user_type,
+                    userDetails: u_details,
+                    name: u_details.first_name + " " + u_details.last_name,
+                    cognito_user_id: u_details.user_cognito_id
+                  })
+                  console.log("USER DETAILS ", u_details);
+                  store.dispatch(setIsSignedInSucceeded());
+                  store.dispatch(userDetails(u_details));
 
-                    this.props.isAuthenticated(true);
-              })
-              .catch(err => {
+                  this.props.isAuthenticated(true);
+                })
+                .catch(err => {
                   this.setState({
                     isLoginError: true,
                     isLoading: false,
                     loginError: response.data.error
                   });
-              })
+                })
 
             }
           } else {
@@ -165,33 +165,47 @@ class Login extends React.Component {
   }
 
   render() {
-    console.log(JSON.parse(localStorage.getItem('state')));
+
+    if (this.state.isSignInSuccessed) {
+      if (this.state.userDetails.user_type === "Admin") {
+        return <Redirect to="/AdminDashboard" />;
+      } else if (this.state.userDetails.is_sensor_company) {
+        return <Redirect to={{
+          pathname: '/OrganizationAdmin',
+          state: {
+            brand: {
+              brand: this.state.userDetails.sensor,
+              user_cognito_id: this.state.cognito_user_id
+            }
+          }
+        }} />;
+      } else {
+        return <Redirect to={{
+          pathname: '/TeamAdmin/user/dashboard',
+          state: {
+            team: {
+              organization: '',
+              team_name: ''
+            },
+            cognito_user_id: this.state.cognito_user_id,
+            player_name: this.state.name
+          }
+        }} />;
+      }
+    }
+
     return (
       <React.Fragment>
         <div className="dynamic__height">
           <div className="container  pl-0 pr-0 login-height overflow-hidden">
-            {this.state.isSignInSuccessed ? this.state.userType == "Admin" ? <Redirect to="/OrganizationAdmin" />
-                : this.state.isValidPlayer ?
-                    <Redirect to={{
-                            pathname: '/TeamAdmin/user/dashboard',
-                            state: {
-                                cognito_user_id : this.state.cognito_user_id,
-                                player_name : this.state.name
-                            }
-                    }} />
-                    :
-                    <Redirect to={{
-                            pathname: '/TeamAdmin/user/dashboard',
-                            state: {
-                                cognito_user_id : this.state.cognito_user_id,
-                                player_name : this.state.name
-                            }
-                    }} />  : null}
-            <div style={{marginTop: "5vh", marginBottom: "2vh"}} className="row login">
+
+            <div style={{ marginTop: "5vh", marginBottom: "2vh" }} className="row login">
               <div className="col-md-12  mb-5">
                 <div className="text-center">
-                  <p style={{  fontSize: "20px",
-                    fontWeight: "900"}} className="top-heading__login animated fadeInUp">
+                  <p style={{
+                    fontSize: "20px",
+                    fontWeight: "900"
+                  }} className="top-heading__login animated fadeInUp">
                     The Dashboard gives users and administrators a cumulative
                     overview, as well as an in-depth analysis on each head
                     acceleration event.
@@ -214,9 +228,9 @@ class Login extends React.Component {
               // Default div for Sign In section
               <div className="col-md-6 mb-5 p-3 animated fadeInRight">
               */
-          }
+              }
               <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
-                <div style={{paddingLeft : "0% !important"}}ref="loginForm" style={{margin: "3%"}} className="card card-border">
+                <div style={{ paddingLeft: "0% !important" }} ref="loginForm" style={{ margin: "3%" }} className="card card-border">
                   <div className="card-body">
 
                     <div ref="brainIcon" className="text-center brain-icon">
@@ -271,7 +285,7 @@ class Login extends React.Component {
                       </div>
 
                       {this.state.tempPasswordRequired ? (
-                        <div style={{marginTop : "2rem"}} className="input-group mb-1">
+                        <div style={{ marginTop: "2rem" }} className="input-group mb-1">
                           <div className="input-group-prepend">
                             <span
                               className="input-group-text"
@@ -312,7 +326,7 @@ class Login extends React.Component {
                           className="spinner-border text-primary"
                           role="status"
                         >
-                          <span  className="sr-only">Loading...</span>
+                          <span className="sr-only">Loading...</span>
                         </div>
                       </div>
                     ) : null}
@@ -364,7 +378,7 @@ class Login extends React.Component {
 }
 
 function mapStateToProps(state) {
-    console.log("ARMIN",state);
+  console.log("ARMIN", state);
   return {
     // dispatching actions
     signedIn: state.isSignedInSuccess

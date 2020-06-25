@@ -902,6 +902,10 @@ function adminCreateUser(User, cb) {
             {
                 Name: 'email_verified',
                 Value: 'true'
+            },
+            {
+                Name: 'custom:level',  /* required */
+                Value: User.level
             }
         ]
     };
@@ -1581,6 +1585,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_inp_uploaded"] = false;
     // Hardcoding Done Here need to be replaced with actual organization in request.
     req.body["organization"] = "PSU";
+    req.body["level"] = '400';
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
@@ -1607,6 +1612,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
+            tempData["is_sensor_company"] = true;
 
             if (req.body.user_type == "Admin") {
 
@@ -1815,7 +1821,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                         })
                                     }
                                     else{
-                                        user_details.Item["user_type"] = userType ;
+                                        //user_details.Item["user_type"] = userType ;
                                         res.send({
                                             message : "success",
                                             user_details : user_details.Item,
@@ -3114,6 +3120,8 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                         else {
                             if (user_details.Item["is_sensor_company"]) {
                                 // console.log(user_details.Item);
+                                req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                req.body["sensor_brand"] = user_details.Item["sensor_brand"];
                                 request.post({
                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
                                     json: req.body
@@ -3138,6 +3146,42 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                     })
                 }
             })
+        }
+    })
+})
+
+app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllSensorBrands", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllOrganizationsOfSensorBrand", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllteamsOfOrganizationOfSensorBrand", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
         }
     })
 })

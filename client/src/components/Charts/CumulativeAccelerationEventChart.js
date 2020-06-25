@@ -1,5 +1,5 @@
 import React from 'react';
-import {Line} from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import Report from '../ReportContent/Report0';
@@ -31,9 +31,9 @@ const options = {
 class CumulativeAccelerationEventChart extends React.Component {
     constructor(props) {
         super(props);
-        console.log("THIS IS DATA RECEIVED CumulativeAccelerationEventChart",this.props);
+        console.log("THIS IS DATA RECEIVED CumulativeAccelerationEventChart", this.props);
         this.state = {
-            data : {
+            data: {
 
                 labels: this.props.data.angular_accelerations,
                 datasets: [{
@@ -45,41 +45,55 @@ class CumulativeAccelerationEventChart extends React.Component {
                     data: this.props.data.linear_accelerations,
                 }]
             },
-            is_selfie_image_uploaded : props.is_selfie_image_uploaded ,
-            imageUrl : props.imageUrl
+            is_selfie_image_uploaded: props.is_selfie_image_uploaded,
+            imageUrl: props.imageUrl
         };
     }
 
     render() {
         return (
             <React.Fragment>
-            <div className="row" style= {{
-              marginTop : 0,
-              marginBottom : "8px"
-            }}>
-                <div className="col-md-2">
-                  <Link to="/OrganizationAdmin">
-                    <h1 className="top-heading__login player-dashboard-title">Organization</h1>
-                  </Link>
-                </div>
-                <div className="col-md-10 adminDashboardTop" >
-                  <Link to={{
-                      pathname: "/TeamAdmin",
-                      state: {
-                          team: this.props.data.redirection_detail
-                      }
-                     }}>
-                    <h1 className="top-heading__login player-dashboard-title">> York Tech Football > </h1>
-                  </Link>
-                  <h1 style={{paddingLeft : "4px", color : "black"}} className="top-heading__login player-dashboard-title" >{(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name }</h1>
-                </div>
-            </div>
-          <h1 ref="h1" style={{
-                        textAlign: "center",
-                        marginBottom : "2%",
-                        color : "black"
-                    }} className="top-heading__login player-dashboard-title">
-                  Player Dashboard
+                {this.props.data.team ?
+                    <div className="row" style={{
+                        marginTop: 0,
+                        marginBottom: "8px"
+                    }}>
+                        <div className="col-md-12">
+                            <p ref="h1" className="penstate">
+                                <Link style={{ fontWeight: "400" }} to={{
+                                    pathname: "/TeamAdmin",
+                                    state: {
+                                        brand: {
+                                            brand: this.props.data.brand,
+                                            organization: this.props.data.organization,
+                                            user_cognito_id: this.props.data.user_cognito_id
+                                        }
+                                    }
+                                }}>{this.props.data.organization}
+                                </Link> >
+                  <Link style={{ fontWeight: "400" }} to={{
+                                    pathname: "/TeamAdmin/team/players",
+                                    state: {
+                                        team: {
+                                            brand: this.props.data.brand,
+                                            organization: this.props.data.organization,
+                                            team_name: this.props.data.team,
+                                            user_cognito_id: this.props.data.user_cognito_id,
+                                            staff: this.props.data.staff
+                                        }
+                                    }
+                                }}>{this.props.data.team}
+                                </Link> > {(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name}
+                            </p>
+                        </div>
+                    </div>
+                    : null}
+                <h1 ref="h1" style={{
+                    textAlign: "center",
+                    marginBottom: "2%",
+                    color: "black"
+                }} className="top-heading__login player-dashboard-title">
+                    Player Dashboard
                 </h1>
                 <div
                     className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1"
@@ -91,74 +105,73 @@ class CumulativeAccelerationEventChart extends React.Component {
                     <div className="row">
                         <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <p
-                            ref="h1"
-                            className="player-dashboard-sub-head"
-                            >Name : {(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name }</p>
+                                ref="h1"
+                                className="player-dashboard-sub-head"
+                            >Name : {this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name}</p>
                             <p
-                            ref="h1"
-                            className="player-dashboard-sub-head"
-                            >Position : <span style={{color : "black"}}>RB, QB</span></p>
+                                ref="h1"
+                                className="player-dashboard-sub-head"
+                            >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span></p>
                         </div>
                         {
-                            !(this.props.data.player_id && this.props.data.player_id.length > 0)?
-                            <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
+                                <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                     <button style={{
-                                            marginRight : "5% !important",
-                                            paddingLeft : "15%",
-                                            paddingRight : "15%"
-                                        }}
-                                        onClick={()=>{
+                                        marginRight: "5% !important",
+                                        paddingLeft: "15%",
+                                        paddingRight: "15%"
+                                    }}
+                                        onClick={() => {
                                             this.props.history.push('/Profile')
 
                                         }}
 
                                         className="btn btn-primary pull-right sub-head-button">
-                                            Profile
+                                        Profile
                                     </button>
-                            </div>
+                                </div>
 
-                             : null
+                                : null
                         }
 
                     </div>
                 </div>
-            <div
-                className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft"
-                style={{
-                    border: "2px solid #0F81DC",
-                    borderRadius: "1.8rem"
-                }}
+                <div
+                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft"
+                    style={{
+                        border: "2px solid #0F81DC",
+                        borderRadius: "1.8rem"
+                    }}
                 >
-                
-                <div className="row">
-                    <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                        <p
-                        ref="h1"
-                        className="player-dashboard-sub-head"
-                        >Cumulative Overview of All Events</p>
-                    </div>
-                    <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                        <button style={{
-                                marginRight : "5% !important"
+
+                    <div className="row">
+                        <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                            <p
+                                ref="h1"
+                                className="player-dashboard-sub-head"
+                            >Cumulative Overview of All Events</p>
+                        </div>
+                        <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <button style={{
+                                marginRight: "5% !important"
                             }}
-                            className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
-                            <PDFDownloadLink document={<Report {...this.props}/>} className="export-cumulative-player" fileName="report.pdf" style={{
-                              color : 'white'
-                            }}>
-                              Export Player Report
+                                className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
+                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName="report.pdf" style={{
+                                    color: 'white'
+                                }}>
+                                    Export Player Report
                               {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-                            </PDFDownloadLink>
-                          </button>
+                                </PDFDownloadLink>
+                            </button>
+                        </div>
+
                     </div>
 
+                    <ExportPlayerReport />
                 </div>
-
-                <ExportPlayerReport />
-
-                </div>
-                </React.Fragment>
-            )
-        }
+            </React.Fragment>
+        )
     }
+}
 
-    export default withRouter(CumulativeAccelerationEventChart);
+export default withRouter(CumulativeAccelerationEventChart);

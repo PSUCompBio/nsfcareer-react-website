@@ -2,11 +2,11 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import {
-    getAllOrganizationsOfSensorBrand,
+    getAllteamsOfOrganizationOfSensorBrand,
     fetchStaffMembers
 } from '../apis';
 
@@ -15,14 +15,13 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
 
-class OrganizationAdmin extends React.Component {
+class TeamnAdmin extends React.Component {
     constructor() {
         super();
         this.state = {
             tabActive: 0,
             targetBtn: '',
             totalTeam: 0,
-            totalOrganization: 0,
             editTeamClass: '',
             hideEditElement: { display: 'block' },
             isFetching: true,
@@ -30,7 +29,7 @@ class OrganizationAdmin extends React.Component {
             organization: 'PSU',
             buttonSelected: 'overview',
             staffList: [],
-            sensorOrgList: []
+            sensorOrgTeamList: []
         };
     }
     toggleTab = (value) => {
@@ -85,11 +84,11 @@ class OrganizationAdmin extends React.Component {
     componentDidMount() {
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0)
-        getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
-            .then(orgs => {
+        getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+            .then(teams => {
                 this.setState(prevState => ({
-                    totalOrganization: orgs.data.data.length,
-                    sensorOrgList: orgs.data.data
+                    totalTeam: teams.data.data.length,
+                    sensorOrgTeamList: teams.data.data
                 }));
 
                 return fetchStaffMembers({})
@@ -114,7 +113,7 @@ class OrganizationAdmin extends React.Component {
 
     };
 
-    smallCards = (reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+    smallCards = (reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
@@ -122,12 +121,14 @@ class OrganizationAdmin extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/team/players',
                             state: {
-                                brand: {
+                                team: {
                                     brand: brand,
                                     organization: organization,
-                                    user_cognito_id: user_cognito_id
+                                    team_name: team,
+                                    user_cognito_id: user_cognito_id,
+                                    staff : this.state.staffList
                                 }
                             }
                         })
@@ -138,7 +139,7 @@ class OrganizationAdmin extends React.Component {
                     <div style={this.state.hideEditElement}>
                         <div ref={reference[1]} className="football-header ">
                             <p className="teamName mobile-dashboard-card" ref={reference[2]}>
-                                <b>{organization}</b>
+                                <b>{team}</b>
                             </p>
                             
                         </div>
@@ -166,9 +167,9 @@ class OrganizationAdmin extends React.Component {
 
     iterateTeam = () => {
         let inc = 1;
-        var cards = new Array(this.state.totalOrganization);
+        var cards = new Array(this.state.totalTeam);
         let j = 1;
-        for (let i = 0; i < this.state.totalOrganization; i++) {
+        for (let i = 0; i < this.state.totalTeam; i++) {
             cards[i] = this.smallCards(
                 [
                     'smCard' + i,
@@ -180,16 +181,16 @@ class OrganizationAdmin extends React.Component {
                     'h' + inc++
                 ],
                 this.props.location.state.brand.brand,
-                this.state.sensorOrgList[i].organization,
-                this.state.sensorOrgList[i].user_cognito_id,
-                Number(this.state.sensorOrgList[i].simulation_count),
+                this.state.sensorOrgTeamList[i].organization,
+                this.state.sensorOrgTeamList[i].team_name,
+                this.state.sensorOrgTeamList[i].user_cognito_id,
+                Number(this.state.sensorOrgTeamList[i].simulation_count),
                 i
             );
             j++;
         }
-
-        if (this.state.totalOrganization === 0) {
-            return  <div style={{marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center'}}>No Organization added yet.</div>
+        if (this.state.totalTeam === 0) {
+            return  <div style={{marginTop: '80px',marginBottom: '80px', width: '100%', textAlign: 'center'}}>No Team added yet.</div>
         }
 
         return cards;
@@ -231,7 +232,21 @@ class OrganizationAdmin extends React.Component {
                             ''
                         )}
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
-                    <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{color: '#0f81dc', fontSize: '30px'}}>{this.props.location.state.brand.brand}</p>
+                    <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate">
+                        
+                        <Link style={{ fontWeight: "400" }} to={{
+                                        pathname: '/OrganizationAdmin',
+                                        state: {
+                                            brand: {
+                                                brand: this.props.location.state.brand.brand,
+                                                user_cognito_id: this.props.location.state.brand.user_cognito_id
+                                            }
+                                        }
+                                    }} >{this.props.location.state.brand.brand}</Link>
+                                    >
+                        {this.props.location.state.brand.organization}
+                        
+                        </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
@@ -356,4 +371,4 @@ function mapStateToProps(state) {
 export default compose(
     withRouter,
     connect(mapStateToProps)
-)(OrganizationAdmin);
+)(TeamnAdmin);

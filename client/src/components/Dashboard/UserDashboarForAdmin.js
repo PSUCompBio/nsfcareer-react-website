@@ -14,12 +14,7 @@ import './Dashboard.css';
 import {
   getUserDetails,
   isAuthenticated,
-  getCumulativeEventPressureData,
-  getHeadAccelerationEvents,
-  getCumulativeEventLoadData,
   getCumulativeAccelerationData,
-  getCumulativeAccelerationTimeData,
-  getSimulationFilePath,
   getSimulationFilesOfPlayer,
   getAllCumulativeAccelerationTimeRecords
 } from '../../apis';
@@ -139,63 +134,8 @@ class UserDashboarForAdmin extends React.Component {
 </div>
 
         <div className="container dashboard player-top-margin-20-mobile">
-          {/*<PlayerDetails user={this.state.user} />*/}
-          {/*
-          <div className="row p-4 mb-5 player-details animated fadeInDown player-top-margin-20-mobile">
-            <div className="col-md-6 player-name">
-              <p ref="p1">
-                Player Name :
-                <span>
-                  {` ${this.props.location.state.player_name} `}
-                </span>
-              </p>
-              <p ref="p2">
-                Player ID :<span>{this.props.location.state.cognito_user_id}</span>
-              </p>
-            </div>
-            <div className="col-md-4 ">
-                <Form.Group controlId="exampleForm.ControlSelect1">
-                    <Form.Control onChange={this.onDateChange} className="player-date-selection-button"  value={this.state.eventDateValue} as="select">
-                      <option value="-1">Please Select Event Date</option>
-                          {this.state.eventsDate.map(item => (
-
-                              <option key={item} value={item}>{item.split("/")[ 2 ]}</option>
-                            ))}
-                    </Form.Control>
-                  </Form.Group>
-            </div>
-            </div>
-            */}
-
-                {this.state.simulationFilePaths && this.state.simulationFilePaths.length !=0 ?
-                    <div className="row card   player-details">
-                        <div className="col-md-6" width="30%">
-                    <Carousel>
-                        {this.state.simulationFilePaths.map((item, index) => (
-
-                            <div>
-                                <img key={index} src={item} />
-                                <p className="legend">{index}</p>
-                            </div>
-                          ))}
-
-                    </Carousel>
-                    </div>
-                    <div className="col-auto"> ALL IMPACT RELATED INFO HERE</div>
-                    </div>
-
-
-                    : null
-                }
-
-
-
-
-                
-
-          <CumulativeEventsAccelerationEvents  team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeAccelerationTimeData} data={this.state.cumulativeAccelerationEventData}/>
-          {/* <CumulativeEvents  is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} loadData={this.state.cumulativeEventLoadData} data={this.state.cumulativeEventData}/>*/}
-          <p
+          <CumulativeEventsAccelerationEvents  team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData}/>
+            <p
           ref="h1"
           style={{
               paddingLeft : "0px"
@@ -209,24 +149,8 @@ class UserDashboarForAdmin extends React.Component {
               <HeadAccelerationAllEvents key={item} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item}/>
             ))
             }
-
-          {/*<HeadAccelerationEvents is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={this.state.headAccelerationEventsData}/>*/}
-
-          {/*<div className="row text-center pt-5 pb-5 mt-5 mb-5 animated fadeInUp">
-            <div className="col-md-12 goto-top d-flex align-items-center justify-content-center position-relative">
-              <div
-                onClick={this.gotoTop}
-                className=" d-flex align-items-center justify-content-center "
-              >
-                <img src="/img/icon/arrowUp.svg" alt="" />
-              </div>
-              <p>Back to top</p>
-            </div>
-        </div>*/}
         </div>
-        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-
-        <Footer />
+           <Footer />
       </React.Fragment>
     );
   }
@@ -234,86 +158,53 @@ class UserDashboarForAdmin extends React.Component {
       isAuthenticated(JSON.stringify({}))
         .then((value) => {
           if (value.data.message === 'success') {
-              getCumulativeAccelerationTimeData({player_id : this.props.location.state.player_name, team : "York Tech Football" })
+            getCumulativeAccelerationData({user_cognito_id: this.props.location.state.user_cognito_id, organization:this.props.location.state.team.organization, player_id : this.props.location.state.player_name, team : this.props.location.state.team.team_name })
               .then(response => {
                   this.setState({
-                      cumulativeAccelerationTimeData : { ...this.state.cumulativeAccelerationTimeData, ...response.data.data }
+                    cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand : this.props.location.state.team.brand, team : this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization:this.props.location.state.team.organization, staff:this.props.location.state.team.staff, player_id : this.props.location.state.player_name}
                   });
-                    return getCumulativeAccelerationData({player_id : this.props.location.state.player_name, team : "York Tech Football" })
+                  return getAllCumulativeAccelerationTimeRecords({user_cognito_id: this.props.location.state.user_cognito_id, organization:this.props.location.state.team.organization, player_id : this.props.location.state.player_name, team : this.props.location.state.team.team_name })
               })
-              .then(response => {
-
-                  this.setState({
-                      cumulativeAccelerationEventData : { ...this.state.cumulativeAccelerationEventData, ...response.data.data, team : "York Tech Football", redirection_detail : this.props.location.state.team , player_id : this.props.location.state.player_name}
-                  });
-                    return getCumulativeEventPressureData(JSON.stringify({}))
-              })
+             
               .then(response => {
                   console.log(response.data);
                   this.setState({
-                      cumulativeEventData : { ...this.state.cumulativeEventData, ...response.data.data, team : "York Tech Football" }
+                    cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data)
                   });
-                  return getHeadAccelerationEvents({player_id : this.props.location.state.player_name, team : "York Tech Football" })
-              })
-              .then(response => {
-                  console.log("Head aceleration data",response.data);
-                  this.setState({
-                      headAccelerationEventsData : { ...this.state.headAccelerationEventsData, ...response.data.data, team : "York Tech Football" }
-                  });
-                  return getSimulationFilePath({player_id : this.props.location.state.player_name.split(" ").join("-") })
 
-              })
-              .then(response => {
-                  this.setState({
-                        eventsDate: this.state.eventsDate.concat(response.data.data)
-                })
-                return getAllCumulativeAccelerationTimeRecords({player_id : this.props.location.state.player_name, team : "York Tech Football" })
-
-              })
-              .then(response => {
-                 this.setState({
-                        cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data)
-                })
-                    return getCumulativeEventLoadData(JSON.stringify({}))
-              })
-              .then(response => {
-                  console.log("Load event data",response.data);
-                  this.setState({
-                      cumulativeEventLoadData : { ...this.state.cumulativeEventLoadData, ...response.data.data }
-                  });
                   if(!this.props.location.state.isRedirectedFromAdminPanel){
-                      getUserDetails({user_cognito_id : this.props.location.state.cognito_user_id })
-                      .then(response => {
-                          delete response.data.data.is_selfie_image_uploaded;
-                          delete response.data.data.is_selfie_simulation_file_uploaded;
-                          delete response.data.data.is_selfie_model_uploaded;
-                          delete response.data.data.profile_picture_url
-                          delete response.data.data.simulation_file_url
-                          this.setState({
-                            user: response.data.data,
-                            isLoading: false,
-                            isAuthenticated: true,
-                            isCheckingAuth: false
-                          });
-                      })
-                      .catch(err => {
-                          this.setState({
-                            user: {},
-                            isLoading: false,
-                            isCheckingAuth: false
-                          });
-                      })
-                  }
-                  else{
-                      this.setState({
-                        user: response.data.data,
-                        isLoading: false,
-                        isAuthenticated: true,
-                        isCheckingAuth: false
-                      });
-                  }
+                    getUserDetails({user_cognito_id : this.props.location.state.cognito_user_id })
+                    .then(response => {
+                        delete response.data.data.is_selfie_image_uploaded;
+                        delete response.data.data.is_selfie_simulation_file_uploaded;
+                        delete response.data.data.is_selfie_model_uploaded;
+                        delete response.data.data.profile_picture_url
+                        delete response.data.data.simulation_file_url
+                        this.setState({
+                          user: response.data.data,
+                          isLoading: false,
+                          isAuthenticated: true,
+                          isCheckingAuth: false
+                        });
+                    })
+                    .catch(err => {
+                        this.setState({
+                          user: {},
+                          isLoading: false,
+                          isCheckingAuth: false
+                        });
+                    })
+                }
+                else{
+                    this.setState({
+                      user: response.data.data,
+                      isLoading: false,
+                      isAuthenticated: true,
+                      isCheckingAuth: false
+                    });
+                }
               })
-
+          
               .catch((error) => {
 
                 console.log(error);
