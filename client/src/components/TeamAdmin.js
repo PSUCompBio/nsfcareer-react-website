@@ -2,10 +2,12 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
-import { withRouter, Link } from 'react-router-dom';
+import { Redirect, withRouter, Link } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import {
+    isAuthenticated,
+    getUserDetails,
     getAllteamsOfOrganizationOfSensorBrand,
     fetchStaffMembers
 } from '../apis';
@@ -19,6 +21,9 @@ class TeamnAdmin extends React.Component {
     constructor() {
         super();
         this.state = {
+            isAuthenticated: false,
+            isCheckingAuth: true,
+            userDetails: {},
             tabActive: 0,
             targetBtn: '',
             totalTeam: 0,
@@ -84,27 +89,59 @@ class TeamnAdmin extends React.Component {
     componentDidMount() {
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0)
-        getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
-            .then(teams => {
-                this.setState(prevState => ({
-                    totalTeam: teams.data.data.length,
-                    sensorOrgTeamList: teams.data.data
-                }));
+        if (this.props.location.state) {
+            console.log('this.props.location.state', this.props.location.state);
+            if (this.props.location.state.brand.user_cognito_id && this.props.location.state.brand.brand && this.props.location.state.brand.organization) {
+                isAuthenticated(JSON.stringify({}))
+                    .then((value) => {
+                        if (value.data.message === 'success') {
+                            getUserDetails()
+                                .then((response) => {
+                                    this.setState({
+                                        userDetails: response.data.data,
+                                        isAuthenticated: true,
+                                        isCheckingAuth: false
+                                    });
+                                    if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300) {
+                                        getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                                            .then(teams => {
+                                                this.setState(prevState => ({
+                                                    totalTeam: teams.data.data.length,
+                                                    sensorOrgTeamList: teams.data.data
+                                                }));
 
-                return fetchStaffMembers({})
-            })
-            .then(response => {
-                for(var i = 0 ; i < response.data.data.length ; i++){
-                    this.setState(prevState => ({
-                        staffList: [...prevState.staffList, response.data.data[i]],
-                        isFetching: false,
-                    }));
-                }
-            })
-            .catch(err => {
-                alert(err);
-            })
-
+                                                return fetchStaffMembers({})
+                                            })
+                                            .then(response => {
+                                                for (var i = 0; i < response.data.data.length; i++) {
+                                                    this.setState(prevState => ({
+                                                        staffList: [...prevState.staffList, response.data.data[i]]
+                                                    }));
+                                                }
+						this.setState(prevState => ({
+						     isFetching: false
+						}));
+                                            })
+                                            .catch(err => {
+                                                alert(err);
+                                            })
+                                    }
+                                })
+                                .catch((error) => {
+                                    this.setState({
+                                        userDetails: {},
+                                        isCheckingAuth: false
+                                    });
+                                });
+                        } else {
+                            this.setState({ isAuthenticated: false, isCheckingAuth: false});
+                        }
+                    })
+                    .catch((err) => {
+                        this.setState({ isAuthenticated: false, isCheckingAuth: false});
+                    })
+            }
+        }
 
         this.checkIfDarkModeActive();
         if (getStatusOfDarkmode().status) {
@@ -128,7 +165,7 @@ class TeamnAdmin extends React.Component {
                                     organization: organization,
                                     team_name: team,
                                     user_cognito_id: user_cognito_id,
-                                    staff : this.state.staffList
+                                    staff: this.state.staffList
                                 }
                             }
                         })
@@ -141,7 +178,7 @@ class TeamnAdmin extends React.Component {
                             <p className="teamName mobile-dashboard-card" ref={reference[2]}>
                                 <b>{team}</b>
                             </p>
-                            
+
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
@@ -190,11 +227,11 @@ class TeamnAdmin extends React.Component {
             j++;
         }
         if (this.state.totalTeam === 0) {
-            return  <div style={{marginTop: '80px',marginBottom: '80px', width: '100%', textAlign: 'center'}}>No Team added yet.</div>
+            return <div style={{ marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center' }}>No Team added yet.</div>
         }
 
         return cards;
-        
+
     };
 
     retunrnRosterBtn = () => {
@@ -224,7 +261,7 @@ class TeamnAdmin extends React.Component {
         return (
             <React.Fragment>
 
-                <div ref="rosterContainer" className="container t-roster animated zoomIn">
+                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1">
 
                     {this.props.isMilitaryVersionActive ? (
                         <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
@@ -232,20 +269,21 @@ class TeamnAdmin extends React.Component {
                             ''
                         )}
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
-                    <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate">
-                        
-                        <Link style={{ fontWeight: "400" }} to={{
-                                        pathname: '/OrganizationAdmin',
-                                        state: {
-                                            brand: {
-                                                brand: this.props.location.state.brand.brand,
-                                                user_cognito_id: this.props.location.state.brand.user_cognito_id
-                                            }
+                        <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate">
+                            {this.state.userDetails.level !== 300 &&
+                                <Link style={{ fontWeight: "400" }} to={{
+                                    pathname: '/OrganizationAdmin',
+                                    state: {
+                                        brand: {
+                                            brand: this.props.location.state.brand.brand,
+                                            user_cognito_id: this.props.location.state.brand.user_cognito_id
                                         }
-                                    }} >{this.props.location.state.brand.brand}</Link>
-                                    >
+                                    }
+                                }} >{this.props.location.state.brand.brand + ' > ' }</Link>
+                                       
+                            }      
                         {this.props.location.state.brand.organization}
-                        
+
                         </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
@@ -321,7 +359,25 @@ class TeamnAdmin extends React.Component {
     };
 
     render() {
-        console.log(this.props);
+
+        if (!this.props.location.state) {
+            return <Redirect to="/Dashboard" />;
+        } else {
+            if (!this.props.location.state.brand.user_cognito_id && !this.props.location.state.brand.brand && !this.props.location.state.brand.organization) {
+                return <Redirect to="/Dashboard" />;
+            }
+        }
+
+        if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+            return <Redirect to="/Login" />;
+        }
+
+        if (this.state.isAuthenticated && !this.state.isCheckingAuth) {
+            if (this.state.userDetails.level === 200 || this.state.userDetails.level === 100 ) {
+                return <Redirect to="/Dashboard" />;
+            }
+        }
+
         if (this.state.isFetching) {
             return <Spinner />;
         }

@@ -3,17 +3,19 @@ import RostarBtn from './Buttons/RostarBtn';
 import { Redirect, Link, withRouter } from 'react-router-dom'
 
 import Footer from './Footer';
-import PenstateUniversity from './PenstateUniversity';
+//import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
 import DarkMode from './DarkMode';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { UncontrolledAlert } from 'reactstrap';
 import {
+    isAuthenticated,
+    getUserDetails,
     uploadSensorDataAndCompute,
     getTeamAdminData,
-    getImpactHistory,
-    getImpactSummary,
+    // getImpactHistory,
+    // getImpactSummary,
     getPlayersData,
     getSimulationStatusCount
 } from '../apis';
@@ -26,42 +28,45 @@ import 'filepond/dist/filepond.min.css';
 import socketIOClient from 'socket.io-client'
 
 
-import { Bar } from 'react-chartjs-2';
+// import { Bar } from 'react-chartjs-2';
 import Spinner from './Spinner/Spinner';
 
-const impactHistoryBarData = {
-    labels: [],
-    datasets: [
-        {
-            label: 'Impact History',
-            backgroundColor: '#0E7DD6',
-            borderColor: '#084474',
-            hoverBackgroundColor: '#0B5FA2',
-            hoverBorderColor: '#0B5FA2',
-            data: []
-        }
-    ]
-};
+// const impactHistoryBarData = {
+//     labels: [],
+//     datasets: [
+//         {
+//             label: 'Impact History',
+//             backgroundColor: '#0E7DD6',
+//             borderColor: '#084474',
+//             hoverBackgroundColor: '#0B5FA2',
+//             hoverBorderColor: '#0B5FA2',
+//             data: []
+//         }
+//     ]
+// };
 
-const impactSummaryBarData = {
-    labels: [],
-    datasets: [
-        {
-            label: 'Impact Summary',
-            backgroundColor: '#0E7DD6',
-            borderColor: '#084474',
-            hoverBackgroundColor: '#0B5FA2',
-            hoverBorderColor: '#0B5FA2',
-            data: []
-        }
-    ]
-};
+// const impactSummaryBarData = {
+//     labels: [],
+//     datasets: [
+//         {
+//             label: 'Impact Summary',
+//             backgroundColor: '#0E7DD6',
+//             borderColor: '#084474',
+//             hoverBackgroundColor: '#0B5FA2',
+//             hoverBorderColor: '#0B5FA2',
+//             data: []
+//         }
+//     ]
+// };
 
 class CommanderTeamView extends React.Component {
     constructor(props) {
         super(props);
         console.log("IN TEAM VIEW ", this.props.location)
         this.state = {
+            isAuthenticated: false,
+            isCheckingAuth: true,
+            userDetails: {},
             avgLoad: 0.02,
             alerts: 0,
             team: 2,
@@ -221,77 +226,87 @@ class CommanderTeamView extends React.Component {
             })
         });
 
-        getImpactHistory(JSON.stringify({}))
-            .then((impactHistory) => {
-                console.log('History', impactHistory);
-                this.setState({
-                    impactHistoryData: {
-                        ...this.state.impactHistoryData,
-                        ...impactHistory.data.data
-                    }
-                });
-                return getImpactSummary(JSON.stringify({}));
-            })
-            .then((impactSummary) => {
-                console.log('Summary', impactSummary);
-                this.setState({
-                    impactSummaryData: {
-                        ...this.state.impactSummaryData,
-                        ...impactSummary.data.data
-                    }
-                });
+        if (this.props.location.state) {
+            if (this.props.location.state.team.user_cognito_id && this.props.location.state.team.organization && this.props.location.state.team.team_name) {
+                isAuthenticated(JSON.stringify({}))
+                    .then((value) => {
+                        if (value.data.message === 'success') {
+                            getUserDetails()
+                                .then((response) => {
+                                    this.setState({
+                                        userDetails: response.data.data,
+                                        isAuthenticated: true,
+                                        isCheckingAuth: false
+                                    });
+                                    if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300 || response.data.data.level === 200) {
+                                        getPlayersData({
+                                            user_cognito_id: this.props.location.state.team.user_cognito_id,
+                                            organization: this.props.location.state.team.organization,
+                                            team_name: this.props.location.state.team.team_name
+                                        })
+                                            .then(response => {
+                                                console.log(response);
+                                                for (var i = 0; i < response.data.data.length; i++) {
+                                                    this.setState(prevState => ({
+                                                        users: [...prevState.users, response.data.data[i]]
+                                                    }));
+                                                }
+                                                return getSimulationStatusCount({
+                                                    user_cognito_id: this.props.location.state.team.user_cognito_id,
+                                                    organization: this.props.location.state.team.organization,
+                                                    team: this.props.location.state.team.team_name
+                                                })
+                        
+                                            })
+                                            .then(response => {
+                        
+                                                this.setState({
+                                                    simulations_completed: response.data.data.completed,
+                                                    simulation_failed: response.data.data.failed,
+                                                    simulations_pending: response.data.data.pending
+                                                });
+                        
+                                                return getTeamAdminData(JSON.stringify({}));
+                                            })
+                                            .then((response) => {
+                        
+                                                this.setState({
+                                                    adminData: { ...this.state.adminData, ...response.data.data },
+                                                    isLoaded: true
+                                                });
+                        
+                                                if (getStatusOfDarkmode().status === true) {
+                                                    this.refs.rosterContainer.style.background = '#171b25';
+                                                    for (let i = 1; i <= 7; i++) {
+                                                        this.refs['card' + i].style.background = '#232838';
+                                                        if ('card' + i === 'card5' || 'card' + i === 'card7') {
+                                                            this.refs['card' + i].style.border = '1px solid #e8e8e8';
+                                                        }
+                                                    }
+                                                }
+                                            })
+                                            .catch((err) => {
+                                                console.log(err);
+                                            });
+                                    } else {
 
-                return getPlayersData({
-                    user_cognito_id: this.props.location.state.team.user_cognito_id,
-                    organization: this.props.location.state.team.organization,
-                    team_name: this.props.location.state.team.team_name
-                })
-
-            })
-            .then(response => {
-                console.log(response);
-                for (var i = 0; i < response.data.data.length; i++) {
-                    this.setState(prevState => ({
-                        users: [...prevState.users, response.data.data[i]]
-                    }));
-                }
-                return getSimulationStatusCount({
-                    user_cognito_id: this.props.location.state.team.user_cognito_id,
-                    organization: this.props.location.state.team.organization,
-                    team: this.props.location.state.team.team_name
-                })
-
-            })
-            .then(response => {
-
-                this.setState({
-                    simulations_completed: response.data.data.completed,
-                    simulation_failed: response.data.data.failed,
-                    simulations_pending: response.data.data.pending
-                });
-
-                return getTeamAdminData(JSON.stringify({}));
-            })
-            .then((response) => {
-
-                this.setState({
-                    adminData: { ...this.state.adminData, ...response.data.data },
-                    isLoaded: true
-                });
-
-                if (getStatusOfDarkmode().status === true) {
-                    this.refs.rosterContainer.style.background = '#171b25';
-                    for (let i = 1; i <= 7; i++) {
-                        this.refs['card' + i].style.background = '#232838';
-                        if ('card' + i === 'card5' || 'card' + i === 'card7') {
-                            this.refs['card' + i].style.border = '1px solid #e8e8e8';
+                                    }
+                                })
+                                .catch((error) => {
+                                    this.setState({
+                                        userDetails: {},
+                                        isCheckingAuth: false
+                                    });
+                                });
+                        } else {
+                            this.setState({ isAuthenticated: false, isCheckingAuth: false});
                         }
-                    }
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                    })
+                    .catch((err) => {
+                        this.setState({ isAuthenticated: false, isCheckingAuth: false});
+                    })
+            }  
+        }
 
         if (getStatusOfDarkmode().status) {
             document.getElementsByTagName('body')[0].style.background = '#171b25';
@@ -302,13 +317,14 @@ class CommanderTeamView extends React.Component {
         return (
             <div
                 ref="rosterContainer"
-                className="container t-roster pt-5 mt-5 animated zoomIn"
+                className="container t-roster pt-5 mt-5 animated1 zoomIn1"
             >
                 <div className="row" >
                     <div className="col-md-8">
                         <div className="row">
                             <div className="col-md-12">
-                                <p ref="h1" className="penstate">
+                                <p ref="h1" className="penstate" style={{fontSize: '30px'}}>
+                                {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
                                     <Link style={{ fontWeight: "400" }} to={{
                                         pathname: '/OrganizationAdmin',
                                         state: {
@@ -317,8 +333,9 @@ class CommanderTeamView extends React.Component {
                                                 user_cognito_id: this.props.location.state.team.user_cognito_id
                                             }
                                         }
-                                    }} >{this.props.location.state.team.brand}</Link>
-                                         >
+                                    }} >{this.props.location.state.team.brand + ' > '}</Link>
+                                : null}
+                                 {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
                                         <Link style={{ fontWeight: "400" }} to={{
                                         pathname: '/TeamAdmin',
                                         state: {
@@ -328,8 +345,8 @@ class CommanderTeamView extends React.Component {
                                                 user_cognito_id: this.props.location.state.team.user_cognito_id
                                             }
                                         }
-                                    }}>{this.props.location.state.team.organization}</Link>
-                                         >
+                                    }}>{this.props.location.state.team.organization + ' > ' }</Link>
+                                : null}
                                          {this.props.location.state.team.team_name}
                                 </p>
                             </div>
@@ -396,7 +413,7 @@ class CommanderTeamView extends React.Component {
                             width : "100%"
                             }} className="btn btn-primary"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> Upload Data</button>
                             */}
-                        <div class="input-group mb-3 input-group-sm" style={{ marginTop: "1rem" }}>
+                        {/* <div class="input-group mb-3 input-group-sm" style={{ marginTop: "1rem" }}>
 
                             <div class="input-group-prepend">
                                 <input
@@ -461,7 +478,7 @@ class CommanderTeamView extends React.Component {
                                 <Link style={{ fontSize: "1.2rem", weight: "900" }} className="top-heading__login" to={'/Developer'} >Read More Here</Link>
                             </span>
 
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <div className="col-md-12 my-auto">
@@ -624,7 +641,7 @@ class CommanderTeamView extends React.Component {
                                         <tbody className="player-table">
                                             {this.state.users.map(function (player, index) {
                                                 if (player.simulation_data.length > 0) {
-                                                    
+
                                                     return <tr className="player-data-table-row" key={index} onClick={() => {
 
                                                         this.setRedirectData(Number(index + 1).toString(), player.player_name)
@@ -698,14 +715,33 @@ class CommanderTeamView extends React.Component {
     };
 
     render() {
+
+        if (!this.props.location.state) {
+            return <Redirect to="/Dashboard" />;
+        } else {
+            if (!this.props.location.state.team.user_cognito_id && !this.props.location.state.team.organization && !this.props.location.state.team.team_name) {
+                return <Redirect to="/Dashboard" />;
+            }
+        }
+
+        if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+            return <Redirect to="/Login" />;
+        }
+
+        if (this.state.isAuthenticated && !this.state.isCheckingAuth) {
+            if (this.state.userDetails.level === 100 ) {
+                return <Redirect to="/Dashboard" />;
+            }
+        }
+
         if (!this.state.isLoaded) {
             return <Spinner />;
         }
-        impactHistoryBarData.labels = this.state.impactHistoryData.force;
-        impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure;
-        impactSummaryBarData.labels = this.state.impactSummaryData.force;
-        impactSummaryBarData.datasets[0].data = this.state.impactSummaryData.pressure;
-       
+        // impactHistoryBarData.labels = this.state.impactHistoryData.force;
+        // impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure;
+        // impactSummaryBarData.labels = this.state.impactSummaryData.force;
+        // impactSummaryBarData.datasets[0].data = this.state.impactSummaryData.pressure;
+
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
                 pathname: '/TeamAdmin/user/dashboard',

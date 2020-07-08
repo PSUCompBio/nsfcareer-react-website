@@ -96,7 +96,7 @@ class AdminDashboard extends React.Component {
                         userDetails: JSON.parse(localStorage.getItem("state")).userInfo
                     });
 
-                    if (this.state.userDetails.user_type === 'Admin') {
+                    if (this.state.userDetails.level === 1000) {
                         this.setState({
                             isAdmin: true
                         });
@@ -112,17 +112,20 @@ class AdminDashboard extends React.Component {
                         .then(response => {
                             for (var i = 0; i < response.data.data.length; i++) {
                                 this.setState(prevState => ({
-                                    staffList: [...prevState.staffList, response.data.data[i]],
-                                    isFetching: false,
+                                    staffList: [...prevState.staffList, response.data.data[i]]
                                 }));
                             }
+                            this.setState(prevState => ({
+                                isFetching: false
+                            }));
                         })
                         .catch(err => {
                             alert(err);
                         })
                     } else {
                         this.setState({
-                            isAdmin: false
+                            isAdmin: false,
+                            isFetching: false
                         });
                     }
                 } else {
@@ -248,7 +251,7 @@ class AdminDashboard extends React.Component {
         return (
             <React.Fragment>
 
-                <div ref="rosterContainer" className="container t-roster animated zoomIn">
+                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1">
 
                     {this.props.isMilitaryVersionActive ? (
                         <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
@@ -333,10 +336,9 @@ class AdminDashboard extends React.Component {
     render() {
 
         if ((!this.state.isAuthenticated && !this.state.isCheckingAuth) || this.state.isAdmin === false) {
-            return <Redirect to="/Login" />;
+            return <Redirect to="/Dashboard" />;
         }
-        
-
+    
         if (this.state.isFetching) {
             return <Spinner />;
         }

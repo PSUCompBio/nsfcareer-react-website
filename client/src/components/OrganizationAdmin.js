@@ -2,10 +2,12 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
-import { withRouter } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import {
+    isAuthenticated,
+    getUserDetails,
     getAllOrganizationsOfSensorBrand,
     fetchStaffMembers
 } from '../apis';
@@ -19,6 +21,8 @@ class OrganizationAdmin extends React.Component {
     constructor() {
         super();
         this.state = {
+            isAuthenticated: false,
+            isCheckingAuth: true,
             tabActive: 0,
             targetBtn: '',
             totalTeam: 0,
@@ -85,27 +89,60 @@ class OrganizationAdmin extends React.Component {
     componentDidMount() {
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0)
-        getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
-            .then(orgs => {
-                this.setState(prevState => ({
-                    totalOrganization: orgs.data.data.length,
-                    sensorOrgList: orgs.data.data
-                }));
+        console.log('this.props.location.state', this.props.location);
+        if (this.props.location.state) {
+            if (this.props.location.state.brand.user_cognito_id && this.props.location.state.brand.brand) {
+                isAuthenticated(JSON.stringify({}))
+                    .then((value) => {
+                        if (value.data.message === 'success') {
+                            getUserDetails()
+                                .then((response) => {
+                                    this.setState({
+                                        userDetails: response.data.data,
+                                        isAuthenticated: true,
+                                        isCheckingAuth: false
+                                    });
+                                    if (response.data.data.level === 1000 || response.data.data.level === 400) {
+                                        getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+                                            .then(orgs => {
+                                                this.setState(prevState => ({
+                                                    totalOrganization: orgs.data.data.length,
+                                                    sensorOrgList: orgs.data.data
+                                                }));
 
-                return fetchStaffMembers({})
-            })
-            .then(response => {
-                for(var i = 0 ; i < response.data.data.length ; i++){
-                    this.setState(prevState => ({
-                        staffList: [...prevState.staffList, response.data.data[i]],
-                        isFetching: false,
-                    }));
-                }
-            })
-            .catch(err => {
-                alert(err);
-            })
-
+                                                return fetchStaffMembers({})
+                                            })
+                                            .then(response => {
+                                                for(var i = 0 ; i < response.data.data.length ; i++){
+                                                    this.setState(prevState => ({
+                                                        staffList: [...prevState.staffList, response.data.data[i]]
+                                                    }));
+                                                }
+                                                this.setState(prevState => ({
+                                                    isFetching: false
+                                                }));
+                                            })
+                                            .catch(err => {
+                                                alert(err);
+                                            })
+                                    }
+                                })
+                                .catch((error) => {
+                                    this.setState({
+                                        userDetails: {},
+                                        isCheckingAuth: false
+                                    });
+                                });
+                        } else {
+                            this.setState({ isAuthenticated: false, isCheckingAuth: false});
+                        }
+                    })
+                    .catch((err) => {
+                        this.setState({ isAuthenticated: false, isCheckingAuth: false});
+                    })
+                
+            }
+        }
 
         this.checkIfDarkModeActive();
         if (getStatusOfDarkmode().status) {
@@ -223,7 +260,7 @@ class OrganizationAdmin extends React.Component {
         return (
             <React.Fragment>
 
-                <div ref="rosterContainer" className="container t-roster animated zoomIn">
+                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1">
 
                     {this.props.isMilitaryVersionActive ? (
                         <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
@@ -306,7 +343,25 @@ class OrganizationAdmin extends React.Component {
     };
 
     render() {
-        console.log(this.props);
+
+        if (!this.props.location.state) {
+           return <Redirect to="/Dashboard" />;
+        } else {
+            if (!this.props.location.state.brand.user_cognito_id && !this.props.location.state.brand.brand) {
+                return <Redirect to="/Dashboard" />;
+            }
+        }
+
+        if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+            return <Redirect to="/Login" />;
+        }
+
+        if (this.state.isAuthenticated && !this.state.isCheckingAuth) {
+            if (this.state.userDetails.level === 300 && this.state.userDetails.level === 200 || this.state.userDetails.level === 100 ) {
+                return <Redirect to="/Dashboard" />;
+            }
+        }
+        
         if (this.state.isFetching) {
             return <Spinner />;
         }

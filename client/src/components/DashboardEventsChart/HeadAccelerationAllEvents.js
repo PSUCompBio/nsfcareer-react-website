@@ -88,7 +88,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     borderColor: '#1987DD',
                     yAxisID: 'A',
                     fill: false,
-                    data: this.props.data.linear_acceleration['xv'],
+                    data: this.props.data.linear_acceleration['xv'] ? this.props.data.linear_acceleration['xv'] : [],
                 }, {
                     lineTension: 0.1,
                     label: "Y Linear Acceleration",
@@ -96,7 +96,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     borderColor: '#ff0000',
                     yAxisID: 'A',
                     fill: false,
-                    data: this.props.data.linear_acceleration['yv'],
+                    data: this.props.data.linear_acceleration['yv'] ? this.props.data.linear_acceleration['yv'] : [],
                 }, {
                     lineTension: 0.1,
                     label: "Z Linear Acceleration",
@@ -104,7 +104,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     borderColor: '#00c04a',
                     yAxisID: 'A',
                     fill: false,
-                    data: this.props.data.linear_acceleration['zv'],
+                    data: this.props.data.linear_acceleration['zv'] ? this.props.data.linear_acceleration['zv'] : [],
                 }, {
                     lineTension: 0.1,
                     label: "X Angular Acceleration",
@@ -120,7 +120,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     borderColor: '#ff9a00',
                     yAxisID: 'B',
                     fill: false,
-                    data: this.props.data.angular_acceleration['yv'],
+                    data: this.props.data.angular_acceleration['yv'] ? this.props.data.angular_acceleration['yv'] : [],
                 }, {
                     lineTension: 0.1,
                     label: "Z Angular Acceleration",
@@ -128,7 +128,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     borderColor: '#000000',
                     yAxisID: 'B',
                     fill: false,
-                    data: this.props.data.angular_acceleration['zv'],
+                    data: this.props.data.angular_acceleration['zv'] ? this.props.data.angular_acceleration['zv'] : [],
                 }]
 
             },

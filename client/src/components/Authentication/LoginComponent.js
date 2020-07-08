@@ -167,31 +167,45 @@ class Login extends React.Component {
   render() {
 
     if (this.state.isSignInSuccessed) {
-      if (this.state.userDetails.user_type === "Admin") {
-        return <Redirect to="/AdminDashboard" />;
-      } else if (this.state.userDetails.is_sensor_company) {
-        return <Redirect to={{
-          pathname: '/OrganizationAdmin',
-          state: {
-            brand: {
-              brand: this.state.userDetails.sensor,
-              user_cognito_id: this.state.cognito_user_id
-            }
-          }
-        }} />;
-      } else {
-        return <Redirect to={{
-          pathname: '/TeamAdmin/user/dashboard',
-          state: {
-            team: {
-              organization: '',
-              team_name: ''
-            },
-            cognito_user_id: this.state.cognito_user_id,
-            player_name: this.state.name
-          }
-        }} />;
-      }
+
+      return <Redirect to="/Dashboard" />;
+
+      // if (this.state.userDetails.level === 1000) {
+      //   return <Redirect to="/AdminDashboard" />;
+      // } else if (this.state.userDetails.level === 400) {
+      //   return <Redirect to={{
+      //     pathname: '/OrganizationAdmin',
+      //     state: {
+      //       brand: {
+      //         brand: this.state.userDetails.sensor,
+      //         user_cognito_id: this.state.cognito_user_id
+      //       }
+      //     }
+      //   }} />;
+      // } else if (this.state.userDetails.level === 300) {
+      //   return <Redirect to={{
+      //     pathname: '/TeamAdmin',
+      //     state: {
+      //       brand: {
+      //         brand: this.state.userDetails.parents.sensor,
+      //         organization: this.state.userDetails.organization,
+      //         user_cognito_id: this.state.userDetails.parents.user_cognito_id
+      //       }
+      //     }
+      //   }} />;
+      // } else {
+      //   return <Redirect to={{
+      //     pathname: '/TeamAdmin/user/dashboard',
+      //     state: {
+      //       team: {
+      //         organization: '',
+      //         team_name: ''
+      //       },
+      //       cognito_user_id: this.state.cognito_user_id,
+      //       player_name: this.state.name
+      //     }
+      //   }} />;
+      // }
     }
 
     return (

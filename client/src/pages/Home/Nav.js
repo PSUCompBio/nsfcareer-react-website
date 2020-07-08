@@ -159,6 +159,7 @@ class Nav extends React.Component {
   signOut = () => {
     store.dispatch(resetSignedInSucceeded());
     store.dispatch(userDetails({}));
+    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     this.setState({ signOutClass: 'sign-out-hide' });
     this.setState({
         user_details : ''
