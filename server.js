@@ -419,6 +419,7 @@ function createUserDbEntry(event, callback) {
     // adding key with name user_cognito_id
     // deleting the key from parameter from "user_name"
     event["user_cognito_id"] = event.user_name;
+    // event["sensor"] = 'Blackbox Biometrics';
     delete event.user_name;
     dbInsert = {
         TableName: "users",
@@ -882,6 +883,8 @@ function adminCreateUser(User, cb) {
         DesiredDeliveryMediums: [
             "EMAIL",
         ],
+        // MessageAction: 'SUPPRESS',
+        // TemporaryPassword: '12345678', // BrainComputing2020!
         UserAttributes: [
             {
                 Name: 'phone_number', /* required */
@@ -1467,7 +1470,6 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
             ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
             ${computed_time ? `<tr><th>Computed Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
           </table>
-
             ${imageData.movie_link ?
               `<div style="display:flex;">
                 <div style="flex:50%">
@@ -1493,7 +1495,7 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
         }
         else{
             res.send({
-                message : "Simulation is in proceess "
+                message : "Simulation is in process"
             })
         }
     })
@@ -1585,7 +1587,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_inp_uploaded"] = false;
     // Hardcoding Done Here need to be replaced with actual organization in request.
     req.body["organization"] = "PSU";
-    req.body["level"] = '400';
+    req.body["level"] = '100';
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
@@ -1612,7 +1614,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
-            tempData["is_sensor_company"] = true;
+            tempData["level"] = 100;
+            //tempData["is_sensor_company"] = true;
 
             if (req.body.user_type == "Admin") {
 
@@ -3118,10 +3121,10 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                             })
                         }
                         else {
-                            if (user_details.Item["is_sensor_company"]) {
+                            if (user_details.Item["level"] === 400) {
                                 // console.log(user_details.Item);
                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-                                req.body["sensor_brand"] = user_details.Item["sensor_brand"];
+                                req.body["sensor_brand"] = user_details.Item["sensor"];
                                 request.post({
                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
                                     json: req.body
