@@ -1,0 +1,81 @@
+/* Responsive layout  */
+
+.team-admin-page-navigation{
+	margin-top: 6rem;
+}
+.team-admin-page-navigation .nav-p a{
+	color: #000000;
+}
+.team-admin-page-navigation .nav-p{
+	color:#0f81dc;
+	font-size: 30px;
+}
+.UserDashboarForAdmin-page-navigation .penstate{
+	color:#0f81dc;
+	font-size: 30px;
+}
+.UserDashboarForAdmin-page-navigation .penstate a{
+	color: #000000;
+}
+@media screen and (max-width: 1024px){
+	.team-admin-page-navigation{
+		margin-top: 9rem;
+	}
+	.UserDashboarForAdmin-page-navigation{
+		margin-top: 9rem!important;
+	} 
+
+}
+@media screen and (max-width: 800px){
+	.team-admin-page-navigation .nav-p {
+	    font-size: 25px;
+	}
+	.UserDashboarForAdmin-page-navigation .penstate{
+		color:#0f81dc;
+		font-size: 25px;
+	}
+}
+@media screen and (max-width: 600px){
+	.team-admin-page-navigation .nav-p {
+	    font-style: normal;
+	    font-stretch: normal;
+	    line-height: normal;
+	    letter-spacing: inherit;
+	    font-size: 20px;
+	}
+	.team-admin-page-navigation{
+	    margin-top: 8rem;
+	}
+	.UserDashboarForAdmin-page-navigation .penstate{
+		 font-style: normal;
+	    font-stretch: normal;
+	    line-height: normal;
+	    letter-spacing: inherit;
+	    font-size: 20px;
+	}
+	.UserDashboarForAdmin-page-navigation{
+		margin-top: 7rem!important;
+	} 
+}
+@media screen and (max-width: 480px){
+	.team-admin-page-navigation .nav-p {
+	    font-size: 16px;
+	}
+	.team-admin-page-navigation {
+	    margin-top: 7rem!important;
+	}
+	.UserDashboarForAdmin-page-navigation .penstate{
+		font-size: 16px;
+	}
+	.UserDashboarForAdmin-page-navigation {
+	    margin-top: 4rem!important;
+	}
+}
+@media screen and (max-width: 412px){
+	.team-admin-page-navigation {
+	    margin-top: 6rem!important;
+	}
+}
+
+
+/* Responsive end  */

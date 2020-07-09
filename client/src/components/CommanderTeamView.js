@@ -317,42 +317,43 @@ class CommanderTeamView extends React.Component {
         return (
             <div
                 ref="rosterContainer"
-                className="container t-roster pt-5 mt-5 animated1 zoomIn1"
+                className="container t-roster  animated1 zoomIn1 team-admin-page-navigation"
             >
                 <div className="row" >
+                     <div className="col-md-12">
+                        <p ref="h1" className="penstate nav-p" >
+                        {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
+                            <Link style={{ fontWeight: "400" }} to={{
+                                pathname: '/OrganizationAdmin',
+                                state: {
+                                    brand: {
+                                        brand: this.props.location.state.team.brand,
+                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                    }
+                                }
+                            }} >{this.props.location.state.team.brand + ' > '}</Link>
+                        : null}
+                         {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
+                                <Link style={{ fontWeight: "400" }} to={{
+                                pathname: '/TeamAdmin',
+                                state: {
+                                    brand: {
+                                        brand: this.props.location.state.team.brand,
+                                        organization: this.props.location.state.team.organization,
+                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                    }
+                                }
+                            }}>{this.props.location.state.team.organization + ' > ' }</Link>
+                        : null}
+                                 {this.props.location.state.team.team_name}
+                        </p>
+                    </div>
+
                     <div className="col-md-8">
                         <div className="row">
+                           
                             <div className="col-md-12">
-                                <p ref="h1" className="penstate" style={{fontSize: '30px'}}>
-                                {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
-                                    <Link style={{ fontWeight: "400" }} to={{
-                                        pathname: '/OrganizationAdmin',
-                                        state: {
-                                            brand: {
-                                                brand: this.props.location.state.team.brand,
-                                                user_cognito_id: this.props.location.state.team.user_cognito_id
-                                            }
-                                        }
-                                    }} >{this.props.location.state.team.brand + ' > '}</Link>
-                                : null}
-                                 {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
-                                        <Link style={{ fontWeight: "400" }} to={{
-                                        pathname: '/TeamAdmin',
-                                        state: {
-                                            brand: {
-                                                brand: this.props.location.state.team.brand,
-                                                organization: this.props.location.state.team.organization,
-                                                user_cognito_id: this.props.location.state.team.user_cognito_id
-                                            }
-                                        }
-                                    }}>{this.props.location.state.team.organization + ' > ' }</Link>
-                                : null}
-                                         {this.props.location.state.team.team_name}
-                                </p>
-                            </div>
-
-                            <div className="col-md-12">
-                                <div className="col-md-8 d-flex mt-3 justify-content-center align-items-center">
+                                <div className="col-md-8 d-flex mt-3 justify-content-center align-items-center ">
                                     <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
                                         <div
                                             style={{
