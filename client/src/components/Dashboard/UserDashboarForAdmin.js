@@ -50,7 +50,8 @@ class UserDashboarForAdmin extends React.Component {
       eventsDate: [],
       eventDateValue: '-1',
       simulationFilePaths: null,
-      cumulativeAccelerationTimeAllRecords: []
+      cumulativeAccelerationTimeAllRecords: [],
+      frontal_Lobe: []
     };
   }
 
@@ -134,7 +135,7 @@ class UserDashboarForAdmin extends React.Component {
         </div>
 
         <div className="container dashboard player-top-margin-20-mobile">
-          <CumulativeEventsAccelerationEvents team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
+          <CumulativeEventsAccelerationEvents frontal_Lobe={this.state.frontal_Lobe} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
           <p
             ref="h1"
             style={{
@@ -169,7 +170,8 @@ class UserDashboarForAdmin extends React.Component {
             .then(response => {
               console.log(response.data);
               this.setState({
-                cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data)
+                cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
+                frontal_Lobe: response.data.frontal_Lobe
               });
 
               if (!this.props.location.state.isRedirectedFromAdminPanel) {

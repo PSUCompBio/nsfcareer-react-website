@@ -14,17 +14,17 @@ let objects = [];
 let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 let hoveredElement = '';
 
-let frontal_Lobe_json = require('./Cumulative/Frontal_Lobe.json');
-let cerebellum_Lobe_json = require('./Cumulative/Cerebellum_Lobe.json');
-let middle_Part_of_the_Brain_json = require('./Cumulative/Middle_Part_of_the_Brain.json');
-let Occipital_Lobe_json = require('./Cumulative/Occipital_Lobe.json');
-let Pariental_Lobe_json = require('./Cumulative/Pariental_Lobe.json');
-let Temporal_Lobe_json = require('./Cumulative/Temporal_Lobe.json');
-let all_spheres_json = frontal_Lobe_json.concat(Pariental_Lobe_json);
-all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
-all_spheres_json = all_spheres_json.concat(Temporal_Lobe_json);
-all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
-all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
+let frontal_Lobe_json = []; // require('./Cumulative/Frontal_Lobe.json');
+let cerebellum_Lobe_json = []; // require('./Cumulative/Cerebellum_Lobe.json');
+let middle_Part_of_the_Brain_json = []; // require('./Cumulative/Middle_Part_of_the_Brain.json');
+let Occipital_Lobe_json = []; // require('./Cumulative/Occipital_Lobe.json');
+let Pariental_Lobe_json = []; // require('./Cumulative/Pariental_Lobe.json');
+let Temporal_Lobe_json = []; // require('./Cumulative/Temporal_Lobe.json');
+let all_spheres_json = []; // frontal_Lobe_json.concat(Pariental_Lobe_json);
+// all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
+// all_spheres_json = all_spheres_json.concat(Temporal_Lobe_json);
+// all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
+// all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
 
 console.log('Merge: ', all_spheres_json);
 
@@ -669,6 +669,8 @@ class ExportPlayerReport extends React.Component {
   render() {
 	  
 	 let me = this;
+	 frontal_Lobe_json = this.props.frontal_Lobe
+	 all_spheres_json = this.props.frontal_Lobe
 	 
 	 const data = {
 		labels: [857, 1173, 3043, 1173, 1200, 1400],

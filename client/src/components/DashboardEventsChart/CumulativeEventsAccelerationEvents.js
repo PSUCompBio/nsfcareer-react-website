@@ -25,7 +25,7 @@ class CumulativeEventsAccelerationEvents extends React.Component {
     return (
       <div className="row cumm mb-5 ">
         <div className="col-md-12 col-lg-12">
-          <CumulativeAccelerationEventChart user={this.state.user} team={this.state.team} is_selfie_image_uploaded={this.state.is_selfie_image_uploaded}  imageUrl={this.state.imageUrl} data={this.props.data}/>
+          <CumulativeAccelerationEventChart frontal_Lobe={this.props.frontal_Lobe} user={this.state.user} team={this.state.team} is_selfie_image_uploaded={this.state.is_selfie_image_uploaded}  imageUrl={this.state.imageUrl} data={this.props.data}/>
 
         </div>
         {/*

@@ -81,10 +81,13 @@ class Login extends React.Component {
       logInFirstTime(formJsonData)
         .then((response) => {
           if (response.data.message === 'success') {
+            u_details = response.data.user_details;
             this.setState({
               isLoading: false,
               isSignInSuccessed: true
             });
+            store.dispatch(setIsSignedInSucceeded());
+            store.dispatch(userDetails(u_details));
             this.props.isAuthenticated(true);
           } else {
             // show error

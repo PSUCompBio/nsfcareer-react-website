@@ -167,7 +167,7 @@ class CumulativeAccelerationEventChart extends React.Component {
 
                     </div>
 
-                    <ExportPlayerReport />
+                    <ExportPlayerReport frontal_Lobe={this.props.frontal_Lobe} />
                 </div>
             </React.Fragment>
         )
