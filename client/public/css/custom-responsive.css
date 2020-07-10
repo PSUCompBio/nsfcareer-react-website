@@ -1,32 +1,18 @@
 /* Responsive layout  */
-
-.team-admin-page-navigation{
-	margin-top: 6rem;
-}
-.team-admin-page-navigation .nav-p a{
-	color: #000000;
-}
-.team-admin-page-navigation .nav-p{
-	color:#0f81dc;
-	font-size: 30px;
-}
-.UserDashboarForAdmin-page-navigation .penstate{
-	color:#0f81dc;
-	font-size: 30px;
-}
-.UserDashboarForAdmin-page-navigation .penstate a{
-	color: #000000;
-}
 @media screen and (max-width: 1024px){
+	/* Navigation text css  */
 	.team-admin-page-navigation{
 		margin-top: 9rem;
 	}
 	.UserDashboarForAdmin-page-navigation{
 		margin-top: 9rem!important;
 	} 
-
+	/* Navigation text end  */
 }
+
+
 @media screen and (max-width: 800px){
+	/* Navigation text css  */
 	.team-admin-page-navigation .nav-p {
 	    font-size: 25px;
 	}
@@ -34,8 +20,12 @@
 		color:#0f81dc;
 		font-size: 25px;
 	}
+	/* Navigation text end  */
 }
+
+
 @media screen and (max-width: 600px){
+	/* Navigation text css  */
 	.team-admin-page-navigation .nav-p {
 	    font-style: normal;
 	    font-stretch: normal;
@@ -56,8 +46,47 @@
 	.UserDashboarForAdmin-page-navigation{
 		margin-top: 7rem!important;
 	} 
+	/* Navigation text end  */
+
+	/* Player dashboard css  start  */
+	.player-dashboard-user-datials-header {
+	    border: 1px solid rgb(15, 129, 220)!important;
+	    border-radius: 0.8rem!important;
+	    background: #D9D9D9!important;
+	    color: #000000!important;
+	}
+	
+	.player-dashboard-user-datials-header p{
+		text-align: left!important;
+		color: #000000;
+	}
+	.Individual-Head-Acceleration-player-dash-chart canvas{
+		height: 353px!important;
+	}
+	.Individual-Head-Acceleration-player-dash-chart, .Individual-Head-Acceleration-player-dash-image{
+		width: 100%;
+	}
+	.brain_model{
+		width: 50%!important;
+	}
+
+	.action_btn_block .lobe_btn{
+		width: 53px !important;
+		font-size: 9px !important;
+		margin-right: 12px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 2px!important;
+	}
+
+	.action_btn_block #motor_and_sensor_cortex {
+	    width: 38px !important;
+	}
+	/* Player dashboard css  end  */
 }
+
+
 @media screen and (max-width: 480px){
+	/* Navigation text css  */
 	.team-admin-page-navigation .nav-p {
 	    font-size: 16px;
 	}
@@ -70,12 +99,53 @@
 	.UserDashboarForAdmin-page-navigation {
 	    margin-top: 4rem!important;
 	}
+	/* Navigation text end  */
+
+	/* Player dashboard css  start  */
+	.player-dashboard-user-datials-header p {
+	    text-align: left!important;
+	    color: #000000;
+	    font-size: 15px!important;
+	    letter-spacing: 1px;
+	}
+	.head-acc-evnt-chart::after {
+	    line-height: 3.35!important;
+	}
+	.action_btn_block .lobe_btn{
+		width: 40px !important;
+		font-size: 7px !important;
+		margin-right: 12px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 2px!important;
+	}
+
+	.action_btn_block #motor_and_sensor_cortex {
+	    width: 38px !important;
+	}
+	/* Player dashboard css end  */
 }
+
+
 @media screen and (max-width: 412px){
+	/* Navigation text css  */
 	.team-admin-page-navigation {
 	    margin-top: 6rem!important;
 	}
+	.action_btn_block .lobe_btn {
+	    width: 34px !important;
+	    font-size: 7px !important;
+	    margin-right: -1px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 2px!important;
+	}
+	/* Navigation text end  */
 }
 
+
+@media screen and (max-width: 360px){
+	.head-acc-evnt-chart::after {
+	    top: -11%!important;
+	}
+}
 
 /* Responsive end  */

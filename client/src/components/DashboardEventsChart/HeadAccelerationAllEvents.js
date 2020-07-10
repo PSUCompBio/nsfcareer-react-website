@@ -1,11 +1,15 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Line, defaults  } from 'react-chartjs-2';
+
+// defaults.global.maintainAspectRatio = false
 
 const options = {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
+    fill: false,
     legend: {
         display: true,
+        fontSize: 3
     },
     plugins: {
         datalabels: {
@@ -48,7 +52,7 @@ const options = {
 
 const optionsMaxStrain = {
     responsive: true,
-    maintainAspectRatio: true,
+    maintainAspectRatio : false,
     plugins: {
         datalabels: {
             // hide datalabels for all datasets
@@ -81,6 +85,7 @@ class HeadAccelerationAllEvents extends React.Component {
         this.state = {
             data: {
                 labels: this.props.data.time,
+                fill: false, 
                 datasets: [{
                     lineTension: 0.1,
                     label: "X Linear Acceleration",
@@ -159,12 +164,12 @@ class HeadAccelerationAllEvents extends React.Component {
 
 
 
-                        <div className="col-md-8 ">
+                        <div className="Individual-Head-Acceleration-player-dash-chart">
 
                             <Line data={this.state.data} options={options} />
 
                         </div>
-                        <div className="col-md-4 d-flex ">
+                        <div className="Individual-Head-Acceleration-player-dash-image ">
 
                             <div className="col-md-12">
                                 {/*{(this.state.is_selfie_simulation_file_uploaded)?<div><img className={`img fluid ${'svg'}`} src="/img/icon/brainEvnt.svg" alt="" /><img width="60%"  height="60%" className={`img-fluid ${'svg'}`} src={this.state.imageUrl} alt="" /> </div> : <img className={`img fluid ${'svg'}`} width="60%"  height="60%" src="/img/icon/brainEvnt.svg" alt="" />}*/}

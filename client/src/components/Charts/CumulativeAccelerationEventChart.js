@@ -96,12 +96,8 @@ class CumulativeAccelerationEventChart extends React.Component {
                     Player Dashboard
                 </h1>
                 <div
-                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1"
-                    style={{
-                        border: "2px solid #0F81DC",
-                        borderRadius: "1.8rem"
-                    }}>
-
+                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1 player-dashboard-user-datials-header"
+                   >
                     <div className="row">
                         <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                             <p
@@ -111,7 +107,9 @@ class CumulativeAccelerationEventChart extends React.Component {
                             <p
                                 ref="h1"
                                 className="player-dashboard-sub-head"
-                            >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span></p>
+                            >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
+                            Number of impacts :     
+                            </p>
                         </div>
                         {
                             !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
@@ -137,11 +135,8 @@ class CumulativeAccelerationEventChart extends React.Component {
                     </div>
                 </div>
                 <div
-                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft"
-                    style={{
-                        border: "2px solid #0F81DC",
-                        borderRadius: "1.8rem"
-                    }}
+                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft Cumulative-Overview-player-dash"
+                    
                 >
 
                     <div className="row">

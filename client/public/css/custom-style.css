@@ -1,0 +1,55 @@
+/* Navigation text css  */
+
+.team-admin-page-navigation{
+	margin-top: 6rem;
+}
+.team-admin-page-navigation .nav-p a{
+	color: #000000;
+}
+.team-admin-page-navigation .nav-p{
+	color:#0f81dc;
+	font-size: 30px;
+}
+.UserDashboarForAdmin-page-navigation .penstate{
+	color:#0f81dc;
+	font-size: 30px;
+}
+.UserDashboarForAdmin-page-navigation .penstate a{
+	color: #000000;
+}
+
+
+/* Navigation text css  end  */
+
+/* Player dashboard css  start  */
+.player-dashboard-user-datials-header{
+	border: 2px solid rgb(15, 129, 220)!important;
+    border-radius: 1.8rem!important;
+}
+.player-dashboard-user-datials-header p{
+    text-align: left!important;
+}
+.player-dashboard-title{
+	text-decoration: underline;
+}
+.head-acc-evnt-chart::after{
+	    line-height: 2.35!important;
+}
+.Cumulative-Overview-player-dash{
+	border: 2px solid rgb(15, 129, 220)!important;
+    border-radius: 1.8rem!important;
+}
+
+.Cumulative-Overview-player-dash .player-dashboard-sub-head{
+	color: #0f81dc!important;
+}
+.Individual-Head-Acceleration-player-dash{
+	color: #0f81dc!important;
+}
+.Individual-Head-Acceleration-player-dash-chart{
+	width: 65%;
+}
+.Individual-Head-Acceleration-player-dash-image{
+	width: 35%;
+}
+/* Player dashboard css end  */

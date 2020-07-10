@@ -141,7 +141,7 @@ class UserDashboarForAdmin extends React.Component {
             style={{
               paddingLeft: "0px"
             }}
-            className="player-dashboard-sub-head">
+            className="player-dashboard-sub-head Individual-Head-Acceleration-player-dash">
             Individual Head Acceleration Events
           </p>
 
