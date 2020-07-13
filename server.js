@@ -901,8 +901,8 @@ function adminCreateUser(User, cb) {
         DesiredDeliveryMediums: [
             "EMAIL",
         ],
-        // MessageAction: 'SUPPRESS',
-        // TemporaryPassword: '12345678', // BrainComputing2020!
+        //MessageAction: 'SUPPRESS',
+        //TemporaryPassword: '12345678', // BrainComputing2020!
         UserAttributes: [
             {
                 Name: 'phone_number', /* required */
@@ -1486,7 +1486,7 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
             </tr>
             ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
             ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
-            ${computed_time ? `<tr><th>Computed Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
+            ${computed_time ? `<tr><th>Compute Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
           </table>
             ${imageData.movie_link ?
               `<div style="display:flex;">
@@ -1938,12 +1938,27 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
                                     userType = "Admin";
                                 }
                             });
+                            // res.send({
+                            //     message: "success",
+                            //     user_type: userType
+                            // })
                             res.cookie("token", result.getIdToken().getJwtToken());
-                            res.send({
-                                message: "success",
-                                user_type: userType
+                            getUserDbData(data.Username, function(err, user_details){
+                                if(err){
+                                    res.send({
+                                        message : "failure",
+                                        error : err
+                                    })
+                                }
+                                else{
+                                    //user_details.Item["user_type"] = userType ;
+                                    res.send({
+                                        message : "success",
+                                        user_details : user_details.Item,
+                                        user_type: userType
+                                    })
+                                }
                             })
-
                         }
                     });
 
