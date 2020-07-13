@@ -168,28 +168,31 @@ class UserDashboarForAdmin extends React.Component {
             className="player-dashboard-sub-head Individual-Head-Acceleration-player-dash">
             Individual Head Acceleration Events
           </p>
-
-          <div className="col-md-12">
-            <div className="col-md-8">
-                <p>Settings</p>
-                <div className="col-md-6">
-                    <span>Linear Acceleration Unit: </span>
-                    <span>Injury Matrix: </span>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="linear_section">
-                      <button onClick={() => this.handleLinearUnit('gs')} className={this.state.linearUnitGsActive ? 'linear_units active' : 'linear_units'} >Gs</button> 
-                      <button onClick={() => this.handleLinearUnit('ms')} className={this.state.linearUnitMsActive ? 'linear_units active' : 'linear_units'}>m/s2</button>
+          <div className="row">
+            <div className="col-md-12 player-dash-chart-setting">
+              <div className="col-md-12">
+                <h1 className="">Settings</h1>
+              </div>
+              <div className="col-md-8" >
+                  
+                  <div className="col-md-6" style={{'float':'left'}}>
+                      <h4>Linear Acceleration Units: </h4>
+                      <h4>Injury Matric: </h4>
                     </div>
-                    <div className="injury_matrix_section">
-                      <button className="injury_mat active">MPS</button>
-                      <button className="injury_mat">Axonal Strain</button>
-                      <button className="injury_mat">CSDM</button>
+                    <div className="col-md-6"  style={{'float':'left'}}>
+                      <div className="linear_section">
+                        <button onClick={() => this.handleLinearUnit('gs')} className={this.state.linearUnitGsActive ? 'linear_units active settings-buttons settings-buttons-active' : 'linear_units settings-buttons'} >Gs</button> 
+                        <button onClick={() => this.handleLinearUnit('ms')} className={this.state.linearUnitMsActive ? 'linear_units active settings-buttons settings-buttons-active' : 'linear_units settings-buttons'} >m/s<sup>2</sup></button>
+                      </div>
+                      <div className="injury_matrix_section">
+                        <button className="injury_mat active" className="settings-buttons settings-buttons-active">MPS</button>
+                        <button className="injury_mat" className="settings-buttons">Axonal Strain</button>
+                        <button className="injury_mat" className="settings-buttons" >CSDM</button>
+                      </div>
                     </div>
                   </div>
-                </div>
+            </div>
           </div>
-
           {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
 
             <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} />

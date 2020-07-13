@@ -1832,7 +1832,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                             else {
 
 
-                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000, httpOnly: true });
+                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000, httpOnly: true }); 
 
                                 getUserDbData(data.Username, function(err, user_details){
                                     if(err){
