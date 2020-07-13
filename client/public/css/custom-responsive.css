@@ -8,6 +8,17 @@
 		margin-top: 9rem!important;
 	} 
 	/* Navigation text end  */
+
+	.action_btn_block .lobe_btn{
+		width: 51px !important;
+	    font-size: 9px !important;
+	    margin-right: 16px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: -1px!important;
+	}
+	.action_btn_block #motor_and_sensor_cortex {
+	    width: 51px !important;
+	}
 }
 
 
@@ -20,9 +31,37 @@
 		color:#0f81dc;
 		font-size: 25px;
 	}
+
+	.team-admin-page-navigation .nav-p {
+		letter-spacing: 1.53px;
+	}
+
 	/* Navigation text end  */
+
+	.action_btn_block .lobe_btn{
+		width: 40px !important;
+		font-size: 7px !important;
+		margin-right: 5px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 2px!important;
+	}
+	.action_btn_block #motor_and_sensor_cortex {
+	    width: 38px !important;
+	}
 }
 
+@media screen and (max-width: 768px){
+	.action_btn_block .lobe_btn{
+		width: 40px !important;
+		font-size: 7px !important;
+		margin-right: 5px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 2px!important;
+	}
+	.action_btn_block #motor_and_sensor_cortex {
+	    width: 38px !important;
+	}
+}
 
 @media screen and (max-width: 600px){
 	/* Navigation text css  */
@@ -88,7 +127,7 @@
 @media screen and (max-width: 480px){
 	/* Navigation text css  */
 	.team-admin-page-navigation .nav-p {
-	    font-size: 16px;
+	    font-size: 13px;
 	}
 	.team-admin-page-navigation {
 	    margin-top: 7rem!important;
@@ -125,6 +164,15 @@
 	/* Player dashboard css end  */
 }
 
+@media screen and (max-width: 414px){
+	.action_btn_block .lobe_btn {
+	    width: 29px !important;
+	    font-size: 7px !important;
+	    margin-right: 12px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 2px!important;
+	}
+}
 
 @media screen and (max-width: 412px){
 	/* Navigation text css  */
@@ -132,19 +180,42 @@
 	    margin-top: 6rem!important;
 	}
 	.action_btn_block .lobe_btn {
-	    width: 34px !important;
-	    font-size: 7px !important;
-	    margin-right: -1px !important;
+	    width: 40px !important;
+	    font-size: 9px !important;
+	    margin-right: 2px !important;
 	    margin-bottom: 6px !important;
 	    margin-left: 2px!important;
 	}
 	/* Navigation text end  */
 }
-
+@media screen and (max-width: 375px){
+	.action_btn_block .lobe_btn {
+	    width: 34px !important;
+	    font-size: 6px !important;
+	    margin-right: 1px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 0px!important;
+	}
+}
 
 @media screen and (max-width: 360px){
 	.head-acc-evnt-chart::after {
 	    top: -11%!important;
+	}
+	.action_btn_block .lobe_btn {
+	    width: 31px !important;
+	    font-size: 6px !important;
+	    margin-right: 1px !important;
+	    margin-bottom: 6px !important;
+	}
+}
+@media screen and (max-width: 320px){
+	.action_btn_block .lobe_btn {
+	    width: 24px !important;
+	    font-size: 6px !important;
+	    margin-right: 1px !important;
+	    margin-bottom: 6px !important;
+	    margin-left: 0px!important;
 	}
 }
 

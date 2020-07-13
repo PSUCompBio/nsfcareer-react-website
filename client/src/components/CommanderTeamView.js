@@ -322,6 +322,17 @@ class CommanderTeamView extends React.Component {
                 <div className="row" >
                      <div className="col-md-12">
                         <p ref="h1" className="penstate nav-p" >
+                        {this.state.userDetails.level === 1000 ?
+                            <Link style={{ fontWeight: "400" }} to={{
+                                pathname: '/AdminDashboard',
+                                state: {
+                                    brand: {
+                                        brand: this.props.location.state.team.brand,
+                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                    }
+                                }
+                            }} >{'Admin > '}</Link>
+                        : null}
                         {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
                             <Link style={{ fontWeight: "400" }} to={{
                                 pathname: '/OrganizationAdmin',

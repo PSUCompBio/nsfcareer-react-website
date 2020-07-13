@@ -51,6 +51,7 @@ class CumulativeAccelerationEventChart extends React.Component {
     }
 
     render() {
+        console.log('this.state.userDetails',this.state.userDetails)
         return (
             <React.Fragment>
                 {this.props.data.team ?

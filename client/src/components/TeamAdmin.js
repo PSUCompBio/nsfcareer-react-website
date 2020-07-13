@@ -270,6 +270,18 @@ class TeamnAdmin extends React.Component {
                         )}
                     <div className=" row text-center  organization-pad__military team-admin-page-navigation">
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate nav-p">
+                            {this.state.userDetails.level === 1000 &&
+                                <Link style={{ fontWeight: "400" }} to={{
+                                    pathname: '/AdminDashboard',
+                                    state: {
+                                        brand: {
+                                            brand: this.props.location.state.brand.brand,
+                                            user_cognito_id: this.props.location.state.brand.user_cognito_id
+                                        }
+                                    }
+                                }} >{'Admin > ' }</Link>
+                                       
+                            }
                             {this.state.userDetails.level !== 300 &&
                                 <Link style={{ fontWeight: "400" }} to={{
                                     pathname: '/OrganizationAdmin',

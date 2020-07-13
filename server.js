@@ -397,13 +397,31 @@ function getFileSignedUrl(key, cb) {
 
 // Get user details & all his attributes
 function getUser(user_name, cb) {
-
+    console.log('getUser',user_name)
     var params = {
         UserPoolId: cognito.userPoolId,
         /* required */
         Username: user_name /* required */
     };
     COGNITO_CLIENT.adminGetUser(params, function (err, data) {
+        if (err) {
+            cb(err.code, "");
+        } // an error occurred
+        else {
+            cb("", data);
+        } // successful response
+    });
+}
+
+//forgot password
+function forgotPassword(user_name, cb) {
+    console.log('forgotPassword',user_name)
+    var params = {
+        ClientId: cognito.ClientId,
+        /* required */
+        Username: user_name /* required */
+    };
+    COGNITO_CLIENT.forgotPassword(params, function (err, data) {
         if (err) {
             cb(err.code, "");
         } // an error occurred
@@ -1814,7 +1832,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                             else {
 
 
-                                res.cookie("token", result.getIdToken().getJwtToken());
+                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000, httpOnly: true });
 
                                 getUserDbData(data.Username, function(err, user_details){
                                     if(err){
@@ -1841,7 +1859,41 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
     })
 })
 
+/* Forget password function start */
+
+app.post(`${apiPrefix}forgotPassword`, (req, res) => {
+    console.log("Log In API Called!",req.body);
+    getUser(req.body.user_name, function (err, data) {
+        if (err) {
+            console.log(err);
+
+            res.send({
+                message: "failure",
+                error: 'Incorrect username'
+            });
+        } else {
+            forgotPassword(req.body.user_name, function (err, data) {
+                console.log('res',err,data)
+                if (err) {
+                    res.send({
+                        message: "failure",
+                        error: err
+                    });
+                }else{
+                    res.send({
+                        message: "success",
+                        error: data
+                    });
+                }
+           });
+        }
+    });
+});
+
+/* Forget password function end */
+
 app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
+    console.log('checking isAuthenticated' )
     if(req.user_cognito_id){
         res.send({
             message : "success",

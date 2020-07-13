@@ -2,7 +2,7 @@ import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
-import { Redirect, withRouter } from 'react-router-dom';
+import { Redirect, withRouter, Link } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import {
@@ -175,6 +175,7 @@ class OrganizationAdmin extends React.Component {
                     <div style={this.state.hideEditElement}>
                         <div ref={reference[1]} className="football-header ">
                             <p className="teamName mobile-dashboard-card" ref={reference[2]}>
+                           
                                 <b>{organization}</b>
                             </p>
                             
@@ -267,8 +268,23 @@ class OrganizationAdmin extends React.Component {
                     ) : (
                             ''
                         )}
-                    <div className="organization-admin-pt-8 row text-center  organization-pad__military">
-                    <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{color: '#0f81dc', fontSize: '30px'}}>{this.props.location.state.brand.brand}</p>
+                    <div className="organization-admin-pt-8 row text-center     team-admin-page-navigation  organization-pad__military">
+                    <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate nav-p" >
+                        {this.state.userDetails.level === 1000 &&
+                            <Link style={{ fontWeight: "400" }} to={{
+                                pathname: '/AdminDashboard',
+                                state: {
+                                    brand: {
+                                        brand: this.props.location.state.brand.brand,
+                                        user_cognito_id: this.props.location.state.brand.user_cognito_id
+                                    }
+                                }
+                            }} >{'Admin > ' }</Link>
+                                   
+                        }
+                        {this.props.location.state.brand.brand}
+
+                    </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
