@@ -1832,7 +1832,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                             else {
 
 
-                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000, httpOnly: true }); 
+                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
 
                                 getUserDbData(data.Username, function(err, user_details){
                                     if(err){
@@ -1942,7 +1942,7 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
                             //     message: "success",
                             //     user_type: userType
                             // })
-                            res.cookie("token", result.getIdToken().getJwtToken());
+                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
                             getUserDbData(data.Username, function(err, user_details){
                                 if(err){
                                     res.send({
