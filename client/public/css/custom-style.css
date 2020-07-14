@@ -43,6 +43,9 @@
 .Cumulative-Overview-player-dash .player-dashboard-sub-head{
 	color: #0f81dc!important;
 }
+..player-dashboard-sub-head {
+	font-weight: 900;
+}
 .Individual-Head-Acceleration-player-dash{
 	color: #0f81dc!important;
 }
@@ -56,6 +59,8 @@
 	text-align: center;
 	color: #313030;
 	font-weight: 800;
+	font-size: 30px;
+    padding-bottom: 12px;
 }
 .player-dash-chart-setting{
 	padding: 20px 0px 20px;
@@ -73,11 +78,83 @@ button.settings-buttons {
 }
 .player-dash-chart-setting h4{
 	font-weight: 400;
-	float: right;
+	text-align:  right;
 }
 .settings-buttons-active{
 	background: #FFD966!important;
     color: black!important;
 }
+.Individual-Head-Acceleration-player-dash-image button{
+	padding: 4px 33px;
+    font-size: 18px;
+    background: #2d549a;
+}
+
 /* Player dashboard css end  */
+
+/* Brain simulation details page css start*/
+
+.brain-simlation-details .brain-simlation-details-title{
+	text-align: center;
+    color: black;
+    text-decoration: underline;
+    padding: 20px;
+}	
+.brain-simlation-details .brain-simlation-details-subtitle{
+	text-align: center;
+    color: #0f81dc;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+.brain-simlation-details .user-simlation-details{
+	border: 2px solid gray;
+    border-radius: 3px;
+    padding: 13px;
+}
+
+.brain-simlation-details .user-simlation-details p{
+	font-weight: 700;
+    font-size: 20px;
+}
+.brain-simlation-details-graph, .brain-simlation-details-movie{
+	margin-top: 36px;
+}
+.brain-simlation-details-graph p{
+	text-align: center;
+    font-size: 21px;
+    font-weight: 600;
+}
+.brain-simlation-details-movie .movie{
+	width: 80%;
+    text-align: center;
+    padding: 40px;
+    margin: auto;
+}
+.brain-simlation-details-metrics .metrics{
+	margin: auto;
+    width: 50%;
+    text-align: center;
+    margin-top: 26px;
+}
+.brain-simlation-details-metrics .gray{
+	   background: gray;
+    margin-top: 10px;
+        margin-left: 8px;
+    margin-right: 8px;
+    border: 1px solid #084372;
+}
+.metrics button{
+	    padding: 4px 17px;
+}
+.backbutton{
+	position: absolute;
+    width: 150px;
+    margin-top: 42px;
+    background: #8080808c;
+    padding: 11px;
+    color: #0f81dc!important;
+    font-weight: 800;
+}
+
+/* Brain simulation details page css end*/
 

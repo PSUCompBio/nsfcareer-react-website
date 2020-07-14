@@ -173,24 +173,31 @@ class UserDashboarForAdmin extends React.Component {
               <div className="col-md-12">
                 <h1 className="">Settings</h1>
               </div>
-              <div className="col-md-8" >
-                  
-                  <div className="col-md-6" style={{'float':'left'}}>
-                      <h4>Linear Acceleration Units: </h4>
-                      <h4>Injury Matric: </h4>
-                    </div>
-                    <div className="col-md-6"  style={{'float':'left'}}>
-                      <div className="linear_section">
-                        <button onClick={() => this.handleLinearUnit('gs')} className={this.state.linearUnitGsActive ? 'linear_units active settings-buttons settings-buttons-active' : 'linear_units settings-buttons'} >Gs</button> 
-                        <button onClick={() => this.handleLinearUnit('ms')} className={this.state.linearUnitMsActive ? 'linear_units active settings-buttons settings-buttons-active' : 'linear_units settings-buttons'} >m/s<sup>2</sup></button>
+              <div className="col-md-12" >
+                    <div className="col-md-12" style={{'float':'left'}}>
+                      <div className="col-md-4" style={{'float':'left'}}>
+                        <h4>Linear Acceleration Units: </h4>
                       </div>
-                      <div className="injury_matrix_section">
-                        <button className="injury_mat active" className="settings-buttons settings-buttons-active">MPS</button>
-                        <button className="injury_mat" className="settings-buttons">Axonal Strain</button>
-                        <button className="injury_mat" className="settings-buttons" >CSDM</button>
+                      <div className="col-md-8"  style={{'float':'left'}}>
+                        <div className="linear_section">
+                          <button onClick={() => this.handleLinearUnit('gs')} className={this.state.linearUnitGsActive ? 'linear_units active settings-buttons settings-buttons-active' : 'linear_units settings-buttons'} >Gs</button> 
+                          <button onClick={() => this.handleLinearUnit('ms')} className={this.state.linearUnitMsActive ? 'linear_units active settings-buttons settings-buttons-active' : 'linear_units settings-buttons'} >m/s<sup>2</sup></button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                    <div className="col-md-12" style={{'float':'left'}}>
+                      <div className="col-md-4" style={{'float':'left'}}>
+                        <h4>Injury Metric: </h4>
+                      </div>
+                      <div className="col-md-8"  style={{'float':'left'}}>
+                        <div className="injury_matrix_section">
+                          <button className="injury_mat active" className="settings-buttons settings-buttons-active">MPS</button>
+                          <button className="injury_mat" className="settings-buttons">Axonal Strain</button>
+                          <button className="injury_mat" className="settings-buttons" >CSDM</button>
+                        </div>
+                      </div>
+                    </div>
+                </div>
             </div>
           </div>
           {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (

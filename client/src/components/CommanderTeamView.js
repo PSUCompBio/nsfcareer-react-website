@@ -314,6 +314,7 @@ class CommanderTeamView extends React.Component {
     }
 
     militaryVersionOrNormal = () => {
+        console.log('users',this.state.users)
         return (
             <div
                 ref="rosterContainer"
@@ -642,12 +643,12 @@ class CommanderTeamView extends React.Component {
                                         <thead>
                                             <tr>
 
-                                                <th scope="col">#</th>
+                                                <th scope="col">Player ID</th>
                                                 <th scope="col">Player Name</th>
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
-                                                <th scope="col">Cumulative Simulation Overview</th>
+                                                <th scope="col">Impact Date</th>
                                             </tr>
                                         </thead>
                                         <tbody className="player-table">
@@ -659,7 +660,7 @@ class CommanderTeamView extends React.Component {
                                                         this.setRedirectData(Number(index + 1).toString(), player.player_name)
                                                     }}
                                                     >
-                                                        <th style={{ verticalAlign: "middle" }} scope="row">{index + 1}</th>
+                                                        <th style={{ verticalAlign: "middle" }} scope="row">{player.simulation_data[0].player_id}</th>
                                                         <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
                                                         {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
@@ -667,9 +668,7 @@ class CommanderTeamView extends React.Component {
 
                                                         {/*<td>{Number(player.impact)}</td>*/}
                                                         <td style={{ alignItems: "center" }}>
-                                                            <img style={{
-                                                                display: "block", width: "15%", height: "auto", objectFit: "cover"
-                                                            }} className={`img-fluid team-view-brain-image-row-picture`} src={'data:image/png;base64,' + player.simulation_image} alt="" /></td>
+                                                            {player.simulation_data[0].date} </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
                                                                                 <td>

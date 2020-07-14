@@ -1,5 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
+import { Link } from 'react-router-dom';
 
 const options = {
     responsive: true,
@@ -149,7 +150,9 @@ class HeadAccelerationAllEvents extends React.Component {
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-image ">
                             <div className="col-md-12">
-                                <div><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.props.data.simulation_image ? 'data:image/png;base64,' + this.props.data.simulation_image : '/img/icon/brainEvnt.svg'} alt="" />
+                                <div>
+                                    <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.props.data.simulation_image ? 'data:image/png;base64,' + this.props.data.simulation_image : '/img/icon/brainEvnt.svg'} alt="" />
+                                    <Link to="/TeamAdmin/user/dashboard/brainsimulationDetails"><button className="btn btn-primary ">View Details</button></Link>
                                 </div>
                             </div>
                         </div>

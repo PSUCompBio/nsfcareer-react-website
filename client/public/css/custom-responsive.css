@@ -48,6 +48,14 @@
 	.action_btn_block #motor_and_sensor_cortex {
 	    width: 38px !important;
 	}
+
+	.player-dash-chart-setting h4{
+		font-weight: 400;
+		text-align: left;
+	}
+	.backbutton{
+		margin-top: 19px;
+	}
 }
 
 @media screen and (max-width: 768px){
@@ -121,6 +129,13 @@
 	    width: 38px !important;
 	}
 	/* Player dashboard css  end  */
+
+	.backbutton {
+    	position: unset;
+	}
+	.brain-simlation-details-metrics .metrics {
+		width: 100%;
+	}
 }
 
 
@@ -172,6 +187,15 @@
 	    margin-bottom: 6px !important;
 	    margin-left: 2px!important;
 	}
+	.player-dash-chart-setting h4 {
+	    font-weight: 400;
+	    text-align: left;
+	    font-size: 18px;
+	}
+	button.settings-buttons {
+	    padding: 2px 13px 2px;
+	    font-size: 15px;
+	}
 }
 
 @media screen and (max-width: 412px){
@@ -207,6 +231,16 @@
 	    font-size: 6px !important;
 	    margin-right: 1px !important;
 	    margin-bottom: 6px !important;
+	}
+	.player-dash-chart-setting h4 {
+		font-size: 16px;
+
+	}
+	.button.settings-buttons{
+		padding: 2px 11px 2px;
+	    margin-left: 3px;
+	    margin-top: 4px;
+	    font-size: 14px;
 	}
 }
 @media screen and (max-width: 320px){
