@@ -1459,12 +1459,6 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
       return verifyImageToken(token, imageData);
     })
     .then(decoded_token => {
-      return getPresignedMovieUrl(imageData);
-    })
-    .then(movie_link => {
-        if(movie_link) {
-          imageData["movie_link"] = movie_link;
-        }
         return getImageFromS3(imageData);
     })
     .then(image_s3 => {
@@ -1488,19 +1482,11 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
             ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
             ${computed_time ? `<tr><th>Compute Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
           </table>
-            ${imageData.movie_link ?
-              `<div style="display:flex;">
+            <div style="display:flex;">
                 <div style="flex:50%">
                   <img style="transform : scale(0.5);transform-origin: top center" src="data:image/png;base64,${image}"/>
                 </div>
-                <div style="flex:50%">
-                  <video src=${imageData.movie_link} style="width:100%;" controls>
-                  </video>
-                </div>
-              </div>`
-              :
-              `<img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`
-            }
+              </div>
           </div>`);
     })
     .catch(err => {
@@ -1517,6 +1503,66 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
             })
         }
     })
+
+});
+
+// Get simulation movie link
+app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
+    const { image_id, token} = req.params;
+    let imageData = '';
+
+    getSimulationImageRecord(image_id)
+        .then(image_data => {
+            imageData = image_data;
+            return verifyImageToken(token, image_data);
+        })
+        .then(decoded_token => {
+            return getPlayerCgValues(imageData.player_name);
+        })
+        .then(cg_coordinates => {
+            // Setting cg values
+            if(cg_coordinates) {
+              imageData["cg_coordinates"] = cg_coordinates;
+            }
+            return getPresignedMovieUrl(imageData);
+        })
+        .then(movie_link => {
+            let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+            res.send(`<table style="text-align:left;">
+            <tr>
+              <th>Image Id</th>
+              <th>:</th>
+              <td>${image_id}</td>
+            </tr>
+            <tr>
+              <th>Player Id</th>
+              <th>:</th>
+              <td>${imageData.player_name}</td>
+            </tr>
+            ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
+            ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
+            ${computed_time ? `<tr><th>Compute Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
+          </table>
+            <div style="display:flex;">
+                <video src=${movie_link} style="width:100%;" controls></video>
+            </div>
+          </div>`);
+        })
+        .catch(err => {
+            console.log(err);
+            // res.removeHeader('X-Frame-Options');
+            if("authorized" in err){
+                res.send({
+                    message : "failure",
+                    error : "You are not authorized to access this resource."
+                })
+            }
+            else{
+                res.send({
+                    message : "Simulation is in process"
+                })
+            }
+        })
 
 });
 
