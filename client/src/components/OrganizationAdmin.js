@@ -109,15 +109,17 @@ class OrganizationAdmin extends React.Component {
                                                     totalOrganization: orgs.data.data.length,
                                                     sensorOrgList: orgs.data.data
                                                 }));
-
-                                                return fetchStaffMembers({})
+                                                console.log('user_cognito_id',this.props.location.state.brand.user_cognito_id,this.props.location.state.brand.brand)
+                                                return fetchStaffMembers({user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand})
                                             })
                                             .then(response => {
-                                                for(var i = 0 ; i < response.data.data.length ; i++){
+                                                console.log('fetchStaffMembers',response)
+                                                // for(var i = 0 ; i < response.data.data.length ; i++){
                                                     this.setState(prevState => ({
-                                                        staffList: [...prevState.staffList, response.data.data[i]]
+                                                        staffList: [...prevState.staffList, response.data.data]
                                                     }));
-                                                }
+                                                // }
+                                                console.log(this.state.staffList)
                                                 this.setState(prevState => ({
                                                     isFetching: false
                                                 }));

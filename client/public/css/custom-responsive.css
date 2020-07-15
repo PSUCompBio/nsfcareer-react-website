@@ -196,6 +196,9 @@
 	    padding: 2px 13px 2px;
 	    font-size: 15px;
 	}
+	.bran-smiulation-dash-chart canvas {
+		height: 322px;
+	}
 }
 
 @media screen and (max-width: 412px){

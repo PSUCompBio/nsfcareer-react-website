@@ -1143,32 +1143,42 @@ const fetchNumbers = () => {
     })
 }
 
-const fetchStaffMembers = () => {
+const fetchStaffMembers = (user_cognito_id,brand) => {
     return new Promise(function (resolve, reject) {
         var params = {
             TableName: 'users',
-            FilterExpression: "#role = :role",
-            ExpressionAttributeNames : {
-                "#role" : "role"
-            },
-            ExpressionAttributeValues: {
-                ":role": "staff"
+             Key: {
+                "user_cognito_id": user_cognito_id
             }
+           
         };
         //   var items
         var items = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(utility.concatArrays(items));
-            } else {
-                items.push(data.Items);
-            }
-            done();
-        });
-    })
+        
+          docClient.get(params, function (err, data) {
+              if (err) {
+                  reject(err)
+
+              } else {
+                console.log('cg data is ',data);
+                resolve(data.Item);
+              }
+          });
+      })
+        // docClient.get(params).eachPage((err, data, done) => {
+        //     console.log('data',data)
+        //     if (err) {
+        //         reject(err);
+        //     }
+        //     if (data != null) {
+        //         console.log('items',data)
+        //         resolve(utility.concatArrays(data));
+        //     } else {
+        //         // items.push(data.Items);
+        //     }
+        //     done();
+        // });
+   
 }
 
 const fetchAllUsers = () => {
@@ -2050,11 +2060,12 @@ app.post(`${apiPrefix}disableUser`, (req, res) => {
 })
 
 app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
-    fetchStaffMembers()
-    .then(list => {
+    console.log('fetchStaffMembers',req.body)
+    fetchStaffMembers(req.body.user_cognito_id,req.body.brand)
+    .then(data => {
         res.send({
             message : "success",
-            data : list
+            data : data
         })
     })
     .catch(err => {

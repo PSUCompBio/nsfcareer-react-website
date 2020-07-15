@@ -109,6 +109,7 @@ class UserDashboarForAdmin extends React.Component {
   }
 
   render() {
+    console.log('this.props.location.state',this.props.location.state)
     const isLoaded = this.state.user;
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
@@ -202,7 +203,7 @@ class UserDashboarForAdmin extends React.Component {
           </div>
           {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
 
-            <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} />
+            <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} state={this.props.location.state}/>
           ))
           }
         </div>

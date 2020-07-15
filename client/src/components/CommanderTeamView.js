@@ -660,7 +660,11 @@ class CommanderTeamView extends React.Component {
                                                         this.setRedirectData(Number(index + 1).toString(), player.player_name)
                                                     }}
                                                     >
-                                                        <th style={{ verticalAlign: "middle" }} scope="row">{player.simulation_data[0].player_id}</th>
+                                                        <th style={{ verticalAlign: "middle" }} scope="row">
+                                                        { player.simulation_data[0].player_id.split('$').pop()
+
+
+                                                        }</th>
                                                         <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
                                                         {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}

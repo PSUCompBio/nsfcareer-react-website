@@ -110,14 +110,15 @@ class TeamnAdmin extends React.Component {
                                                     sensorOrgTeamList: teams.data.data
                                                 }));
 
-                                                return fetchStaffMembers({})
+                                                return fetchStaffMembers({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
                                             })
                                             .then(response => {
-                                                for (var i = 0; i < response.data.data.length; i++) {
+                                                console.log('fetchStaffMembers',response)
+                                                // for (var i = 0; i < response.data.data.length; i++) {
                                                     this.setState(prevState => ({
-                                                        staffList: [...prevState.staffList, response.data.data[i]]
+                                                        staffList: [...prevState.staffList, response.data.data]
                                                     }));
-                                                }
+                                                // }
 						this.setState(prevState => ({
 						     isFetching: false
 						}));
