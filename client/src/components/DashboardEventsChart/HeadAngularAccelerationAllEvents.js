@@ -119,7 +119,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
         return (
             <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
                 <div className="bran-smiulation-dash-chart">
-                    <Line data={this.state.data} options={options} redraw={true} />
+                    <Line id="goodCanvas1" data={this.state.data} options={options} redraw={true} />
                 </div>
             </div>
               

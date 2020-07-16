@@ -15,10 +15,12 @@ import '../../Buttons/Buttons.css';
 import '.././Dashboard.css';
 import {
   getUserDetails,
+  getUserDBDetails,
   isAuthenticated,
   getCumulativeAccelerationData,
   getSimulationFilesOfPlayer,
-  getAllCumulativeAccelerationTimeRecords
+  getAllCumulativeAccelerationTimeRecords,
+  getBrainSimulationMovie
 } from '../../../apis';
 
 import { Form } from 'react-bootstrap';
@@ -48,6 +50,7 @@ class BrainSimulationDetails extends React.Component {
       linearUnitGsActive: true,
       linearUnitMsActive: false,
       cumulativeEventData: {},
+      movie_link: ''
  
     };
   }
@@ -161,7 +164,9 @@ class BrainSimulationDetails extends React.Component {
                     <h4 className="brain-simlation-details-subtitle">Skull Kinematics Movie Based on Sensor Data</h4>
                     <div className="col-md-12">
                       <div className="movie">
-                        -----Movie----
+                       {this.state.movie_link &&
+                        <video src={this.state.movie_link} style={{'width':'100%'}} controls></video>
+                       }
                       </div>
                     </div>
                   </div>
@@ -197,15 +202,27 @@ class BrainSimulationDetails extends React.Component {
   componentDidMount() {
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
+        
           if (value.data.message === 'success') {
-            getUserDetails()
+            getUserDBDetails()
               .then((response) => {
                   this.setState({
                       user: true,
                       userDetails: response.data.data,
-                      isAuthenticated: true,
-                      isCheckingAuth: false
-                  });
+                  })
+                  getBrainSimulationMovie(this.props.location.state.data.sensor_data.image_id).then((response) => {
+                  console.log('movie_link',response)
+                    this.setState({
+                        movie_link:response.data.movie_link,
+                        isAuthenticated: true,
+                        isCheckingAuth: false
+                    });
+                  }).catch((error) => {
+                    this.setState({
+                        userDetails: {},
+                        isCheckingAuth: false
+                    });
+                });
               }).catch((error) => {
                   this.setState({
                       userDetails: {},

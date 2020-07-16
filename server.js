@@ -1576,6 +1576,50 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
 
 });
 
+//Getting brain simulation details page video
+app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
+    const { image_id } = req.params;
+    let imageData = '';
+    getSimulationImageRecord(image_id)
+        .then(image_data => {
+            imageData = image_data;
+            return verifyImageToken(imageData['token'], image_data);
+        })
+        .then(decoded_token => {
+            return getPlayerCgValues(imageData.player_name);
+        })
+        .then(cg_coordinates => {
+            // Setting cg values
+            if(cg_coordinates) {
+              imageData["cg_coordinates"] = cg_coordinates;
+            }
+            return getPresignedMovieUrl(imageData);
+        })
+        .then(movie_link => {
+            // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+            console.log('movie_link',movie_link);
+            res.send({
+                message : "success",
+                movie_link : movie_link
+            })
+            
+        })
+        .catch(err => {
+            console.log(err);
+            // res.removeHeader('X-Frame-Options');
+            if("authorized" in err){
+                res.send({
+                    message : "failure",
+                    error : "You are not authorized to access this resource."
+                })
+            }
+            else{
+                res.send({
+                    message : "Simulation is in process"
+                })
+            }
+        })
+});
 
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
@@ -2075,7 +2119,31 @@ app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
             data : []
         })
     })
-})
+});
+
+//getting only user db details
+app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
+    // If request comes to get detail of specific player
+    console.log(req.body);
+    if(req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
+    }
+    getUserDbData(req.user_cognito_id, function (err, data) {
+        if (err) {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }
+        else {
+            userData = data.Item;
+            res.send({
+                message: "success",
+                data: userData
+            });
+        }
+    });
+});
 
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player

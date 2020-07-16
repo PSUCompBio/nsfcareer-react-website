@@ -12,6 +12,7 @@ import { UncontrolledAlert } from 'reactstrap';
 import {
     isAuthenticated,
     getUserDetails,
+    getUserDBDetails,
     uploadSensorDataAndCompute,
     getTeamAdminData,
     // getImpactHistory,
@@ -231,7 +232,7 @@ class CommanderTeamView extends React.Component {
                 isAuthenticated(JSON.stringify({}))
                     .then((value) => {
                         if (value.data.message === 'success') {
-                            getUserDetails()
+                            getUserDBDetails()
                                 .then((response) => {
                                     this.setState({
                                         userDetails: response.data.data,
@@ -648,7 +649,7 @@ class CommanderTeamView extends React.Component {
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
-                                                <th scope="col">Impact Date</th>
+                                                <th scope="col">Impact Date & Time</th>
                                             </tr>
                                         </thead>
                                         <tbody className="player-table">
@@ -661,7 +662,7 @@ class CommanderTeamView extends React.Component {
                                                     }}
                                                     >
                                                         <th style={{ verticalAlign: "middle" }} scope="row">
-                                                        { player.simulation_data[0].player_id.split('$').pop()
+                                                        { player.simulation_data[0].player_id.split('$')[0]
 
 
                                                         }</th>
@@ -672,7 +673,7 @@ class CommanderTeamView extends React.Component {
 
                                                         {/*<td>{Number(player.impact)}</td>*/}
                                                         <td style={{ alignItems: "center" }}>
-                                                            {player.simulation_data[0].date} </td>
+                                                            {player.simulation_data[0]['impact-date']} {player.simulation_data[0]['date']} {player.simulation_data[0]['impact-time']}</td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
                                                                                 <td>
@@ -701,8 +702,9 @@ class CommanderTeamView extends React.Component {
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Name</th>
+                                                 <th scope="col">Email</th>
                                                 <th scope="col">Organization</th>
-                                                <th scope="col">Department</th>
+                                                
                                             </tr>
                                         </thead>
                                         <tbody className="player-table">
@@ -711,8 +713,8 @@ class CommanderTeamView extends React.Component {
                                                 return <tr className="player-data-table-row" key={index}>
                                                     <td>{index + 1}</td>
                                                     <td>{staff.first_name} {staff.last_name}</td>
+                                                     <td>{staff.email} </td>
                                                     <td>{staff.organization}</td>
-                                                    <td>CTE</td>
                                                 </tr>
                                             })}
                                         </tbody>

@@ -8,6 +8,7 @@ import Spinner from './Spinner/Spinner';
 import {
     isAuthenticated,
     getUserDetails,
+    getUserDBDetails,
     getAllteamsOfOrganizationOfSensorBrand,
     fetchStaffMembers
 } from '../apis';
@@ -95,7 +96,7 @@ class TeamnAdmin extends React.Component {
                 isAuthenticated(JSON.stringify({}))
                     .then((value) => {
                         if (value.data.message === 'success') {
-                            getUserDetails()
+                            getUserDBDetails()
                                 .then((response) => {
                                     this.setState({
                                         userDetails: response.data.data,
@@ -335,8 +336,9 @@ class TeamnAdmin extends React.Component {
                                                     <tr>
                                                         <th scope="col">#</th>
                                                         <th scope="col">Name</th>
+                                                        <th scope="col">Email</th>
                                                         <th scope="col">Organization</th>
-                                                        <th scope="col">Department</th>
+                                                        
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
@@ -344,8 +346,8 @@ class TeamnAdmin extends React.Component {
                                                         return <tr className="player-data-table-row" key={index}>
                                                             <td>{index + 1}</td>
                                                             <td>{staff.first_name} {staff.last_name}</td>
+                                                             <td>{staff.email} </td>
                                                             <td>{staff.organization}</td>
-                                                            <td>CTE</td>
                                                         </tr>
                                                     })}
                                                 </tbody>

@@ -156,6 +156,19 @@ export const getUserDetails = (request) =>{
       });
   })
 }
+
+export const getUserDBDetails = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUserDBDetails`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getProfilePicLink = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getProfilePicLink`, JSON.parse(request),{withCredentials: true})
@@ -579,6 +592,18 @@ export const getAllOrganizationsOfSensorBrand = (request) =>{
 export const getAllteamsOfOrganizationOfSensorBrand = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllteamsOfOrganizationOfSensorBrand`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getBrainSimulationMovie = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.get(`/getBrainSimulationMovie/`+request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
