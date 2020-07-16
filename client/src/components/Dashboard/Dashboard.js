@@ -82,26 +82,13 @@ class Dashboard extends React.Component {
       isAuthenticated(JSON.stringify({}))
         .then((value) => {
           if (value.data.message === 'success') {
-            getUserDetails()
-              .then((response) => {
-                console.log(response.data);
-                this.setState({
-                  userDetails: response.data.data,
-                  isLoading: false,
+              this.setState({
+		  userDetails: JSON.parse(localStorage.getItem("state")).userInfo,
+		  isLoading: false,
                   isAuthenticated: true,
                   isCheckingAuth: false,
                   isLoaded: true
-                });
-              })
-              .catch((error) => {
-                console.log(error);
-                this.setState({
-                  userDetails: {},
-                  isLoading: false,
-                  isCheckingAuth: false,
-                  isLoaded: true
-                });
-              });
+	      });
 
           } else {
             this.setState({ isAuthenticated: false, isCheckingAuth: false, isLoaded: true });

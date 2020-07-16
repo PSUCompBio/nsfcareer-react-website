@@ -104,21 +104,22 @@ class AdminDashboard extends React.Component {
                         .then(brands => {
                             this.setState(prevState => ({
                                 totalBrand: brands.data.data.length,
-                                sensorBrandList: brands.data.data
-                            }));
-
-                            return fetchStaffMembers({})
-                        })
-                        .then(response => {
-                            for (var i = 0; i < response.data.data.length; i++) {
-                                this.setState(prevState => ({
-                                    staffList: [...prevState.staffList, response.data.data[i]]
-                                }));
-                            }
-                            this.setState(prevState => ({
+                                sensorBrandList: brands.data.data,
                                 isFetching: false
                             }));
+
+                           // return fetchStaffMembers({})
                         })
+                        // .then(response => {
+                        //     for (var i = 0; i < response.data.data.length; i++) {
+                        //         this.setState(prevState => ({
+                        //             staffList: [...prevState.staffList, response.data.data[i]]
+                        //         }));
+                        //     }
+                        //     this.setState(prevState => ({
+                        //         isFetching: false
+                        //     }));
+                        // })
                         .catch(err => {
                             alert(err);
                         })
@@ -266,14 +267,14 @@ class AdminDashboard extends React.Component {
                                     ref="cardContainer"
                                     className="col-md-12 current-roster-card mb-5 mt-4 p-0"
                                 >
-                                    {this.props.isMilitaryVersionActive === true ? (
+                                    {/* {this.props.isMilitaryVersionActive === true ? (
                                         ''
                                     ) : (
                                             <div className="rostar-selector">
                                                 {this.retunrnRosterBtn()}
                                             </div>
-                                        )}
-                                    {!this.state.tabActive ?
+                                        )} */}
+                                    {/* {!this.state.tabActive ?
                                         <div className="row">
                                             <div className="col-md-12 text-right">
 
@@ -314,7 +315,7 @@ class AdminDashboard extends React.Component {
 
                                             </table>
                                         </div>
-                                    }
+                                    } */}
                                     {!this.state.tabActive ?
                                         <div className="football-container mt-4 d-flex flex-wrap">
                                             {this.iterateTeam()}
