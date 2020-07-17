@@ -16,23 +16,13 @@ const options = {
         }
     },
     scales: {
-        yAxes: [{
-            scaleLabel: {
-                display: true,
-                labelString: 'Linear Acceleration (Gs)'
-            },
-            id: 'A',
-            position: 'left',
-            ticks: {
-                //min: 0
-            }
-        }, {
+        yAxes: [ {
             scaleLabel: {
                 display: true,
                 labelString: 'Angular Acceleration (rad/s2)'
             },
             id: 'B',
-            position: 'right',
+            position: 'left',
             ticks: {
                 //min: 0
             }
@@ -99,20 +89,20 @@ class HeadAngularAccelerationAllEvents extends React.Component {
     static getDerivedStateFromProps (props, state) {
         let temp_data = state.data;
         console.log(props.linearUnit)
-        if (props.linearUnit === 'ms') {
-            options.scales.yAxes[0].scaleLabel.labelString = 'Linear Acceleration (m/s2)';
-            temp_data.datasets[0].data = props.data.linear_acceleration['xv'] ? props.data.linear_acceleration['xv'] : [];
-            temp_data.datasets[1].data = props.data.linear_acceleration['yv'] ? props.data.linear_acceleration['yv'] : [];
-            temp_data.datasets[2].data = props.data.linear_acceleration['zv'] ? props.data.linear_acceleration['zv'] : [];
-        } else {
-            options.scales.yAxes[0].scaleLabel.labelString = 'Linear Acceleration (Gs)';
-            temp_data.datasets[0].data = props.data.linear_acceleration['xv-g'] ? props.data.linear_acceleration['xv-g'] : [];
-            temp_data.datasets[1].data = props.data.linear_acceleration['yv-g'] ? props.data.linear_acceleration['yv-g'] : [];
-            temp_data.datasets[2].data = props.data.linear_acceleration['zv-g'] ? props.data.linear_acceleration['zv-g'] : [];
-        }
-        return {
-            data: temp_data
-        };
+        // if (props.linearUnit === 'ms') {
+        //     options.scales.yAxes[0].scaleLabel.labelString = 'Linear Acceleration (m/s2)';
+        //     temp_data.datasets[0].data = props.data.linear_acceleration['xv'] ? props.data.linear_acceleration['xv'] : [];
+        //     temp_data.datasets[1].data = props.data.linear_acceleration['yv'] ? props.data.linear_acceleration['yv'] : [];
+        //     temp_data.datasets[2].data = props.data.linear_acceleration['zv'] ? props.data.linear_acceleration['zv'] : [];
+        // } else {
+        //     options.scales.yAxes[0].scaleLabel.labelString = 'Linear Acceleration (Gs)';
+        //     temp_data.datasets[0].data = props.data.linear_acceleration['xv-g'] ? props.data.linear_acceleration['xv-g'] : [];
+        //     temp_data.datasets[1].data = props.data.linear_acceleration['yv-g'] ? props.data.linear_acceleration['yv-g'] : [];
+        //     temp_data.datasets[2].data = props.data.linear_acceleration['zv-g'] ? props.data.linear_acceleration['zv-g'] : [];
+        // }
+        // return {
+        //     data: temp_data
+        // };
     }
 
     render() {

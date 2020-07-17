@@ -160,10 +160,47 @@ button.settings-buttons {
 }
 
 .bran-smiulation-dash-chart canvas{
-        width: 100%;
+        width: 100%!important;
     display: block;
-    height: 352px;
+    height: 352px!important;
 
+}
+
+.div-chart-labels{
+    width: 65%;
+    text-align: left;
+    font-size: 13px;
+    margin-left: 54px;
+}
+
+.div-chart-labels .chart-label{
+    width: 31%;
+}
+
+.div-chart-labels .chart-label span {
+    height: 23px;
+    padding: 0px 24px 1px;
+    content: '';
+    margin-right: 8px;
+}
+
+.div-chart-labels  .label-1 span {
+    background: #1987dd;
+}
+.div-chart-labels  .label-2 span {
+    background: red;
+}
+.div-chart-labels  .label-3 span {
+    background: #00af43;
+}
+.div-chart-labels  .label-4 span {
+    background: #8000a3;
+}
+.div-chart-labels  .label-5 span {
+    background: #ff9a00;
+}
+.div-chart-labels  .label-6 span {
+    background: #000000;
 }
 
 /* Brain simulation details page css end*/

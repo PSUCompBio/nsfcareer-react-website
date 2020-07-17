@@ -7,7 +7,7 @@ const options = {
     maintainAspectRatio: false,
     fill: false,
     legend: {
-        display: true
+        display: false
     },
     plugins: {
         datalabels: {
@@ -145,7 +145,17 @@ class HeadAccelerationAllEvents extends React.Component {
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
                 <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.props.data.sensor_data['impact-date'] : '2020-01-01'} ${this.props.data.sensor_data['impact-time'] ? this.props.data.sensor_data['impact-time'] : ''}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
                     <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
+                         <div className="div-chart-labels"> 
+                            <label className="chart-label label-1"><span></span> X Linear Acceleration</label>
+                            <label className="chart-label label-2"><span></span> Y Linear Acceleration</label>
+                            <label className="chart-label label-3"><span></span> Z Linear Acceleration</label>
+                            <label className="chart-label label-4"><span></span> X Angular Acceleration</label>
+                            <label className="chart-label label-5"><span></span> Y Angular Acceleration</label>
+                            <label className="chart-label label-6"><span></span> Z Angular Acceleration</label>
+                            
+                        </div>
                         <div className="Individual-Head-Acceleration-player-dash-chart">
+                            
                             <Line id="goodCanvas1"  data={this.state.data} options={options} redraw={true} aria-label="Cumulative Overview of All Events" role="chart"/>
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-image ">

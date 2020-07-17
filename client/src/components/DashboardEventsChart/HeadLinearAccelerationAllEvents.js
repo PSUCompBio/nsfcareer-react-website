@@ -26,16 +26,6 @@ const options = {
             ticks: {
                 //min: 0
             }
-        }, {
-            scaleLabel: {
-                display: true,
-                labelString: 'Angular Acceleration (rad/s2)'
-            },
-            id: 'B',
-            position: 'right',
-            ticks: {
-                //min: 0
-            }
         }],
         xAxes: [{
 

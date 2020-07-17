@@ -161,6 +161,7 @@ class UserDashboarForAdmin extends React.Component {
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation">
           <CumulativeEventsAccelerationEvents frontal_Lobe={this.state.frontal_Lobe} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
+          
           <p
             ref="h1"
             style={{

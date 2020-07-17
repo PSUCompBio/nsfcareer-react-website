@@ -19,6 +19,12 @@
 	.action_btn_block #motor_and_sensor_cortex {
 	    width: 51px !important;
 	}
+	.bran-smiulation-dash-chart canvas {
+		/*height: 324px;*/
+	}
+	.div-chart-labels {
+		font-size: 12px;
+	}
 }
 
 
@@ -55,6 +61,9 @@
 	}
 	.backbutton{
 		margin-top: 19px;
+	}
+	.div-chart-labels .chart-label {
+    	width: 50%;
 	}
 }
 
@@ -136,6 +145,17 @@
 	.brain-simlation-details-metrics .metrics {
 		width: 100%;
 	}
+	.brain-simlation-details-movie .movie {
+	    width: 100%;
+	    text-align: center;
+	     padding: inherit; 
+	    margin: 32px 0px 32px;
+	}
+	.div-chart-labels .chart-label {
+	    text-align: center;
+	    width: 100%;
+	    padding: 4px;
+	}
 }
 
 
@@ -177,6 +197,31 @@
 	    width: 38px !important;
 	}
 	/* Player dashboard css end  */
+	.brain-simlation-details-movie  .col-md-12{
+		padding-right: 0px; 
+    	 padding-left: 0px;
+	}
+	.div-chart-labels {
+	    width: 100%;
+	    text-align: left;
+	    margin-left: 0px;
+	    font-size: 11px;
+	}
+	.div-chart-labels .chart-label {
+	    text-align: left;
+	    width: 36%;
+	    padding: 2px;
+	    margin-left: 47px;
+	}
+	.div-chart-labels .chart-label span {
+	    height: 23px;
+	    padding: 0px 11px 1px;
+	    content: '';
+	    margin-right: 8px;
+	}
+	.div-chart-labels .chart-label span {
+	    margin-right: 5px;
+	}
 }
 
 @media screen and (max-width: 414px){
@@ -199,10 +244,13 @@
 	.bran-smiulation-dash-chart canvas {
 		height: 322px;
 	}
+	.div-chart-labels {
+	    font-size: 9px;
+	}
 }
 
 @media screen and (max-width: 412px){
-	/* Navigation text css  */
+	/* Navigation text css  
 	.team-admin-page-navigation {
 	    margin-top: 6rem!important;
 	}
@@ -222,6 +270,14 @@
 	    margin-right: 1px !important;
 	    margin-bottom: 6px !important;
 	    margin-left: 0px!important;
+	}
+	.div-chart-labels{
+		margin-left: 52px;
+		    font-size: 8px;
+	}
+	.div-chart-labels .chart-label {
+	  	    width: 50%;
+	     margin-left: 0px; 
 	}
 }
 
@@ -254,6 +310,7 @@
 	    margin-bottom: 6px !important;
 	    margin-left: 0px!important;
 	}
+	
 }
 
 /* Responsive end  */
