@@ -205,3 +205,13 @@ button.settings-buttons {
 
 /* Brain simulation details page css end*/
 
+.Individual-Head-Acceleration-player-dash-image svg {
+    width: 100%;
+    padding: 56px;
+}
+
+.metrics svg {
+    width: 100%;
+    padding: 79px;
+}
+
