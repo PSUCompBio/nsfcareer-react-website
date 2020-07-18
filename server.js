@@ -14,7 +14,6 @@ archiver = require("archiver"),
 fs = require("fs"),
 path = require("path"),
 uploadFile = require("./upload.js"),
-config_env = require("./config/configuration_keys"),
 ms = require("ms"),
 multer = require('multer'),
 XLSX = require('xlsx'),
@@ -79,7 +78,24 @@ console.log("DOMAIN IS ", process.env.DOMAIN);
 // ======================================
 
 // Avatar Configuration
-var config = require("./config/configuration_keys");
+
+var config = {
+    "awsAccessKeyId": process.env.AWS_ACCESS_KEY_ID,
+    "awsSecretAccessKey": process.env.AWS_ACCESS_SECRET_KEY,
+    "sportModelBucket": process.env.SPORT_MODEL_BUCKET,
+    "avatar3dClientId": process.env.AVATAR_3D_CLIENT_ID,
+    "avatar3dclientSecret": process.env.AVATAR_3D_CLIENT_SECRET,
+    "region": process.env.REGION,
+    "usersbucket": process.env.USER_BUCKET,
+    "userPoolId": process.env.USER_POOL_ID,
+    "apiVersion": process.env.API_VERSION,
+    "ClientId": process.env.CLIENT_ID,
+    "ComputeInstanceEndpoint": process.env.COMPUTE_INSTANCE_ENDPOINT
+};
+
+// var config = require('../config/configuration_keys.json'); 
+var config_env = config;
+
 //AWS.config.loadFromPath('./config/configuration_keys.json');
 const BUCKET_NAME = config_env.usersbucket;
 
@@ -715,7 +731,8 @@ function getUploadedVtkFileList(user_name, cb) {
     const s3Params = {
         Bucket: BUCKET_NAME,
         Delimiter: '/',
-        Prefix: user_name + '/profile/rbf/vtk/'
+        // Prefix: user_name + '/profile/rbf/vtk/'
+        Prefix: user_name + '/profile/morphed_vtk/combined_meshes/'
         // Key: req.query.key + ''
     };
 
@@ -1280,7 +1297,8 @@ function getVtkFileLink(user_id) {
                     model_key = latestModel.Key;
                 }
                 else {
-                    model_key = user_id + "/profile/rbf/vtk/";
+                    // model_key = user_id + "/profile/rbf/vtk/";
+                    model_key = user_id + "/profile/morphed_vtk/combined_meshes/";
                 }
                 // Generate SignedURL of the image
                 getFileSignedUrl(model_key, (err, url) => {
