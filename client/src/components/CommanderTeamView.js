@@ -673,7 +673,7 @@ class CommanderTeamView extends React.Component {
 
                                                         {/*<td>{Number(player.impact)}</td>*/}
                                                         <td style={{ alignItems: "center" }}>
-                                                            {player.simulation_data[0]['impact-date']} {player.simulation_data[0]['date']} {player.simulation_data[0]['impact-time']}</td>
+                                                            {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']: 'Unkown Date and Time'} </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
                                                                                 <td>

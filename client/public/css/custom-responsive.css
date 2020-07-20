@@ -25,6 +25,13 @@
 	.div-chart-labels {
 		font-size: 12px;
 	}
+	.Individual-Head-Acceleration-player-dash-image .loader p{
+		font-size: 13px;
+	    width: 51%;
+	}
+	.Individual-Head-Acceleration-player-dash-image .loader{
+		width: 90%;
+	}
 }
 
 
@@ -64,6 +71,15 @@
 	}
 	.div-chart-labels .chart-label {
     	width: 50%;
+	}
+	.Individual-Head-Acceleration-player-dash-image .loader p{
+		    padding: 4px;
+	    font-size: 9px;
+	    font-weight: 700;
+	    width: 46%;
+	}
+	.Individual-Head-Acceleration-player-dash-image .loader{
+		    width: 87%;
 	}
 }
 
@@ -222,6 +238,30 @@
 	.div-chart-labels .chart-label span {
 	    margin-right: 5px;
 	}
+
+	.export-player-report-1{
+		display: none!important;
+	}
+	.export-player-report-2{
+		display: block!important;
+	}
+	.Individual-Head-Acceleration-player-dash-image .loader p {
+	    background: white;
+	    padding: 8px;
+	    font-size: 24px;
+	    font-weight: 700;
+	    width: 56%;
+	    border: 1px solid;
+	    margin: 0 auto;
+	    box-shadow: 0px 0px 6px 0px #ccc;
+ 	}
+ 	.Individual-Head-Acceleration-player-dash-image .loader {
+	    width: 93%;
+	}
+	.head-acc-evnt-chart::after {
+	    top: -9%!important;
+	    height: 59px!important;
+	}
 }
 
 @media screen and (max-width: 414px){
@@ -246,6 +286,15 @@
 	}
 	.div-chart-labels {
 	    font-size: 9px;
+	}
+	.Individual-Head-Acceleration-player-dash-image .loader{
+		width: 91%;
+	}
+	.Individual-Head-Acceleration-player-dash-image .loader p{
+		    padding: 8px;
+	    font-size: 19px;
+	    font-weight: 700;
+	    width: 51%;
 	}
 }
 
@@ -279,12 +328,17 @@
 	  	    width: 50%;
 	     margin-left: 0px; 
 	}
+	.Individual-Head-Acceleration-player-dash-image .loader p {
+	    background: white;
+	    padding: 7px;
+	    font-size: 12px;
+	    font-weight: 700;
+	    width: 43%;
+	   
+	}
 }
 
 @media screen and (max-width: 360px){
-	.head-acc-evnt-chart::after {
-	    top: -11%!important;
-	}
 	.action_btn_block .lobe_btn {
 	    width: 31px !important;
 	    font-size: 6px !important;
@@ -310,7 +364,15 @@
 	    margin-bottom: 6px !important;
 	    margin-left: 0px!important;
 	}
-	
+	.Individual-Head-Acceleration-player-dash-image .loader{
+		width: 88%;
+	}
+	.Individual-Head-Acceleration-player-dash-image .loader p {				
+	    padding: 7px;
+	    font-size: 8px;
+	    font-weight: 700;
+	    width: 38%;
+	}
 }
 
 /* Responsive end  */

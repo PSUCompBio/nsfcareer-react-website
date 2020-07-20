@@ -30,7 +30,7 @@ class CumulativeEventsAccelerationEvents extends React.Component {
         </div>
         {/*
         <div className="col-md-6 col-lg-5  ">
-          <CumulatieAccelerationToTimeEventChart data={this.props.loadData}/>
+          {/*<CumulatieAccelerationToTimeEventChart data={this.props.loadData}/>
         </div>
         */}
       </div>

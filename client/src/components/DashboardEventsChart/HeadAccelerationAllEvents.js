@@ -143,7 +143,7 @@ class HeadAccelerationAllEvents extends React.Component {
     render() {
         return (
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
-                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.props.data.sensor_data['impact-date'] : '2020-01-01'} ${this.props.data.sensor_data['impact-time'] ? this.props.data.sensor_data['impact-time'] : ''}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
+                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.props.data.sensor_data['impact-date'] +' '+ this.props.data.sensor_data['impact-time'] : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
                     <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
                          <div className="div-chart-labels"> 
                             <label className="chart-label label-1"><span></span> X Linear Acceleration</label>
@@ -158,9 +158,14 @@ class HeadAccelerationAllEvents extends React.Component {
                             
                             <Line id="goodCanvas1"  data={this.state.data} options={options} redraw={true} aria-label="Cumulative Overview of All Events" role="chart"/>
                         </div>
-                        <div className="Individual-Head-Acceleration-player-dash-image ">
+                        <div className="Individual-Head-Acceleration-player-dash-image   ">
                             <div className="col-md-12">
                                 <div>
+                                    {!this.props.data.simulation_image &&
+                                        <div className="loader">
+                                            <p>Brain Simulation <br/> Pending...</p>
+                                        </div>
+                                    }
                                     <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.props.data.simulation_image ? 'data:image/png;base64,' + this.props.data.simulation_image : '/img/icon/brainEvnt.svg'} alt="" />
                                     <Link  to={{
                                             pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',

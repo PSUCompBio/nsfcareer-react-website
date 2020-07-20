@@ -51,7 +51,8 @@ class CumulativeAccelerationEventChart extends React.Component {
     }
 
     render() {
-        console.log('this.state.userDetails',this.state.userDetails)
+        // console.log('this.state.userDetails',this.state.userDetails)
+        console.log('props',this.props);
         return (
             <React.Fragment>
                 {this.props.data.team ?
@@ -151,7 +152,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                             <button style={{
                                 marginRight: "5% !important"
                             }}
-                                className="btn btn-primary pull-right sub-head-button"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
+                                className="btn btn-primary pull-right sub-head-button export-player-report-1"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
                                 <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName="report.pdf" style={{
                                     color: 'white'
                                 }}>
@@ -165,6 +166,17 @@ class CumulativeAccelerationEventChart extends React.Component {
 
                     <ExportPlayerReport frontal_Lobe={this.props.frontal_Lobe} />
                 </div>
+                 <button style={{
+                                marginRight: "5% !important"
+                            }}
+                                className="btn btn-primary pull-right sub-head-button export-player-report-2"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
+                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName="report.pdf" style={{
+                                    color: 'white'
+                                }}>
+                                    Export Player Report
+                              {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                                </PDFDownloadLink>
+                            </button>
             </React.Fragment>
         )
     }
