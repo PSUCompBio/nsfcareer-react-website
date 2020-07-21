@@ -216,12 +216,12 @@ class UserDashboarForAdmin extends React.Component {
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
         if (value.data.message === 'success') {
-          getCumulativeAccelerationData({ user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
+          getCumulativeAccelerationData({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
             .then(response => {
               this.setState({
                 cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: this.props.location.state.team.brand, team: this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, staff: this.props.location.state.team.staff, player_id: this.props.location.state.player_name }
               });
-              return getAllCumulativeAccelerationTimeRecords({ user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
+              return getAllCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
             })
 
             .then(response => {

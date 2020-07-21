@@ -222,7 +222,7 @@ class TeamnAdmin extends React.Component {
                 this.props.location.state.brand.brand,
                 this.state.sensorOrgTeamList[i].organization,
                 this.state.sensorOrgTeamList[i].team_name,
-                this.state.sensorOrgTeamList[i].user_cognito_id,
+                this.state.userDetails.user_cognito_id,
                 Number(this.state.sensorOrgTeamList[i].simulation_count),
                 i
             );

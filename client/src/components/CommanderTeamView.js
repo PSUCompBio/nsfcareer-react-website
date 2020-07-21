@@ -132,6 +132,7 @@ class CommanderTeamView extends React.Component {
             .then((response) => {
                 if (response.data.message === "success") {
                     getPlayersData({
+			brand: this.props.location.state.team.brand,
                         user_cognito_id: this.props.location.state.team.user_cognito_id,
                         organization: this.props.location.state.team.organization,
                         team_name: this.props.location.state.team.team_name
@@ -147,6 +148,7 @@ class CommanderTeamView extends React.Component {
                             }
                             this.setState({});
                             getSimulationStatusCount({
+				brand: this.props.location.state.team.brand,
                                 user_cognito_id: this.props.location.state.team.user_cognito_id,
                                 organization: this.props.location.state.team.organization,
                                 team: this.props.location.state.team.team_name
@@ -241,6 +243,7 @@ class CommanderTeamView extends React.Component {
                                     });
                                     if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300 || response.data.data.level === 200) {
                                         getPlayersData({
+					    brand: this.props.location.state.team.brand,
                                             user_cognito_id: this.props.location.state.team.user_cognito_id,
                                             organization: this.props.location.state.team.organization,
                                             team_name: this.props.location.state.team.team_name
@@ -253,6 +256,7 @@ class CommanderTeamView extends React.Component {
                                                     }));
                                                 }
                                                 return getSimulationStatusCount({
+						    brand: this.props.location.state.team.brand,
                                                     user_cognito_id: this.props.location.state.team.user_cognito_id,
                                                     organization: this.props.location.state.team.organization,
                                                     team: this.props.location.state.team.team_name

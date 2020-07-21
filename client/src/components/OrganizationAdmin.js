@@ -222,7 +222,7 @@ class OrganizationAdmin extends React.Component {
                 ],
                 this.props.location.state.brand.brand,
                 this.state.sensorOrgList[i].organization,
-                this.state.sensorOrgList[i].user_cognito_id,
+                this.state.userDetails.user_cognito_id,
                 Number(this.state.sensorOrgList[i].simulation_count),
                 i
             );
