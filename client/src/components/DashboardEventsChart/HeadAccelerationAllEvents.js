@@ -1,7 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
-
+import simulationLoading from '../simulationLoading.png'
 const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -143,7 +143,7 @@ class HeadAccelerationAllEvents extends React.Component {
     render() {
         return (
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
-                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.props.data.sensor_data['impact-date'] +' '+ this.props.data.sensor_data['impact-time'] : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
+                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.props.data.sensor_data['impact-date'] +' '+ this.props.data.sensor_data['impact-time'] : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.props.data.sensor_data['date']  +' '+ this.props.data.sensor_data['time']  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
                     <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
                          <div className="div-chart-labels"> 
                             <label className="chart-label label-1"><span></span> X Linear Acceleration</label>
@@ -161,12 +161,13 @@ class HeadAccelerationAllEvents extends React.Component {
                         <div className="Individual-Head-Acceleration-player-dash-image   ">
                             <div className="col-md-12">
                                 <div>
-                                    {!this.props.data.simulation_image &&
+                                    {/*
                                         <div className="loader">
                                             <p>Brain Simulation <br/> Pending...</p>
                                         </div>
-                                    }
-                                    <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.props.data.simulation_image ? 'data:image/png;base64,' + this.props.data.simulation_image : '/img/icon/brainEvnt.svg'} alt="" />
+                                    */}
+                                   
+                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.props.data.simulation_image ? 'data:image/png;base64,' + this.props.data.simulation_image : simulationLoading} alt="" />
                                     <Link  to={{
                                             pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',
                                             

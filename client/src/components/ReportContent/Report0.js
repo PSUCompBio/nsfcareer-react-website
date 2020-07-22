@@ -6,6 +6,7 @@ import header1 from './header1.png';
 import footer1 from '../footer1.jpg';
 import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
+import ClinicalReportHeader from './Clinical-Report-Header.png';
 // import logo 
 // Create styles
 const styles = StyleSheet.create({
@@ -44,11 +45,23 @@ const styles = StyleSheet.create({
         textAlign:'center',
         width: '100%',
     },
+    tableRowHeadtitle: {
+        flex: 1,
+        width : '100%',
+        flexDirection : 'row',
+        marginTop : '75px',
+        textAlign: 'center',
+    },
+    title:{
+        fontSize:25,
+        display : 'inline-block',
+        color: 'white'
+    },
     tableRowHead: {
         flex: 1,
         marginLeft : '5%',
         flexDirection : 'row',
-        marginTop : '80px'
+        marginTop : '6px'
     },
     tableColLeft: {
         borderStyle: "solid",
@@ -135,11 +148,14 @@ class Report extends React.Component {
                         <View style= {{
                             }}>
                             <View style= {styles.tableHead}>
-                                <Image  style={styles.logo} src={header1} alt="head"/>
+                                <Image  style={styles.logo} src={ClinicalReportHeader} alt="head"/>
+                            </View>
+                            <View style= {styles.tableRowHeadtitle}>
+                                <Text style={styles.title}>Prediction Overview</Text>
                             </View>
                             <View style= {styles.tableRowHead}>
                                 <Text style={styles.tableColLeft}> Date : {this.getDateInFormat()} </Text>
-                                <Text style={styles.tableColRightHead}>{'                       PAGE 1 of 2'} </Text>
+                                <Text style={styles.tableColRightHead}>{'                   PAGE 1 of 2'} </Text>
                             </View>
                             <Text style={{
                                     margin : 'auto',
@@ -185,7 +201,7 @@ class Report extends React.Component {
                             <View>
                                 <View style= {styles.tableRowHead}>
 
-                                    <Text style={styles.tableColRightHead}>{'                       PAGE 2 of 2'} </Text>
+                                    <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
                                 </View>
                                 <Text style = {{
                                         fontSize : 15,

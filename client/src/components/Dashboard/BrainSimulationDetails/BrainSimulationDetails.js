@@ -10,6 +10,8 @@ import HeadAngularAccelerationAllEvents from '../../DashboardEventsChart/HeadAng
 
 import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
+import simulationLoading from '../../simulationLoading.png';
+import videoSimulationLoading from './videoSimulationLoading.png';
 import 'jquery';
 import '../../Buttons/Buttons.css';
 import '.././Dashboard.css';
@@ -164,6 +166,9 @@ class BrainSimulationDetails extends React.Component {
                     <h4 className="brain-simlation-details-subtitle">Skull Kinematics Movie Based on Sensor Data</h4>
                     <div className="col-md-12">
                       <div className="movie">
+                      {!this.state.movie_link &&
+                        <img src={videoSimulationLoading} style={{'width':'50%'}} />
+                      }
                        {this.state.movie_link &&
                         <video src={this.state.movie_link} style={{'width':'100%'}} controls></video>
                        }
@@ -184,7 +189,7 @@ class BrainSimulationDetails extends React.Component {
                             <button className="btn gray">MASxSR<sub>15</sub></button>
                           </div>
                           <div className="col-md-12">
-                            <img class="img-fluid svg" width="100%" height="60%" src={this.props.location.state.data.simulation_image ? 'data:image/png;base64,' + this.props.location.state.data.simulation_image : '/img/icon/brainEvnt.svg'} alt="" />
+                            <img class="img-fluid svg" width="100%" height="60%" src={this.props.location.state.data.simulation_image ? 'data:image/png;base64,' + this.props.location.state.data.simulation_image : simulationLoading} alt="" />
                             
                           </div>
                       </div>
