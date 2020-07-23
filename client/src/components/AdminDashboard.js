@@ -102,6 +102,7 @@ class AdminDashboard extends React.Component {
                         });
                         getAllSensorBrands()
                         .then(brands => {
+                            console.log('brands',brands)
                             this.setState(prevState => ({
                                 totalBrand: brands.data.data.length,
                                 sensorBrandList: brands.data.data,
@@ -214,7 +215,7 @@ class AdminDashboard extends React.Component {
                     'h' + inc++
                 ],
                 this.state.sensorBrandList[i].sensor,
-                this.state.userDetails.user_cognito_id,
+                this.state.sensorBrandList[i].users,
                 Number(this.state.sensorBrandList[i].simulation_count),
                 i
             );

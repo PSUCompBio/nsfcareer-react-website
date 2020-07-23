@@ -106,6 +106,7 @@ class OrganizationAdmin extends React.Component {
                                     if (response.data.data.level === 1000 || response.data.data.level === 400) {
                                         getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
                                             .then(orgs => {
+                                                console.log('orgs',orgs)
                                                 this.setState(prevState => ({
                                                     totalOrganization: orgs.data.data.length,
                                                     sensorOrgList: orgs.data.data
@@ -222,7 +223,7 @@ class OrganizationAdmin extends React.Component {
                 ],
                 this.props.location.state.brand.brand,
                 this.state.sensorOrgList[i].organization,
-                this.state.userDetails.user_cognito_id,
+                this.props.location.state.brand.user_cognito_id,
                 Number(this.state.sensorOrgList[i].simulation_count),
                 i
             );
@@ -261,6 +262,15 @@ class OrganizationAdmin extends React.Component {
     };
 
     militaryVersionOrNormalVersion = () => {
+        console.log('staffList',this.state.staffList);
+        
+        var staffList =  this.state.staffList.map(function (staff, index) {
+            return staff;
+        })
+        // staffList[0].map( (staff, index) =>
+        //     console.log(staff)
+        //  )
+        // console.log('staffList',staffList[0])
         return (
             <React.Fragment>
 
@@ -290,10 +300,14 @@ class OrganizationAdmin extends React.Component {
                     </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
+                                <div className="col-md-12  mb-5 mt-4 p-0" >
+                                    
+                                </div>
                                 <div
                                     ref="cardContainer"
                                     className="col-md-12 current-roster-card mb-5 mt-4 p-0"
                                 >
+                                
                                     {this.props.isMilitaryVersionActive === true ? (
                                         ''
                                     ) : (
@@ -320,7 +334,16 @@ class OrganizationAdmin extends React.Component {
                                         </div>
                                         :
                                         <div className="commander-data-table">
+                                            <Link  to={{
+                                                    pathname: '/InviteUsers',
+                                                    state: {
+                                                        lavelFor: '3000',                                        
+                                                    }
+                                                }} >
+                                                    <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team user</button> 
+                                                </Link>
                                             <table style={{ whiteSpace: "nowrap" }} className="table">
+                                                
                                                 <thead>
                                                     <tr>
                                                         <th scope="col">#</th>
@@ -330,12 +353,12 @@ class OrganizationAdmin extends React.Component {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
-                                                    {this.state.staffList.map(function (staff, index) {
+                                                    {staffList && staffList[0].map(function (staff, index) {
                                                         return <tr className="player-data-table-row" key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td>{staff.first_name} {staff.last_name}</td>
-                                                            <td>{staff.email} </td>
-                                                            <td>{staff.organization}</td>
+                                                            <td>{staff.data.first_name} {staff.data.last_name}</td>
+                                                            <td>{staff.data.email} </td>
+                                                            <td>{staff.data.organization}</td>
                                                            
                                                         </tr>
                                                     })}

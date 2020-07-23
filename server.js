@@ -79,21 +79,21 @@ console.log("DOMAIN IS ", process.env.DOMAIN);
 
 // Avatar Configuration
 
-var config = {
-    "awsAccessKeyId": process.env.AWS_ACCESS_KEY_ID,
-    "awsSecretAccessKey": process.env.AWS_ACCESS_SECRET_KEY,
-    "sportModelBucket": process.env.SPORT_MODEL_BUCKET,
-    "avatar3dClientId": process.env.AVATAR_3D_CLIENT_ID,
-    "avatar3dclientSecret": process.env.AVATAR_3D_CLIENT_SECRET,
-    "region": process.env.REGION,
-    "usersbucket": process.env.USER_BUCKET,
-    "userPoolId": process.env.USER_POOL_ID,
-    "apiVersion": process.env.API_VERSION,
-    "ClientId": process.env.CLIENT_ID,
-    "ComputeInstanceEndpoint": process.env.COMPUTE_INSTANCE_ENDPOINT
-};
+// var config = {
+//     "awsAccessKeyId": process.env.AWS_ACCESS_KEY_ID,
+//     "awsSecretAccessKey": process.env.AWS_ACCESS_SECRET_KEY,
+//     "sportModelBucket": process.env.SPORT_MODEL_BUCKET,
+//     "avatar3dClientId": process.env.AVATAR_3D_CLIENT_ID,
+//     "avatar3dclientSecret": process.env.AVATAR_3D_CLIENT_SECRET,
+//     "region": process.env.REGION,
+//     "usersbucket": process.env.USER_BUCKET,
+//     "userPoolId": process.env.USER_POOL_ID,
+//     "apiVersion": process.env.API_VERSION,
+//     "ClientId": process.env.CLIENT_ID,
+//     "ComputeInstanceEndpoint": process.env.COMPUTE_INSTANCE_ENDPOINT
+// };
 
-// var config = require('./config/configuration_keys.json'); 
+var config = require('./config/configuration_keys.json'); 
 var config_env = config;
 
 //AWS.config.loadFromPath('./config/configuration_keys.json');
@@ -897,33 +897,6 @@ function getUserDbData(user_name, cb) {
     });
 }
 
-function getUserSensor(user_name) {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'sensors',
-            FilterExpression: "contains(#users, :user_cognito_id)",
-            ExpressionAttributeNames: {
-                "#users": "users",
-            },
-            ExpressionAttributeValues: {
-                ":user_cognito_id": user_name,
-            }
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-
 function getAge(dob) {
     let currentDate = new Date();
     let birthDate = new Date(dob);
@@ -1204,7 +1177,7 @@ const fetchStaffMembers = (user_cognito_id,brand) => {
                   reject(err)
 
               } else {
-                console.log('cg data is ',data);
+                // console.log('cg data is ',data);
                 resolve(data.Item);
               }
           });
@@ -1263,10 +1236,6 @@ const putNumbers = (numbersData) => {
         })
     })
 }
-
-function concatArrays(arrays) {
-    return [].concat.apply([], arrays);
-} 
 
 function getINPFile(user_id) {
     return new Promise((resolve, reject) => {
@@ -1926,6 +1895,27 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
 });
 
+app.post(`${apiPrefix}InviteUsers`, (req, res) => {
+    console.log("InviteUsers Called!",req.body);
+    res.send({
+        message: "Success",
+    });
+    createUserDbEntry(req.body, function (dberr, dbdata) {
+                    if (dberr) {
+                        console.log("DB ERRRRRR =============================== \n", dberr);
+
+                        // res.send({
+                        //     message: "faiure",
+                        //     error: dberr.code
+                        // });
+                    }
+                    else {
+                        console.log('dbdata',dbdata)
+                    }
+                })
+});
+
+
 app.post(`${apiPrefix}logIn`, (req, res) => {
     console.log("Log In API Called!",req.body);
     // Getting user data of that user
@@ -1991,30 +1981,12 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                         })
                                     }
                                     else{
-                                        if (user_details.Item["level"] === 400) {
-                                            getUserSensor(data.Username)
-                                                .then(sensor_data => {
-                                                    user_details.Item["sensor"] = sensor_data[0]["sensor"];
-                                                    res.send({
-                                                        message : "success",
-                                                        user_details : user_details.Item,
-                                                        user_type: userType
-                                                    })
-                                                    
-                                                })
-                                                .catch(err => {
-                                                    res.send({
-                                                        message : "failure",
-                                                        error : err
-                                                    })
-                                                })
-                                        } else {
-                                            res.send({
-                                                message : "success",
-                                                user_details : user_details.Item,
-                                                user_type: userType
-                                            })
-                                        }  
+                                        //user_details.Item["user_type"] = userType ;
+                                        res.send({
+                                            message : "success",
+                                            user_details : user_details.Item,
+                                            user_type: userType
+                                        })
                                     }
                                 })
                             }
@@ -2171,21 +2143,34 @@ app.post(`${apiPrefix}disableUser`, (req, res) => {
 })
 
 app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
-    console.log('fetchStaffMembers',req.body)
-    fetchStaffMembers(req.body.user_cognito_id,req.body.brand)
-    .then(data => {
-        res.send({
-            message : "success",
-            data : data
+    console.log('fetchStaffMembers',req.body.user_cognito_id);
+    var user_cognito_id = req.body.user_cognito_id;
+    var cId_len = user_cognito_id.length;
+    var cId_len2 = cId_len-1;
+    var memebers = [];
+    var f = 0;
+    for(var i = 0; i < cId_len; i++){
+        fetchStaffMembers(user_cognito_id[i],req.body.brand)
+        .then(data => {
+            memebers.push({data});
+            console.log(cId_len2,f)
+            if(f == cId_len2){
+                res.send({
+                    message : "success",
+                    data : memebers
+                })
+            }
+            f++;
         })
-    })
-    .catch(err => {
-        res.send({
-            message : "failure",
-            error : err,
-            data : []
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err,
+                data : []
+            })  
         })
-    })
+    }
+  
 });
 
 //getting only user db details
@@ -3381,33 +3366,23 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                         }
                         else {
                             if (user_details.Item["level"] === 400) {
-                                getUserSensor(data.Username)
-                                    .then(sensor_data => {
-                                        // console.log(sensor_data[0].sensor); 
-                                        req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-                                        req.body["sensor_brand"] = sensor_data[0]["sensor"];
-                                        request.post({
-                                            url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
-                                            json: req.body
-                                        }, function (err, httpResponse, body) {
-                                            if (err) {
-                                                res.send({
-                                                    message: "failure",
-                                                    error: err
-                                                })
-                                            }
-                                            else {
-                                                res.send(httpResponse.body);
-                                            }
-                                        })
-                                    })
-                                    .catch(err => {
+                                // console.log(user_details.Item);
+                                req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                req.body["sensor_brand"] = user_details.Item["sensor"];
+                                request.post({
+                                    url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                    json: req.body
+                                }, function (err, httpResponse, body) {
+                                    if (err) {
                                         res.send({
-                                            message : "failure",
-                                            error : err
+                                            message: "failure",
+                                            error: err
                                         })
-                                    })
-                                
+                                    }
+                                    else {
+                                        res.send(httpResponse.body);
+                                    }
+                                })
                             } else {
                                 res.send({
                                     message: "failure",
