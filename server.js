@@ -918,7 +918,55 @@ function getAge(dob) {
     return age;
 }
 
+function getUserSensor(user_name) {
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'sensors',
+            FilterExpression: "contains(#users, :user_cognito_id)",
+            ExpressionAttributeNames: {
+                "#users": "users",
+            },
+            ExpressionAttributeValues: {
+                ":user_cognito_id": user_name,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 
+function adminUpdateUser(User, cb) {
+
+    var params = {
+        UserAttributes: [ /* required */
+          {
+            Name: 'email', /* required */
+            Value: User.email
+          },
+          /* more items */
+        ],
+        UserPoolId: cognito.userPoolId, /* required */
+        Username: User.user_name, /* required */
+      };
+      COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+        if (err) {
+            cb(err, "");
+        } // an error occurred
+        else {
+            cb("", data);
+        }             // successful response
+      });
+}
 
 // Function to create User by Admin
 function adminCreateUser(User, cb) {
@@ -1245,6 +1293,10 @@ const putNumbers = (numbersData) => {
             }
         })
     })
+}
+
+function concatArrays(arrays) {
+    return [].concat.apply([], arrays);
 }
 
 function getINPFile(user_id) {
@@ -1738,6 +1790,31 @@ app.post(`${apiPrefix}singUpWithToken`, (req, res) => {
     
 
 })
+
+app.post(`${apiPrefix}updateCognitoUser`, (req, res) => {
+    let obj = {};
+    obj.user_name = 'ec3acb86-fae0-408a-93a5-9319de4f9766';
+    obj.email = 'ben@hitiq.com';
+
+    adminUpdateUser(obj, function (err, data) {
+        if (err) {
+            console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+            res.send({
+                message: "failure",
+                error: err.message
+            });
+        }
+        else {
+            // On success
+            res.send({
+                message: 'success'
+            });
+        }
+    })
+})
+
+
 app.post(`${apiPrefix}signUp`, (req, res) => {
 
 
@@ -2026,12 +2103,30 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                         })
                                     }
                                     else{
-                                        //user_details.Item["user_type"] = userType ;
-                                        res.send({
-                                            message : "success",
-                                            user_details : user_details.Item,
-                                            user_type: userType
-                                        })
+                                        if (user_details.Item["level"] === 400) {
+                                            getUserSensor(data.Username)
+                                                .then(sensor_data => {
+                                                    user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                    res.send({
+                                                        message : "success",
+                                                        user_details : user_details.Item,
+                                                        user_type: userType
+                                                    })
+                                                    
+                                                })
+                                                .catch(err => {
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                })
+                                        } else {
+                                            res.send({
+                                                message : "success",
+                                                user_details : user_details.Item,
+                                                user_type: userType
+                                            })
+                                        }  
                                     }
                                 })
                             }
@@ -2135,12 +2230,30 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
                                     })
                                 }
                                 else{
-                                    //user_details.Item["user_type"] = userType ;
-                                    res.send({
-                                        message : "success",
-                                        user_details : user_details.Item,
-                                        user_type: userType
-                                    })
+                                    if (user_details.Item["level"] === 400) {
+                                        getUserSensor(data.Username)
+                                            .then(sensor_data => {
+                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                res.send({
+                                                    message : "success",
+                                                    user_details : user_details.Item,
+                                                    user_type: userType
+                                                })
+                                                
+                                            })
+                                            .catch(err => {
+                                                res.send({
+                                                    message : "failure",
+                                                    error : err
+                                                })
+                                            })
+                                    } else {
+                                        res.send({
+                                            message : "success",
+                                            user_details : user_details.Item,
+                                            user_type: userType
+                                        })
+                                    }  
                                 }
                             })
                         }
