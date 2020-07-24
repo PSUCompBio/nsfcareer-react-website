@@ -27,6 +27,16 @@ global.fetch = require('node-fetch');
 
 var _ = require('lodash');
 
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'tbitest987@gmail.com',
+    pass: 'Developer@981'
+  }
+});
+
 
 // ================================================
 //          SOCKET <DOT> IO CONFIGURATION
@@ -1711,6 +1721,23 @@ app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
     })
 })
 
+
+app.post(`${apiPrefix}singUpWithToken`, (req, res) => {
+    // First we add an attirbute of `name` as cognito requires it from first_name and last_name
+    req.body["name"] = req.body.first_name + req.body.last_name;
+    req.body["email"] = req.body.user_name;
+    req.body["is_selfie_image_uploaded"] = false;
+    req.body["is_selfie_model_uploaded"] = false;
+    req.body["is_selfie_inp_uploaded"] = false;
+    // Hardcoding Done Here need to be replaced with actual organization in request.
+    req.body["organization"] = req.body.organization;
+    req.body["level"] = req.body.level;
+    req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
+    req.body.country_code = req.body.country_code.split(" ")[0] ;
+    console.log("-----------------------------\n",req.body,"----------------------------------------\n");
+    
+
+})
 app.post(`${apiPrefix}signUp`, (req, res) => {
 
 
@@ -1737,7 +1764,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             });
         }
         else {
-
+            console.log('data',data)
             var UserData = data.User;
             req.body["user_cognito_id"] = UserData.Username;
             //Now check type of User and give permission accordingly
@@ -1897,22 +1924,40 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
-    res.send({
-        message: "Success",
-    });
     createUserDbEntry(req.body, function (dberr, dbdata) {
-                    if (dberr) {
-                        console.log("DB ERRRRRR =============================== \n", dberr);
+        if (dberr) {
+            console.log("DB ERRRRRR =============================== \n", dberr);
 
-                        // res.send({
-                        //     message: "faiure",
-                        //     error: dberr.code
-                        // });
-                    }
-                    else {
-                        console.log('dbdata',dbdata)
-                    }
-                })
+            res.send({
+                message: "faiure",
+                error: dberr.code
+            });
+        }
+        else {
+            console.log('dbdata',dbdata)
+            var mailOptions = {
+              from: 'mukesh.rawat@brihaspatitech.com',
+              to: dbdata.email,
+              subject: 'Thank you for joining Nsfcareer',
+              text: 'Signup by this url = http://localhost:3000/SignUp/'+dbdata.user_cognito_id
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+              if (error) {
+                res.send({
+                    message: "faiure",
+                    error: error
+                });
+              } else {
+                console.log('Email sent: ' + info.response);
+                res.send({
+                    message: "Success",
+                    data: info.response
+                });
+              }
+            });
+        }
+    })
 });
 
 
@@ -2142,34 +2187,68 @@ app.post(`${apiPrefix}disableUser`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
-    console.log('fetchStaffMembers',req.body.user_cognito_id);
-    var user_cognito_id = req.body.user_cognito_id;
-    var cId_len = user_cognito_id.length;
-    var cId_len2 = cId_len-1;
-    var memebers = [];
-    var f = 0;
-    for(var i = 0; i < cId_len; i++){
-        fetchStaffMembers(user_cognito_id[i],req.body.brand)
-        .then(data => {
-            memebers.push({data});
-            console.log(cId_len2,f)
-            if(f == cId_len2){
-                res.send({
-                    message : "success",
-                    data : memebers
+const fetchSensor = (sensor) => {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            TableName: 'sensors',
+             Key: {
+                "sensor": sensor
+            }
+           
+        };
+        //   var items
+        var items = [];
+        
+          docClient.get(params, function (err, data) {
+              if (err) {
+                  reject(err)
+
+              } else {
+                // console.log('cg data is ',data);
+                resolve(data.Item);
+              }
+          });
+      })
+}
+
+app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{ 
+     fetchSensor(req.body.brand)
+        .then(sensors => {
+            console.log('sensors',sensors.users);
+            var user_cognito_id = sensors.users;
+            var cId_len = user_cognito_id.length;
+            var cId_len2 = cId_len-1;
+            var memebers = [];
+            var f = 0;
+            for(var i = 0; i < cId_len; i++){
+                fetchStaffMembers(user_cognito_id[i],req.body.brand)
+                .then(data => {
+                    memebers.push({data});
+                    console.log(cId_len2,f)
+                    if(f == cId_len2){
+                        res.send({
+                            message : "success",
+                            data : memebers
+                        })
+                    }
+                    f++;
+                })
+                .catch(err => {
+                    res.send({
+                        message : "failure",
+                        error : err,
+                        data : []
+                    })  
                 })
             }
-            f++;
-        })
-        .catch(err => {
+        }) .catch(err => {
             res.send({
                 message : "failure",
                 error : err,
                 data : []
             })  
-        })
-    }
+        });
+    //
   
 });
 

@@ -331,6 +331,18 @@ class TeamnAdmin extends React.Component {
                                         </div>
                                         :
                                         <div className="commander-data-table">
+                                             <Link  to={{
+                                                    pathname: '/InviteUsers',
+                                                    state: {
+                                                        lavelFor: '200',
+                                                        data:{
+                                                            type: 'TeamnAdmin',
+                                                            sensorOrgTeamList: this.state.sensorOrgTeamList,
+                                                        }                                        
+                                                    }
+                                                }} >
+                                                    <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Player</button> 
+                                                </Link>
                                             <table style={{ whiteSpace: "nowrap" }} className="table">
                                                 <thead>
                                                     <tr>

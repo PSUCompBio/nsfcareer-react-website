@@ -37,9 +37,33 @@ export const signUp = (request) =>{
   })
 }
 
+export const singUpWithToken = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/singUpWithToken`, JSON.parse(request))
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const logIn = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/logIn`, JSON.parse(request),{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const InviteUser = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/InviteUsers`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

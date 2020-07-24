@@ -334,14 +334,19 @@ class OrganizationAdmin extends React.Component {
                                         </div>
                                         :
                                         <div className="commander-data-table">
-                                            <Link  to={{
+                                          {/*  <Link  to={{
                                                     pathname: '/InviteUsers',
                                                     state: {
-                                                        lavelFor: '3000',                                        
+                                                        lavelFor: '300',
+                                                        data:{
+                                                            type: 'organization',
+                                                            sensorOrgList: this.state.sensorOrgList,
+                                                            sensor: this.props.location.state.brand.brand
+                                                        }                                        
                                                     }
                                                 }} >
                                                     <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team user</button> 
-                                                </Link>
+                                                </Link>*/}
                                             <table style={{ whiteSpace: "nowrap" }} className="table">
                                                 
                                                 <thead>

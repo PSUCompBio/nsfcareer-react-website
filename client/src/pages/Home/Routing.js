@@ -18,6 +18,7 @@ import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import AdminDashboard from '../../components/AdminDashboard';
 import Users from '../../components/Users';
+import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
 import TeamPlayers from '../../components/CommanderTeamView';
@@ -29,6 +30,7 @@ import Developer from '../Developer/DeveloperPage';
 import Dash from '../Dash/DashPage';
 import Report from '../../components/ReportContent/Report0';
 import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
+import InviteUsers from '../../components/InviteUsers';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -193,7 +195,12 @@ class Routing extends React.Component {
         />
         <Route
             exact
-            path="/SignUp"
+            path="/SignUp/:token"
+            render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+            exact
+            path="/SignUp/"
             render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
@@ -210,6 +217,11 @@ class Routing extends React.Component {
           exact
           path="/Users"
           render={(props) => <Users {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
+          path="/Users/addUsers"
+          render={(props) => <AddUsers {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact
@@ -271,6 +283,11 @@ class Routing extends React.Component {
             exact
             path="/OrganizationAdmin"
             render={(props) => <OrganizationAdmin {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/InviteUsers"
+            render={(props) => <InviteUsers {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact
