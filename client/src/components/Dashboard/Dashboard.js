@@ -20,7 +20,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-
+    console.log('organization: this.state.userDetails',this.state.userDetails)
     if (!this.state.isLoaded) return <Spinner />;
  
     if (this.state.isAuthenticated && !this.state.isCheckingAuth) {
@@ -41,9 +41,9 @@ class Dashboard extends React.Component {
           pathname: '/TeamAdmin',
           state: {
             brand: {
-              brand: this.state.userDetails.parents.sensor,
+              brand: this.state.userDetails.sensor,
               organization: this.state.userDetails.organization,
-              user_cognito_id: this.state.userDetails.parents.user_cognito_id
+              user_cognito_id: this.state.userDetails.user_cognito_id
             }
           }
         }} />;
@@ -52,10 +52,10 @@ class Dashboard extends React.Component {
           pathname: '/TeamAdmin/team/players',
           state: {
             team: {
-              brand: this.state.userDetails.parents.sensor,
+              brand: this.state.userDetails.sensor,
               organization: this.state.userDetails.parents.organization,
               team_name: this.state.userDetails.team,
-              user_cognito_id: this.state.userDetails.parents.user_cognito_id
+              user_cognito_id: this.state.userDetails.user_cognito_id
             }
           }
         }} />;

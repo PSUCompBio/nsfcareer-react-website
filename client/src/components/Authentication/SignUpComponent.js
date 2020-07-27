@@ -2,7 +2,7 @@ import React from 'react';
 import LoginComponent from './LoginComponent';
 import { Link, withRouter, Redirect } from 'react-router-dom';
 import { formDataToJson } from '../../utilities/utility';
-import { signUp,singUpWithToken, getUserDBDetails } from '../../apis';
+import { signUp,singUpWithToken, getUserDBDetails, getUserTokenDBDetails } from '../../apis';
 import { useParams } from "react-router";
 import '../../mixed_style.css';
 import Footer from '../Footer';
@@ -94,7 +94,7 @@ class SignUpComponent extends React.Component {
         user_cognito_id: user_cognito_id
       });
      
-      getUserDBDetails({user_cognito_id:user_cognito_id}).then((response) => {
+      getUserTokenDBDetails({InviteToken:user_cognito_id}).then((response) => {
         console.log('response',response);
         if(response.data.data){
           var data = response.data.data;
@@ -146,10 +146,10 @@ class SignUpComponent extends React.Component {
       console.log(formData);
       const formJsonData = formDataToJson(formData);
       console.log(formJsonData);
-      singUpWithToken(formJsonData)
-      .then((response) => {
-        console.log('response',response)
-      })
+         this.props.history.push({
+          pathname : '/IRB',
+          state : { formData : formJsonData }
+      });
   }
   handleSubmit(e) {
     e.preventDefault();
@@ -430,7 +430,7 @@ class SignUpComponent extends React.Component {
         {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
 
         <div className="input-group mb-5">
-          <input type="hidden" name="user_cognito_id" id="user_cognito_id" value={this.state.user_cognito_id} />
+          <input type="hidden" name="InviteToken" id="InviteToken" value={this.state.user_cognito_id} />
           <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon1">
               <img className="age" src={this.state.baseUrl+'/'+"img/icon/age.svg"} alt="" />

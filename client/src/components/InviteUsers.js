@@ -72,7 +72,8 @@ class InviteUsers extends React.Component {
       lavelFor: '',
       failuer: false,
       invited: false,
-      organization: ''
+      organization: '',
+      sensorBrandList: ''
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -155,7 +156,7 @@ class InviteUsers extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
 
-  selectOption=(data,heading) =>  {
+  selectOption=(data,heading,type) =>  {
     return(
       <FormGroup row>
         <Label for="exampleEmail" sm={2}>{heading}</Label>
@@ -163,17 +164,17 @@ class InviteUsers extends React.Component {
         <div className="input-group">
           <Input
             type="select"
-            name="organization"
-            id="organization"
+            name={type}
+            id={type}
             className="profile-input"
-            aria-label="organization"
+            aria-label={type}
             style={{'width': '100%','padding': '6px'}}
             onChange={this.handleInputChange}
           >
             <option defaultValue>{heading}</option>
             {data &&
               data.map((value)=>
-                <option value={value.organization}>{value.organization}</option>
+                <option value={value[type]}>{value[type]}</option>
               )
             }
           </Input>
@@ -279,7 +280,9 @@ class InviteUsers extends React.Component {
                     {this.state.selectioptions && 
                       this.state.selectioptions 
                     }
-                 
+                  {this.state.sensorBrandList &&
+                    this.state.sensorBrandList
+                  }
                   <div style={{'margin-bottom': '24px'}}>
                     <button class="btn btn-primary">{this.state.isLoading ? (
                         <div className="d-flex justify-content-center">
@@ -308,9 +311,9 @@ class InviteUsers extends React.Component {
     if(this.props.location.state.lavelFor){
       var location = this.props.location.state.data;
       if(location.type == 'organization'){
-        // console.log('sensorOrgList',this.selectOption(location.sensorOrgList,'Select Organization'));
+        // console.log('sensorOrgList',this.selectOption(location.sensorOrgList,'Organization','organization'));
         this.setState({
-          selectioptions: this.selectOption(location.sensorOrgList,'Select Organization'),
+          selectioptions: this.selectOption(location.sensorOrgList,'Select Organization','organization'),
           sensor:location.sensor
         });  
       }else if(location.type == 'TeamnAdmin'){
@@ -319,6 +322,13 @@ class InviteUsers extends React.Component {
           sensor:location.sensorOrgTeamList[0].sensor,
           organization:location.sensorOrgTeamList[0].organization,
         }); 
+      }else if(location.type == 'AdminOrganization'){
+        console.log('location',location.sensorBrandList);
+         this.setState({
+          sensorBrandList: this.selectOption(location.sensorBrandList,'Sensor','sensor'),
+        }); 
+      }else{
+        
       }
     }
     isAuthenticated(JSON.stringify({}))

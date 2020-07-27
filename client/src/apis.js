@@ -192,6 +192,17 @@ export const getUserDBDetails = (request) =>{
       });
   })
 }
+export const getUserTokenDBDetails = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUserTokenDBDetails`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 
 export const getProfilePicLink = (request) =>{
   return new Promise((resolve,reject)=>{

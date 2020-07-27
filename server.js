@@ -483,6 +483,30 @@ function createUserDbEntry(event, callback) {
     });
 }
 
+function createInviteUserDbEntry(event, callback) {
+    var dbInsert = {};
+    // adding key with name user_cognito_id
+    // deleting the key from parameter from "user_name"
+    // event["sensor"] = 'Blackbox Biometrics';
+    delete event.user_name;
+    dbInsert = {
+        TableName: "InviteUsers",
+        Item: event
+    }
+
+
+    docClient.put(dbInsert, function (dbErr, dbData) {
+        if (dbErr) {
+            callback(dbErr, null);
+            console.log(dbErr);
+        }
+        else {
+            console.log(dbData);
+            callback(null, event);
+        }
+    });
+}
+
 function addRecordInUsersDDB(event) {
     return new Promise((resolve, reject) =>{
         var dbInsert = {};
@@ -906,7 +930,24 @@ function getUserDbData(user_name, cb) {
         }
     });
 }
+function getUserTokenDBDetails(user_name, cb) {
+    var db_table = {
+        TableName: 'InviteUsers',
+        Key: {
+            "InviteToken": user_name
+        }
+    };
+    docClient.get(db_table, function (err, data) {
+        if (err) {
 
+            cb(err, "");
+
+        } else {
+
+            cb("", data);
+        }
+    });
+}
 function getAge(dob) {
     let currentDate = new Date();
     let birthDate = new Date(dob);
@@ -1827,7 +1868,9 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_inp_uploaded"] = false;
     // Hardcoding Done Here need to be replaced with actual organization in request.
     req.body["organization"] = "PSU";
-    req.body["level"] = '100';
+    if(!req.body.level){
+        req.body["level"] = 100;
+    }
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
@@ -1854,7 +1897,12 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
-            tempData["level"] = 100;
+            if(!req.body.level){
+                tempData["level"] = 100;
+            }else{
+                 tempData["level"] =  parseInt(req.body.level);
+            }
+            
             //tempData["is_sensor_company"] = true;
 
             if (req.body.user_type == "Admin") {
@@ -2001,7 +2049,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
-    createUserDbEntry(req.body, function (dberr, dbdata) {
+    createInviteUserDbEntry(req.body, function (dberr, dbdata) {
         if (dberr) {
             console.log("DB ERRRRRR =============================== \n", dberr);
 
@@ -2016,7 +2064,7 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
               from: 'mukesh.rawat@brihaspatitech.com',
               to: dbdata.email,
               subject: 'Thank you for joining Nsfcareer',
-              text: 'Signup by this url = http://localhost:3000/SignUp/'+dbdata.user_cognito_id
+              text: 'Signup by this url = http://localhost:3000/SignUp/'+dbdata.InviteToken
             };
 
             transporter.sendMail(mailOptions, function(error, info){
@@ -2388,6 +2436,30 @@ app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
         }
     });
 });
+
+app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
+    // If request comes to get detail of specific player
+    console.log(req.body);
+    if(req.body.InviteToken){
+        req.InviteToken = req.body.InviteToken ;
+    }
+    getUserTokenDBDetails(req.InviteToken, function (err, data) {
+        if (err) {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }
+        else {
+            userData = data.Item;
+            res.send({
+                message: "success",
+                data: userData
+            });
+        }
+    });
+});
+
 
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
