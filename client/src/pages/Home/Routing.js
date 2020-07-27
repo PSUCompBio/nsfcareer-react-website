@@ -18,7 +18,7 @@ import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import AdminDashboard from '../../components/AdminDashboard';
 import Users from '../../components/Users';
-import AddUsers from '../../components/AddUsers';
+// import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
 import TeamPlayers from '../../components/CommanderTeamView';
@@ -218,11 +218,11 @@ class Routing extends React.Component {
           path="/Users"
           render={(props) => <Users {...props} isDarkModeSet={this.checkDarkMode} />}
         />
-        <Route
+        {/* <Route
           exact
           path="/Users/addUsers"
           render={(props) => <AddUsers {...props} isDarkModeSet={this.checkDarkMode} />}
-        />
+        /> */}
         <Route
           exact
           path="/TeamAdmin/user/dashboard"
