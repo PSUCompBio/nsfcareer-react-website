@@ -32,6 +32,12 @@
 	.Individual-Head-Acceleration-player-dash-image .loader{
 		width: 90%;
 	}
+	.Simulationvideo{
+		height: 224px;
+	}
+	.impact-video{
+		height: 224px;
+	}
 }
 
 
@@ -81,6 +87,15 @@
 	.Individual-Head-Acceleration-player-dash-image .loader{
 		    width: 87%;
 	}
+	.Simulationvideo{
+		height: 156px;
+	}
+	.impact-video{
+		height: 156px;
+	}
+	.impact-video p{
+		font-size: 16px;
+	}
 }
 
 @media screen and (max-width: 768px){
@@ -93,6 +108,9 @@
 	}
 	.action_btn_block #motor_and_sensor_cortex {
 	    width: 38px !important;
+	}
+	.impact-video p{
+		font-size: 13px;
 	}
 }
 
@@ -164,13 +182,23 @@
 	.brain-simlation-details-movie .movie {
 	    width: 100%;
 	    text-align: center;
-	     padding: inherit; 
+	        padding: 20px 0px 20px;
 	    margin: 32px 0px 32px;
 	}
 	.div-chart-labels .chart-label {
 	    text-align: center;
 	    width: 100%;
 	    padding: 4px;
+	}
+	.Simulationvideo {
+    	height: 229px;
+	}
+	.impact-video{
+		height: 229px;
+		margin-top: 30px;
+	}
+	.impact-video p {
+		font-size: 19px;
 	}
 }
 
@@ -296,6 +324,9 @@
 	    font-weight: 700;
 	    width: 51%;
 	}
+	.Simulationvideo, .impact-video{
+		height: 172px;
+	}
 }
 
 @media screen and (max-width: 412px){
@@ -336,6 +367,12 @@
 	    width: 43%;
 	   
 	}
+	.Simulationvideo, .impact-video{
+		height: 156px;
+	}
+	.impact-video p {
+	    font-size: 15px;
+	}
 }
 
 @media screen and (max-width: 360px){
@@ -354,6 +391,9 @@
 	    margin-left: 3px;
 	    margin-top: 4px;
 	    font-size: 14px;
+	}
+	.Simulationvideo, .impact-video {
+	    height: 144px;
 	}
 }
 @media screen and (max-width: 320px){

@@ -6,7 +6,7 @@ import CumulativeEventsAccelerationEvents from '../DashboardEventsChart/Cumulati
 import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
 import HeadAccelerationAllEvents from '../DashboardEventsChart/HeadAccelerationAllEvents';
 import { svgToInline } from '../../config/InlineSvgFromImg';
-import DarkMode from '../DarkMode';
+// import DarkMode from '../DarkMode';
 import Footer from '../Footer';
 import 'jquery';
 import '../Buttons/Buttons.css';

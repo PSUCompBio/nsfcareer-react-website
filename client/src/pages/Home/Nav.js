@@ -457,70 +457,85 @@ class Nav extends React.Component {
                 aria-hidden="true"
               ></i>
               <div
-                onClick={this.showLogOutOptions}
+                
                 className="mobile-user-profile"
               >
                 {( (this.state.user_details !=null || typeof this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0 )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
               </div>
             </div>
+            <div>
+              <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
+                Home <span className="sr-only">(current)</span>
+              </Link>
+              <div className={LineUnderLink.linkeMaker('/Home')} />
+              <Link onClick={this.handleClick} className="nav-link" to={'/Details'}>
+                Details <span className="sr-only">(current)</span>
+              </Link>
+              <div className={LineUnderLink.linkeMaker('/About')} />
+              {this.props.isLoggedIn === true ? (
+                <React.Fragment>
+                  <Link
+                    onClick={this.handleClick}
+                    className="nav-link"
+                    to={'/Profile'}
+                  >
+                    Profile <span className="sr-only">(current)</span>
+                  </Link>
+                  <div className={LineUnderLink.linkeMaker('/Profile')} />
+                </React.Fragment>
+              ) : (
+                ''
+              )}
 
-            <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
-              Home <span className="sr-only">(current)</span>
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/Home')} />
-            <Link onClick={this.handleClick} className="nav-link" to={'/Details'}>
-              Details <span className="sr-only">(current)</span>
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/About')} />
-            {this.props.isLoggedIn === true ? (
-              <React.Fragment>
-                <Link
-                  onClick={this.handleClick}
+              <Link
+                onClick={this.handleClick}
+                className="nav-link"
+                to={'/Contact'}
+              >
+                Contact us
+              </Link>
+  			<Link
+                onClick={this.handleClick}
+                className="nav-link"
+                to={'/Developer'}
+              >
+                For Developers
+              </Link>
+              <div className={LineUnderLink.linkeMaker('/Contact')} />
+              {this.props.location.pathname !== '/SignUp' ? (
+                <React.Fragment>
+                  <Link onClick={this.handleClick} className="nav-link mobie-dashboard-hover" to={'/Dashboard'}>
+                    Dashboard <span className="sr-only">(current)</span>
+                  </Link>
+                  <div className={LineUnderLink.linkeMaker('/Login')} />
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <Link
+                    onClick={this.handleClick}
+                    className="nav-link"
+                    to={'/SignUp'}
+                  >
+                    Sign up
+                  </Link>
+                  <div className={LineUnderLink.linkeMaker('/SignUp')} />
+                </React.Fragment>
+              )}
+            
+              <Link
+                   onClick={this.handleClick}
                   className="nav-link"
-                  to={'/Profile'}
-                >
-                  Profile <span className="sr-only">(current)</span>
-                </Link>
-                <div className={LineUnderLink.linkeMaker('/Profile')} />
-              </React.Fragment>
-            ) : (
-              ''
-            )}
-
-            <Link
-              onClick={this.handleClick}
-              className="nav-link"
-              to={'/Contact'}
-            >
-              Contact us
-            </Link>
-			<Link
-              onClick={this.handleClick}
-              className="nav-link"
-              to={'/Developer'}
-            >
-              For Developers
-            </Link>
-            <div className={LineUnderLink.linkeMaker('/Contact')} />
-            {this.props.location.pathname !== '/SignUp' ? (
-              <React.Fragment>
-                <Link onClick={this.handleClick} className="nav-link mobie-dashboard-hover" to={'/Dashboard'}>
-                  Dashboard <span className="sr-only">(current)</span>
-                </Link>
-                <div className={LineUnderLink.linkeMaker('/Login')} />
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Link
-                  onClick={this.handleClick}
+                   to="profile">Settings
+              </Link>
+              <a
+                  onClick={() => {
+                    this.signOut();
+                    this.handleClick();
+                  }}
                   className="nav-link"
-                  to={'/SignUp'}
-                >
-                  Sign up
-                </Link>
-                <div className={LineUnderLink.linkeMaker('/SignUp')} />
-              </React.Fragment>
-            )}
+                   href="#">Sign Out
+              </a>
+            </div>
           </div>
 
           <div

@@ -960,6 +960,7 @@ function getAge(dob) {
 }
 
 function getUserSensor(user_name) {
+    console.log('user_name',user_name)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'sensors',
@@ -982,6 +983,34 @@ function getUserSensor(user_name) {
                 item.push(data.Items);
             }
             done();
+        });
+    });
+}
+
+function InsertUserIntoSensor(user_name,sensor) {
+    console.log('user_name',user_name)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'sensors',
+            Key: { 'sensor': sensor },
+            ReturnValues: 'ALL_NEW',
+            UpdateExpression: 'set #users = list_append(if_not_exists(#users, :empty_list), :user_cognito_id)',
+            ExpressionAttributeNames: {
+                "#users": "users",
+            },
+            ExpressionAttributeValues: {
+                ":user_cognito_id": user_name,
+            }
+        };
+        var item = [];
+        docClient.update(params,function (err, data) { 
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
         });
     });
 }
@@ -1961,6 +1990,16 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                         });
                     }
                     else {
+                        if(mergedObject.level == 400){
+                            InsertUserIntoSensor(mergedObject.user_cognito_id,mergedObject.sensor).
+                                then(sensor_data => {
+                                   
+                                    console.log('sensor_data',sensor_data)
+                                })
+                                .catch(err => {
+                                   console.log('err',err)
+                                })
+                        }
                         // Add user to corresponding group...
                         // event.user_type
                         // event.user_name
@@ -2104,7 +2143,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
             // Now getting the list of Groups of user
             getListGroupForUser(data.Username, function (error, groupData) {
                 if (error) {
-
+                    console.log('error',error)
                     res.send({
                         message: "failure",
                         error: error
@@ -2132,6 +2171,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                         login(req.body.user_name, req.body.password, userType, function (err, result) {
 
                             if (err) {
+                                console.log('err',err)
                                 res.cookie("token", "");
                                 res.send({
                                     message: "failure",
@@ -2145,6 +2185,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
 
                                 getUserDbData(data.Username, function(err, user_details){
                                     if(err){
+                                         console.log('err2',err)
                                         res.send({
                                             message : "failure",
                                             error : err
@@ -2163,6 +2204,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                                     
                                                 })
                                                 .catch(err => {
+                                                     console.log('err3',err)
                                                     res.send({
                                                         message : "failure",
                                                         error : err
