@@ -351,3 +351,22 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
 .cbp-spmenu-right.cbp-spmenu-open{
     overflow: scroll;
 }
+
+.upload-icon{
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 19.5%;
+}
+
+.upload-icon img{
+    width: 8%!important;
+    border-radius: 0PX!important;
+}
+
+.profile-loading{
+    position: absolute!important;
+}
+.profile-loading .spinner-border{
+    color: white!important;
+}

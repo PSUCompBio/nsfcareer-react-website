@@ -164,7 +164,7 @@ class BrainSimulationDetails extends React.Component {
 
                 {/*Movie section start*/}
                   <div className="col-md-12 col-lg-12 brain-simlation-details-movie">
-                    <h4 className="brain-simlation-details-subtitle">Skull Kinematics Movie Based on Sensor Data</h4>
+                    <h4 className="brain-simlation-details-subtitle">Video Verification of Skull Kinematics</h4>
                     <div className="col-md-12">
                       <div className="movie">
                         <div className="col-md-6" style={{'float':'left'}}>

@@ -5,6 +5,12 @@ import { resetSignedInSucceeded, userDetails } from '../../Actions';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import LineUnderLink from '../../utilities/LineUnderLink.js';
+import camera from './camera.png';
+import {
+    uploadProfilePic,
+    getProfilePicLink,
+ 
+} from '../../apis'; 
 
 class Nav extends React.Component {
   constructor(props) {
@@ -27,12 +33,153 @@ class Nav extends React.Component {
       userType : props.userType,
       isNavbarTransparent : props.isNavbarTransparent,
       user_details : {},
-      intervalId: ''
+      intervalId: '',
+      profile_to_view: '',
+      isLoading: ''
     };
     console.log("STATE VALUES , ", this.state.user_details);
     this.handleClick = this.handleClick.bind(this);
     this.timer = this.timer.bind(this);
   }
+
+  onChangeHandler = (event) => {
+      event.persist();
+      console.log('uploading',this.state.user_details)
+      this.setState({
+          selectedFile: event.target.files[0]
+      });
+      this.onClickHandler(event.target.files[0]);
+  };
+
+  onClickHandler = (profile_pic) => {
+        const data = new FormData();
+        this.setState({
+            isFileBeingUploaded: true,
+            isUploading: true,
+            isFileUploaded: false,
+            fileUploadError: '',
+        });
+        var user_id = '';
+        if(this.state.profile_to_view){
+            user_id = this.state.profile_to_view ;
+        }
+        else{
+            user_id = this.state.user_details.user_cognito_id ;
+        }
+
+        data.append('profile_pic', profile_pic);
+        data.append('user_cognito_id', user_id);
+
+        // console.log("THIS IS FORM DATA ",data);
+        // console.log("VALUE TO BE PRINTED ",user_id);
+        var profile_data = {
+            profile_picture_url :'', // Not a user key
+            avatar_url : '',
+            is_selfie_image_uploaded : false,
+            is_selfie_model_uploaded : false,
+            foundInpLink: false,
+            isUploading: false,
+            is_selfie_inp_uploaded: false,
+            inp_file_url:'',
+            avatar_url : '',
+            vtk_file_url : '',
+            inp_latest_url_details : '',
+            selfie_latest_url_details : '',
+            simulation_file_url_details : '',
+            avatar_zip_file_url_details : '',
+            vtk_file_url_details : ''
+        }
+        uploadProfilePic(data)
+        .then((response) => {
+            console.log(response);
+
+            if (response.data.message === 'success') {
+                // Fetch only image url again
+                getProfilePicLink(
+                    JSON.stringify({ user_cognito_id: user_id })
+                )
+                .then((res) => {
+                    console.log(res.data);
+                    profile_data.profile_picture_url = res.data.profile_picture_url ;
+                    if (
+                        res.data.avatar_url !== undefined &&
+                        res.data.avatar_url.length !== 0
+                    ) {
+                        profile_data.avatar_url = res.data.avatar_url;
+                        profile_data.is_selfie_image_uploaded = true;
+
+                        // profile_data.is_selfie_model_uploaded = true;
+                        if(res.data.profile_picture_url) {
+                            let file_extension = this.getUploadFileExtension(res.data.profile_picture_url);
+                            let details = res.data.profile_picture_url.split(file_extension)[0].split('/');
+
+                            let timestamp = details[details.length - 1]
+
+                            let date = new Date(parseInt(timestamp));
+
+                            profile_data.selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                        }
+                        else{
+                            if (
+                                res.data.avatar_url !== undefined &&
+                                res.data.avatar_url.length !== 0
+                            ) {
+                                let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                                let details = res.data.avatar_url.split(".png")[0].split('/');
+
+                                let timestamp = details[details.length - 1]
+
+                                let date = new Date(parseInt(timestamp));
+
+                                profile_data.selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+                            }
+                        }
+
+                        this.setState((prevState) => {
+                            prevState = JSON.parse(JSON.stringify(this.state.user));
+                            prevState.profile_picture_url = res.data.profile_picture_url;
+                            if (
+                                res.data.avatar_url !== undefined &&
+                                res.data.avatar_url.length !== 0
+                            ) {
+                                prevState.avatar_url = res.data.avatar_url;
+                                prevState.is_selfie_image_uploaded = true;
+                            }
+                            return { user: prevState, selfie_latest_upload_details : profile_data.selfie_latest_url_details };
+                        });
+                    }
+
+                    // this.setState({
+                    //     profile_picture_url: res.data.profile_picture_url
+                    //
+                    // });
+                    this.setState({ isUploading: false, isFileUploaded : true });
+
+
+                    // this.setState({ foundInpLink: false });
+
+                })
+                .catch((err) => {
+                    console.log(err);
+
+                    this.setState({ isUploading: false, fileUploadError : "Failed to fetch Inp Link"});
+                    alert("Failed to fetch Inp Link");
+                });
+            } else {
+
+                this.setState({ isUploading: false, fileUploadError : "Failed to upload selfie !"});
+                    alert("Failed to upload selfie !");
+
+                console.log(response);
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            this.setState({ isUploading: false, fileUploadError : "Internal Server Error : Failed to upload Selfie !"});
+                    alert("Internal Server Error : Failed to upload Selfie !");
+
+        });
+    };
 
   isEquivalent = (a, b) => {
     // Create arrays of property names
@@ -60,7 +207,33 @@ class Nav extends React.Component {
     return true;
 }
 
+getUploadFileExtension(url){
 
+        if(new RegExp(".jpg").test(url)){
+            return ".jpg";
+        }
+        if(new RegExp(".jpeg").test(url)){
+            return ".jpeg";
+        }
+        if(new RegExp(".JPEG").test(url)){
+            return ".JPEG";
+        }
+        if(new RegExp(".JPG").test(url)){
+            return ".JPG";
+        }
+        if(new RegExp(".png").test(url)){
+            return ".png";
+        }
+        if(new RegExp(".PNG").test(url)){
+            return ".PNG";
+        }
+        if(new RegExp(".tiff").test(url)){
+            return ".tiff";
+        }
+        if(new RegExp(".TIFF").test(url)){
+            return ".TIFF";
+        }
+    }
   componentDidMount() {
       this.setState({
           intervalId : setInterval(this.timer, 1000)
@@ -93,6 +266,7 @@ class Nav extends React.Component {
            user_details : JSON.parse(localStorage.getItem("state")).userInfo
        })
    }
+   console.log('this.state.user_details',this.state.user_details)
     }
 
   }
@@ -460,8 +634,34 @@ class Nav extends React.Component {
                 
                 className="mobile-user-profile"
               >
-                {( (this.state.user_details !=null || typeof this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0 )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
+                {( (this.state.user_details !=null || typeof this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0  && !this.state.isUploading )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : this.state.isUploading? '' : "NSF"}
+               <br/> 
               </div>
+              {Object.keys(this.state.user_details).length >0  && !this.state.isUploading ?
+                (<div className="upload-icon">
+                  <input
+                    onChange={this.onChangeHandler}
+                    type="file"
+                    name="profile_pic"
+                    id="file"
+                    style = {{
+                        display : "none"
+                    }}
+                  />
+                  <label for="file"><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
+                </div>) : null
+              }
+              {this.state.isUploading ? (
+                      <div className="d-flex justify-content-center center-spinner profile-loading">
+                        <div
+                          className="spinner-border"
+                          role="status"
+                        >
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      </div>
+                    ) : null}
+
             </div>
             <div>
               <Link onClick={this.handleClick} className="nav-link" to={'/Home'}>
@@ -521,21 +721,32 @@ class Nav extends React.Component {
                   <div className={LineUnderLink.linkeMaker('/SignUp')} />
                 </React.Fragment>
               )}
-            
-              <Link
-                   onClick={this.handleClick}
-                  className="nav-link"
-                   to="profile">Settings
-              </Link>
-              <a
-                  onClick={() => {
-                    this.signOut();
-                    this.handleClick();
-                  }}
-                  className="nav-link"
-                   href="#">Sign Out
-              </a>
-            </div>
+              {Object.keys(this.state.user_details).length >0  &&
+                <React.Fragment>
+                <Link
+                     onClick={this.handleClick}
+                    className="nav-link"
+                     to="profile">Settings
+                </Link>
+                <a
+                    onClick={() => {
+                      this.signOut();
+                      this.handleClick();
+                    }}
+                    className="nav-link"
+                     href="#">Sign Out
+                </a>
+                </React.Fragment>
+              }
+              {Object.keys(this.state.user_details).length == 0  &&
+                 <Link
+                     onClick={this.Login}
+                    className="nav-handleClick"
+                     to="Login">Login
+                </Link>
+              }
+              </div>
+
           </div>
 
           <div

@@ -106,6 +106,7 @@ class TeamnAdmin extends React.Component {
                                     if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300) {
                                         getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
                                             .then(teams => {
+                                                console.log('teams',teams)
                                                 this.setState(prevState => ({
                                                     totalTeam: teams.data.data.length,
                                                     sensorOrgTeamList: teams.data.data

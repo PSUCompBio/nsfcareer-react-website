@@ -644,6 +644,7 @@ class CommanderTeamView extends React.Component {
                             </div>
                             {!this.state.tabActive ?
                                 <div ref="table" className="commander-data-table table-responsive ">
+                                    
                                     <table style={{ whiteSpace: "nowrap" }} className="table ">
                                         <thead>
                                             <tr>
@@ -656,7 +657,7 @@ class CommanderTeamView extends React.Component {
                                                 <th scope="col">Impact Date & Time</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="player-table">
+                                      <tbody className="player-table">
                                             {this.state.users.map(function (player, index) {
                                                 if (player.simulation_data.length > 0) {
 
@@ -701,6 +702,17 @@ class CommanderTeamView extends React.Component {
                                     </table>
                                 </div>
                                 : <div className="commander-data-table">
+                                    {/*<Link  to={{
+                                        pathname: '/InviteUsers',
+                                        state: {
+                                            lavelFor: '100',
+                                            data:{
+                                                type: 'Player',
+                                            }                                        
+                                        }
+                                        }} >
+                                        <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Player</button> 
+                                    </Link>*/}
                                     <table style={{ whiteSpace: "nowrap" }} className="table">
                                         <thead>
                                             <tr>
@@ -711,7 +723,7 @@ class CommanderTeamView extends React.Component {
                                                 
                                             </tr>
                                         </thead>
-                                        <tbody className="player-table">
+                                        {/*<tbody className="player-table">
                                             {this.props.location.state.team.staff.map(function (staff, index) {
 
                                                 return <tr className="player-data-table-row" key={index}>
@@ -721,7 +733,7 @@ class CommanderTeamView extends React.Component {
                                                     <td>{staff.organization}</td>
                                                 </tr>
                                             })}
-                                        </tbody>
+                                        </tbody>*/}
 
                                     </table>
                                 </div>

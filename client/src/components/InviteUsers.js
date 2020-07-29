@@ -73,7 +73,9 @@ class InviteUsers extends React.Component {
       failuer: false,
       invited: false,
       organization: '',
-      sensorBrandList: ''
+      sensorBrandList: '',
+      TeamList: '',
+      team: ''
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -102,7 +104,7 @@ class InviteUsers extends React.Component {
   handleSubmit(e) {
       console.log('Update user details clicked');
       e.preventDefault();
-      const {first_name, last_name,email, lavelFor,organization,sensor} = this.state;
+      const {first_name, last_name,email, lavelFor,organization,sensor,team} = this.state;
       var level = lavelFor
       console.log(first_name, last_name, lavelFor)
       this.setState({isLoading:true})
@@ -120,7 +122,8 @@ class InviteUsers extends React.Component {
         'InviteToken':tokens,
         'user_name':tokens,
         'organization':organization,
-        'sensor':sensor
+        'sensor':sensor,
+        'team': team
       };
 
       console.log('formJsonData',formJsonData);
@@ -166,6 +169,35 @@ class InviteUsers extends React.Component {
             type="select"
             name={type}
             id={type}
+            className="profile-input"
+            aria-label={type}
+            style={{'width': '100%','padding': '6px'}}
+            onChange={this.handleInputChange}
+          >
+            <option defaultValue>{heading}</option>
+            {data &&
+              data.map((value)=>
+                <option value={value[type]}>{value[type]}</option>
+              )
+            }
+          </Input>
+          </div>
+        </Col>
+    </FormGroup>
+
+      
+    )
+  }
+  selectOption2=(data,heading,type,name) =>  {
+    return(
+      <FormGroup row>
+        <Label for="exampleEmail" sm={2}>{heading}</Label>
+        <Col sm={8}>
+        <div className="input-group">
+          <Input
+            type="select"
+            name={name}
+            id={name}
             className="profile-input"
             aria-label={type}
             style={{'width': '100%','padding': '6px'}}
@@ -283,6 +315,9 @@ class InviteUsers extends React.Component {
                   {this.state.sensorBrandList &&
                     this.state.sensorBrandList
                   }
+                  {this.state.TeamList &&
+                    this.state.TeamList
+                  }
                   <div style={{'margin-bottom': '24px'}}>
                     <button class="btn btn-primary">{this.state.isLoading ? (
                         <div className="d-flex justify-content-center">
@@ -313,7 +348,7 @@ class InviteUsers extends React.Component {
       if(location.type == 'organization'){
         // console.log('sensorOrgList',this.selectOption(location.sensorOrgList,'Organization','organization'));
         this.setState({
-          selectioptions: this.selectOption(location.sensorOrgList,'Select Organization','organization'),
+          selectioptions: this.selectOption(location.sensorOrgList,'Organization','organization'),
           sensor:location.sensor
         });  
       }else if(location.type == 'TeamnAdmin'){
@@ -321,6 +356,7 @@ class InviteUsers extends React.Component {
          this.setState({
           sensor:location.sensorOrgTeamList[0].sensor,
           organization:location.sensorOrgTeamList[0].organization,
+          TeamList: this.selectOption2(location.sensorOrgTeamList,'Team','team_name','team')
         }); 
       }else if(location.type == 'AdminOrganization'){
         console.log('location',location.sensorBrandList);

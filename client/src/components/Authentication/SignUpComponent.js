@@ -40,6 +40,8 @@ class SignUpComponent extends React.Component {
       email: '',
       level: '',
       sensor:'',
+      team: '',
+      organization:'',
       baseUrl: window.location.origin.toString()
     };
     if(this.props.location.state && this.props.location.state.message ) {
@@ -104,7 +106,9 @@ class SignUpComponent extends React.Component {
             last_name: data.last_name,
             email: data.email,
             level:data.level,
-            sensor: data.sensor
+            sensor: data.sensor,
+            organization: data.organization,
+            team: data.team ? data.team : '' 
           });
         }else{
           this.setState({isFetching: false,Invaliduser: true})
@@ -450,6 +454,10 @@ class SignUpComponent extends React.Component {
         </div>
         <input type="hidden" name="level" id="level" value={this.state.level}/>
         <input type="hidden" name="sensor" id="sensor" value={this.state.sensor}/>
+        <input type="hidden" name="organization" id="organization" value={this.state.organization}/>
+        <input type="hidden" name="team" id="team" value={this.state.team}/>
+
+
 
         <div className="input-group mb-5">
           <div className="input-group-prepend">

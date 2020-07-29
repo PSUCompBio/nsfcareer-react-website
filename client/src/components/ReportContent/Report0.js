@@ -165,7 +165,7 @@ class Report extends React.Component {
                                     marginBottom : '2%',
                                     fontSize : 26,
                                 }}>
-                                {this.props.data.player_id}
+                                {this.props.data.player['first-name'] +' '+this.props.data.player['last-name']}
                             </Text>
 
                             <View style={styles.tableRow}>

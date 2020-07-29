@@ -988,22 +988,24 @@ function getUserSensor(user_name) {
 }
 
 function InsertUserIntoSensor(user_name,sensor) {
-    console.log('user_name',user_name)
+    console.log('user_name',user_name,sensor)
     return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'sensors',
-            Key: { 'sensor': sensor },
-            ReturnValues: 'ALL_NEW',
-            UpdateExpression: 'set #users = list_append(if_not_exists(#users, :empty_list), :user_cognito_id)',
+        var dbInsert = {
+            TableName: "sensors",
+            Key: { 
+                "sensor" : sensor
+            },
+            UpdateExpression: "set #users = list_append(#users, :user_cognito_id)",
             ExpressionAttributeNames: {
-                "#users": "users",
+                "#users": "users"
             },
             ExpressionAttributeValues: {
-                ":user_cognito_id": user_name,
-            }
-        };
-        var item = [];
-        docClient.update(params,function (err, data) { 
+                ":user_cognito_id": [user_name]
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+
+        docClient.update(dbInsert, function (err, data) {
             if (err) {
                 console.log("ERROR WHILE CREATING DATA",err);
                 reject(err);
@@ -1896,7 +1898,9 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
     // Hardcoding Done Here need to be replaced with actual organization in request.
-    req.body["organization"] = "PSU";
+    if(!req.body.organization){
+        req.body["organization"] = "PSU";
+    }
     if(!req.body.level){
         req.body["level"] = 100;
     }
