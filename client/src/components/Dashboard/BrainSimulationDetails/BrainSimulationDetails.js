@@ -12,6 +12,7 @@ import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
 import simulationLoading from '../../simulationLoading.png';
 import videoSimulationLoading from './videoSimulationLoading.png';
+import uploadicon from './upload-icon.png'
 import 'jquery';
 import '../../Buttons/Buttons.css';
 import '.././Dashboard.css';
@@ -166,12 +167,40 @@ class BrainSimulationDetails extends React.Component {
                     <h4 className="brain-simlation-details-subtitle">Skull Kinematics Movie Based on Sensor Data</h4>
                     <div className="col-md-12">
                       <div className="movie">
-                      {!this.state.movie_link &&
-                        <img src={videoSimulationLoading} style={{'width':'50%'}} />
-                      }
-                       {this.state.movie_link &&
-                        <video src={this.state.movie_link} style={{'width':'100%'}} controls></video>
-                       }
+                        <div className="col-md-6" style={{'float':'left'}}>
+                          <div className="Simulationvideo">
+                            {!this.state.movie_link &&
+                              <img src={videoSimulationLoading} style={{'width':'50%'}} />
+                            }
+                            {this.state.movie_link &&
+                              <video src={this.state.movie_link} style={{'width':'100%'}} controls></video>
+                            }
+                          </div>
+                          <div>
+                            <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
+                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                          </div>
+                        </div>
+                        <div className="col-md-6" style={{'float':'left'}}>
+                          <div className='impact-video'>
+                            <img src={uploadicon} style={{'width':'40%'}} alt="upload video"/>
+                            <p>Upload Sideline Video of Impact</p>
+                          </div>
+                          <div>
+                            <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
+                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                          </div>
+                          <div>
+                            <input type="range" min="1" max="100" className="MyrangeSlider2" id="MyrangeSlider2" />
+                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <div>
+                            <input type="range" min="1" max="100" className="MyrangeSlider3" id="MyrangeSlider3" />
+                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

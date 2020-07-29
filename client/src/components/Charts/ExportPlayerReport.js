@@ -34,8 +34,12 @@ let hightlightMaterial = new THREE.MeshPhongMaterial( {
 	transparent: true
 });
 
-let manager = new THREE.LoadingManager();
-let textureLoader = new THREE.TextureLoader(manager);
+// let manager = new THREE.LoadingManager();
+// let textureLoader = new THREE.TextureLoader(manager);
+var texture = new THREE.TextureLoader().load(modelTexture);
+texture.encoding = THREE.sRGBEncoding;
+// texture.flipY = false;
+let objMaterial = new THREE.MeshPhongMaterial({map: texture, transparent: true, opacity: 0.5});
 
 let raycaster = new THREE.Raycaster();
 let mouse = new THREE.Vector2();
@@ -338,42 +342,53 @@ class ExportPlayerReport extends React.Component {
 						
 				obj = gltf.scene;
 				
-				obj.traverse(function (child) {
-					//console.log('child: ', child);
-					if (child.isMesh) {
-						objects.push(child);
+				obj.traverse(function (node) {
+					//console.log('node: ', node);
+					if (node.isMesh) {
+						objects.push(node);
 					}
+					node.material = objMaterial;
+					node.material.needsUpdate = true;
+					node.castShadow = true;
+					node.receiveShadow = true;
+				});
+
+				scene.add( obj );
+				me.showAllSpheres();
+
+				me.setState({
+					isLoading: false
 				});
 				
-				let map = textureLoader.load(modelTexture);
-				map.encoding = THREE.sRGBEncoding;
-				//map.flipY = false;
+				// let map = textureLoader.load(modelTexture);
+				// map.encoding = THREE.sRGBEncoding;
+				// //map.flipY = false;
 				
-				manager.onStart = function () {
-					console.log('Loading started');
-					me.setState({
-						isLoading: true
-					});
-				};
+				// manager.onStart = function () {
+				// 	console.log('Loading started');
+				// 	me.setState({
+				// 		isLoading: true
+				// 	});
+				// };
 				
-				manager.onLoad = function () {
-					console.log('loaded');
-					me.setState({
-						isLoading: false
-					});
-					let material = new THREE.MeshPhongMaterial({map: map, transparent: true, opacity: 0.5, cache: true});
-					obj.traverse( function ( node ) {
-						node.material = material;
-						node.material.needsUpdate = true;
-						node.castShadow = true;
-						node.receiveShadow = true;
-					});
+				// manager.onLoad = function () {
+				// 	console.log('loaded');
+				// 	me.setState({
+				// 		isLoading: false
+				// 	});
+				// 	let material = new THREE.MeshPhongMaterial({map: map, transparent: true, opacity: 0.5, cache: true});
+				// 	obj.traverse( function ( node ) {
+				// 		node.material = material;
+				// 		node.material.needsUpdate = true;
+				// 		node.castShadow = true;
+				// 		node.receiveShadow = true;
+				// 	});
 														
-					scene.add( obj );
+				// 	scene.add( obj );
 
-					me.showAllSpheres();
+				// 	me.showAllSpheres();
 					
-				};
+				// };
 			},
 			// called while loading is progressing
 			function ( xhr ) {
@@ -668,9 +683,19 @@ class ExportPlayerReport extends React.Component {
 
   render() {
 	  
-	 let me = this;
-	 frontal_Lobe_json = this.props.frontal_Lobe
-	 all_spheres_json = this.props.frontal_Lobe
+	let me = this;
+	frontal_Lobe_json = this.props.brainRegions.frontal || []
+	cerebellum_Lobe_json = this.props.brainRegions.cerebellum || []
+	Occipital_Lobe_json = this.props.brainRegions.occipital || []
+	Pariental_Lobe_json = this.props.brainRegions.parietal || []
+	Temporal_Lobe_json = this.props.brainRegions.temporal || []
+	middle_Part_of_the_Brain_json = this.props.motor || []
+	all_spheres_json = all_spheres_json.concat(frontal_Lobe_json);
+	all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
+	all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
+	all_spheres_json = all_spheres_json.concat(Pariental_Lobe_json);
+	all_spheres_json = all_spheres_json.concat(Temporal_Lobe_json);
+	all_spheres_json = all_spheres_json.concat(middle_Part_of_the_Brain_json);
 	 
 	 const data = {
 		labels: [857, 1173, 3043, 1173, 1200, 1400],

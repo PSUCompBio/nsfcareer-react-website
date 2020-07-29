@@ -53,7 +53,7 @@ class Dashboard extends React.Component {
           state: {
             team: {
               brand: this.state.userDetails.sensor,
-              organization: this.state.userDetails.parents.organization,
+              organization: this.state.userDetails.organization,
               team_name: this.state.userDetails.team,
               user_cognito_id: this.state.userDetails.user_cognito_id
             }

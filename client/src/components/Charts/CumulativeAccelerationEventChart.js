@@ -52,7 +52,12 @@ class CumulativeAccelerationEventChart extends React.Component {
 
     render() {
         // console.log('this.state.userDetails',this.state.userDetails)
-        console.log('props',this.props);
+        var fileName = '';
+        if(this.props.user){
+            console.log('props',this.props.user[0].sensor_data);
+            fileName = this.props.user[0].sensor_data.player['first-name']+'_'+this.props.user[0].sensor_data.player['last-name']+'_'+this.props.user[0].sensor_data.player_id.split('$')[1];
+            console.log('fileName',fileName)
+        }
         return (
             <React.Fragment>
                 {this.props.data.team ?
@@ -152,11 +157,11 @@ class CumulativeAccelerationEventChart extends React.Component {
                             <button style={{
                                 marginRight: "5% !important"
                             }}
-                                className="btn btn-primary pull-right sub-head-button export-player-report-1"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
-                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName="report.pdf" style={{
+                                className="btn btn-primary pull-right sub-head-button export-player-report-1"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>&nbsp;
+                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
                                     color: 'white'
                                 }}>
-                                    Export Player Report
+                                    Export Impact Report
                               {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                                 </PDFDownloadLink>
                             </button>
@@ -169,11 +174,11 @@ class CumulativeAccelerationEventChart extends React.Component {
                  <button style={{
                                 marginRight: "5% !important"
                             }}
-                                className="btn btn-primary pull-right sub-head-button export-player-report-2"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>
-                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName="report.pdf" style={{
+                                className="btn btn-primary pull-right sub-head-button export-player-report-2"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>&nbsp;
+                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
                                     color: 'white'
                                 }}>
-                                    Export Player Report
+                                    Export Impact Report
                               {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                                 </PDFDownloadLink>
                             </button>
