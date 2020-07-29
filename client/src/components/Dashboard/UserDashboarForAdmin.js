@@ -160,7 +160,7 @@ class UserDashboarForAdmin extends React.Component {
         </div>
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation">
-        <CumulativeEventsAccelerationEvents frontal_Lobe={this.state.frontal_Lobe} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
+        <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
          
           <p
             ref="h1"
@@ -228,7 +228,7 @@ class UserDashboarForAdmin extends React.Component {
               console.log(response.data);
               this.setState({
                 cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
-                frontal_Lobe: response.data.frontal_Lobe
+		brainRegions: response.data.brainRegions
               });
 
               if (!this.props.location.state.isRedirectedFromAdminPanel) {
