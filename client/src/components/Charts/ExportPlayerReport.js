@@ -26,8 +26,6 @@ let all_spheres_json = []; // frontal_Lobe_json.concat(Pariental_Lobe_json);
 // all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
 // all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
 
-console.log('Merge: ', all_spheres_json);
-
 let hightlightMaterial = new THREE.MeshPhongMaterial( {
 	color: 0xffff00,
 	opacity: 0.5,
@@ -53,6 +51,7 @@ class ExportPlayerReport extends React.Component {
 			isLoading: false,
 			condition: false,
 			isMouseEvent: false,
+			brainStrainActive: 'principal-max-strain',
 			barColors: defaultBarColors
 		};
 	}
@@ -69,58 +68,58 @@ class ExportPlayerReport extends React.Component {
 		let me = this;
 		
 		// Highlight brain model on mouse hover on brain model
-		document.getElementById("brain_model_block_1").addEventListener('mousemove', function(event) {
-			me.onMouseMove(event, '#brain_model_block_1');
-		}, false);
-		document.getElementById("brain_model_block_2").addEventListener('mousemove', function(event) {
-			me.onMouseMove(event, '#brain_model_block_2');
-		}, false);
-		document.getElementById("brain_model_block_3").addEventListener('mousemove', function(event) {
-			me.onMouseMove(event, '#brain_model_block_3');
-		}, false);
-		document.getElementById("brain_model_block_4").addEventListener('mousemove', function(event) {
-			me.onMouseMove(event, '#brain_model_block_4');
-		}, false);
+		// document.getElementById("brain_model_block_1").addEventListener('mousemove', function(event) {
+		// 	me.onMouseMove(event, '#brain_model_block_1');
+		// }, false);
+		// document.getElementById("brain_model_block_2").addEventListener('mousemove', function(event) {
+		// 	me.onMouseMove(event, '#brain_model_block_2');
+		// }, false);
+		// document.getElementById("brain_model_block_3").addEventListener('mousemove', function(event) {
+		// 	me.onMouseMove(event, '#brain_model_block_3');
+		// }, false);
+		// document.getElementById("brain_model_block_4").addEventListener('mousemove', function(event) {
+		// 	me.onMouseMove(event, '#brain_model_block_4');
+		// }, false);
 		
-		// Highlight brain model on mouse hover on brain button
-		document.getElementById("front_btn").addEventListener('mouseover', function(event) {
-			me.onMouseHover(event, 'Frontal_Lobe');
-		}, false);
-		document.getElementById("pariental_btn").addEventListener('mouseover', function(event) {
-			me.onMouseHover(event, 'Pariental_Lobe');
-		}, false);
-		document.getElementById("occipital_btn").addEventListener('mouseover', function(event) {
-			me.onMouseHover(event, 'Occipital_Lobe');
-		}, false);
-		document.getElementById("temporal_btn").addEventListener('mouseover', function(event) {
-			me.onMouseHover(event, 'Temporal_Lobe');
-		}, false);
-		document.getElementById("cerebellum_btn").addEventListener('mouseover', function(event) {
-			me.onMouseHover(event, 'Cerebellum_Lobe');
-		}, false);
-		document.getElementById("motor_and_sensor_cortex").addEventListener('mouseover', function(event) {
-			me.onMouseHover(event, 'Middle_Part_of_the_Brain');
-		}, false);
+		// // Highlight brain model on mouse hover on brain button
+		// document.getElementById("front_btn").addEventListener('mouseover', function(event) {
+		// 	me.onMouseHover(event, 'Frontal_Lobe');
+		// }, false);
+		// document.getElementById("pariental_btn").addEventListener('mouseover', function(event) {
+		// 	me.onMouseHover(event, 'Pariental_Lobe');
+		// }, false);
+		// document.getElementById("occipital_btn").addEventListener('mouseover', function(event) {
+		// 	me.onMouseHover(event, 'Occipital_Lobe');
+		// }, false);
+		// document.getElementById("temporal_btn").addEventListener('mouseover', function(event) {
+		// 	me.onMouseHover(event, 'Temporal_Lobe');
+		// }, false);
+		// document.getElementById("cerebellum_btn").addEventListener('mouseover', function(event) {
+		// 	me.onMouseHover(event, 'Cerebellum_Lobe');
+		// }, false);
+		// document.getElementById("motor_and_sensor_cortex").addEventListener('mouseover', function(event) {
+		// 	me.onMouseHover(event, 'Middle_Part_of_the_Brain');
+		// }, false);
 		
-		// Remove Highlight brain model on mouse out from brain button
-		document.getElementById("front_btn").addEventListener('mouseout', function(event) {
-			me.onMouseOut(event);
-		}, false);
-		document.getElementById("pariental_btn").addEventListener('mouseout', function(event) {
-			me.onMouseOut(event);
-		}, false);
-		document.getElementById("occipital_btn").addEventListener('mouseout', function(event) {
-			me.onMouseOut(event);
-		}, false);
-		document.getElementById("temporal_btn").addEventListener('mouseout', function(event) {
-			me.onMouseOut(event);
-		}, false);
-		document.getElementById("cerebellum_btn").addEventListener('mouseout', function(event) {
-			me.onMouseOut(event);
-		}, false);
-		document.getElementById("motor_and_sensor_cortex").addEventListener('mouseout', function(event) {
-			me.onMouseOut(event);
-		}, false);
+		// // Remove Highlight brain model on mouse out from brain button
+		// document.getElementById("front_btn").addEventListener('mouseout', function(event) {
+		// 	me.onMouseOut(event);
+		// }, false);
+		// document.getElementById("pariental_btn").addEventListener('mouseout', function(event) {
+		// 	me.onMouseOut(event);
+		// }, false);
+		// document.getElementById("occipital_btn").addEventListener('mouseout', function(event) {
+		// 	me.onMouseOut(event);
+		// }, false);
+		// document.getElementById("temporal_btn").addEventListener('mouseout', function(event) {
+		// 	me.onMouseOut(event);
+		// }, false);
+		// document.getElementById("cerebellum_btn").addEventListener('mouseout', function(event) {
+		// 	me.onMouseOut(event);
+		// }, false);
+		// document.getElementById("motor_and_sensor_cortex").addEventListener('mouseout', function(event) {
+		// 	me.onMouseOut(event);
+		// }, false);
 	}
 	
 	onMouseHover = ( event, type ) => {
@@ -679,17 +678,39 @@ class ExportPlayerReport extends React.Component {
 			this.renderer4.setSize(width, height, false);
 		}
 		return needResize;
-    } 
+	}
+	
+	handleBrainStrain = (val) => {
+		this.setState({
+			brainStrainActive: val
+		});
+	}
 
   render() {
 	  
 	let me = this;
-	frontal_Lobe_json = this.props.brainRegions.frontal || []
-	cerebellum_Lobe_json = this.props.brainRegions.cerebellum || []
-	Occipital_Lobe_json = this.props.brainRegions.occipital || []
-	Pariental_Lobe_json = this.props.brainRegions.parietal || []
-	Temporal_Lobe_json = this.props.brainRegions.temporal || []
-	middle_Part_of_the_Brain_json = this.props.motor || []
+	//frontal_Lobe_json = this.props.brainRegions.frontal || []
+	//all_spheres_json = this.props.brainRegions.frontal || []
+	// cerebellum_Lobe_json = this.props.brainRegions.cerebellum || []
+	// Occipital_Lobe_json = this.props.brainRegions.occipital || []
+	// Pariental_Lobe_json = this.props.brainRegions.parietal || []
+	// Temporal_Lobe_json = this.props.brainRegions.temporal || []
+	// middle_Part_of_the_Brain_json = this.props.motor || []
+	// all_spheres_json = all_spheres_json.concat(frontal_Lobe_json);
+	// all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
+	// all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
+	// all_spheres_json = all_spheres_json.concat(Pariental_Lobe_json);
+	// all_spheres_json = all_spheres_json.concat(Temporal_Lobe_json);
+	// all_spheres_json = all_spheres_json.concat(middle_Part_of_the_Brain_json);
+
+	const { brainStrainActive } = this.state;
+	frontal_Lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
+	cerebellum_Lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
+	Occipital_Lobe_json = this.props.brainRegions[brainStrainActive].occipital || []
+	Pariental_Lobe_json = this.props.brainRegions[brainStrainActive].parietal || []
+	Temporal_Lobe_json = this.props.brainRegions[brainStrainActive].temporal || []
+	middle_Part_of_the_Brain_json = this.props.brainRegions[brainStrainActive].motor || []
+
 	all_spheres_json = all_spheres_json.concat(frontal_Lobe_json);
 	all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
 	all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
@@ -836,6 +857,11 @@ class ExportPlayerReport extends React.Component {
 							<div id="brain_model_block_2" className="brain_model"></div><br/>
 							<div id="brain_model_block_3" className="brain_model"></div>
 							<div id="brain_model_block_4" className="brain_model"></div>
+							<button onClick={() => this.handleBrainStrain('principal-max-strain')} className={this.state.brainStrainActive === 'principal-max-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Max Principal Strain</button>
+							<button onClick={() => this.handleBrainStrain('principal-min-strain')} className={this.state.brainStrainActive === 'principal-min-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Min Principal Strain</button>
+							<button onClick={() => this.handleBrainStrain('csdm-max')} className={this.state.brainStrainActive === 'csdm-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM<sub>15</sub></button>
+							<button onClick={() => this.handleBrainStrain('axonal-strain-max')} className={this.state.brainStrainActive === 'axonal-strain-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Axonal Strain<sub>15</sub></button>
+							<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
 						</div>
 				</div>
 				<div className="col-md-7">
@@ -856,6 +882,7 @@ class ExportPlayerReport extends React.Component {
 					</div>
 				</div>
 			</div>
+			
 		</React.Fragment>
     );
   }
