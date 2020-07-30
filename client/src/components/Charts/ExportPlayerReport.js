@@ -2,8 +2,8 @@ import React from 'react';
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import brain from './Cumulative/brain.glb';
-import modelTexture from './Cumulative/textures/Br_color.jpg';
+import brain from './Cumulative/new_brain.glb';
+import modelTexture from './Cumulative/textures/new_Br_color.jpg';
 import {Bar} from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './Cumulative/dash.css';
@@ -68,58 +68,58 @@ class ExportPlayerReport extends React.Component {
 		let me = this;
 		
 		// Highlight brain model on mouse hover on brain model
-		// document.getElementById("brain_model_block_1").addEventListener('mousemove', function(event) {
-		// 	me.onMouseMove(event, '#brain_model_block_1');
-		// }, false);
-		// document.getElementById("brain_model_block_2").addEventListener('mousemove', function(event) {
-		// 	me.onMouseMove(event, '#brain_model_block_2');
-		// }, false);
-		// document.getElementById("brain_model_block_3").addEventListener('mousemove', function(event) {
-		// 	me.onMouseMove(event, '#brain_model_block_3');
-		// }, false);
-		// document.getElementById("brain_model_block_4").addEventListener('mousemove', function(event) {
-		// 	me.onMouseMove(event, '#brain_model_block_4');
-		// }, false);
+		document.getElementById("brain_model_block_1").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_1');
+		}, false);
+		document.getElementById("brain_model_block_2").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_2');
+		}, false);
+		document.getElementById("brain_model_block_3").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_3');
+		}, false);
+		document.getElementById("brain_model_block_4").addEventListener('mousemove', function(event) {
+			me.onMouseMove(event, '#brain_model_block_4');
+		}, false);
 		
-		// // Highlight brain model on mouse hover on brain button
-		// document.getElementById("front_btn").addEventListener('mouseover', function(event) {
-		// 	me.onMouseHover(event, 'Frontal_Lobe');
-		// }, false);
-		// document.getElementById("pariental_btn").addEventListener('mouseover', function(event) {
-		// 	me.onMouseHover(event, 'Pariental_Lobe');
-		// }, false);
-		// document.getElementById("occipital_btn").addEventListener('mouseover', function(event) {
-		// 	me.onMouseHover(event, 'Occipital_Lobe');
-		// }, false);
-		// document.getElementById("temporal_btn").addEventListener('mouseover', function(event) {
-		// 	me.onMouseHover(event, 'Temporal_Lobe');
-		// }, false);
-		// document.getElementById("cerebellum_btn").addEventListener('mouseover', function(event) {
-		// 	me.onMouseHover(event, 'Cerebellum_Lobe');
-		// }, false);
-		// document.getElementById("motor_and_sensor_cortex").addEventListener('mouseover', function(event) {
-		// 	me.onMouseHover(event, 'Middle_Part_of_the_Brain');
-		// }, false);
+		// Highlight brain model on mouse hover on brain button
+		document.getElementById("front_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Frontal_Lobe');
+		}, false);
+		document.getElementById("pariental_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Pariental_Lobe');
+		}, false);
+		document.getElementById("occipital_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Occipital_Lobe');
+		}, false);
+		document.getElementById("temporal_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Temporal_Lobe');
+		}, false);
+		document.getElementById("cerebellum_btn").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Cerebellum_Lobe');
+		}, false);
+		document.getElementById("motor_and_sensor_cortex").addEventListener('mouseover', function(event) {
+			me.onMouseHover(event, 'Middle_Part_of_the_Brain');
+		}, false);
 		
-		// // Remove Highlight brain model on mouse out from brain button
-		// document.getElementById("front_btn").addEventListener('mouseout', function(event) {
-		// 	me.onMouseOut(event);
-		// }, false);
-		// document.getElementById("pariental_btn").addEventListener('mouseout', function(event) {
-		// 	me.onMouseOut(event);
-		// }, false);
-		// document.getElementById("occipital_btn").addEventListener('mouseout', function(event) {
-		// 	me.onMouseOut(event);
-		// }, false);
-		// document.getElementById("temporal_btn").addEventListener('mouseout', function(event) {
-		// 	me.onMouseOut(event);
-		// }, false);
-		// document.getElementById("cerebellum_btn").addEventListener('mouseout', function(event) {
-		// 	me.onMouseOut(event);
-		// }, false);
-		// document.getElementById("motor_and_sensor_cortex").addEventListener('mouseout', function(event) {
-		// 	me.onMouseOut(event);
-		// }, false);
+		// Remove Highlight brain model on mouse out from brain button
+		document.getElementById("front_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("pariental_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("occipital_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("temporal_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("cerebellum_btn").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
+		document.getElementById("motor_and_sensor_cortex").addEventListener('mouseout', function(event) {
+			me.onMouseOut(event);
+		}, false);
 	}
 	
 	onMouseHover = ( event, type ) => {
