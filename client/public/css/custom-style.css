@@ -353,10 +353,10 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
 }
 
 .upload-icon{
-    position: absolute;
-    width: 100%;
+        position: fixed;
+    width: 77%;
     text-align: center;
-    top: 19.5%;
+    top: 14.8%;
 }
 
 .upload-icon img{

@@ -163,7 +163,7 @@ class Nav extends React.Component {
                     console.log(err);
 
                     this.setState({ isUploading: false, fileUploadError : "Failed to fetch Inp Link"});
-                    alert("Failed to fetch Inp Link");
+                    // alert("Failed to fetch Inp Link");
                 });
             } else {
 
@@ -266,7 +266,6 @@ getUploadFileExtension(url){
            user_details : JSON.parse(localStorage.getItem("state")).userInfo
        })
    }
-   console.log('this.state.user_details',this.state.user_details)
     }
 
   }
@@ -637,8 +636,7 @@ getUploadFileExtension(url){
                 {( (this.state.user_details !=null || typeof this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0  && !this.state.isUploading )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : this.state.isUploading? '' : "NSF"}
                <br/> 
               </div>
-              {Object.keys(this.state.user_details).length >0  && !this.state.isUploading ?
-                (<div className="upload-icon">
+              <div className="upload-icon" style={Object.keys(this.state.user_details).length >0  && !this.state.isUploading ?{ 'display':'block'} : {'display':'none'}}>
                   <input
                     onChange={this.onChangeHandler}
                     type="file"
@@ -648,9 +646,9 @@ getUploadFileExtension(url){
                         display : "none"
                     }}
                   />
-                  <label for="file"><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
-                </div>) : null
-              }
+                <label for="file" style={{'margin-bottom':'0px'}}><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
+                </div>
+              
               {this.state.isUploading ? (
                       <div className="d-flex justify-content-center center-spinner profile-loading">
                         <div

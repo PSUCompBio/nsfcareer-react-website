@@ -54,6 +54,7 @@ class Profile extends React.Component {
         let params = new URLSearchParams(search);
 
         let user_profile_to_view = params.get('id') ;
+        console.log('user_profile_to_view',user_profile_to_view)
         if(!user_profile_to_view){
             user_profile_to_view = '';
         }
@@ -558,6 +559,7 @@ class Profile extends React.Component {
 
 
     showProfile = () => {
+        console.log('this.state.user.profile_picture_url',this.state.user.profile_picture_url)
         return (
             <React.Fragment>
                 <div
