@@ -195,7 +195,7 @@ class BrainSimulationDetails extends React.Component {
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                         </div>
-                        <div className="col-md-12">
+                        <div className="">
                           <div>
                             <input type="range" min="1" max="100" className="MyrangeSlider3" id="MyrangeSlider3" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>

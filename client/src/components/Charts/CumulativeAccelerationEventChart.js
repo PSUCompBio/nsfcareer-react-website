@@ -169,7 +169,7 @@ class CumulativeAccelerationEventChart extends React.Component {
 
                     </div>
 
-                    <ExportPlayerReport frontal_Lobe={this.props.frontal_Lobe} brainRegions={this.props.brainRegions} />
+                    <ExportPlayerReport brainRegions={this.props.brainRegions} />
                 </div>
                  <button style={{
                                 marginRight: "5% !important"
