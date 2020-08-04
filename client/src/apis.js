@@ -168,6 +168,18 @@ export const uploadSensorDataAndCompute = (request) =>{
       });
   })
 }
+export const uploadSidelineImpactVideo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/uploadSidelineImpactVideo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 
 export const getUserDetails = (request) =>{
   return new Promise((resolve,reject)=>{
@@ -516,6 +528,18 @@ export const getAllCumulativeAccelerationTimeRecords = (request) =>{
   })
 }
 
+export const getAllCumulativeAccelerationJsonData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllCumulativeAccelerationJsonData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getSimulationStatusCount = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getSimulationStatusCount`, request,{withCredentials: true})
@@ -639,6 +663,18 @@ export const getAllteamsOfOrganizationOfSensorBrand = (request) =>{
 export const getBrainSimulationMovie = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.get(`/getBrainSimulationMovie/`+request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getOrganizationList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getOrganizationList/`,request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

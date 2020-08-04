@@ -7,6 +7,7 @@ import HeadAccelerationEvents from '../../DashboardEventsChart/HeadAccelerationE
 import { svgToInline } from '../../../config/InlineSvgFromImg';
 import HeadLinearAccelerationAllEvents from '../../DashboardEventsChart/HeadLinearAccelerationAllEvents';
 import HeadAngularAccelerationAllEvents from '../../DashboardEventsChart/HeadAngularAccelerationAllEvents';
+import Dropzone from 'react-dropzone';
 
 import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
@@ -23,7 +24,8 @@ import {
   getCumulativeAccelerationData,
   getSimulationFilesOfPlayer,
   getAllCumulativeAccelerationTimeRecords,
-  getBrainSimulationMovie
+  getBrainSimulationMovie,
+  uploadSidelineImpactVideo
 } from '../../../apis';
 
 import { Form } from 'react-bootstrap';
@@ -38,11 +40,40 @@ import Spinner from '../../Spinner/Spinner';
 import ScrollToTop from 'react-scroll-up';
 
 import { getStatusOfDarkmode } from '../../../reducer';
-
-
 class BrainSimulationDetails extends React.Component {
   constructor(props) {
     super(props);
+    this.onDrop = (files) => {
+      console.log('files',files);
+      console.log(files.length)
+      if(files.length > 1){
+        alert('You can upload only one file');
+      }else{
+        this.setState(files)
+        const data = new FormData() 
+        data.append('file', files[0]);
+        data.append('image_id',this.props.location.state.data.sensor_data.image_id );
+        console.log(this.props.location.state.user_cognito_id)
+        data.append('user_cognito_id',this.props.location.state.user_cognito_id );
+        this.setState({isLoading:true})
+
+        uploadSidelineImpactVideo(data)
+        .then(res => { 
+          if(res.data.message == 'success'){
+            this.setState({impact_video_url: res.data.impact_video_url});
+          }else{
+            this.setState({status: res.data.data.message})
+
+          }
+          this.setState({isLoading:false})
+
+        }). catch(err =>{
+          console.log('err',err)
+        })
+        // var fileType = this.getUploadFileExtension3(files[0].name);
+        // console.log('fileType',fileType)
+      }
+    };
     // console.log('User Dashboard For Admin Is ',this.props);
     console.log("USER DASHBOARD PROPS", this.props)
     this.state = {
@@ -53,11 +84,40 @@ class BrainSimulationDetails extends React.Component {
       linearUnitGsActive: true,
       linearUnitMsActive: false,
       cumulativeEventData: {},
-      movie_link: ''
- 
+      movie_link: '',
+      files: [],
+      isLoading: false,
+      status: '',
+      impact_video_url: '',
     };
   }
-
+  getUploadFileExtension3(url){
+    console.log()
+    if(new RegExp(".mp4").test(url)){
+        return ".mp4";
+    }
+    if(new RegExp(".mov").test(url)){
+        return ".mov";
+    }
+    if(new RegExp(".3gp").test(url)){
+        return ".3gp";
+    }
+    if(new RegExp(".ogg").test(url)){
+        return ".ogg";
+    }
+    if(new RegExp(".wmv").test(url)){
+        return ".wmv";
+    }
+    if(new RegExp(".webm").test(url)){
+        return ".webm";
+    }
+    if(new RegExp(".flv").test(url)){
+        return ".flv";
+    }
+    if(new RegExp(".TIFF").test(url)){
+        return ".TIFF";
+    }
+  }
   componentDidUpdate() {
     svgToInline();
   }
@@ -79,6 +139,17 @@ class BrainSimulationDetails extends React.Component {
       return <Redirect to="/Login" />;
     }
     if (!isLoaded) return <Spinner />;
+
+ // MyDropzone() {
+ //  const onDrop = useCallback(acceptedFiles => {
+ //   console.log('uploading');
+ //  }, [])
+  const files = this.state.files.map(file => (
+      <span key={file.name}>
+        {file.name} - {file.size} bytes
+      </span>
+    ));
+
     return (
       <React.Fragment>
         <div className="center-scroll-up-mobile">
@@ -182,10 +253,39 @@ class BrainSimulationDetails extends React.Component {
                           </div>
                         </div>
                         <div className="col-md-6" style={{'float':'left'}}>
-                          <div className='impact-video'>
-                            <img src={uploadicon} style={{'width':'40%'}} alt="upload video"/>
-                            <p>Upload Sideline Video of Impact</p>
-                          </div>
+                          {!this.state.impact_video_url ?
+                            (<Dropzone onDrop={this.onDrop}>
+                              {({getRootProps, getInputProps}) => (
+                                <section className="container">
+                                  <div className='impact-video'  {...getRootProps()}>
+                                    <input {...getInputProps()} />
+                                    
+                                     {this.state.isLoading ? (
+                                      <div className="d-flex justify-content-center center-spinner" style={{'margin-top':'25%'}}>
+                                        <p>Uploading &nbsp;&nbsp;</p><br/  >
+                                        <div
+                                          className="spinner-border text-primary"
+                                          role="status"
+                                        >
+                                          <span className="sr-only">Loading...</span>
+                                        </div>
+                                      </div>
+                                    ) : this.state.status ? <p style={{'margin-top':'25%','color':'red'}}>{this.state.status}</p>
+                                      :<React.Fragment>
+                                        <img src={uploadicon} style={{'width':'40%'}} alt="upload video"/>
+                                        <p>Upload Sideline Video of Impact</p>
+                                      </React.Fragment>
+                                    }
+                                  </div>
+                                  <p>{files}</p>
+                                </section>
+                              )}
+                            </Dropzone>)
+                            : <video src={this.state.impact_video_url} style={{'width':'100%'}} controls></video>
+                             
+                          }
+
+                               
                           <div>
                             <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
@@ -195,7 +295,7 @@ class BrainSimulationDetails extends React.Component {
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                         </div>
-                        <div className="">
+                        <div className="" style={{'padding': '0px 14px'}}>
                           <div>
                             <input type="range" min="1" max="100" className="MyrangeSlider3" id="MyrangeSlider3" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
@@ -248,6 +348,7 @@ class BrainSimulationDetails extends React.Component {
                   console.log('movie_link',response)
                     this.setState({
                         movie_link:response.data.movie_link,
+                        impact_video_url: response.data.impact_video_url,
                         isAuthenticated: true,
                         isCheckingAuth: false
                     });
