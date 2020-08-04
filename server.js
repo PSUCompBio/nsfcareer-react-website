@@ -144,7 +144,7 @@ var upload = multer({
 
         if (!jpgFile && !jpegFile && !pngFile && !JPEGFile && !JPGFile && !PNGFile && !TIFFFile && !tiffFile) {
 
-            req.body["file_error"] = "Only JPEG/ JPG/ jpeg/ jpg/ PNG/ png/ tiff/ TIFF format file is allowed";
+            //req.body["file_error"] = "Only JPEG/ JPG/ jpeg/ jpg/ PNG/ png/ tiff/ TIFF format file is allowed";
 
         }
         callback(null, true)
@@ -405,12 +405,21 @@ function getListGroupForUser(user_name, cb) {
     });
 }
 
-function getFileSignedUrl(key, cb) {
+function getFileSignedUrl(key, cb, type) {
 
     var params = {
         Bucket: BUCKET_NAME,
         Key: key
     };
+
+    if (type) {
+        
+        let filename = key.split('/').pop();
+        filename = filename.split('.')[0];
+        filename = filename + '-' + type + '.zip';
+        params.ResponseContentDisposition = 'attachment; filename=' + filename 
+    }
+
     s3.getSignedUrl('getObject', params, function (err, url) {
         if (err) {
             cb(err, "");
@@ -1442,7 +1451,7 @@ function getVtkFileLink(user_id) {
                     else {
                         resolve(url);
                     }
-                })
+                }, 'FEMesh')
             }
         })
 
@@ -2689,7 +2698,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                 })
                                             }
 
-                                        })
+                                        }, 'avatar')
 
                                     }
 
@@ -2810,7 +2819,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                         })
                     }
 
-                })
+                }, 'avatar')
 
             }
 
@@ -3705,6 +3714,210 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
             })
         }
     })
+})
+
+// app.post(`${apiPrefix}api/upload/sensor`, (req, res) => {
+//     let upload_file = fs.readFileSync(req.body.filename, {encoding: 'base64'});
+
+//     let selfie = false;
+//     if (req.body.selfie) {
+//         selfie = fs.readFileSync(req.body.selfie, {encoding: 'base64'});
+//     }
+   
+//     var user_type = "standard";
+//     login(req.body.user, req.body.password, user_type, (err, data) => {
+//         if (err) {
+//             res.send({
+//                 message: "failure",
+//                 error: err
+//             })
+//         }
+//         else {
+//             getUser(req.body.user, function (err, data) {
+//                 if (err) {
+//                     console.log(err);
+
+//                     res.send({
+//                         message: "failure",
+//                         error: err
+//                     });
+//                 } else {
+//                     getUserDbData(data.Username, function (err, user_details) {
+//                         if (err) {
+//                             res.send({
+//                                 message: "failure",
+//                                 error: err
+//                             })
+//                         }
+//                         else {
+//                             if (user_details.Item["level"] === 400) {
+//                                 // console.log(user_details.Item);
+//                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+//                                 req.body["sensor_brand"] = user_details.Item["sensor"];
+//                                 req.body["upload_file"] = upload_file;
+
+//                                 let filename =  req.body.filename.split("/");
+//                                 filename = filename[filename.length-1];
+
+//                                 req.body["data_filename"] = filename;
+//                                 req.body["selfie"] = selfie;
+//                                 req.body["filename"] = req.body.selfie; 
+//                                 request.post({
+//                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+//                                     json: req.body
+//                                 }, function (err, httpResponse, body) {
+//                                     if (err) {
+//                                         res.send({
+//                                             message: "failure",
+//                                             error: err
+//                                         })
+//                                     }
+//                                     else {
+//                                         if (httpResponse.body.image_url) {
+//                                             let body = '<!DOCTYPE html>\
+//                                                 <html>\
+//                                                 <body>';
+//                                             let counter = 0;                                                
+//                                             httpResponse.body.image_url.forEach((url, m) => {
+//                                                 counter++;
+//                                                 body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
+//                                                 if (counter == httpResponse.body.image_url.length) {
+//                                                     body += '</body>\
+//                                                             </html>';
+//                                                     res.send(body);
+//                                                 }
+//                                             })
+//                                         } else {
+//                                             res.send(httpResponse.body);
+//                                         }
+//                                     }
+//                                 })
+//                             } else {
+//                                 res.send({
+//                                     message: "failure",
+//                                     error: 'User is not sensor company.'
+//                                 })
+//                             }
+//                         }
+//                     })
+//                 }
+//             })
+//         }
+//     })
+// })
+
+// Run simulation using cURL command
+app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxCount: 1}, {name: "selfie", maxCount: 1}]),  (req, res) => {
+
+    let data_filename = null;
+    let base64File = null;
+    if (req.files.filename) {
+        let file_data = req.files.filename[0].buffer
+        base64File = file_data.toString('base64');
+        data_filename = req.files.filename[0].originalname
+    }
+
+    let selfie = null;
+    let base64Selfie = null;
+    if (req.files.selfie) {
+        let selfie_data = req.files.selfie[0].buffer
+        base64Selfie = selfie_data.toString('base64');
+        selfie = req.files.selfie[0].originalname;
+    }
+     
+    // res.send('<!DOCTYPE html>\
+    //     <html>\
+    //       <body>\
+    //         <iframe src="http://nsfcareer.io/simulation/results/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZV9pZCI6IktydkE3aGNCMiIsImlhdCI6MTU5NjEwMTg5OH0.BdtxPuz1O_dR-ZOxysjWNl018jcBk2OcKE1f9gWolY4/KrvA7hcB2" width="100%" height="500px"></iframe>\
+    //         <iframe src="http://nsfcareer.io/getSimulationMovie/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZV9pZCI6IktydkE3aGNCMiIsImlhdCI6MTU5NjEwMTg5OH0.BdtxPuz1O_dR-ZOxysjWNl018jcBk2OcKE1f9gWolY4/KrvA7hcB2" width="100%" height="500px"></iframe>\
+    //       </body>\
+    //     </html>'
+    // )
+    // res.send({
+    //     data : req.body,
+    //     data_filename: data_filename,
+    //     upload_file : base64File,
+    //     filename: selfie,
+    //     selfie : base64Selfie
+    // });
+
+    var user_type = "standard";
+    login(req.body.user, req.body.password, user_type, (err, data) => {
+        if (err) {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }
+        else {
+            getUser(req.body.user, function (err, data) {
+                if (err) {
+                    console.log(err);
+
+                    res.send({
+                        message: "failure",
+                        error: err
+                    });
+                } else {
+                    getUserDbData(data.Username, function (err, user_details) {
+                        if (err) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                        else {
+                            if (user_details.Item["level"] === 400) {
+                                // console.log(user_details.Item);
+                                req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                req.body["sensor_brand"] = user_details.Item["sensor"];
+                                req.body["upload_file"] = base64File;
+                                req.body["data_filename"] = data_filename;
+                                req.body["selfie"] = base64Selfie;
+                                req.body["filename"] = selfie; 
+                                request.post({
+                                    url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                    json: req.body
+                                }, function (err, httpResponse, body) {
+                                    if (err) {
+                                        res.send({
+                                            message: "failure",
+                                            error: err
+                                        })
+                                    }
+                                    else {
+                                        if (httpResponse.body.image_url) {
+                                            let body = '<!DOCTYPE html>\
+                                                <html>\
+                                                <body>';
+                                            let counter = 0;                                                
+                                            httpResponse.body.image_url.forEach((url, m) => {
+                                                counter++;
+                                                body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
+                                                if (counter == httpResponse.body.image_url.length) {
+                                                    body += '</body>\
+                                                            </html>';
+                                                    res.send(body);
+                                                }
+                                            })
+                                        } else {
+                                            res.send(httpResponse.body);
+                                        }
+                                    }
+                                })
+                            } else {
+                                res.send({
+                                    message: "failure",
+                                    error: 'User is not sensor company.'
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+
 })
 
 app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
