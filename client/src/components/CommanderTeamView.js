@@ -318,8 +318,27 @@ class CommanderTeamView extends React.Component {
         }
     }
 
+    getDateTime = (timestamp) => {
+
+        const plus0 = num => `0${num.toString()}`.slice(-2)
+      
+        const d = new Date(timestamp)
+      
+        const year = d.getFullYear()
+        const monthTmp = d.getMonth() + 1
+        const month = plus0(monthTmp)
+        const date = plus0(d.getDate())
+        const hour = plus0(d.getHours())
+        const minute = plus0(d.getMinutes())
+        const second = plus0(d.getSeconds())
+        const rest = timestamp.toString().slice(-5)
+      
+        return `${month}-${date}-${year} ${hour}:${minute}:${second}:${rest}`
+      }
+
     militaryVersionOrNormal = () => {
         console.log('users',this.state.users)
+        let me = this;
         return (
             <div
                 ref="rosterContainer"
@@ -655,11 +674,13 @@ class CommanderTeamView extends React.Component {
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
                                                 <th scope="col">Impact Date & Time</th>
+                                                <th scope="col">Simulation Date & Time</th>
                                             </tr>
                                         </thead>
                                       <tbody className="player-table">
                                             {this.state.users.map(function (player, index) {
                                                 if (player.simulation_data.length > 0) {
+                                                  let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
 
                                                     return <tr className="player-data-table-row" key={index} onClick={() => {
 
@@ -667,8 +688,8 @@ class CommanderTeamView extends React.Component {
                                                     }}
                                                     >
                                                         <th style={{ verticalAlign: "middle" }} scope="row">
-                                                        { player.simulation_data[0].player_id.split('$')[0]
-
+                                                        {  
+                                                            player.simulation_data[0].player_id.split('$')[0]
 
                                                         }</th>
                                                         <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
@@ -694,6 +715,7 @@ class CommanderTeamView extends React.Component {
                                                                                 </div>
                                                                                 </td>
                                                                                 */}
+                                                        <td style={{ alignItems: "center" }}>{dateTime}</td>
                                                     </tr>;
                                                 }
                                             }, this)}
