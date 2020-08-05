@@ -522,7 +522,7 @@ class AdminDashboard extends React.Component {
                             <button type="button" className={this.state.isOrganization ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
                             <button type="button" className={this.state.isTeams ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
                             <button type="button" className= "btn  float-left custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
-                            <button type="button" className= "btn  float-left custom-button" name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
+                            <button type="button"  className={this.state.isPlayers ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
 
                         </div>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
