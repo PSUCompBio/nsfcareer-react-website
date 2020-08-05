@@ -2599,6 +2599,231 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
 
 
 })
+
+function getTeamList() {
+    console.log('getTeamList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+            ProjectionExpression: "sensor, organization, team_name"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+function getOrganizationTeamData(obj) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+            ExpressionAttributeValues: {
+               ":sensor": obj.sensor,
+               ":organization": obj.organization,
+               ":team": obj.team
+            },
+            ProjectionExpression: "sensor"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getTeamList`, (req, res) => {
+    console.log(req.body);
+    getTeamList().then(list=>{
+        // console.log('list',list)
+        let uniqueList = [];
+        var teamList = list.filter(function (team_name) {
+            return (!("teamList" in team_name));
+        });
+
+        // console.log(teamList);
+
+        let counter = 0;
+        if (teamList.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        } else {
+            // console.log(teamList);
+            teamList.forEach(function (team, index) {
+                let data = team;
+                let i = index;
+                getOrganizationTeamData({ sensor: data.sensor, organization: data.organization, team: data.team_name})
+                .then(simulation_records => {
+                    counter++;
+                    team["simulation_count"] = Number(simulation_records.length).toString();
+
+                    if (counter == teamList.length) {
+                        console.log(teamList);
+                        res.send({
+                            message: "success",
+                            data: teamList
+                        })
+                    }
+                })
+                .catch(err => {
+                   counter++
+                    if (counter == teamList.length) {
+                        res.send({
+                            message: "failure",
+                            error: err
+                        })
+                    }
+                })
+            })
+        }
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+});
+
+function getPlayerList() {
+    console.log('getTeamList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getTeamDataWithPlayerRecords(player_id,team,sensor,organization) {
+    console.log('player_id',player_id,team,sensor,organization)
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "sensor = :sensor and organization = :organization and team = :team and begins_with(player_id,:player_id)",
+            ExpressionAttributeValues: {
+               ":sensor": sensor,
+               ":organization": organization,
+               ":team": team,
+               ":player_id": player_id,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                console.log('err',err)
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+                console.log(data)
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getPlayerList`, (req, res) => {
+    console.log(req.body);
+    getPlayerList().then(players=>{
+        // console.log('player',players)
+        var player_list = [];
+        for(var i =0; i < players.length; i++){
+            if(players[i].player_list){
+                var list = players[i].player_list;
+                for(var j = 0;j < list.length; j++){
+                // console.log(list[j])
+
+                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                }
+            }
+        }
+        console.log('player_list',player_list.length)
+        if (player_list.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        }
+        else {
+            var counter = 0;
+            var p_data = [];
+            var player_listLn = player_list.length - 1;
+            player_list.forEach(function (player, index) {
+                let p = player;
+                let i = index;
+                let playerData = '';
+                if(player.player_id && player.player_id != 'undefined'){
+                    getTeamDataWithPlayerRecords(player.player_id, player.team,  player.sensor, player.organization)
+                    .then(player_data => {
+                        playerData = player_data;
+                        counter++;
+                        p_data.push({
+                            player_name: p,
+                            //vsimulation_image: image ? image : '',
+                            simulation_data: playerData
+                        });
+                        console.log(counter,player_listLn)
+                       if (counter == player_listLn) {
+                            res.send({
+                                message: "success",
+                                data: p_data
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        counter++;
+                        if (counter == player_listLn) {
+                            res.send({
+                                message: "failure",
+                                data: p_data
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+})
+
 app.post(`${apiPrefix}enableUser`, (req, res) => {
     enableUser(req.body.user_name, function (err, data) {
         if (err) {

@@ -21,44 +21,13 @@ import {
     getSimulationStatusCount
 } from '../apis';
 
-
-
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 
 import socketIOClient from 'socket.io-client'
 
-
-// import { Bar } from 'react-chartjs-2';
 import Spinner from './Spinner/Spinner';
 
-// const impactHistoryBarData = {
-//     labels: [],
-//     datasets: [
-//         {
-//             label: 'Impact History',
-//             backgroundColor: '#0E7DD6',
-//             borderColor: '#084474',
-//             hoverBackgroundColor: '#0B5FA2',
-//             hoverBorderColor: '#0B5FA2',
-//             data: []
-//         }
-//     ]
-// };
-
-// const impactSummaryBarData = {
-//     labels: [],
-//     datasets: [
-//         {
-//             label: 'Impact Summary',
-//             backgroundColor: '#0E7DD6',
-//             borderColor: '#084474',
-//             hoverBackgroundColor: '#0B5FA2',
-//             hoverBorderColor: '#0B5FA2',
-//             data: []
-//         }
-//     ]
-// };
 
 class CommanderTeamView extends React.Component {
     constructor(props) {
@@ -148,7 +117,7 @@ class CommanderTeamView extends React.Component {
                             }
                             this.setState({});
                             getSimulationStatusCount({
-				brand: this.props.location.state.team.brand,
+				                brand: this.props.location.state.team.brand,
                                 user_cognito_id: this.props.location.state.team.user_cognito_id,
                                 organization: this.props.location.state.team.organization,
                                 team: this.props.location.state.team.team_name
@@ -689,7 +658,7 @@ class CommanderTeamView extends React.Component {
                                                     >
                                                         <th style={{ verticalAlign: "middle" }} scope="row">
                                                         {  
-                                                            player.simulation_data[0].player_id.split('$')[0]
+                                                            player.simulation_data[0].player_id.split('$')[1]
 
                                                         }</th>
                                                         <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>

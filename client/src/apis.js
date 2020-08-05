@@ -683,3 +683,26 @@ export const getOrganizationList = (request) =>{
       });
   })
 }
+export const getTeamList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamList/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getPlayerList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getPlayerList/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
