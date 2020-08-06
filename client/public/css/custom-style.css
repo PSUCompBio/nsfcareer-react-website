@@ -1,21 +1,21 @@
 /* Navigation text css  */
 
 .team-admin-page-navigation{
-	margin-top: 6rem;
+    margin-top: 6rem;
 }
 .team-admin-page-navigation .nav-p a{
-	color: #000000;
+    color: #000000;
 }
 .team-admin-page-navigation .nav-p{
-	color:#0f81dc;
-	font-size: 30px;
+    color:#0f81dc;
+    font-size: 30px;
 }
 .UserDashboarForAdmin-page-navigation .penstate{
-	color:#0f81dc;
-	font-size: 30px;
+    color:#0f81dc;
+    font-size: 30px;
 }
 .UserDashboarForAdmin-page-navigation .penstate a{
-	color: #000000;
+    color: #000000;
 }
 
 
@@ -23,47 +23,47 @@
 
 /* Player dashboard css  start  */
 .player-dashboard-user-datials-header{
-	border: 2px solid rgb(15, 129, 220)!important;
+    border: 2px solid rgb(15, 129, 220)!important;
     border-radius: 1.8rem!important;
 }
 .player-dashboard-user-datials-header p{
     text-align: left!important;
 }
 .player-dashboard-title{
-	text-decoration: underline;
+    text-decoration: underline;
 }
 .head-acc-evnt-chart::after{
-	    line-height: 2.35!important;
+        line-height: 2.35!important;
 }
 .Cumulative-Overview-player-dash{
-	border: 2px solid rgb(15, 129, 220)!important;
+    border: 2px solid rgb(15, 129, 220)!important;
     border-radius: 1.8rem!important;
 }
 
 .Cumulative-Overview-player-dash .player-dashboard-sub-head{
-	color: #0f81dc!important;
+    color: #0f81dc!important;
 }
 ..player-dashboard-sub-head {
-	font-weight: 900;
+    font-weight: 900;
 }
 .Individual-Head-Acceleration-player-dash{
-	color: #0f81dc!important;
+    color: #0f81dc!important;
 }
 .Individual-Head-Acceleration-player-dash-chart{
-	width: 65%;
+    width: 65%;
 }
 .Individual-Head-Acceleration-player-dash-image{
-	width: 35%;
+    width: 35%;
 }
 .player-dash-chart-setting h1{
-	text-align: center;
-	color: #313030;
-	font-weight: 800;
-	font-size: 30px;
+    text-align: center;
+    color: #313030;
+    font-weight: 800;
+    font-size: 30px;
     padding-bottom: 12px;
 }
 .player-dash-chart-setting{
-	padding: 20px 0px 20px;
+    padding: 20px 0px 20px;
     border-radius: 12px;
     background: #d3d3d3;
 }
@@ -77,15 +77,15 @@ button.settings-buttons {
     margin-top: 4px;
 }
 .player-dash-chart-setting h4{
-	font-weight: 400;
-	text-align:  right;
+    font-weight: 400;
+    text-align:  right;
 }
 .settings-buttons-active{
-	background: #FFD966!important;
+    background: #FFD966!important;
     color: black!important;
 }
 .Individual-Head-Acceleration-player-dash-image button{
-	padding: 4px 33px;
+    padding: 4px 33px;
     font-size: 18px;
     background: #2d549a;
 }
@@ -95,38 +95,38 @@ button.settings-buttons {
 /* Brain simulation details page css start*/
 
 .brain-simlation-details .brain-simlation-details-title{
-	text-align: center;
+    text-align: center;
     color: black;
     text-decoration: underline;
     padding: 20px;
-}	
+}   
 .brain-simlation-details .brain-simlation-details-subtitle{
-	text-align: center;
+    text-align: center;
     color: #0f81dc;
     font-weight: 900;
     letter-spacing: 1px;
 }
 .brain-simlation-details .user-simlation-details{
-	border: 2px solid gray;
+    border: 2px solid gray;
     border-radius: 3px;
     padding: 13px;
 }
 
 .brain-simlation-details .user-simlation-details p{
-	font-weight: 700;
+    font-weight: 700;
     font-size: 20px;
 }
 .brain-simlation-details-graph, .brain-simlation-details-movie{
-	margin-top: 36px;
+    margin-top: 36px;
 }
 .brain-simlation-details-graph p{
-	text-align: center;
+    text-align: center;
     font-size: 21px;
     font-weight: 600;
 }
 .brain-simlation-details-movie .movie{
     float: left;
-	width: 100%;
+    width: 100%;
     text-align: center;
     padding: 23px 0px 27px;
     border: 5px solid #0e7bd2;
@@ -134,23 +134,23 @@ button.settings-buttons {
     border-radius: 4px;
 }
 .brain-simlation-details-metrics .metrics{
-	margin: auto;
+    margin: auto;
     width: 50%;
     text-align: center;
     margin-top: 26px;
 }
 .brain-simlation-details-metrics .gray{
-	   background: gray;
+       background: gray;
     margin-top: 10px;
         margin-left: 8px;
     margin-right: 8px;
     border: 1px solid #084372;
 }
 .metrics button{
-	    padding: 4px 17px;
+        padding: 4px 17px;
 }
 .backbutton{
-	position: absolute;
+    position: absolute;
     width: 150px;
     margin-top: 42px;
     background: #8080808c;
@@ -353,10 +353,10 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
 }
 
 .upload-icon{
-        position: fixed;
-    width: 77%;
+    position: absolute;
+    width: 100%;
     text-align: center;
-    top: 14.8%;
+    top: 18%;
 }
 
 .upload-icon img{
@@ -369,4 +369,17 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
 }
 .profile-loading .spinner-border{
     color: white!important;
+}
+
+.custom-button{
+    background-color: #4472C4!important;
+    color: white!important;
+    padding: 6px 24px!important;
+    border: 2px solid #4472c4!important;
+}
+.custom-button2{
+     background-color: #CF6D2A!important;
+    color: white!important;
+    padding: 6px 24px!important;
+    border: 2px solid #4472c4!important;
 }

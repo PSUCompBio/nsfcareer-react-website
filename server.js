@@ -174,6 +174,26 @@ var uploadSensorData = multer({
     //     fileSize: 1024 * 1024
     // }
 });
+var uploadSidelineImpactVideo = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        //var ext = path.extname(file.originalname);
+        console.log("This is filename ------> \n",file);
+
+        // let csv = new RegExp(".csv").test(file.originalname);
+        // let csv_upper = new RegExp(".CSV").test(file.originalname);
+        // let excel = new RegExp(".xlsx").test(file.originalname);
+        // let excelx = new RegExp(".xls").test(file.originalname);
+        // if (!csv && !csv_upper && !excel && !excelx) {
+        //     // res.send({message : "FAILURE"});
+        //     req.body["file_error"] = "Only .csv , .xlsx file is allowed"
+        // }
+        callback(null, true)
+    }
+    // limits:{
+    //     fileSize: 1024 * 1024
+    // }
+});
 
 var uploadModelRealData = multer({
     storage: storage,
@@ -995,6 +1015,26 @@ function getUserSensor(user_name) {
         });
     });
 }
+function getOrganizationList() {
+    console.log('getOrganizationList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 
 function InsertUserIntoSensor(user_name,sensor) {
     console.log('user_name',user_name,sensor)
@@ -1024,6 +1064,84 @@ function InsertUserIntoSensor(user_name,sensor) {
             }
         });
     });
+}
+
+function InsertImpactVideoKey(video_id,impact_video_path) {
+    console.log('user_name',video_id,impact_video_path)
+    return new Promise((resolve, reject) => {
+       var userParams = {
+            TableName: "simulation_images",
+            Key: {
+                image_id: video_id,
+            },
+            UpdateExpression:
+                "set impact_video_path = :impact_video_path",
+            ExpressionAttributeValues: {
+                ":impact_video_path": impact_video_path,
+            },
+            ReturnValues: "UPDATED_NEW",
+        };
+        docClient.update(userParams, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+
+    //  return new Promise((resolve, reject) =>{
+    //     var dbInsert = {};
+    //     // adding key with name user_cognito_id
+    //     // deleting the key from parameter from "user_name"
+    //     dbInsert = {
+    //         TableName: "impact_sideline_video",
+    //         Item: {
+    //                 'video_id' :  video_id,
+    //                 'impact_video_path' :  impact_video_path
+    //             }
+    //     }
+
+
+    //     docClient.put(dbInsert, function (dbErr, dbData) {
+    //         if (dbErr) {
+    //             reject(dbErr)
+    //             console.log(dbErr);
+    //         }
+    //         else {
+    //             console.log(dbData);
+    //             resolve(dbData);
+    //         }
+    //     });
+    // })
+    // return new Promise((resolve, reject) => {
+    //     var dbInsert = {
+    //         TableName: "simulation_images",
+    //         Key: { 
+    //             "image_id" : image_id
+    //         },
+    //         UpdateExpression: "set #impact_video_path = :key",
+    //         ExpressionAttributeNames: {
+    //             "#impact_video_path": "impact_video_path"
+    //         },
+    //         ExpressionAttributeValues: {
+    //             ":key":key
+    //         },
+    //         ReturnValues: "UPDATED_NEW"
+    //     }
+
+    //     docClient.update(dbInsert, function (err, data) {
+    //         if (err) {
+    //             console.log("ERROR WHILE CREATING DATA",err);
+    //             reject(err);
+
+    //         } else {
+    //             resolve(data)
+    //         }
+    //     });
+    // });
 }
 
 function adminUpdateUser(User, cb) {
@@ -1578,6 +1696,29 @@ function getPresignedMovieUrl(image_details) {
   })
 }
 
+function ImpactVideoUrl(image_details) {
+  return new Promise((resolve, reject) => {
+    const { impact_video_path } = image_details;
+    console.log('impact_video_path',impact_video_path)
+    if(impact_video_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: impact_video_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
+}
+
 // Miliseconds to Human readable 
 function timeConversion(duration) {
     const portions = [];
@@ -1741,6 +1882,7 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
 app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     const { image_id } = req.params;
     let imageData = '';
+    var movie_link_url = '';
     getSimulationImageRecord(image_id)
         .then(image_data => {
             imageData = image_data;
@@ -1759,11 +1901,17 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         .then(movie_link => {
             // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
             console.log('movie_link',movie_link);
+            movie_link_url = movie_link;
+           
+            return ImpactVideoUrl(imageData);
+            
+        }) .then(impact_video_url => {
+            console.log('movie_link_url',movie_link_url)
             res.send({
                 message : "success",
-                movie_link : movie_link
+                movie_link : movie_link_url,
+                impact_video_url: impact_video_url
             })
-            
         })
         .catch(err => {
             console.log(err);
@@ -2369,6 +2517,311 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
     }
 })
 
+})
+
+function getBrandOrganizationData(sensor, organization) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "sensor = :sensor and organization = :organization",
+            ExpressionAttributeValues: {
+                ":sensor": sensor,
+                ":organization": organization
+            },
+            ProjectionExpression: "sensor"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
+    console.log(req.body)
+    getOrganizationList()
+    .then(list =>{
+        console.log('list',list.length)
+        let uniqueList = [];
+        var orgList = list.filter(function (organization) {
+            if (uniqueList.indexOf(organization.organization) === -1) {
+                uniqueList.push(organization.organization);
+                return organization;
+            }
+        });
+
+        let counter = 0;
+        if (orgList.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        } else {
+            orgList.forEach(function (org, index) {
+                let data = org;
+                let i = index;
+                getBrandOrganizationData(data.sensor,data.organization )
+                    .then(simulation_records => {
+                        console.log('orgList.length',orgList.length)
+                        counter++;
+                        org["simulation_count"] = Number(simulation_records.length).toString();
+
+                        if (counter == orgList.length) {
+                            res.send({
+                                message: "success",
+                                data: orgList
+                            })
+                        }
+                    })
+                    .catch(err => {
+                       counter++
+                        if (counter == orgList.length) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                    })
+            })
+        }
+    })
+    .catch(err =>{
+        console.log('err',err)
+    })
+
+
+})
+
+function getTeamList() {
+    console.log('getTeamList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+            ProjectionExpression: "sensor, organization, team_name"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+function getOrganizationTeamData(obj) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+            ExpressionAttributeValues: {
+               ":sensor": obj.sensor,
+               ":organization": obj.organization,
+               ":team": obj.team
+            },
+            ProjectionExpression: "sensor"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getTeamList`, (req, res) => {
+    console.log(req.body);
+    getTeamList().then(list=>{
+        // console.log('list',list)
+        let uniqueList = [];
+        var teamList = list.filter(function (team_name) {
+            return (!("teamList" in team_name));
+        });
+
+        // console.log(teamList);
+
+        let counter = 0;
+        if (teamList.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        } else {
+            // console.log(teamList);
+            teamList.forEach(function (team, index) {
+                let data = team;
+                let i = index;
+                getOrganizationTeamData({ sensor: data.sensor, organization: data.organization, team: data.team_name})
+                .then(simulation_records => {
+                    counter++;
+                    team["simulation_count"] = Number(simulation_records.length).toString();
+
+                    if (counter == teamList.length) {
+                        console.log(teamList);
+                        res.send({
+                            message: "success",
+                            data: teamList
+                        })
+                    }
+                })
+                .catch(err => {
+                   counter++
+                    if (counter == teamList.length) {
+                        res.send({
+                            message: "failure",
+                            error: err
+                        })
+                    }
+                })
+            })
+        }
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+});
+
+function getPlayerList() {
+    console.log('getTeamList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getTeamDataWithPlayerRecords(player_id,team,sensor,organization) {
+    console.log('player_id',player_id,team,sensor,organization)
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "sensor = :sensor and organization = :organization and team = :team and begins_with(player_id,:player_id)",
+            ExpressionAttributeValues: {
+               ":sensor": sensor,
+               ":organization": organization,
+               ":team": team,
+               ":player_id": player_id,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                console.log('err',err)
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+                console.log(data)
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getPlayerList`, (req, res) => {
+    console.log(req.body);
+    getPlayerList().then(players=>{
+        // console.log('player',players)
+        var player_list = [];
+        for(var i =0; i < players.length; i++){
+            if(players[i].player_list){
+                var list = players[i].player_list;
+                for(var j = 0;j < list.length; j++){
+                // console.log(list[j])
+
+                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                }
+            }
+        }
+        console.log('player_list',player_list.length)
+        if (player_list.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        }
+        else {
+            var counter = 0;
+            var p_data = [];
+            var player_listLn = player_list.length - 1;
+            player_list.forEach(function (player, index) {
+                let p = player;
+                let i = index;
+                let playerData = '';
+                if(player.player_id && player.player_id != 'undefined'){
+                    getTeamDataWithPlayerRecords(player.player_id, player.team,  player.sensor, player.organization)
+                    .then(player_data => {
+                        playerData = player_data;
+                        counter++;
+                        p_data.push({
+                            player_name: p,
+                            //vsimulation_image: image ? image : '',
+                            simulation_data: playerData
+                        });
+                        console.log(counter,player_listLn)
+                       if (counter == player_listLn) {
+                            res.send({
+                                message: "success",
+                                data: p_data
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        counter++;
+                        if (counter == player_listLn) {
+                            res.send({
+                                message: "failure",
+                                data: p_data
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
 })
 
 app.post(`${apiPrefix}enableUser`, (req, res) => {
@@ -3209,6 +3662,90 @@ app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res)=> {
 })
 
 // Uploading the Sensor Data (CSV) file
+app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
+        console.log('file',req.body.image_id);
+        var file_name = Date.now();
+        var image_id = req.body.image_id;
+        var uploadParams = {
+            Bucket: config.usersbucket,
+            Key: '', // pass key
+            Body: null, // pass file body
+        };
+
+        // File Extensions
+        var file_extension = req.file.originalname.split(".");
+        file_extension = file_extension[file_extension.length - 1];
+
+        // Setting Attributes for file upload on S3
+        uploadParams.Key =  "1/simulation/impact-video/" + file_name + "." + file_extension;
+        // console.log('req.file.buffer', req.file.buffer)
+        uploadParams.Body = req.file.buffer;
+       
+        // console.log('uploadParams',uploadParams)
+        s3.upload(uploadParams, (err, data) => {
+            if (err) {
+                console.log('======errr \n',err)
+                res.send({
+                    message: "failure",
+                    data: err
+                });
+               
+            }else{
+                InsertImpactVideoKey(req.body.image_id,data.key).
+                then(sensor_data => {
+                    const  image_id  = req.body.image_id;
+                    console.log('image_id',image_id)
+                    let imageData = '';
+                    getSimulationImageRecord(image_id)
+                        .then(image_data => {
+                            // console.log('image_data',image_data)
+                            imageData = image_data;
+                            return verifyImageToken(imageData['token'], image_data);
+                        })
+                        .then(decoded_token => {
+                            // console.log('decoded_token',decoded_token)
+                            return getPlayerCgValues(imageData.player_name);
+                        })
+                        .then(cg_coordinates => {
+                            // Setting cg values
+                            // console.log("cg_coordinates",cg_coordinates)
+                            if(cg_coordinates) {
+                              imageData["cg_coordinates"] = cg_coordinates;
+                            }
+                            return ImpactVideoUrl(imageData);
+                        })
+                        .then(movie_link => {
+                            // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                            console.log('movie_link',movie_link);
+                            res.send({
+                                message : "success",
+                                impact_video_url : movie_link
+                            })
+                            
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            // res.removeHeader('X-Frame-Options');
+                            // if(err.message == 'The provided key element does not match the schema'){
+                                res.send({
+                                    message: "failure",
+                                    data: err
+                                });
+                            // }
+                        })
+                })
+                .catch(err => {
+                   console.log('err',err)
+                    res.send({
+                        message: "failure",
+                        data: err
+                    });
+                })
+            }
+        })
+})
+
+// Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
     // Upload this data in Profile Bucket of USER
     console.log("API Called to upload to upload Sensor Data")
@@ -3478,11 +4015,25 @@ app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('getAllCumulativeAccelerationTimeRecords',req.body)
     request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
         }
         else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getAllCumulativeAccelerationJsonData`, (req,res) =>{
+    
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationJsonData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            console.log('getAllCumulativeAccelerationJsonData',httpResponse.body)
             res.send(httpResponse.body);
         }
     })

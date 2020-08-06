@@ -8,7 +8,10 @@ import Spinner from './Spinner/Spinner';
 import {
     isAuthenticated,
     getAllSensorBrands,
-    fetchStaffMembers
+    fetchStaffMembers,
+    getOrganizationList,
+    getTeamList,
+    getPlayerList
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -33,7 +36,16 @@ class AdminDashboard extends React.Component {
             isFetching: true,
             buttonSelected: 'overview',
             staffList: [],
-            sensorBrandList: []
+            sensorBrandList: [],
+            OrganizationList: [],
+            isOrganization: false,
+            isSensor: true,
+            totalTeam: '',
+            isTeams: false,
+            teamList: [],
+            isPlayers: false,
+            playerList: [],
+            cognito_user_id: ''
         };
     }
     toggleTab = (value) => {
@@ -45,6 +57,54 @@ class AdminDashboard extends React.Component {
         this.setState({ targetBtn: value });
     };
 
+    handleButtonChanges =(e)=>{
+        console.log(e.target.name);
+        if(e.target.name == 'organization'){
+            this.setState({      
+                isSensor: false,
+                isOrganization: true,
+                isTeams: false,
+                isFetching: false,
+                isPlayers: false
+            })
+        }else if(e.target.name == 'sensor_companies'){
+            this.setState({
+                isFetching: false,
+                isSensor: true,
+                isTeams: false,
+                isOrganization: false,
+                isPlayers: false
+            })
+        }else if(e.target.name == 'teams'){
+           
+            this.setState({
+                isFetching: false,
+                isSensor: false,
+                isTeams: true,
+                isOrganization: false,
+                isPlayers: false
+            })
+        }else if(e.target.name == 'individuals'){
+            var the = this;
+            the.setState({isFetching: true});
+            getPlayerList({type: 'playersList'})
+            .then(players => {
+                this.setState({
+                    playerList:players.data.data,
+                    isSensor: false,
+                    isTeams: false,
+                    isOrganization: false,
+                    isPlayers: true,
+                })
+
+                 setTimeout(function(){ 
+                    the.setState({isFetching: false});
+                }, 3000);
+            }).catch(err=>{
+                console.log('err',err)
+            })
+        }
+    }
     checkIfDarkModeActive = () => {
         if (getStatusOfDarkmode().status === true) {
             const elementsRequire = [
@@ -106,21 +166,39 @@ class AdminDashboard extends React.Component {
                             this.setState(prevState => ({
                                 totalBrand: brands.data.data.length,
                                 sensorBrandList: brands.data.data,
-                                isFetching: false
                             }));
-
+                             getOrganizationList({type:'organizations'}).then(organizations =>{
+                                console.log('organizations',organizations);
+                                this.setState({
+                                    OrganizationList: organizations.data.data,
+                                    totalOrganization: organizations.data.data.length,
+                                    isFetching: false,
+                                })
+                                getTeamList({type:"team"}).then(teams =>{
+                                    console.log('teams',teams)
+                                    this.setState({
+                                        teamList: teams.data.data,
+                                        totalTeam: teams.data.data.length,
+                                        isFetching: false,
+                                    })
+                                }).catch(err=>{
+                                    console.log('err',err)
+                                    this.setState({
+                                        isFetching: false,
+                                        isAuthenticated: false, 
+                                        isCheckingAuth: false
+                                    })
+                                })
+                            }).catch(err=>{
+                                console.log('err',err)
+                                this.setState({
+                                    isFetching: false,
+                                    isAuthenticated: false, 
+                                    isCheckingAuth: false
+                                })
+                            })
                            // return fetchStaffMembers({})
                         })
-                        // .then(response => {
-                        //     for (var i = 0; i < response.data.data.length; i++) {
-                        //         this.setState(prevState => ({
-                        //             staffList: [...prevState.staffList, response.data.data[i]]
-                        //         }));
-                        //     }
-                        //     this.setState(prevState => ({
-                        //         isFetching: false
-                        //     }));
-                        // })
                         .catch(err => {
                             alert(err);
                         })
@@ -145,6 +223,15 @@ class AdminDashboard extends React.Component {
         }
 
     };
+
+    setRedirectData = (id, p_name) => {
+        console.log('setRedirectData',id,p_name,this.state.userDetails)
+        this.setState({
+            cognito_user_id: id,
+            player_name: p_name,
+            user_cognito_id: this.state.userDetails.user_cognito_id
+        })
+    }
 
     smallCards = (reference, brand, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
@@ -187,6 +274,157 @@ class AdminDashboard extends React.Component {
         );
     };
 
+     smallCards2 = (reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+        // console.log(reference);
+        return (
+            <div key={key} ref={''} className={this.state.editTeamClass}>
+                <div
+                    ref={reference[0]}
+                    onClick={(e) => {
+                        this.props.history.push({
+                            pathname: '/TeamAdmin',
+                            state: {
+                                brand: {
+                                    brand: brand,
+                                    organization: organization,
+                                    user_cognito_id: user_cognito_id
+                                }
+                            }
+                        })
+                    }}
+                    className={`tech-football m-3`}
+                >
+
+                    <div style={this.state.hideEditElement}>
+                        <div ref={reference[1]} className="football-header ">
+                            <p className="teamName mobile-dashboard-card" ref={reference[2]}>
+                           
+                                <b>{organization}</b>
+                            </p>
+                            
+                        </div>
+                        <div className="football-body d-flex">
+                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
+                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                <p className="teamImpact" ref={reference[5]}>
+                                    Simulations
+                                            </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    iterateTeam2 = () => {
+        let inc = 1;
+        var cards = new Array(this.state.totalOrganization);
+        let j = 1;
+        for (let i = 0; i < this.state.totalOrganization; i++) {
+            cards[i] = this.smallCards2(
+                [
+                    'smCard' + i,
+                    'parentChildTop' + i,
+                    'h' + inc++,
+                    'h' + inc++,
+                    'parentChildLeft' + i,
+                    'h' + inc++,
+                    'h' + inc++
+                ],
+                this.state.OrganizationList[i].sensor,
+                this.state.OrganizationList[i].organization,
+                this.state.OrganizationList[i].user_cognito_id,
+                Number(this.state.OrganizationList[i].simulation_count),
+                i
+            );
+            j++;
+        }
+
+        if (this.state.totalOrganization === 0) {
+            return  <div style={{marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center'}}>No Organization added yet.</div>
+        }
+
+        return cards;
+        
+    };
+
+    smallCards3 = (reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
+        // console.log(reference);
+        return (
+            <div key={key} ref={''} className={this.state.editTeamClass}>
+                <div
+                    ref={reference[0]}
+                    onClick={(e) => {
+                        this.props.history.push({
+                            pathname: '/TeamAdmin/team/players',
+                            state: {
+                                team: {
+                                    brand: brand,
+                                    organization: organization,
+                                    team_name: team,
+                                    user_cognito_id: user_cognito_id,
+                                    staff: this.state.staffList
+                                }
+                            }
+                        })
+                    }}
+                    className={`tech-football m-3`}
+                >
+
+                    <div style={this.state.hideEditElement}>
+                        <div ref={reference[1]} className="football-header ">
+                            <p className="teamName mobile-dashboard-card" ref={reference[2]}>
+                                <b>{team}</b>
+                            </p>
+
+                        </div>
+                        <div className="football-body d-flex">
+                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
+                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                <p className="teamImpact" ref={reference[5]}>
+                                    Simulations
+                                            </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    iterateTeam3 = () => {
+        let inc = 1;
+        var cards = new Array(this.state.totalTeam);
+        let j = 1;
+        for (let i = 0; i < this.state.totalTeam; i++) {
+            cards[i] = this.smallCards3(
+                [
+                    'smCard' + i,
+                    'parentChildTop' + i,
+                    'h' + inc++,
+                    'h' + inc++,
+                    'parentChildLeft' + i,
+                    'h' + inc++,
+                    'h' + inc++
+                ],
+                this.state.teamList[i].sensor,
+                this.state.teamList[i].organization,
+                this.state.teamList[i].team_name,
+                this.state.userDetails.user_cognito_id,
+                Number(this.state.teamList[i].simulation_count),
+                i
+            );
+            j++;
+        }
+        if (this.state.totalTeam === 0) {
+            return <div style={{ marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center' }}>No Team added yet.</div>
+        }
+
+        return cards;
+
+    };
+
     activateTab = (value) => {
         if (value !== this.state.buttonSelected) {
             this.setState({
@@ -225,6 +463,23 @@ class AdminDashboard extends React.Component {
         return cards;
 
     };
+    getDateTime = (timestamp) => {
+
+        const plus0 = num => `0${num.toString()}`.slice(-2)
+      
+        const d = new Date(timestamp)
+      
+        const year = d.getFullYear()
+        const monthTmp = d.getMonth() + 1
+        const month = plus0(monthTmp)
+        const date = plus0(d.getDate())
+        const hour = plus0(d.getHours())
+        const minute = plus0(d.getMinutes())
+        const second = plus0(d.getSeconds())
+        const rest = timestamp.toString().slice(-5)
+      
+        return `${month}-${date}-${year} ${hour}:${minute}:${second}:${rest}`
+    }
 
     retunrnRosterBtn = () => {
         return (
@@ -262,6 +517,14 @@ class AdminDashboard extends React.Component {
                         )}
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{ textAlign: 'center', fontSize: '30px' }}>Admin Dashboard</p>
+                        <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
+                            <button type="button" className={this.state.isSensor ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
+                            <button type="button" className={this.state.isOrganization ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
+                            <button type="button" className={this.state.isTeams ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
+                            <button type="button" className= "btn  float-left custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
+                            <button type="button"  className={this.state.isPlayers ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
+
+                        </div>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
@@ -341,9 +604,73 @@ class AdminDashboard extends React.Component {
                                         </div>
                                     } 
                                     {!this.state.tabActive ?
-                                        <div className="football-container mt-4 d-flex flex-wrap">
-                                            {this.iterateTeam()}
-                                        </div>
+                                        this.state.isPlayers ? (
+                                            <div ref="table" className="commander-data-table table-responsive ">
+                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th scope="col">Player ID</th>
+                                                            <th scope="col">Player Name</th>
+                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
+                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
+                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
+                                                            <th scope="col">Impact Date & Time</th>
+                                                            <th scope="col">Simulation Date & Time</th>
+                                                        </tr>
+                                                    </thead>
+                                                  <tbody className="player-table">
+                                                        {this.state.playerList.map(function (player, index) {
+                                                            if (player.simulation_data.length > 0) {
+                                                              let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+
+                                                                return <tr className="player-data-table-row" key={index} onClick={() => {
+
+                                                                    this.setRedirectData(Number(index + 1).toString(), player.player_name)
+                                                                }}
+                                                                >
+                                                                    <th style={{ verticalAlign: "middle" }} scope="row">
+                                                                    {  
+                                                                        player.simulation_data[0].player_id.split('$')[1]
+
+                                                                    }</th>
+                                                                    <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
+                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
+                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td>}
+
+                                                                    {/*<td>{Number(player.impact)}</td>*/}
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                         {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']:  player.simulation_data[0]['date']  && player.simulation_data[0]['time']? player.simulation_data[0]['date'] +' '+ player.simulation_data[0]['time']  : 'Unkown Date and Time' } </td>
+                                                                    {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
+                                                                    {/*<td>0</td>
+                                                                                            <td>
+                                                                                            <div className="progress my-progress">
+                                                                                            <div
+                                                                                            style={{ width: '3%' }}
+                                                                                            className="progress-bar my-progress-bar "
+                                                                                            role="progressbar"
+                                                                                            aria-valuenow="0"
+                                                                                            aria-valuemin="0"
+                                                                                            aria-valuemax="100"
+                                                                                            ></div>
+                                                                                            </div>
+                                                                                            </td>
+                                                                                            */}
+                                                                    <td style={{ alignItems: "center" }}>{dateTime}</td>
+                                                                </tr>;
+                                                            }
+                                                        }, this)}
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ) :
+                                         (<div className="football-container mt-4 d-flex flex-wrap">
+                                            {this.state.isSensor && this.iterateTeam()}
+                                            {this.state.isOrganization && this.iterateTeam2()}
+                                            {this.state.isTeams && this.iterateTeam3()}
+                                        </div>)
                                         : null}
                                 </div>
                             </div>
@@ -363,7 +690,25 @@ class AdminDashboard extends React.Component {
         if ((!this.state.isAuthenticated && !this.state.isCheckingAuth) || this.state.isAdmin === false) {
             return <Redirect to="/Dashboard" />;
         }
-    
+        
+        if (this.state.cognito_user_id) {
+            return <Redirect push to={{
+                pathname: '/TeamAdmin/user/dashboard',
+                state: {
+                    user_cognito_id: this.state.userDetails.user_cognito_id,
+                    cognito_user_id: this.state.cognito_user_id,
+                    player_name: this.state.player_name.player_id,
+                    isRedirectedFromAdminPanel: true,
+                    team: {
+                        brand: this.state.player_name.sensor,
+                        team_name: this.state.player_name.team,
+                        organization: this.state.player_name.organization,
+                        staff: ''
+                    }
+                }
+            }} />
+        }
+
         if (this.state.isFetching) {
             return <Spinner />;
         }
