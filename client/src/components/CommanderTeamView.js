@@ -333,7 +333,7 @@ class CommanderTeamView extends React.Component {
         const second = plus0(d.getSeconds())
         const rest = timestamp.toString().slice(-5)
       
-        return `${month}-${date}-${year} ${hour}:${minute}:${second}:${rest}`
+        return `${month}:${date}:${year} ${hour}:${minute}:${second}:${rest}`
       }
 
     militaryVersionOrNormal = () => {
