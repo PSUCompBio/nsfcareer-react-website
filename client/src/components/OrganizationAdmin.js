@@ -262,11 +262,12 @@ class OrganizationAdmin extends React.Component {
     };
 
     militaryVersionOrNormalVersion = () => {
-        console.log('staffList',this.state.staffList);
+       
         
         var staffList =  this.state.staffList.map(function (staff, index) {
             return staff;
         })
+         console.log('staffList',staffList);
         // staffList[0].map( (staff, index) =>
         //     console.log(staff)
         //  )
@@ -359,11 +360,12 @@ class OrganizationAdmin extends React.Component {
                                                 </thead>
                                                 <tbody className="player-table">
                                                     {staffList && staffList[0].map(function (staff, index) {
+
                                                         return <tr className="player-data-table-row" key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{staff.data.first_name} {staff.data.last_name}</td>
-                                                            <td>{staff.data.email} </td>
-                                                            <td>{staff.data.organization}</td>
+                                                            <td>{staff.data ?  index + 1 : ''}</td>
+                                                            <td>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
+                                                            <td>{staff.data ? staff.data.email : ''} </td>
+                                                            <td>{staff.data ? staff.data.organization : ''}</td>
                                                            
                                                         </tr>
                                                     })}

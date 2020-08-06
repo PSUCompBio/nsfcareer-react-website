@@ -86,23 +86,32 @@ class AdminDashboard extends React.Component {
             })
         }else if(e.target.name == 'individuals'){
             var the = this;
-            the.setState({isFetching: true});
-            getPlayerList({type: 'playersList'})
-            .then(players => {
+            if(this.state.playerList == ''){
+                the.setState({isFetching: true});
+                getPlayerList({type: 'playersList'})
+                .then(players => {
+                    this.setState({
+                        playerList:players.data.data,
+                        isSensor: false,
+                        isTeams: false,
+                        isOrganization: false,
+                        isPlayers: true,
+                    })
+
+                     setTimeout(function(){ 
+                        the.setState({isFetching: false});
+                    }, 3000);
+                }).catch(err=>{
+                    console.log('err',err)
+                })
+            }else{
                 this.setState({
-                    playerList:players.data.data,
                     isSensor: false,
                     isTeams: false,
                     isOrganization: false,
                     isPlayers: true,
                 })
-
-                 setTimeout(function(){ 
-                    the.setState({isFetching: false});
-                }, 3000);
-            }).catch(err=>{
-                console.log('err',err)
-            })
+            }
         }
     }
     checkIfDarkModeActive = () => {

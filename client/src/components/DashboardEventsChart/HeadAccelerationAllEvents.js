@@ -6,6 +6,7 @@ const options = {
     responsive: true,
     maintainAspectRatio: false,
     fill: false,
+
     legend: {
         display: false
     },
@@ -23,9 +24,7 @@ const options = {
             },
             id: 'A',
             position: 'left',
-            ticks: {
-                //min: 0
-            }
+           
         }, {
             scaleLabel: {
                 display: true,
@@ -61,6 +60,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     borderColor: '#1987DD',
                     yAxisID: 'A',
                     fill: false,
+                    pointRadius: 0,
                     data: this.props.data.linear_acceleration['xv'] ? this.props.data.linear_acceleration['xv'] : [],
                 }, {
                     lineTension: 0.1,
@@ -69,6 +69,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     borderColor: '#ff0000',
                     yAxisID: 'A',
                     fill: false,
+                    pointRadius: 0,
                     data: this.props.data.linear_acceleration['yv'] ? this.props.data.linear_acceleration['yv'] : [],
                 }, {
                     lineTension: 0.1,
@@ -76,6 +77,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     backgroundColor: '#00c04a',
                     borderColor: '#00c04a',
                     yAxisID: 'A',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.linear_acceleration['zv'] ? this.props.data.linear_acceleration['zv'] : [],
                 }, {
@@ -84,6 +86,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     backgroundColor: '#8000a3',
                     borderColor: '#8000a3',
                     yAxisID: 'B',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.angular_acceleration['xv'],
                 }, {
@@ -92,6 +95,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     backgroundColor: '#ff9a00',
                     borderColor: '#ff9a00',
                     yAxisID: 'B',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.angular_acceleration['yv'] ? this.props.data.angular_acceleration['yv'] : [],
                 }, {
@@ -99,6 +103,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     label: "Z Angular Acceleration",
                     backgroundColor: '#000000',
                     borderColor: '#000000',
+                    pointRadius: 0,
                     yAxisID: 'B',
                     fill: false,
                     data: this.props.data.angular_acceleration['zv'] ? this.props.data.angular_acceleration['zv'] : [],

@@ -51,6 +51,7 @@ class HeadLinearAccelerationAllEvents extends React.Component {
                     backgroundColor: '#7CB5EC',
                     borderColor: '#1987DD',
                     yAxisID: 'A',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.linear_acceleration['xv'] ? this.props.data.linear_acceleration['xv'] : [],
                 }, {
@@ -59,6 +60,7 @@ class HeadLinearAccelerationAllEvents extends React.Component {
                     backgroundColor: '#ff0000',
                     borderColor: '#ff0000',
                     yAxisID: 'A',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.linear_acceleration['yv'] ? this.props.data.linear_acceleration['yv'] : [],
                 }, {
@@ -67,6 +69,7 @@ class HeadLinearAccelerationAllEvents extends React.Component {
                     backgroundColor: '#00c04a',
                     borderColor: '#00c04a',
                     yAxisID: 'A',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.linear_acceleration['zv'] ? this.props.data.linear_acceleration['zv'] : [],
                 }]

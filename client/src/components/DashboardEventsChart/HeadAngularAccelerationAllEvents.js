@@ -51,6 +51,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
                     backgroundColor: '#8000a3',
                     borderColor: '#8000a3',
                     yAxisID: 'B',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.angular_acceleration['xv'],
                 }, {
@@ -59,6 +60,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
                     backgroundColor: '#ff9a00',
                     borderColor: '#ff9a00',
                     yAxisID: 'B',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.angular_acceleration['yv'] ? this.props.data.angular_acceleration['yv'] : [],
                 }, {
@@ -67,6 +69,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
                     backgroundColor: '#000000',
                     borderColor: '#000000',
                     yAxisID: 'B',
+                    pointRadius: 0,
                     fill: false,
                     data: this.props.data.angular_acceleration['zv'] ? this.props.data.angular_acceleration['zv'] : [],
                 }]
