@@ -204,6 +204,10 @@
 
 
 @media screen and (max-width: 480px){
+	.banner-sign-in-button{
+		    padding-left: 32% !important;
+		    margin-top: 40%;
+	}
 	/* Navigation text css  */
 	.team-admin-page-navigation .nav-p {
 	    font-size: 13px;

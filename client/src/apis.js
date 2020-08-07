@@ -672,6 +672,18 @@ export const getBrainSimulationMovie = (request) =>{
   })
 }
 
+export const getBrainSimulationLogFile = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.get(`/getBrainSimulationLogFile/`+request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getOrganizationList = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getOrganizationList/`,request, {withCredentials: true})

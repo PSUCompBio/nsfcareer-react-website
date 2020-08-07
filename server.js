@@ -1695,6 +1695,29 @@ function getPresignedMovieUrl(image_details) {
     }
   })
 }
+function getBrainSimulationLogFile(image_details){
+    console.log('image_details',image_details)
+    return new Promise((resolve, reject) => {
+    const { log_path } = image_details;
+    if(log_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: log_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
+
+}
 
 function ImpactVideoUrl(image_details) {
   return new Promise((resolve, reject) => {
@@ -1877,6 +1900,56 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
         })
 
 });
+
+app.get(`${apiPrefix}getBrainSimulationLogFile/:image_id`, (req, res) => {
+    const {image_id} = req.params;
+    console.log('image_id',image_id)
+    // res.send({
+    //         message : "success",
+    //         simulation_log_path : req.body,
+    //     })
+    // // const { image_id } = req.params;
+    // //  request.post({ url: config.ComputeInstanceEndpoint + "getBrainSimulationLogFile", json: req.params }, function (err, httpResponse, body) {
+    // //     if (err) {
+    // //         res.send({ message: 'failure', error: err });
+    // //     }
+    // //     else {
+    // //         console.log('getAllCumulativeAccelerationJsonData',httpResponse.body)
+    // //         res.send(httpResponse.body);
+    // //     }
+    // // })
+    let imageData = '';
+    var movie_link_url = '';
+    getSimulationImageRecord(image_id)
+    .then(image_data => {
+        imageData = image_data;
+        return verifyImageToken(imageData['token'], image_data);
+    })
+    .then(decoded_token => {
+       
+        return getPlayerCgValues(imageData.player_name);
+    })
+     .then(cg_coordinates => {
+        // Setting cg values
+        // console.log('log_path',log_path)
+        var key  = imageData.log_path;
+        return getBrainSimulationLogFile(imageData);
+    }).then(simulation_log_path => {
+        // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+        console.log('simulation_log_path',simulation_log_path);
+        res.send({
+            message : "success",
+            simulation_log_path : simulation_log_path,
+        })
+    })
+    .catch(err=>{
+        console.log('err',err)
+        res.send({
+            message : "failure",
+            error : err
+        })
+    })
+})
 
 //Getting brain simulation details page video
 app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {

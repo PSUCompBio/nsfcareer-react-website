@@ -31,7 +31,7 @@ import Dash from '../Dash/DashPage';
 import Report from '../../components/ReportContent/Report0';
 import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
 import InviteUsers from '../../components/InviteUsers';
-
+import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -232,6 +232,13 @@ class Routing extends React.Component {
           exact
           path="/TeamAdmin/user/dashboard/brainSimulationDetails"
           render={(props) => <BrainSimulationDetails {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+
+        
+        <Route
+          exact
+          path="/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog"
+          render={(props) => <BrainSimulationLog {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact
