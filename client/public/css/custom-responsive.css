@@ -208,6 +208,11 @@
 		    padding-left: 32% !important;
 		    margin-top: 40%;
 	}
+	.signIn-btn{
+		padding: 9px 22px!important;
+    	border: solid 3px #ffffff!important;
+    	    box-shadow: 0px 0px 4px #47525d!important;
+	}
 	/* Navigation text css  */
 	.team-admin-page-navigation .nav-p {
 	    font-size: 13px;
@@ -297,6 +302,9 @@
 }
 
 @media screen and (max-width: 414px){
+	.signIn-btn{
+		width: 136px!important;
+	}
 	.action_btn_block .lobe_btn {
 	    width: 29px !important;
 	    font-size: 7px !important;

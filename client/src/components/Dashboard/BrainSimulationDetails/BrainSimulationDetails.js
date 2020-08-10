@@ -90,7 +90,8 @@ class BrainSimulationDetails extends React.Component {
       isLoading: false,
       status: '',
       impact_video_url: '',
-      simulation_log_path: ''
+      simulation_log_path: '',
+      simulation_log:''
     };
   }
   getUploadFileExtension3(url){
@@ -213,14 +214,14 @@ class BrainSimulationDetails extends React.Component {
                   </div>
                   <h1 className="top-heading__login brain-simlation-details-title" >Brain Simulation Details</h1>
                   {/* this.state.simulation_log_path && <p className="top-heading__login brain-simlation-details-title" ><a href={this.state.simulation_log_path} target="_blank">Simulation Log File</a></p>*/}
-                  <div style={{'text-align':'center','width':'100%'}}>{this.props.location.state.data.log_file && 
+                  <div style={{'text-align':'center','width':'100%'}}>{this.state.simulation_log && 
                     <Link 
                     to={{
                       pathname: '/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog',
                       state: {
                         state: this.props.location.state.state,
-                        data: this.props.location.state.data
-
+                        data: this.props.location.state.data,
+                        simulation_log: this.state.simulation_log
                       }
                     }}>
                    
@@ -370,7 +371,7 @@ class BrainSimulationDetails extends React.Component {
                     getBrainSimulationLogFile(this.props.location.state.data.sensor_data.image_id).then((response) => {
                       console.log('response',response)
                         this.setState({
-                          simulation_log_path:response.data.simulation_log_path,
+                          simulation_log:response.data.data,
                           isLoaded: true,
                           isAuthenticated: true,
                           isCheckingAuth: false

@@ -315,9 +315,9 @@ class InviteUsers extends React.Component {
                   {this.state.sensorBrandList &&
                     this.state.sensorBrandList
                   }
-                  {this.state.TeamList &&
+                  {/*this.state.TeamList &&
                     this.state.TeamList
-                  }
+                  */}
                   <div style={{'margin-bottom': '24px'}}>
                     <button class="btn btn-primary">{this.state.isLoading ? (
                         <div className="d-flex justify-content-center">
@@ -356,7 +356,8 @@ class InviteUsers extends React.Component {
          this.setState({
           sensor:location.sensorOrgTeamList[0].sensor,
           organization:location.sensorOrgTeamList[0].organization,
-          TeamList: this.selectOption2(location.sensorOrgTeamList,'Team','team_name','team')
+          TeamList: this.selectOption2(location.sensorOrgTeamList,'Team','team_name','team'),
+          team: location.sensorOrgTeamList[0].team_name
         }); 
       }else if(location.type == 'AdminOrganization'){
         console.log('location',location.sensorBrandList);

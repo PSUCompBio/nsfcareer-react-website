@@ -18,6 +18,9 @@ import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
+import gridView from './girdView.png';
+import listView from './listView.png';
+
 
 class AdminDashboard extends React.Component {
     constructor() {
@@ -45,7 +48,8 @@ class AdminDashboard extends React.Component {
             teamList: [],
             isPlayers: false,
             playerList: [],
-            cognito_user_id: ''
+            cognito_user_id: '',
+            view: 'gridView',
         };
     }
     toggleTab = (value) => {
@@ -56,6 +60,11 @@ class AdminDashboard extends React.Component {
     getTargetBtn = (value) => {
         this.setState({ targetBtn: value });
     };
+    handleViewChange = (view) =>{
+        console.log('view',view)
+        localStorage.setItem('view', view);
+        this.setState({view:view})
+    }
 
     handleButtonChanges =(e)=>{
         console.log(e.target.name);
@@ -86,6 +95,7 @@ class AdminDashboard extends React.Component {
             })
         }else if(e.target.name == 'individuals'){
             var the = this;
+            console.log('playerList',this.state.playerList)
             if(this.state.playerList == ''){
                 the.setState({isFetching: true});
                 getPlayerList({type: 'playersList'})
@@ -157,6 +167,11 @@ class AdminDashboard extends React.Component {
     componentDidMount() {
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0)
+        var view = localStorage.getItem('view');
+        if(view){
+            console.log('view',view)
+            this.setState({view: view})
+        }
         isAuthenticated(JSON.stringify({}))
             .then((value) => {
                 if (value.data.message === 'success') {
@@ -512,6 +527,90 @@ class AdminDashboard extends React.Component {
             </React.Fragment>
         );
     };
+    tableSensor = () => {
+        var body =  this.state.sensorBrandList.map(function (sensor, index) {
+                if (sensor) {
+                    return <tr className="player-data-table-row" key={index} onClick={() => {
+                        this.props.history.push({
+                            pathname: '/OrganizationAdmin',
+                            state: {
+                                brand: {
+                                    brand: sensor.sensor,
+                                    user_cognito_id: this.state.userDetails.user_cognito_id
+                                }
+                            }
+                        })
+                    }}
+                    >
+                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                        <td>{sensor.sensor}</td>
+                        <td>{sensor.simulation_count}</td>
+                       
+                    </tr>;
+                }
+            }, this)
+        return body
+        
+    }
+    tableOrganization = ()=> {
+        console.log(this.state.OrganizationList)
+        var body =  this.state.OrganizationList.map(function (organization, index) {
+                if (organization) {
+                    return <tr className="player-data-table-row" key={index} onClick={() => {
+                        this.props.history.push({
+                            pathname: '/TeamAdmin',
+                            state: {
+                                brand: {
+                                    brand: organization.sensor,
+                                    organization: organization.organization,
+                                    user_cognito_id: this.state.userDetails.user_cognito_id
+                                }
+                            }
+                        })
+                    }}
+                    >
+                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                        <td>{organization.organization}</td>
+                        <td>{organization.sensor ? organization.sensor : 'NA'}</td>
+                        <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
+                        <td>{organization.team_name ? organization.team_name : 'NA'}</td> 
+                    </tr>;
+                }
+            }, this)
+        return body
+    }
+
+    tableTeams = ()=>{
+        console.log(this.state.teamList)
+
+        var body =  this.state.teamList.map(function (team, index) {
+                if (team) {
+                    return <tr className="player-data-table-row" key={index} onClick={() => {
+                        this.props.history.push({
+                            pathname: '/TeamAdmin/team/players',
+                            state: {
+                                team: {
+                                    brand: team.sensor,
+                                    organization: team.organization,
+                                    team_name: team.team_name,
+                                    user_cognito_id: this.state.userDetails.user_cognito_id,
+                                    staff: this.state.staffList
+                                }
+                            }
+                        })
+                        
+                    }}
+                    >
+                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                        <td>{team.team_name ? team.team_name : 'NA'}</td> 
+                        <td>{team.simulation_count ? team.simulation_count : '0'}</td>
+                        <td>{team.organization}</td>
+                        <td>{team.sensor ? team.sensor : 'NA'}</td>
+                    </tr>;
+                }
+            }, this)
+        return body
+    }
 
     militaryVersionOrNormalVersion = () => {
         return (
@@ -526,13 +625,23 @@ class AdminDashboard extends React.Component {
                         )}
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{ textAlign: 'center', fontSize: '30px' }}>Admin Dashboard</p>
-                        <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
+                        <div className="col-md-10 organization-admin-table-margin-5-mobile-overview">
                             <button type="button" className={this.state.isSensor ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
                             <button type="button" className={this.state.isOrganization ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
                             <button type="button" className={this.state.isTeams ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
                             <button type="button" className= "btn  float-left custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
                             <button type="button"  className={this.state.isPlayers ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
 
+                        </div>
+                        <div className="col-md-2" >
+                            
+                                {!this.state.isPlayers && 
+                                    <div className="View">
+                                        <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
+                                        <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                    </div>
+                                }
+                            
                         </div>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
@@ -613,6 +722,7 @@ class AdminDashboard extends React.Component {
                                         </div>
                                     } 
                                     {!this.state.tabActive ?
+                                        this.state.view == 'gridView' ?
                                         this.state.isPlayers ? (
                                             <div ref="table" className="commander-data-table table-responsive ">
                                                 <table style={{ whiteSpace: "nowrap" }} className="table ">
@@ -679,6 +789,119 @@ class AdminDashboard extends React.Component {
                                             {this.state.isSensor && this.iterateTeam()}
                                             {this.state.isOrganization && this.iterateTeam2()}
                                             {this.state.isTeams && this.iterateTeam3()}
+                                        </div>)
+                                        :   
+                                        this.state.isPlayers ? (
+                                            <div ref="table" className="commander-data-table table-responsive ">
+                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th scope="col">Player ID</th>
+                                                            <th scope="col">Player Name</th>
+                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
+                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
+                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
+                                                            <th scope="col">Impact Date & Time</th>
+                                                            <th scope="col">Simulation Date & Time</th>
+                                                        </tr>
+                                                    </thead>
+                                                  <tbody className="player-table">
+                                                        {this.state.playerList.map(function (player, index) {
+                                                            if (player.simulation_data.length > 0) {
+                                                              let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+
+                                                                return <tr className="player-data-table-row" key={index} onClick={() => {
+
+                                                                    this.setRedirectData(Number(index + 1).toString(), player.player_name)
+                                                                }}
+                                                                >
+                                                                    <th style={{ verticalAlign: "middle" }} scope="row">
+                                                                    {  
+                                                                        player.simulation_data[0].player_id.split('$')[1]
+
+                                                                    }</th>
+                                                                    <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
+                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
+                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td>}
+
+                                                                    {/*<td>{Number(player.impact)}</td>*/}
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                         {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']:  player.simulation_data[0]['date']  && player.simulation_data[0]['time']? player.simulation_data[0]['date'] +' '+ player.simulation_data[0]['time']  : 'Unkown Date and Time' } </td>
+                                                                    {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
+                                                                    {/*<td>0</td>
+                                                                                            <td>
+                                                                                            <div className="progress my-progress">
+                                                                                            <div
+                                                                                            style={{ width: '3%' }}
+                                                                                            className="progress-bar my-progress-bar "
+                                                                                            role="progressbar"
+                                                                                            aria-valuenow="0"
+                                                                                            aria-valuemin="0"
+                                                                                            aria-valuemax="100"
+                                                                                            ></div>
+                                                                                            </div>
+                                                                                            </td>
+                                                                                            */}
+                                                                    <td style={{ alignItems: "center" }}>{dateTime}</td>
+                                                                </tr>;
+                                                            }
+                                                        }, this)}
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ) :
+                                        (<div ref="table" className="commander-data-table table-responsive ">
+                                            {this.state.isSensor && 
+                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th scope="col">S.No.</th>
+                                                            <th scope="col">Sensor</th>
+                                                            <th scope="col">Simulations</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="player-table">
+                                                        {this.tableSensor()}
+                                                    </tbody>
+                                                </table>
+                                            }
+                                            {this.state.isOrganization && 
+                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">S.No.</th>
+                                                            <th scope="col">Organization</th>
+                                                            <th scope="col">Sensor</th>
+                                                            <th scope="col">Simulations</th>
+                                                            <th scope="col">Team Name</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="player-table">
+                                                        {this.tableOrganization()}
+                                                    </tbody>
+                                                </table>
+                                            }
+                                            {this.state.isTeams && 
+                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">S.No.</th>
+                                                            <th scope="col">Team Name</th>
+                                                            <th scope="col">Simulations</th>
+                                                            <th scope="col">Organization</th>
+                                                            <th scope="col">Sensor</th>
+                                                           
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="player-table">
+                                                        {this.tableTeams()}
+                                                    </tbody>
+                                                </table>
+                                            }
                                         </div>)
                                         : null}
                                 </div>

@@ -1908,47 +1908,46 @@ app.get(`${apiPrefix}getBrainSimulationLogFile/:image_id`, (req, res) => {
     //         message : "success",
     //         simulation_log_path : req.body,
     //     })
-    // // const { image_id } = req.params;
-    // //  request.post({ url: config.ComputeInstanceEndpoint + "getBrainSimulationLogFile", json: req.params }, function (err, httpResponse, body) {
-    // //     if (err) {
-    // //         res.send({ message: 'failure', error: err });
-    // //     }
-    // //     else {
-    // //         console.log('getAllCumulativeAccelerationJsonData',httpResponse.body)
-    // //         res.send(httpResponse.body);
-    // //     }
-    // // })
-    let imageData = '';
-    var movie_link_url = '';
-    getSimulationImageRecord(image_id)
-    .then(image_data => {
-        imageData = image_data;
-        return verifyImageToken(imageData['token'], image_data);
+     request.post({ url: config.ComputeInstanceEndpoint + "getBrainSimulationLogFile", json: req.params }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            console.log('getBrainSimulationLogFile',httpResponse.body)
+            res.send(httpResponse.body);
+        }
     })
-    .then(decoded_token => {
+    // let imageData = '';
+    // var movie_link_url = '';
+    // getSimulationImageRecord(image_id)
+    // .then(image_data => {
+    //     imageData = image_data;
+    //     return verifyImageToken(imageData['token'], image_data);
+    // })
+    // .then(decoded_token => {
        
-        return getPlayerCgValues(imageData.player_name);
-    })
-     .then(cg_coordinates => {
-        // Setting cg values
-        // console.log('log_path',log_path)
-        var key  = imageData.log_path;
-        return getBrainSimulationLogFile(imageData);
-    }).then(simulation_log_path => {
-        // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
-        console.log('simulation_log_path',simulation_log_path);
-        res.send({
-            message : "success",
-            simulation_log_path : simulation_log_path,
-        })
-    })
-    .catch(err=>{
-        console.log('err',err)
-        res.send({
-            message : "failure",
-            error : err
-        })
-    })
+    //     return getPlayerCgValues(imageData.player_name);
+    // })
+    //  .then(cg_coordinates => {
+    //     // Setting cg values
+    //     // console.log('log_path',log_path)
+    //     var key  = imageData.log_path;
+    //     return getBrainSimulationLogFile(imageData);
+    // }).then(simulation_log_path => {
+    //     // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+    //     console.log('simulation_log_path',simulation_log_path);
+    //     res.send({
+    //         message : "success",
+    //         simulation_log_path : simulation_log_path,
+    //     })
+    // })
+    // .catch(err=>{
+    //     console.log('err',err)
+    //     res.send({
+    //         message : "failure",
+    //         error : err
+    //     })
+    // })
 })
 
 //Getting brain simulation details page video
@@ -3736,7 +3735,7 @@ app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res)=> {
 
 // Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
-        console.log('file',req.body.image_id);
+        console.log('file',req.body);
         var file_name = Date.now();
         var image_id = req.body.image_id;
         var uploadParams = {
@@ -3744,77 +3743,90 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
             Key: '', // pass key
             Body: null, // pass file body
         };
-
-        // File Extensions
-        var file_extension = req.file.originalname.split(".");
-        file_extension = file_extension[file_extension.length - 1];
-
-        // Setting Attributes for file upload on S3
-        uploadParams.Key =  "1/simulation/impact-video/" + file_name + "." + file_extension;
-        // console.log('req.file.buffer', req.file.buffer)
-        uploadParams.Body = req.file.buffer;
-       
-        // console.log('uploadParams',uploadParams)
-        s3.upload(uploadParams, (err, data) => {
-            if (err) {
-                console.log('======errr \n',err)
-                res.send({
-                    message: "failure",
-                    data: err
-                });
-               
-            }else{
-                InsertImpactVideoKey(req.body.image_id,data.key).
-                then(sensor_data => {
-                    const  image_id  = req.body.image_id;
-                    console.log('image_id',image_id)
-                    let imageData = '';
-                    getSimulationImageRecord(image_id)
-                        .then(image_data => {
-                            // console.log('image_data',image_data)
-                            imageData = image_data;
-                            return verifyImageToken(imageData['token'], image_data);
-                        })
-                        .then(decoded_token => {
-                            // console.log('decoded_token',decoded_token)
-                            return getPlayerCgValues(imageData.player_name);
-                        })
-                        .then(cg_coordinates => {
-                            // Setting cg values
-                            // console.log("cg_coordinates",cg_coordinates)
-                            if(cg_coordinates) {
-                              imageData["cg_coordinates"] = cg_coordinates;
-                            }
-                            return ImpactVideoUrl(imageData);
-                        })
-                        .then(movie_link => {
-                            // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
-                            console.log('movie_link',movie_link);
-                            res.send({
-                                message : "success",
-                                impact_video_url : movie_link
-                            })
-                            
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            // res.removeHeader('X-Frame-Options');
-                            // if(err.message == 'The provided key element does not match the schema'){
-                                res.send({
-                                    message: "failure",
-                                    data: err
-                                });
-                            // }
-                        })
-                })
-                .catch(err => {
-                   console.log('err',err)
+        getSimulationImageRecord(image_id)
+        .then(data => {
+            // File Extensions
+            var file_extension = req.file.originalname.split(".");
+            file_extension = file_extension[file_extension.length - 1];
+            var d = new Date();
+            console.log(d.toLocaleDateString('pt-PT'));
+            d = d.toLocaleDateString('pt-PT');
+            var date = d.replace("/", "-");
+            date = date.replace("/", "-");
+            console.log('date',date);
+            // Setting Attributes for file upload on S3
+            uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/" + file_name + "." + file_extension;
+            // console.log('req.file.buffer', req.file.buffer)
+            uploadParams.Body = req.file.buffer;
+           
+            // console.log('uploadParams',uploadParams)
+            s3.upload(uploadParams, (err, data) => {
+                if (err) {
+                    console.log('======errr \n',err)
                     res.send({
                         message: "failure",
                         data: err
                     });
-                })
-            }
+                   
+                }else{
+                    InsertImpactVideoKey(req.body.image_id,data.key).
+                    then(sensor_data => {
+                        const  image_id  = req.body.image_id;
+                        console.log('image_id',image_id)
+                        let imageData = '';
+                        getSimulationImageRecord(image_id)
+                            .then(image_data => {
+                                // console.log('image_data',image_data)
+                                imageData = image_data;
+                                return verifyImageToken(imageData['token'], image_data);
+                            })
+                            .then(decoded_token => {
+                                // console.log('decoded_token',decoded_token)
+                                return getPlayerCgValues(imageData.player_name);
+                            })
+                            .then(cg_coordinates => {
+                                // Setting cg values
+                                // console.log("cg_coordinates",cg_coordinates)
+                                if(cg_coordinates) {
+                                  imageData["cg_coordinates"] = cg_coordinates;
+                                }
+                                return ImpactVideoUrl(imageData);
+                            })
+                            .then(movie_link => {
+                                // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                console.log('movie_link',movie_link);
+                                res.send({
+                                    message : "success",
+                                    impact_video_url : movie_link
+                                })
+                                
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                // res.removeHeader('X-Frame-Options');
+                                // if(err.message == 'The provided key element does not match the schema'){
+                                    res.send({
+                                        message: "failure",
+                                        data: err
+                                    });
+                                // }
+                            })
+                    })
+                    .catch(err => {
+                       console.log('err',err)
+                        res.send({
+                            message: "failure",
+                            data: err
+                        });
+                    })
+                }
+            })
+        }).catch(err => {
+           console.log('err',err)
+            res.send({
+                message: "failure",
+                data: err
+            });
         })
 })
 
