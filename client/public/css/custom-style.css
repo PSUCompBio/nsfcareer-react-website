@@ -383,3 +383,14 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
     padding: 6px 24px!important;
     border: 2px solid #4472c4!important;
 }
+
+/*nav section css start*/
+
+.View img{
+    width: 28%!important;
+    display: inline-block!important;
+    margin: 9px!important;
+    cursor: pointer!important;
+}
+
+/*nav section css end*/

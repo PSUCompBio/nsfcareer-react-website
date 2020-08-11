@@ -16,12 +16,7 @@ import {
   getUserDetails,
   getUserDBDetails,
   isAuthenticated,
-  getCumulativeAccelerationData,
-  getSimulationFilesOfPlayer,
-  getAllCumulativeAccelerationTimeRecords,
-  getBrainSimulationMovie,
-  uploadSidelineImpactVideo,
-  getBrainSimulationLogFile
+  
 } from '../../../apis';
 
 import { Form } from 'react-bootstrap';
@@ -39,37 +34,7 @@ import { getStatusOfDarkmode } from '../../../reducer';
 class BrainSimulationLog extends React.Component {
   constructor(props) {
     super(props);
-    this.onDrop = (files) => {
-      console.log('files',files);
-      console.log(files.length)
-      if(files.length > 1){
-        alert('You can upload only one file');
-      }else{
-        this.setState(files)
-        const data = new FormData() 
-        data.append('file', files[0]);
-        data.append('image_id',this.props.location.state.data.sensor_data.image_id );
-        console.log(this.props.location.state.user_cognito_id)
-        data.append('user_cognito_id',this.props.location.state.user_cognito_id );
-        this.setState({isLoading:true})
-
-        uploadSidelineImpactVideo(data)
-        .then(res => { 
-          if(res.data.message == 'success'){
-            this.setState({impact_video_url: res.data.impact_video_url});
-          }else{
-            this.setState({status: res.data.data.message})
-
-          }
-          this.setState({isLoading:false})
-
-        }). catch(err =>{
-          console.log('err',err)
-        })
-        // var fileType = this.getUploadFileExtension3(files[0].name);
-        // console.log('fileType',fileType)
-      }
-    };
+    
     // console.log('User Dashboard For Admin Is ',this.props);
     console.log("USER DASHBOARD PROPS", this.props)
     this.state = {
@@ -127,8 +92,11 @@ class BrainSimulationLog extends React.Component {
  
   render() {
     console.log('props',this.props.location.state)
-    // const isLoaded = this.state.user;
-    console.log(this.state.user);
+    var logs = this.props.location.state.simulation_log;
+    logs = logs.split('-');
+    var log = logs.map(function (log, index) {
+      return <p>{log}</p>
+    })
     // if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
     //   return <Redirect to="/Login" />;
     // }
@@ -180,12 +148,21 @@ class BrainSimulationLog extends React.Component {
           </ScrollToTop>
         </div>
 
+
         <div className="container dashboard UserDashboarForAdmin-page-navigation brain-simlation-details">
 
             <div className="container">
               <div className="row">
-                
-                <p style={{'width': '100%'}}>{this.props.location.state && this.props.location.state.data.log_file}</p>
+                <div className="backbutton">
+                  <Link 
+                    to={{
+                      pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',
+                     state: this.props.location.state
+                  }}
+                  >&lt; Back To Details
+                  </Link>
+                </div>
+                <p style={{'width': '100%','margin-top': '124px'}}>{this.props.location.state && log}</p>
               </div>
             </div>
         </div>

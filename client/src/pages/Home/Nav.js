@@ -11,6 +11,7 @@ import {
     getProfilePicLink,
  
 } from '../../apis'; 
+import $ from "jquery";
 
 class Nav extends React.Component {
   constructor(props) {
@@ -238,6 +239,24 @@ getUploadFileExtension(url){
       this.setState({
           intervalId : setInterval(this.timer, 1000)
       })
+      var timer;
+      console.log('widht',$( document ).width())
+      if($( document ).width() <= '480'){
+        $(document).scroll(function(){
+
+          if(timer != "undefined"){
+            clearTimeout(timer);
+          }
+          
+          $('.navbar').hide();
+          timer = setTimeout(function(){
+            
+            $('.navbar').show();
+
+          },250)//Threshold is 100ms
+
+        });
+      }
   }
 
   componentWillUpdate() {
