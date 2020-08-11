@@ -351,7 +351,8 @@ function getImageFromS3(image_record){
         };
         s3.getObject(params, function(err, data) {
             if (err) {
-                reject(err)
+                // reject(err)
+                resolve(null);
             }
             else{
                 resolve(data);
@@ -362,12 +363,13 @@ function getImageFromS3(image_record){
 
 function getImageFromS3Buffer(image_data){
     return new Promise((resolve, reject) => {
-        console.log(image_data.Body);
+        // console.log(image_data.Body);
             try{
                 resolve(image_data.Body.toString('base64'))
             }
             catch (e){
-                reject(e)
+                //reject(e)
+                resolve(null);
             }
 
     })
@@ -1685,7 +1687,8 @@ function getPresignedMovieUrl(image_details) {
       };
       s3.getSignedUrl('getObject', params, function (err, url) {
           if (err) {
-              reject(err);
+              //reject(err);
+              resolve(false);
           } else {
               resolve(url);
           }
@@ -1696,7 +1699,7 @@ function getPresignedMovieUrl(image_details) {
   })
 }
 function getBrainSimulationLogFile(image_details){
-    console.log('image_details',image_details)
+    // console.log('image_details',image_details)
     return new Promise((resolve, reject) => {
     const { log_path } = image_details;
     if(log_path) {
@@ -1707,7 +1710,8 @@ function getBrainSimulationLogFile(image_details){
       };
       s3.getSignedUrl('getObject', params, function (err, url) {
           if (err) {
-              reject(err);
+              //reject(err);
+              resolve(false);
           } else {
               resolve(url);
           }
@@ -1794,7 +1798,10 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
       return verifyImageToken(token, imageData);
     })
     .then(decoded_token => {
-        return getImageFromS3(imageData);
+        if (imageData.root_path && imageData.root_path != 'null') {
+            imageData.path = imageData.root_path + imageData.image_id + '.png';
+        } console.log(imageData.path);
+        return getImageFromS3(imageData); 
     })
     .then(image_s3 => {
         return getImageFromS3Buffer(image_s3);
@@ -1858,6 +1865,9 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
             // Setting cg values
             if(cg_coordinates) {
               imageData["cg_coordinates"] = cg_coordinates;
+            }
+            if (!imageData.movie_path) {
+                imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
             }
             return getPresignedMovieUrl(imageData);
         })
@@ -1965,20 +1975,19 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
             return getPlayerCgValues(imageData.player_name);
         })
         .then(cg_coordinates => {
-            // Setting cg values
-            if(cg_coordinates) {
-              imageData["cg_coordinates"] = cg_coordinates;
-            }
+            if (!imageData.movie_path) {
+                imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
+            } 
             return getPresignedMovieUrl(imageData);
         })
         .then(movie_link => {
-            // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
             console.log('movie_link',movie_link);
             movie_link_url = movie_link;
            
             return ImpactVideoUrl(imageData);
             
-        }) .then(impact_video_url => {
+        }) 
+        .then(impact_video_url => {
             console.log('movie_link_url',movie_link_url)
             res.send({
                 message : "success",

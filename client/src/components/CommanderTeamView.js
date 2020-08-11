@@ -302,7 +302,19 @@ class CommanderTeamView extends React.Component {
         const second = plus0(d.getSeconds())
         const rest = timestamp.toString().slice(-5)
       
-        return `${month}:${date}:${year} ${hour}:${minute}:${second}:${rest}`
+        return `${month}/${date}/${year} ${hour}:${minute}:${second}`
+    }
+
+    tConvert = (time) => {
+        // Check correct time format and split into components
+        time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+      
+        if (time.length > 1) { // If time format correct
+          time = time.slice (1);  // Remove full string match value
+          time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+          time[0] = +time[0] % 12 || 12; // Adjust hours
+        }
+        return time.join (''); // return adjusted time or original string
     }
 
     militaryVersionOrNormal = () => {
@@ -639,11 +651,11 @@ class CommanderTeamView extends React.Component {
 
                                                 <th scope="col">Player ID</th>
                                                 <th scope="col">Player Name</th>
-                                                {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
                                                 {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
-                                                {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
-                                                <th scope="col">Impact Date & Time</th>
-                                                <th scope="col">Simulation Date & Time</th>
+                                                <th scope="col">Impact Date</th>
+                                                <th scope="col">Impact Time</th>
+                                                <th scope="col">Simulation Date</th>
+                                                <th scope="col">Simulation Time</th>
                                             </tr>
                                         </thead>
                                       <tbody className="player-table">
@@ -652,7 +664,20 @@ class CommanderTeamView extends React.Component {
                                                   let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
                                                   let row = player.simulation_data[0].simulation_status === 'pending' ? '#FFA500' : false;
 
+                                                  if (player.simulation_data[0]['impact-time']) {
+                                                    let split = player.simulation_data[0]['impact-time'].split(":");
+                                                    player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                  }
+
+                                                  if (player.simulation_data[0]['time']) {
+                                                    let split = player.simulation_data[0]['time'].toString();
+                                                    split = split.split(":");
+                                                    player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                  }
+
                                                   if (player.simulation_data[0].simulation_status === 'completed' ) {
+
+                                                    let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
 
                                                     let currentStamp = new Date().getTime();
                                                     let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
@@ -660,7 +685,7 @@ class CommanderTeamView extends React.Component {
                                                     diff /= 60;
                                                     let minutes =  Math.abs(Math.round(diff));
                                                     console.log('minutes', minutes);
-
+                                                    minutes = minutes - computed_time;
                                                     if (minutes <= 10) {
                                                         row = '#32CD32';
                                                     }
@@ -677,13 +702,14 @@ class CommanderTeamView extends React.Component {
 
                                                         }</th>
                                                         <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                        {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
                                                         {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
-                                                        {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td>}
+                                                        { /* this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td> */}
 
                                                         {/*<td>{Number(player.impact)}</td>*/}
                                                         <td style={{ alignItems: "center" }}>
-                                                             {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']:  player.simulation_data[0]['date']  && player.simulation_data[0]['time']? player.simulation_data[0]['date'] +' '+ player.simulation_data[0]['time']  : 'Unkown Date and Time' } </td>
+                                                             {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'].replace(/:|-/g, "/") : player.simulation_data[0]['date'] ? player.simulation_data[0]['date'].replace(/:|-/g, "/") : 'Unkown Date' } </td>
+                                                        <td style={{ alignItems: "center" }}>
+                                                             {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
                                                                                 <td>
@@ -699,7 +725,8 @@ class CommanderTeamView extends React.Component {
                                                                                 </div>
                                                                                 </td>
                                                                                 */}
-                                                        <td style={{ alignItems: "center" }}>{dateTime}</td>
+                                                        <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
+                                                        <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
                                                     </tr>;
                                                 }
                                             }, this)}
