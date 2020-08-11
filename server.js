@@ -100,7 +100,8 @@ console.log("DOMAIN IS ", process.env.DOMAIN);
 //     "userPoolId": process.env.USER_POOL_ID,
 //     "apiVersion": process.env.API_VERSION,
 //     "ClientId": process.env.CLIENT_ID,
-//     "ComputeInstanceEndpoint": process.env.COMPUTE_INSTANCE_ENDPOINT
+//     "ComputeInstanceEndpoint": process.env.COMPUTE_INSTANCE_ENDPOINT,
+//     "FrontendUrl": process.env.COMPUTE_INSTANCE_ENDPOINT
 // };
 
 var config = require('./config/configuration_keys.json'); 
@@ -2345,7 +2346,7 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
               from: 'mukesh.rawat@brihaspatitech.com',
               to: dbdata.email,
               subject: 'Thank you for joining Nsfcareer',
-              text: 'Signup by this url = http://localhost:3000/SignUp/'+dbdata.InviteToken
+              text: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
             };
 
             transporter.sendMail(mailOptions, function(error, info){
@@ -3778,7 +3779,8 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
                     });
                    
                 }else{
-                    InsertImpactVideoKey(req.body.image_id,data.key).
+                    console.log('data',uploadParams.Key )
+                    InsertImpactVideoKey(req.body.image_id,uploadParams.Key ).
                     then(sensor_data => {
                         const  image_id  = req.body.image_id;
                         console.log('image_id',image_id)

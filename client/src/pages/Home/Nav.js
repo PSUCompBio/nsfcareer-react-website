@@ -43,16 +43,16 @@ class Nav extends React.Component {
     this.timer = this.timer.bind(this);
   }
 
-  onChangeHandler = (event) => {
+  onChangeHandler2 = (event) => {
       event.persist();
       console.log('uploading',this.state.user_details)
       this.setState({
           selectedFile: event.target.files[0]
       });
-      this.onClickHandler(event.target.files[0]);
+      this.onClickHandler2(event.target.files[0]);
   };
 
-  onClickHandler = (profile_pic) => {
+  onClickHandler2 = (profile_pic) => {
         const data = new FormData();
         this.setState({
             isFileBeingUploaded: true,
@@ -657,7 +657,7 @@ getUploadFileExtension(url){
               </div>
               <div className="upload-icon" style={Object.keys(this.state.user_details).length >0  && !this.state.isUploading ?{ 'display':'block'} : {'display':'none'}}>
                   <input
-                    onChange={this.onChangeHandler}
+                    onChange={this.onChangeHandler2}
                     type="file"
                     name="profile_pic"
                     id="file"

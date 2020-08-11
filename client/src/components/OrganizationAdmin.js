@@ -254,7 +254,7 @@ class OrganizationAdmin extends React.Component {
                     makeActive={this.state.tabActive}
                     getBtn={this.getTargetBtn}
                     currentBtn={this.state.targetBtn}
-                    content="staff"
+                    content="Organization Admin Users"
 
                 />
             </React.Fragment>
@@ -263,7 +263,7 @@ class OrganizationAdmin extends React.Component {
 
     militaryVersionOrNormalVersion = () => {
        
-        
+        var level = this.state.userDetails.level;
         var staffList =  this.state.staffList.map(function (staff, index) {
             return staff;
         })
@@ -301,8 +301,8 @@ class OrganizationAdmin extends React.Component {
                     </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
-                                <div className="col-md-12  mb-5 mt-4 p-0" >
-                                    
+                                <div className="col-md-12 Admintitle" >
+                                    <h1>Organization Dashboard</h1>
                                 </div>
                                 <div
                                     ref="cardContainer"
@@ -346,7 +346,7 @@ class OrganizationAdmin extends React.Component {
                                                         }                                        
                                                     }
                                                 }} >
-                                                    <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team user</button> 
+                                                    <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Admin</button> 
                                                 </Link>
                                             <table style={{ whiteSpace: "nowrap" }} className="table">
                                                 
@@ -361,7 +361,14 @@ class OrganizationAdmin extends React.Component {
                                                 <tbody className="player-table">
                                                     {staffList && staffList[0].map(function (staff, index) {
 
-                                                        return <tr className="player-data-table-row" key={index}>
+                                                        return <tr className="player-data-table-row" key={index}
+                                                            onClick={()=>{
+                                                                if(staff.data && level === 1000){
+                                                                var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id);
+                                                                  win.focus();
+                                                                }
+                                                            }}
+                                                        >
                                                             <td>{staff.data ?  index + 1 : ''}</td>
                                                             <td>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
                                                             <td>{staff.data ? staff.data.email : ''} </td>

@@ -608,6 +608,9 @@ class CommanderTeamView extends React.Component {
                 </div>
                 <div className="row mb-5 mt-5">
                     <div className="col-md-12">
+                        <div className="col-md-12 Admintitle2" >
+                            <h1>Team Dashboard</h1>
+                        </div>
                         {/*<div className="text-left">
                                                 <button type="btn" className="impact-sumary-btn">
                                                 Team History

@@ -302,6 +302,9 @@ class TeamnAdmin extends React.Component {
                         </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
+                                <div className="col-md-12 Admintitle" >
+                                    <h1>Organization Dashboard</h1>
+                                </div>
                                 <div
                                     ref="cardContainer"
                                     className="col-md-12 current-roster-card mb-5 mt-4 p-0"

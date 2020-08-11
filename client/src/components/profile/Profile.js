@@ -971,12 +971,12 @@ class Profile extends React.Component {
                                                                 onChange={this.onChangeHandler}
                                                                 type="file"
                                                                 name="profile_pic"
-                                                                id="file"
+                                                                id="file1"
                                                                 style = {{
                                                                     display : "none"
                                                                 }}
                                                                 />
-                                                            <label for="file" className = "inspect-btn mt-1 mb-4" style={{
+                                                            <label for="file1" className = "inspect-btn mt-1 mb-4" style={{
                                                                     textAlign : "center"
                                                                 }}>
                                                                 Update
@@ -996,12 +996,12 @@ class Profile extends React.Component {
                                                         onChange={this.onChangeHandler}
                                                         type="file"
                                                         name="profile_pic"
-                                                        id="file"
+                                                        id="file1"
                                                         style = {{
                                                             display : "none"
                                                         }}
                                                         />
-                                                    <label for="file" className = "inspect-btn mt-1 mb-4" style={{
+                                                    <label for="file1" className = "inspect-btn mt-1 mb-4" style={{
                                                             textAlign : "center"
                                                         }}>
                                                         Upload
