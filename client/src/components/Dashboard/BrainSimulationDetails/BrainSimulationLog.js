@@ -91,9 +91,9 @@ class BrainSimulationLog extends React.Component {
 
  
   render() {
-    console.log('props',this.props.location.state)
+    // console.log('props',this.props.location.state)
     var logs = this.props.location.state.simulation_log;
-    logs = logs.split('-');
+    logs = logs.split('\n');
     var log = logs.map(function (log, index) {
       return <p>{log}</p>
     })
