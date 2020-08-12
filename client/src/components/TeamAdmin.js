@@ -118,15 +118,16 @@ class TeamnAdmin extends React.Component {
                                                 console.log('fetchStaffMembers',response)
                                                 // for (var i = 0; i < response.data.data.length; i++) {
                                                     this.setState(prevState => ({
-                                                        staffList: [...prevState.staffList, response.data.data]
+                                                        staffList: [...prevState.staffList, response.data.data],
+                                                        isFetching: false
                                                     }));
                                                 // }
-						this.setState(prevState => ({
-						     isFetching: false
-						}));
                                             })
                                             .catch(err => {
                                                 alert(err);
+                                                this.setState(prevState => ({
+                                                    isFetching: false
+                                                }));
                                             })
                                     }
                                 })
@@ -143,6 +144,12 @@ class TeamnAdmin extends React.Component {
                     .catch((err) => {
                         this.setState({ isAuthenticated: false, isCheckingAuth: false});
                     })
+            }else{
+                this.setState(prevState => ({
+                    totalTeam: 0,
+                    sensorOrgTeamList: [],
+                    isFetching: false
+                }));
             }
         }
 
@@ -230,7 +237,7 @@ class TeamnAdmin extends React.Component {
             j++;
         }
         if (this.state.totalTeam === 0) {
-            return <div style={{ marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center' }}>No Team added yet.</div>
+            return <div style={{ marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center','font-weight': '600','font-size': '30px','color': '#495057' }}>No Data To display.</div>
         }
 
         return cards;

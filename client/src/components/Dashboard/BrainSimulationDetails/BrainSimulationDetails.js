@@ -28,8 +28,9 @@ import {
   uploadSidelineImpactVideo,
   getBrainSimulationLogFile
 } from '../../../apis';
+import axios from 'axios';
 
-import { Form } from 'react-bootstrap';
+import { Form, ProgressBar } from 'react-bootstrap';
 
 
 
@@ -56,23 +57,41 @@ class BrainSimulationDetails extends React.Component {
         data.append('image_id',this.props.location.state.data.sensor_data.image_id );
         console.log(this.props.location.state.user_cognito_id)
         data.append('user_cognito_id',this.props.location.state.user_cognito_id );
-        this.setState({isLoading:true})
-
-        uploadSidelineImpactVideo(data)
-        .then(res => { 
-          if(res.data.message == 'success'){
-            this.setState({impact_video_url: res.data.impact_video_url});
-          }else{
-            this.setState({status: res.data.data.message})
-
+        this.setState({isLoading:true,IsAcceleration:true})
+        var myVar = '';
+        var the = this;
+        const options = {
+          onUploadProgress: (progressEvent) => {
+            const {loaded, total } = progressEvent;
+            let percent = Math.floor((loaded * 100) / total);
+            if(percent < 70){
+              this.setState({uploadPercentage:percent})
+            }else{
+              
+              setInterval(function(){
+                 if(the.state.uploadPercentage < 99){
+                    the.setState({uploadPercentage: the.state.uploadPercentage + 1});
+                  }
+              }, 2000)
+            }
           }
-          this.setState({isLoading:false})
-
-        }). catch(err =>{
-          console.log('err',err)
+        }
+         axios.post(`/uploadSidelineImpactVideo`, data,options,{withCredentials: true})
+        .then(function (res) {
+          console.log('res',res);
+          if(res.data.message == 'success'){
+          console.log('impact_video_url',res.data.impact_video_url)
+            the.setState({uploadPercentage:100});
+            setTimeout(function(){
+              the.setState({impact_video_url: res.data.impact_video_url});
+            },2000)
+          }else{
+            the.setState({status: res.data.data.message});
+          }
         })
-        // var fileType = this.getUploadFileExtension3(files[0].name);
-        // console.log('fileType',fileType)
+        .catch(function (error) {
+          console.log(error)
+        });
       }
     };
     // console.log('User Dashboard For Admin Is ',this.props);
@@ -91,9 +110,12 @@ class BrainSimulationDetails extends React.Component {
       status: '',
       impact_video_url: '',
       simulation_log_path: '',
-      simulation_log:''
+      simulation_log:'',
+      uploadPercentage: 0,
+      IsAcceleration: false
     };
   }
+ 
   getUploadFileExtension3(url){
     console.log()
     if(new RegExp(".mp4").test(url)){
@@ -242,10 +264,14 @@ class BrainSimulationDetails extends React.Component {
                 <div className="col-md-12 col-lg-12 brain-simlation-details-graph">
                   <h4 className="brain-simlation-details-subtitle">Input From Sensor</h4>
                   <div className="col-md-6" style={{'float':'left'}}>
-                    <HeadLinearAccelerationAllEvents  key={this.props.location.state.data} data={this.props.location.state.data} state={this.props.location.state.state}/>
+                    
+                      <HeadLinearAccelerationAllEvents  key={this.props.location.state.data} data={this.props.location.state.data} state={this.props.location.state.state}/>
+                    
                   </div>
                   <div className="col-md-6" style={{'float':'left'}}>
-                    <HeadAngularAccelerationAllEvents  key={this.props.location.state.data} data={this.props.location.state.data} state={this.props.location.state.state}/>
+                    
+                      <HeadAngularAccelerationAllEvents  key={this.props.location.state.data} data={this.props.location.state.data} state={this.props.location.state.state}/>
+                    
                     
                   </div>
                 </div>
@@ -279,14 +305,9 @@ class BrainSimulationDetails extends React.Component {
                                     <input {...getInputProps()} />
                                     
                                      {this.state.isLoading ? (
-                                      <div className="d-flex justify-content-center center-spinner" style={{'margin-top':'25%'}}>
-                                        <p>Uploading &nbsp;&nbsp;</p><br/  >
-                                        <div
-                                          className="spinner-border text-primary"
-                                          role="status"
-                                        >
-                                          <span className="sr-only">Loading...</span>
-                                        </div>
+                                      <div className="d-flex justify-content-center center-spinner" style={{'margin-top':'28%'}}>
+                                      <ProgressBar animated now={this.state.uploadPercentage} label={`${this.state.uploadPercentage}%`} />
+                                       
                                       </div>
                                     ) : this.state.status ? <p style={{'margin-top':'25%','color':'red'}}>{this.state.status}</p>
                                       :<React.Fragment>

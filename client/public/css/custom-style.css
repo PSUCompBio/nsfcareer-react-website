@@ -409,3 +409,6 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
 .Admintitle2 h1{
     font-weight: 600;
 }
+.progress{
+    width: 70%!important;
+}

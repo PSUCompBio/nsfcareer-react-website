@@ -208,6 +208,9 @@
 	    padding-left: 32% !important;
 	    margin-top: 40%;
 	}
+	.navbar-bg-change{
+		background-image: linear-gradient(to right, #083c66 , #0787de)!important;
+	}
 	.signIn-btn{
 		padding: 9px 22px!important;
     	border: solid 3px #ffffff!important;

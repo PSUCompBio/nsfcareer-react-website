@@ -355,7 +355,6 @@ class OrganizationAdmin extends React.Component {
                                                         <th scope="col">#</th>
                                                         <th scope="col">Name</th>
                                                         <th scope="col">Email</th>
-                                                        <th scope="col">Organization</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
@@ -372,13 +371,13 @@ class OrganizationAdmin extends React.Component {
                                                             <td>{staff.data ?  index + 1 : ''}</td>
                                                             <td>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
                                                             <td>{staff.data ? staff.data.email : ''} </td>
-                                                            <td>{staff.data ? staff.data.organization : ''}</td>
-                                                           
                                                         </tr>
                                                     })}
+
                                                 </tbody>
 
                                             </table>
+                                            {!staffList && <p>No Data to display</p> }
                                         </div>
                                     }
                                     {!this.state.tabActive ?

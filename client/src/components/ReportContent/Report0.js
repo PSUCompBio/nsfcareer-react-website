@@ -25,6 +25,11 @@ const styles = StyleSheet.create({
         padding: 0,
         backgroundColor: 'white',
     },
+    col12: {
+        width: '100%',
+        paddingLeft : '5%',
+        paddingRight : '5%',
+    },
     Image: {
         objectFit: 'cover'
     },
@@ -33,6 +38,50 @@ const styles = StyleSheet.create({
         marginLeft : '5%',
         flexDirection : 'row',
         marginBottom : '6px'
+    },
+    rowHeadBorder:{
+        width:'100%',
+        backgroundColor:'#4472C4',
+        marginTop: '10px',
+        padding: '10px',
+        textAlign: 'center'
+    },
+    rowHead2:{
+        width:'100%',
+        backgroundColor:'#DAE3F3',
+        borderTop:'1px solid',
+        marginTop: '0px',
+        padding: '10px',
+        textAlign: 'center'
+    },
+    rowHead2Text:{
+        marginTop: '5px',
+        color:'#686868',
+        fontSize: 16,
+        display: 'inline-block'
+    },
+    rowHead2TextSub: {
+        marginTop: '22px',
+        marginRight: '75px',
+        position: 'absolute',
+         color:'#686868',
+        fontSize: 12,
+        textAlign: 'right',
+        display: 'inline-block'
+    },
+    rowHead2Text2Sub:{
+        marginTop: '40px',
+        marginRight: '65px',
+        position: 'absolute',
+         color:'#686868',
+        fontSize: 9,
+        textAlign: 'right',
+        display: 'inline-block' 
+    },
+    rowHead2Text2:{
+        marginTop: '7px',
+        color:'#686868',
+        fontSize: 12
     },
     tableHead:{
         flex: 1,
@@ -182,6 +231,15 @@ class Report extends React.Component {
 
                                 <Text style={styles.tableColRight}> Organization : {this.props.team != undefined ? this.props.team.organization : this.props.user.organization ? this.props.user.organization : "N/A" } </Text>
 
+                            </View>
+                            <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}> sadfasdfsdafasdf </Text></View>
+                            <View style={styles.col12}>
+                                <View style={styles.rowHead2}>
+                                    <Text  style={styles.rowHead2Text}>10% of brain tissue has exceeded MASxSR</Text>
+                                    <Text style={styles.rowHead2TextSub}>7.5</Text>
+                                    <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s     )</Text>
+                                    <Text style={styles.rowHead2Text2Sub}>-1</Text>
+                                </View>
                             </View>
                         </View>
 

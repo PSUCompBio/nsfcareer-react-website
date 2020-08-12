@@ -733,7 +733,7 @@ class Profile extends React.Component {
                                             <Label for="exampleEmail" sm={2}>Organization</Label>
                                             <Col sm={6}>
                                                 <div class="input-group">
-                                                    <Input readOnly
+                                                    <Input disabled
                                                         className="profile-input" type="select" name="organization" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
                                                         <option value={this.state.organization ? this.state.organization : "PSU"}  > {this.state.organization ? this.state.organization : "PSU"} </option>
                                                         <option value="NSF"  > NSF </option>
