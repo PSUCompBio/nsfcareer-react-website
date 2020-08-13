@@ -20,6 +20,7 @@ import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
 import gridView from './girdView.png';
 import listView from './listView.png';
+import $ from "jquery";
 
 
 class AdminDashboard extends React.Component {
@@ -172,6 +173,7 @@ class AdminDashboard extends React.Component {
             console.log('view',view)
             this.setState({view: view})
         }
+
         isAuthenticated(JSON.stringify({}))
             .then((value) => {
                 if (value.data.message === 'success') {
@@ -626,11 +628,11 @@ class AdminDashboard extends React.Component {
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{ textAlign: 'center', fontSize: '30px' }}>Admin Dashboard</p>
                         <div className="col-md-10 organization-admin-table-margin-5-mobile-overview">
-                            <button type="button" className={this.state.isSensor ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
-                            <button type="button" className={this.state.isOrganization ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
-                            <button type="button" className={this.state.isTeams ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
-                            <button type="button" className= "btn  float-left custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
-                            <button type="button"  className={this.state.isPlayers ?  "btn  float-left custom-button2" : "btn  float-left custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
+                            <button type="button" className={this.state.isSensor ?  "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
+                            <button type="button" className={this.state.isOrganization ?  "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
+                            <button type="button" className={this.state.isTeams ?  "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
+                            <button type="button" className= "btn   custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
+                            <button type="button"  className={this.state.isPlayers ?  "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
 
                         </div>
                         <div className="col-md-2" >

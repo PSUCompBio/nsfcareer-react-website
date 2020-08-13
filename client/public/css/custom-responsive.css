@@ -209,7 +209,7 @@
 	    margin-top: 40%;
 	}
 	.navbar-bg-change{
-		background-image: linear-gradient(to right, #083c66 , #0787de)!important;
+		background: linear-gradient(90deg,#083c66 10%,#078ae2)!important;
 	}
 	.signIn-btn{
 		padding: 9px 22px!important;
@@ -307,6 +307,23 @@
 	    top: -9%!important;
 	    height: 59px!important;
 	}
+
+	.View img{
+		width: 15%!important;
+	}
+	
+	.custom-button{
+		float: inherit!important;
+		
+	    padding: 4px 9px!important;
+	}
+	.custom-button2{
+		float: inherit!important;
+	    padding: 4px 9px!important;
+	}
+	.Admintitle h1{
+		font-size: 1.5rem;
+	}
 }
 
 @media screen and (max-width: 414px){
@@ -346,6 +363,10 @@
 	}
 	.Simulationvideo, .impact-video{
 		height: 172px;
+	}
+
+	.rostar-btn {
+		font-size: 12px;
 	}
 }
 
@@ -417,6 +438,9 @@
 	}
 }
 @media screen and (max-width: 320px){
+	.Admintitle h1{
+		font-size: 1.3rem!important;
+	}
 	.action_btn_block .lobe_btn {
 	    width: 24px !important;
 	    font-size: 6px !important;

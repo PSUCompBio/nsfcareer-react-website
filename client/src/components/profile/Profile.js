@@ -725,26 +725,13 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                             <Col sm={4}>
-                                                <button className="btn btn-warning btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Not Verified</button>
+                                                <button className="btn btn-warning btn-sm" style={{'float':'left'}}><i class="fa fa-check" aria-hidden="true"></i> Not Verified</button>
+                                                <button className="btn btn-danger btn-sm" style={{'float':'left','margin-left':'5px'}}> Verify now!</button>
+
                                             </Col>
                                         </FormGroup>
 
-                                        <FormGroup row>
-                                            <Label for="exampleEmail" sm={2}>Organization</Label>
-                                            <Col sm={6}>
-                                                <div class="input-group">
-                                                    <Input disabled
-                                                        className="profile-input" type="select" name="organization" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
-                                                        <option value={this.state.organization ? this.state.organization : "PSU"}  > {this.state.organization ? this.state.organization : "PSU"} </option>
-                                                        <option value="NSF"  > NSF </option>
-                                                    </Input>
-                                                    <span class="input-group-addon profile-edit-icon"
-                                                        >
-                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                    </span>
-                                                </div>
-                                            </Col>
-                                        </FormGroup>
+                                        
 
                                         <FormGroup row>
                                             <Label for="dob" sm={2}>Birthday</Label>
@@ -789,7 +776,33 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                         </FormGroup>
-
+                                        <p
+                                            ref="h1"
+                                            style={{
+                                                paddingLeft : "0px"
+                                            }}
+                                            className="player-dashboard-sub-head">
+                                            Security and Permissions
+                                        </p>
+                                        <FormGroup row>
+                                            <Label for="exampleEmail" sm={2}>Organization</Label>
+                                            <Col sm={6}>
+                                                <div class="input-group">
+                                                    {/* 
+                                                        <Input disabled
+                                                            className="profile-input" type="select" name="organization" id="exampleEmail" defaultValue={this.state.organization ? this.state.organization : "PSU"}  placeholder="Organization" >
+                                                            <option value={this.state.organization ? this.state.organization : "PSU"}  > {this.state.organization ? this.state.organization : "PSU"} </option>
+                                                            <option value="NSF"  > NSF </option>
+                                                        </Input>
+                                                        <span class="input-group-addon profile-edit-icon"
+                                                            >
+                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                        </span>
+                                                    */}
+                                                    <span className="ProfileOrganization">{this.state.organization ? this.state.organization : "PSU"}</span>
+                                                </div>
+                                            </Col>
+                                        </FormGroup>
                                         <FormGroup row>
                                             <Label for="exampleEmail" sm={2}>Type</Label>
                                             <Col sm={6}>
@@ -820,6 +833,9 @@ class Profile extends React.Component {
                                                     style={{color : "red"}}
                                                     class="fa fa-times-circle profile-edit-icon" aria-hidden="true"></i>  }
                                                 </span>
+                                                <span>
+                                                    <button className="btn btn-danger btn-sm" style={{'margin-left':'26px'}}>Complete now!</button>
+                                                </span>
                                             </Label>
                                             <Col sm={8}>
                                                 <div class="input-group">
@@ -845,7 +861,8 @@ class Profile extends React.Component {
                                             ) : null}
                                             {this.state.message ? (
                                                 <div
-                                                    className="alert alert-info api-response-alert"
+                                                    className="alert alert-success"
+                                                    style={{'margin-top': '8px'}}
                                                     role="alert">
                                                     <strong > Success !</strong> {this.state.message}
                                                     </div>

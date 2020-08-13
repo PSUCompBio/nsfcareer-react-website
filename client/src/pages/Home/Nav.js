@@ -248,10 +248,10 @@ getUploadFileExtension(url){
             clearTimeout(timer);
           }
           
-          $('.navbar').hide();
+          // $('.navbar').hide();
           timer = setTimeout(function(){
             
-            $('.navbar').show();
+            // $('.navbar').show();
 
           },250)//Threshold is 100ms
 

@@ -2103,7 +2103,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
         req.body["organization"] = "PSU";
     }
     if(!req.body.level){
-        req.body["level"] = 100;
+        req.body["level"] = '100';
     }
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
@@ -2132,9 +2132,9 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
             if(!req.body.level){
-                tempData["level"] = 100;
+                tempData["level"] = '100';
             }else{
-                 tempData["level"] =  parseInt(req.body.level);
+                 tempData["level"] =  req.body.level;
             }
             
             //tempData["is_sensor_company"] = true;

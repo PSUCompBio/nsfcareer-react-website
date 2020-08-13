@@ -376,12 +376,14 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
     color: white!important;
     padding: 6px 24px!important;
     border: 2px solid #4472c4!important;
+    float: left!important;
 }
 .custom-button2{
      background-color: #CF6D2A!important;
     color: white!important;
     padding: 6px 24px!important;
     border: 2px solid #4472c4!important;
+    float: left!important;
 }
 
 /*nav section css start*/
@@ -411,4 +413,16 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
 }
 .progress{
     width: 70%!important;
+}
+.navbar-bg-change2{
+    position: fixed !important;
+    top: 0;
+    background : transparent!important;
+    background : linear-gradient(to right, #083c66 , #075b97, #078ae2)!important;
+}
+
+.ProfileOrganization{
+    padding: 6px 22px;
+    border: 2px solid #007bff;
+    border-radius: 19px;
 }
