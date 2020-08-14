@@ -154,8 +154,8 @@ class OrganizationAdmin extends React.Component {
         }
 
     };
-
-    smallCards = (reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+  
+    smallCards = (list, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
@@ -212,6 +212,7 @@ class OrganizationAdmin extends React.Component {
         let j = 1;
         for (let i = 0; i < this.state.totalOrganization; i++) {
             cards[i] = this.smallCards(
+                this.state.sensorOrgList,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,
