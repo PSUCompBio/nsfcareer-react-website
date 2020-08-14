@@ -2565,15 +2565,29 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
 
 function getBrandOrganizationData(sensor, organization) {
     return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "sensor_data",
-            FilterExpression: "sensor = :sensor and organization = :organization",
-            ExpressionAttributeValues: {
-                ":sensor": sensor,
-                ":organization": organization
-            },
-            ProjectionExpression: "sensor"
-        };
+        let params;
+
+        if (sensor != '') {
+            params = {
+                TableName: "sensor_data",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                    ":sensor": sensor,
+                    ":organization": organization
+                },
+                ProjectionExpression: "sensor"
+            };
+        } else {
+            params = {
+                TableName: "sensor_data",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                   ":organization": organization
+                },
+                ProjectionExpression: "sensor"
+            };
+        }
+        
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -2612,7 +2626,7 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
             orgList.forEach(function (org, index) {
                 let data = org;
                 let i = index;
-                getBrandOrganizationData(data.sensor,data.organization )
+                getBrandOrganizationData(data.sensor ? data.sensor : '' ,data.organization )
                     .then(simulation_records => {
                         console.log('orgList.length',orgList.length)
                         counter++;

@@ -92,7 +92,8 @@ class TeamnAdmin extends React.Component {
         window.scrollTo(0, 0)
         if (this.props.location.state) {
             console.log('this.props.location.state', this.props.location.state);
-            if (this.props.location.state.brand.user_cognito_id && this.props.location.state.brand.brand && this.props.location.state.brand.organization) {
+            //if (this.props.location.state.brand.user_cognito_id && this.props.location.state.brand.brand && this.props.location.state.brand.organization) {
+            if (this.props.location.state.brand.organization) {
                 isAuthenticated(JSON.stringify({}))
                     .then((value) => {
                         if (value.data.message === 'success') {
@@ -292,7 +293,7 @@ class TeamnAdmin extends React.Component {
                                 }} >{'Admin > ' }</Link>
                                        
                             }
-                            {this.state.userDetails.level !== 300 &&
+                            {this.state.userDetails.level !== 300 && this.state.userDetails.level !== 1000 &&
                                 <Link style={{ fontWeight: "400" }} to={{
                                     pathname: '/OrganizationAdmin',
                                     state: {
