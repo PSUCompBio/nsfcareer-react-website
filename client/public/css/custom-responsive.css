@@ -382,12 +382,12 @@
 
 @media screen and (max-width: 412px){
 	.custom-button{
-		font-size: 11px!important;
+		font-size: 13px!important;
 		float: left!important;
 	    padding: 5px 11px!important;
 	}
 	.custom-button2{
-		font-size: 11px!important;
+		font-size: 13px!important;
 		float: left!important;	
 	    padding: 5px 11px!important;;
 	}
@@ -408,6 +408,10 @@
 	/* Navigation text end  */
 }
 @media screen and (max-width: 375px){
+	.custom-button, .custom-button2{
+		font-size: 11px!important;
+		
+	}
 	.action_btn_block .lobe_btn {
 	    width: 34px !important;
 	    font-size: 6px !important;
