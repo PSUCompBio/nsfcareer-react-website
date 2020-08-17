@@ -17,7 +17,8 @@ import {
     getSimulationFile,
     getVtkFileLink,
     updateUserDetails,
-    isAuthenticated
+    isAuthenticated,
+    VerifyNumber
 } from '../../apis';
 
 import { UncontrolledAlert,
@@ -82,7 +83,8 @@ class Profile extends React.Component {
             startDate: '',
             avatar_zip_file_url_details : '',
             vtk_file_url_details : '',
-            isRefreshing : false
+            isRefreshing : false,
+            phone_number: ''
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -514,6 +516,26 @@ class Profile extends React.Component {
             });
         }
     };
+    Change = (e)=>{
+        const {name, value} = e.target;
+        console.log(name, value)
+        this.setState({[name]:value, number_verified: 'false'})
+    }
+    VerifyNumber=(e)=>{
+         e.preventDefault();
+        console.log('e',this.state.phone_number,this.state.user.user_cognito_id,this.state.selectedCountryCode);
+        if(this.state.phone_number){
+            VerifyNumber({phone_number: this.state.phone_number, user_cognito_id:this.state.user.user_cognito_id,country_code:this.state.selectedCountryCode})
+            .then(res=>{
+                console.log('res',res);
+                if(res.data.message == "success"){
+                    this.setState({number_verified: 'true'})
+                }
+            }).catch(err => {
+                console.log('err',err)
+            })
+        }
+    }
 
     handleSubmit(e) {
         console.log('Update user details clicked');
@@ -530,7 +552,8 @@ class Profile extends React.Component {
         // converting formData to JSON
         const formJsonData = JSON.parse(formDataToJson(formData));
 
-        formJsonData["user_cognito_id"] = this.state.user.user_cognito_id
+        formJsonData["user_cognito_id"] = this.state.user.user_cognito_id;
+        formJsonData["number_verified"] = this.state.number_verified;
 
         // Calling update user details api
         updateUserDetails(JSON.stringify(formJsonData))
@@ -560,6 +583,7 @@ class Profile extends React.Component {
 
     showProfile = () => {
         console.log('this.state.user.profile_picture_url',this.state.user.profile_picture_url)
+        // this.setState({phone_number: this.state.user.phone_number})
         return (
             <React.Fragment>
                 <div
@@ -713,7 +737,7 @@ class Profile extends React.Component {
                                                                     {this.state.slectedCountryName}
                                                                 </span>
                                                                 <Input
-                                                                    className="profile-input phone-number-input-box" type="text" name="phone_number" id="exampleEmail" value={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
+                                                                    className="profile-input phone-number-input-box" type="text" name="phone_number" onChange={this.Change} id="exampleEmail" defaultValue={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
                                                                 <span class="input-group-addon profile-edit-icon"
                                                                     >
                                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -725,9 +749,17 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                             <Col sm={4}>
-                                                <button className="btn btn-warning btn-sm" style={{'float':'left'}}><i class="fa fa-check" aria-hidden="true"></i> Not Verified</button>
-                                                <button className="btn btn-danger btn-sm" style={{'float':'left','margin-left':'5px'}}> Verify now!</button>
-
+                                                {this.state.number_verified == 'true' ? 
+                                                    (<button className="btn btn-success btn-sm" onClick={e =>e.preventDefault()}><i class="fa fa-check" aria-hidden="true"></i> Verified</button>) 
+                                                    :
+                                                    (
+                                                        <React.Fragment>
+                                                            <button className="btn btn-warning btn-sm" onClick={e =>e.preventDefault()} style={{'float':'left'}}><i class="fa fa-check"  aria-hidden="true"></i> Not Verified</button>
+                                                            <button className="btn btn-danger btn-sm" style={{'float':'left','margin-left':'5px'}} onClick={this.VerifyNumber}> Verify now!</button>
+                                                        </React.Fragment>
+                                                    )
+                                                }
+                                                
                                             </Col>
                                         </FormGroup>
 
@@ -1286,6 +1318,8 @@ class Profile extends React.Component {
                                         }
                                         this.setState({
                                             user: { ...this.state.user, ...response.data.data },
+                                            phone_number: response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length),
+                                            number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                                             isLoading: false,
                                             isAuthenticated: true,
                                             isCheckingAuth: false,

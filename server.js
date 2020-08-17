@@ -2015,37 +2015,126 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
 
 
 app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
+    console.log('req',req.body);
+    let obj = {};
+    obj.user_name = req.body.user_cognito_id;
+    obj.phone_number = req.body.country_code+req.body.phone_number;
+    obj.phone_number_verified = req.body.number_verified
+    adminVerifyNumber(obj, function (err, data) {
+        if (err) {
 
-    let update_details = {
+        }else{
 
-        TableName : 'users',
-        Key : {
-            "user_cognito_id": req.body.user_cognito_id
-        },
-        UpdateExpression : "set first_name = :fname, last_name = :lname, dob = :dob, gender = :gender, phone_number = :phone_number",
-        ExpressionAttributeValues : {
-            ":fname" : req.body.first_name,
-            ":lname" : req.body.last_name,
-            ":dob" : req.body.dob,
-            ":gender" : req.body.sex,
-            ":phone_number" : req.body.country_code + req.body.phone_number
-        },
-        ReturnValues: "UPDATED_NEW"
-    };
+            let update_details = {
 
-    docClient.update(update_details, function(err, data){
-        if(err) {
-            res.send({
-                message : 'failure'
-            })
-        } else {
-            res.send({
-                message : 'success'
+                TableName : 'users',
+                Key : {
+                    "user_cognito_id": req.body.user_cognito_id
+                },
+                UpdateExpression : "set first_name = :fname, last_name = :lname, dob = :dob, gender = :gender, phone_number = :phone_number, phone_number_verified = :phone_number_verified",
+                ExpressionAttributeValues : {
+                    ":fname" : req.body.first_name,
+                    ":lname" : req.body.last_name,
+                    ":dob" : req.body.dob,
+                    ":gender" : req.body.sex,
+                    ":phone_number" : req.body.country_code + req.body.phone_number,
+                    ":phone_number_verified" : req.body.number_verified
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+
+            docClient.update(update_details, function(err, data){
+                if(err) {
+                    res.send({
+                        message : 'failure'
+                    })
+                } else {
+                    res.send({
+                        message : 'success'
+                    })
+                }
             })
         }
     })
 })
+function adminVerifyNumber(User, cb) {
 
+    var params = {
+        UserAttributes: [ /* required */
+          {
+            Name: 'phone_number', /* required */
+            Value: User.phone_number
+          },
+          {
+            Name: 'phone_number_verified', /* required */
+            Value: User.phone_number_verified
+          },
+          /* more items */
+        ],
+        UserPoolId: cognito.userPoolId, /* required */
+        Username: User.user_name, /* required */
+      };
+      COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+        if (err) {
+            cb(err, "");
+        } // an error occurred
+        else {
+            cb("", data);
+        }             // successful response
+      });
+}
+app.post(`${apiPrefix}VerifyNumber`,(req, res) => {
+    console.log('req',req.body);
+    let obj = {};
+    obj.user_name = req.body.user_cognito_id;
+    obj.phone_number = req.body.country_code+req.body.phone_number;
+    obj.phone_number_verified = 'true'
+    adminVerifyNumber(obj, function (err, data) {
+        if (err) {
+            console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+            res.send({
+                message: "failure",
+                error: err.message
+            });
+        }
+        else {
+            // On success
+            // res.send({
+            //     message: 'success',
+            //     data: data
+            // });
+            let update_details = {
+
+                TableName : 'users',
+                Key : {
+                    "user_cognito_id": req.body.user_cognito_id
+                },
+                UpdateExpression : "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified",
+                ExpressionAttributeValues : {
+                    ":phone_number" : obj.phone_number,
+                    ":country_code" : req.body.country_code,
+                    ":phone_number_verified" : 'true'
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+
+            docClient.update(update_details, function(err, data){
+                if(err) {
+                    res.send({
+                        message : 'failure',
+                        err: err
+                    })
+                } else {
+                    res.send({
+                        message : 'success',
+                        data: data
+                    })
+                }
+            })
+        }
+    })
+})
 
 app.post(`${apiPrefix}singUpWithToken`, (req, res) => {
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
