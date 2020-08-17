@@ -305,6 +305,20 @@ class CommanderTeamView extends React.Component {
         return `${month}/${date}/${year} ${hour}:${minute}:${second}`
     }
 
+    getDate = (timestamp) => {
+
+        const plus0 = num => `0${num.toString()}`.slice(-2)
+      
+        const d = new Date(timestamp)
+      
+        const year = d.getFullYear()
+        const monthTmp = d.getMonth() + 1
+        const month = plus0(monthTmp)
+        const date = plus0(d.getDate())
+        
+        return `${month}/${date}/${year}`
+    }
+
     tConvert = (time) => {
         // Check correct time format and split into components
         time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
@@ -710,7 +724,7 @@ class CommanderTeamView extends React.Component {
 
                                                         {/*<td>{Number(player.impact)}</td>*/}
                                                         <td style={{ alignItems: "center" }}>
-                                                             {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'].replace(/:|-/g, "/") : player.simulation_data[0]['date'] ? player.simulation_data[0]['date'].replace(/:|-/g, "/") : 'Unkown Date' } </td>
+                                                             {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
                                                         <td style={{ alignItems: "center" }}>
                                                              {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}

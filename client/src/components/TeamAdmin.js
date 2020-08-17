@@ -228,7 +228,8 @@ class TeamnAdmin extends React.Component {
                     'h' + inc++,
                     'h' + inc++
                 ],
-                this.props.location.state.brand.brand,
+                //this.props.location.state.brand.brand, 
+                this.state.sensorOrgTeamList[i].sensor,
                 this.state.sensorOrgTeamList[i].organization,
                 this.state.sensorOrgTeamList[i].team_name,
                 this.state.userDetails.user_cognito_id,

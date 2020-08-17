@@ -496,6 +496,7 @@ function createUserDbEntry(event, callback) {
     // deleting the key from parameter from "user_name"
     event["user_cognito_id"] = event.user_name;
     // event["sensor"] = 'Blackbox Biometrics';
+    // event["organization"] = 'Army Research Laboratory';
     delete event.user_name;
     dbInsert = {
         TableName: "users",
@@ -1178,8 +1179,8 @@ function adminCreateUser(User, cb) {
         DesiredDeliveryMediums: [
             "EMAIL",
         ],
-        //MessageAction: 'SUPPRESS',
-        //TemporaryPassword: '12345678', // BrainComputing2020!
+        // MessageAction: 'SUPPRESS',
+        // TemporaryPassword: '12345678', // BrainComputing2020!
         UserAttributes: [
             {
                 Name: 'phone_number', /* required */
@@ -2221,9 +2222,9 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
             if(!req.body.level){
-                tempData["level"] = '100';
+                tempData["level"] = 100;
             }else{
-                 tempData["level"] =  req.body.level;
+                 tempData["level"] =  parseInt(req.body.level);
             }
             
             //tempData["is_sensor_company"] = true;
@@ -4396,10 +4397,12 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                             })
                         }
                         else {
-                            if (user_details.Item["level"] === 400) {
+                            if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
                                 // console.log(user_details.Item);
                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                 req.body["sensor_brand"] = user_details.Item["sensor"];
+                                req.body["level"] = user_details.Item["level"];
+                                req.body["organization"] = user_details.Item["organization"];
                                 request.post({
                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
                                     json: req.body
@@ -4579,10 +4582,12 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
                             })
                         }
                         else {
-                            if (user_details.Item["level"] === 400) {
+                            if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
                                 // console.log(user_details.Item);
                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                 req.body["sensor_brand"] = user_details.Item["sensor"];
+                                req.body["level"] = user_details.Item["level"];
+                                req.body["organization"] = user_details.Item["organization"];
                                 req.body["upload_file"] = base64File;
                                 req.body["data_filename"] = data_filename;
                                 req.body["selfie"] = base64Selfie;
