@@ -160,7 +160,7 @@ class TeamnAdmin extends React.Component {
 
     };
 
-    smallCards = (reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
+    smallCards = (simulation_status,reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
@@ -180,7 +180,7 @@ class TeamnAdmin extends React.Component {
                             }
                         })
                     }}
-                    className={`tech-football m-3`}
+                    className={simulation_status == 'completed' ? `completedSimulation tech-football m-3` : `pendingSimulation tech-football m-3`}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -218,6 +218,7 @@ class TeamnAdmin extends React.Component {
         let j = 1;
         for (let i = 0; i < this.state.totalTeam; i++) {
             cards[i] = this.smallCards(
+                this.state.sensorOrgTeamList[i].simulation_status,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,

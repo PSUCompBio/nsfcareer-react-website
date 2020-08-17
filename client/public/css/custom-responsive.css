@@ -204,6 +204,9 @@
 
 
 @media screen and (max-width: 480px){
+	.dashboard-custom-button2{
+		display: inherit;
+	}
 	.banner-sign-in-button{
 	    padding-left: 32% !important;
 	    margin-top: 40%;
@@ -313,16 +316,23 @@
 	}
 	
 	.custom-button{
-		float: inherit!important;
-		
-	    padding: 4px 9px!important;
+		font-size: 13px!important;
+		float: left!important;
+	    padding: 5px 15px!important;
 	}
 	.custom-button2{
-		float: inherit!important;
-	    padding: 4px 9px!important;
+		font-size: 13px!important;
+		float: left!important;	
+	    padding: 5px 15px!important;;
 	}
 	.Admintitle h1{
 		font-size: 1.5rem;
+	}
+	.dashboard-custom-button{
+		display: none;
+	}
+	.unlock-img2{
+		width: 3.5%;
 	}
 }
 
@@ -371,6 +381,19 @@
 }
 
 @media screen and (max-width: 412px){
+	.custom-button{
+		font-size: 11px!important;
+		float: left!important;
+	    padding: 5px 11px!important;
+	}
+	.custom-button2{
+		font-size: 11px!important;
+		float: left!important;	
+	    padding: 5px 11px!important;;
+	}
+	.View img {
+	    width: 17%!important;
+	}
 	/* Navigation text css  
 	.team-admin-page-navigation {
 	    margin-top: 6rem!important;
@@ -438,6 +461,19 @@
 	}
 }
 @media screen and (max-width: 320px){
+	.custom-button{
+		font-size: 9px!important;
+		float: left!important;
+	    padding: 5px 11px!important;
+	}
+	.custom-button2{
+		font-size: 7px!important;
+		float: left!important;	
+	    padding: 5px 11px!important;;
+	}
+	.View img {
+	    width: 24%!important;
+	}
 	.Admintitle h1{
 		font-size: 1.3rem!important;
 	}

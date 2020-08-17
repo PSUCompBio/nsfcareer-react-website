@@ -155,8 +155,8 @@ class OrganizationAdmin extends React.Component {
 
     };
   
-    smallCards = (list, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
-        // console.log(reference);
+    smallCards = (simulation_status, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+        console.log('list',simulation_status);
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <div
@@ -173,7 +173,7 @@ class OrganizationAdmin extends React.Component {
                             }
                         })
                     }}
-                    className={`tech-football m-3`}
+                    className={simulation_status == 'completed' ? `completedSimulation tech-football m-3` : `pendingSimulation tech-football m-3`}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -212,7 +212,7 @@ class OrganizationAdmin extends React.Component {
         let j = 1;
         for (let i = 0; i < this.state.totalOrganization; i++) {
             cards[i] = this.smallCards(
-                this.state.sensorOrgList,
+                this.state.sensorOrgList[i].simulation_status,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,
