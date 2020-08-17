@@ -128,7 +128,7 @@ button.settings-buttons {
     float: left;
     width: 100%;
     text-align: center;
-    padding: 23px 0px 27px;
+    padding: 0px 0px 27px;
     border: 5px solid #0e7bd2;
     margin: 45px 0px 40px;
     border-radius: 4px;
@@ -258,7 +258,7 @@ button.settings-buttons {
 
 input#MyrangeSlider1 {
     -webkit-appearance: none;
-    width: 100%;
+    width: 95%;
     height: 9px;
     background: #686868d1;
     outline: none;
@@ -292,7 +292,7 @@ input#MyrangeSlider1:focus{
 
 input#MyrangeSlider2 {
     -webkit-appearance: none;
-    width: 100%;
+    width: 95%;
     height: 9px;
     background: #686868d1;
     outline: none;
@@ -305,7 +305,7 @@ input#MyrangeSlider2 {
 
 input#MyrangeSlider3 {
     -webkit-appearance: none;
-    width: 100%;
+    width: 95%;
     height: 30px;
     background: #686868d1;
     outline: none;
@@ -425,4 +425,54 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
     padding: 6px 22px;
     border: 2px solid #007bff;
     border-radius: 19px;
+}
+.completedSimulation{
+    background: #28a745!important;
+    color: white!important;
+}
+.completedSimulation p{
+    color: white!important;
+}
+
+.pendingSimulation{
+    background: #ff7907!important;
+    color: white!important;
+}
+.pendingSimulation p, .pendingSimulation th, .pendingSimulation td{
+    color: white!important;
+}
+.dashboard-custom-button2{
+    display: none;
+}
+.unlock-img{
+    float: left;
+    width: 3.5%;
+}
+.unlock-img2{
+    float: left;
+    width: 2.5%;
+}
+.Replace-video{
+    width: 100%;
+    display: inline-block;
+}
+
+.Replace-video div{
+    width: 50%;
+    float: right;
+}
+.Replace-video div label{
+    background: #4472c4;
+    color: white;
+    padding: 4px 18px;
+    margin-bottom: 0px!important;
+    margin-top: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.Replace-video div label img{
+    width: 28px;
+}
+.Replace-video div #uploadFile{
+    display: none;
 }

@@ -2665,7 +2665,7 @@ function getBrandOrganizationData(sensor, organization) {
                     ":sensor": sensor,
                     ":organization": organization
                 },
-                ProjectionExpression: "sensor"
+                ProjectionExpression: "sensor,image_id"
             };
         } else {
             params = {
@@ -2674,7 +2674,7 @@ function getBrandOrganizationData(sensor, organization) {
                 ExpressionAttributeValues: {
                    ":organization": organization
                 },
-                ProjectionExpression: "sensor"
+                ProjectionExpression: "sensor,image_id"
             };
         }
         
@@ -2692,7 +2692,23 @@ function getBrandOrganizationData(sensor, organization) {
         });
     });
 }
-
+function getPlayerSimulationStatus(image_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "simulation_images",
+            Key: {
+                image_id: image_id,
+            },
+        };
+        docClient.get(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data.Item);
+            }
+        });
+    });
+}
 app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
     console.log(req.body)
     getOrganizationList()
@@ -2718,15 +2734,44 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
                 let i = index;
                 getBrandOrganizationData(data.sensor ? data.sensor : '' ,data.organization )
                     .then(simulation_records => {
-                        console.log('orgList.length',orgList.length)
                         counter++;
                         org["simulation_count"] = Number(simulation_records.length).toString();
-
+                        org["simulation_status"] = 'completed';
                         if (counter == orgList.length) {
-                            res.send({
-                                message: "success",
-                                data: orgList
-                            })
+                            
+                            var y = 0;
+                            // console.log('simulation_records',simulation_records)
+                            for(var i = 0; i < simulation_records.length; i++){
+                                getPlayerSimulationStatus(simulation_records[i].image_id)
+                                .then(data => {
+                                    if(data.status != 'completed'){
+                                        org["simulation_status"] = 'pending';
+                                    }
+                                    y++;
+                                    if(y == simulation_records.length){
+                                        res.send({
+                                            message: "success",
+                                            data: orgList
+                                        })
+                                    }
+                                }).catch(err => {
+                                    console.log('err',err)
+                                })
+                            }
+                            
+                        }else{
+                            var y = 0;
+                            for(var i = 0; i < simulation_records.length; i++){
+                                getPlayerSimulationStatus(simulation_records[i].image_id)
+                                .then(data => {
+                                    if(data.status != 'completed'){
+                                        org["simulation_status"] = 'pending';
+                                    }
+                                    y++;
+                                }).catch(err => {
+                                    console.log('err',err)
+                                })
+                            }
                         }
                     })
                     .catch(err => {
@@ -2780,7 +2825,7 @@ function getOrganizationTeamData(obj) {
                ":organization": obj.organization,
                ":team": obj.team
             },
-            ProjectionExpression: "sensor"
+            ProjectionExpression: "sensor,image_id"
         };
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
@@ -2824,12 +2869,41 @@ app.post(`${apiPrefix}getTeamList`, (req, res) => {
                     counter++;
                     team["simulation_count"] = Number(simulation_records.length).toString();
 
+                    team["simulation_status"] = 'completed';
                     if (counter == teamList.length) {
-                        console.log(teamList);
-                        res.send({
-                            message: "success",
-                            data: teamList
-                        })
+                        var y = 0;
+                        // console.log('simulation_records',simulation_records)
+                        for(var i = 0; i < simulation_records.length; i++){
+                            getPlayerSimulationStatus(simulation_records[i].image_id)
+                            .then(data => {
+                                if(data.status != 'completed'){
+                                    team["simulation_status"] = 'pending';
+                                }
+                                y++;
+                                if(y == simulation_records.length){
+                                    res.send({
+                                        message: "success",
+                                        data: teamList
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log('err',err)
+                            })
+                        }
+                        
+                    }else{
+                        var y = 0;
+                        for(var i = 0; i < simulation_records.length; i++){
+                            getPlayerSimulationStatus(simulation_records[i].image_id)
+                            .then(data => {
+                                if(data.status != 'completed'){
+                                    team["simulation_status"] = 'pending';
+                                }
+                                y++;
+                            }).catch(err => {
+                                console.log('err',err)
+                            })
+                        }
                     }
                 })
                 .catch(err => {
@@ -2917,7 +2991,6 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                 }
             }
         }
-        console.log('player_list',player_list.length)
         if (player_list.length == 0) {
             res.send({
                 message: "success",
@@ -2940,14 +3013,43 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                         p_data.push({
                             player_name: p,
                             //vsimulation_image: image ? image : '',
-                            simulation_data: playerData
+                            simulation_data: playerData,
+                            simulation_status : 'completed'
                         });
-                        console.log(counter,player_listLn)
-                       if (counter == player_listLn) {
-                            res.send({
-                                message: "success",
-                                data: p_data
-                            })
+                         var y = 0;
+                        if (counter == player_listLn) {
+                           
+                            // console.log('simulation_records',simulation_records)
+                            for(var i = 0; i < player_data.length; i++){
+                                getPlayerSimulationStatus(player_data[i].image_id)
+                                .then(data => {
+                                    if(data.status != 'completed'){
+                                        p_data["simulation_status"] = 'pending';
+                                    }
+                                    y++;
+                                    if(y == player_data.length){
+                                        res.send({
+                                            message: "success",
+                                            data: p_data
+                                        })
+                                    }
+                                }).catch(err => {
+                                    console.log('err',err)
+                                })
+                            }
+                            
+                        }else{
+                            for(var i = 0; i < player_data.length; i++){
+                                getPlayerSimulationStatus(player_data[i].image_id)
+                                .then(data => {
+                                    if(data.status != 'completed'){
+                                        p_data["simulation_status"] = 'pending';
+                                    }
+                                    y++;
+                                }).catch(err => {
+                                    console.log('err',err)
+                                })
+                            }
                         }
                     })
                     .catch(err => {

@@ -13,6 +13,11 @@ import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
 import simulationLoading from '../../simulationLoading.png';
 import videoSimulationLoading from './videoSimulationLoading.png';
+import unlock from './unlock.png';
+import lock from './lock.png';
+import upload from './upload.png';
+
+
 import uploadicon from './upload-icon.png'
 import 'jquery';
 import '../../Buttons/Buttons.css';
@@ -52,46 +57,7 @@ class BrainSimulationDetails extends React.Component {
         alert('You can upload only one file');
       }else{
         this.setState(files)
-        const data = new FormData() 
-        data.append('file', files[0]);
-        data.append('image_id',this.props.location.state.data.sensor_data.image_id );
-        console.log(this.props.location.state.user_cognito_id)
-        data.append('user_cognito_id',this.props.location.state.user_cognito_id );
-        this.setState({isLoading:true,IsAcceleration:true})
-        var myVar = '';
-        var the = this;
-        const options = {
-          onUploadProgress: (progressEvent) => {
-            const {loaded, total } = progressEvent;
-            let percent = Math.floor((loaded * 100) / total);
-            if(percent < 70){
-              this.setState({uploadPercentage:percent})
-            }else{
-              
-              setInterval(function(){
-                 if(the.state.uploadPercentage < 99){
-                    the.setState({uploadPercentage: the.state.uploadPercentage + 1});
-                  }
-              }, 2000)
-            }
-          }
-        }
-         axios.post(`/uploadSidelineImpactVideo`, data,options,{withCredentials: true})
-        .then(function (res) {
-          console.log('res',res);
-          if(res.data.message == 'success'){
-          console.log('impact_video_url',res.data.impact_video_url)
-            the.setState({uploadPercentage:100});
-            setTimeout(function(){
-              the.setState({impact_video_url: res.data.impact_video_url});
-            },2000)
-          }else{
-            the.setState({status: res.data.data.message});
-          }
-        })
-        .catch(function (error) {
-          console.log(error)
-        });
+        this.upload(files[0]);
       }
     };
     // console.log('User Dashboard For Admin Is ',this.props);
@@ -145,6 +111,55 @@ class BrainSimulationDetails extends React.Component {
   }
   componentDidUpdate() {
     svgToInline();
+  }
+
+  uploadFile = (event) =>{
+    console.log('files', event.target.files[0]);
+    this.setState({impact_video_url: ''});
+    this.upload(event.target.files[0]);
+  }
+
+  upload =(file)=>{
+     const data = new FormData() 
+    data.append('file',file);
+    data.append('image_id',this.props.location.state.data.sensor_data.image_id );
+    console.log(this.props.location.state.user_cognito_id)
+    data.append('user_cognito_id',this.props.location.state.user_cognito_id );
+    this.setState({isLoading:true,IsAcceleration:true})
+    var myVar = '';
+    var the = this;
+    const options = {
+      onUploadProgress: (progressEvent) => {
+        const {loaded, total } = progressEvent;
+        let percent = Math.floor((loaded * 100) / total);
+        if(percent < 70){
+          this.setState({uploadPercentage:percent})
+        }else{
+          
+          setInterval(function(){
+             if(the.state.uploadPercentage < 99){
+                the.setState({uploadPercentage: the.state.uploadPercentage + 1});
+              }
+          }, 2000)
+        }
+      }
+    }
+     axios.post(`/uploadSidelineImpactVideo`, data,options,{withCredentials: true})
+    .then(function (res) {
+      console.log('res',res);
+      if(res.data.message == 'success'){
+      console.log('impact_video_url',res.data.impact_video_url)
+        the.setState({uploadPercentage:100});
+        setTimeout(function(){
+          the.setState({impact_video_url: res.data.impact_video_url});
+        },2000)
+      }else{
+        the.setState({status: res.data.data.message});
+      }
+    })
+    .catch(function (error) {
+      console.log(error)
+    });
   }
 
   gotoTop = () => {
@@ -252,7 +267,7 @@ class BrainSimulationDetails extends React.Component {
                   }</div>
                   <h4 className="brain-simlation-details-subtitle">Player and Impact Number Details</h4>
                 </div>
-                <div className="col-md-12"> 
+                <div className="col-md-12" > 
                   <div className="user-simlation-details">
                     <p>Name: {this.props.location.state.data.sensor_data.player['first-name'] +' '+this.props.location.state.data.sensor_data.player['last-name'] }</p>
                     <p>Impact ID: </p>
@@ -282,6 +297,16 @@ class BrainSimulationDetails extends React.Component {
                     <h4 className="brain-simlation-details-subtitle">Video Verification of Skull Kinematics</h4>
                     <div className="col-md-12">
                       <div className="movie">
+                        <div className="Replace-video">
+                          <div>
+                            {this.state.impact_video_url &&
+                              <React.Fragment>
+                                <label for="uploadFile"><img src={upload} />  Replace Video</label>
+                                <input type="file" id="uploadFile" onChange={this.uploadFile} />
+                              </React.Fragment>
+                            }
+                          </div>
+                        </div>
                         <div className="col-md-6" style={{'float':'left'}}>
                           <div className="Simulationvideo">
                             {!this.state.movie_link &&
@@ -292,6 +317,7 @@ class BrainSimulationDetails extends React.Component {
                             }
                           </div>
                           <div>
+                            <img src={unlock} className="unlock-img"/>
                             <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
@@ -326,16 +352,19 @@ class BrainSimulationDetails extends React.Component {
 
                                
                           <div>
+                            <img src={lock} className="unlock-img"/>
                             <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           <div>
+                            <img src={unlock} className="unlock-img"/>
                             <input type="range" min="1" max="100" className="MyrangeSlider2" id="MyrangeSlider2" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                         </div>
                         <div className="" style={{'padding': '0px 14px'}}>
                           <div>
+                            <img src={unlock} className="unlock-img2"/>
                             <input type="range" min="1" max="100" className="MyrangeSlider3" id="MyrangeSlider3" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>

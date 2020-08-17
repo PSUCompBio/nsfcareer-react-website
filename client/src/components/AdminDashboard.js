@@ -101,6 +101,7 @@ class AdminDashboard extends React.Component {
                 the.setState({isFetching: true});
                 getPlayerList({type: 'playersList'})
                 .then(players => {
+                    console.log('playerList',players.data.data)
                     this.setState({
                         playerList:players.data.data,
                         isSensor: false,
@@ -300,7 +301,7 @@ class AdminDashboard extends React.Component {
         );
     };
 
-     smallCards2 = (reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+     smallCards2 = (simulation_status,reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
@@ -318,7 +319,7 @@ class AdminDashboard extends React.Component {
                             }
                         })
                     }}
-                    className={`tech-football m-3`}
+                    className={simulation_status == 'pending' ? `pendingSimulation tech-football m-3` : `completedSimulation tech-football m-3`}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -331,7 +332,7 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                <p style={{ fontSize: "50px" }}>{noOfSimulation ? noOfSimulation : '0'}</p>
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -344,11 +345,13 @@ class AdminDashboard extends React.Component {
     };
 
     iterateTeam2 = () => {
+        console.log('OrganizationList',this.state.OrganizationList)
         let inc = 1;
         var cards = new Array(this.state.totalOrganization);
         let j = 1;
         for (let i = 0; i < this.state.totalOrganization; i++) {
             cards[i] = this.smallCards2(
+                this.state.OrganizationList[i].simulation_status,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,
@@ -375,7 +378,7 @@ class AdminDashboard extends React.Component {
         
     };
 
-    smallCards3 = (reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
+    smallCards3 = (simulation_status,reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
@@ -395,7 +398,7 @@ class AdminDashboard extends React.Component {
                             }
                         })
                     }}
-                    className={`tech-football m-3`}
+                    className={simulation_status == "pending" ? `pendingSimulation tech-football m-3` : `completedSimulation tech-football m-3` }
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -407,7 +410,7 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                <p style={{ fontSize: "50px" }}>{noOfSimulation ? noOfSimulation : '0'}</p>
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -420,11 +423,13 @@ class AdminDashboard extends React.Component {
     };
 
     iterateTeam3 = () => {
+        console.log('teamList',this.state.teamList)
         let inc = 1;
         var cards = new Array(this.state.totalTeam);
         let j = 1;
         for (let i = 0; i < this.state.totalTeam; i++) {
             cards[i] = this.smallCards3(
+                this.state.teamList[i].simulation_status,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,
@@ -558,7 +563,7 @@ class AdminDashboard extends React.Component {
         console.log(this.state.OrganizationList)
         var body =  this.state.OrganizationList.map(function (organization, index) {
                 if (organization) {
-                    return <tr className="player-data-table-row" key={index} onClick={() => {
+                    return <tr className={organization.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`}  key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin',
                             state: {
@@ -587,7 +592,7 @@ class AdminDashboard extends React.Component {
 
         var body =  this.state.teamList.map(function (team, index) {
                 if (team) {
-                    return <tr className="player-data-table-row" key={index} onClick={() => {
+                    return <tr className={team.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin/team/players',
                             state: {
@@ -627,7 +632,7 @@ class AdminDashboard extends React.Component {
                         )}
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{ textAlign: 'center', fontSize: '30px' }}>Admin Dashboard</p>
-                        <div className="col-md-10 organization-admin-table-margin-5-mobile-overview">
+                        <div className="col-md-10 organization-admin-table-margin-5-mobile-overview dashboard-custom-button">
                             <button type="button" className={this.state.isSensor ?  "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
                             <button type="button" className={this.state.isOrganization ?  "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
                             <button type="button" className={this.state.isTeams ?  "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
@@ -635,7 +640,7 @@ class AdminDashboard extends React.Component {
                             <button type="button"  className={this.state.isPlayers ?  "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
 
                         </div>
-                        <div className="col-md-2" >
+                         <div className="col-md-2 dashboard-custom-button" >
                             
                                 {!this.state.isPlayers && 
                                     <div className="View">
@@ -645,6 +650,22 @@ class AdminDashboard extends React.Component {
                                 }
                             
                         </div>
+                        <div className="col-md-12  dashboard-custom-button2">
+                            <button type="button" className={this.state.isSensor ?  "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
+                            <button type="button" className={this.state.isOrganization ?  "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
+                            <button type="button" className={this.state.isTeams ?  "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
+                        </div>
+                        <div className="col-md-8 dashboard-custom-button2">
+                            <button type="button" className= "btn   custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
+                            <button type="button"  className={this.state.isPlayers ?  "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
+                            {!this.state.isPlayers && 
+                                <div className="View">
+                                    <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
+                                    <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                </div>
+                            }
+                        </div>
+                       
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
@@ -813,7 +834,7 @@ class AdminDashboard extends React.Component {
                                                             if (player.simulation_data.length > 0) {
                                                               let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
 
-                                                                return <tr className="player-data-table-row" key={index} onClick={() => {
+                                                                return <tr className={player.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
 
                                                                     this.setRedirectData(Number(index + 1).toString(), player.player_name)
                                                                 }}
