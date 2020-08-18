@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         width:'100%',
         backgroundColor:'#4472C4',
         marginTop: '10px',
-        padding: '10px',
+        height: '3px',
         textAlign: 'center'
     },
     rowHead2:{
@@ -232,12 +232,13 @@ class Report extends React.Component {
                                 <Text style={styles.tableColRight}> Organization : {this.props.team != undefined ? this.props.team.organization : this.props.user.organization ? this.props.user.organization : "N/A" } </Text>
 
                             </View>
-                            <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}> sadfasdfsdafasdf </Text></View>
+                           
                             <View style={styles.col12}>
+                                 <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                 <View style={styles.rowHead2}>
                                     <Text  style={styles.rowHead2Text}>10% of brain tissue has exceeded MASxSR</Text>
                                     <Text style={styles.rowHead2TextSub}>7.5</Text>
-                                    <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s     )</Text>
+                                    <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s   )</Text>
                                     <Text style={styles.rowHead2Text2Sub}>-1</Text>
                                 </View>
                             </View>

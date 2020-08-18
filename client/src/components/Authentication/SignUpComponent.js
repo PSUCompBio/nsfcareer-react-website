@@ -127,7 +127,18 @@ class SignUpComponent extends React.Component {
       slectedCountryName: eventValue[1]
     });
   };
-
+   handleInputChange = (e) =>{
+    const name = e.target.name;
+    console.log(e.target.value)
+    if(name == 'phone_number'){
+       var value = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+       if(value.length < 11){
+         this.setState({[name]: [value]});
+        }
+    }else{
+      this.setState({[name]: [e.target.value]});
+    }
+  }
   handleDateChange = (date) => {
       console.log("Received date is ", date, "Actual date is", this.state.startDate);
       const startDate = moment(date);
@@ -339,8 +350,10 @@ class SignUpComponent extends React.Component {
           <input
             type="text"
             className="form-control contact-number"
-            placeholder="Contact number"
+            placeholder="1111111111"
             name="phone_number"
+            value={this.state.phone_number} 
+            onChange={this.handleInputChange}
             aria-label="contact number"
             aria-describedby="basic-addon1"
             required

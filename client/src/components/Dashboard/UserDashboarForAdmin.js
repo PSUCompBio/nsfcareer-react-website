@@ -16,7 +16,8 @@ import {
   isAuthenticated,
   getCumulativeAccelerationData,
   getSimulationFilesOfPlayer,
-  getAllCumulativeAccelerationTimeRecords
+  getAllCumulativeAccelerationTimeRecords,
+  getAllCumulativeAccelerationJsonData
 } from '../../apis';
 
 import { Form } from 'react-bootstrap';
@@ -54,7 +55,8 @@ class UserDashboarForAdmin extends React.Component {
       eventDateValue: '-1',
       simulationFilePaths: null,
       cumulativeAccelerationTimeAllRecords: [],
-      frontal_Lobe: []
+      frontal_Lobe: [],
+      jsonData: ''
     };
   }
 
@@ -160,8 +162,9 @@ class UserDashboarForAdmin extends React.Component {
         </div>
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation">
-        <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
-         
+        {this.state.jsonData && 
+          <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
+        }
           <p
             ref="h1"
             style={{
@@ -241,7 +244,6 @@ class UserDashboarForAdmin extends React.Component {
                     delete response.data.data.simulation_file_url
                     this.setState({
                       user: response.data.data,
-                      isLoading: false,
                       isAuthenticated: true,
                       isCheckingAuth: false
                     });
@@ -249,18 +251,33 @@ class UserDashboarForAdmin extends React.Component {
                   .catch(err => {
                     this.setState({
                       user: {},
-                      isLoading: false,
+                      // isLoading: false,
                       isCheckingAuth: false
                     });
                   })
               }
               else {
-                this.setState({
+                 this.setState({
                   user: response.data.data,
-                  isLoading: false,
-                  isAuthenticated: true,
-                  isCheckingAuth: false
+                 
                 });
+                getAllCumulativeAccelerationJsonData({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
+                .then(response => {
+                  console.log('response',response.data.data.JsonFile)
+                  this.setState({
+                    jsonData: response.data.data.JsonFile, 
+                    isLoading: false,
+                    isAuthenticated: true,
+                    isCheckingAuth: false
+                  })
+                }).catch(err =>{
+                  console.log('err',err);
+                  this.setState({
+                    user: {},
+                    isLoading: false,
+                    isCheckingAuth: false
+                  });
+                })
               }
             })
 

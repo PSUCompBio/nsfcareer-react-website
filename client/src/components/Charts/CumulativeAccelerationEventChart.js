@@ -54,9 +54,9 @@ class CumulativeAccelerationEventChart extends React.Component {
         // console.log('this.state.userDetails',this.state.userDetails)
         var fileName = '';
         if(this.props.user){
-            console.log('props',this.props.user[0].sensor_data);
+            console.log('props',this.props);
             fileName = this.props.user[0].sensor_data.player['first-name']+'_'+this.props.user[0].sensor_data.player['last-name']+'_'+this.props.user[0].sensor_data.player_id.split('$')[1];
-            console.log('fileName',fileName)
+            // console.log('fileName',fileName)
         }
         return (
             <React.Fragment>
@@ -169,6 +169,7 @@ class CumulativeAccelerationEventChart extends React.Component {
 
                     </div>
 
+                    {/*<ExportPlayerReport brainRegions={this.props.brainRegions} />*/}
                     <ExportPlayerReport brainRegions={this.props.brainRegions} />
                 </div>
                  <button style={{

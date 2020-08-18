@@ -708,7 +708,7 @@ class CommanderTeamView extends React.Component {
                                                     }
                                                   }
 
-                                                    return <tr style={{ backgroundColor: row}} className="player-data-table-row" key={index} onClick={() => {
+                                                    return <tr style={{ backgroundColor: row}} className={player.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
 
                                                         this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0])
                                                     }}
