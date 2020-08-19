@@ -228,10 +228,12 @@ class UserDashboarForAdmin extends React.Component {
             })
 
             .then(response => {
-              console.log(response.data);
+              console.log('response',response.data);
               this.setState({
                 cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
-		brainRegions: response.data.brainRegions
+		            brainRegions: response.data.brainRegions,
+                jsonData: response.data.data,
+                isLoading: false,
               });
 
               if (!this.props.location.state.isRedirectedFromAdminPanel) {
@@ -245,13 +247,14 @@ class UserDashboarForAdmin extends React.Component {
                     this.setState({
                       user: response.data.data,
                       isAuthenticated: true,
-                      isCheckingAuth: false
+                      isCheckingAuth: false,
+                      isLoading: false,
                     });
                   })
                   .catch(err => {
                     this.setState({
                       user: {},
-                      // isLoading: false,
+                      isLoading: false,
                       isCheckingAuth: false
                     });
                   })
@@ -261,23 +264,6 @@ class UserDashboarForAdmin extends React.Component {
                   user: response.data.data,
                  
                 });
-                getAllCumulativeAccelerationJsonData({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
-                .then(response => {
-                  console.log('response',response.data.data.JsonFile)
-                  this.setState({
-                    jsonData: response.data.data.JsonFile, 
-                    isLoading: false,
-                    isAuthenticated: true,
-                    isCheckingAuth: false
-                  })
-                }).catch(err =>{
-                  console.log('err',err);
-                  this.setState({
-                    user: {},
-                    isLoading: false,
-                    isCheckingAuth: false
-                  });
-                })
               }
             })
 

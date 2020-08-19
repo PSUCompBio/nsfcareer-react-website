@@ -230,6 +230,8 @@ var COGNITO_CLIENT = new AWS.CognitoIdentityServiceProvider({
     region: cognito.region
 });
 
+
+
 // DynamoDB Object created to do SCAN , PUT , UPDATE operations
 const docClient = new AWS.DynamoDB.DocumentClient({
     convertEmptyValues: true
@@ -2089,13 +2091,29 @@ app.post(`${apiPrefix}VerifyNumber`,(req, res) => {
     let obj = {};
     obj.user_name = req.body.user_cognito_id;
     obj.phone_number = req.body.country_code+req.body.phone_number;
-    obj.phone_number_verified = 'true'
+    obj.phone_number_verified = 'true';
+   // var params = {
+   //    Message: 'TEXT_MESSAGE', /* required */
+   //    PhoneNumber: '+917055727901',
+   //  };
+
+   //  // Create promise and SNS service object
+   //  var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
+
+   //  // Handle promise's fulfilled/rejected states
+   //  publishTextPromise.then(
+   //    function(data) {
+   //      console.log("MessageID is " + data.MessageId);
+   //    }).catch(
+   //      function(err) {
+   //      console.error(err, err.stack);
+   //    });
     adminVerifyNumber(obj, function (err, data) {
         if (err) {
             console.log("COGNITO CREATE USER ERROR =========\n", err);
 
             res.send({
-                message: "failure",
+                message: "failure", 
                 error: err.message
             });
         }
@@ -2425,11 +2443,11 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
     // Getting user data of that user
     getUser(req.body.user_name, function (err, data) {
         if (err) {
-            console.log(err);
+            console.log('err0',err);
 
             res.send({
                 message: "failure",
-                error: err
+                error: 'Incorrect login credentials'
             });
         } else {
 
@@ -2438,10 +2456,10 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
             // Now getting the list of Groups of user
             getListGroupForUser(data.Username, function (error, groupData) {
                 if (error) {
-                    console.log('error',error)
+                    console.log('error1',error)
                     res.send({
                         message: "failure",
-                        error: error
+                        error: 'Incorrect login credentials'
                     });
                 } else {
                     // Now checking is user is ADMIN or not
@@ -2466,11 +2484,11 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                         login(req.body.user_name, req.body.password, userType, function (err, result) {
 
                             if (err) {
-                                console.log('err',err)
+                                console.log('err2',err)
                                 res.cookie("token", "");
                                 res.send({
                                     message: "failure",
-                                    error: err
+                                    error: 'Incorrect login credentials'
                                 })
                             }
                             else {
@@ -2480,7 +2498,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
 
                                 getUserDbData(data.Username, function(err, user_details){
                                     if(err){
-                                         console.log('err2',err)
+                                         console.log('err3',err)
                                         res.send({
                                             message : "failure",
                                             error : err
@@ -2499,7 +2517,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                                     
                                                 })
                                                 .catch(err => {
-                                                     console.log('err3',err)
+                                                     console.log('err4',err)
                                                     res.send({
                                                         message : "failure",
                                                         error : err
@@ -2870,6 +2888,7 @@ app.post(`${apiPrefix}getTeamList`, (req, res) => {
                     team["simulation_count"] = Number(simulation_records.length).toString();
 
                     team["simulation_status"] = 'completed';
+                    console.log(counter , teamList.length)
                     if (counter == teamList.length) {
                         var y = 0;
                         // console.log('simulation_records',simulation_records)
@@ -3028,6 +3047,7 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                             });
 
                             let k = 0;
+                            var p_datalen = p_data.length - 1;
                             p_data.forEach(function (record, index) {
                                 getPlayerSimulationStatus(player_data[0].image_id)
                                     .then(simulation => {
@@ -3038,8 +3058,8 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                                         }
                                         p_data[index]['simulation_data'][0]['simulation_status'] = simulation.status;
                                         p_data[index]['simulation_data'][0]['computed_time'] = simulation.computed_time;
-                                        console.log(k, p_data.length)
-                                        if (k == p_data.length) {
+                                        console.log(k, p_datalen)
+                                        if (k == p_datalen) {
                                             res.send({
                                                 message: "success",
                                                 data: p_data

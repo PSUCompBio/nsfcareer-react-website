@@ -10,6 +10,9 @@ import HomePage from './HomePage';
 import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile';
+import verifyNumber from '../../components/profile/verifyNumber/verifyNumber';
+// import verify from '../../components/profile/verifyNumber/verify';
+
 import Dashboard from '../../components/Dashboard/Dashboard';
 import UserDashboarForAdmin from '../../components/Dashboard/UserDashboarForAdmin';
 import ForgotPassword from '../../components/ForgotPassword';
@@ -193,6 +196,16 @@ class Routing extends React.Component {
           path="/Profile"
           render={(props) => <Profile {...props} isDarkModeSet={this.checkDarkMode} />}
         />
+        <Route
+          exact
+          path="/verify-number"
+          render={(props) => <verifyNumber {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        // <Route
+        //   exact
+        //   path="/verify"
+        //   render={(props) => <verify {...props} isDarkModeSet={this.checkDarkMode} />}
+        // />
         <Route
             exact
             path="/SignUp/:token"
