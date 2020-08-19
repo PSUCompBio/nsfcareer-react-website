@@ -201,11 +201,6 @@ class Routing extends React.Component {
           path="/verify-number"
           render={(props) => <verifyNumber {...props} isDarkModeSet={this.checkDarkMode} />}
         />
-        // <Route
-        //   exact
-        //   path="/verify"
-        //   render={(props) => <verify {...props} isDarkModeSet={this.checkDarkMode} />}
-        // />
         <Route
             exact
             path="/SignUp/:token"
