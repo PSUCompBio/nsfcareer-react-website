@@ -10,6 +10,8 @@ import HomePage from './HomePage';
 import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile';
+// import verify from '../../components/profile/verifyNumber/verify';
+
 import Dashboard from '../../components/Dashboard/Dashboard';
 import UserDashboarForAdmin from '../../components/Dashboard/UserDashboarForAdmin';
 import ForgotPassword from '../../components/ForgotPassword';
@@ -18,6 +20,7 @@ import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import AdminDashboard from '../../components/AdminDashboard';
 import Users from '../../components/Users';
+import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
 import TeamPlayers from '../../components/CommanderTeamView';
@@ -28,7 +31,9 @@ import Sports from '../Sports/SportsPage';
 import Developer from '../Developer/DeveloperPage';
 import Dash from '../Dash/DashPage';
 import Report from '../../components/ReportContent/Report0';
-
+import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
+import InviteUsers from '../../components/InviteUsers';
+import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -190,9 +195,15 @@ class Routing extends React.Component {
           path="/Profile"
           render={(props) => <Profile {...props} isDarkModeSet={this.checkDarkMode} />}
         />
+        
         <Route
             exact
-            path="/SignUp"
+            path="/SignUp/:token"
+            render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+            exact
+            path="/SignUp/"
             render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
@@ -210,10 +221,27 @@ class Routing extends React.Component {
           path="/Users"
           render={(props) => <Users {...props} isDarkModeSet={this.checkDarkMode} />}
         />
+         <Route
+          exact
+          path="/number-verification"
+          render={(props) => <AddUsers {...props} isDarkModeSet={this.checkDarkMode} />}
+        /> 
         <Route
           exact
           path="/TeamAdmin/user/dashboard"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
+          path="/TeamAdmin/user/dashboard/brainSimulationDetails"
+          render={(props) => <BrainSimulationDetails {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+
+        
+        <Route
+          exact
+          path="/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog"
+          render={(props) => <BrainSimulationLog {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact
@@ -268,6 +296,11 @@ class Routing extends React.Component {
         />
         <Route
             exact
+            path="/InviteUsers"
+            render={(props) => <InviteUsers {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
             path="/AdminDashboard"
             render={(props) => <AdminDashboard {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
@@ -296,6 +329,7 @@ class Routing extends React.Component {
             path="/IRBParentConsent"
             render={(props) => <IRBParentConsent {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
+       
       </React.Fragment>
     );
   }

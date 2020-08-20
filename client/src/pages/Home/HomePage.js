@@ -11,6 +11,7 @@ import { getStatusOfDarkmode } from '../../reducer';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import screenWidth from '../../utilities/ScreenWidth';
 import GetUpdates from './../../components/GetUpdates';
+import $ from "jquery";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -104,8 +105,16 @@ class HomePage extends React.Component {
   };
 
   updateAccToMouseWheel = (e) => {
+    // if($( document ).width() <= '480'){
+    //   if(this.state.mobilePageCount === 1){
+    //     $('.navbar').removeClass('navbar-bg-change2');
+    //     $('.navbar').addClass('navbar-bg-change');
+    //   }else{
+    //     $('.navbar').removeClass('navbar-bg-change');
+    //     $('.navbar').addClass('navbar-bg-change2');
 
-    console.log(this.state.mobilePageCount);
+    //   }
+    // }
     if (e.deltaY > 0 && this.state.mobilePageCount === 1) {
       this.setState(
         {

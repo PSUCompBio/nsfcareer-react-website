@@ -2,10 +2,12 @@ import React from 'react';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import ReactDOM from 'react-dom';
 import page3 from '../pg_0003.jpg';
-import header1 from '../header1.jpg';
+import header1 from './header1.png';
 import footer1 from '../footer1.jpg';
 import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
+import ClinicalReportHeader from './Clinical-Report-Header.png';
+// import logo 
 // Create styles
 const styles = StyleSheet.create({
     page: {
@@ -23,7 +25,12 @@ const styles = StyleSheet.create({
         padding: 0,
         backgroundColor: 'white',
     },
-    image: {
+    col12: {
+        width: '100%',
+        paddingLeft : '5%',
+        paddingRight : '5%',
+    },
+    Image: {
         objectFit: 'cover'
     },
     tableRow: {
@@ -32,11 +39,78 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         marginBottom : '6px'
     },
+    rowHeadBorder:{
+        width:'100%',
+        backgroundColor:'#4472C4',
+        marginTop: '10px',
+        height: '3px',
+        textAlign: 'center'
+    },
+    rowHead2:{
+        width:'100%',
+        backgroundColor:'#DAE3F3',
+        borderTop:'1px solid',
+        marginTop: '0px',
+        padding: '10px',
+        textAlign: 'center'
+    },
+    rowHead2Text:{
+        marginTop: '5px',
+        color:'#686868',
+        fontSize: 16,
+        display: 'inline-block'
+    },
+    rowHead2TextSub: {
+        marginTop: '22px',
+        marginRight: '75px',
+        position: 'absolute',
+         color:'#686868',
+        fontSize: 12,
+        textAlign: 'right',
+        display: 'inline-block'
+    },
+    rowHead2Text2Sub:{
+        marginTop: '40px',
+        marginRight: '65px',
+        position: 'absolute',
+         color:'#686868',
+        fontSize: 9,
+        textAlign: 'right',
+        display: 'inline-block' 
+    },
+    rowHead2Text2:{
+        marginTop: '7px',
+        color:'#686868',
+        fontSize: 9
+    },
+    tableHead:{
+        flex: 1,
+        flexDirection : 'row',
+        marginTop : '0',
+        textAlign:'center',
+        position:'absolute',
+    },
+    logo: {
+        textAlign:'center',
+        width: '100%',
+    },
+    tableRowHeadtitle: {
+        flex: 1,
+        width : '100%',
+        flexDirection : 'row',
+        marginTop : '75px',
+        textAlign: 'center',
+    },
+    title:{
+        fontSize:25,
+        display : 'inline-block',
+        color: 'white'
+    },
     tableRowHead: {
         flex: 1,
         marginLeft : '5%',
         flexDirection : 'row',
-        marginTop : '4%'
+        marginTop : '6px'
     },
     tableColLeft: {
         borderStyle: "solid",
@@ -82,7 +156,10 @@ const styles = StyleSheet.create({
 class Report extends React.Component {
     constructor(props) {
         super(props);
-        console.log('props are ', this.props);
+        console.log('props are ', this.props.jsonData);
+        this.state = {
+            jsonData : this.props.jsonData[0].jsonOutputFile
+        }
     }
 
     getDateInFormat(){
@@ -106,7 +183,13 @@ class Report extends React.Component {
 
 
     render() {
-
+        console.log(this.state.jsonData)
+        var csdm;
+        if(this.state.jsonData){
+            if(this.state.jsonData['csdm-15']){
+                csdm = this.state.jsonData['csdm-15'];
+            }
+        }
         return (
             <Document>
                 <Page object-fit="fill" size="A4">
@@ -122,20 +205,25 @@ class Report extends React.Component {
                         */}
                         <View style= {{
                             }}>
-
+                            <View style= {styles.tableHead}>
+                                <Image  style={styles.logo} src={ClinicalReportHeader} alt="head"/>
+                            </View>
+                            <View style= {styles.tableRowHeadtitle}>
+                                <Text style={styles.title}>Prediction Overview</Text>
+                            </View>
                             <View style= {styles.tableRowHead}>
                                 <Text style={styles.tableColLeft}> Date : {this.getDateInFormat()} </Text>
-                                <Text style={styles.tableColRightHead}>{'                            1'} </Text>
+                                <Text style={styles.tableColRightHead}>{'                   PAGE 1 of 2'} </Text>
                             </View>
                             <Text style={{
                                     margin : 'auto',
                                     alignItems : 'center',
-                                    marginTop : '1%',
+                                    marginTop : '3%',
                                     color : 'blue',
                                     marginBottom : '2%',
                                     fontSize : 26,
                                 }}>
-                                {this.props.data.player_id}
+                                {this.props.data.player['first-name'] +' '+this.props.data.player['last-name']}
                             </Text>
 
                             <View style={styles.tableRow}>
@@ -152,6 +240,18 @@ class Report extends React.Component {
 
                                 <Text style={styles.tableColRight}> Organization : {this.props.team != undefined ? this.props.team.organization : this.props.user.organization ? this.props.user.organization : "N/A" } </Text>
 
+                            </View>
+                           
+                            <View style={styles.col12}>
+                                 <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                <View style={styles.rowHead2}>
+                                    {/*<Text  style={styles.rowHead2Text}>10% of brain tissue has exceeded MASxSR</Text>*/}
+                                    {/*<Text style={styles.rowHead2TextSub}>7.5</Text>*/}
+                                    {/* <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s   )</Text>*/}
+                                    {/* <Text style={styles.rowHead2Text2Sub}>-1</Text>*/}
+                                    <Text  style={styles.rowHead2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>
+                                    <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                </View>
                             </View>
                         </View>
 
@@ -171,7 +271,7 @@ class Report extends React.Component {
                             <View>
                                 <View style= {styles.tableRowHead}>
 
-                                    <Text style={styles.tableColRightHead}>{'                            2'} </Text>
+                                    <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
                                 </View>
                                 <Text style = {{
                                         fontSize : 15,

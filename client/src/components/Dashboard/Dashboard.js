@@ -20,19 +20,42 @@ class Dashboard extends React.Component {
   }
 
   render() {
-
+    console.log('organization: this.state.userDetails',this.state.userDetails)
     if (!this.state.isLoaded) return <Spinner />;
  
     if (this.state.isAuthenticated && !this.state.isCheckingAuth) {
-      if (this.state.userDetails.user_type === "Admin") {
+      if (this.state.userDetails.level === 1000) {
         return <Redirect to="/AdminDashboard" />;
-      } else if (this.state.userDetails.is_sensor_company) {
+      } else if (this.state.userDetails.level === 400) {
         return <Redirect to={{
           pathname: '/OrganizationAdmin',
           state: {
             brand: {
               brand: this.state.userDetails.sensor,
-              user_cognito_id: this.state.cognito_user_id
+              user_cognito_id: this.state.userDetails.user_cognito_id
+            }
+          }
+        }} />;
+      } else if (this.state.userDetails.level === 300) {
+        return <Redirect to={{
+          pathname: '/TeamAdmin',
+          state: {
+            brand: {
+              brand: this.state.userDetails.sensor,
+              organization: this.state.userDetails.organization,
+              user_cognito_id: this.state.userDetails.user_cognito_id
+            }
+          }
+        }} />;
+      } else if (this.state.userDetails.level === 200) {
+        return <Redirect to={{
+          pathname: '/TeamAdmin/team/players',
+          state: {
+            team: {
+              brand: this.state.userDetails.sensor,
+              organization: this.state.userDetails.organization,
+              team_name: this.state.userDetails.team,
+              user_cognito_id: this.state.userDetails.user_cognito_id
             }
           }
         }} />;
@@ -44,7 +67,7 @@ class Dashboard extends React.Component {
               organization: '',
               team_name: ''
             },
-            cognito_user_id: this.state.cognito_user_id,
+            cognito_user_id: this.state.userDetails.user_cognito_id,
             player_name: this.state.name
           }
         }} />;
@@ -59,33 +82,13 @@ class Dashboard extends React.Component {
       isAuthenticated(JSON.stringify({}))
         .then((value) => {
           if (value.data.message === 'success') {
-
-
-            getUserDetails()
-              .then((response) => {
-                console.log(response.data);
-                this.setState({
-                  userDetails: response.data.data,
-                  isLoading: false,
+              this.setState({
+		  userDetails: JSON.parse(localStorage.getItem("state")).userInfo,
+		  isLoading: false,
                   isAuthenticated: true,
                   isCheckingAuth: false,
                   isLoaded: true
-                });
-
-                // User is authenticate hence load chart data
-
-              })
-              .catch((error) => {
-
-                console.log(error);
-
-                this.setState({
-                  userDetails: {},
-                  isLoading: false,
-                  isCheckingAuth: false,
-                  isLoaded: true
-                });
-              });
+	      });
 
           } else {
             this.setState({ isAuthenticated: false, isCheckingAuth: false, isLoaded: true });

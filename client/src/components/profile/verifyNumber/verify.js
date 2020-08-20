@@ -1,12 +1,12 @@
 import React from 'react';
-import './Profile.css';
+import '.././Profile.css';
 import { Redirect, withRouter } from 'react-router-dom';
-import CountryCode from '../../config/CountryCode.json';
-import { formDataToJson } from '../../utilities/utility';
+import CountryCode from '../../../config/CountryCode.json';
+import { formDataToJson } from '../../../utilities/utility';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
-import DarkMode from '../DarkMode';
+import DarkMode from '../../DarkMode';
 
 import {
     uploadProfilePic,
@@ -19,7 +19,7 @@ import {
     updateUserDetails,
     isAuthenticated,
     VerifyNumber
-} from '../../apis';
+} from '../../../apis';
 
 import { UncontrolledAlert,
     Form,
@@ -32,22 +32,22 @@ import { UncontrolledAlert,
     Row
 } from 'reactstrap';
 
-import Footer from '../Footer';
+import Footer from '../../Footer';
 
-import DownloadBtn from '../Buttons/Download3dProfile';
-import store from '../../Store';
+import DownloadBtn from '../../Buttons/Download3dProfile';
+import store from '../../../Store';
 import {
     darkThemeActiveSetter,
     darkThemeInactiveSetter,
     resetSignedInSucceeded,
     militaryVersion
-} from '../../Actions';
-import { getStatusOfDarkmode } from '../../reducer';
-import Spinner from '../Spinner/Spinner';
+} from '../../../Actions';
+import { getStatusOfDarkmode } from '../../../reducer';
+import Spinner from '../../Spinner/Spinner';
 import Img from 'react-fix-image-orientation'
 
 
-class Profile extends React.Component {
+class verify extends React.Component {
     constructor(props) {
         super(props);
 
@@ -59,6 +59,7 @@ class Profile extends React.Component {
         if(!user_profile_to_view){
             user_profile_to_view = '';
         }
+
         this.state = {
             selectedFile: null,
             isLoading: true,
@@ -83,8 +84,7 @@ class Profile extends React.Component {
             avatar_zip_file_url_details : '',
             vtk_file_url_details : '',
             isRefreshing : false,
-            phone_number: '',
-            VerifyNumber:false,
+            phone_number: ''
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -522,31 +522,16 @@ class Profile extends React.Component {
         this.setState({[name]:value, number_verified: 'false'})
     }
     VerifyNumber=(e)=>{
-        e.preventDefault();
+         e.preventDefault();
         console.log('e',this.state.phone_number,this.state.user.user_cognito_id,this.state.selectedCountryCode);
-        this.setState({isLoading: true})
         if(this.state.phone_number){
             VerifyNumber({phone_number: this.state.phone_number, user_cognito_id:this.state.user.user_cognito_id,country_code:this.state.selectedCountryCode})
             .then(res=>{
                 console.log('res',res);
                 if(res.data.message == "success"){
-                    this.setState({VerifyNumber: true})
-                }else{
-                        this.setState({
-                            isLoading: false,
-                            isLoginError: true,
-                            loginError: res.data.err
-
-                        })
-                    }
+                    this.setState({number_verified: 'true'})
+                }
             }).catch(err => {
-                    this.setState({
-                        isLoading: false,
-                        isLoginError: true,
-                        loginError: err
-
-                    })
-
                 console.log('err',err)
             })
         }
@@ -597,7 +582,7 @@ class Profile extends React.Component {
 
 
     showProfile = () => {
-        console.log('this.state.user.profile_picture_url', this.state.user.country_code)
+        console.log('this.state.user.profile_picture_url',this.state.user.profile_picture_url)
         // this.setState({phone_number: this.state.user.phone_number})
         return (
             <React.Fragment>
@@ -1273,13 +1258,6 @@ class Profile extends React.Component {
                             } else if (Object.entries(this.state.user).length === 0) {
                                 return <Spinner />;
                             }
-                            if(this.state.VerifyNumber) {
-                              return   <Redirect to={{
-                                            pathname: '/number-verification',
-                                            state: { data : {phone_number: this.state.phone_number, user_cognito_id:this.state.user.user_cognito_id,country_code:this.state.selectedCountryCode} }
-                                        }}
-                                />
-                            }
 
                             return this.showProfile();
                         };
@@ -1401,4 +1379,4 @@ class Profile extends React.Component {
                         }
                     }
 
-                    export default withRouter(Profile);
+                    export default withRouter(verify);

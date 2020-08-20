@@ -39,7 +39,7 @@ class IRBLinkContent extends React.Component {
             user_details : JSON.parse(this.props.location.state.formData),
             isLoading : false,
             signatureTemplate : template_data.template_image.sign_here,
-            blankSignTemplate : template_data.template_image.blank_sign_here
+            blankSignTemplate : template_data.template_image.blank_sign_here,
         }
 
         console.log('IRB link props', props, );
@@ -368,12 +368,21 @@ class IRBLinkContent extends React.Component {
                                             } else {
                                                 // Check if error is valid object
                                                 if(response.data.error){
-                                                    this.props.history.push({
-                                                        pathname : '/SignUp',
-                                                        state : {
-                                                            message : response.data.error
-                                                        }
-                                                    })
+                                                    if(user_details.InviteToken){
+                                                         this.props.history.push({
+                                                            pathname : '/SignUp/'+user_details.InviteToken,
+                                                            state : {
+                                                                message : response.data.error
+                                                            }
+                                                        })
+                                                    }else{
+                                                        this.props.history.push({
+                                                            pathname : '/SignUp',
+                                                            state : {
+                                                                message : response.data.error
+                                                            }
+                                                        })
+                                                    }
                                                 }
                                                 else{
                                                     this.props.history.push({

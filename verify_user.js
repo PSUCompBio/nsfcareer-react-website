@@ -74,8 +74,15 @@ function VerifyToken(req, res, next) {
                         then(function (result) {
                             // now we can use the claims
                             var claims = JSON.parse(result.payload);
+                            console.log('claims',claims)
                             // additionally we can verify the token expiration
-                            var current_ts = Math.floor(new Date() / 1000);
+                            console.log('claims',claims)
+                            let numWeeks = 1;
+                            let now = new Date();
+                            now.setDate(now.getDate() + numWeeks * -7);
+                            // additionally we can verify the token expiration
+                            var current_ts = Math.floor(now / 1000);
+                            console.log('current_ts',current_ts,'claims.exp',claims.exp)
                             if (current_ts > claims.exp) {
                                 res.send({
                                     message : "failure",

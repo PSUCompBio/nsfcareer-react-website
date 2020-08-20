@@ -14,7 +14,6 @@ archiver = require("archiver"),
 fs = require("fs"),
 path = require("path"),
 uploadFile = require("./upload.js"),
-config_env = require("./config/configuration_keys"),
 ms = require("ms"),
 multer = require('multer'),
 XLSX = require('xlsx'),
@@ -27,6 +26,16 @@ _array = require('lodash/array');
 global.fetch = require('node-fetch');
 
 var _ = require('lodash');
+
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'tbitest987@gmail.com',
+    pass: 'Developer@981'
+  }
+});
 
 
 // ================================================
@@ -79,7 +88,25 @@ console.log("DOMAIN IS ", process.env.DOMAIN);
 // ======================================
 
 // Avatar Configuration
-var config = require("./config/configuration_keys");
+
+// var config = {
+//     "awsAccessKeyId": process.env.AWS_ACCESS_KEY_ID,
+//     "awsSecretAccessKey": process.env.AWS_ACCESS_SECRET_KEY,
+//     "sportModelBucket": process.env.SPORT_MODEL_BUCKET,
+//     "avatar3dClientId": process.env.AVATAR_3D_CLIENT_ID,
+//     "avatar3dclientSecret": process.env.AVATAR_3D_CLIENT_SECRET,
+//     "region": process.env.REGION,
+//     "usersbucket": process.env.USER_BUCKET,
+//     "userPoolId": process.env.USER_POOL_ID,
+//     "apiVersion": process.env.API_VERSION,
+//     "ClientId": process.env.CLIENT_ID,
+//     "ComputeInstanceEndpoint": process.env.COMPUTE_INSTANCE_ENDPOINT,
+//     "FrontendUrl": process.env.FRONTEND_URL
+// };
+
+var config = require('./config/configuration_keys.json'); 
+var config_env = config;
+
 //AWS.config.loadFromPath('./config/configuration_keys.json');
 const BUCKET_NAME = config_env.usersbucket;
 
@@ -118,7 +145,7 @@ var upload = multer({
 
         if (!jpgFile && !jpegFile && !pngFile && !JPEGFile && !JPGFile && !PNGFile && !TIFFFile && !tiffFile) {
 
-            req.body["file_error"] = "Only JPEG/ JPG/ jpeg/ jpg/ PNG/ png/ tiff/ TIFF format file is allowed";
+            //req.body["file_error"] = "Only JPEG/ JPG/ jpeg/ jpg/ PNG/ png/ tiff/ TIFF format file is allowed";
 
         }
         callback(null, true)
@@ -142,6 +169,26 @@ var uploadSensorData = multer({
             // res.send({message : "FAILURE"});
             req.body["file_error"] = "Only .csv , .xlsx file is allowed"
         }
+        callback(null, true)
+    }
+    // limits:{
+    //     fileSize: 1024 * 1024
+    // }
+});
+var uploadSidelineImpactVideo = multer({
+    storage: storage,
+    fileFilter: function (req, file, callback) {
+        //var ext = path.extname(file.originalname);
+        console.log("This is filename ------> \n",file);
+
+        // let csv = new RegExp(".csv").test(file.originalname);
+        // let csv_upper = new RegExp(".CSV").test(file.originalname);
+        // let excel = new RegExp(".xlsx").test(file.originalname);
+        // let excelx = new RegExp(".xls").test(file.originalname);
+        // if (!csv && !csv_upper && !excel && !excelx) {
+        //     // res.send({message : "FAILURE"});
+        //     req.body["file_error"] = "Only .csv , .xlsx file is allowed"
+        // }
         callback(null, true)
     }
     // limits:{
@@ -182,6 +229,8 @@ var COGNITO_CLIENT = new AWS.CognitoIdentityServiceProvider({
     apiVersion: cognito.apiVersion,
     region: cognito.region
 });
+
+
 
 // DynamoDB Object created to do SCAN , PUT , UPDATE operations
 const docClient = new AWS.DynamoDB.DocumentClient({
@@ -305,7 +354,8 @@ function getImageFromS3(image_record){
         };
         s3.getObject(params, function(err, data) {
             if (err) {
-                reject(err)
+                // reject(err)
+                resolve(null);
             }
             else{
                 resolve(data);
@@ -316,12 +366,13 @@ function getImageFromS3(image_record){
 
 function getImageFromS3Buffer(image_data){
     return new Promise((resolve, reject) => {
-        console.log(image_data.Body);
+        // console.log(image_data.Body);
             try{
                 resolve(image_data.Body.toString('base64'))
             }
             catch (e){
-                reject(e)
+                //reject(e)
+                resolve(null);
             }
 
     })
@@ -379,12 +430,21 @@ function getListGroupForUser(user_name, cb) {
     });
 }
 
-function getFileSignedUrl(key, cb) {
+function getFileSignedUrl(key, cb, type) {
 
     var params = {
         Bucket: BUCKET_NAME,
         Key: key
     };
+
+    if (type) {
+        
+        let filename = key.split('/').pop();
+        filename = filename.split('.')[0];
+        filename = filename + '-' + type + '.zip';
+        params.ResponseContentDisposition = 'attachment; filename=' + filename 
+    }
+
     s3.getSignedUrl('getObject', params, function (err, url) {
         if (err) {
             cb(err, "");
@@ -397,7 +457,7 @@ function getFileSignedUrl(key, cb) {
 
 // Get user details & all his attributes
 function getUser(user_name, cb) {
-
+    console.log('getUser',user_name)
     var params = {
         UserPoolId: cognito.userPoolId,
         /* required */
@@ -413,15 +473,59 @@ function getUser(user_name, cb) {
     });
 }
 
+//forgot password
+function forgotPassword(user_name, cb) {
+    console.log('forgotPassword',user_name)
+    var params = {
+        ClientId: cognito.ClientId,
+        /* required */
+        Username: user_name /* required */
+    };
+    COGNITO_CLIENT.forgotPassword(params, function (err, data) {
+        if (err) {
+            cb(err.code, "");
+        } // an error occurred
+        else {
+            cb("", data);
+        } // successful response
+    });
+}
+
 
 function createUserDbEntry(event, callback) {
     var dbInsert = {};
     // adding key with name user_cognito_id
     // deleting the key from parameter from "user_name"
     event["user_cognito_id"] = event.user_name;
+    // event["sensor"] = 'Blackbox Biometrics';
+    // event["organization"] = 'Army Research Laboratory';
     delete event.user_name;
     dbInsert = {
         TableName: "users",
+        Item: event
+    }
+
+
+    docClient.put(dbInsert, function (dbErr, dbData) {
+        if (dbErr) {
+            callback(dbErr, null);
+            console.log(dbErr);
+        }
+        else {
+            console.log(dbData);
+            callback(null, event);
+        }
+    });
+}
+
+function createInviteUserDbEntry(event, callback) {
+    var dbInsert = {};
+    // adding key with name user_cognito_id
+    // deleting the key from parameter from "user_name"
+    // event["sensor"] = 'Blackbox Biometrics';
+    delete event.user_name;
+    dbInsert = {
+        TableName: "InviteUsers",
         Item: event
     }
 
@@ -696,7 +800,8 @@ function getUploadedVtkFileList(user_name, cb) {
     const s3Params = {
         Bucket: BUCKET_NAME,
         Delimiter: '/',
-        Prefix: user_name + '/profile/rbf/vtk/'
+        // Prefix: user_name + '/profile/rbf/vtk/'
+        Prefix: user_name + '/profile/morphed_vtk/combined_meshes/'
         // Key: req.query.key + ''
     };
 
@@ -860,7 +965,24 @@ function getUserDbData(user_name, cb) {
         }
     });
 }
+function getUserTokenDBDetails(user_name, cb) {
+    var db_table = {
+        TableName: 'InviteUsers',
+        Key: {
+            "InviteToken": user_name
+        }
+    };
+    docClient.get(db_table, function (err, data) {
+        if (err) {
 
+            cb(err, "");
+
+        } else {
+
+            cb("", data);
+        }
+    });
+}
 function getAge(dob) {
     let currentDate = new Date();
     let birthDate = new Date(dob);
@@ -872,7 +994,184 @@ function getAge(dob) {
     return age;
 }
 
+function getUserSensor(user_name) {
+    console.log('user_name',user_name)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'sensors',
+            FilterExpression: "contains(#users, :user_cognito_id)",
+            ExpressionAttributeNames: {
+                "#users": "users",
+            },
+            ExpressionAttributeValues: {
+                ":user_cognito_id": user_name,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getOrganizationList() {
+    console.log('getOrganizationList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 
+function InsertUserIntoSensor(user_name,sensor) {
+    console.log('user_name',user_name,sensor)
+    return new Promise((resolve, reject) => {
+        var dbInsert = {
+            TableName: "sensors",
+            Key: { 
+                "sensor" : sensor
+            },
+            UpdateExpression: "set #users = list_append(#users, :user_cognito_id)",
+            ExpressionAttributeNames: {
+                "#users": "users"
+            },
+            ExpressionAttributeValues: {
+                ":user_cognito_id": [user_name]
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+
+        docClient.update(dbInsert, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+function InsertImpactVideoKey(video_id,impact_video_path) {
+    console.log('user_name',video_id,impact_video_path)
+    return new Promise((resolve, reject) => {
+       var userParams = {
+            TableName: "simulation_images",
+            Key: {
+                image_id: video_id,
+            },
+            UpdateExpression:
+                "set impact_video_path = :impact_video_path",
+            ExpressionAttributeValues: {
+                ":impact_video_path": impact_video_path,
+            },
+            ReturnValues: "UPDATED_NEW",
+        };
+        docClient.update(userParams, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+
+    //  return new Promise((resolve, reject) =>{
+    //     var dbInsert = {};
+    //     // adding key with name user_cognito_id
+    //     // deleting the key from parameter from "user_name"
+    //     dbInsert = {
+    //         TableName: "impact_sideline_video",
+    //         Item: {
+    //                 'video_id' :  video_id,
+    //                 'impact_video_path' :  impact_video_path
+    //             }
+    //     }
+
+
+    //     docClient.put(dbInsert, function (dbErr, dbData) {
+    //         if (dbErr) {
+    //             reject(dbErr)
+    //             console.log(dbErr);
+    //         }
+    //         else {
+    //             console.log(dbData);
+    //             resolve(dbData);
+    //         }
+    //     });
+    // })
+    // return new Promise((resolve, reject) => {
+    //     var dbInsert = {
+    //         TableName: "simulation_images",
+    //         Key: { 
+    //             "image_id" : image_id
+    //         },
+    //         UpdateExpression: "set #impact_video_path = :key",
+    //         ExpressionAttributeNames: {
+    //             "#impact_video_path": "impact_video_path"
+    //         },
+    //         ExpressionAttributeValues: {
+    //             ":key":key
+    //         },
+    //         ReturnValues: "UPDATED_NEW"
+    //     }
+
+    //     docClient.update(dbInsert, function (err, data) {
+    //         if (err) {
+    //             console.log("ERROR WHILE CREATING DATA",err);
+    //             reject(err);
+
+    //         } else {
+    //             resolve(data)
+    //         }
+    //     });
+    // });
+}
+
+function adminUpdateUser(User, cb) {
+
+    var params = {
+        UserAttributes: [ /* required */
+          {
+            Name: 'email', /* required */
+            Value: User.email
+          },
+          /* more items */
+        ],
+        UserPoolId: cognito.userPoolId, /* required */
+        Username: User.user_name, /* required */
+      };
+      COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+        if (err) {
+            cb(err, "");
+        } // an error occurred
+        else {
+            cb("", data);
+        }             // successful response
+      });
+}
 
 // Function to create User by Admin
 function adminCreateUser(User, cb) {
@@ -882,6 +1181,8 @@ function adminCreateUser(User, cb) {
         DesiredDeliveryMediums: [
             "EMAIL",
         ],
+        // MessageAction: 'SUPPRESS',
+        // TemporaryPassword: '12345678', // BrainComputing2020!
         UserAttributes: [
             {
                 Name: 'phone_number', /* required */
@@ -1122,32 +1423,42 @@ const fetchNumbers = () => {
     })
 }
 
-const fetchStaffMembers = () => {
+const fetchStaffMembers = (user_cognito_id,brand) => {
     return new Promise(function (resolve, reject) {
         var params = {
             TableName: 'users',
-            FilterExpression: "#role = :role",
-            ExpressionAttributeNames : {
-                "#role" : "role"
-            },
-            ExpressionAttributeValues: {
-                ":role": "staff"
+             Key: {
+                "user_cognito_id": user_cognito_id
             }
+           
         };
         //   var items
         var items = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(utility.concatArrays(items));
-            } else {
-                items.push(data.Items);
-            }
-            done();
-        });
-    })
+        
+          docClient.get(params, function (err, data) {
+              if (err) {
+                  reject(err)
+
+              } else {
+                // console.log('cg data is ',data);
+                resolve(data.Item);
+              }
+          });
+      })
+        // docClient.get(params).eachPage((err, data, done) => {
+        //     console.log('data',data)
+        //     if (err) {
+        //         reject(err);
+        //     }
+        //     if (data != null) {
+        //         console.log('items',data)
+        //         resolve(utility.concatArrays(data));
+        //     } else {
+        //         // items.push(data.Items);
+        //     }
+        //     done();
+        // });
+   
 }
 
 const fetchAllUsers = () => {
@@ -1187,6 +1498,10 @@ const putNumbers = (numbersData) => {
             }
         })
     })
+}
+
+function concatArrays(arrays) {
+    return [].concat.apply([], arrays);
 }
 
 function getINPFile(user_id) {
@@ -1249,7 +1564,8 @@ function getVtkFileLink(user_id) {
                     model_key = latestModel.Key;
                 }
                 else {
-                    model_key = user_id + "/profile/rbf/vtk/";
+                    // model_key = user_id + "/profile/rbf/vtk/";
+                    model_key = user_id + "/profile/morphed_vtk/combined_meshes/";
                 }
                 // Generate SignedURL of the image
                 getFileSignedUrl(model_key, (err, url) => {
@@ -1259,7 +1575,7 @@ function getVtkFileLink(user_id) {
                     else {
                         resolve(url);
                     }
-                })
+                }, 'FEMesh')
             }
         })
 
@@ -1375,6 +1691,54 @@ function getPresignedMovieUrl(image_details) {
       };
       s3.getSignedUrl('getObject', params, function (err, url) {
           if (err) {
+              //reject(err);
+              resolve(false);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
+}
+function getBrainSimulationLogFile(image_details){
+    // console.log('image_details',image_details)
+    return new Promise((resolve, reject) => {
+    const { log_path } = image_details;
+    if(log_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: log_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              //reject(err);
+              resolve(false);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
+
+}
+
+function ImpactVideoUrl(image_details) {
+  return new Promise((resolve, reject) => {
+    const { impact_video_path } = image_details;
+    console.log('impact_video_path',impact_video_path)
+    if(impact_video_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: impact_video_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
               reject(err);
           } else {
               resolve(url);
@@ -1438,13 +1802,10 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
       return verifyImageToken(token, imageData);
     })
     .then(decoded_token => {
-      return getPresignedMovieUrl(imageData);
-    })
-    .then(movie_link => {
-        if(movie_link) {
-          imageData["movie_link"] = movie_link;
-        }
-        return getImageFromS3(imageData);
+        if (imageData.root_path && imageData.root_path != 'null') {
+            imageData.path = imageData.root_path + imageData.image_id + '.png';
+        } console.log(imageData.path);
+        return getImageFromS3(imageData); 
     })
     .then(image_s3 => {
         return getImageFromS3Buffer(image_s3);
@@ -1465,22 +1826,13 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
             </tr>
             ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
             ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
-            ${computed_time ? `<tr><th>Computed Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
+            ${computed_time ? `<tr><th>Compute Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
           </table>
-
-            ${imageData.movie_link ?
-              `<div style="display:flex;">
+            <div style="display:flex;">
                 <div style="flex:50%">
                   <img style="transform : scale(0.5);transform-origin: top center" src="data:image/png;base64,${image}"/>
                 </div>
-                <div style="flex:50%">
-                  <video src=${imageData.movie_link} style="width:100%;" controls>
-                  </video>
-                </div>
-              </div>`
-              :
-              `<img style="transform : scale(0.5)" src="data:image/png;base64,${image}"/>`
-            }
+              </div>
           </div>`);
     })
     .catch(err => {
@@ -1493,13 +1845,137 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
         }
         else{
             res.send({
-                message : "Simulation is in proceess "
+                message : "Simulation is in process"
             })
         }
     })
 
 });
 
+// Get simulation movie link
+app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
+    const { image_id, token} = req.params;
+    let imageData = '';
+
+    getSimulationImageRecord(image_id)
+        .then(image_data => {
+            imageData = image_data;
+            return verifyImageToken(token, image_data);
+        })
+        .then(decoded_token => {
+            return getPlayerCgValues(imageData.player_name);
+        })
+        .then(cg_coordinates => {
+            // Setting cg values
+            if(cg_coordinates) {
+              imageData["cg_coordinates"] = cg_coordinates;
+            }
+            if (!imageData.movie_path) {
+                imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
+            }
+            return getPresignedMovieUrl(imageData);
+        })
+        .then(movie_link => {
+            let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+            res.send(`<table style="text-align:left;">
+            <tr>
+              <th>Image Id</th>
+              <th>:</th>
+              <td>${image_id}</td>
+            </tr>
+            <tr>
+              <th>Player Id</th>
+              <th>:</th>
+              <td>${imageData.player_name}</td>
+            </tr>
+            ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
+            ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
+            ${computed_time ? `<tr><th>Compute Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
+          </table>
+            <div style="display:flex;">
+                <video src=${movie_link} style="width:100%;" controls></video>
+            </div>
+          </div>`);
+        })
+        .catch(err => {
+            console.log(err);
+            // res.removeHeader('X-Frame-Options');
+            if("authorized" in err){
+                res.send({
+                    message : "failure",
+                    error : "You are not authorized to access this resource."
+                })
+            }
+            else{
+                res.send({
+                    message : "Simulation is in process"
+                })
+            }
+        })
+
+});
+
+app.get(`${apiPrefix}getBrainSimulationLogFile/:image_id`, (req, res) => {
+    request.post({ url: config.ComputeInstanceEndpoint + "getBrainSimulationLogFile", json: req.params }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+//Getting brain simulation details page video
+app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
+    const { image_id } = req.params;
+    let imageData = '';
+    var movie_link_url = '';
+    getSimulationImageRecord(image_id)
+        .then(image_data => {
+            imageData = image_data;
+            return verifyImageToken(imageData['token'], image_data);
+        })
+        .then(decoded_token => {
+            return getPlayerCgValues(imageData.player_name);
+        })
+        .then(cg_coordinates => {
+            if (!imageData.movie_path) {
+                imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
+            } 
+            return getPresignedMovieUrl(imageData);
+        })
+        .then(movie_link => {
+            console.log('movie_link',movie_link);
+            movie_link_url = movie_link;
+           
+            return ImpactVideoUrl(imageData);
+            
+        }) 
+        .then(impact_video_url => {
+            console.log('movie_link_url',movie_link_url)
+            res.send({
+                message : "success",
+                movie_link : movie_link_url,
+                impact_video_url: impact_video_url
+            })
+        })
+        .catch(err => {
+            console.log(err);
+            // res.removeHeader('X-Frame-Options');
+            if("authorized" in err){
+                res.send({
+                    message : "failure",
+                    error : "You are not authorized to access this resource."
+                })
+            }
+            else{
+                res.send({
+                    message : "Simulation is in process"
+                })
+            }
+        })
+});
 
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
@@ -1542,36 +2018,300 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
 
 
 app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
+    console.log('req',req.body);
+    let obj = {};
+    obj.user_name = req.body.user_cognito_id;
+    obj.phone_number = req.body.country_code+req.body.phone_number;
+    obj.phone_number_verified = req.body.number_verified
+    adminVerifyNumber(obj, function (err, data) {
+        if (err) {
 
-    let update_details = {
+        }else{
 
-        TableName : 'users',
-        Key : {
-            "user_cognito_id": req.body.user_cognito_id
-        },
-        UpdateExpression : "set first_name = :fname, last_name = :lname, dob = :dob, gender = :gender, phone_number = :phone_number",
-        ExpressionAttributeValues : {
-            ":fname" : req.body.first_name,
-            ":lname" : req.body.last_name,
-            ":dob" : req.body.dob,
-            ":gender" : req.body.sex,
-            ":phone_number" : req.body.country_code + req.body.phone_number
-        },
-        ReturnValues: "UPDATED_NEW"
-    };
+            let update_details = {
 
-    docClient.update(update_details, function(err, data){
-        if(err) {
-            res.send({
-                message : 'failure'
-            })
-        } else {
-            res.send({
-                message : 'success'
+                TableName : 'users',
+                Key : {
+                    "user_cognito_id": req.body.user_cognito_id
+                },
+                UpdateExpression : "set first_name = :fname, last_name = :lname, dob = :dob, gender = :gender, phone_number = :phone_number, phone_number_verified = :phone_number_verified",
+                ExpressionAttributeValues : {
+                    ":fname" : req.body.first_name,
+                    ":lname" : req.body.last_name,
+                    ":dob" : req.body.dob,
+                    ":gender" : req.body.sex,
+                    ":phone_number" : req.body.country_code + req.body.phone_number,
+                    ":phone_number_verified" : req.body.number_verified
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+
+            docClient.update(update_details, function(err, data){
+                if(err) {
+                    res.send({
+                        message : 'failure'
+                    })
+                } else {
+                    res.send({
+                        message : 'success'
+                    })
+                }
             })
         }
     })
 })
+function adminVerifyNumber(User, cb) {
+
+    var params = {
+        UserAttributes: [ /* required */
+          {
+            Name: 'phone_number', /* required */
+            Value: User.phone_number
+          },
+          {
+            Name: 'phone_number_verified', /* required */
+            Value: User.phone_number_verified
+          },
+          /* more items */
+        ],
+        UserPoolId: cognito.userPoolId, /* required */
+        Username: User.user_name, /* required */
+      };
+      COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+        if (err) {
+            cb(err, "");
+        } // an error occurred
+        else {
+            cb("", data);
+        }             // successful response
+      });
+}
+
+app.post(`${apiPrefix}VerifyNumber`,(req, res) => {
+    console.log('req',req.body);
+    let obj = {};
+    obj.user_name = req.body.user_cognito_id;
+    obj.phone_number = req.body.country_code+req.body.phone_number;
+    obj.phone_number_verified = 'true';
+    var code = Math.floor(100000 + Math.random() * 900000);
+    var d  = new Date(Date.now() + (5 * 60 * 1000));
+    var code_exp = d.getTime();
+    console.log('obj.phone_number',)
+    var params = {
+      Message: code+' is your NSFCAREER verification code', /* required */
+      PhoneNumber: obj.phone_number,
+    };
+
+    // Create promise and SNS service object
+    var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
+
+    // Handle promise's fulfilled/rejected states
+    publishTextPromise.then(
+    function(data) {
+        console.log("MessageID is " + data.MessageId);
+        let update_details = {
+            TableName : 'users',
+            Key : {
+                "user_cognito_id": req.body.user_cognito_id
+            },
+            UpdateExpression : "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified,number_verified_code= :number_verified_code, number_verified_code_exp= :number_verified_code_exp",
+            ExpressionAttributeValues : {
+                ":phone_number" : obj.phone_number,
+                ":country_code" : req.body.country_code,
+                ":phone_number_verified" : 'false',
+                ":number_verified_code" : code,
+                ":number_verified_code_exp" : code_exp
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        docClient.update(update_details, function(err, data){
+            if(err) {
+                res.send({
+                    message : 'failure',
+                    err: 'Somthing went wrong! Please try later.'
+                })
+            } else {
+                res.send({
+                    message : 'success',
+                    data: data
+                })
+            }
+        })
+      }).catch( err =>{
+            res.send({
+                message : 'failure',
+                err: 'Failed to send verification code, Please try later.'
+            })
+      });
+
+
+    // adminVerifyNumber(obj, function (err, data) {
+    //     if (err) {
+    //         console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+    //         res.send({
+    //             message: "failure", 
+    //             error: err.message
+    //         });
+    //     }
+    //     else {
+    //         // On success
+    //         // res.send({
+    //         //     message: 'success',
+    //         //     data: data
+    //         // });
+    //         let update_details = {
+
+    //             TableName : 'users',
+    //             Key : {
+    //                 "user_cognito_id": req.body.user_cognito_id
+    //             },
+    //             UpdateExpression : "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified",
+    //             ExpressionAttributeValues : {
+    //                 ":phone_number" : obj.phone_number,
+    //                 ":country_code" : req.body.country_code,
+    //                 ":phone_number_verified" : 'true'
+    //             },
+    //             ReturnValues: "UPDATED_NEW"
+    //         };
+
+    //         docClient.update(update_details, function(err, data){
+    //             if(err) {
+    //                 res.send({
+    //                     message : 'failure',
+    //                     err: err
+    //                 })
+    //             } else {
+    //                 res.send({
+    //                     message : 'success',
+    //                     data: data
+    //                 })
+    //             }
+    //         })
+    //     }
+    // })
+})
+
+app.post(`${apiPrefix}VerifyVerificationCode`,(req, res) => {
+    console.log('req',req.body);
+    var user_cognito_id = req.body.user_cognito_id;
+    var numberVerificationCode = req.body.numberVerificationCode;
+
+    getUserDbData(user_cognito_id, function(err, user_details){
+        if(err){
+            console.log('err',err)
+        }else{
+            console.log('user_details');
+            let obj = {};
+            obj.user_name = user_cognito_id;
+            obj.phone_number = user_details.Item.phone_number;
+            obj.phone_number_verified = 'true';
+            if(user_details.Item.number_verified_code){
+                if(parseInt(numberVerificationCode) ===  user_details.Item.number_verified_code){
+                    var currentTime = Date.now();
+                    if(user_details.Item.number_verified_code_exp <  currentTime){
+                        res.send({
+                            message: "failure",
+                            error:"Verification code has been expired!"
+                        });
+                    }else{
+                        adminVerifyNumber(obj, function (err, data) {
+                            if (err) {
+                                console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+                                res.send({
+                                    message: "failure", 
+                                    error: err.message
+                                });
+                            }
+                            else {
+                                let update_details = {
+
+                                    TableName : 'users',
+                                    Key : {
+                                        "user_cognito_id": user_cognito_id
+                                    },
+                                    UpdateExpression : "set phone_number_verified= :phone_number_verified",
+                                    ExpressionAttributeValues : {
+                                        ":phone_number_verified" : 'true'
+                                    },
+                                    ReturnValues: "UPDATED_NEW"
+                                };
+
+                                docClient.update(update_details, function(err, data){
+                                    if(err) {
+                                        res.send({
+                                            message : 'failure',
+                                            err: err
+                                        })
+                                    } else {
+                                        res.send({
+                                            message : 'success',
+                                            data: data
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }else{
+                    res.send({
+                        message: "failure",
+                        error:"Verification code dose not match."
+                    });
+                }
+            }else{
+                res.send({
+                    message: "failure",
+                    error: "Your number can not verified yet."
+                });
+            }
+        }
+    })
+
+})
+
+app.post(`${apiPrefix}singUpWithToken`, (req, res) => {
+    // First we add an attirbute of `name` as cognito requires it from first_name and last_name
+    req.body["name"] = req.body.first_name + req.body.last_name;
+    req.body["email"] = req.body.user_name;
+    req.body["is_selfie_image_uploaded"] = false;
+    req.body["is_selfie_model_uploaded"] = false;
+    req.body["is_selfie_inp_uploaded"] = false;
+    // Hardcoding Done Here need to be replaced with actual organization in request.
+    req.body["organization"] = req.body.organization;
+    req.body["level"] = req.body.level;
+    req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
+    req.body.country_code = req.body.country_code.split(" ")[0] ;
+    console.log("-----------------------------\n",req.body,"----------------------------------------\n");
+    
+
+})
+
+app.post(`${apiPrefix}updateCognitoUser`, (req, res) => {
+    let obj = {};
+    obj.user_name = 'ec3acb86-fae0-408a-93a5-9319de4f9766';
+    obj.email = 'ben@hitiq.com';
+
+    adminUpdateUser(obj, function (err, data) {
+        if (err) {
+            console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+            res.send({
+                message: "failure",
+                error: err.message
+            });
+        }
+        else {
+            // On success
+            res.send({
+                message: 'success'
+            });
+        }
+    })
+})
+
 
 app.post(`${apiPrefix}signUp`, (req, res) => {
 
@@ -1584,8 +2324,12 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
     // Hardcoding Done Here need to be replaced with actual organization in request.
-    req.body["organization"] = "PSU";
-    req.body["level"] = '400';
+    if(!req.body.organization){
+        req.body["organization"] = "PSU";
+    }
+    if(!req.body.level){
+        req.body["level"] = '100';
+    }
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
@@ -1599,7 +2343,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             });
         }
         else {
-
+            console.log('data',data)
             var UserData = data.User;
             req.body["user_cognito_id"] = UserData.Username;
             //Now check type of User and give permission accordingly
@@ -1612,7 +2356,13 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
-            tempData["is_sensor_company"] = true;
+            if(!req.body.level){
+                tempData["level"] = 100;
+            }else{
+                 tempData["level"] =  parseInt(req.body.level);
+            }
+            
+            //tempData["is_sensor_company"] = true;
 
             if (req.body.user_type == "Admin") {
 
@@ -1670,6 +2420,16 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                         });
                     }
                     else {
+                        if(mergedObject.level == 400){
+                            InsertUserIntoSensor(mergedObject.user_cognito_id,mergedObject.sensor).
+                                then(sensor_data => {
+                                   
+                                    console.log('sensor_data',sensor_data)
+                                })
+                                .catch(err => {
+                                   console.log('err',err)
+                                })
+                        }
                         // Add user to corresponding group...
                         // event.user_type
                         // event.user_name
@@ -1756,16 +2516,55 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
 });
 
+app.post(`${apiPrefix}InviteUsers`, (req, res) => {
+    console.log("InviteUsers Called!",req.body);
+    createInviteUserDbEntry(req.body, function (dberr, dbdata) {
+        if (dberr) {
+            console.log("DB ERRRRRR =============================== \n", dberr);
+
+            res.send({
+                message: "faiure",
+                error: dberr.code
+            });
+        }
+        else {
+            console.log('dbdata',dbdata)
+            var mailOptions = {
+              from: 'mukesh.rawat@brihaspatitech.com',
+              to: dbdata.email,
+              subject: 'Thank you for joining Nsfcareer',
+              text: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){
+              if (error) {
+                res.send({
+                    message: "faiure",
+                    error: error
+                });
+              } else {
+                console.log('Email sent: ' + info.response);
+                res.send({
+                    message: "Success",
+                    data: info.response
+                });
+              }
+            });
+        }
+    })
+});
+
+
 app.post(`${apiPrefix}logIn`, (req, res) => {
     console.log("Log In API Called!",req.body);
     // Getting user data of that user
     getUser(req.body.user_name, function (err, data) {
         if (err) {
-            console.log(err);
+            console.log('err0',err);
 
             res.send({
                 message: "failure",
-                error: err
+                error: 'Incorrect login credentials'
             });
         } else {
 
@@ -1774,10 +2573,10 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
             // Now getting the list of Groups of user
             getListGroupForUser(data.Username, function (error, groupData) {
                 if (error) {
-
+                    console.log('error1',error)
                     res.send({
                         message: "failure",
-                        error: error
+                        error: 'Incorrect login credentials'
                     });
                 } else {
                     // Now checking is user is ADMIN or not
@@ -1802,31 +2601,52 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                         login(req.body.user_name, req.body.password, userType, function (err, result) {
 
                             if (err) {
+                                console.log('err2',err)
                                 res.cookie("token", "");
                                 res.send({
                                     message: "failure",
-                                    error: err
+                                    error: 'Incorrect login credentials'
                                 })
                             }
                             else {
 
 
-                                res.cookie("token", result.getIdToken().getJwtToken());
+                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
 
                                 getUserDbData(data.Username, function(err, user_details){
                                     if(err){
+                                         console.log('err3',err)
                                         res.send({
                                             message : "failure",
                                             error : err
                                         })
                                     }
                                     else{
-                                        //user_details.Item["user_type"] = userType ;
-                                        res.send({
-                                            message : "success",
-                                            user_details : user_details.Item,
-                                            user_type: userType
-                                        })
+                                        if (user_details.Item["level"] === 400) {
+                                            getUserSensor(data.Username)
+                                                .then(sensor_data => {
+                                                    user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                    res.send({
+                                                        message : "success",
+                                                        user_details : user_details.Item,
+                                                        user_type: userType
+                                                    })
+                                                    
+                                                })
+                                                .catch(err => {
+                                                     console.log('err4',err)
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                })
+                                        } else {
+                                            res.send({
+                                                message : "success",
+                                                user_details : user_details.Item,
+                                                user_type: userType
+                                            })
+                                        }  
                                     }
                                 })
                             }
@@ -1838,7 +2658,41 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
     })
 })
 
+/* Forget password function start */
+
+app.post(`${apiPrefix}forgotPassword`, (req, res) => {
+    console.log("Log In API Called!",req.body);
+    getUser(req.body.user_name, function (err, data) {
+        if (err) {
+            console.log(err);
+
+            res.send({
+                message: "failure",
+                error: 'Incorrect username'
+            });
+        } else {
+            forgotPassword(req.body.user_name, function (err, data) {
+                console.log('res',err,data)
+                if (err) {
+                    res.send({
+                        message: "failure",
+                        error: err
+                    });
+                }else{
+                    res.send({
+                        message: "success",
+                        error: data
+                    });
+                }
+           });
+        }
+    });
+});
+
+/* Forget password function end */
+
 app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
+    console.log('checking isAuthenticated' )
     if(req.user_cognito_id){
         res.send({
             message : "success",
@@ -1883,12 +2737,45 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
                                     userType = "Admin";
                                 }
                             });
-                            res.cookie("token", result.getIdToken().getJwtToken());
-                            res.send({
-                                message: "success",
-                                user_type: userType
+                            // res.send({
+                            //     message: "success",
+                            //     user_type: userType
+                            // })
+                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+                            getUserDbData(data.Username, function(err, user_details){
+                                if(err){
+                                    res.send({
+                                        message : "failure",
+                                        error : err
+                                    })
+                                }
+                                else{
+                                    if (user_details.Item["level"] === 400) {
+                                        getUserSensor(data.Username)
+                                            .then(sensor_data => {
+                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                res.send({
+                                                    message : "success",
+                                                    user_details : user_details.Item,
+                                                    user_type: userType
+                                                })
+                                                
+                                            })
+                                            .catch(err => {
+                                                res.send({
+                                                    message : "failure",
+                                                    error : err
+                                                })
+                                            })
+                                    } else {
+                                        res.send({
+                                            message : "success",
+                                            user_details : user_details.Item,
+                                            user_type: userType
+                                        })
+                                    }  
+                                }
                             })
-
                         }
                     });
 
@@ -1899,6 +2786,481 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
     }
 })
 
+})
+
+function getBrandOrganizationData(sensor, organization) {
+    return new Promise((resolve, reject) => {
+        let params;
+
+        if (sensor != '') {
+            params = {
+                TableName: "sensor_data",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                    ":sensor": sensor,
+                    ":organization": organization
+                },
+                ProjectionExpression: "sensor,image_id,player_id,computed_time"
+            };
+        } else {
+            params = {
+                TableName: "sensor_data",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                   ":organization": organization
+                },
+                ProjectionExpression: "sensor,image_id"
+            };
+        }
+        
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getPlayerSimulationStatus(image_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "simulation_images",
+            Key: {
+                image_id: image_id,
+            },
+        };
+        docClient.get(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data.Item);
+            }
+        });
+    });
+}
+app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
+    console.log(req.body)
+    getOrganizationList()
+    .then(list =>{
+        console.log('list',list.length)
+        let uniqueList = [];
+        var orgList = list.filter(function (organization) {
+            if (uniqueList.indexOf(organization.organization) === -1) {
+                uniqueList.push(organization.organization);
+                return organization;
+            }
+        });
+
+        let counter = 0;
+        if (orgList.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        } else {
+            orgList.forEach(function (org, index) {
+                let data = org;
+                let i = index;
+                getBrandOrganizationData(data.sensor ? data.sensor : '' , data.organization )
+                    .then(simulation_records => {
+                        counter++;
+                        org["simulation_count"] = Number(simulation_records.length).toString();
+
+                        simulation_records.forEach(function (simulation_record, index) {
+                            simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                        })
+
+                        simulation_records.sort(function (b, a) {
+                            var keyA = a.date_time,
+                                keyB = b.date_time;
+                            if (keyA < keyB) return -1;
+                            if (keyA > keyB) return 1;
+                            return 0;
+                        });
+
+                        org["simulation_status"] = '';
+                        org["computed_time"] = '';
+                        org["simulation_timestamp"] = '';
+                        
+                        if (simulation_records.length > 0) {
+                            console.log(simulation_records[0].image_id);
+                            getPlayerSimulationStatus(simulation_records[0].image_id)
+                                .then(simulation => {
+                                    org["simulation_status"] = simulation.status;
+                                    org["computed_time"] = simulation.computed_time;
+                                    org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+
+                                    if (counter == orgList.length) {
+                                        res.send({
+                                            message: "success",
+                                            data: orgList
+                                        })
+                                    }
+
+                                }).catch(err => {
+                                    console.log('err',err);
+                                })
+                        } else {
+                            if (counter == orgList.length) {
+                                res.send({
+                                    message: "success",
+                                    data: orgList
+                                })
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        counter++
+                        if (counter == orgList.length) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                    })
+            })
+        }
+    })
+    .catch(err =>{
+        console.log('err',err)
+    })
+
+
+})
+
+function getTeamList() {
+    console.log('getTeamList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+            ProjectionExpression: "sensor, organization, team_name"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+function getOrganizationTeamData(obj) {
+    return new Promise((resolve, reject) => {
+        let params;
+        if (obj.sensor) {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                   ":sensor": obj.sensor,
+                   ":organization": obj.organization,
+                   ":team": obj.team
+                },
+                ProjectionExpression: "sensor,image_id,computed_time,player_id",
+                ScanIndexForward: false
+            };
+        } else {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                   ":organization": obj.organization,
+                   ":team": obj.team
+                },
+                ProjectionExpression: "sensor,image_id,computed_time,player_id",
+                ScanIndexForward: false
+            };
+        }
+        
+        var item = [];
+        docClient.query(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getTeamList`, (req, res) => {
+    console.log(req.body);
+    getTeamList().then(list=>{
+        // console.log('list',list)
+        let uniqueList = [];
+        var teamList = list.filter(function (team_name) {
+            return (!("teamList" in team_name));
+        });
+
+        // console.log(teamList);
+
+        let counter = 0;
+        if (teamList.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        } else {
+            // console.log(teamList);
+            teamList.forEach(function (team, index) {
+                let data = team;
+                let i = index;
+                getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false , organization: data.organization, team: data.team_name})
+                    .then(simulation_records => {
+                        // console.log('simulation_records',simulation_records)
+                        counter++;
+                        team["simulation_count"] = Number(simulation_records.length).toString();
+                        team["simulation_status"] = '';
+                        team["computed_time"] = '';
+                        team["simulation_timestamp"] = '';
+                        if (simulation_records.length > 0) {
+                            //console.log(simulation_records[0].image_id);
+                            getPlayerSimulationStatus(simulation_records[0].image_id)
+                                .then(simulation => {
+                                    team["simulation_status"] = simulation.status;
+                                    team["computed_time"] = simulation.computed_time;
+                                    team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+
+                                    if (counter == teamList.length) {
+                                        res.send({
+                                            message: "success",
+                                            data: teamList
+                                        })
+                                    }
+
+                                }).catch(err => {
+                                    console.log('err',err);
+                                })
+                        } else {
+                            if (counter == teamList.length) {
+                                res.send({
+                                    message: "success",
+                                    data: teamList
+                                })
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        counter++
+                        if (counter == teamList.length) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                    })
+            })
+        }
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+});
+
+function getPlayerList() {
+    console.log('getTeamList')
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getTeamDataWithPlayerRecords(player_id,team,sensor,organization) {
+    console.log('player_id',player_id,team,sensor,organization)
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "sensor = :sensor and organization = :organization and team = :team and begins_with(player_id,:player_id)",
+            ExpressionAttributeValues: {
+               ":sensor": sensor,
+               ":organization": organization,
+               ":team": team,
+               ":player_id": player_id,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                console.log('err',err)
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+                console.log(data)
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getPlayerList`, (req, res) => {
+    console.log(req.body);
+    getPlayerList().then(players=>{
+        // console.log('player',players)
+        var player_list = [];
+        for(var i =0; i < players.length; i++){
+            if(players[i].player_list){
+                var list = players[i].player_list;
+                for(var j = 0;j < list.length; j++){
+                // console.log(list[j])
+
+                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                }
+            }
+        }
+        if (player_list.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        }
+        else {
+            var counter = 0;
+            var indx = 0;
+            var p_data = [];
+            var player_listLn = player_list.length - 1;
+            player_list.forEach(function (player, index) {
+                let p = player;
+                let j = index;
+                let playerData = '';
+                if(player.player_id && player.player_id != 'undefined'){
+                    getTeamDataWithPlayerRecords(player.player_id, player.team,  player.sensor, player.organization)
+                    .then(player_data => {
+                        playerData = player_data;
+                        counter++;
+                        p_data.push({
+                            player_name: p,
+                            //vsimulation_image: image ? image : '',
+                            simulation_data: playerData,
+                            simulation_status : 'completed'
+                        });
+                        var y = 0;
+                         if (counter == player_listLn) {
+                            p_data.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+
+                            let k = 0;
+                            var p_datalen = p_data.length - 1;
+                            p_data.forEach(function (record, index) {
+                                getPlayerSimulationStatus(player_data[0].image_id)
+                                    .then(simulation => {
+                                        console.log('simulation',simulation.status)
+                                        k++;
+                                        if(simulation.status != 'completed'){
+                                           p_data[index].simulation_status = 'pending';
+                                        }
+                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation.status;
+                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation.computed_time;
+                                        console.log(k, p_datalen)
+                                        if (k == p_datalen) {
+                                            res.send({
+                                                message: "success",
+                                                data: p_data
+                                            })
+                                        }
+                                    })
+                            })
+                        }
+                        // if (counter == player_listLn) {
+                        //     for(var i = 0; i < player_data.length; i++){
+                        //         var ind = indx;
+                        //         getPlayerSimulationStatus(player_data[i].image_id)
+                        //         .then(data => {
+                        //             if(data.status != 'completed'){
+                        //                 p_data[ind].simulation_status = 'pending';
+                        //             }
+                        //             console.log('data.status', p_data[indx].simulation_status)
+
+                        //             y++;
+                        //             if(y == player_data.length){
+                        //                 res.send({
+                        //                     message: "success",
+                        //                     data: p_data
+                        //                 })
+                        //             }
+                        //         }).catch(err => {
+                        //             console.log('err',err)
+                        //         })
+                        //     }
+                            
+                        // }else{
+                        //     for(var i = 0; i < player_data.length; i++){
+                        //         var ind = indx;
+                        //         getPlayerSimulationStatus(player_data[indx].image_id)
+                        //         .then(data => {
+                        //             console.log('data.status', p_data[indx].simulation_status)
+
+                        //             if(data.status != 'completed'){
+                        //                p_data[ind].simulation_status = 'pending';
+                        //             }
+                        //             y++;
+                        //         }).catch(err => {
+                        //             console.log('err',err)
+                        //         })
+                        //     }
+                        // }
+                        indx++;
+                    })
+                    .catch(err => {
+                        counter++;
+                        if (counter == player_listLn) {
+                            res.send({
+                                message: "failure",
+                                data: p_data
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
 })
 
 app.post(`${apiPrefix}enableUser`, (req, res) => {
@@ -1933,22 +3295,118 @@ app.post(`${apiPrefix}disableUser`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
-    fetchStaffMembers()
-    .then(list => {
-        res.send({
-            message : "success",
-            data : list
-        })
-    })
-    .catch(err => {
-        res.send({
-            message : "failure",
-            error : err,
-            data : []
-        })
-    })
-})
+const fetchSensor = (sensor) => {
+    return new Promise(function (resolve, reject) {
+        var params = {
+            TableName: 'sensors',
+             Key: {
+                "sensor": sensor
+            }
+           
+        };
+        //   var items
+        var items = [];
+        
+          docClient.get(params, function (err, data) {
+              if (err) {
+                  reject(err)
+
+              } else {
+                // console.log('cg data is ',data);
+                resolve(data.Item);
+              }
+          });
+      })
+}
+
+app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{ 
+     fetchSensor(req.body.brand)
+        .then(sensors => {
+            console.log('sensors',sensors.users);
+            var user_cognito_id = sensors.users;
+            var cId_len = user_cognito_id.length;
+            var cId_len2 = cId_len-1;
+            var memebers = [];
+            var f = 0;
+            for(var i = 0; i < cId_len; i++){
+                fetchStaffMembers(user_cognito_id[i],req.body.brand)
+                .then(data => {
+                    memebers.push({data});
+                    console.log(cId_len2,f)
+                    if(f == cId_len2){
+                        res.send({
+                            message : "success",
+                            data : memebers
+                        })
+                    }
+                    f++;
+                })
+                .catch(err => {
+                    res.send({
+                        message : "failure",
+                        error : err,
+                        data : []
+                    })  
+                })
+            }
+        }) .catch(err => {
+            res.send({
+                message : "failure",
+                error : err,
+                data : []
+            })  
+        });
+    //
+  
+});
+
+//getting only user db details
+app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
+    // If request comes to get detail of specific player
+    console.log(req.body);
+    if(req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
+    }
+    getUserDbData(req.user_cognito_id, function (err, data) {
+        if (err) {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }
+        else {
+            userData = data.Item;
+            res.send({
+                message: "success",
+                data: userData
+            });
+        }
+    });
+});
+
+app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
+    // If request comes to get detail of specific player
+    console.log(req.body);
+    if(req.body.InviteToken){
+        req.InviteToken = req.body.InviteToken ;
+    }
+    getUserTokenDBDetails(req.InviteToken, function (err, data) {
+        if (err) {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }
+        else {
+            userData = data.Item;
+            res.send({
+                message: "success",
+                data: userData
+            });
+        }
+    });
+});
+
 
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
@@ -2132,7 +3590,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                 })
                                             }
 
-                                        })
+                                        }, 'avatar')
 
                                     }
 
@@ -2253,7 +3711,7 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                         })
                     }
 
-                })
+                }, 'avatar')
 
             }
 
@@ -2643,6 +4101,104 @@ app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res)=> {
 })
 
 // Uploading the Sensor Data (CSV) file
+app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
+        console.log('file',req.body);
+        var file_name = Date.now();
+        var image_id = req.body.image_id;
+        var uploadParams = {
+            Bucket: config.usersbucket,
+            Key: '', // pass key
+            Body: null, // pass file body
+        };
+        getSimulationImageRecord(image_id)
+        .then(data => {
+            // File Extensions
+            var file_extension = req.file.originalname.split(".");
+            file_extension = file_extension[file_extension.length - 1];
+            var d = new Date();
+            console.log(d.toLocaleDateString('pt-PT'));
+            d = d.toLocaleDateString('pt-PT');
+            var date = d.replace("/", "-");
+            date = date.replace("/", "-");
+            console.log('date',date);
+            // Setting Attributes for file upload on S3
+            uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/" + file_name + "." + file_extension;
+            // console.log('req.file.buffer', req.file.buffer)
+            uploadParams.Body = req.file.buffer;
+           
+            // console.log('uploadParams',uploadParams)
+            s3.upload(uploadParams, (err, data) => {
+                if (err) {
+                    console.log('======errr \n',err)
+                    res.send({
+                        message: "failure",
+                        data: err
+                    });
+                   
+                }else{
+                    console.log('data',uploadParams.Key )
+                    InsertImpactVideoKey(req.body.image_id,uploadParams.Key ).
+                    then(sensor_data => {
+                        const  image_id  = req.body.image_id;
+                        console.log('image_id',image_id)
+                        let imageData = '';
+                        getSimulationImageRecord(image_id)
+                            .then(image_data => {
+                                // console.log('image_data',image_data)
+                                imageData = image_data;
+                                return verifyImageToken(imageData['token'], image_data);
+                            })
+                            .then(decoded_token => {
+                                // console.log('decoded_token',decoded_token)
+                                return getPlayerCgValues(imageData.player_name);
+                            })
+                            .then(cg_coordinates => {
+                                // Setting cg values
+                                // console.log("cg_coordinates",cg_coordinates)
+                                if(cg_coordinates) {
+                                  imageData["cg_coordinates"] = cg_coordinates;
+                                }
+                                return ImpactVideoUrl(imageData);
+                            })
+                            .then(movie_link => {
+                                // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                console.log('movie_link',movie_link);
+                                res.send({
+                                    message : "success",
+                                    impact_video_url : movie_link
+                                })
+                                
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                // res.removeHeader('X-Frame-Options');
+                                // if(err.message == 'The provided key element does not match the schema'){
+                                    res.send({
+                                        message: "failure",
+                                        data: err
+                                    });
+                                // }
+                            })
+                    })
+                    .catch(err => {
+                       console.log('err',err)
+                        res.send({
+                            message: "failure",
+                            data: err
+                        });
+                    })
+                }
+            })
+        }).catch(err => {
+           console.log('err',err)
+            res.send({
+                message: "failure",
+                data: err
+            });
+        })
+})
+
+// Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTimeout('10m'), uploadSensorData.single('sensor_csv_file'), (req, res) => {
     // Upload this data in Profile Bucket of USER
     console.log("API Called to upload to upload Sensor Data")
@@ -2912,11 +4468,25 @@ app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('getAllCumulativeAccelerationTimeRecords',req.body)
     request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
         }
         else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}getAllCumulativeAccelerationJsonData`, (req,res) =>{
+    
+    request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationJsonData", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            console.log('getAllCumulativeAccelerationJsonData',httpResponse.body)
             res.send(httpResponse.body);
         }
     })
@@ -3118,10 +4688,12 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                             })
                         }
                         else {
-                            if (user_details.Item["is_sensor_company"]) {
+                            if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
                                 // console.log(user_details.Item);
                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-                                req.body["sensor_brand"] = user_details.Item["sensor_brand"];
+                                req.body["sensor_brand"] = user_details.Item["sensor"];
+                                req.body["level"] = user_details.Item["level"];
+                                req.body["organization"] = user_details.Item["organization"];
                                 request.post({
                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
                                     json: req.body
@@ -3148,6 +4720,212 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
             })
         }
     })
+})
+
+// app.post(`${apiPrefix}api/upload/sensor`, (req, res) => {
+//     let upload_file = fs.readFileSync(req.body.filename, {encoding: 'base64'});
+
+//     let selfie = false;
+//     if (req.body.selfie) {
+//         selfie = fs.readFileSync(req.body.selfie, {encoding: 'base64'});
+//     }
+   
+//     var user_type = "standard";
+//     login(req.body.user, req.body.password, user_type, (err, data) => {
+//         if (err) {
+//             res.send({
+//                 message: "failure",
+//                 error: err
+//             })
+//         }
+//         else {
+//             getUser(req.body.user, function (err, data) {
+//                 if (err) {
+//                     console.log(err);
+
+//                     res.send({
+//                         message: "failure",
+//                         error: err
+//                     });
+//                 } else {
+//                     getUserDbData(data.Username, function (err, user_details) {
+//                         if (err) {
+//                             res.send({
+//                                 message: "failure",
+//                                 error: err
+//                             })
+//                         }
+//                         else {
+//                             if (user_details.Item["level"] === 400) {
+//                                 // console.log(user_details.Item);
+//                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+//                                 req.body["sensor_brand"] = user_details.Item["sensor"];
+//                                 req.body["upload_file"] = upload_file;
+
+//                                 let filename =  req.body.filename.split("/");
+//                                 filename = filename[filename.length-1];
+
+//                                 req.body["data_filename"] = filename;
+//                                 req.body["selfie"] = selfie;
+//                                 req.body["filename"] = req.body.selfie; 
+//                                 request.post({
+//                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+//                                     json: req.body
+//                                 }, function (err, httpResponse, body) {
+//                                     if (err) {
+//                                         res.send({
+//                                             message: "failure",
+//                                             error: err
+//                                         })
+//                                     }
+//                                     else {
+//                                         if (httpResponse.body.image_url) {
+//                                             let body = '<!DOCTYPE html>\
+//                                                 <html>\
+//                                                 <body>';
+//                                             let counter = 0;                                                
+//                                             httpResponse.body.image_url.forEach((url, m) => {
+//                                                 counter++;
+//                                                 body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
+//                                                 if (counter == httpResponse.body.image_url.length) {
+//                                                     body += '</body>\
+//                                                             </html>';
+//                                                     res.send(body);
+//                                                 }
+//                                             })
+//                                         } else {
+//                                             res.send(httpResponse.body);
+//                                         }
+//                                     }
+//                                 })
+//                             } else {
+//                                 res.send({
+//                                     message: "failure",
+//                                     error: 'User is not sensor company.'
+//                                 })
+//                             }
+//                         }
+//                     })
+//                 }
+//             })
+//         }
+//     })
+// })
+
+// Run simulation using cURL command
+app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxCount: 1}, {name: "selfie", maxCount: 1}]),  (req, res) => {
+
+    let data_filename = null;
+    let base64File = null;
+    if (req.files.filename) {
+        let file_data = req.files.filename[0].buffer
+        base64File = file_data.toString('base64');
+        data_filename = req.files.filename[0].originalname
+    }
+
+    let selfie = null;
+    let base64Selfie = null;
+    if (req.files.selfie) {
+        let selfie_data = req.files.selfie[0].buffer
+        base64Selfie = selfie_data.toString('base64');
+        selfie = req.files.selfie[0].originalname;
+    }
+     
+    // res.send('<!DOCTYPE html>\
+    //     <html>\
+    //       <body>\
+    //         <iframe src="http://nsfcareer.io/simulation/results/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZV9pZCI6IktydkE3aGNCMiIsImlhdCI6MTU5NjEwMTg5OH0.BdtxPuz1O_dR-ZOxysjWNl018jcBk2OcKE1f9gWolY4/KrvA7hcB2" width="100%" height="500px"></iframe>\
+    //         <iframe src="http://nsfcareer.io/getSimulationMovie/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZV9pZCI6IktydkE3aGNCMiIsImlhdCI6MTU5NjEwMTg5OH0.BdtxPuz1O_dR-ZOxysjWNl018jcBk2OcKE1f9gWolY4/KrvA7hcB2" width="100%" height="500px"></iframe>\
+    //       </body>\
+    //     </html>'
+    // )
+    // res.send({
+    //     data : req.body,
+    //     data_filename: data_filename,
+    //     upload_file : base64File,
+    //     filename: selfie,
+    //     selfie : base64Selfie
+    // });
+
+    var user_type = "standard";
+    login(req.body.user, req.body.password, user_type, (err, data) => {
+        if (err) {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        }
+        else {
+            getUser(req.body.user, function (err, data) {
+                if (err) {
+                    console.log(err);
+
+                    res.send({
+                        message: "failure",
+                        error: err
+                    });
+                } else {
+                    getUserDbData(data.Username, function (err, user_details) {
+                        if (err) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                        else {
+                            if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
+                                // console.log(user_details.Item);
+                                req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                req.body["sensor_brand"] = user_details.Item["sensor"];
+                                req.body["level"] = user_details.Item["level"];
+                                req.body["organization"] = user_details.Item["organization"];
+                                req.body["upload_file"] = base64File;
+                                req.body["data_filename"] = data_filename;
+                                req.body["selfie"] = base64Selfie;
+                                req.body["filename"] = selfie; 
+                                request.post({
+                                    url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                    json: req.body
+                                }, function (err, httpResponse, body) {
+                                    if (err) {
+                                        res.send({
+                                            message: "failure",
+                                            error: err
+                                        })
+                                    }
+                                    else {
+                                        if (httpResponse.body.image_url) {
+                                            let body = '<!DOCTYPE html>\
+                                                <html>\
+                                                <body>';
+                                            let counter = 0;                                                
+                                            httpResponse.body.image_url.forEach((url, m) => {
+                                                counter++;
+                                                body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
+                                                if (counter == httpResponse.body.image_url.length) {
+                                                    body += '</body>\
+                                                            </html>';
+                                                    res.send(body);
+                                                }
+                                            })
+                                        } else {
+                                            res.send(httpResponse.body);
+                                        }
+                                    }
+                                })
+                            } else {
+                                res.send({
+                                    message: "failure",
+                                    error: 'User is not sensor company.'
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    })
+
 })
 
 app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
