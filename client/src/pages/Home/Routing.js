@@ -10,7 +10,6 @@ import HomePage from './HomePage';
 import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
 import Profile from '../../components/profile/Profile';
-import verifyNumber from '../../components/profile/verifyNumber/verifyNumber';
 // import verify from '../../components/profile/verifyNumber/verify';
 
 import Dashboard from '../../components/Dashboard/Dashboard';
@@ -21,7 +20,7 @@ import Contact from '../Contact/ContactPage';
 import OrganizationAdmin from '../../components/OrganizationAdmin';
 import AdminDashboard from '../../components/AdminDashboard';
 import Users from '../../components/Users';
-// import AddUsers from '../../components/AddUsers';
+import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
 import TeamPlayers from '../../components/CommanderTeamView';
@@ -196,11 +195,7 @@ class Routing extends React.Component {
           path="/Profile"
           render={(props) => <Profile {...props} isDarkModeSet={this.checkDarkMode} />}
         />
-        <Route
-          exact
-          path="/verify-number"
-          render={(props) => <verifyNumber {...props} isDarkModeSet={this.checkDarkMode} />}
-        />
+        
         <Route
             exact
             path="/SignUp/:token"
@@ -226,11 +221,11 @@ class Routing extends React.Component {
           path="/Users"
           render={(props) => <Users {...props} isDarkModeSet={this.checkDarkMode} />}
         />
-        {/* <Route
+         <Route
           exact
-          path="/Users/addUsers"
+          path="/number-verification"
           render={(props) => <AddUsers {...props} isDarkModeSet={this.checkDarkMode} />}
-        /> */}
+        /> 
         <Route
           exact
           path="/TeamAdmin/user/dashboard"
@@ -334,6 +329,7 @@ class Routing extends React.Component {
             path="/IRBParentConsent"
             render={(props) => <IRBParentConsent {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
+       
       </React.Fragment>
     );
   }

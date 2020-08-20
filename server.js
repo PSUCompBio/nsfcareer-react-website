@@ -2086,73 +2086,190 @@ function adminVerifyNumber(User, cb) {
         }             // successful response
       });
 }
+
 app.post(`${apiPrefix}VerifyNumber`,(req, res) => {
     console.log('req',req.body);
     let obj = {};
     obj.user_name = req.body.user_cognito_id;
     obj.phone_number = req.body.country_code+req.body.phone_number;
     obj.phone_number_verified = 'true';
-   // var params = {
-   //    Message: 'TEXT_MESSAGE', /* required */
-   //    PhoneNumber: '+917055727901',
-   //  };
+    var code = Math.floor(100000 + Math.random() * 900000);
+    var d  = new Date(Date.now() + (5 * 60 * 1000));
+    var code_exp = d.getTime();
+    console.log('obj.phone_number',)
+    var params = {
+      Message: code+' is your NSFCAREER verification code', /* required */
+      PhoneNumber: obj.phone_number,
+    };
 
-   //  // Create promise and SNS service object
-   //  var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
+    // Create promise and SNS service object
+    var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
 
-   //  // Handle promise's fulfilled/rejected states
-   //  publishTextPromise.then(
-   //    function(data) {
-   //      console.log("MessageID is " + data.MessageId);
-   //    }).catch(
-   //      function(err) {
-   //      console.error(err, err.stack);
-   //    });
-    adminVerifyNumber(obj, function (err, data) {
-        if (err) {
-            console.log("COGNITO CREATE USER ERROR =========\n", err);
+    // Handle promise's fulfilled/rejected states
+    publishTextPromise.then(
+    function(data) {
+        console.log("MessageID is " + data.MessageId);
+        let update_details = {
+            TableName : 'users',
+            Key : {
+                "user_cognito_id": req.body.user_cognito_id
+            },
+            UpdateExpression : "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified,number_verified_code= :number_verified_code, number_verified_code_exp= :number_verified_code_exp",
+            ExpressionAttributeValues : {
+                ":phone_number" : obj.phone_number,
+                ":country_code" : req.body.country_code,
+                ":phone_number_verified" : 'false',
+                ":number_verified_code" : code,
+                ":number_verified_code_exp" : code_exp
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
 
+        docClient.update(update_details, function(err, data){
+            if(err) {
+                res.send({
+                    message : 'failure',
+                    err: 'Somthing went wrong! Please try later.'
+                })
+            } else {
+                res.send({
+                    message : 'success',
+                    data: data
+                })
+            }
+        })
+      }).catch( err =>{
             res.send({
-                message: "failure", 
-                error: err.message
-            });
-        }
-        else {
-            // On success
-            // res.send({
-            //     message: 'success',
-            //     data: data
-            // });
-            let update_details = {
-
-                TableName : 'users',
-                Key : {
-                    "user_cognito_id": req.body.user_cognito_id
-                },
-                UpdateExpression : "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified",
-                ExpressionAttributeValues : {
-                    ":phone_number" : obj.phone_number,
-                    ":country_code" : req.body.country_code,
-                    ":phone_number_verified" : 'true'
-                },
-                ReturnValues: "UPDATED_NEW"
-            };
-
-            docClient.update(update_details, function(err, data){
-                if(err) {
-                    res.send({
-                        message : 'failure',
-                        err: err
-                    })
-                } else {
-                    res.send({
-                        message : 'success',
-                        data: data
-                    })
-                }
+                message : 'failure',
+                err: 'Failed to send verification code, Please try later.'
             })
+      });
+
+
+    // adminVerifyNumber(obj, function (err, data) {
+    //     if (err) {
+    //         console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+    //         res.send({
+    //             message: "failure", 
+    //             error: err.message
+    //         });
+    //     }
+    //     else {
+    //         // On success
+    //         // res.send({
+    //         //     message: 'success',
+    //         //     data: data
+    //         // });
+    //         let update_details = {
+
+    //             TableName : 'users',
+    //             Key : {
+    //                 "user_cognito_id": req.body.user_cognito_id
+    //             },
+    //             UpdateExpression : "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified",
+    //             ExpressionAttributeValues : {
+    //                 ":phone_number" : obj.phone_number,
+    //                 ":country_code" : req.body.country_code,
+    //                 ":phone_number_verified" : 'true'
+    //             },
+    //             ReturnValues: "UPDATED_NEW"
+    //         };
+
+    //         docClient.update(update_details, function(err, data){
+    //             if(err) {
+    //                 res.send({
+    //                     message : 'failure',
+    //                     err: err
+    //                 })
+    //             } else {
+    //                 res.send({
+    //                     message : 'success',
+    //                     data: data
+    //                 })
+    //             }
+    //         })
+    //     }
+    // })
+})
+
+app.post(`${apiPrefix}VerifyVerificationCode`,(req, res) => {
+    console.log('req',req.body);
+    var user_cognito_id = req.body.user_cognito_id;
+    var numberVerificationCode = req.body.numberVerificationCode;
+
+    getUserDbData(user_cognito_id, function(err, user_details){
+        if(err){
+            console.log('err',err)
+        }else{
+            console.log('user_details');
+            let obj = {};
+            obj.user_name = user_cognito_id;
+            obj.phone_number = user_details.Item.phone_number;
+            obj.phone_number_verified = 'true';
+            if(user_details.Item.number_verified_code){
+                if(parseInt(numberVerificationCode) ===  user_details.Item.number_verified_code){
+                    var currentTime = Date.now();
+                    if(user_details.Item.number_verified_code_exp <  currentTime){
+                        res.send({
+                            message: "failure",
+                            error:"Verification code has been expired!"
+                        });
+                    }else{
+                        adminVerifyNumber(obj, function (err, data) {
+                            if (err) {
+                                console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+                                res.send({
+                                    message: "failure", 
+                                    error: err.message
+                                });
+                            }
+                            else {
+                                let update_details = {
+
+                                    TableName : 'users',
+                                    Key : {
+                                        "user_cognito_id": user_cognito_id
+                                    },
+                                    UpdateExpression : "set phone_number_verified= :phone_number_verified",
+                                    ExpressionAttributeValues : {
+                                        ":phone_number_verified" : 'true'
+                                    },
+                                    ReturnValues: "UPDATED_NEW"
+                                };
+
+                                docClient.update(update_details, function(err, data){
+                                    if(err) {
+                                        res.send({
+                                            message : 'failure',
+                                            err: err
+                                        })
+                                    } else {
+                                        res.send({
+                                            message : 'success',
+                                            data: data
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }else{
+                    res.send({
+                        message: "failure",
+                        error:"Verification code dose not match."
+                    });
+                }
+            }else{
+                res.send({
+                    message: "failure",
+                    error: "Your number can not verified yet."
+                });
+            }
         }
     })
+
 })
 
 app.post(`${apiPrefix}singUpWithToken`, (req, res) => {

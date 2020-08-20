@@ -85,6 +85,18 @@ export const updateUserDetails = (request) =>{
   })
 }
 
+export const VerifyVerificationCode = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/VerifyVerificationCode`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const VerifyNumber = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/VerifyNumber`, request,{withCredentials: true})
@@ -96,7 +108,6 @@ export const VerifyNumber = (request) =>{
       });
   })
 }
-
 
 export const logInFirstTime = (request) =>{
   return new Promise((resolve,reject)=>{

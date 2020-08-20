@@ -59,7 +59,6 @@ class Profile extends React.Component {
         if(!user_profile_to_view){
             user_profile_to_view = '';
         }
-
         this.state = {
             selectedFile: null,
             isLoading: true,
@@ -84,7 +83,8 @@ class Profile extends React.Component {
             avatar_zip_file_url_details : '',
             vtk_file_url_details : '',
             isRefreshing : false,
-            phone_number: ''
+            phone_number: '',
+            VerifyNumber:false,
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -522,16 +522,31 @@ class Profile extends React.Component {
         this.setState({[name]:value, number_verified: 'false'})
     }
     VerifyNumber=(e)=>{
-         e.preventDefault();
+        e.preventDefault();
         console.log('e',this.state.phone_number,this.state.user.user_cognito_id,this.state.selectedCountryCode);
+        this.setState({isLoading: true})
         if(this.state.phone_number){
             VerifyNumber({phone_number: this.state.phone_number, user_cognito_id:this.state.user.user_cognito_id,country_code:this.state.selectedCountryCode})
             .then(res=>{
                 console.log('res',res);
                 if(res.data.message == "success"){
-                    this.setState({number_verified: 'true'})
-                }
+                    this.setState({VerifyNumber: true})
+                }else{
+                        this.setState({
+                            isLoading: false,
+                            isLoginError: true,
+                            loginError: res.data.err
+
+                        })
+                    }
             }).catch(err => {
+                    this.setState({
+                        isLoading: false,
+                        isLoginError: true,
+                        loginError: err
+
+                    })
+
                 console.log('err',err)
             })
         }
@@ -582,7 +597,7 @@ class Profile extends React.Component {
 
 
     showProfile = () => {
-        console.log('this.state.user.profile_picture_url',this.state.user.profile_picture_url)
+        console.log('this.state.user.profile_picture_url', this.state.user.country_code)
         // this.setState({phone_number: this.state.user.phone_number})
         return (
             <React.Fragment>
@@ -1257,6 +1272,13 @@ class Profile extends React.Component {
                                 return <Redirect to="/Login" />;
                             } else if (Object.entries(this.state.user).length === 0) {
                                 return <Spinner />;
+                            }
+                            if(this.state.VerifyNumber) {
+                              return   <Redirect to={{
+                                            pathname: '/number-verification',
+                                            state: { data : {phone_number: this.state.phone_number, user_cognito_id:this.state.user.user_cognito_id,country_code:this.state.selectedCountryCode} }
+                                        }}
+                                />
                             }
 
                             return this.showProfile();

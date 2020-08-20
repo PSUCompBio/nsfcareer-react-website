@@ -350,7 +350,7 @@ class SignUpComponent extends React.Component {
           <input
             type="text"
             className="form-control contact-number"
-            placeholder="(443) 417-4223"
+            placeholder="(800) 867-5309"
             name="phone_number"
             value={this.state.phone_number} 
             onChange={this.handleInputChange}
