@@ -161,8 +161,24 @@ class TeamnAdmin extends React.Component {
 
     };
 
-    smallCards = (simulation_status,reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
+    smallCards = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
+        let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
+        if (simulation_status == 'completed') {
+            let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
+
+            let currentStamp = new Date().getTime();
+            let simulationTimestamp = parseFloat(simulation_timestamp);
+            var diff =(currentStamp - simulationTimestamp) / 1000;
+            diff /= 60;
+            let minutes =  Math.abs(Math.round(diff));
+            console.log('minutes', minutes);
+            minutes = minutes - computed_time;
+            if (minutes <= 10) {
+                cls = 'completedSimulation tech-football m-3';
+            }
+        }
+
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <div
@@ -181,7 +197,7 @@ class TeamnAdmin extends React.Component {
                             }
                         })
                     }}
-                    className={simulation_status == 'completed' ? `completedSimulation tech-football m-3` : `pendingSimulation tech-football m-3`}
+                    className={cls}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -220,6 +236,8 @@ class TeamnAdmin extends React.Component {
         for (let i = 0; i < this.state.totalTeam; i++) {
             cards[i] = this.smallCards(
                 this.state.sensorOrgTeamList[i].simulation_status,
+                this.state.sensorOrgTeamList[i].computed_time,
+                this.state.sensorOrgTeamList[i].simulation_timestamp,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,

@@ -301,8 +301,23 @@ class AdminDashboard extends React.Component {
         );
     };
 
-     smallCards2 = (simulation_status,reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+     smallCards2 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
+        let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
+        if (simulation_status == 'completed') {
+            let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
+
+            let currentStamp = new Date().getTime();
+            let simulationTimestamp = parseFloat(simulation_timestamp);
+            var diff =(currentStamp - simulationTimestamp) / 1000;
+            diff /= 60;
+            let minutes =  Math.abs(Math.round(diff));
+            console.log('minutes', minutes);
+            minutes = minutes - computed_time;
+            if (minutes <= 10) {
+                cls = 'completedSimulation tech-football m-3';
+            }
+        }
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <div
@@ -319,7 +334,7 @@ class AdminDashboard extends React.Component {
                             }
                         })
                     }}
-                    className={simulation_status == 'pending' ? `pendingSimulation tech-football m-3` : `completedSimulation tech-football m-3`}
+                    className={cls}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -352,6 +367,8 @@ class AdminDashboard extends React.Component {
         for (let i = 0; i < this.state.totalOrganization; i++) {
             cards[i] = this.smallCards2(
                 this.state.OrganizationList[i].simulation_status,
+                this.state.OrganizationList[i].computed_time,
+                this.state.OrganizationList[i].simulation_timestamp,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,
@@ -378,8 +395,23 @@ class AdminDashboard extends React.Component {
         
     };
 
-    smallCards3 = (simulation_status,reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
+    smallCards3 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
+        let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
+        if (simulation_status == 'completed') {
+            let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
+
+            let currentStamp = new Date().getTime();
+            let simulationTimestamp = parseFloat(simulation_timestamp);
+            var diff =(currentStamp - simulationTimestamp) / 1000;
+            diff /= 60;
+            let minutes =  Math.abs(Math.round(diff));
+            console.log('minutes', minutes);
+            minutes = minutes - computed_time;
+            if (minutes <= 10) {
+                cls = 'completedSimulation tech-football m-3';
+            }
+        }
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <div
@@ -398,7 +430,7 @@ class AdminDashboard extends React.Component {
                             }
                         })
                     }}
-                    className={simulation_status == "pending" ? `pendingSimulation tech-football m-3` : `completedSimulation tech-football m-3` }
+                    className={cls}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -430,6 +462,8 @@ class AdminDashboard extends React.Component {
         for (let i = 0; i < this.state.totalTeam; i++) {
             cards[i] = this.smallCards3(
                 this.state.teamList[i].simulation_status,
+                this.state.teamList[i].computed_time,
+                this.state.teamList[i].simulation_timestamp,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,

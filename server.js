@@ -2683,7 +2683,7 @@ function getBrandOrganizationData(sensor, organization) {
                     ":sensor": sensor,
                     ":organization": organization
                 },
-                ProjectionExpression: "sensor,image_id"
+                ProjectionExpression: "sensor,image_id,player_id,computed_time"
             };
         } else {
             params = {
@@ -2750,50 +2750,56 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
             orgList.forEach(function (org, index) {
                 let data = org;
                 let i = index;
-                getBrandOrganizationData(data.sensor ? data.sensor : '' ,data.organization )
+                getBrandOrganizationData(data.sensor ? data.sensor : '' , data.organization )
                     .then(simulation_records => {
                         counter++;
                         org["simulation_count"] = Number(simulation_records.length).toString();
-                        org["simulation_status"] = 'completed';
-                        if (counter == orgList.length) {
-                            
-                            var y = 0;
-                            // console.log('simulation_records',simulation_records)
-                            for(var i = 0; i < simulation_records.length; i++){
-                                getPlayerSimulationStatus(simulation_records[i].image_id)
-                                .then(data => {
-                                    if(data.status != 'completed'){
-                                        org["simulation_status"] = 'pending';
-                                    }
-                                    y++;
-                                    if(y == simulation_records.length){
+
+                        simulation_records.forEach(function (simulation_record, index) {
+                            simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                        })
+
+                        simulation_records.sort(function (b, a) {
+                            var keyA = a.date_time,
+                                keyB = b.date_time;
+                            if (keyA < keyB) return -1;
+                            if (keyA > keyB) return 1;
+                            return 0;
+                        });
+
+                        org["simulation_status"] = '';
+                        org["computed_time"] = '';
+                        org["simulation_timestamp"] = '';
+                        
+                        if (simulation_records.length > 0) {
+                            console.log(simulation_records[0].image_id);
+                            getPlayerSimulationStatus(simulation_records[0].image_id)
+                                .then(simulation => {
+                                    org["simulation_status"] = simulation.status;
+                                    org["computed_time"] = simulation.computed_time;
+                                    org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+
+                                    if (counter == orgList.length) {
                                         res.send({
                                             message: "success",
                                             data: orgList
                                         })
                                     }
+
                                 }).catch(err => {
-                                    console.log('err',err)
+                                    console.log('err',err);
                                 })
-                            }
-                            
-                        }else{
-                            var y = 0;
-                            for(var i = 0; i < simulation_records.length; i++){
-                                getPlayerSimulationStatus(simulation_records[i].image_id)
-                                .then(data => {
-                                    if(data.status != 'completed'){
-                                        org["simulation_status"] = 'pending';
-                                    }
-                                    y++;
-                                }).catch(err => {
-                                    console.log('err',err)
+                        } else {
+                            if (counter == orgList.length) {
+                                res.send({
+                                    message: "success",
+                                    data: orgList
                                 })
                             }
                         }
                     })
                     .catch(err => {
-                       counter++
+                        counter++
                         if (counter == orgList.length) {
                             res.send({
                                 message: "failure",
@@ -2835,18 +2841,36 @@ function getTeamList() {
 
 function getOrganizationTeamData(obj) {
     return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "sensor_data",
-            FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
-            ExpressionAttributeValues: {
-               ":sensor": obj.sensor,
-               ":organization": obj.organization,
-               ":team": obj.team
-            },
-            ProjectionExpression: "sensor,image_id"
-        };
+        let params;
+        if (obj.sensor) {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                   ":sensor": obj.sensor,
+                   ":organization": obj.organization,
+                   ":team": obj.team
+                },
+                ProjectionExpression: "sensor,image_id,computed_time,player_id",
+                ScanIndexForward: false
+            };
+        } else {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                   ":organization": obj.organization,
+                   ":team": obj.team
+                },
+                ProjectionExpression: "sensor,image_id,computed_time,player_id",
+                ScanIndexForward: false
+            };
+        }
+        
         var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
+        docClient.query(params).eachPage((err, data, done) => {
             if (err) {
                 reject(err);
             }
@@ -2882,58 +2906,50 @@ app.post(`${apiPrefix}getTeamList`, (req, res) => {
             teamList.forEach(function (team, index) {
                 let data = team;
                 let i = index;
-                getOrganizationTeamData({ sensor: data.sensor, organization: data.organization, team: data.team_name})
-                .then(simulation_records => {
-                    counter++;
-                    team["simulation_count"] = Number(simulation_records.length).toString();
-
-                    team["simulation_status"] = 'completed';
-                    console.log(counter , teamList.length)
-                    if (counter == teamList.length) {
-                        var y = 0;
+                getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false , organization: data.organization, team: data.team_name})
+                    .then(simulation_records => {
                         // console.log('simulation_records',simulation_records)
-                        for(var i = 0; i < simulation_records.length; i++){
-                            getPlayerSimulationStatus(simulation_records[i].image_id)
-                            .then(data => {
-                                if(data.status != 'completed'){
-                                    team["simulation_status"] = 'pending';
-                                }
-                                y++;
-                                if(y == simulation_records.length){
-                                    res.send({
-                                        message: "success",
-                                        data: teamList
-                                    })
-                                }
-                            }).catch(err => {
-                                console.log('err',err)
+                        counter++;
+                        team["simulation_count"] = Number(simulation_records.length).toString();
+                        team["simulation_status"] = '';
+                        team["computed_time"] = '';
+                        team["simulation_timestamp"] = '';
+                        if (simulation_records.length > 0) {
+                            //console.log(simulation_records[0].image_id);
+                            getPlayerSimulationStatus(simulation_records[0].image_id)
+                                .then(simulation => {
+                                    team["simulation_status"] = simulation.status;
+                                    team["computed_time"] = simulation.computed_time;
+                                    team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+
+                                    if (counter == teamList.length) {
+                                        res.send({
+                                            message: "success",
+                                            data: teamList
+                                        })
+                                    }
+
+                                }).catch(err => {
+                                    console.log('err',err);
+                                })
+                        } else {
+                            if (counter == teamList.length) {
+                                res.send({
+                                    message: "success",
+                                    data: teamList
+                                })
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        counter++
+                        if (counter == teamList.length) {
+                            res.send({
+                                message: "failure",
+                                error: err
                             })
                         }
-                        
-                    }else{
-                        var y = 0;
-                        for(var i = 0; i < simulation_records.length; i++){
-                            getPlayerSimulationStatus(simulation_records[i].image_id)
-                            .then(data => {
-                                if(data.status != 'completed'){
-                                    team["simulation_status"] = 'pending';
-                                }
-                                y++;
-                            }).catch(err => {
-                                console.log('err',err)
-                            })
-                        }
-                    }
-                })
-                .catch(err => {
-                   counter++
-                    if (counter == teamList.length) {
-                        res.send({
-                            message: "failure",
-                            error: err
-                        })
-                    }
-                })
+                    })
             })
         }
     }).catch(err =>{

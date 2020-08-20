@@ -679,7 +679,7 @@ class CommanderTeamView extends React.Component {
                                             {this.state.users.map(function (player, index) {
                                                 if (player.simulation_data.length > 0) {
                                                   let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
-                                                  let row = player.simulation_data[0].simulation_status === 'pending' ? '#FFA500' : false;
+                                                  let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
 
                                                   if (player.simulation_data[0]['impact-time']) {
                                                     let split = player.simulation_data[0]['impact-time'].split(":");
@@ -704,11 +704,11 @@ class CommanderTeamView extends React.Component {
                                                     console.log('minutes', minutes);
                                                     minutes = minutes - computed_time;
                                                     if (minutes <= 10) {
-                                                        row = '#32CD32';
+                                                        cls = 'completedSimulation player-data-table-row';
                                                     }
                                                   }
 
-                                                    return <tr style={{ backgroundColor: row}} className={player.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
+                                                    return <tr className={cls} key={index} onClick={() => {
 
                                                         this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0])
                                                     }}
