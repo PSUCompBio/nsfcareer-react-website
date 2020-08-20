@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     rowHead2Text2:{
         marginTop: '7px',
         color:'#686868',
-        fontSize: 12
+        fontSize: 9
     },
     tableHead:{
         flex: 1,
@@ -156,7 +156,10 @@ const styles = StyleSheet.create({
 class Report extends React.Component {
     constructor(props) {
         super(props);
-        console.log('props are ', this.props);
+        console.log('props are ', this.props.jsonData);
+        this.state = {
+            jsonData : this.props.jsonData[0].jsonOutputFile
+        }
     }
 
     getDateInFormat(){
@@ -180,7 +183,13 @@ class Report extends React.Component {
 
 
     render() {
-
+        console.log(this.state.jsonData)
+        var csdm;
+        if(this.state.jsonData){
+            if(this.state.jsonData['csdm-15']){
+                csdm = this.state.jsonData['csdm-15'];
+            }
+        }
         return (
             <Document>
                 <Page object-fit="fill" size="A4">
@@ -236,10 +245,12 @@ class Report extends React.Component {
                             <View style={styles.col12}>
                                  <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                 <View style={styles.rowHead2}>
-                                    <Text  style={styles.rowHead2Text}>10% of brain tissue has exceeded MASxSR</Text>
-                                    <Text style={styles.rowHead2TextSub}>7.5</Text>
-                                    <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s   )</Text>
-                                    <Text style={styles.rowHead2Text2Sub}>-1</Text>
+                                    {/*<Text  style={styles.rowHead2Text}>10% of brain tissue has exceeded MASxSR</Text>*/}
+                                    {/*<Text style={styles.rowHead2TextSub}>7.5</Text>*/}
+                                    {/* <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s   )</Text>*/}
+                                    {/* <Text style={styles.rowHead2Text2Sub}>-1</Text>*/}
+                                    <Text  style={styles.rowHead2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>
+                                    <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
                                 </View>
                             </View>
                         </View>
