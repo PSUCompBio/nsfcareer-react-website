@@ -469,10 +469,17 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
     margin-top: 5px;
     border-radius: 6px;
     cursor: pointer;
+    margin: 5px;
 }
 .Replace-video div label img{
     width: 28px;
 }
 .Replace-video div #uploadFile{
     display: none;
+}
+
+.signIn-btn:hover {
+    background: #ffffff!important;
+    color: #1e76b9;
+    /* border: solid 3px #1e76b9!important; */
 }

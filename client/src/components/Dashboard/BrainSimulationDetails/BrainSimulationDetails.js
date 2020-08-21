@@ -16,6 +16,7 @@ import videoSimulationLoading from './videoSimulationLoading.png';
 import unlock from './unlock.png';
 import lock from './lock.png';
 import upload from './upload.png';
+import remove from './remove.png';
 
 
 import uploadicon from './upload-icon.png'
@@ -31,7 +32,8 @@ import {
   getAllCumulativeAccelerationTimeRecords,
   getBrainSimulationMovie,
   uploadSidelineImpactVideo,
-  getBrainSimulationLogFile
+  getBrainSimulationLogFile,
+  removeVideo
 } from '../../../apis';
 import axios from 'axios';
 
@@ -78,7 +80,8 @@ class BrainSimulationDetails extends React.Component {
       simulation_log_path: '',
       simulation_log:'',
       uploadPercentage: 0,
-      IsAcceleration: false
+      IsAcceleration: false,
+      label_remove_video: 'Remove Video'
     };
   }
  
@@ -117,6 +120,30 @@ class BrainSimulationDetails extends React.Component {
     console.log('files', event.target.files[0]);
     this.setState({impact_video_url: ''});
     this.upload(event.target.files[0]);
+  }
+  handalRemoveVideo = () =>{
+    console.log('remove')
+     this.setState({
+      label_remove_video: 'Removing...',
+      isLoading: false
+    })
+    removeVideo({'image_id':this.props.location.state.data.sensor_data.image_id})
+    .then(res => {
+      console.log(res)
+      if(res.data.message == 'success'){
+        this.setState({
+          label_remove_video: 'Removed'
+        })
+        var the = this;
+        setTimeout(function(){
+          the.setState({impact_video_url: ''})
+        },2000)
+      }else{
+        alert(res.data.err);
+      }
+    }).catch(err =>{
+      console.log(err)
+    })
   }
 
   upload =(file)=>{
@@ -303,6 +330,7 @@ class BrainSimulationDetails extends React.Component {
                               <React.Fragment>
                                 <label for="uploadFile"><img src={upload} />  Replace Video</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
+                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
                               </React.Fragment>
                             }
                           </div>

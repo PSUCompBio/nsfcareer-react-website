@@ -146,6 +146,7 @@ class HeadAccelerationAllEvents extends React.Component {
     }
 
     render() {
+        console.log('data',this.props.data)
         return (
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
                 <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.props.data.sensor_data['impact-date'] +' '+ this.props.data.sensor_data['impact-time'] : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.props.data.sensor_data['date']  +' '+ this.props.data.sensor_data['time']  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
@@ -173,6 +174,11 @@ class HeadAccelerationAllEvents extends React.Component {
                                     */}
                                    
                                    <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.props.data.simulation_image ? 'data:image/png;base64,' + this.props.data.simulation_image : simulationLoading} alt="" />
+                                     {
+                                    !this.props.data.sensor_data ?
+                                       null
+
+                                     : 
                                     <Link  to={{
                                             pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',
                                             
@@ -182,6 +188,7 @@ class HeadAccelerationAllEvents extends React.Component {
                                            } 
 
                                         }} ><button className="btn btn-primary ">View Details</button></Link>
+                                    }
                                 </div>
                             </div>
                         </div>
