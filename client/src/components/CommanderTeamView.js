@@ -668,7 +668,6 @@ class CommanderTeamView extends React.Component {
 
                                                 <th scope="col">Player ID</th>
                                                 <th scope="col">Player Name</th>
-                                                {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
                                                 <th scope="col">Impact Date</th>
                                                 <th scope="col">Impact Time</th>
                                                 <th scope="col">Simulation Date</th>
@@ -719,10 +718,6 @@ class CommanderTeamView extends React.Component {
 
                                                         }</th>
                                                         <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                        {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
-                                                        { /* this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td> */}
-
-                                                        {/*<td>{Number(player.impact)}</td>*/}
                                                         <td style={{ alignItems: "center" }}>
                                                              {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
                                                         <td style={{ alignItems: "center" }}>

@@ -260,8 +260,22 @@ class AdminDashboard extends React.Component {
         })
     }
 
-    smallCards = (reference, brand, user_cognito_id, noOfSimulation, key) => {
-        // console.log(reference);
+    smallCards = (simulation_status, computed_time, simulation_timestamp, reference, brand, user_cognito_id, noOfSimulation, key) => {
+        let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
+        if (simulation_status == 'completed') {
+            let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
+
+            let currentStamp = new Date().getTime();
+            let simulationTimestamp = parseFloat(simulation_timestamp);
+            var diff =(currentStamp - simulationTimestamp) / 1000;
+            diff /= 60;
+            let minutes =  Math.abs(Math.round(diff));
+            console.log('minutes', minutes);
+            minutes = minutes - computed_time;
+            if (minutes <= 10) {
+                cls = 'completedSimulation tech-football m-3';
+            }
+        }
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <div
@@ -277,7 +291,7 @@ class AdminDashboard extends React.Component {
                             }
                         })
                     }}
-                    className={`tech-football m-3`}
+                    className={cls}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -506,8 +520,11 @@ class AdminDashboard extends React.Component {
         for (let i = 0; i < this.state.totalBrand; i++) {
 
             const brand = this.state.sensorBrandList[i];
-            console.log("POP IT ", brand);
+            
             cards[i] = this.smallCards(
+                this.state.sensorBrandList[i].simulation_status,
+                this.state.sensorBrandList[i].computed_time,
+                this.state.sensorBrandList[i].simulation_timestamp,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,
@@ -546,6 +563,33 @@ class AdminDashboard extends React.Component {
         return `${month}-${date}-${year} ${hour}:${minute}:${second}:${rest}`
     }
 
+    getDate = (timestamp) => {
+
+        const plus0 = num => `0${num.toString()}`.slice(-2)
+      
+        const d = new Date(timestamp)
+      
+        const year = d.getFullYear()
+        const monthTmp = d.getMonth() + 1
+        const month = plus0(monthTmp)
+        const date = plus0(d.getDate())
+        
+        return `${month}/${date}/${year}`
+    }
+
+    tConvert = (time) => {
+        // Check correct time format and split into components
+        time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+      
+        if (time.length > 1) { // If time format correct
+          time = time.slice (1);  // Remove full string match value
+          time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+          time[0] = +time[0] % 12 || 12; // Adjust hours
+        }
+        return time.join (''); // return adjusted time or original string
+    }
+
+
     retunrnRosterBtn = () => {
         return (
             <React.Fragment>
@@ -571,7 +615,24 @@ class AdminDashboard extends React.Component {
     tableSensor = () => {
         var body =  this.state.sensorBrandList.map(function (sensor, index) {
                 if (sensor) {
-                    return <tr className="player-data-table-row" key={index} onClick={() => {
+
+                    let cls = sensor.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (sensor.simulation_status == 'completed') {
+                        let computed_time = sensor.computed_time ? parseFloat(sensor.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(sensor.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+
+                    return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/OrganizationAdmin',
                             state: {
@@ -597,7 +658,24 @@ class AdminDashboard extends React.Component {
         console.log(this.state.OrganizationList)
         var body =  this.state.OrganizationList.map(function (organization, index) {
                 if (organization) {
-                    return <tr className={organization.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`}  key={index} onClick={() => {
+
+                    let cls = organization.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (organization.simulation_status == 'completed') {
+                        let computed_time = organization.computed_time ? parseFloat(organization.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(organization.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+
+                    return <tr className={cls}  key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin',
                             state: {
@@ -626,7 +704,23 @@ class AdminDashboard extends React.Component {
 
         var body =  this.state.teamList.map(function (team, index) {
                 if (team) {
-                    return <tr className={team.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
+
+                    let cls = team.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (team.simulation_status == 'completed') {
+                        let computed_time = team.computed_time ? parseFloat(team.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(team.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+                    return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin/team/players',
                             state: {
@@ -786,38 +880,62 @@ class AdminDashboard extends React.Component {
                                                     <thead>
                                                         <tr>
 
-                                                            <th scope="col">Player ID</th>
-                                                            <th scope="col">Player Name</th>
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
-                                                            <th scope="col">Impact Date & Time</th>
-                                                            <th scope="col">Simulation Date & Time</th>
+                                                        <th scope="col">Player ID</th>
+                                                    <th scope="col">Player Name</th>
+                                                    <th scope="col">Impact Date</th>
+                                                    <th scope="col">Impact Time</th>
+                                                    <th scope="col">Simulation Date</th>
+                                                    <th scope="col">Simulation Time</th>
                                                         </tr>
                                                     </thead>
                                                   <tbody className="player-table">
                                                         {this.state.playerList.map(function (player, index) {
                                                             if (player.simulation_data.length > 0) {
-                                                              let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+              
+                                                                if (player.simulation_data[0]['impact-time']) {
+                                                                  let split = player.simulation_data[0]['impact-time'].split(":");
+                                                                  player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0]['time']) {
+                                                                  let split = player.simulation_data[0]['time'].toString();
+                                                                  split = split.split(":");
+                                                                  player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0].simulation_status === 'completed' ) {
+              
+                                                                  let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
+              
+                                                                  let currentStamp = new Date().getTime();
+                                                                  let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
+                                                                  var diff =(currentStamp - simulationTimestamp) / 1000;
+                                                                  diff /= 60;
+                                                                  let minutes =  Math.abs(Math.round(diff));
+                                                                  console.log('minutes', minutes);
+                                                                  minutes = minutes - computed_time;
+                                                                  if (minutes <= 10) {
+                                                                      cls = 'completedSimulation player-data-table-row';
+                                                                  }
+                                                                }
 
-                                                                return <tr className="player-data-table-row" key={index} onClick={() => {
+                                                                return <tr className={cls} key={index} onClick={() => {
 
                                                                     this.setRedirectData(Number(index + 1).toString(), player.player_name)
                                                                 }}
                                                                 >
                                                                     <th style={{ verticalAlign: "middle" }} scope="row">
                                                                     {  
-                                                                        player.simulation_data[0].player_id.split('$')[1]
+                                                                        player.simulation_data[0].player_id.split('$')[0]
 
                                                                     }</th>
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td>}
-
-                                                                    {/*<td>{Number(player.impact)}</td>*/}
                                                                     <td style={{ alignItems: "center" }}>
-                                                                         {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']:  player.simulation_data[0]['date']  && player.simulation_data[0]['time']? player.simulation_data[0]['date'] +' '+ player.simulation_data[0]['time']  : 'Unkown Date and Time' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
@@ -833,7 +951,8 @@ class AdminDashboard extends React.Component {
                                                                                             </div>
                                                                                             </td>
                                                                                             */}
-                                                                    <td style={{ alignItems: "center" }}>{dateTime}</td>
+                                                                    <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
+                                                                    <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
                                                                 </tr>;
                                                             }
                                                         }, this)}
@@ -854,38 +973,62 @@ class AdminDashboard extends React.Component {
                                                     <thead>
                                                         <tr>
 
-                                                            <th scope="col">Player ID</th>
-                                                            <th scope="col">Player Name</th>
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
-                                                            <th scope="col">Impact Date & Time</th>
-                                                            <th scope="col">Simulation Date & Time</th>
+                                                        <th scope="col">Player ID</th>
+                                                        <th scope="col">Player Name</th>
+                                                        <th scope="col">Impact Date</th>
+                                                        <th scope="col">Impact Time</th>
+                                                        <th scope="col">Simulation Date</th>
+                                                        <th scope="col">Simulation Time</th>    
                                                         </tr>
                                                     </thead>
                                                   <tbody className="player-table">
                                                         {this.state.playerList.map(function (player, index) {
                                                             if (player.simulation_data.length > 0) {
-                                                              let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+              
+                                                                if (player.simulation_data[0]['impact-time']) {
+                                                                  let split = player.simulation_data[0]['impact-time'].split(":");
+                                                                  player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0]['time']) {
+                                                                  let split = player.simulation_data[0]['time'].toString();
+                                                                  split = split.split(":");
+                                                                  player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0].simulation_status === 'completed' ) {
+              
+                                                                  let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
+              
+                                                                  let currentStamp = new Date().getTime();
+                                                                  let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
+                                                                  var diff =(currentStamp - simulationTimestamp) / 1000;
+                                                                  diff /= 60;
+                                                                  let minutes =  Math.abs(Math.round(diff));
+                                                                  console.log('minutes', minutes);
+                                                                  minutes = minutes - computed_time;
+                                                                  if (minutes <= 10) {
+                                                                      cls = 'completedSimulation player-data-table-row';
+                                                                  }
+                                                                }
 
-                                                                return <tr className={player.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
+                                                                return <tr className={cls} key={index} onClick={() => {
 
                                                                     this.setRedirectData(Number(index + 1).toString(), player.player_name)
                                                                 }}
                                                                 >
                                                                     <th style={{ verticalAlign: "middle" }} scope="row">
                                                                     {  
-                                                                        player.simulation_data[0].player_id.split('$')[1]
+                                                                        player.simulation_data[0].player_id.split('$')[0]
 
                                                                     }</th>
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td>}
-
-                                                                    {/*<td>{Number(player.impact)}</td>*/}
                                                                     <td style={{ alignItems: "center" }}>
-                                                                         {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']:  player.simulation_data[0]['date']  && player.simulation_data[0]['time']? player.simulation_data[0]['date'] +' '+ player.simulation_data[0]['time']  : 'Unkown Date and Time' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
@@ -901,7 +1044,8 @@ class AdminDashboard extends React.Component {
                                                                                             </div>
                                                                                             </td>
                                                                                             */}
-                                                                    <td style={{ alignItems: "center" }}>{dateTime}</td>
+                                                                    <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
+                                                                    <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
                                                                 </tr>;
                                                             }
                                                         }, this)}

@@ -1022,7 +1022,6 @@ function getUserSensor(user_name) {
     });
 }
 function getOrganizationList() {
-    console.log('getOrganizationList')
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
@@ -2792,7 +2791,7 @@ function getBrandOrganizationData(sensor, organization) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (sensor != '') {
+        if (sensor !== '') {
             params = {
                 TableName: "sensor_data",
                 FilterExpression: "sensor = :sensor and organization = :organization",
@@ -2809,7 +2808,7 @@ function getBrandOrganizationData(sensor, organization) {
                 ExpressionAttributeValues: {
                    ":organization": organization
                 },
-                ProjectionExpression: "sensor,image_id"
+                ProjectionExpression: "sensor,image_id,player_id,computed_time"
             };
         }
         
@@ -2845,97 +2844,90 @@ function getPlayerSimulationStatus(image_id) {
     });
 }
 app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
-    console.log(req.body)
     getOrganizationList()
-    .then(list =>{
-        console.log('list',list.length)
-        let uniqueList = [];
-        var orgList = list.filter(function (organization) {
-            if (uniqueList.indexOf(organization.organization) === -1) {
-                uniqueList.push(organization.organization);
-                return organization;
-            }
-        });
+        .then(list => {
+            let uniqueList = [];
+            var orgList = list.filter(function (organization) {
+                if (uniqueList.indexOf(organization.organization) === -1) {
+                    uniqueList.push(organization.organization);
+                    return organization;
+                }
+            });
 
-        let counter = 0;
-        if (orgList.length == 0) {
-            res.send({
-                message: "success",
-                data: []
-            })
-        } else {
-            orgList.forEach(function (org, index) {
-                let data = org;
-                let i = index;
-                getBrandOrganizationData(data.sensor ? data.sensor : '' , data.organization )
-                    .then(simulation_records => {
-                        counter++;
-                        org["simulation_count"] = Number(simulation_records.length).toString();
+            let counter = 0;
+            if (orgList.length == 0) {
+                res.send({
+                    message: "success",
+                    data: []
+                })
+            } else {
+                orgList.forEach(function (org, index) {
+                    let data = org;
+                    let i = index;
+                    getBrandOrganizationData('' , data.organization )
+                        .then(simulation_records => {
+                            
+                            org["simulation_count"] = Number(simulation_records.length).toString();
+                            org["simulation_status"] = '';
+                            org["computed_time"] = '';
+                            org["simulation_timestamp"] = '';
 
-                        simulation_records.forEach(function (simulation_record, index) {
-                            simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            simulation_records.forEach(function (simulation_record, index) {
+                                simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            })
+
+                            simulation_records.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+
+                            if (simulation_records.length > 0) {
+                                getPlayerSimulationStatus(simulation_records[0].image_id)
+                                    .then(simulation => {
+                                        org["simulation_status"] = simulation.status;
+                                        org["computed_time"] = simulation.computed_time;
+                                        org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                        counter++;
+                                        if (counter == orgList.length) {
+                                            res.send({
+                                                message: "success",
+                                                data: orgList
+                                            })
+                                        }
+                                    }).catch(err => {
+                                        console.log('err',err);
+                                    })
+                            } else {
+                                counter++;
+                                if (counter == orgList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: orgList
+                                    })
+                                }
+                            }
                         })
-
-                        simulation_records.sort(function (b, a) {
-                            var keyA = a.date_time,
-                                keyB = b.date_time;
-                            if (keyA < keyB) return -1;
-                            if (keyA > keyB) return 1;
-                            return 0;
-                        });
-
-                        org["simulation_status"] = '';
-                        org["computed_time"] = '';
-                        org["simulation_timestamp"] = '';
-                        
-                        if (simulation_records.length > 0) {
-                            console.log(simulation_records[0].image_id);
-                            getPlayerSimulationStatus(simulation_records[0].image_id)
-                                .then(simulation => {
-                                    org["simulation_status"] = simulation.status;
-                                    org["computed_time"] = simulation.computed_time;
-                                    org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
-
-                                    if (counter == orgList.length) {
-                                        res.send({
-                                            message: "success",
-                                            data: orgList
-                                        })
-                                    }
-
-                                }).catch(err => {
-                                    console.log('err',err);
-                                })
-                        } else {
+                        .catch(err => {
+                            counter++
                             if (counter == orgList.length) {
                                 res.send({
-                                    message: "success",
-                                    data: orgList
+                                    message: "failure",
+                                    error: err
                                 })
                             }
-                        }
-                    })
-                    .catch(err => {
-                        counter++
-                        if (counter == orgList.length) {
-                            res.send({
-                                message: "failure",
-                                error: err
-                            })
-                        }
-                    })
-            })
-        }
-    })
-    .catch(err =>{
-        console.log('err',err)
-    })
-
-
+                        })
+                })
+            }
+        })
+        .catch(err =>{
+            console.log('err',err)
+        })
 })
 
 function getTeamList() {
-    console.log('getTeamList')
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
@@ -3002,84 +2994,94 @@ function getOrganizationTeamData(obj) {
 }
 
 app.post(`${apiPrefix}getTeamList`, (req, res) => {
-    console.log(req.body);
-    getTeamList().then(list=>{
-        // console.log('list',list)
-        let uniqueList = [];
-        var teamList = list.filter(function (team_name) {
-            return (!("teamList" in team_name));
-        });
+    getTeamList()
+        .then(list=>{
+            // console.log('list',list)
+            let uniqueList = [];
+            var teamList = list.filter(function (team_name) {
+                return (!("teamList" in team_name));
+            });
 
-        // console.log(teamList);
-
-        let counter = 0;
-        if (teamList.length == 0) {
-            res.send({
-                message: "success",
-                data: []
-            })
-        } else {
             // console.log(teamList);
-            teamList.forEach(function (team, index) {
-                let data = team;
-                let i = index;
-                getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false , organization: data.organization, team: data.team_name})
-                    .then(simulation_records => {
-                        // console.log('simulation_records',simulation_records)
-                        counter++;
-                        team["simulation_count"] = Number(simulation_records.length).toString();
-                        team["simulation_status"] = '';
-                        team["computed_time"] = '';
-                        team["simulation_timestamp"] = '';
-                        if (simulation_records.length > 0) {
-                            //console.log(simulation_records[0].image_id);
-                            getPlayerSimulationStatus(simulation_records[0].image_id)
-                                .then(simulation => {
-                                    team["simulation_status"] = simulation.status;
-                                    team["computed_time"] = simulation.computed_time;
-                                    team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
 
-                                    if (counter == teamList.length) {
-                                        res.send({
-                                            message: "success",
-                                            data: teamList
-                                        })
-                                    }
+            let counter = 0;
+            if (teamList.length == 0) {
+                res.send({
+                    message: "success",
+                    data: []
+                })
+            } else {
+                // console.log(teamList);
+                teamList.forEach(function (team, index) {
+                    let data = team;
+                    let i = index;
+                    getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false , organization: data.organization, team: data.team_name})
+                        .then(simulation_records => {
+                            
+                            team["simulation_count"] = Number(simulation_records.length).toString();
+                            team["simulation_status"] = '';
+                            team["computed_time"] = '';
+                            team["simulation_timestamp"] = '';
 
-                                }).catch(err => {
-                                    console.log('err',err);
-                                })
-                        } else {
+                            simulation_records.forEach(function (simulation_record, index) {
+                                simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            })
+
+                            simulation_records.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+
+                            if (simulation_records.length > 0) {
+                                getPlayerSimulationStatus(simulation_records[0].image_id)
+                                    .then(simulation => {
+                                        team["simulation_status"] = simulation.status;
+                                        team["computed_time"] = simulation.computed_time;
+                                        team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                        counter++;
+                                        if (counter == teamList.length) {
+                                            res.send({
+                                                message: "success",
+                                                data: teamList
+                                            })
+                                        }
+
+                                    }).catch(err => {
+                                        console.log('err',err);
+                                    })
+                            } else {
+                                counter++;
+                                if (counter == teamList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: teamList
+                                    })
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            counter++
                             if (counter == teamList.length) {
                                 res.send({
-                                    message: "success",
-                                    data: teamList
+                                    message: "failure",
+                                    error: err
                                 })
                             }
-                        }
-                    })
-                    .catch(err => {
-                        counter++
-                        if (counter == teamList.length) {
-                            res.send({
-                                message: "failure",
-                                error: err
-                            })
-                        }
-                    })
+                        })
+                })
+            }
+        }).catch(err => {
+            res.send({
+                message: "failure",
+                error: err
             })
-        }
-    }).catch(err =>{
-        console.log('err',err)
-        res.send({
-            message: "failure",
-            error: err
         })
-    })
 });
 
 function getPlayerList() {
-    console.log('getTeamList')
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
@@ -3098,23 +3100,39 @@ function getPlayerList() {
         });
     });
 }
-function getTeamDataWithPlayerRecords(player_id,team,sensor,organization) {
-    console.log('player_id',player_id,team,sensor,organization)
+function getTeamDataWithPlayerRecords(player_id, team, sensor, organization) {
     return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "sensor_data",
-            FilterExpression: "sensor = :sensor and organization = :organization and team = :team and begins_with(player_id,:player_id)",
-            ExpressionAttributeValues: {
-               ":sensor": sensor,
-               ":organization": organization,
-               ":team": team,
-               ":player_id": player_id,
-            }
-        };
+        let params;
+
+        if (sensor) {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                ":sensor": sensor,
+                ":organization": organization,
+                ":team": team,
+                ":player_id": player_id + '$',
+                },
+                ScanIndexForward: false
+            };
+        } else {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                ":organization": organization,
+                ":team": team,
+                ":player_id": player_id + '$',
+                },
+                ScanIndexForward: false
+            };
+        }
         var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
+        docClient.query(params).eachPage((err, data, done) => {
             if (err) {
-                console.log('err',err)
                 reject(err);
             }
             if (data == null) {
@@ -3122,23 +3140,18 @@ function getTeamDataWithPlayerRecords(player_id,team,sensor,organization) {
             } else {
                 item.push(data.Items);
             }
-                console.log(data)
             done();
         });
     });
 }
 
 app.post(`${apiPrefix}getPlayerList`, (req, res) => {
-    console.log(req.body);
-    getPlayerList().then(players=>{
-        // console.log('player',players)
+    getPlayerList().then(players => {
         var player_list = [];
         for(var i =0; i < players.length; i++){
             if(players[i].player_list){
                 var list = players[i].player_list;
                 for(var j = 0;j < list.length; j++){
-                // console.log(list[j])
-
                     player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
                 }
             }
@@ -3159,7 +3172,7 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                 let j = index;
                 let playerData = '';
                 if(player.player_id && player.player_id != 'undefined'){
-                    getTeamDataWithPlayerRecords(player.player_id, player.team,  player.sensor, player.organization)
+                    getTeamDataWithPlayerRecords(player.player_id, player.team, player.sensor, player.organization)
                     .then(player_data => {
                         playerData = player_data;
                         counter++;
@@ -3201,44 +3214,7 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                                     })
                             })
                         }
-                        // if (counter == player_listLn) {
-                        //     for(var i = 0; i < player_data.length; i++){
-                        //         var ind = indx;
-                        //         getPlayerSimulationStatus(player_data[i].image_id)
-                        //         .then(data => {
-                        //             if(data.status != 'completed'){
-                        //                 p_data[ind].simulation_status = 'pending';
-                        //             }
-                        //             console.log('data.status', p_data[indx].simulation_status)
-
-                        //             y++;
-                        //             if(y == player_data.length){
-                        //                 res.send({
-                        //                     message: "success",
-                        //                     data: p_data
-                        //                 })
-                        //             }
-                        //         }).catch(err => {
-                        //             console.log('err',err)
-                        //         })
-                        //     }
-                            
-                        // }else{
-                        //     for(var i = 0; i < player_data.length; i++){
-                        //         var ind = indx;
-                        //         getPlayerSimulationStatus(player_data[indx].image_id)
-                        //         .then(data => {
-                        //             console.log('data.status', p_data[indx].simulation_status)
-
-                        //             if(data.status != 'completed'){
-                        //                p_data[ind].simulation_status = 'pending';
-                        //             }
-                        //             y++;
-                        //         }).catch(err => {
-                        //             console.log('err',err)
-                        //         })
-                        //     }
-                        // }
+                        
                         indx++;
                     })
                     .catch(err => {

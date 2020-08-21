@@ -134,12 +134,18 @@ class ExportPlayerReport extends React.Component {
 	}
 
 	onMouseHover = (event, type) => {
-		if (event !== '') event.preventDefault();
+		if (event !== "") event.preventDefault();
 
-		if (event !== '') {
+		if (event !== "") {
 			this.highlightGraphBar(type);
 		}
-		
+
+		this.unHighlightPickedObject();
+
+		pickedObject = scene.getObjectByName(type, true);
+
+		if (pickedObject) this.highlightPickedObject();
+
 		this.createLobeSheres(type);
 	}
 
@@ -228,20 +234,39 @@ class ExportPlayerReport extends React.Component {
 
 	resetHighLight = () => {
 
-		// Clear pick position
-		this.clearPickPosition();
-		
 		let barColors = defaultBarColors;
 		
 		this.setState({
 			barColors: barColors
 		});
 
+		this.unHighlightPickedObject();
+
 		// Show all spheres
 		this.showAllSpheres();
 	}
 
 	pick = (normalizedPosition, pickingScene, pickingCamera) => {
+		// cast a ray through the frustum
+		raycaster.setFromCamera(normalizedPosition, pickingCamera);
+		// get the list of objects the ray intersected
+		const intersectedObjects = raycaster.intersectObjects(
+			brainModel.children[0].children[0].children
+		);
+
+		if (intersectedObjects.length) {
+			this.unHighlightPickedObject();
+			// pick the first object. It's the closest one
+			pickedObject = intersectedObjects[0].object;
+
+			this.highlightPickedObject();
+
+			this.highlightGraphBar(pickedObject.name);
+			this.createLobeSheres(pickedObject.name);
+		}
+	}
+
+	unHighlightPickedObject = () => {
 		// restore the color if there is a picked object
 		if (pickedObject) {
 			pickedObject.material.emissive.setHex(pickedObjectSavedColor);
@@ -250,33 +275,23 @@ class ExportPlayerReport extends React.Component {
 			pickedObject = undefined;
 			this.cursorAdd(false);
 		}
+	};
 
-		// cast a ray through the frustum
-		raycaster.setFromCamera(normalizedPosition, pickingCamera);
-		// get the list of objects the ray intersected
-		const intersectedObjects = raycaster.intersectObjects(brainModel.children[0].children[0].children);
-
-		if (intersectedObjects.length) {
-			this.cursorAdd(true);
-			// pick the first object. It's the closest one
-			pickedObject = intersectedObjects[0].object;
-			// save its color
-			pickedObjectSavedColor = pickedObject.material.emissive.getHex();
-			// set its emissive color to flashing red/yellow
-			pickedObject.material.emissiveIntensity = highlightEmissiveIntensity;
-			pickedObject.material.opacity = highlightTransparency;
-			pickedObject.material.emissive.setHex(highlightColor);
-
-			this.highlightGraphBar(pickedObject.name);
-			this.createLobeSheres(pickedObject.name);
-		}
-	}
+	highlightPickedObject = () => {
+		this.cursorAdd(true);
+		// save its color
+		pickedObjectSavedColor = pickedObject.material.emissive.getHex();
+		// set its emissive color to flashing red/yellow
+		pickedObject.material.emissiveIntensity = highlightEmissiveIntensity;
+		pickedObject.material.opacity = highlightTransparency;
+		pickedObject.material.emissive.setHex(highlightColor);
+	};
 
 	sceneSetup = () => {
 		scene = new THREE.Scene();
-		scene.background = new THREE.Color('black');
+		scene.background = new THREE.Color("black");
 
-		canvas = document.querySelector('#c');
+		canvas = document.querySelector("#c");
 
 		renderer = new THREE.WebGLRenderer({
 			canvas: canvas,
@@ -284,12 +299,12 @@ class ExportPlayerReport extends React.Component {
 			alpha: true
 		});
 
-		aspectRatio = window.innerWidth / window.innerHeight;
+		aspectRatio = canvas.clientWidth / canvas.clientHeight;
 		width = (canvas.clientWidth / amount) * window.devicePixelRatio;
 		height = (canvas.clientHeight / amount) * window.devicePixelRatio;
 		renderer.setPixelRatio(window.devicePixelRatio);
 		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-	}
+	};
 
 	cameraSetup = () => {
 		let cameras = [];
@@ -302,8 +317,18 @@ class ExportPlayerReport extends React.Component {
 
 				if (cameraAtt.length === 0) cameraAtt[0] = defaultCamAtt;
 
-				const subCamera = new THREE.PerspectiveCamera(cameraAtt[0].fov, aspectRatio, near, far);
-				subCamera.viewport = new THREE.Vector4(Math.floor(x * width + space / 2), Math.floor(y * height + space / 2), Math.ceil(width) - space, Math.ceil(height) - space);
+				const subCamera = new THREE.PerspectiveCamera(
+					cameraAtt[0].fov,
+					aspectRatio,
+					near,
+					far
+				);
+				subCamera.viewport = new THREE.Vector4(
+					Math.floor(x * width + space / 2),
+					Math.floor(y * height + space / 2),
+					Math.ceil(width) - space,
+					Math.ceil(height) - space
+				);
 
 				const subCameraContainer = new THREE.Object3D();
 				subCameraContainer.add(subCamera);
@@ -323,16 +348,16 @@ class ExportPlayerReport extends React.Component {
 
 		camera = new THREE.ArrayCamera(cameras);
 		camera.position.z = 3;
-	}
+	};
 
 	lightSetup = () => {
-		const hemLight = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 1);
+		const hemLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 1);
 		scene.add(hemLight);
 
-		const dirLight = new THREE.DirectionalLight(0xFFFFFF, 1);
+		const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 		dirLight.position.set(10, 20, 10);
 		scene.add(dirLight);
-	}
+	};
 
 	generateSphere = (x, y, z, sphereName) => {
 		if (root) {
@@ -388,72 +413,59 @@ class ExportPlayerReport extends React.Component {
 
 		let me = this;
 
-		me.setState({
-			isLoading: true
-		});
-
 		// Load&Add brain
 		const gltfLoader = new GLTFLoader();
-		gltfLoader.load(brain, (gltf) => {
-			root = gltf.scene;
+		gltfLoader.load(brain,
+			(gltf) => {
+				root = gltf.scene;
 
-			const box = new THREE.Box3().setFromObject(root);
-			const boxSize = box.getSize(new THREE.Vector3()).length();
-			const boxCenter = box.getCenter(new THREE.Vector3());
+				const box = new THREE.Box3().setFromObject(root);
+				const boxSize = box.getSize(new THREE.Vector3()).length();
+				const boxCenter = box.getCenter(new THREE.Vector3());
 
-			// Add pointer(s) to brain model as children
-			// const sphereGeo = new THREE.SphereGeometry(.003, 32, 32);
-			// const sphereMat = new THREE.MeshStandardMaterial({
-			// 	color: 0xff0000
-			// });
-			// const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-			// const pointerPos = new THREE.Vector3(0.0160951, -0.34639, -0.049492);
-			// // (x, y, z) --> (x, -z, y)
-			// sphere.position.x += pointerPos.x;
-			// sphere.position.y += pointerPos.z;
-			// sphere.position.z -= pointerPos.y;
-			// sphere.name = "pointer"
-			// root.add(sphere);
+				this.showAllSpheres();
 
-			// this.generateSphere(0.0160951, -0.34639, -0.049492, 'pointer1');
-			// this.generateSphere(0.00858463, -0.41321, 0.00714862, 'pointer2');
-			this.showAllSpheres();
+				root.position.x -= boxCenter.x;
+				root.position.y -= boxCenter.y;
+				root.position.z -= boxCenter.z;
 
-			root.position.x -= boxCenter.x;
-			root.position.y -= boxCenter.y;
-			root.position.z -= boxCenter.z;
+				root.traverse((n) => {
+					let match = n.name.match(/pointer/g);
 
-			root.traverse((n) => {
-				let match = n.name.match(/pointer/g);
-				
-				if (n.isMesh && !match) {
-					n.material = n.material.clone();
-					n.material.transparent = true;
-					n.material.map = null;
-					n.material.color.set(defaultColor);
-					n.material.opacity = defaultTransparency;
+					if (n.isMesh && !match) {
+						n.material = n.material.clone();
+						n.material.transparent = true;
+						n.material.map = null;
+						n.material.color.set(defaultColor);
+						n.material.opacity = defaultTransparency;
 
-					if (n.name !== "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord" && n.name !== "Cerebellum_node_Cerebellum" && n.name !== "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R" && n.name !== "Frontal_Lobe_node_Frontal_Lobe" && n.name !== "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex" && n.name !== "node_Mesh_16" && n.name !== "Temporal_Lobe_node_Temporal_Lobe")
-						n.visible = false;
-				}
-			});
+						if (
+							n.name !== "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord" &&
+							n.name !== "Cerebellum_node_Cerebellum" &&
+							n.name !== "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R" &&
+							n.name !== "Frontal_Lobe_node_Frontal_Lobe" &&
+							n.name !==
+							"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex" &&
+							n.name !== "node_Mesh_16" &&
+							n.name !== "Temporal_Lobe_node_Temporal_Lobe"
+						)
+							n.visible = false;
+					}
+				});
 
-			brainModel = new THREE.Object3D();
-			brainModel.add(root);
-			brainModel.rotation.x = Math.PI / 2;
-			brainModel.rotation.y = Math.PI;
-			brainModel.rotation.z = Math.PI;
+				brainModel = new THREE.Object3D();
+				brainModel.add(root);
+				brainModel.rotation.x = Math.PI / 2;
+				brainModel.rotation.y = Math.PI;
+				brainModel.rotation.z = Math.PI;
 
-			scene.add(brainModel);
-
-			me.setState({
-				isLoading: false
-			});
-		});
-	}
+				scene.add(brainModel);
+			}
+		);
+	};
 
 	onWindowResize = () => {
-		aspectRatio = window.innerWidth / window.innerHeight;
+		aspectRatio = canvas.clientWidth / canvas.clientHeight;
 		// width = (window.innerWidth / amount) * window.devicePixelRatio;
 		// height = (window.innerHeight / amount) * window.devicePixelRatio;
 		// renderer.setSize(window.innerWidth, window.innerHeight);
@@ -470,13 +482,14 @@ class ExportPlayerReport extends React.Component {
 					Math.floor(x * width + space / 2),
 					Math.floor(y * height + space / 2),
 					Math.ceil(width - space),
-					Math.ceil(height - space));
+					Math.ceil(height - space)
+				);
 
 				subCamera.aspect = aspectRatio;
 				subCamera.updateProjectionMatrix();
 			}
 		}
-	}
+	};
 
 	onMouseMove = (event) => {
 		// Set pick position
@@ -493,7 +506,7 @@ class ExportPlayerReport extends React.Component {
 				}
 			})
 		}
-
+		this.unHighlightPickedObject();
 		this.setState({
 			barColors: defaultBarColors
 		});
@@ -527,32 +540,47 @@ class ExportPlayerReport extends React.Component {
 	getCanvasRelativePosition = (event) => {
 		const rect = canvas.getBoundingClientRect();
 		return {
-			x: (event.clientX - rect.left) * canvas.width / rect.width,
-			y: (event.clientY - rect.top) * canvas.height / rect.height,
+			x: ((event.clientX - rect.left) * canvas.width) / rect.width,
+			y: ((event.clientY - rect.top) * canvas.height) / rect.height
 		};
-	}
+	};
 
 	setPickPosition = (event) => {
+		const pos = this.getCanvasRelativePosition(event);
+
+		if (pos.x < 0 || pos.y < 0) return;
+
 		for (let y = 0; y < amount; y++) {
 			for (let x = 0; x < amount; x++) {
 				const startX = Math.floor(x * width + space / 2);
-				const endX = Math.floor(x * width + space / 2) + Math.ceil(width - space);
+				const endX =
+					Math.floor(x * width + space / 2) + Math.ceil(width - space);
 				const startY = Math.floor(y * height + space / 2);
-				const endY = Math.floor(y * height + space / 2) + Math.ceil(height - space);
+				const endY =
+					Math.floor(y * height + space / 2) + Math.ceil(height - space);
 
-				if (event.clientX * window.devicePixelRatio >= startX && event.clientX * window.devicePixelRatio <= endX && amount * height - event.clientY * window.devicePixelRatio >= startY && amount * height - event.clientY * window.devicePixelRatio <= endY) {
+				if (
+					pos.x * window.devicePixelRatio >= startX &&
+					pos.x * window.devicePixelRatio <= endX &&
+					amount * height - pos.y * window.devicePixelRatio >= startY &&
+					amount * height - pos.y * window.devicePixelRatio <= endY
+				) {
 					// Current camera
 					currentSubCamera = camera.cameras[amount * y + x];
 
-					const pos = this.getCanvasRelativePosition(event);
-					pickPosition.x = ((event.clientX * window.devicePixelRatio - x * width) / width) * 2 - 1;
-					pickPosition.y = ((event.clientY * window.devicePixelRatio - ((amount - 1) - y) * height) / height) * -2 + 1;
+					pickPosition.x =
+						((pos.x * window.devicePixelRatio - x * width) / width) * 2 - 1;
+					pickPosition.y =
+						((pos.y * window.devicePixelRatio - (amount - 1 - y) * height) /
+							height) *
+						-2 +
+						1;
 
 					break;
 				}
 			}
 		}
-	}
+	};
 
 	clearPickPosition = () => {
 		// unlike the mouse which always has a position
@@ -579,12 +607,12 @@ class ExportPlayerReport extends React.Component {
 	let me = this;
 	
 	const { brainStrainActive } = this.state;
-	frontal_Lobe_json = this.props.brainRegions[brainStrainActive].frontal || [{x: 0.00205875, y: -0.413274, z: -0.0556418}]
-	cerebellum_Lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || [{x: 0.00679913, y: -0.313188, z: 0.0161927}]
-	Occipital_Lobe_json = this.props.brainRegions[brainStrainActive].occipital || [{x: 0.0114976, y: -0.368995, z: 0.029747}]
-	Pariental_Lobe_json = this.props.brainRegions[brainStrainActive].parietal || [{x: 0.0057455, y: -0.413943, z: 0.0061665}]
-	Temporal_Lobe_json = this.props.brainRegions[brainStrainActive].temporal || [{x: 0.0261539, y: -0.338157, z: -0.0565029}]
-	middle_Part_of_the_Brain_json = this.props.brainRegions[brainStrainActive].motor || [{x: 0.00227188, y: -0.407034, z: -0.0116845}]
+	frontal_Lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
+	cerebellum_Lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
+	Occipital_Lobe_json = this.props.brainRegions[brainStrainActive].occipital || []
+	Pariental_Lobe_json = this.props.brainRegions[brainStrainActive].parietal || []
+	Temporal_Lobe_json = this.props.brainRegions[brainStrainActive].temporal || []
+	middle_Part_of_the_Brain_json = this.props.brainRegions[brainStrainActive].msc || []
 
 	all_spheres_json = all_spheres_json.concat(frontal_Lobe_json);
 	all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
