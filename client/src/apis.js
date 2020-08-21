@@ -203,6 +203,18 @@ export const uploadSidelineImpactVideo = (request) =>{
   })
 }
 
+export const removeVideo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/removeVideo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 
 export const getUserDetails = (request) =>{
   return new Promise((resolve,reject)=>{

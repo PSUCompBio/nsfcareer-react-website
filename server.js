@@ -1096,57 +1096,6 @@ function InsertImpactVideoKey(video_id,impact_video_path) {
             }
         });
     });
-
-    //  return new Promise((resolve, reject) =>{
-    //     var dbInsert = {};
-    //     // adding key with name user_cognito_id
-    //     // deleting the key from parameter from "user_name"
-    //     dbInsert = {
-    //         TableName: "impact_sideline_video",
-    //         Item: {
-    //                 'video_id' :  video_id,
-    //                 'impact_video_path' :  impact_video_path
-    //             }
-    //     }
-
-
-    //     docClient.put(dbInsert, function (dbErr, dbData) {
-    //         if (dbErr) {
-    //             reject(dbErr)
-    //             console.log(dbErr);
-    //         }
-    //         else {
-    //             console.log(dbData);
-    //             resolve(dbData);
-    //         }
-    //     });
-    // })
-    // return new Promise((resolve, reject) => {
-    //     var dbInsert = {
-    //         TableName: "simulation_images",
-    //         Key: { 
-    //             "image_id" : image_id
-    //         },
-    //         UpdateExpression: "set #impact_video_path = :key",
-    //         ExpressionAttributeNames: {
-    //             "#impact_video_path": "impact_video_path"
-    //         },
-    //         ExpressionAttributeValues: {
-    //             ":key":key
-    //         },
-    //         ReturnValues: "UPDATED_NEW"
-    //     }
-
-    //     docClient.update(dbInsert, function (err, data) {
-    //         if (err) {
-    //             console.log("ERROR WHILE CREATING DATA",err);
-    //             reject(err);
-
-    //         } else {
-    //             resolve(data)
-    //         }
-    //     });
-    // });
 }
 
 function adminUpdateUser(User, cb) {
@@ -4076,6 +4025,69 @@ app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res)=> {
 
 })
 
+function removes3Object(path){
+    return new Promise((resolve, reject) =>{
+        var params = {
+            Bucket: config_env.usersbucket,
+            Key: path
+        };
+        s3.deleteObject(params, function(err, data) {
+            if (err) {
+                // reject(err)
+                reject(err);
+            }
+            else{
+                resolve(data);
+            }
+        });
+    })
+}
+
+app.post(`${apiPrefix}removeVideo`, (req, res)=> {
+    console.log('req',req.body)
+    var image_id = req.body.image_id;
+    var imageData = '';
+    getSimulationImageRecord(image_id)
+    .then(image_data =>{
+        console.log('image_data',image_data);
+        imageData = image_data;
+       
+        if (imageData.impact_video_path && imageData.impact_video_path != 'null') {
+            removes3Object(imageData.impact_video_path)
+            .then(response =>{
+                // console.log('res',res);
+                InsertImpactVideoKey(image_id,false)
+                .then(response => {
+                    res.send({
+                        message: "success",
+                        data: res
+                    });
+                }) .catch(err =>{
+                    console.log('errdatabase',err)
+                    res.send({
+                        message: "success",
+                        data: err
+                    });
+                })
+            })
+            .catch(err =>{
+                console.log('errremoves3Object',err)
+                res.send({
+                    message: "failure",
+                    err: 'Somthing went wrong! Please try again.'
+                });
+            })
+        }else{
+            res.send({
+                message: "failure",
+                err: 'Video not found.'
+            });
+        }
+    }).catch(err =>{
+        console.log('err',err)
+    })
+
+})
 // Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
         console.log('file',req.body);
