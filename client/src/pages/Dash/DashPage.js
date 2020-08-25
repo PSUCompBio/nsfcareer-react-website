@@ -7,23 +7,26 @@ import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './dash.css';
 
-let frontal_Lobe_json = [{ x: 0.00205875, y: -0.413274, z: -0.0556418 }];
-let cerebellum_Lobe_json = [{ x: 0.00679913, y: -0.313188, z: 0.0161927 }];
-let middle_Part_of_the_Brain_json = [{ x: 0.00227188, y: -0.407034, z: -0.0116845 }];
-let Occipital_Lobe_json = [{ x: 0.0114976, y: -0.368995, z: 0.029747 }];
-let Pariental_Lobe_json = [{ x: 0.0057455, y: -0.413943, z: 0.0061665 }];
-let Temporal_Lobe_json = [{ x: 0.0261539, y: -0.338157, z: -0.0565029 }];
-let all_spheres_json = [];
-all_spheres_json = all_spheres_json.concat(frontal_Lobe_json);
-all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
-all_spheres_json = all_spheres_json.concat(Temporal_Lobe_json);
-all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
-all_spheres_json = all_spheres_json.concat(Pariental_Lobe_json);
-all_spheres_json = all_spheres_json.concat(middle_Part_of_the_Brain_json);
+let stem_json = [{ x: -0.00903787, y: -0.316476, z: -0.0150604 }];
+let frontal_lobe_json = [{ x: 0.00205875, y: -0.413274, z: -0.0556418 }];
+let cerebellum_lobe_json = [{ x: 0.00679913, y: -0.313188, z: 0.0161927 }];
+let middle_part_of_the_brain_json = [{ x: 0.00227188, y: -0.407034, z: -0.0116845 }];
+let occipital_lobe_json = [{ x: 0.0114976, y: -0.368995, z: 0.029747 }];
+let pariental_lobe_json = [{ x: 0.0057455, y: -0.413943, z: 0.0061665 }];
+let temporal_lobe_json = [{ x: 0.0261539, y: -0.338157, z: -0.0565029 }];
+
+let all_spheres_json = [];       
+all_spheres_json = all_spheres_json.concat(stem_json);
+all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
+all_spheres_json = all_spheres_json.concat(occipital_lobe_json);
+all_spheres_json = all_spheres_json.concat(temporal_lobe_json);
+all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
+all_spheres_json = all_spheres_json.concat(pariental_lobe_json);
+all_spheres_json = all_spheres_json.concat(middle_part_of_the_brain_json);
 
 let camera, scene, renderer, canvas, raycaster, root;
 let brainModel;
-let aspectRatio, width, height, mouse, currentSubCamera, prevIntersectObj, pickHelper;
+let aspectRatio, width, height, currentSubCamera;
 const defaultTransparency = 0.3;
 const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
@@ -31,7 +34,7 @@ const highlightColor = 0xadab24;
 const highlightEmissiveIntensity = 0.6;
 
 const amount = 2;
-const space = 5;
+const space = 10;
 const near = 0.1;
 const far = 100;
 const cameraAttArr = [
@@ -80,7 +83,8 @@ class DashPage extends React.Component {
 		super(props);
 		this.state = {
 			isLoading: false,
-			barColors: defaultBarColors
+			barColors: defaultBarColors,
+			loadedActionButtons: false,
 		};
 	}
 
@@ -107,58 +111,68 @@ class DashPage extends React.Component {
 		window.addEventListener('touchend', this.onTouchEnd, false);
 
 		this.startAnimationLoop();
+	}
 
-		let me = this;
+	componentDidUpdate() {
+		if (
+			!this.state.loadedActionButtons
+		) {
+			this.setState({
+				loadedActionButtons: true
+			});
 
-		// Highlight brain model on mouse hover on brain button
-		document.getElementById('front_btn').addEventListener(
-			'mouseover',
-			function (event) {
-				me.onMouseHover(event, 'Frontal_Lobe_node_Frontal_Lobe');
-			},
-			false
-		);
-		document.getElementById('pariental_btn').addEventListener(
-			'mouseover',
-			function (event) {
-				me.onMouseHover(event, 'node_Mesh_16');
-			},
-			false
-		);
-		document.getElementById('occipital_btn').addEventListener(
-			'mouseover',
-			function (event) {
-				me.onMouseHover(
-					event,
-					'Brainstem_Spinal_cord_node_Brainstem_Spinal_cord'
-				);
-			},
-			false
-		);
-		document.getElementById('temporal_btn').addEventListener(
-			'mouseover',
-			function (event) {
-				me.onMouseHover(event, 'Temporal_Lobe_node_Temporal_Lobe');
-			},
-			false
-		);
-		document.getElementById('cerebellum_btn').addEventListener(
-			'mouseover',
-			function (event) {
-				me.onMouseHover(event, 'Cerebellum_node_Cerebellum');
-			},
-			false
-		);
-		document.getElementById('motor_and_sensor_cortex').addEventListener(
-			'mouseover',
-			function (event) {
-				me.onMouseHover(
-					event,
-					'Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex'
-				);
-			},
-			false
-		);
+			let me = this;
+
+			// Highlight brain model on mouse hover on brain button
+			document.getElementById("front_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "Frontal_Lobe_node_Frontal_Lobe");
+				},
+				false
+			);
+			document.getElementById("pariental_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
+					);
+				},
+				false
+			);
+			document.getElementById("occipital_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "node_Mesh_16");
+				},
+				false
+			);
+			document.getElementById("temporal_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "Temporal_Lobe_node_Temporal_Lobe");
+				},
+				false
+			);
+			document.getElementById("cerebellum_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "Cerebellum_node_Cerebellum");
+				},
+				false
+			);
+			document.getElementById("motor_and_sensor_cortex").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex"
+					);
+				},
+				false
+			);
+		}
 	}
 
 	startAnimationLoop = () => {
@@ -189,47 +203,55 @@ class DashPage extends React.Component {
 		let me = this;
 
 		// Remove prev spheres
-		me.removeSpheres();
-
-		// Add new spheres
-		switch (type) {
-			case 'Frontal_Lobe_node_Frontal_Lobe':
-				frontal_Lobe_json.forEach(function (object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case 'node_Mesh_16':
-				Pariental_Lobe_json.forEach(function (object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case 'Brainstem_Spinal_cord_node_Brainstem_Spinal_cord':
-				Occipital_Lobe_json.forEach(function (object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case 'Temporal_Lobe_node_Temporal_Lobe':
-				Temporal_Lobe_json.forEach(function (object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case 'Cerebellum_node_Cerebellum':
-				cerebellum_Lobe_json.forEach(function (object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case 'Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex':
-				middle_Part_of_the_Brain_json.forEach(function (object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-		}
+		me.removeSpheres(function () {
+			// Add new spheres
+			switch (type) {
+				case "Frontal_Lobe_node_Frontal_Lobe":
+					frontal_lobe_json.forEach(function (object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					});
+					break;
+				case "node_Mesh_16":
+					occipital_lobe_json.forEach(function (object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					});
+					break;
+				case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
+					pariental_lobe_json.forEach(function (object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					});
+					break;
+				case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
+					stem_json.forEach(function (object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					});
+					break;
+				case "Temporal_Lobe_node_Temporal_Lobe":
+					temporal_lobe_json.forEach(function (object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					});
+					break;
+				case "Cerebellum_node_Cerebellum":
+					cerebellum_lobe_json.forEach(function (object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					});
+					break;
+				case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
+					middle_part_of_the_brain_json.forEach(function (object, index) {
+						var i = parseInt(index + 1);
+						me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					});
+					break;
+				default:
+					break;
+			}
+		});
 	};
 
 	showAllSpheres = () => {
@@ -253,7 +275,7 @@ class DashPage extends React.Component {
 					'#7CB5EC'
 				];
 				break;
-			case 'node_Mesh_16':
+			case 'Cerebral_hemispheres_R_node_Cerebral_hemispheres_R':
 				barColors = [
 					'#7CB5EC',
 					'rgba(255,255,102)',
@@ -263,7 +285,7 @@ class DashPage extends React.Component {
 					'#7CB5EC'
 				];
 				break;
-			case 'Brainstem_Spinal_cord_node_Brainstem_Spinal_cord':
+			case 'node_Mesh_16':
 				barColors = [
 					'#7CB5EC',
 					'#7CB5EC',
@@ -311,13 +333,14 @@ class DashPage extends React.Component {
 	};
 
 	resetHighLight = () => {
+
+		this.unHighlightPickedObject();
+
 		let barColors = defaultBarColors;
 
 		this.setState({
 			barColors: barColors
 		});
-
-		this.unHighlightPickedObject();
 
 		// Show all spheres
 		this.showAllSpheres();
@@ -335,7 +358,7 @@ class DashPage extends React.Component {
 			this.unHighlightPickedObject();
 			// pick the first object. It's the closest one
 			pickedObject = intersectedObjects[0].object;
-
+			console.log(pickedObject.name);
 			this.highlightPickedObject();
 
 			this.highlightGraphBar(pickedObject.name);
@@ -366,7 +389,7 @@ class DashPage extends React.Component {
 
 	sceneSetup = () => {
 		scene = new THREE.Scene();
-		scene.background = new THREE.Color("black");
+		scene.background = new THREE.Color("white");
 
 		canvas = document.querySelector("#c");
 
@@ -454,14 +477,22 @@ class DashPage extends React.Component {
 		}
 	};
 
-	removeSpheres = () => {
+	removeSpheres = (callback) => {
 		if (root) {
-			root.traverse((n) => {
-				let match = n.name.match(/pointer/g);
-				if (match) {
-					n.visible = false;
-				}
-			});
+			let total = root.children.length + 1;
+			for (let i = 1; i <= total; i++) {
+				var selectedObject = scene.getObjectByName('pointer' + i);
+				if (selectedObject)
+					root.remove(selectedObject);
+			}
+			// root.traverse((n) => {
+			// 	let match = n.name.match(/pointer/g);
+			// 	if (match) {
+			// 		n.visible = false;
+			// 	}
+			// });
+
+			callback();
 		}
 	};
 
@@ -543,9 +574,6 @@ class DashPage extends React.Component {
 
 	onWindowResize = () => {
 		aspectRatio = canvas.clientWidth / canvas.clientHeight;
-		// width = (window.innerWidth / amount) * window.devicePixelRatio;
-		// height = (window.innerHeight / amount) * window.devicePixelRatio;
-		// renderer.setSize(window.innerWidth, window.innerHeight);
 		width = (canvas.clientWidth / amount) * window.devicePixelRatio;
 		height = (canvas.clientHeight / amount) * window.devicePixelRatio;
 		renderer.setPixelRatio(window.devicePixelRatio);
@@ -574,15 +602,7 @@ class DashPage extends React.Component {
 	};
 
 	onMouseOut = () => {
-		if (root) {
-			root.traverse((n) => {
-				let match = n.name.match(/pointer/g);
-				if (match) {
-					n.visible = true;
-				}
-			});
-		}
-
+		
 		this.unHighlightPickedObject();
 
 		this.setState({
@@ -617,6 +637,7 @@ class DashPage extends React.Component {
 
 	getCanvasRelativePosition = (event) => {
 		const rect = canvas.getBoundingClientRect();
+
 		return {
 			x: ((event.clientX - rect.left) * canvas.width) / rect.width,
 			y: ((event.clientY - rect.top) * canvas.height) / rect.height
@@ -638,21 +659,17 @@ class DashPage extends React.Component {
 					Math.floor(y * height + space / 2) + Math.ceil(height - space);
 
 				if (
-					pos.x * window.devicePixelRatio >= startX &&
-					pos.x * window.devicePixelRatio <= endX &&
-					amount * height - pos.y * window.devicePixelRatio >= startY &&
-					amount * height - pos.y * window.devicePixelRatio <= endY
+					pos.x >= startX &&
+					pos.x <= endX &&
+					amount * height - pos.y >= startY &&
+					amount * height - pos.y <= endY
 				) {
 					// Current camera
 					currentSubCamera = camera.cameras[amount * y + x];
 
-					pickPosition.x =
-						((pos.x * window.devicePixelRatio - x * width) / width) * 2 - 1;
+					pickPosition.x = ((pos.x - x * width) / width) * 2 - 1;
 					pickPosition.y =
-						((pos.y * window.devicePixelRatio - (amount - 1 - y) * height) /
-							height) *
-						-2 +
-						1;
+						((pos.y - (amount - 1 - y) * height) / height) * -2 + 1;
 
 					break;
 				}
@@ -672,8 +689,8 @@ class DashPage extends React.Component {
 	// Add cursor or not
 	cursorAdd = (flag) => {
 		flag
-			? canvas.classList.add('cursor-pointer')
-			: canvas.classList.remove('cursor-pointer');
+			? canvas.classList.add("cursor-pointer")
+			: canvas.classList.remove("cursor-pointer");
 	};
 
 	render() {
@@ -690,12 +707,12 @@ class DashPage extends React.Component {
 					hoverBackgroundColor: 'rgba(255,255,102)',
 					hoverBorderColor: 'rgba(255,255,102)',
 					data: [
-						parseFloat(frontal_Lobe_json.length),
-						parseFloat(Pariental_Lobe_json.length),
-						parseFloat(Occipital_Lobe_json.length),
-						parseFloat(Temporal_Lobe_json.length),
-						parseFloat(cerebellum_Lobe_json.length),
-						parseFloat(middle_Part_of_the_Brain_json.length)
+						parseFloat(frontal_lobe_json.length),
+						parseFloat(pariental_lobe_json.length),
+						parseFloat(occipital_lobe_json.length),
+						parseFloat(temporal_lobe_json.length),
+						parseFloat(cerebellum_lobe_json.length),
+						parseFloat(middle_part_of_the_brain_json.length)
 					]
 				}
 			]
@@ -717,22 +734,22 @@ class DashPage extends React.Component {
 
 						switch (context.dataIndex) {
 							case 0:
-								return frontal_Lobe_json.length;
+								return frontal_lobe_json.length;
 								break;
 							case 1:
-								return Pariental_Lobe_json.length;
+								return pariental_lobe_json.length;
 								break;
 							case 2:
-								return Occipital_Lobe_json.length;
+								return occipital_lobe_json.length;
 								break;
 							case 3:
-								return Temporal_Lobe_json.length;
+								return temporal_lobe_json.length;
 								break;
 							case 4:
-								return cerebellum_Lobe_json.length;
+								return cerebellum_lobe_json.length;
 								break;
 							case 5:
-								return middle_Part_of_the_Brain_json.length;
+								return middle_part_of_the_brain_json.length;
 								break;
 						}
 					}
@@ -777,12 +794,12 @@ class DashPage extends React.Component {
 								me.onMouseHover('', 'Frontal_Lobe_node_Frontal_Lobe');
 								break;
 							case 1:
-								me.onMouseHover('', 'node_Mesh_16');
+								me.onMouseHover('', 'Cerebral_hemispheres_R_node_Cerebral_hemispheres_R');
 								break;
 							case 2:
 								me.onMouseHover(
 									'',
-									'Brainstem_Spinal_cord_node_Brainstem_Spinal_cord'
+									'node_Mesh_16'
 								);
 								break;
 							case 3:

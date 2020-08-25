@@ -668,10 +668,11 @@ class CommanderTeamView extends React.Component {
 
                                                 <th scope="col">Player ID</th>
                                                 <th scope="col">Player Name</th>
-                                                <th scope="col">Impact Date</th>
-                                                <th scope="col">Impact Time</th>
-                                                <th scope="col">Simulation Date</th>
-                                                <th scope="col">Simulation Time</th>
+                                                <th scope="col"># of Simulations</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>
                                             </tr>
                                         </thead>
                                       <tbody className="player-table">
@@ -718,6 +719,7 @@ class CommanderTeamView extends React.Component {
 
                                                         }</th>
                                                         <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                        <td>{player.simulation_data.length}</td>
                                                         <td style={{ alignItems: "center" }}>
                                                              {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
                                                         <td style={{ alignItems: "center" }}>
