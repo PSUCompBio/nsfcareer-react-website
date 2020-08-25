@@ -3115,10 +3115,9 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
             var counter = 0;
             var indx = 0;
             var p_data = [];
-            var player_listLn = player_list.length - 1;
+            var player_listLn = player_list.length;
             player_list.forEach(function (player, index) {
                 let p = player;
-                let j = index;
                 let playerData = '';
                 if(player.player_id && player.player_id != 'undefined'){
                     getTeamDataWithPlayerRecords(player.player_id, player.team, player.sensor, player.organization)
@@ -3129,9 +3128,9 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                             player_name: p,
                             //vsimulation_image: image ? image : '',
                             simulation_data: playerData,
-                            simulation_status : 'completed'
+                            date_time: playerData[0].player_id.split('$')[1],
                         });
-                        var y = 0;
+                       
                          if (counter == player_listLn) {
                             p_data.sort(function (b, a) {
                                 var keyA = a.date_time,
@@ -3139,27 +3138,27 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                                 if (keyA < keyB) return -1;
                                 if (keyA > keyB) return 1;
                                 return 0;
-                            });
+                            }); 
 
                             let k = 0;
-                            var p_datalen = p_data.length - 1;
+                            var p_datalen = p_data.length;
                             p_data.forEach(function (record, index) {
-                                getPlayerSimulationStatus(player_data[0].image_id)
+                                getPlayerSimulationStatus(record.simulation_data[0].image_id)
                                     .then(simulation => {
-                                        console.log('simulation',simulation.status)
+                                        // console.log('simulation',simulation.status)
                                         k++;
-                                        if(simulation.status != 'completed'){
-                                           p_data[index].simulation_status = 'pending';
-                                        }
                                         p_data[index]['simulation_data'][0]['simulation_status'] = simulation.status;
                                         p_data[index]['simulation_data'][0]['computed_time'] = simulation.computed_time;
-                                        console.log(k, p_datalen)
+                                        
                                         if (k == p_datalen) {
                                             res.send({
                                                 message: "success",
                                                 data: p_data
                                             })
                                         }
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
                                     })
                             })
                         }
@@ -3175,6 +3174,8 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                             })
                         }
                     })
+                } else {
+                    counter++;
                 }
             })
         }
