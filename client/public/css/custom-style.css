@@ -483,3 +483,86 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
     color: #1e76b9;
     /* border: solid 3px #1e76b9!important; */
 }
+
+.button-edit{
+    color: #094e85!important;
+    font-weight: 700!important;
+    padding: 5px 28px!important;
+    font-size: 20px!important;
+    background-color: #929eaa!important;
+    border: 1px solid #0e79cf!important;
+}
+
+.organization-edit-icons{
+    position: absolute;
+    z-index: 999;
+    margin-top: 48px;
+    vertical-align: middle;
+    text-align: left;
+    margin-left: 25px;
+}
+.button-edit-active{
+    box-shadow: 0px 0px 8px #929eaa!important;
+}
+.organization-edit-icons li{
+    list-style: none;
+    padding: 9px 0px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.organization-edit-icons img{
+    width: 18%;
+}
+.add-box{
+    border: 1px solid #094e85!important;
+}
+
+.add-box img{
+    width: 62%!important;
+    vertical-align: middle!important;
+}
+.isEdit{
+    display: none;
+}
+.wrap_img {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+.tech-football {
+    position: relative;
+}
+.delete-confirmation-box{
+    background: #aeaeae!important;
+    border: 3px solid red!important;
+}
+.delete-confirmation-box h4{
+    color: #000;
+}
+.delete-confirmation-box p{
+    color: red;
+    font-weight: 700;
+    font-size: 20px;
+}
+.delete-confirmation-button{
+    padding: 20px;
+}
+
+button.btn.button-back{
+    background: #e2061b;
+    font-weight: 700;
+    border: 1px solid #094e84;
+    margin: 5px;
+}
+button.btn.button-yes{
+    background: #28a745;
+    font-weight: 700;
+    border: 1px solid #094e84;
+    margin: 5px;
+}
+.modal__wrapper{
+    z-index: 99999!important;
+}

@@ -28,14 +28,15 @@ global.fetch = require('node-fetch');
 var _ = require('lodash');
 
 var nodemailer = require('nodemailer');
-
-var transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'tbitest987@gmail.com',
-    pass: 'Developer@981'
-  }
-});
+// var transporter = nodemailer.createTransport({
+//   host: 'email.us-west-2.amazonaws.com',
+//   port: 465,
+//   secure: true,
+//   auth: {
+//     user: 'AKIA5UBJSELBMRFTI2QO',
+//     pass: 'BPwKxokCSkorDHhAnyrVaNbML8Ydlo3scXbQEmwbPJay'
+//   }
+// });
 
 
 // ================================================
@@ -221,7 +222,7 @@ var uploadModelRealData = multer({
 const awsWorker = require('./controllers/aws.controller.js');
 
 
-var s3 = new AWS.S3();
+var s3 = new AWS.S3({useAccelerateEndpoint: true});
 
 // Cognito client who initializes the AWS Credentials to invoke
 // commands on behalf of the developer
@@ -2477,31 +2478,123 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
         }
         else {
             console.log('dbdata',dbdata)
-            var mailOptions = {
-              from: 'mukesh.rawat@brihaspatitech.com',
-              to: dbdata.email,
-              subject: 'Thank you for joining Nsfcareer',
-              text: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+            // var mailOptions = {
+            //   from: 'mukesh.rawat@brihaspatitech.com',
+            //   to: dbdata.email,
+            //   subject: 'Thank you for joining Nsfcareer',
+            //   text: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+            // };
+
+            // transporter.sendMail(mailOptions, function(error, info){
+            //   if (error) {
+            //     console.log('error',error)
+            //     res.send({
+            //         message: "faiure",
+            //         error: error
+            //     });
+            //   } else {
+            //     console.log('Email sent: ' + info.response);
+            //     res.send({
+            //         message: "Success",
+            //         data: info.response
+            //     });
+            //   }
+            // });
+            var params = {
+              Destination: { /* required */
+                ToAddresses: [
+                  dbdata.email,
+                  /* more items */
+                ]
+              },
+              Message: { /* required */
+                Body: { /* required */
+                  Text: {
+                   Charset: "UTF-8",
+                   Data: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+                  }
+                 },
+                 Subject: {
+                  Charset: 'UTF-8',
+                  Data: 'Thank you for joining Nsfcareer'
+                 }
+                },
+              Source: 'info@NSFCAREER.IO', /* required */
+              ReplyToAddresses: [
+                 'info@NSFCAREER.IO',
+                /* more items */
+              ],
             };
 
-            transporter.sendMail(mailOptions, function(error, info){
-              if (error) {
-                res.send({
-                    message: "faiure",
-                    error: error
-                });
-              } else {
-                console.log('Email sent: ' + info.response);
+            // Create the promise and SES service object
+            var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+            // Handle promise's fulfilled/rejected states
+            sendPromise.then(
+              function(data) {
+                console.log(data.MessageId);
                 res.send({
                     message: "Success",
-                    data: info.response
+                    data: data.MessageId
                 });
-              }
-            });
+              }).catch(
+                function(err) {
+                console.error(err, err.stack);
+                res.send({
+                    message: "faiure",
+                    error: err
+                });
+              });
         }
     })
 });
 
+//Delete organizations
+function DeleteOrganization(organization_id) {
+    console.log('organization_id',organization_id)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            }
+        }
+
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                console.log("error when deleting data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+app.post(`${apiPrefix}deleteItem`, (req, res) => {
+    console.log(req.body)  
+    let type = req.body.type;
+    let data = req.body.data;
+    if(type == 'team'){
+        console.log('data',data)
+        DeleteOrganization(data.organization_id)
+        .then(data => {
+            console.log('res',data)
+            res.send({
+                message: 'success',
+                status: 200
+            })
+        }).catch(err => {
+            console.log('err',err)
+             res.send({
+                message: 'failure',
+                status: 300,
+                err: err
+            })
+        })
+    }
+})
 
 app.post(`${apiPrefix}logIn`, (req, res) => {
     console.log("Log In API Called!",req.body);

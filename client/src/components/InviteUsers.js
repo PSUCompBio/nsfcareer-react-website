@@ -329,7 +329,7 @@ class InviteUsers extends React.Component {
                                 
                             </div>
                         </div>
-                    ) : this.state.failuer ? 'Faild Try Again' : this.state.invited? 'Invited' : 'Invite'}</button>
+                    ) : this.state.failuer ? 'Failed Try Again' : this.state.invited? 'Invited' : 'Invite'}</button>
                     
                   </div>
                 </Form>
