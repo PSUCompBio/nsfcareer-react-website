@@ -2596,6 +2596,159 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
     }
 })
 
+//Rename organization
+
+function renameOrganization(OrganizationName,organization_id) {
+    console.log('organization_id',organization_id)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            },
+            UpdateExpression: "set #organization = :organization",
+            ExpressionAttributeNames: {
+                "#organization": "organization"
+            },
+            ExpressionAttributeValues: {
+                ":organization": OrganizationName
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when deleting data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+app.post(`${apiPrefix}renameOrganization`, (req, res) => {
+    console.log(req.body)  
+    renameOrganization(req.body.OrganizationName, req.body.organization_id)
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+})
+
+//Add organization
+function addOrganization(OrganizationName, sensor) {
+    return new Promise((resolve, reject) =>{
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        dbInsert = {
+            TableName: "organizations",
+            Item: {
+                organization: OrganizationName,
+                organization_id: 'org-'+Date.now(),
+                player_list: [],
+                sensor: sensor,
+                team_name: ' ',
+                user_cognito_id: ' '
+            }
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                reject(dbErr)
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                resolve(dbData);
+            }
+        });
+    })
+}
+
+app.post(`${apiPrefix}addOrganization`, (req, res) => {
+    console.log(req.body);
+    addOrganization(req.body.OrganizationName, req.body.sensor)
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+})
+
+
+//Merge organization
+function MergeOrganization(OrganizationName, organization_id) {
+    console.log('user_name',OrganizationName)
+    return new Promise((resolve, reject) => {
+        var dbInsert = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            },
+            UpdateExpression: "set #organization = :organization",
+            ExpressionAttributeNames: {
+                "#organization": "organization"
+            },
+            ExpressionAttributeValues: {
+                ":organization": OrganizationName
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+
+        docClient.update(dbInsert, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+
+app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
+    console.log(req.body);
+    MergeOrganization(req.body.OrganizationName, req.body.organization_id)
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+})
+
 app.post(`${apiPrefix}logIn`, (req, res) => {
     console.log("Log In API Called!",req.body);
     // Getting user data of that user

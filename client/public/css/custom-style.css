@@ -495,7 +495,7 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
 
 .organization-edit-icons{
     position: absolute;
-    z-index: 999;
+    z-index: 1;
     margin-top: 48px;
     vertical-align: middle;
     text-align: left;
