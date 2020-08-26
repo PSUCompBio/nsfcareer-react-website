@@ -5,13 +5,29 @@ import { getStatusOfDarkmode } from '../reducer';
 import { Redirect, withRouter, Link } from 'react-router-dom';
 import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
+import DeletePopup from './Popup/DeletePopup';
+import UpdatePopup from './Popup/UpdatePopup';
+
 import {
     isAuthenticated,
     getUserDetails,
     getUserDBDetails,
     getAllOrganizationsOfSensorBrand,
-    fetchStaffMembers
+    fetchStaffMembers,
+    deleteItem,
+    renameOrganization,
+    addOrganization,
+    MergeOrganization
 } from '../apis';
+import { 
+    UncontrolledAlert
+} from 'reactstrap';
+
+import delicon from './icons/delete.png';
+import merge from './icons/merge.png';
+import pencil from './icons/pencil.png';
+import plus from './icons/plus.png'
+import $ from 'jquery';
 
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
@@ -35,7 +51,22 @@ class OrganizationAdmin extends React.Component {
             organization: 'PSU',
             buttonSelected: 'overview',
             staffList: [],
-            sensorOrgList: []
+            sensorOrgList: [],
+            isDisplay: { display: 'none' },
+            isDisplay2: { display: 'none' },
+            DelData: '',
+            renameData : '',
+            isEdit: false,
+            isDelete: false,
+            isUploading: false,
+            isUpdated:false,
+            Error: '',
+            data: '',
+            isRename: false,
+            addOrganizationData: '',
+            isAddOrganization: false,
+            mergeData: '',
+            isMerge: false
         };
     }
     toggleTab = (value) => {
@@ -86,6 +117,221 @@ class OrganizationAdmin extends React.Component {
             });
         }
     };
+
+    handleEdit = (e) =>{
+        console.log('edit')
+        $('.isEdit').css({'display':'inherit'});
+        $('.button-edit').addClass('button-edit-active');
+        this.setState({
+            isEdit:true,
+            DelData: '',
+            isDelete: false,
+            isUpdated: false,
+            Error: ''
+        })
+    }
+    handleCencel =()=>{
+        $('.isEdit').css({'display':'none'});
+        $('.button-edit').removeClass('button-edit-active');
+        this.setState({
+            isEdit:false,
+            DelData: '',
+            isDelete: false,
+            isUpdated: false,
+            Error: '',
+            isUploading:false,
+            renameData: '',
+            isRename: false,
+            isAddOrganization: false,
+            addOrganizationData: '',
+            mergeData: '',
+            isMerge: false
+        })
+    }
+
+    deleteRecord = (e) =>{
+        console.log('delete',e)
+        this.setState({DelData: {type: 'team',data:e} })
+        if (this.state.isDisplay.display === 'none') {
+          this.setState({ isDisplay: {display:'flex'} });
+        } else {
+          this.setState({ isDisplay: {display:'none'} });
+        }
+    }
+    editRecord = (e) =>{
+        console.log('data',e.type)
+        this.setState({data:e })
+        if (this.state.isDisplay2.display === 'none') {
+          this.setState({ isDisplay2: {display:'flex'} });
+        } else {
+          this.setState({ isDisplay2: {display:'none'} });
+        }
+    }
+    makeVisible = (data) => {
+        this.setState({ isDisplay: data });
+    }
+    makeVisible2 = (data) => {
+        this.setState({ isDisplay2: data });
+    }
+
+    isDeleteData = (isDelete) => {
+        console.log('isDelete',isDelete)
+        this.setState({ isDelete: isDelete });
+        this.setState({ isDisplay:{ display: 'none' } });
+    }
+    isUpdateData = (data) =>{
+        console.log('isUpdateData',data);
+        if(data.data.type == "rename"){
+            this.setState({renameData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id}, isRename: true})
+        }
+        if(data.data.type == "addOrganization"){
+            this.setState({addOrganizationData: {OrganizationName : data.OrganizationName, sensor: this.props.location.state.brand.brand  }, isAddOrganization: true})
+        }
+        if(data.data.type == "merge"){
+            this.setState({mergeData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id }, isMerge: true})
+        }
+        this.setState({ isDisplay2:{ display: 'none' } });
+    }
+
+    handleChangeSave = () =>{
+        console.log('Save',this.state.renameData, this.state.addOrganizationData);
+        this.setState({isUploading: true});
+        if(this.state.isDelete){
+              console.log('deleting')
+              deleteItem(this.state.DelData)
+              .then(res => {
+                  console.log('res',res);
+                    if(res.data.message == 'success'){
+                         this.setState(prevState => ({
+                            isUpdated: false,
+                        }));
+                        this.handleRenmaeOrganization();
+                    }else{
+                        this.setState({
+                            isUploading: false,
+                            Error: 'Somthing went wrong when deleting data.'
+                        })
+                    }
+                
+              }).catch(err=>{
+                    console.log(err)
+                    this.setState({
+                        isUploading: false,
+                        isUpdated: false,
+                        Error: 'Somthing went wrong when deleting data.'
+                    })
+              })
+        }else{
+            this.handleRenmaeOrganization();
+        }
+    }
+
+    handleRenmaeOrganization = () => {
+        console.log('rename',this.state.data)
+        if(this.state.isRename){
+            renameOrganization(this.state.renameData)
+            .then(response => {
+                console.log('response',response)
+                if(response.data.message == "success"){
+                    this.handleMergeOrganization();
+                }else{
+                    this.setState({
+                     isUpdated: false,
+                        isUploading: false,
+                        Error: 'Somthing went wrong when renaming organization.'
+                    })
+                }
+
+            }).catch(err =>{
+                console.log('errRename',err);
+                this.setState({
+                    isUploading: false,
+                    Error: 'Somthing went wrong when renaming organization.'
+                })
+            })
+        }else{
+            this.handleMergeOrganization();
+        }
+    }
+
+    handleMergeOrganization = () => {
+        console.log('rename',this.state.mergeData)
+        if(this.state.isMerge){
+            MergeOrganization(this.state.mergeData)
+            .then(response => {
+                console.log('response',response)
+                if(response.data.message == "success"){
+                    this.handleAddOrganization();
+                }else{
+                    this.setState({
+                        isUpdated: false,
+                        isUploading: false,
+                        Error: 'Somthing went wrong when merging organization.'
+                    })
+                }
+
+            }).catch(err =>{
+                console.log('errRename',err);
+                this.setState({
+                    isUploading: false,
+                    Error: 'Somthing went wrong when merging organization.'
+                })
+            })
+        }else{
+            this.handleAddOrganization();
+        }
+    }
+
+    handleAddOrganization=()=>{
+        console.log('addOrganization',this.state.addOrganizationData);
+        if(this.state.isAddOrganization){
+            addOrganization(this.state.addOrganizationData)
+            .then(response =>{
+                 console.log('response',response)
+                if(response.data.message == "success"){
+                    getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+                    .then(orgs => {
+                        $('.isEdit').css({'display':'none'});
+                        $('.button-edit').removeClass('button-edit-active');
+                        this.setState(prevState => ({
+                            totalOrganization: orgs.data.data.length,
+                            sensorOrgList: orgs.data.data,
+                            isEdit: false,
+                            isUpdated: true,
+                            isUploading: false
+                        }));
+                    })
+                }else{
+                    this.setState({
+                     isUpdated: false,
+                        isUploading: false,
+                        Error: 'Somthing went wrong when renameing organization.'
+                    })
+                }    
+            }).catch(err =>{
+                console.log('erradd',err);
+                this.setState({
+                    isUploading: false,
+                    isUpdated: false,
+                    Error: 'Somthing went wrong when renameing organization.'
+                })
+            })
+        }else{
+            getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+            .then(orgs => {
+                $('.isEdit').css({'display':'none'});
+                $('.button-edit').removeClass('button-edit-active');
+                this.setState(prevState => ({
+                    totalOrganization: orgs.data.data.length,
+                    sensorOrgList: orgs.data.data,
+                    isEdit: false,
+                    isUpdated: true,
+                    isUploading: false
+                }));
+            })
+        }
+
+    }
 
     componentDidMount() {
         // Scrolling winddow to top when user clicks on about us page
@@ -155,7 +401,7 @@ class OrganizationAdmin extends React.Component {
 
     };
   
-    smallCards = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+    smallCards = (organization_id,simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
         //console.log('list',simulation_status);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status == 'completed') {
@@ -174,6 +420,11 @@ class OrganizationAdmin extends React.Component {
         }
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
+                <ul className="organization-edit-icons isEdit">
+                    <li><span><img src={pencil}  onClick={e => this.editRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'rename'})}/>Rename</span></li>
+                    <li><span><img src={merge}  onClick={e => this.editRecord( {organization_id: organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} />Merge</span></li>
+                    <li><span><img src={delicon} onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
+                </ul>
                 <div
                     ref={reference[0]}
                     onClick={(e) => {
@@ -190,7 +441,7 @@ class OrganizationAdmin extends React.Component {
                     }}
                     className={cls}
                 >
-
+                   
                     <div style={this.state.hideEditElement}>
                         <div ref={reference[1]} className="football-header ">
                             <p className="teamName mobile-dashboard-card" ref={reference[2]}>
@@ -224,9 +475,11 @@ class OrganizationAdmin extends React.Component {
     iterateTeam = () => {
         let inc = 1;
         var cards = new Array(this.state.totalOrganization);
+        console.log('cards',cards)
         let j = 1;
         for (let i = 0; i < this.state.totalOrganization; i++) {
             cards[i] = this.smallCards(
+                this.state.sensorOrgList[i].organization_id,
                 this.state.sensorOrgList[i].simulation_status,
                 this.state.sensorOrgList[i].computed_time,
                 this.state.sensorOrgList[i].simulation_timestamp,
@@ -320,7 +573,7 @@ class OrganizationAdmin extends React.Component {
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div className="col-md-12 Admintitle" >
-                                    <h1>Organization Dashboard</h1>
+                                    <h1>Organization Dashboard <button className="btn float-right button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button></h1>
                                 </div>
                                 <div
                                     ref="cardContainer"
@@ -400,10 +653,61 @@ class OrganizationAdmin extends React.Component {
                                     }
                                     {!this.state.tabActive ?
                                         <div className="football-container mt-4 d-flex flex-wrap">
-                                            {this.iterateTeam()}
+                                            {
+                                                <React.Fragment>
+                                                    {this.iterateTeam()}
+                                                    <div  className="isEdit" >
+                                                        <div
+                                                            className="tech-football m-3 add-box"
+                                                            onClick={e => this.editRecord( {type: 'addOrganization'})}
+                                                        >
+                                                            <div className="wrap_img">
+                                                           <img src={plus} />
+                                                            <h4>Add New</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </React.Fragment>
+                                            }
                                         </div>
                                         : null}
+                                        {this.state.isUploading ? (
+                                            <div className="d-flex justify-content-center center-spinner">
+                                                <div
+                                                    className="spinner-border text-primary"
+                                                    role="status"
+                                                    >
+                                                    <span className="sr-only">Uploading...</span>
+                                                </div>
+                                            </div>
+                                        ) : null}
+
+                                        {this.state.isUpdated ? (
+                                            <UncontrolledAlert
+                                                color="success"
+                                                style={{ marginTop: '5px' }}
+                                                >
+                                                Changes has been done successfully.
+                                            </UncontrolledAlert>
+                                        ) : null}
+                                        {this.state.Error ? (
+                                            <UncontrolledAlert
+                                                style={{ marginTop: '5px' }}
+                                                color="danger"
+
+                                                >
+                                                {this.state.Error}
+
+                                            </UncontrolledAlert>
+                                        ) : null}
+                                    <div className="delete-confirmation-button isEdit">
+                                        <button className="btn button-back " onClick={this.handleCencel}>Cencel</button>
+                                        <button className="btn button-yes " onClick={this.handleChangeSave} >Save</button>
+                                    </div>
+                                   
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -442,7 +746,9 @@ class OrganizationAdmin extends React.Component {
 
         return (
             <React.Fragment>
-
+                <DeletePopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData)? this.props.isDeleteData : this.isDeleteData} />
+                <UpdatePopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData} data={this.state.data}/>
+                
                 {this.props.isMilitaryVersionActive === true ? (
                     <div className="militay-view">
                         <div className="military-sidebar">

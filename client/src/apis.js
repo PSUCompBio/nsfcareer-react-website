@@ -764,3 +764,40 @@ export const deleteItem = (request) =>{
       });
   })
 }
+export const renameOrganization = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/renameOrganization/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
+export const addOrganization = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/addOrganization/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
+export const MergeOrganization = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/MergeOrganization/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
