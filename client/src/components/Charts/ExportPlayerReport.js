@@ -6,7 +6,7 @@ import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './Cumulative/dash.css';
 
-let camera, scene, renderer, canvas, raycaster, root;
+let camera, scene, renderer, canvas, raycaster, root, sphereContainer;
 let brainModel;
 let aspectRatio, width, height, currentSubCamera;
 const defaultTransparency = 0.3;
@@ -58,7 +58,7 @@ const pickPosition = { x: 0, y: 0 };
 raycaster = new THREE.Raycaster();
 let pickedObject = null;
 let pickedObjectSavedColor = 0;
-let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
 
 let stem_json = [];
 let csf_json = [];
@@ -79,7 +79,48 @@ class ExportPlayerReport extends React.Component {
 			barColors: defaultBarColors,
 			brainStrainActive: 'principal-max-strain',
 			loadedActionButtons: false,
+			actionButtons: [
+				{
+					id: "motor_and_sensor_cortex",
+					name: "Motor and Sensor Cortex"
+				},
+				{
+					id: "stem_btn",
+					name: "Stem"
+				},
+				{
+					id: "cerebellum_btn",
+					name: "Cerebellum Lobe"
+				},
+				{
+					id: "temporal_btn",
+					name: "Temporal Lobe"
+				},
+				{
+					id: "occipital_btn",
+					name: "Occipital Lobe"
+				},
+				{
+					id: "pariental_btn",
+					name: "Parietal Lobe"
+				},
+				{
+					id: "front_btn",
+					name: "Frontal Lobe"
+				}
+			],
+			actionButtonPositions: []
 		};
+
+		this.plugins = [
+			{
+				afterDraw: (chart) => {
+					setTimeout(() => {
+						this.afterDrawChart(chart);
+					}, 1000);
+				}
+			}
+		];
 	}
 
 	componentDidMount() {
@@ -109,7 +150,8 @@ class ExportPlayerReport extends React.Component {
 
 	componentDidUpdate() {
 		if (
-			!this.state.loadedActionButtons
+			!this.state.loadedActionButtons &&
+			this.state.actionButtonPositions.length !== 0
 		) {
 			this.setState({
 				loadedActionButtons: true
@@ -166,6 +208,16 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
+			document.getElementById("stem_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
+					);
+				},
+				false
+			);
 		}
 	}
 
@@ -175,6 +227,32 @@ class ExportPlayerReport extends React.Component {
 
 		renderer.render(scene, camera);
 		requestAnimationFrame(this.startAnimationLoop);
+	};
+
+	afterDrawChart = (chart) => {
+		var ctx = chart.chart.ctx;
+
+		const rect = chart.canvas.getBoundingClientRect();
+		ctx.save();
+		var xAxis = chart.scales["x-axis-0"];
+		var yAxis = chart.scales["y-axis-0"];
+		let actionButtonPosArr = [];
+
+		xAxis.ticks.forEach((v, i) => {
+			var x = xAxis.getPixelForTick(i);
+			actionButtonPosArr = [
+				{
+					x: x + rect.left,
+					y: yAxis.bottom + rect.top
+				},
+				...actionButtonPosArr
+			];
+		});
+		ctx.restore();
+
+		this.setState({
+			actionButtonPositions: actionButtonPosArr
+		});
 	};
 
 	onMouseHover = (event, type) => {
@@ -259,65 +337,84 @@ class ExportPlayerReport extends React.Component {
 	highlightGraphBar = (type) => {
 		let barColors = defaultBarColors;
 		switch (type) {
-			case 'Frontal_Lobe_node_Frontal_Lobe':
+			case "Frontal_Lobe_node_Frontal_Lobe":
 				barColors = [
-					'rgba(255,255,102)',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC'
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
 				];
 				break;
-			case 'Cerebral_hemispheres_R_node_Cerebral_hemispheres_R':
+			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
 				barColors = [
-					'#7CB5EC',
-					'rgba(255,255,102)',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC'
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
 				];
 				break;
-			case 'node_Mesh_16':
+			case "node_Mesh_16":
 				barColors = [
-					'#7CB5EC',
-					'#7CB5EC',
-					'rgba(255,255,102)',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC'
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
 				];
 				break;
-			case 'Temporal_Lobe_node_Temporal_Lobe':
+			case "Temporal_Lobe_node_Temporal_Lobe":
 				barColors = [
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'rgba(255,255,102)',
-					'#7CB5EC',
-					'#7CB5EC'
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
 				];
 				break;
-			case 'Cerebellum_node_Cerebellum':
+			case "Cerebellum_node_Cerebellum":
 				barColors = [
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'rgba(255,255,102)',
-					'#7CB5EC'
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC"
 				];
 				break;
-			case 'Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex':
+			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
 				barColors = [
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'#7CB5EC',
-					'rgba(255,255,102)'
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC"
 				];
+				break;
+			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
+				barColors = [
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)"
+				];
+				break;
+			default:
 				break;
 		}
 
@@ -470,25 +567,15 @@ class ExportPlayerReport extends React.Component {
 			sphere.position.y += pointerPos.z;
 			sphere.position.z -= pointerPos.y;
 			sphere.name = sphereName;
-			root.add(sphere);
+			sphereContainer.add(sphere);
 		}
 	};
 
 	removeSpheres = (callback) => {
 		if (root) {
-			let total = root.children.length + 1;
-			for (let i = 1; i <= total; i++) {
-				var selectedObject = scene.getObjectByName('pointer' + i);
-				if (selectedObject)
-					root.remove(selectedObject);
+			for (let i = sphereContainer.children.length - 1; i >= 0; i--) {
+				sphereContainer.remove(sphereContainer.children[i]);
 			}
-			// root.traverse((n) => {
-			// 	let match = n.name.match(/pointer/g);
-			// 	if (match) {
-			// 		n.visible = false;
-			// 	}
-			// });
-
 			callback();
 		}
 	};
@@ -527,6 +614,9 @@ class ExportPlayerReport extends React.Component {
 				const box = new THREE.Box3().setFromObject(root);
 				const boxSize = box.getSize(new THREE.Vector3()).length();
 				const boxCenter = box.getCenter(new THREE.Vector3());
+
+				sphereContainer = new THREE.Object3D();
+				root.add(sphereContainer);
 
 				me.removeSpheres(function () {
 					me.showUpdatedRegion();
@@ -602,10 +692,10 @@ class ExportPlayerReport extends React.Component {
 
 	onMouseOut = () => {
 		let me =this;
-		me.removeSpheres(function () {
-			me.showUpdatedRegion();
-		});
-		me.unHighlightPickedObject();
+		// me.removeSpheres(function () {
+		// 	me.showUpdatedRegion();
+		// });
+		// me.unHighlightPickedObject();
 		me.setState({
 			barColors: defaultBarColors
 		});
@@ -736,7 +826,7 @@ class ExportPlayerReport extends React.Component {
 		let me = this;
 
 		const data = {
-			labels: [857, 1173, 3043, 1173, 1200, 1400],
+			labels: [0, 0, 0, 0, 0, 0, 0],
 			datasets: [{
 				label: "Events",
 				lineTension: 0.1,
@@ -744,7 +834,14 @@ class ExportPlayerReport extends React.Component {
 				borderColor: '#1987DD',
 				hoverBackgroundColor: 'rgba(255,255,102)',
 				hoverBorderColor: 'rgba(255,255,102)',
-				data: [parseFloat(frontal_lobe_json.length), parseFloat(pariental_lobe_json.length), parseFloat(occipital_lobe_json.length), parseFloat(temporal_lobe_json.length), parseFloat(cerebellum_lobe_json.length), parseFloat(middle_part_of_the_brain_json.length)]
+				data: [
+					parseFloat(frontal_lobe_json.length), 
+					parseFloat(pariental_lobe_json.length), 
+					parseFloat(occipital_lobe_json.length), 
+					parseFloat(temporal_lobe_json.length), 
+					parseFloat(cerebellum_lobe_json.length),
+					parseFloat(stem_json.length),
+					parseFloat(middle_part_of_the_brain_json.length)]
 			}]
 		};
 
@@ -779,8 +876,12 @@ class ExportPlayerReport extends React.Component {
 								return cerebellum_lobe_json.length;
 								break;
 							case 5:
+								return stem_json.length;
+							case 6:
 								return middle_part_of_the_brain_json.length;
 								break;
+							default:
+								break;	
 						}
 					}
 				}
@@ -836,7 +937,18 @@ class ExportPlayerReport extends React.Component {
 								me.onMouseHover('', 'Cerebellum_node_Cerebellum');
 								break;
 							case 5:
-								me.onMouseHover('', 'Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex');
+								me.onMouseHover(
+									"",
+									"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
+								);
+								break;
+							case 6:
+								me.onMouseHover(
+									"",
+									"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex"
+								);
+								break;
+							default:
 								break;
 						}
 						return ' ' + event + ' Events';
@@ -854,6 +966,24 @@ class ExportPlayerReport extends React.Component {
 				}
 			}
 		};
+
+		const actionButtons = this.state.actionButtonPositions.map((pos, index) => {
+			return (
+				<button
+					className="btn btn-primary lobe_btn_temp"
+					id={this.state.actionButtons[index].id}
+					style={{
+						position: "fixed",
+						top: pos.y + 10,
+						left: pos.x,
+						transform: "translate(-50%, 0%)"
+					}}
+					key={index}
+				>
+					{this.state.actionButtons[index].name}
+				</button>
+			);
+		});
 
 		return (
 			<React.Fragment>
@@ -880,15 +1010,17 @@ class ExportPlayerReport extends React.Component {
 						</div>
 					</div>
 					<div className="col-md-7">
-						<Bar data={data} options={options} />
-						<div className="action_btn_block">
-							<button className="btn btn-primary lobe_btn" id="front_btn">Frontal Lobe</button>
-							<button className="btn btn-primary lobe_btn" id="pariental_btn">Parietal Lobe</button>
-							<button className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
-							<button className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
-							<button className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>
-							<button className="btn btn-primary lobe_btn motor_and_sensor_cortex" id="motor_and_sensor_cortex">Motor and Sensor Cortex</button>
-						</div>
+						<Bar data={data} options={options} plugins={this.plugins} />
+						{actionButtons}
+						{/* <div className="action_btn_block">
+							<button className="btn btn-primary lobe_btn_temp" id="front_btn">Frontal</button>
+							<button className="btn btn-primary lobe_btn_temp" id="pariental_btn">Parietal</button>
+							<button className="btn btn-primary lobe_btn_temp" id="occipital_btn">Occipital</button>
+							<button className="btn btn-primary lobe_btn_temp" id="temporal_btn">Temporal</button>
+							<button className="btn btn-primary lobe_btn_temp" id="cerebellum_btn">Cerebellum</button>
+							<button className="btn btn-primary lobe_btn_temp" id="stem_btn">Stem</button>
+							<button className="btn btn-primary lobe_btn_temp motor_and_sensor_cortex" id="motor_and_sensor_cortex">Motor and Sensor Cortex</button>
+						</div> */}
 						<div>
 							<span className="brain_txt">Select a Brain Region </span>
 						</div>

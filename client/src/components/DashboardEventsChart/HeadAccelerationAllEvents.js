@@ -145,11 +145,46 @@ class HeadAccelerationAllEvents extends React.Component {
         };
     }
 
+    getDate = (timestamp) => {
+
+        const plus0 = num => `0${num.toString()}`.slice(-2)
+      
+        const d = new Date(timestamp)
+      
+        const year = d.getFullYear()
+        const monthTmp = d.getMonth() + 1
+        const month = plus0(monthTmp)
+        const date = plus0(d.getDate())
+        
+        return `${month}/${date}/${year}`
+    }
+
+    tConvert = (time) => {
+        // Check correct time format and split into components
+        time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+      
+        if (time.length > 1) { // If time format correct
+          time = time.slice (1);  // Remove full string match value
+          time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+          time[0] = +time[0] % 12 || 12; // Adjust hours
+        }
+        return time.join (''); // return adjusted time or original string
+    }
+
     render() {
-        console.log('data',this.props.data)
+        if (this.props.data.sensor_data['impact-time']) {
+            let split = this.props.data.sensor_data['impact-time'].split(":");
+            this.props.data.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
+          }
+
+          if (this.props.data.sensor_data['time']) {
+            let split = this.props.data.sensor_data['time'].toString();
+            split = split.split(":");
+            this.props.data.sensor_data['time'] = split.slice(0, split.length - 1).join(":");
+          }
         return (
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
-                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.props.data.sensor_data['impact-date'] +' '+ this.props.data.sensor_data['impact-time'] : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.props.data.sensor_data['date']  +' '+ this.props.data.sensor_data['time']  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
+                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.getDate(this.props.data.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(this.props.data.sensor_data['impact-time']) : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.getDate(this.props.data.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(this.props.data.sensor_data['time'])  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
                     <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
                          <div className="div-chart-labels"> 
                             <label className="chart-label label-1"><span></span> X Linear Acceleration</label>
