@@ -182,13 +182,13 @@ class OrganizationAdmin extends React.Component {
     isUpdateData = (data) =>{
         console.log('isUpdateData',data);
         if(data.data.type == "rename"){
-            this.setState({renameData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id}, isRename: true})
+            this.setState({renameData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data}, isRename: true})
         }
         if(data.data.type == "addOrganization"){
             this.setState({addOrganizationData: {OrganizationName : data.OrganizationName, sensor: this.props.location.state.brand.brand  }, isAddOrganization: true})
         }
         if(data.data.type == "merge"){
-            this.setState({mergeData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id }, isMerge: true})
+            this.setState({mergeData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
         }
         this.setState({ isDisplay2:{ display: 'none' } });
     }
@@ -422,7 +422,7 @@ class OrganizationAdmin extends React.Component {
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <ul className="organization-edit-icons isEdit">
                     <li><span><img src={pencil}  onClick={e => this.editRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'rename'})}/>Rename</span></li>
-                    <li><span><img src={merge}  onClick={e => this.editRecord( {organization_id: organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} />Merge</span></li>
+                    <li><span><img src={merge}  onClick={e => this.editRecord( {brand: brand, organization_id: organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} />Merge</span></li>
                     <li><span><img src={delicon} onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
                 </ul>
                 <div

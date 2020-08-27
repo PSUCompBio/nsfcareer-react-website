@@ -2572,31 +2572,112 @@ function DeleteOrganization(organization_id) {
     });
 }
 
+function getOrganizatonBynameSensor(organization, sensor){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "organizations",
+                FilterExpression: "sensor = :sensor and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":sensor": sensor,
+                ":organization": organization,
+                },
+            };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+
 app.post(`${apiPrefix}deleteItem`, (req, res) => {
     console.log(req.body)  
     let type = req.body.type;
     let data = req.body.data;
     if(type == 'team'){
         console.log('data',data)
-        DeleteOrganization(data.organization_id)
-        .then(data => {
-            console.log('res',data)
-            res.send({
-                message: 'success',
-                status: 200
-            })
+        getOrganizatonBynameSensor(data.organization, data.brand)
+        .then(org =>{
+            var orglen = org.length;
+            orglen = orglen-1;
+            if(org){
+                org.forEach(function (record, index) {
+                    console.log('record',record.organization_id);
+                    console.log(index, orglen)
+                    DeleteOrganization(record.organization_id)
+                    .then(data => {
+                        console.log('res',data)
+                        if(index == orglen){
+                            res.send({
+                                message: 'success',
+                                status: 200
+                            })
+                        }
+                    }).catch(err => {
+                        console.log('err',err)
+                        if(index == orglen){
+                             res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
+                res.send({
+                    message: 'failure',
+                    status: 300,
+                    err: err
+                })
+            }
         }).catch(err => {
             console.log('err',err)
-             res.send({
+            res.send({
                 message: 'failure',
                 status: 300,
                 err: err
             })
         })
+        
     }
 })
 
 //Rename organization
+
+
+function getOrgSensorData(organization, sensor){
+    return new Promise((resolve, reject) =>{
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "organization= :organization and sensor = :sensor",
+            ExpressionAttributeValues: {
+               ":sensor": sensor,
+               ":organization": organization
+            },
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+
 
 function renameOrganization(OrganizationName,organization_id) {
     console.log('organization_id',organization_id)
@@ -2617,7 +2698,36 @@ function renameOrganization(OrganizationName,organization_id) {
         }
         docClient.update(params, function (err, data) {
             if (err) {
-                console.log("error when deleting data\n",err);
+                console.log("error when updating data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+function renameSensorOrganization(OrganizationName,player_id, team) {
+    console.log('OrganizationName',OrganizationName)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "sensor_data",
+            Key: { 
+                "team": team,
+                "player_id" : player_id
+            },
+            UpdateExpression: "set #organization = :organization",
+            ExpressionAttributeNames: {
+                "#organization": "organization"
+            },
+            ExpressionAttributeValues: {
+                ":organization": OrganizationName
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating sensor data\n",err);
                 reject(err);
 
             } else {
@@ -2628,13 +2738,49 @@ function renameOrganization(OrganizationName,organization_id) {
 }
 
 app.post(`${apiPrefix}renameOrganization`, (req, res) => {
-    console.log(req.body)  
+    console.log(req.body) ;
+    let organization = req.body.data.organization;
+    let sensor = req.body.data.brand;
+    let OrganizationName = req.body.OrganizationName;
+   
     renameOrganization(req.body.OrganizationName, req.body.organization_id)
     .then(data => {
         console.log('res',data)
-        res.send({
-            message: 'success',
-            status: 200
+        getOrgSensorData(organization, sensor)
+        .then(sensor_data => {
+            console.log('sensor_data',sensor_data);
+            let sensorlen = sensor_data.length;
+            if(sensorlen > 0){
+                sensorlen = sensorlen-1;
+                sensor_data.forEach(function (record, index) {
+                    // console.log('sensor',record);
+                    renameSensorOrganization(OrganizationName, record.player_id, record.team)
+                    .then(response=>{
+                        console.log('response',response)
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'success',
+                                status: 200,
+                            })
+                        }
+                    }).catch(err=>{
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
+                res.send({
+                    message: 'success',
+                    status: 200,
+                })
+            }
+        }).catch(err => {
+            console.log("er",err)
         })
     }).catch(err =>{
         console.log(err)
@@ -2735,9 +2881,44 @@ app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
     MergeOrganization(req.body.OrganizationName, req.body.organization_id)
     .then(data => {
         console.log('res',data)
-        res.send({
-            message: 'success',
-            status: 200
+        let organization = req.body.data.selectOrg;
+        let sensor = req.body.data.brand;
+        let OrganizationName = req.body.OrganizationName;
+        getOrgSensorData(organization, sensor)
+        .then(sensor_data => {
+            console.log('sensor_data',sensor_data);
+            let sensorlen = sensor_data.length;
+            if(sensorlen > 0){
+                sensorlen = sensorlen-1;
+                sensor_data.forEach(function (record, index) {
+                    // console.log('sensor',record);
+                    renameSensorOrganization(OrganizationName, record.player_id, record.team)
+                    .then(response=>{
+                        console.log('response',response)
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'success',
+                                status: 200,
+                            })
+                        }
+                    }).catch(err=>{
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
+                res.send({
+                    message: 'success',
+                    status: 200,
+                })
+            }
+        }).catch(err => {
+            console.log("er",err)
         })
     }).catch(err =>{
         console.log(err)
@@ -2747,6 +2928,7 @@ app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
             err: err
         })
     })
+    
 })
 
 app.post(`${apiPrefix}logIn`, (req, res) => {

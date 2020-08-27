@@ -150,6 +150,84 @@ const styles = StyleSheet.create({
         color : 'grey',
         fontSize : 10,
         marginLeft : 'auto'
+    },
+    column1:{
+        width:'25%',
+        marginTop: '25px',
+        fontSize: 10,
+        color : 'grey',
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display:'inline-block',
+        float:'left'
+
+    },
+    column2:{
+        width:'10%',
+        marginTop: '25px',
+        fontSize: 10,
+        color : 'grey',
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display:'inline-block',
+        float:'left'
+    },
+     tableColLeft2: {
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display : 'inline-block',
+        width : '20%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        textAlign : 'left',
+        marginRight: '15px',
+        marginTop: '25px'
+    },
+    tableTd1: {
+        display : 'inline-block',
+        width : '20%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        textAlign : 'left',
+        marginRight: '15px',
+        marginTop: '2px'
+    },
+    tableColRight2: {
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display : 'inline-block',
+        width : '10%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        marginTop: '25px',
+        textAlign : 'center'
+    },
+    tableColRight3: {
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display : 'inline-block',
+        width : '25 %',
+        float : 'right',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        marginLeft: '10px',
+        marginTop: '25px',
+        textAlign : 'center'
+    },
+    hLine : {
+        width : '1.5px',
+        float : 'left',
+        flexDirection : 'column',
+        backgroundColor: 'grey',
+        height: '11px',
+        marginTop: '25px'
     }
 });
 
@@ -231,7 +309,7 @@ class Report extends React.Component {
 
 
                                 <Text style={styles.tableColLeft}> DOB : {this.props.user.dob ? this.props.user.dob : "N/A"} </Text>
-                                <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
+                                <Text style={styles.tableColRight}> Referring physician : Unknown </Text>
 
                             </View>
                             <View style={styles.tableRow}>
@@ -252,6 +330,31 @@ class Report extends React.Component {
                                     <Text  style={styles.rowHead2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>
                                     <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
                                 </View>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
+                                <Text style={styles.tableColRight2}>0-7.5</Text>
+                                <Text style={styles.hLine}></Text>
+                                <Text style={styles.tableColRight2}>7.5-15</Text>
+                                <Text style={styles.hLine}></Text>
+                                <Text style={styles.tableColRight2}>15-25</Text>
+                                <Text style={styles.hLine}></Text>
+                                <Text style={styles.tableColRight2}>25-30</Text>
+                                <Text style={styles.hLine}></Text>
+                                <Text style={styles.tableColRight2}>30-50</Text>
+                                <Text style={styles.tableColRight3}>NOTES</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableTd1}>Fontal</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableTd1}>Parietal</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableTd1}>Occipital</Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableTd1}>Temporal</Text>
                             </View>
                         </View>
 
