@@ -2279,6 +2279,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     if(!req.body.level){
         req.body["level"] = '100';
     }
+    req.body.phone_number = req.body.phone_number.replace(/[-() ]/g, '');
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");

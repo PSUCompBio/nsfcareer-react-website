@@ -1,7 +1,7 @@
 import React from 'react';
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-//import brain from './brain1.glb';
+import brain from './brain1.glb';
 //import Footer from '../../components/Footer';
 import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
@@ -125,6 +125,7 @@ class DashPage extends React.Component {
 			isLoading: false,
 			barColors: defaultBarColors,
 			loadedActionButtons: false,
+			chartHovered: false,
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
@@ -161,6 +162,8 @@ class DashPage extends React.Component {
 		this.plugins = [
 			{
 				afterDraw: (chart) => {
+					if (this.state.loadedActionButtons) return;
+
 					setTimeout(() => {
 						this.afterDrawChart(chart);
 					}, 1000);
@@ -288,8 +291,8 @@ class DashPage extends React.Component {
 			var x = xAxis.getPixelForTick(i);
 			actionButtonPosArr = [
 				{
-					x: x + rect.left,
-					y: yAxis.bottom + rect.top
+					x: x,
+					y: yAxis.bottom
 				},
 				...actionButtonPosArr
 			];
@@ -303,6 +306,10 @@ class DashPage extends React.Component {
 
 	onMouseHover = (event, type) => {
 		if (event !== "") event.preventDefault();
+
+		this.setState({
+			chartHovered: true
+		});
 
 		pickedObject = scene.getObjectByName(type, true);
 		this.highlightGraphBar(type);
@@ -497,20 +504,6 @@ class DashPage extends React.Component {
 		});
 	};
 
-	reset = () => {
-		this.unHighlightPickedObject();
-		pickedObject = null;
-		prevPickedObject = null;
-
-		this.setState({
-			barColors: defaultBarColors
-		});
-
-		this.removeSpheres();
-		// Show all spheres
-		this.showAllSpheres();
-	};
-
 	pick = (normalizedPosition, pickingScene, pickingCamera) => {
 		// cast a ray through the frustum
 		raycaster.setFromCamera(normalizedPosition, pickingCamera);
@@ -531,6 +524,8 @@ class DashPage extends React.Component {
 			prevPickedObject = pickedObject;
 			this.highlightPickedObject();
 			this.createLobeSheres(pickedObject.name);
+		} else {
+			if (!this.state.chartHovered) this.reset();
 		}
 	};
 
@@ -653,8 +648,7 @@ class DashPage extends React.Component {
 
 		// Load&Add brain
 		const gltfLoader = new GLTFLoader();
-		gltfLoader.load(
-			"https://assets.codepen.io/3194077/cloud-viz-brain-Aug-15-2020-V1-Optimized.glb",
+		gltfLoader.load(brain,
 			(gltf) => {
 				root = gltf.scene;
 
@@ -736,7 +730,8 @@ class DashPage extends React.Component {
 
 	onMouseOut = () => {
 		this.setState({
-			barColors: defaultBarColors
+			barColors: defaultBarColors,
+			chartHovered: false
 		});
 	};
 
@@ -745,7 +740,8 @@ class DashPage extends React.Component {
 		this.clearPickPosition();
 
 		this.setState({
-			barColors: defaultBarColors
+			barColors: defaultBarColors,
+			chartHovered: false
 		});
 	};
 
@@ -823,18 +819,24 @@ class DashPage extends React.Component {
 			: canvas.classList.remove("cursor-pointer");
 	};
 
-	resetHighLight = () => {
+	reset = () => {
 
 		this.unHighlightPickedObject();
 		pickedObject = null;
 		prevPickedObject = null;
 
+		let barColors = defaultBarColors;
+
 		this.setState({
-			barColors: defaultBarColors
+			barColors: barColors
+		});
+
+		this.setState({
+			barColors: barColors,
+			chartHovered: false
 		});
 
 		this.removeSpheres();
-
 		// Show all spheres
 		this.showAllSpheres();
 	};
@@ -992,10 +994,12 @@ class DashPage extends React.Component {
 					className="btn btn-primary lobe_btn_temp"
 					id={this.state.actionButtons[index].id}
 					style={{
-						position: "fixed",
-						top: pos.y + 10,
 						left: pos.x,
-						transform: "translate(-50%, 0%)"
+						width: this.chartContainer
+							? this.chartContainer.getBoundingClientRect().width /
+							this.state.actionButtonPositions.length -
+							20
+							: 0
 					}}
 					key={index}
 				>
@@ -1021,44 +1025,20 @@ class DashPage extends React.Component {
 						) : null}
 						<canvas
 							id="c"
-							style={{ width: '100%', height: '100%', display: 'block' }}
+							style={{ width: '100%', height: '80%', display: 'block' }}
 						></canvas>
 					</div>
-					<div className="col-md-7">
+					<div className="col-md-7" ref={(ref) => (this.chartContainer = ref)}>
 						<Bar data={data} options={options} plugins={this.plugins} />
-						{/* <div className="action_btn_block"> */}
-						{actionButtons}
-						{/* <button className="btn btn-primary lobe_btn" id="front_btn">
-								Frontal Lobe
-             				 </button>
-							<button className="btn btn-primary lobe_btn" id="pariental_btn">
-								Parietal Lobe
-             				 </button>
-							<button className="btn btn-primary lobe_btn" id="occipital_btn">
-								Occipital Lobe
-             				</button>
-							<button className="btn btn-primary lobe_btn" id="temporal_btn">
-								Temporal Lobe
-              				</button>
-							<button
-								className="btn btn-primary lobe_btn cerebellum_btn"
-								id="cerebellum_btn"
-							>
-								Cerebellum Lobe
-             				 </button>
-							<button
-								className="btn btn-primary lobe_btn motor_and_sensor_cortex"
-								id="motor_and_sensor_cortex"
-							>
-								Motor and Sensor Cortex
-             				 </button> */}
-						{/* </div> */}
+						<div className="action-btn-container">
+							{actionButtons}
+						</div>
 						<div>
 							<span className="brain_txt">Select a Brain Region </span>
 						</div>
 						<div>
 							<button
-								onClick={this.resetHighLight}
+								onClick={this.reset}
 								className="btn btn-primary reset_btn"
 								id="reset_btn"
 							>

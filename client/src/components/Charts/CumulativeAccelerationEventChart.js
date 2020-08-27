@@ -119,7 +119,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                 ref="h1"
                                 className="player-dashboard-sub-head"
                             >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
-                            Number of impacts :     
+                            Number of Simulations : {this.props.data.simulationCount ? this.props.data.simulationCount : ''}
                             </p>
                         </div>
                         {

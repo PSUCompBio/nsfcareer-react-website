@@ -14,6 +14,7 @@ import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import DarkMode from '../DarkMode';
 import moment from 'moment';
+import MaskedInput from 'react-text-mask'
 
 
 class SignUpComponent extends React.Component {
@@ -347,13 +348,24 @@ class SignUpComponent extends React.Component {
               </span>
             </span>
           </div>
-          <input
+          {/* <input
             type="text"
             className="form-control contact-number"
             placeholder="(800) 867-5309"
             name="phone_number"
             value={this.state.phone_number} 
             onChange={this.handleInputChange}
+            aria-label="contact number"
+            aria-describedby="basic-addon1"
+            required
+          /> */}
+          <MaskedInput
+            mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+            className="form-control contact-number"
+            guide={false}
+            placeholder="(800) 867-5309"
+            name="phone_number"
+            value={this.state.phone_number}
             aria-label="contact number"
             aria-describedby="basic-addon1"
             required

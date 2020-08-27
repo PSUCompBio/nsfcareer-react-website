@@ -118,6 +118,7 @@ class UserDashboarForAdmin extends React.Component {
     }
     if (!isLoaded) return <Spinner />;
     return (
+
       <React.Fragment>
         <div className="center-scroll-up-mobile">
           <ScrollToTop
@@ -173,8 +174,9 @@ class UserDashboarForAdmin extends React.Component {
             className="player-dashboard-sub-head Individual-Head-Acceleration-player-dash">
             Individual Head Acceleration Events
           </p>
-          <div className="row">
-            <div className="col-md-12 player-dash-chart-setting">
+          { this.state.user.level !== 100 &&
+          <div className="row" >
+             <div className="col-md-12 player-dash-chart-setting">
               <div className="col-md-12">
                 <h1 className="">Settings</h1>
               </div>
@@ -204,12 +206,22 @@ class UserDashboarForAdmin extends React.Component {
                     </div>
                 </div>
             </div>
-          </div>
-          {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
+        </div>
+        }
+          { this.state.user.level === 100 &&
+            <div className="row" style={{border: '1px solid #000', marginBottom: '20px'}}>
+              <div className="col-md-12" style={{textAlign: 'center', display: 'block', marginTop: '50px', marginBottom: '100px'}}>
+                    <span>No impacts have been recorded yet.</span>
+                </div>
+            </div>
+          }
+          
+          {this.state.user.level !== 100 && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
 
             <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} state={this.props.location.state}/>
           ))
           }
+         
         </div>
         <Footer />
       </React.Fragment>
@@ -222,7 +234,7 @@ class UserDashboarForAdmin extends React.Component {
           getCumulativeAccelerationData({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
             .then(response => {
               this.setState({
-                cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: this.props.location.state.team.brand, team: this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, staff: this.props.location.state.team.staff, player_id: this.props.location.state.player_name }
+                cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: this.props.location.state.team.brand, team: this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, staff: this.props.location.state.team.staff, player_id: this.props.location.state.player_name, simulationCount: response.data.simulationCount}
               });
               return getAllCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
             })
