@@ -155,7 +155,7 @@ class UpdatePopup extends React.Component {
             </React.Fragment>
           }
           <div className="delete-confirmation-button">
-            <button className="btn button-back"  onClick={() => this.props.makeVisible2({ display: 'none' })}>Cencel</button>
+            <button className="btn button-back"  onClick={() => this.props.makeVisible2({ display: 'none' })}>Cancel</button>
             <button className="btn button-yes" onClick={this.hadleApply}>Apply</button>
           </div>
         </div>

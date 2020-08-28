@@ -801,3 +801,27 @@ export const MergeOrganization = (request) =>{
       });
   })
 }
+
+export const getOrgUniqueList = () =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getOrgUniqueList/`, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getOrgUniqueTeams = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getOrgUniqueTeams/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

@@ -702,7 +702,7 @@ class OrganizationAdmin extends React.Component {
                                             </UncontrolledAlert>
                                         ) : null}
                                     <div className="delete-confirmation-button isEdit">
-                                        <button className="btn button-back " onClick={this.handleCencel}>Cencel</button>
+                                        <button className="btn button-back " onClick={this.handleCencel}>Cancel</button>
                                         <button className="btn button-yes " onClick={this.handleChangeSave} >Save</button>
                                     </div>
                                    

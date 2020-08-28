@@ -27,7 +27,7 @@ import SignatureCanvas from 'react-signature-canvas'
 import Footer from './Footer';
 import { signUp } from '../apis';
 import Spinner from './Spinner/Spinner';
-import { Redirect } from 'react-router-dom';
+import { Redirect ,Link} from 'react-router-dom';
 import template_data from './../config/template_images.json'
 import "./irb.css"
 
@@ -80,7 +80,12 @@ class IRBLinkContent extends React.Component {
     }
     render() {
 
-
+        var height = 100;
+        console.log(window.innerWidth);
+        if(window.innerWidth <= 480){
+            height = 300;  
+        }
+        console.log('width',height)
         return (
             <React.Fragment>
             <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll",overflowX: "hidden"}} class="container">
@@ -346,7 +351,7 @@ class IRBLinkContent extends React.Component {
 
                                 <SignatureCanvas penColor='black'
                                     onBegin={this.cleanPlaceholderTemplate}
-                                    canvasProps={{height: 100, className: 'sigCanvas'}} ref={(ref) => { this.userSignature = ref;}}/>
+                                    canvasProps={{height: height, className: 'sigCanvas'}} ref={(ref) => { this.userSignature = ref;}}/>
                                 <button type="button"
                                     onClick={(e)=> {
                                         let user_details = this.state.user_details
@@ -427,9 +432,9 @@ class IRBLinkContent extends React.Component {
                                         });
                                         }
                                         }
+                                        className="singup-sbumit-btn"
                                         style={{
                                         width: "100%",
-                                        background: "#174f86",
                                         lineHeight: "50px",
                                         textAlign: "center",
                                         color: "#fff",
@@ -440,6 +445,11 @@ class IRBLinkContent extends React.Component {
                                         marginTop: "1%",
 
                                         }}> Submit</button>
+                                        <Link to={{ 
+                                            pathname: '/SignUp',
+                                        state: {}
+                                        }}
+                                         ><button className="btn singup-cancel-btn">Cancel</button></Link>
                                         {this.state.isLoading ? (
                                         <div style={{textAlign : "center", marginTop: "1%",
                                         marginBottom: "10%"}}>

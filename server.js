@@ -1965,6 +1965,113 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
     })
 });
 
+/*++++++++++++++++ Geting org unique list ++++++++++++++++++++++*/
+function getOrgUniqueList() {
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'users',
+            key:{
+                level: 300
+            },
+            ProjectionExpression: "organization"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getOrgUniqueList`, (req, res) => {
+    console.log('get org list')
+    getOrgUniqueList()
+    .then(list => {
+        let uniqueList = [];
+        var orgList = list.filter(function (organization) {
+            if (uniqueList.indexOf(organization.organization) === -1) {
+                uniqueList.push(organization.organization);
+                return organization;
+            }
+        });
+        console.log('uniqueList',orgList)
+        res.send({
+            message: 'success',
+            status: 200,
+            data: orgList
+        })
+    })
+    .catch(err=>{
+        console.log('err',err);
+        res.send({
+            message: 'faiure',
+            status: 300,
+            data: []
+        })
+    })
+})
+
+/*++++++++++++ Getting Organization teams +++++++++++++++++*/
+
+function getOrgUniqueTeams(organization) {
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+            key:{
+                organization: organization
+            },
+            ProjectionExpression: "team_name"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getOrgUniqueTeams`, (req, res) => {
+    console.log('org name', req.body);
+    getOrgUniqueTeams(req.body.org)
+    .then(list => {
+        let uniqueList = [];
+        var teamList = list.filter(function (team) {
+            if (uniqueList.indexOf(team.team_name) === -1) {
+                uniqueList.push(team.team_name);
+                return team;
+            }
+        });
+        console.log('uniqueList',teamList)
+        res.send({
+            message: 'success',
+            status: 200,
+            data: teamList
+        })
+    })
+    .catch(err=>{
+        console.log('err',err);
+        res.send({
+            message: 'faiure',
+            status: 300,
+            data: []
+        })
+    })
+})
+
 
 app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
     console.log('req',req.body);
