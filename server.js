@@ -3890,6 +3890,72 @@ app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
     });
 });
 
+app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
+    if (req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
+    }
+    if (req.user_cognito_id) {
+        let userData = {};
+        getFileSignedUrl( req.user_cognito_id + "/profile/avatar/brain.ply", function (err, brain_ply) {
+            if (err) {
+                userData["brain_ply"] = "";
+                res.send({
+                    message: "failure",
+                    data: userData
+                })
+            }
+            else {
+                userData["brain_ply"] = brain_ply;
+                getFileSignedUrl( req.user_cognito_id + "/profile/avatar/skull.ply", function (err, skull_ply) {
+                    if (err) {
+                        userData["skull_ply"] = "";
+                        res.send({
+                            message: "failure",
+                            data: userData
+                        })
+                    }
+                    else {
+                        userData["skull_ply"] = skull_ply;
+                        getFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.ply", function (err, model_ply) {
+                            if (err) {
+                                userData["model_ply"] = "";
+                                res.send({
+                                    message: "failure",
+                                    data: userData
+                                })
+                            }
+                            else {
+                                userData["model_ply"] = model_ply;
+                                getFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.jpg", function (err, model_jpg) {
+                                    if (err) {
+                                        userData["model_jpg"] = "";
+                                        res.send({
+                                            message: "failure",
+                                            data: userData
+                                        })
+                                    }
+                                    else {
+                                        userData["model_jpg"] = model_jpg;
+                                        res.send({
+                                            message: "success",
+                                            data: userData
+                                        })
+
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        })    
+    } else {
+        res.send({
+            message: "failure",
+            error: 'User cognito id is required '
+        })
+    }
+})    
 
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
