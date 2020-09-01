@@ -27,7 +27,7 @@ import 'filepond/dist/filepond.min.css';
 import socketIOClient from 'socket.io-client'
 
 import Spinner from './Spinner/Spinner';
-
+import Switch from "react-switch";
 
 class CommanderTeamView extends React.Component {
     constructor(props) {
@@ -64,7 +64,8 @@ class CommanderTeamView extends React.Component {
             buttonSelected: 'overview',
             simulations_completed: 0,
             simulations_pending: 0,
-            simulation_failed: 0
+            simulation_failed: 0,
+            checked: false
         };
     }
     activateTab = (value) => {
@@ -317,6 +318,10 @@ class CommanderTeamView extends React.Component {
         const date = plus0(d.getDate())
         
         return `${month}/${date}/${year}`
+    }
+
+    handleCheck=(checked)=> {
+        this.setState({ checked });
     }
 
     tConvert = (time) => {
@@ -673,6 +678,7 @@ class CommanderTeamView extends React.Component {
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Team</span>Status</th>
                                             </tr>
                                         </thead>
                                       <tbody className="player-table">
@@ -741,6 +747,7 @@ class CommanderTeamView extends React.Component {
                                                                                 */}
                                                         <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
                                                         <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
+                                                        <td style={{ alignItems: "center" }}><Switch onChange={this.handleCheck} uncheckedIcon={false}  onColor="#00B050" onHandleColor="#2693e6" className="react-switch" checkedIcon={false} checked={this.state.checked} /></td>
                                                     </tr>;
                                                 }
                                             }, this)}

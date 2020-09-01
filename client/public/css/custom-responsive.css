@@ -334,6 +334,30 @@
 	.unlock-img2{
 		width: 3.5%;
 	}
+	.camera-alert{
+	    width: 100%;
+	    height: 147px;
+	    background: #0f66ae;
+	    margin-top: -153px;
+	    position: absolute;
+	}
+	#inner-circle{
+		top: 32px!important;
+	    height: 44px!important;
+	    width: 44px!important;
+	}
+	#outer-circle{
+		height: 62px!important;
+    	width: 62px!important;
+	}
+	#container-circles{
+		bottom: 74px!important;
+	}
+	.camera-alert{
+		font-weight: bold;
+    	font-size: 20px;
+    	line-height: 1.2;
+	}
 }
 
 @media screen and (max-width: 414px){
@@ -496,6 +520,13 @@
 	    font-size: 8px;
 	    font-weight: 700;
 	    width: 38%;
+	}
+	.camera-circle {
+	   	width: 54%;
+	    height: 181px;
+	    left: 50%;
+	    transition: auto;
+	    top: 32%;
 	}
 }
 

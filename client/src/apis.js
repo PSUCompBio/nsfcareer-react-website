@@ -85,6 +85,19 @@ export const updateUserDetails = (request) =>{
   })
 }
 
+export const updateUserMouthguardDetails = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/updateUserMouthguardDetails`, JSON.parse(request),{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
 export const VerifyVerificationCode = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/VerifyVerificationCode`, request,{withCredentials: true})

@@ -34,6 +34,9 @@ import Report from '../../components/ReportContent/Report0';
 import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
 import InviteUsers from '../../components/InviteUsers';
 import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
+import ProfileImageUpload from '../../components/profile/ProfileImageUpload';
+
+
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -329,7 +332,11 @@ class Routing extends React.Component {
             path="/IRBParentConsent"
             render={(props) => <IRBParentConsent {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
-       
+         <Route
+            exact
+            path="/profile-image-upload"
+            render={(props) => <ProfileImageUpload {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
       </React.Fragment>
     );
   }

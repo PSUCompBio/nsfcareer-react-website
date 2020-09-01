@@ -18,8 +18,11 @@ import {
     getVtkFileLink,
     updateUserDetails,
     isAuthenticated,
-    VerifyNumber
+    VerifyNumber,
+    getAllSensorBrands,
+    updateUserMouthguardDetails
 } from '../../apis';
+import Select from 'react-select';
 
 import { UncontrolledAlert,
     Form,
@@ -46,6 +49,9 @@ import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import Img from 'react-fix-image-orientation'
 import AvatarInspectionModel from '../Popup/AvatarInspectionModel';
+let options = [];
+
+
 
 
 class Profile extends React.Component {
@@ -86,6 +92,8 @@ class Profile extends React.Component {
             isRefreshing : false,
             phone_number: '',
             VerifyNumber:false,
+            sensors: [],
+            selectedOption: null,
             isDisplay: { display: 'none' }
         };
         this.handleDateChange = this.handleDateChange.bind(this);
@@ -122,7 +130,10 @@ class Profile extends React.Component {
             return { user: prevState };
         });
     };
-
+    handleSensorChange = (selectedOption)=>{
+      console.log(selectedOption);
+      this.setState({ selectedOption });
+    }
     getUploadFileExtension(url){
 
         if(new RegExp(".jpg").test(url)){
@@ -153,6 +164,19 @@ class Profile extends React.Component {
 
     getCountryName = (e) => {};
 
+    setSensor = () =>{
+         getAllSensorBrands()
+        .then(data =>{
+            console.log('Sensor',data)
+            if(data.data.message == "success"){
+                this.setState({
+                  sensors: data.data.data
+                })
+             }
+        }).catch(err =>{
+            console.log('err',err)
+        })
+    }
 
     onClickHandler = (profile_pic) => {
         const data = new FormData();
@@ -596,6 +620,42 @@ class Profile extends React.Component {
         });
 
     }
+    handleMouthguardSubmit =(e)=>{
+        e.preventDefault();
+        e.persist();
+        //temporary setting authentication to change nav bar tabs
+
+        console.log('update User Details api called');
+        const formData = new FormData(e.target);
+        this.setState({
+            isLoginError2: false,
+            isLoading2: true
+        });
+        // converting formData to JSON
+        const formJsonData = JSON.parse(formDataToJson(formData));
+        console.log('formJsonData',formJsonData)
+        formJsonData["user_cognito_id"] = this.state.user.user_cognito_id;
+        updateUserMouthguardDetails(JSON.stringify(formJsonData))
+        .then((response) => {
+            if (response.data.message === 'success') {
+                this.setState({
+                    isLoading2: false,
+                    message2 : 'Success'
+                });
+
+            } else {
+                // show error
+                this.setState({
+                    loginError2: response.data.error,
+                    isLoginError2: true,
+                    isLoading2: false
+                });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    }
 
     showModal = () => {
 
@@ -612,8 +672,12 @@ class Profile extends React.Component {
 
 
     showProfile = () => {
-        console.log('this.state.user.profile_picture_url', this.state.user.country_code)
+        console.log('sensor', this.state.sensor)
         // this.setState({phone_number: this.state.user.phone_number})
+        options = this.state.sensors.map(function(sensors,index){
+          return {value:sensors.sensor,label:sensors.sensor }
+        });
+        let isClearable = true;
         return (
             <React.Fragment>
                 <div
@@ -953,6 +1017,72 @@ class Profile extends React.Component {
                                     </div>
                                 </div>
                                 <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
+                                    <div ref="lightDark" style={{ border: "2px solid rgb(15, 129, 220)", borderRadius: "1.8rem" }} className="row profile-container">
+                                        <div className="col-md-10 ml-4 mt-2 pt-2">
+                                            <p className="player-dashboard-sub-head">
+                                                Mouthguard of Sensor Information
+                                            </p>
+                                            <Form className="mt-2" onSubmit = {this.handleMouthguardSubmit} >
+                                                
+                                                    <FormGroup row>
+                                                        <Label for="exampleEmail" sm={2}>Sensor Brand </Label>
+                                                        <Col sm={6}>
+                                                            <div class="input-group">
+                                                               <Select
+                                                                  className="custom-profile-select"
+                                                                  value={this.state.selectedOption}
+                                                                  defaultValue ={this.state.selectedOption}
+                                                                  name="sensor"
+                                                                  placeholder="Select sensor brand"
+                                                                  onChange={this.handleSensorChange}
+                                                                  options={options}
+                                                                  isClearable={isClearable}
+                                                                />
+                                                            </div>
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <FormGroup row>
+                                                        <Label for="exampleEmail" sm={2}>Sensor ID Number</Label>
+                                                        <Col sm={6}>
+                                                            <div class="input-group">
+                                                                <Input className="profile-input" type="text" name="sensor_id_number"  defaultValue={this.state.sensor_id_number} id="sensor_id_number"  placeholder="Sensor Id number" />
+                                                            </div>
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <div className="text-center" style={{'margin-bottom': '14px'}}>
+                                                        <Button color="primary"> Save Changes </Button>
+                                                    </div>
+                                                    {this.state.isLoading2 ? (
+                                                        <div className="d-flex justify-content-center center-spinner">
+                                                            <div
+                                                                className="spinner-border text-primary"
+                                                                role="status"
+                                                                >
+                                                                <span  className="sr-only">Loading...</span>
+                                                            </div>
+                                                        </div>
+                                                    ) : null}
+                                                    {this.state.message2 ? (
+                                                        <div
+                                                            className="alert alert-success"
+                                                            style={{'margin-top': '8px'}}
+                                                            role="alert">
+                                                            <strong > Success !</strong> {this.state.message2}
+                                                        </div>
+                                                    ) : null}
+                                                    {this.state.isLoginError2 ? (
+                                                        <div
+                                                            className="alert alert-info api-response-alert"
+                                                            role="alert"
+                                                            >
+                                                            <strong >Failed! </strong> {this.state.loginError2}
+                                                            </div>
+                                                    ) : null}
+                                            </Form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
                                     <div
                                         style={{
                                             border: "2px solid rgb(15, 129, 220)",
@@ -1217,6 +1347,8 @@ class Profile extends React.Component {
                                         </div>
 
                                     </div>
+
+
                                     <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
                                         <div
                                             style={{
@@ -1359,6 +1491,8 @@ class Profile extends React.Component {
                                             user: { ...this.state.user, ...response.data.data },
                                             phone_number: response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length),
                                             number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
+                                            selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
+                                            sensor_id_number:  response.data.data.sensor_id_number ? response.data.data.sensor_id_number : '',
                                             isLoading: false,
                                             isAuthenticated: true,
                                             isCheckingAuth: false,
@@ -1415,6 +1549,7 @@ class Profile extends React.Component {
                             if (getStatusOfDarkmode().status) {
                                 document.getElementsByTagName('body')[0].style.background = '#171b25';
                             }
+                            this.setSensor();
                         }
                     }
 
