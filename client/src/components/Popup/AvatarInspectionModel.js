@@ -3,6 +3,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
+import { ThreeBSP } from "three-js-csg-es6";
+
 import "./AvatarView.css";
 import {
   getAvatarInspection
@@ -34,11 +36,11 @@ class AvatarInspectionModel extends Component {
         const promises = [
           // this.loadTexture("https://assets.codepen.io/3194077/model.jpg"),
           // this.loadPLY("https://assets.codepen.io/3194077/model.ply"),
-          // this.loadFBX("./assets/models/brain.FBX"),
+          // this.loadPLY("./assets/models/brain.ply"),
           // this.loadPLY("./assets/models/skull.ply"),
           this.loadTexture(response.data.data.model_jpg),
           this.loadPLY(response.data.data.model_ply),
-          this.loadFBX("./assets/models/brain.FBX"),
+          this.loadPLY(response.data.data.brain_ply),
           this.loadPLY(response.data.data.skull_ply),
           this.loadTexture("./assets/textures/brain_diffuse.jpg"),
           this.loadTexture("./assets/textures/brain_normal.png"),
@@ -47,16 +49,19 @@ class AvatarInspectionModel extends Component {
         Promise.all(promises).then((result) => {
           this.avatarTex = result[0];
           this.avatarGeo = this.bufferGeoToGeo(result[1]);
-          this.brain = result[2].children[0];
-          this.skullGeo = result[3];
+          this.brainGeo = this.bufferGeoToGeo(result[2]);
+          this.skullGeo = this.bufferGeoToGeo(result[3]);
           this.brainTex = result[4];
           this.brainNormalTex = result[5];
+          this.brainTex.wrapS = THREE.RepeatWrapping;
+          this.brainTex.wrapT = THREE.RepeatWrapping;
+          this.brainTex.repeat.set(0.5, 0.5);
+
+          this.uvGenerate(this.brainGeo);
 
           this.loadedAssets();
         });
       })
-
-
   };
 
   bufferGeoToGeo = (bufferGeo) => {
@@ -83,20 +88,19 @@ class AvatarInspectionModel extends Component {
       const v1 = geometry.vertices[faces[i].a],
         v2 = geometry.vertices[faces[i].b],
         v3 = geometry.vertices[faces[i].c];
-
       geometry.faceVertexUvs[0].push([
         new THREE.Vector2(
-          (v1.x + offset.x) / range.x,
-          (v1.y + offset.y) / range.y
+          (v1.x + v1.z + v1.y + offset.x) / range.x,
+          (v1.y - v1.z + offset.y) / range.y
         ),
         new THREE.Vector2(
-          (v2.x + offset.x) / range.x,
-          (v2.y + offset.y) / range.y
+          (v2.x + v2.z + v2.y + offset.x) / range.x,
+          (v2.y - v2.z + offset.y) / range.y
         ),
         new THREE.Vector2(
-          (v3.x + offset.x) / range.x,
-          (v3.y + offset.y) / range.y
-        ),
+          (v3.x + v3.z + v3.y + offset.x) / range.x,
+          (v3.y - v3.z + offset.y) / range.y
+        )
       ]);
     }
     geometry.uvsNeedUpdate = true;
@@ -122,7 +126,7 @@ class AvatarInspectionModel extends Component {
 
   loadedAssets = () => {
     this.setState({
-      isLoading: false,
+      isLoading: false
     });
 
     this.init();
@@ -130,8 +134,10 @@ class AvatarInspectionModel extends Component {
   };
 
   init = () => {
-    this.width = (window.innerWidth / 2) * window.devicePixelRatio;
-    this.height = (window.innerHeight) * window.devicePixelRatio;
+    this.expectedWidth = 1280;
+    this.expectedHeight = 720;
+    this.width = this.el.offsetWidth * window.devicePixelRatio;
+    this.height = this.el.offsetHeight * window.devicePixelRatio;
     this.mouse = new THREE.Vector2();
 
     this.sceneSetup();
@@ -150,11 +156,11 @@ class AvatarInspectionModel extends Component {
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true,
+      alpha: true
     });
 
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.setSize(window.innerWidth / 2, window.innerHeight);
+    this.renderer.setSize(this.el.offsetWidth, this.el.offsetHeight);
     this.renderer.localClippingEnabled = true;
     this.el.appendChild(this.renderer.domElement);
   };
@@ -169,10 +175,12 @@ class AvatarInspectionModel extends Component {
       10000
     );
     this.camera.position.z = 1000;
-    this.controller = new OrbitControls(
-      this.camera,
-      this.renderer.domElement
-    );
+    this.camera.zoom =
+      this.el.offsetWidth > this.el.offsetHeight
+        ? this.el.offsetWidth / this.expectedWidth
+        : this.el.offsetHeight / this.expectedHeight;
+    this.camera.updateProjectionMatrix();
+    this.controller = new OrbitControls(this.camera, this.renderer.domElement);
     this.controller.update();
     this.scene.add(this.camera);
   };
@@ -184,6 +192,11 @@ class AvatarInspectionModel extends Component {
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(10, 20, 10);
     this.scene.add(dirLight);
+
+    this.pointLight = new THREE.PointLight(0xffffff, 0.4);
+    this.pointLight.position.set(-200, 100, 0);
+    this.pointLight.visible = false;
+    this.scene.add(this.pointLight);
   };
 
   objectSetup = () => {
@@ -194,12 +207,12 @@ class AvatarInspectionModel extends Component {
     this.avatarMat = new THREE.MeshStandardMaterial({
       map: this.avatarTex,
       side: THREE.FrontSide,
-      clipShadows: true,
+      clipShadows: true
     });
     this.avatarMat2 = new THREE.MeshStandardMaterial({
       color: 0xff9f80,
       side: THREE.BackSide,
-      clipShadows: true,
+      clipShadows: true
     });
 
     this.avatarGeo.center();
@@ -207,32 +220,38 @@ class AvatarInspectionModel extends Component {
     this.avatar = new THREE.Mesh(this.avatarGeo, this.avatarMat);
     this.avatar.scale.multiplyScalar(1000);
 
-    this.avatar2 = new THREE.Mesh(this.avatarGeo, this.avatarMat2);
-    this.avatar2.scale.multiplyScalar(1000);
+    this.avatar2 = this.avatar.clone();
+    this.avatar2.material = this.avatarMat2;
 
     this.scene.add(this.avatar);
     this.scene.add(this.avatar2);
 
     // Add brain model
-    const box = new THREE.Box3().setFromObject(this.brain);
-    const center = box.getCenter(new THREE.Vector3());
+    this.brainMat = new THREE.MeshPhongMaterial({
+      map: this.brainTex,
+      side: THREE.DoubleSide,
+      clipShadows: false,
+      color: 0xaaaaaa,
+      specular: 0x000000
+    });
+    this.brainGeo.computeVertexNormals();
+    this.brainGeo.center();
 
-    this.brain.position.x += this.brain.position.x - center.x;
-    this.brain.position.y += this.brain.position.y - center.y;
-    this.brain.position.z += this.brain.position.z - center.z;
-    this.brain.scale.multiplyScalar(115);
+    this.brain = new THREE.Mesh(this.brainGeo, this.brainMat);
+    this.brain.scale.multiplyScalar(1100);
+
     this.brain.scale.x *= 0.8;
-    this.brain.position.y += 45;
-    this.brain.position.z += 30;
-
-    this.brain.material.color.setHex(0xffffff);
+    this.brain.position.y += 90;
+    this.brain.position.z += 8.5;
 
     this.scene.add(this.brain);
 
     // Add skull model
-    this.skullMat = new THREE.MeshStandardMaterial({
+    this.skullMat = new THREE.MeshPhongMaterial({
       side: THREE.DoubleSide,
-      clipShadows: true,
+      clipShadows: false,
+      color: 0xaaaaaa,
+      specular: 0x000000
     });
     this.skullGeo.computeVertexNormals();
     this.skullGeo.center();
@@ -244,21 +263,51 @@ class AvatarInspectionModel extends Component {
     this.skull.position.y += 85;
     this.skull.position.z += 8.5;
 
-    this.scene.add(this.skull);
+    const box = new THREE.Mesh(new THREE.BoxGeometry(500, 500, 500));
+    box.position.x += 245.1;
+
+    this.skull2 = this.intersectMesh(this.skull, box).csg;
+    this.skull2.material = this.skullMat;
+
+    this.scene.add(this.skull2);
+  };
+
+  intersectMesh = (mesh1, mesh2) => {
+    const sBSP = new ThreeBSP(mesh1);
+    const bBSP = new ThreeBSP(mesh2);
+
+    const sub = bBSP.intersect(sBSP);
+    const newMesh = sub.toMesh();
+
+    return Object.assign({}, { csg: newMesh });
+  };
+
+  subtractMesh = (mesh1, mesh2) => {
+    const sBSP = new ThreeBSP(mesh1);
+    const bBSP = new ThreeBSP(mesh2);
+
+    const sub = bBSP.subtract(sBSP);
+    const newMesh = sub.toMesh();
+
+    return Object.assign({}, { csg: newMesh });
   };
 
   onWindowResize = () => {
-    this.width = (window.innerWidth / 2) * window.devicePixelRatio;
-    this.height = (window.innerHeight) * window.devicePixelRatio;
+    this.width = this.el.offsetWidth * window.devicePixelRatio;
+    this.height = this.el.offsetHeight * window.devicePixelRatio;
 
     this.camera.left = this.width / -2;
     this.camera.right = this.width / 2;
     this.camera.top = this.height / 2;
     this.camera.bottom = this.height / -2;
+    this.camera.zoom =
+      this.el.offsetWidth > this.el.offsetHeight
+        ? this.el.offsetWidth / this.expectedWidth
+        : this.el.offsetHeight / this.expectedHeight;
 
     this.camera.updateProjectionMatrix();
 
-    this.renderer.setSize(window.innerWidth / 2, window.innerHeight);
+    this.renderer.setSize(this.el.offsetWidth, this.el.offsetHeight);
   };
 
   animate = () => {
@@ -272,14 +321,16 @@ class AvatarInspectionModel extends Component {
       this.avatarMat.clippingPlanes = null;
       this.avatarMat2.clippingPlanes = null;
       this.skullMat.clippingPlanes = null;
+      this.pointLight.visible = false;
     } else {
       this.avatarMat.clippingPlanes = [this.clipPlane];
       this.avatarMat2.clippingPlanes = [this.clipPlane];
       this.skullMat.clippingPlanes = [this.clipPlane];
+      this.pointLight.visible = true;
     }
 
     this.setState({
-      showBrain: !this.state.showBrain,
+      showBrain: !this.state.showBrain
     });
   };
 
