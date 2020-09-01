@@ -1970,8 +1970,12 @@ function getOrgUniqueList() {
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'users',
-            key:{
-                level: 300
+            FilterExpression: "#level = :level",
+            ExpressionAttributeValues: {
+                ":level": 300,
+            },
+            ExpressionAttributeNames: {
+                "#level": "level",
             },
             ProjectionExpression: "organization"
         };
@@ -2024,8 +2028,9 @@ function getOrgUniqueTeams(organization) {
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
-            key:{
-                organization: organization
+            FilterExpression: "organization = :organization",
+            ExpressionAttributeValues: {
+            ":organization": organization
             },
             ProjectionExpression: "team_name"
         };
