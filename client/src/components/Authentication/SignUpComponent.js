@@ -475,7 +475,7 @@ class SignUpComponent extends React.Component {
             : null
         }
 
-        <div className="form-row">
+        <div className="form-row mb-3">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
@@ -498,7 +498,7 @@ class SignUpComponent extends React.Component {
           </div>
         </div>
 
-        <div className="form-row">
+        <div className="form-row mb-3">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
@@ -529,7 +529,7 @@ class SignUpComponent extends React.Component {
         ) : null}
         <input type="hidden" name="team" defaultValue={this.state.team} />
         {this.state.option_team && 
-          <div className="form-row ">
+          <div className="form-row mb-3">
             <div className="input-group mb-3">
               <div className="input-group-prepend">
                 <span className="input-group-text" id="basic-addon1">
