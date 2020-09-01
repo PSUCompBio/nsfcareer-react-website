@@ -45,6 +45,7 @@ import {
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import Img from 'react-fix-image-orientation'
+import AvatarInspectionModel from '../Popup/AvatarInspectionModel';
 
 
 class Profile extends React.Component {
@@ -85,6 +86,7 @@ class Profile extends React.Component {
             isRefreshing : false,
             phone_number: '',
             VerifyNumber:false,
+            isDisplay: { display: 'none' }
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -593,6 +595,19 @@ class Profile extends React.Component {
             console.log(err);
         });
 
+    }
+
+    showModal = () => {
+
+        if (this.state.isDisplay.display === 'none') {
+            this.setState({ isDisplay: { display: 'flex' } });
+        } else {
+            this.setState({ isDisplay: { display: 'none' } });
+        }
+    };
+
+    makeVisible = (data) => {
+        this.setState({ isDisplay: data });
     }
 
 
@@ -1135,6 +1150,7 @@ class Profile extends React.Component {
                                                             </button>
 
                                                             <button
+                                                                onClick={this.showModal}
                                                                 style={{
                                                                     width : "100%"
                                                                 }}
@@ -1261,6 +1277,7 @@ class Profile extends React.Component {
                                         </div>
                                     </div>
                                     {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+                                    <AvatarInspectionModel user_cognito_id={this.state.profile_to_view} isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />
                                     <Footer />
                                 </React.Fragment>
                             );

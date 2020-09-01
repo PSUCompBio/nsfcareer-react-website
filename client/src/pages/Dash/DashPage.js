@@ -57,7 +57,7 @@ all_spheres_json = all_spheres_json.concat(stem_json);
 
 let camera, scene, renderer, canvas, raycaster, root, sphereContainer;
 let brainModel;
-let aspectRatio, width, height, currentSubCamera;
+let aspectRatio, width, height, currentSubCamera, initialRatio, prevCanvasWidth;
 const defaultTransparency = 0.3;
 const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
@@ -122,38 +122,45 @@ class DashPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isLoading: false,
+			isLoading: true,
 			barColors: defaultBarColors,
 			loadedActionButtons: false,
 			chartHovered: false,
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
-					name: "Motor and Sensor Cortex"
+					name: "Motor and Sensor Cortex",
+					shortenName: "Motor& Sensor Cortex"
 				},
 				{
 					id: "stem_btn",
-					name: "Stem"
+					name: "Stem",
+					shortenName: "Stem"
 				},
 				{
 					id: "cerebellum_btn",
-					name: "Cerebellum Lobe"
+					name: "Cerebellum Lobe",
+					shortenName: "Cerebellum"
 				},
 				{
 					id: "temporal_btn",
-					name: "Temporal Lobe"
+					name: "Temporal Lobe",
+					shortenName: "Temporal"
 				},
 				{
 					id: "occipital_btn",
-					name: "Occipital Lobe"
+					name: "Occipital Lobe",
+					shortenName: "Occipital"
 				},
 				{
 					id: "pariental_btn",
-					name: "Parietal Lobe"
+					name: "Parietal Lobe",
+					shortenName: "Parietal"
 				},
 				{
 					id: "front_btn",
-					name: "Frontal Lobe"
+					name: "Frontal Lobe",
+					shortenName: "Frontal"
 				}
 			],
 			actionButtonPositions: []
@@ -164,9 +171,7 @@ class DashPage extends React.Component {
 				afterDraw: (chart) => {
 					if (this.state.loadedActionButtons) return;
 
-					setTimeout(() => {
-						this.afterDrawChart(chart);
-					}, 1000);
+					setTimeout(() => this.afterDrawChart(chart), 100);
 				}
 			}
 		];
@@ -176,15 +181,7 @@ class DashPage extends React.Component {
 		// Scrolling the screen to top
 		window.scrollTo(0, 0);
 
-		this.sceneSetup();
-
-		this.cameraSetup();
-
-		this.lightSetup();
-
-		this.objectSetup();
-
-		this.clearPickPosition();
+		this.init();
 
 		window.addEventListener("resize", this.onWindowResize, false);
 		window.addEventListener("mousemove", this.onMouseMove, false);
@@ -270,13 +267,15 @@ class DashPage extends React.Component {
 		}
 	}
 
-	startAnimationLoop = () => {
-		if (brainModel && currentSubCamera)
-			this.pick(pickPosition, scene, currentSubCamera);
-
-		renderer.render(scene, camera);
-		requestAnimationFrame(this.startAnimationLoop);
-	};
+	componentWillUnmount() {
+		window.removeEventListener("resize", this.onWindowResize);
+		window.removeEventListener("mousemove", this.onMouseMove);
+		window.removeEventListener("mouseout", this.onMouseOut);
+		window.removeEventListener("mouseleave", this.onMouseLeave);
+		window.removeEventListener("touchstart", this.onTouchStart);
+		window.removeEventListener("touchmove", this.onTouchMove);
+		window.removeEventListener("touchend", this.onTouchEnd);
+	}
 
 	afterDrawChart = (chart) => {
 		var ctx = chart.chart.ctx;
@@ -302,28 +301,6 @@ class DashPage extends React.Component {
 		this.setState({
 			actionButtonPositions: actionButtonPosArr
 		});
-	};
-
-	onMouseHover = (event, type) => {
-		if (event !== "") event.preventDefault();
-
-		this.setState({
-			chartHovered: true
-		});
-
-		pickedObject = scene.getObjectByName(type, true);
-		this.highlightGraphBar(type);
-
-		if (
-			!pickedObject ||
-			(prevPickedObject && prevPickedObject.name === pickedObject.name)
-		)
-			return;
-
-		this.unHighlightPickedObject();
-		prevPickedObject = pickedObject;
-		this.highlightPickedObject();
-		this.createLobeSheres(type);
 	};
 
 	createLobeSheres = (type) => {
@@ -504,6 +481,27 @@ class DashPage extends React.Component {
 		});
 	};
 
+	reset = () => {
+		this.unHighlightPickedObject();
+		pickedObject = null;
+		prevPickedObject = null;
+
+		let barColors = defaultBarColors;
+
+		this.setState({
+			barColors: barColors
+		});
+
+		this.setState({
+			barColors: barColors,
+			chartHovered: false
+		});
+
+		this.removeSpheres();
+		// Show all spheres
+		this.showAllSpheres();
+	};
+
 	pick = (normalizedPosition, pickingScene, pickingCamera) => {
 		// cast a ray through the frustum
 		raycaster.setFromCamera(normalizedPosition, pickingCamera);
@@ -549,6 +547,29 @@ class DashPage extends React.Component {
 		pickedObject.material.emissive.setHex(highlightColor);
 	};
 
+	init = () => {
+		this.sceneSetup();
+
+		this.cameraSetup();
+
+		this.lightSetup();
+
+		this.objectSetup();
+
+		this.clearPickPosition();
+	};
+
+	startAnimationLoop = () => {
+		if (brainModel && currentSubCamera)
+			this.pick(pickPosition, scene, currentSubCamera);
+
+		// canvas.width = this.threeCanvasContainer.offsetWidth;
+		// canvas.height = this.threeCanvasContainer.offsetHeight;
+		// console.log('an' + canvas.width);
+		renderer.render(scene, camera);
+		requestAnimationFrame(this.startAnimationLoop);
+	};
+
 	sceneSetup = () => {
 		scene = new THREE.Scene();
 		scene.background = new THREE.Color("white");
@@ -561,11 +582,23 @@ class DashPage extends React.Component {
 			alpha: true
 		});
 
-		aspectRatio = canvas.clientWidth / canvas.clientHeight;
-		width = (canvas.clientWidth / amount) * window.devicePixelRatio;
-		height = (canvas.clientHeight / amount) * window.devicePixelRatio;
+		aspectRatio =
+			this.threeCanvasContainer.offsetWidth /
+			this.threeCanvasContainer.offsetHeight;
+
+		initialRatio = 1 / aspectRatio;
+
+		width =
+			(this.threeCanvasContainer.offsetWidth / amount) *
+			window.devicePixelRatio;
+		height =
+			(this.threeCanvasContainer.offsetHeight / amount) *
+			window.devicePixelRatio;
 		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+		renderer.setSize(
+			this.threeCanvasContainer.offsetWidth,
+			this.threeCanvasContainer.offsetHeight
+		);
 	};
 
 	cameraSetup = () => {
@@ -648,7 +681,8 @@ class DashPage extends React.Component {
 
 		// Load&Add brain
 		const gltfLoader = new GLTFLoader();
-		gltfLoader.load(brain,
+		gltfLoader.load(
+			"https://assets.codepen.io/3194077/cloud-viz-brain-Aug-15-2020-V1-Optimized.glb",
 			(gltf) => {
 				root = gltf.scene;
 
@@ -695,70 +729,12 @@ class DashPage extends React.Component {
 				brainModel.rotation.z = Math.PI;
 
 				scene.add(brainModel);
+
+				this.setState({
+					isLoading: false
+				});
 			}
 		);
-	};
-
-	onWindowResize = () => {
-		aspectRatio = canvas.clientWidth / canvas.clientHeight;
-		width = (canvas.clientWidth / amount) * window.devicePixelRatio;
-		height = (canvas.clientHeight / amount) * window.devicePixelRatio;
-		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-
-		for (let y = 0; y < amount; y++) {
-			for (let x = 0; x < amount; x++) {
-				const subCamera = camera.cameras[amount * y + x];
-
-				subCamera.viewport.set(
-					Math.floor(x * width + space / 2),
-					Math.floor(y * height + space / 2),
-					Math.ceil(width - space),
-					Math.ceil(height - space)
-				);
-
-				subCamera.aspect = aspectRatio;
-				subCamera.updateProjectionMatrix();
-			}
-		}
-	};
-
-	onMouseMove = (event) => {
-		// Set pick position
-		this.setPickPosition(event);
-	};
-
-	onMouseOut = () => {
-		this.setState({
-			barColors: defaultBarColors,
-			chartHovered: false
-		});
-	};
-
-	onMouseLeave = () => {
-		// Clear pick position
-		this.clearPickPosition();
-
-		this.setState({
-			barColors: defaultBarColors,
-			chartHovered: false
-		});
-	};
-
-	onTouchStart = (event) => {
-		// prevent the window from scrolling
-		event.preventDefault();
-		this.setPickPosition(event.touches[0]);
-	};
-
-	onTouchMove = (event) => {
-		// Set pick position
-		this.setPickPosition(event.touches[0]);
-	};
-
-	onTouchEnd = () => {
-		// Clear pick position
-		// this.clearPickPosition();
 	};
 
 	getCanvasRelativePosition = (event) => {
@@ -819,26 +795,132 @@ class DashPage extends React.Component {
 			: canvas.classList.remove("cursor-pointer");
 	};
 
-	reset = () => {
+	onWindowResize = () => {
+		if (prevCanvasWidth === this.threeCanvasContainer.offsetWidth) return;
+
+		const canvasWidth = this.threeCanvasContainer.offsetWidth;
+		prevCanvasWidth = canvasWidth;
+		const canvasHeight = this.threeCanvasContainer.offsetWidth * initialRatio;
+
+		aspectRatio = canvasWidth / canvasHeight;
+		width = (canvasWidth / amount) * window.devicePixelRatio;
+		height = (canvasHeight / amount) * window.devicePixelRatio;
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(canvasWidth, canvasHeight);
+
+		for (let y = 0; y < amount; y++) {
+			for (let x = 0; x < amount; x++) {
+				const subCamera = camera.cameras[amount * y + x];
+
+				subCamera.viewport.set(
+					Math.floor(x * width + space / 2),
+					Math.floor(y * height + space / 2),
+					Math.ceil(width - space),
+					Math.ceil(height - space)
+				);
+
+				subCamera.aspect = aspectRatio;
+				subCamera.updateProjectionMatrix();
+			}
+		}
+
+		this.setState({
+			loadedActionButtons: false,
+			actionButtonPositions: []
+		});
+
+		this.removeEventListeners();
+	};
+
+	onMouseHover = (event, type) => {
+		if (event !== "") event.preventDefault();
+
+		this.setState({
+			chartHovered: true
+		});
+
+		pickedObject = scene.getObjectByName(type, true);
+		this.highlightGraphBar(type);
+
+		if (
+			!pickedObject ||
+			(prevPickedObject && prevPickedObject.name === pickedObject.name)
+		)
+			return;
 
 		this.unHighlightPickedObject();
-		pickedObject = null;
-		prevPickedObject = null;
+		prevPickedObject = pickedObject;
+		this.highlightPickedObject();
+		this.createLobeSheres(type);
+	};
 
-		let barColors = defaultBarColors;
+	onMouseMove = (event) => {
+		// Set pick position
+		this.setPickPosition(event);
+	};
 
+	onMouseOut = () => {
 		this.setState({
-			barColors: barColors
-		});
-
-		this.setState({
-			barColors: barColors,
+			barColors: defaultBarColors,
 			chartHovered: false
 		});
+	};
 
-		this.removeSpheres();
-		// Show all spheres
-		this.showAllSpheres();
+	onMouseLeave = () => {
+		// Clear pick position
+		this.clearPickPosition();
+
+		this.setState({
+			barColors: defaultBarColors,
+			chartHovered: false
+		});
+	};
+
+	onTouchStart = (event) => {
+		// prevent the window from scrolling
+		event.preventDefault();
+		this.setPickPosition(event.touches[0]);
+	};
+
+	onTouchMove = (event) => {
+		// Set pick position
+		this.setPickPosition(event.touches[0]);
+	};
+
+	onTouchEnd = () => {
+		// Clear pick position
+		// this.clearPickPosition();
+	};
+
+	removeEventListeners = () => {
+		if (document.getElementById("front_btn"))
+			document
+				.getElementById("front_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("pariental_btn"))
+			document
+				.getElementById("pariental_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("occipital_btn"))
+			document
+				.getElementById("occipital_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("temporal_btn"))
+			document
+				.getElementById("temporal_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("cerebellum_btn"))
+			document
+				.getElementById("cerebellum_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("motor_and_sensor_cortex"))
+			document
+				.getElementById("motor_and_sensor_cortex")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("stem_btn"))
+			document
+				.getElementById("stem_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
 	};
 
 	render() {
@@ -998,12 +1080,23 @@ class DashPage extends React.Component {
 						width: this.chartContainer
 							? this.chartContainer.getBoundingClientRect().width /
 							this.state.actionButtonPositions.length -
-							20
+							(window.innerWidth > window.innerHeight ? 20 : 15)
 							: 0
 					}}
 					key={index}
 				>
-					{this.state.actionButtons[index].name}
+					<span
+						style={{
+							transform:
+								window.innerWidth < window.innerHeight
+									? "rotate(-50deg)"
+									: "initial"
+						}}
+					>
+						{window.innerWidth < window.innerHeight
+							? this.state.actionButtons[index].shortenName
+							: this.state.actionButtons[index].name}
+					</span>
 				</button>
 			);
 		});
@@ -1023,10 +1116,12 @@ class DashPage extends React.Component {
 								</div>
 							</div>
 						) : null}
-						<canvas
-							id="c"
-							style={{ width: '100%', height: '80%', display: 'block' }}
-						></canvas>
+						<div
+							style={{ width: "100%", height: "100%", display: "block" }}
+							ref={(ref) => (this.threeCanvasContainer = ref)}
+						>
+							<canvas id="c" style={{ width: "100%", height: "100%" }}></canvas>
+						</div>
 					</div>
 					<div className="col-md-7" ref={(ref) => (this.chartContainer = ref)}>
 						<Bar data={data} options={options} plugins={this.plugins} />
