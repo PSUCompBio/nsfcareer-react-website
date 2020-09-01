@@ -580,6 +580,28 @@ button.btn.button-yes{
     font-weight: 900!important;
     line-height: 32px!important;
 }
+.profile-picture-btn{
+    color: white!important;
+    width: 100%!important;
+    background: #4472C4!important;
+    margin-top: 16px!important;
+    font-size: 18px!important;
+    font-weight: 900!important;
+    line-height: 32px!important;
+}
+.camera-box{
+    height: auto!important;
+    top: 25%!important;
+    background-color: #f8f9fa!important;
+    box-shadow: inherit!important;
+    width: 56%!important;
+}
+.react-html5-camera-photo {
+    margin-top: 4%!important;
+}
+.delete__icon{
+    z-index: 1;
+}
 
 
 
@@ -617,6 +639,18 @@ button.btn.button-yes{
     width: 11px;
     height: 11px;
 }
+.camera-circle{
+   border: 9px solid #0f66ae;
+    width: 54%;
+    height: 228px;
+    left: 50%;
+    transition: auto;
+    top: 36%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    border-radius: 100%;
+}
+
 
 /**
  * Input
@@ -786,7 +820,7 @@ button.btn.button-yes{
     border-radius: 0 0 3px 3px;
 }
 .custom-react-serach{
-    width: 93%;
+    width: calc(100% - 30px);
 
 }
 
@@ -799,3 +833,16 @@ button.btn.button-yes{
     border-color: white!important;
     border-bottom-color: black!important;
  }
+.p_h4{
+    font-size: 22px;
+    font-weight: 700;
+}
+.profileCameraIcon{
+    width: 5%
+}
+.custom-profile-select{
+    width: 100%;
+}
+.react-switch{
+    z-index: 2;
+}

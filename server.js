@@ -2116,6 +2116,34 @@ app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
         }
     })
 })
+
+app.post(`${apiPrefix}updateUserMouthguardDetails`,(req, res) => {
+    console.log('req',req.body);
+    let update_details = {
+        TableName : 'users',
+        Key : {
+            "user_cognito_id": req.body.user_cognito_id
+        },
+        UpdateExpression : "set sensor = :sensor, sensor_id_number = :sensor_id_number",
+        ExpressionAttributeValues : {
+            ":sensor" : req.body.sensor,
+            ":sensor_id_number" : req.body.sensor_id_number
+        },
+        ReturnValues: "UPDATED_NEW"
+    };
+
+    docClient.update(update_details, function(err, data){
+        if(err) {
+            res.send({
+                message : 'failure'
+            })
+        } else {
+            res.send({
+                message : 'success'
+            })
+        }
+    })
+})
 function adminVerifyNumber(User, cb) {
 
     var params = {
@@ -2389,6 +2417,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body.phone_number = req.body.phone_number.replace(/[-() ]/g, '');
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
+    var user_cognito_id = '';
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
     adminCreateUser(req.body, function (err, data) {
         if (err) {
@@ -2403,6 +2432,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             console.log('data',data)
             var UserData = data.User;
             req.body["user_cognito_id"] = UserData.Username;
+            user_cognito_id = UserData.Username;
             //Now check type of User and give permission accordingly
             // res.send(data);
             // user_type
@@ -2453,7 +2483,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                             else {
                                 // On success
                                 res.send({
-                                    message: 'success'
+                                    message: 'success',
+                                    user_cognito_id: user_cognito_id
                                 });
                             }
                         });
@@ -2508,12 +2539,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                 mergedObject["age"] = age;
 
                                 if( age < 18) {
-
                                     // Disable user account
-
-
-
-
                                 }
 
                                 // Sending request to service to generate IRB form
@@ -2533,7 +2559,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                         if( age > 18 ) {
                                             res.send({
                                                 message: "success",
-                                                message_details : "Successfully created account ! Check your mail for temporary login credentials"
+                                                message_details : "Successfully created account ! Check your mail for temporary login credentials",
+                                                user_cognito_id: user_cognito_id
                                             })
                                         } else {
 
@@ -2548,7 +2575,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                                 else {
                                                     res.send({
                                                         message : "success",
-                                                        message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, youw will be a part of the study!"
+                                                        message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, youw will be a part of the study!",
+                                                        user_cognito_id: user_cognito_id
                                                     })
                                                 }
                                             })
@@ -2557,20 +2585,13 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                                     }
                                 })
-
-
                             }
                         });
                     }
                 })
             }
-
-
-
         }
     })
-
-
 });
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {

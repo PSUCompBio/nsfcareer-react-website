@@ -365,9 +365,9 @@ class IRBLinkContent extends React.Component {
                                             console.log("RESPONSE FROM SERVER IS ", response)
                                             if(response.data.message == "success") {
                                                 this.props.history.push({
-                                                    pathname : '/Login',
+                                                    pathname : '/profile-image-upload',
                                                     state : {
-                                                        message : response.data.message_details
+                                                        message : response.data
                                                     }
                                                 })
                                             } else {
