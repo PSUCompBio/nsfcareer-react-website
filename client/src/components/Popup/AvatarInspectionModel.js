@@ -30,6 +30,12 @@ class AvatarInspectionModel extends Component {
     this.controller.dispose();
   }
 
+  componentDidUpdate() {
+    if (this.props.isVisible.display === 'flex') {
+      this.resetCamera();
+    }
+  }
+
   loadAssets = () => {
     getAvatarInspection({ user_cognito_id: this.props.user_cognito_id })
       .then((response) => {
@@ -280,6 +286,11 @@ class AvatarInspectionModel extends Component {
     const newMesh = sub.toMesh();
 
     return Object.assign({}, { csg: newMesh });
+  };
+
+  resetCamera = () => {
+    if (this.controller)
+      this.controller.reset();
   };
 
   subtractMesh = (mesh1, mesh2) => {
