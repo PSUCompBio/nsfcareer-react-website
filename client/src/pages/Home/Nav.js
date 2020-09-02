@@ -12,7 +12,7 @@ import {
  
 } from '../../apis'; 
 import $ from "jquery";
-
+import CameraPopup from '../../components/Popup/CameraPopup';
 class Nav extends React.Component {
   constructor(props) {
     super(props);
@@ -36,7 +36,9 @@ class Nav extends React.Component {
       user_details : {},
       intervalId: '',
       profile_to_view: '',
-      isLoading: ''
+      isLoading: '',
+      isDisplay2: { display: 'none' },
+      isDeskTop: false,
     };
     console.log("STATE VALUES , ", this.state.user_details);
     this.handleClick = this.handleClick.bind(this);
@@ -51,7 +53,35 @@ class Nav extends React.Component {
       });
       this.onClickHandler2(event.target.files[0]);
   };
-
+   handleCameraPopup = (e) =>{
+        console.log('delete',e)
+        this.setState({DelData: {type: 'team',data:e} })
+        if (this.state.isDisplay2.display === 'none') {
+          this.setState({ isDisplay2: {display:'flex'} });
+        } else {
+          this.setState({ isDisplay2: {display:'none'} });
+        }
+    }
+    makeVisible2 = (data) => {
+      this.setState({ isDisplay2: data });
+  }
+  isUpdateData = (data) =>{
+    console.log('isUpdateData',data);
+    var file = data.dataUri;
+    var the = this;
+    if(file){
+     fetch(file)
+      .then(function(res){return res.arrayBuffer();})
+      .then(function(buf){
+        return new File([buf], 'img',{type:'image/png'});
+      }).then(res =>{
+        console.log(res)
+        if(res){
+          the.onClickHandler2(res);
+        }
+      })
+    }
+  }
   onClickHandler2 = (profile_pic) => {
         const data = new FormData();
         this.setState({
@@ -238,7 +268,12 @@ getUploadFileExtension(url){
   componentDidMount() {
       this.setState({
           intervalId : setInterval(this.timer, 1000)
-      })
+      });
+      if(window.innerWidth > 480){
+        this.setState({
+          isDeskTop: true
+        })
+      }
       var timer;
       console.log('widht',$( document ).width())
       if($( document ).width() <= '480'){
@@ -593,8 +628,10 @@ getUploadFileExtension(url){
   render() {
     const localStore = JSON.parse(localStorage.getItem('state'));
     return (
+
         <div style={(this.props.location.pathname == "/IRB" || this.props.location.pathname == "/irb" ) ? { display : "none"} : { display : "block"} }>
 
+        <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
 
 
                 <nav
@@ -665,7 +702,11 @@ getUploadFileExtension(url){
                         display : "none"
                     }}
                   />
-                <label for="file" style={{'margin-bottom':'0px'}}><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
+                {this.state.isDeskTop ? 
+                  <label for="file" style={{'margin-bottom':'0px'}}><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
+                :
+                  <label onClick={this.handleCameraPopup} style={{'margin-bottom':'0px'}}><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
+                }
                 </div>
               
               {this.state.isUploading ? (

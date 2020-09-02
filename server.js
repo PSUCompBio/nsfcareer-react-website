@@ -2980,7 +2980,7 @@ app.post(`${apiPrefix}addOrganization`, (req, res) => {
 
 //Merge organization
 function MergeOrganization(OrganizationName, organization_id) {
-    console.log('user_name',OrganizationName)
+    console.log('user_name',OrganizationName,organization_id)
     return new Promise((resolve, reject) => {
         var dbInsert = {
             TableName: "organizations",
@@ -3011,7 +3011,7 @@ function MergeOrganization(OrganizationName, organization_id) {
 
 
 app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
-    console.log(req.body);
+    console.log('MergeOrganization',req.body);
     MergeOrganization(req.body.OrganizationName, req.body.organization_id)
     .then(data => {
         console.log('res',data)

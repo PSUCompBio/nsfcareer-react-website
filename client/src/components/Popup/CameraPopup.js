@@ -57,7 +57,7 @@ class CameraPopup extends React.Component {
       dataUri: this.state.dataUri
     }
     this.props.isUpdateData(updateData);
-    this.props.makeVisible({ display: 'none' })
+    this.props.makeVisible2({ display: 'none' })
   }
  
   componentWillMount() {
@@ -83,12 +83,12 @@ class CameraPopup extends React.Component {
     }
    
     return (
-      <div style={this.props.isVisible} className="modal__wrapper ">
+      <div style={this.props.isVisible2} className="modal__wrapper ">
          {this.props.isVisible2 ? this.scrollToTop() : null}
         <div className="modal__show camera-box">
           <img
             className="delete__icon"
-             onClick={() => this.props.makeVisible({ display: 'none' })}
+             onClick={() => this.props.makeVisible2({ display: 'none' })}
             src="/img/icon/close.svg"
             alt=""
           />
@@ -99,7 +99,7 @@ class CameraPopup extends React.Component {
                 <Camera
                     onTakePhoto = { (dataUri) => { this.handleTakePhoto(dataUri); } }
                     onCameraError = { (error) => { this.handleCameraError(error); } }
-                    idealResolution = {{width: width, height: height}}
+                    idealResolution = {{width: width, height: height}}                    
                   />
                   <div className="camera-circle">
 
