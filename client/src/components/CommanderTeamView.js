@@ -18,7 +18,8 @@ import {
     // getImpactHistory,
     // getImpactSummary,
     getPlayersData,
-    getSimulationStatusCount
+    getSimulationStatusCount,
+    updateUserStatus,
 } from '../apis';
 
 import { FilePond } from 'react-filepond';
@@ -58,6 +59,7 @@ class CommanderTeamView extends React.Component {
             impactHistoryData: {},
             uploadMessageLog: '',
             users: [],
+            requestedUsers: [],
             redirectData: {},
             cognito_user_id: '',
             player_name: '',
@@ -65,7 +67,7 @@ class CommanderTeamView extends React.Component {
             simulations_completed: 0,
             simulations_pending: 0,
             simulation_failed: 0,
-            checked: false
+            checked: true
         };
     }
     activateTab = (value) => {
@@ -102,7 +104,7 @@ class CommanderTeamView extends React.Component {
             .then((response) => {
                 if (response.data.message === "success") {
                     getPlayersData({
-			brand: this.props.location.state.team.brand,
+			            brand: this.props.location.state.team.brand,
                         user_cognito_id: this.props.location.state.team.user_cognito_id,
                         organization: this.props.location.state.team.organization,
                         team_name: this.props.location.state.team.team_name
@@ -211,9 +213,10 @@ class CommanderTeamView extends React.Component {
                                         isAuthenticated: true,
                                         isCheckingAuth: false
                                     });
-                                    if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300 || response.data.data.level === 200) {
+                                    let user_level = response.data.data.level;
+                                    if (user_level === 1000 || user_level === 400 || user_level === 300 || user_level === 200) {
                                         getPlayersData({
-					    brand: this.props.location.state.team.brand,
+					                        brand: user_level === 300 ? '' : this.props.location.state.team.brand,
                                             user_cognito_id: this.props.location.state.team.user_cognito_id,
                                             organization: this.props.location.state.team.organization,
                                             team_name: this.props.location.state.team.team_name
@@ -225,13 +228,17 @@ class CommanderTeamView extends React.Component {
                                                         users: [...prevState.users, response.data.data[i]]
                                                     }));
                                                 }
+                                                for (var i = 0; i < response.data.requested_players.length; i++) {
+                                                    this.setState(prevState => ({
+                                                        requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
+                                                    }));
+                                                } 
                                                 return getSimulationStatusCount({
-						    brand: this.props.location.state.team.brand,
+						                            brand: user_level === 300 ? '' : this.props.location.state.team.brand,
                                                     user_cognito_id: this.props.location.state.team.user_cognito_id,
                                                     organization: this.props.location.state.team.organization,
                                                     team: this.props.location.state.team.team_name
                                                 })
-                        
                                             })
                                             .then(response => {
                         
@@ -320,8 +327,32 @@ class CommanderTeamView extends React.Component {
         return `${month}/${date}/${year}`
     }
 
-    handleCheck=(checked)=> {
-        this.setState({ checked });
+    handleCheck=(checked, event, id)=> {
+        this.setState({ 
+            isLoaded: false
+        });
+       let status = checked ? 'approved' : 'pending';
+        updateUserStatus({user_cognito_id: id, status: status})
+            .then(data => {
+                let requestedUsers = this.state.requestedUsers.map(function (r_player) {
+                    if (r_player.user_cognito_id === id) {
+                        r_player.player_status = status;
+                    }
+                    return r_player
+                })
+        
+                this.setState({ 
+                    //checked,
+                    requestedUsers: requestedUsers,
+                    isLoaded: true
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({
+                    isLoaded: true
+                });
+            })
     }
 
     tConvert = (time) => {
@@ -334,6 +365,20 @@ class CommanderTeamView extends React.Component {
           time[0] = +time[0] % 12 || 12; // Adjust hours
         }
         return time.join (''); // return adjusted time or original string
+    }
+
+    getStatus = (status) => {
+        if (status === 'pending') {
+            return <div>Pending<br></br></div>;
+        } else {
+            return <div style={{paddingTop: '10px'}}></div>;
+        }
+    }
+
+    getUrl = (obj) => {
+        if (obj.player_status === 'approved') {
+            return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.user_cognito_id}>Profile</a>;
+        }
     }
 
     militaryVersionOrNormal = () => {
@@ -678,7 +723,12 @@ class CommanderTeamView extends React.Component {
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>
-                                                <th scope="col" ><span style={{display: 'block'}}>Team</span>Status</th>
+                                                { this.state.userDetails.level > 200 &&
+                                                    <React.Fragment>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Team</span>Status</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Profile</span>Settings</th>
+                                                    </React.Fragment>
+                                                }
                                             </tr>
                                         </thead>
                                       <tbody className="player-table">
@@ -747,11 +797,39 @@ class CommanderTeamView extends React.Component {
                                                                                 */}
                                                         <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
                                                         <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
-                                                        <td style={{ alignItems: "center" }}><Switch onChange={this.handleCheck} uncheckedIcon={false}  onColor="#00B050" onHandleColor="#2693e6" className="react-switch" checkedIcon={false} checked={this.state.checked} /></td>
+                                                        { this.state.userDetails.level > 200 &&
+                                                            <React.Fragment>
+                                                                <td style={{ alignItems: "center" }}><Switch uncheckedIcon={true}  offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={true} checked={this.state.checked} /></td>
+                                                                <td></td>
+                                                            </React.Fragment>
+                                                        }
                                                     </tr>;
                                                 }
                                             }, this)}
-
+                                            {this.state.requestedUsers.map(function (r_player, r_index) {
+                                                let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
+                                                return <tr key={r_index} style={{lineHeight: lineHeight}}>
+                                                        <td>-</td>
+                                                        <td>{r_player.first_name + ' ' + r_player.last_name}</td>
+                                                        <td>-</td>
+                                                        <td>-</td>
+                                                        <td>-</td>
+                                                        <td>-</td>
+                                                        <td>-</td>
+                                                        { this.state.userDetails.level > 200 &&
+                                                            <React.Fragment>
+                                                                <td style={{ alignItems: "center" }}>
+                                                                    {this.getStatus(r_player.player_status)}   
+                                                                    <Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+                                                                </td>
+                                                                <td>
+                                                                    {this.state.userDetails.level > 200 ? this.getUrl(r_player) : ''}
+                                                                </td>
+                                                            </React.Fragment>
+                                                        }
+                                                       
+                                                     </tr>
+                                            }, this)}
                                         </tbody>
                                     </table>
                                 </div>

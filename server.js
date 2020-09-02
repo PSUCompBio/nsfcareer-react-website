@@ -494,28 +494,137 @@ function forgotPassword(user_name, cb) {
 
 
 function createUserDbEntry(event, callback) {
-    var dbInsert = {};
-    // adding key with name user_cognito_id
-    // deleting the key from parameter from "user_name"
-    event["user_cognito_id"] = event.user_name;
-    // event["sensor"] = 'Blackbox Biometrics';
-    // event["organization"] = 'Army Research Laboratory';
-    delete event.user_name;
-    dbInsert = {
-        TableName: "users",
-        Item: event
+
+    if (event.organization && event.team) {
+        addPlayerToTeamOfOrganization(event.organization, event.team, event.user_name)
+        .then(result => {
+            var dbInsert = {};
+            // adding key with name user_cognito_id
+            // deleting the key from parameter from "user_name"
+            event["user_cognito_id"] = event.user_name;
+            // event["sensor"] = 'Blackbox Biometrics';
+            // event["organization"] = 'Army Research Laboratory';
+            delete event.user_name;
+            delete event.organization;
+            delete event.team;
+            dbInsert = {
+                TableName: "users",
+                Item: event
+            }
+
+
+            docClient.put(dbInsert, function (dbErr, dbData) {
+                if (dbErr) {
+                    callback(dbErr, null);
+                    console.log(dbErr);
+                }
+                else {
+                    console.log(dbData);
+                    callback(null, event);
+                }
+            });
+        })
+    } else {
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        event["user_cognito_id"] = event.user_name;
+        // event["sensor"] = 'Blackbox Biometrics';
+        // event["organization"] = 'Army Research Laboratory';
+        delete event.user_name;
+        delete event.organization;
+        delete event.team;
+        dbInsert = {
+            TableName: "users",
+            Item: event
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                callback(dbErr, null);
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                callback(null, event);
+            }
+        });
     }
+}
 
+function addPlayerToTeamOfOrganization(org, team, player_id) {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: "organizations",
+            FilterExpression: "organization = :organization and team_name = :team",
+            ExpressionAttributeValues: {
+                ":organization": org,
+                ":team": team,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+           
+            if (data == null) {
+                const scanData = concatArrays(item);
+                if (scanData.length > 0) {
+                    // If Player does not exists in Team
+                    if (scanData[0].requested_player_list.indexOf(player_id) <= -1) {
+                        const dbUpdate = {
+                            TableName: "organizations",
+                            Key: {
+                                organization_id: scanData[0].organization_id
+                            },
+                            UpdateExpression: "set #list = list_append(#list, :newItem)",
+                            ExpressionAttributeNames: {
+                                "#list": "requested_player_list",
+                            },
+                            ExpressionAttributeValues: {
+                                ":newItem": [player_id],
+                            },
+                            ReturnValues: "UPDATED_NEW",
+                        };
 
-    docClient.put(dbInsert, function (dbErr, dbData) {
-        if (dbErr) {
-            callback(dbErr, null);
-            console.log(dbErr);
-        }
-        else {
-            console.log(dbData);
-            callback(null, event);
-        }
+                        docClient.update(dbUpdate, function (err, data) {
+                            if (err) {
+                                reject(err);
+                            } else {
+                                resolve(data);
+                            }
+                        });
+                    } else {
+                        console.log("PLAYER ALREADY EXISTS IN TEAM");
+                        resolve("PLAYER ALREADY EXISTS IN TEAM");
+                    }
+                } else {
+                    const dbInsert = {
+                        TableName: "organizations",
+                        Item: {
+                            organization_id: 'org-' + Date.now(),
+                            organization: org,
+                            team_name: team,
+                            requested_player_list: [player_id]
+                        },
+                    };
+                    docClient.put(dbInsert, function (err, data) {
+                        if (err) {
+                            console.log(err);
+                            reject(err);
+                        } else {
+                            resolve(data);
+                        }
+                    });
+                }
+                //resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        }); 
     });
 }
 
@@ -5581,6 +5690,45 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
     })
 })
 
+app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
+    updateUserStatus(req.body)
+        .then(data => {
+            res.send({
+                message: "success",
+                data: data
+            });
+        })
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })
+});
+
+function updateUserStatus(obj) {
+    return new Promise((resolve, reject) => {
+        var userParams = {
+            TableName: "users",
+            Key: {
+                user_cognito_id: obj.user_cognito_id,
+            },
+            UpdateExpression:
+                "set player_status = :player_status",
+            ExpressionAttributeValues: {
+                ":player_status": obj.status,
+            },
+            ReturnValues: "UPDATED_NEW",
+        };
+        docClient.update(userParams, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
 
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {

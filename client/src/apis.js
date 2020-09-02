@@ -814,6 +814,17 @@ export const addOrganization = (request) =>{
   })
 }
 
+export const updateUserStatus = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/updateUserStatus/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 
 export const MergeOrganization = (request) =>{
   return new Promise((resolve,reject)=>{
