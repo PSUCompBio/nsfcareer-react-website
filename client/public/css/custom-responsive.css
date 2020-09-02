@@ -38,6 +38,16 @@
 	.impact-video{
 		height: 224px;
 	}
+	.View img {
+	    width: 42%!important;
+	    display: inline-block!important;
+	    margin: 3px!important;
+	    cursor: pointer!important;
+	}
+	.org-edit-button {
+	    float: right!important;
+	    padding-right: 18px!important;
+	}
 }
 
 
@@ -111,6 +121,19 @@
 	}
 	.impact-video p{
 		font-size: 13px;
+	}
+	.View img {
+	    width: 10%!important;
+	    display: inline-block!important;
+	    margin: 3px!important;
+	    cursor: pointer!important;
+	}
+	.org-edit-button{
+		text-align: center!important;
+    	left: 35%!important;
+	}
+	.button-edit{
+		float: initial!important;
 	}
 }
 
@@ -357,6 +380,13 @@
 		font-weight: bold;
     	font-size: 20px;
     	line-height: 1.2;
+	}
+	.button-edit{
+		float: initial!important;
+	}
+	.org-edit-button{
+		text-align: center!important;
+    	left: 25%!important;
 	}
 }
 

@@ -49,11 +49,9 @@ import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import Img from 'react-fix-image-orientation'
 import AvatarInspectionModel from '../Popup/AvatarInspectionModel';
+import camera from './camera.png';
+import CameraPopup from '../Popup/CameraPopup';
 let options = [];
-
-
-
-
 class Profile extends React.Component {
     constructor(props) {
         super(props);
@@ -94,7 +92,9 @@ class Profile extends React.Component {
             VerifyNumber:false,
             sensors: [],
             selectedOption: null,
-            isDisplay: { display: 'none' }
+            isDisplay: { display: 'none' },
+            isDisplay2: { display: 'none' },
+            isDeskTop: false,
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -666,10 +666,39 @@ class Profile extends React.Component {
         }
     };
 
+    handleCameraPopup = (e) =>{
+        console.log('delete',e)
+        if (this.state.isDisplay2.display === 'none') {
+          this.setState({ isDisplay2: {display:'flex'} });
+        } else {
+          this.setState({ isDisplay2: {display:'none'} });
+        }
+    }
+
     makeVisible = (data) => {
         this.setState({ isDisplay: data });
     }
 
+    makeVisible2 = (data) => {
+        this.setState({ isDisplay2: data });
+    }
+    isUpdateData = (data) =>{
+        console.log('isUpdateData',data);
+        var file = data.dataUri;
+        var the = this;
+        if(file){
+         fetch(file)
+          .then(function(res){return res.arrayBuffer();})
+          .then(function(buf){
+            return new File([buf], 'img',{type:'image/png'});
+          }).then(res =>{
+            console.log(res)
+            if(res){
+              the.onClickHandler(res);
+            }
+          })
+        }
+      }
 
     showProfile = () => {
         console.log('sensor', this.state.sensor)
@@ -680,6 +709,8 @@ class Profile extends React.Component {
         let isClearable = true;
         return (
             <React.Fragment>
+            <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+
                 <div
                     style={{
                         marginTop : "10%"
@@ -1185,11 +1216,19 @@ class Profile extends React.Component {
                                                                     display : "none"
                                                                 }}
                                                                 />
-                                                            <label for="file1" className = "inspect-btn mt-1 mb-4" style={{
-                                                                    textAlign : "center"
-                                                                }}>
-                                                                Update
-                                                            </label>
+                                                            {this.state.isDeskTop ? 
+                                                                <label for="file1" className = "inspect-btn mt-1 mb-4" style={{
+                                                                        textAlign : "center"
+                                                                    }}>
+                                                                    Update
+                                                                </label>
+                                                            :
+                                                                <label onClick={this.handleCameraPopup} className = "inspect-btn mt-1 mb-4" style={{
+                                                                        textAlign : "center"
+                                                                    }}>
+                                                                    Update
+                                                                </label>
+                                                            }
                                                         </div>
                                                         <DownloadBtn
 
@@ -1438,6 +1477,11 @@ class Profile extends React.Component {
                         }
 
                         componentDidMount() {
+                            if(window.innerWidth > 480){
+                              this.setState({
+                                isDeskTop: true
+                              })
+                             }
                             this.setState({ isLoading: true });
                             isAuthenticated(JSON.stringify({}))
                             .then((value) => {

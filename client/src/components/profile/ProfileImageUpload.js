@@ -37,7 +37,7 @@ class ProfileImageUpload extends React.Component {
             error : '',
             message : '',
             isGuardianSigned : false,
-            isDisplay: { display: 'none' },
+            isDisplay2: { display: 'none' },
             isDeskTop: false,
             selectedFile: '',
             userData: '',
@@ -103,24 +103,24 @@ class ProfileImageUpload extends React.Component {
     // API to get the details of user whose consent is being approves
     console.log(this.props.location)
     var userData = this.props.location;
-    if(userData.state.message){
+    if(userData.state){
       this.setState({userData:userData.state.message})
     }else{
-      this.setState({Redirect: true})
+      this.setState({Redirect: true});
     }
   }
 
   handleCameraPopup = (e) =>{
         console.log('delete',e)
         this.setState({DelData: {type: 'team',data:e} })
-        if (this.state.isDisplay.display === 'none') {
-          this.setState({ isDisplay: {display:'flex'} });
+        if (this.state.isDisplay2.display === 'none') {
+          this.setState({ isDisplay2: {display:'flex'} });
         } else {
-          this.setState({ isDisplay: {display:'none'} });
+          this.setState({ isDisplay2: {display:'none'} });
         }
     }
-  makeVisible = (data) => {
-      this.setState({ isDisplay: data });
+  makeVisible2 = (data) => {
+      this.setState({ isDisplay2: data });
   }
   handleFormSubmit = (e) => {
     e.preventDefault();
@@ -152,7 +152,7 @@ class ProfileImageUpload extends React.Component {
     }
     return (
       <React.Fragment>
-        <CameraPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+        <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
         <div className="container-fluid pl-0 pr-0 overflow-hidden">
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <div className="col-md-6 col-lg-6 offset-md-3 mb-5">

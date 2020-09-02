@@ -33,6 +33,8 @@ import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
+import gridView from './girdView.png';
+import listView from './listView.png';
 
 class OrganizationAdmin extends React.Component {
     constructor() {
@@ -66,7 +68,8 @@ class OrganizationAdmin extends React.Component {
             addOrganizationData: '',
             isAddOrganization: false,
             mergeData: '',
-            isMerge: false
+            isMerge: false,
+            view: 'gridView'
         };
     }
     toggleTab = (value) => {
@@ -148,7 +151,11 @@ class OrganizationAdmin extends React.Component {
             isMerge: false
         })
     }
-
+    handleViewChange = (view) =>{
+        console.log('view',view)
+        localStorage.setItem('OrgView', view);
+        this.setState({view:view})
+    }
     deleteRecord = (e) =>{
         console.log('delete',e)
         this.setState({DelData: {type: 'team',data:e} })
@@ -298,14 +305,30 @@ class OrganizationAdmin extends React.Component {
                             sensorOrgList: orgs.data.data,
                             isEdit: false,
                             isUpdated: true,
-                            isUploading: false
+                            isUploading: false,
+                            isDelete: false,
+                            DelData: '',
+                            isRename: false,
+                            renameData: '',
+                            isMerge: false,
+                            mergeData: '',
+                            isAddOrganization: false,
+                            addOrganizationData: ''
                         }));
                     })
                 }else{
                     this.setState({
                      isUpdated: false,
                         isUploading: false,
-                        Error: 'Somthing went wrong when renameing organization.'
+                        Error: 'Somthing went wrong when renameing organization.',
+                        isDelete: false,
+                        DelData: '',
+                        isRename: false,
+                        renameData: '',
+                        isMerge: false,
+                        mergeData: '',
+                        isAddOrganization: false,
+                        addOrganizationData: ''
                     })
                 }    
             }).catch(err =>{
@@ -313,7 +336,15 @@ class OrganizationAdmin extends React.Component {
                 this.setState({
                     isUploading: false,
                     isUpdated: false,
-                    Error: 'Somthing went wrong when renameing organization.'
+                    Error: 'Somthing went wrong when renameing organization.',
+                    isDelete: false,
+                    DelData: '',
+                    isRename: false,
+                    renameData: '',
+                    isMerge: false,
+                    mergeData: '',
+                    isAddOrganization: false,
+                    addOrganizationData: ''
                 })
             })
         }else{
@@ -326,7 +357,15 @@ class OrganizationAdmin extends React.Component {
                     sensorOrgList: orgs.data.data,
                     isEdit: false,
                     isUpdated: true,
-                    isUploading: false
+                    isUploading: false,
+                    isDelete: false,
+                    DelData: '',
+                    isRename: false,
+                    renameData: '',
+                    isMerge: false,
+                    mergeData: '',
+                    isAddOrganization: false,
+                    addOrganizationData: ''
                 }));
             })
         }
@@ -337,6 +376,11 @@ class OrganizationAdmin extends React.Component {
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0)
         console.log('this.props.location.state', this.props.location);
+        var view = localStorage.getItem('OrgView');
+        if(view){
+            console.log('OrgView',view)
+            this.setState({view: view})
+        }
         if (this.props.location.state) {
             if (this.props.location.state.brand.user_cognito_id && this.props.location.state.brand.brand) {
                 isAuthenticated(JSON.stringify({}))
@@ -402,7 +446,7 @@ class OrganizationAdmin extends React.Component {
     };
   
     smallCards = (organization_id,simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
-        //console.log('list',simulation_status);
+        console.log('organization_id',organization_id);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status == 'completed') {
             let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
@@ -472,7 +516,53 @@ class OrganizationAdmin extends React.Component {
         }
     }
 
+     tableOrganization = ()=> {
+        console.log(this.state.sensorOrgList)
+        var body =  this.state.sensorOrgList.map(function (organization, index) {
+                if (organization) {
+
+                    let cls = organization.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (organization.simulation_status == 'completed') {
+                        let computed_time = organization.computed_time ? parseFloat(organization.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(organization.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+
+                    return <tr className={cls}  key={index} onClick={() => {
+                        this.props.history.push({
+                            pathname: '/TeamAdmin',
+                            state: {
+                                brand: {
+                                    brand: organization.sensor,
+                                    organization: organization.organization,
+                                    user_cognito_id: this.state.userDetails.user_cognito_id
+                                }
+                            }
+                        })
+                    }}
+                    >
+                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                        <td>{organization.organization}</td>
+                        <td>{organization.sensor ? organization.sensor : 'NA'}</td>
+                        <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
+                        <td>{organization.team_name ? organization.team_name : 'NA'}</td> 
+                    </tr>;
+                }
+            }, this)
+        return body
+    }
+
     iterateTeam = () => {
+        console.log('sensorOrgList',this.state.sensorOrgList)
         let inc = 1;
         var cards = new Array(this.state.totalOrganization);
         console.log('cards',cards)
@@ -573,7 +663,20 @@ class OrganizationAdmin extends React.Component {
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div className="col-md-12 Admintitle" >
-                                    <h1>Organization Dashboard <button className="btn float-right button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button></h1>
+                                    <h1>Organization Dashboard 
+                                        <div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
+                                            <div className="View">
+                                                <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
+                                                <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                            </div>
+                                        </div>
+                                    </h1>
+                                </div>
+                                <div className="col-md-12 Admintitle" >
+                                    <div className="col-md-2 org-edit-button" >
+                                        <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button>
+                                       
+                                    </div>
                                 </div>
                                 <div
                                     ref="cardContainer"
@@ -652,25 +755,43 @@ class OrganizationAdmin extends React.Component {
                                         </div>
                                     }
                                     {!this.state.tabActive ?
-                                        <div className="football-container mt-4 d-flex flex-wrap">
-                                            {
-                                                <React.Fragment>
-                                                    {this.iterateTeam()}
-                                                    <div  className="isEdit" >
-                                                        <div
-                                                            className="tech-football m-3 add-box"
-                                                            onClick={e => this.editRecord( {type: 'addOrganization'})}
-                                                        >
-                                                            <div className="wrap_img">
-                                                           <img src={plus} />
-                                                            <h4>Add New</h4>
+                                        this.state.view == 'gridView' ?
+                                            <div className="football-container mt-4 d-flex flex-wrap">
+                                                {
+                                                    <React.Fragment>
+                                                        {this.iterateTeam()}
+                                                        <div  className="isEdit" >
+                                                            <div
+                                                                className="tech-football m-3 add-box"
+                                                                onClick={e => this.editRecord( {type: 'addOrganization'})}
+                                                            >
+                                                                <div className="wrap_img">
+                                                               <img src={plus} />
+                                                                <h4>Add New</h4>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    
-                                                </React.Fragment>
-                                            }
-                                        </div>
+                                                        
+                                                    </React.Fragment>
+                                                }
+                                            </div>
+                                            : 
+                                            <div ref="table" className="commander-data-table table-responsive ">
+                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">S.No.</th>
+                                                            <th scope="col">Organization</th>
+                                                            <th scope="col">Sensor</th>
+                                                            <th scope="col">Simulations</th>
+                                                            <th scope="col">Team Name</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="player-table">
+                                                        {this.tableOrganization()}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         : null}
                                         {this.state.isUploading ? (
                                             <div className="d-flex justify-content-center center-spinner">

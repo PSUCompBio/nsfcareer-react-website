@@ -491,6 +491,7 @@ input#MyrangeSlider2:focus, input#MyrangeSlider3:focus{
     font-size: 20px!important;
     background-color: #929eaa!important;
     border: 1px solid #0e79cf!important;
+    float:right;
 }
 
 .organization-edit-icons{
@@ -845,4 +846,9 @@ button.btn.button-yes{
 }
 .react-switch{
     z-index: 2;
+}
+.org-edit-button{
+    float: right!important;
+    padding-right: 38px!important;
+
 }
