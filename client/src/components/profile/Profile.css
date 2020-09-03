@@ -178,6 +178,11 @@ input::placeholder {
   width: 100% !important;
 }
 
+.disable_btn {
+   background-color: #808080 !important;
+}
+
+
 .load-time-btn {
   padding: 3px 10px;
   border-radius: 12px;

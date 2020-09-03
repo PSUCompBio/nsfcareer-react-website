@@ -455,6 +455,28 @@ function getFileSignedUrl(key, cb, type) {
     });
 }
 
+function getAvatarInspectionFileSignedUrl(key, cb) {
+
+    var params = {
+        Bucket: BUCKET_NAME,
+        Key: key
+    };
+
+    s3.headObject(params, function (err, metadata) {  
+        if (err && err.code === 'NotFound') {  
+          // Handle no object on cloud here 
+          cb(err, "");
+        } else {  
+            s3.getSignedUrl('getObject', params, function (err, url) {
+                if (err) {
+                    cb(err, "");
+                } else {
+                    cb("", url);
+                }
+            });
+        }
+      });
+}
 
 // Get user details & all his attributes
 function getUser(user_name, cb) {
@@ -4008,9 +4030,9 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
     if (req.body.user_cognito_id){
         req.user_cognito_id = req.body.user_cognito_id ;
     }
-    if (req.user_cognito_id) {
+    if (req.user_cognito_id) { 
         let userData = {};
-        getFileSignedUrl( req.user_cognito_id + "/profile/avatar/brain.ply", function (err, brain_ply) {
+        getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/brain.ply", function (err, brain_ply) {
             if (err) {
                 userData["brain_ply"] = "";
                 res.send({
@@ -4020,7 +4042,7 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
             }
             else {
                 userData["brain_ply"] = brain_ply;
-                getFileSignedUrl( req.user_cognito_id + "/profile/avatar/skull.ply", function (err, skull_ply) {
+                getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/skull.ply", function (err, skull_ply) {
                     if (err) {
                         userData["skull_ply"] = "";
                         res.send({
@@ -4030,7 +4052,7 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
                     }
                     else {
                         userData["skull_ply"] = skull_ply;
-                        getFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.ply", function (err, model_ply) {
+                        getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.ply", function (err, model_ply) {
                             if (err) {
                                 userData["model_ply"] = "";
                                 res.send({
@@ -4040,7 +4062,7 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
                             }
                             else {
                                 userData["model_ply"] = model_ply;
-                                getFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.jpg", function (err, model_jpg) {
+                                getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.jpg", function (err, model_jpg) {
                                     if (err) {
                                         userData["model_jpg"] = "";
                                         res.send({
@@ -5604,7 +5626,9 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                 req.body["sensor_brand"] = user_details.Item["sensor"];
                                 req.body["level"] = user_details.Item["level"];
-                                req.body["organization"] = user_details.Item["organization"];
+                                if (user_details.Item["level"] === 300) {
+                                    req.body["organization"] = user_details.Item["organization"];
+                                }
                                 req.body["upload_file"] = base64File;
                                 req.body["data_filename"] = data_filename;
                                 req.body["selfie"] = base64Selfie;

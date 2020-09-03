@@ -20,6 +20,7 @@ import {
     isAuthenticated,
     VerifyNumber,
     getAllSensorBrands,
+    getAvatarInspection,
     updateUserMouthguardDetails
 } from '../../apis';
 import Select from 'react-select';
@@ -92,6 +93,7 @@ class Profile extends React.Component {
             VerifyNumber:false,
             sensors: [],
             selectedOption: null,
+            inspection_data: '',
             isDisplay: { display: 'none' },
             isDisplay2: { display: 'none' },
             isDeskTop: false,
@@ -707,6 +709,7 @@ class Profile extends React.Component {
           return {value:sensors.sensor,label:sensors.sensor }
         });
         let isClearable = true;
+        let disable_btn = !this.state.inspection_data ? 'disable_btn' : '';
         return (
             <React.Fragment>
             <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
@@ -1323,7 +1326,8 @@ class Profile extends React.Component {
                                                                 style={{
                                                                     width : "100%"
                                                                 }}
-                                                                className={`inspect-btn mt-1 mb-4`} type="button">
+                                                                disabled={this.state.inspection_data ? false : true}
+                                                                className={`inspect-btn mt-1 mb-4 ` + disable_btn } type="button">
                                                                 Inspect
                                                             </button>
                                                             <DownloadBtn
@@ -1448,7 +1452,9 @@ class Profile extends React.Component {
                                         </div>
                                     </div>
                                     {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-                                    <AvatarInspectionModel user_cognito_id={this.state.profile_to_view} isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />
+                                    {this.state.inspection_data &&
+                                        <AvatarInspectionModel inspection_data={this.state.inspection_data} user_cognito_id={this.state.profile_to_view} isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />
+                                    }
                                     <Footer />
                                 </React.Fragment>
                             );
@@ -1458,7 +1464,8 @@ class Profile extends React.Component {
 
                             if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
                                 return <Redirect to="/Login" />;
-                            } else if (Object.entries(this.state.user).length === 0) {
+                            //} else if (Object.entries(this.state.user).length === 0) {    
+                            } else if (this.state.isLoading) {
                                 return <Spinner />;
                             }
                             if(this.state.VerifyNumber) {
@@ -1537,9 +1544,9 @@ class Profile extends React.Component {
                                             number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                                             selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
                                             sensor_id_number:  response.data.data.sensor_id_number ? response.data.data.sensor_id_number : '',
-                                            isLoading: false,
-                                            isAuthenticated: true,
-                                            isCheckingAuth: false,
+                                            // isLoading: false,
+                                            // isAuthenticated: true,
+                                            // isCheckingAuth: false,
                                             inp_latest_upload_details : inp_latest_url_details,
                                             selfie_latest_upload_details : selfie_latest_url_details,
                                             simulation_file_latest_upload_details : simulation_file_url_details,
@@ -1567,6 +1574,20 @@ class Profile extends React.Component {
                                             }
                                             this.props.isDarkModeSet(this.state.isDarkMode);
                                         }
+                                        return getAvatarInspection({ user_cognito_id: this.props.user_cognito_id })
+                                    })
+                                    .then(result => {
+                                        let inspection_data = '';
+                                        if (result.data.data.model_jpg && result.data.data.model_ply && result.data.data.brain_ply && result.data.data.skull_ply) {
+                                            inspection_data = result.data.data;
+                                        }
+                                        this.setState({
+                                            isLoading: false,
+                                            isAuthenticated: true,
+                                            isCheckingAuth: false,
+                                            inspection_data: inspection_data
+                                        });
+                                        
                                     })
                                     .catch((error) => {
                                         this.setState({

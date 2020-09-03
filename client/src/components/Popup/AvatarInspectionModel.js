@@ -6,9 +6,9 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { ThreeBSP } from "three-js-csg-es6";
 
 import "./AvatarView.css";
-import {
-  getAvatarInspection
-} from '../../apis';
+// import {
+//   getAvatarInspection
+// } from '../../apis';
 
 class AvatarInspectionModel extends Component {
   constructor() {
@@ -27,27 +27,32 @@ class AvatarInspectionModel extends Component {
     window.removeEventListener("resize", this.handleWindowResize);
     window.removeEventListener("click", this.handleMouseClick);
     window.cancelAnimationFrame(this.requestID);
-    this.controller.dispose();
+
+    if (this.controller)
+      this.controller.dispose();
   }
 
   componentDidUpdate() {
     if (this.props.isVisible.display === 'flex') {
       this.resetCamera();
+        if (this.el && this.camera) {
+          this.onWindowResize();
+        }
     }
-  }
+  } 
 
   loadAssets = () => {
-    getAvatarInspection({ user_cognito_id: this.props.user_cognito_id })
-      .then((response) => {
+    // getAvatarInspection({ user_cognito_id: this.props.user_cognito_id })
+    //   .then((response) => {
         const promises = [
           // this.loadTexture("https://assets.codepen.io/3194077/model.jpg"),
           // this.loadPLY("https://assets.codepen.io/3194077/model.ply"),
           // this.loadPLY("./assets/models/brain.ply"),
           // this.loadPLY("./assets/models/skull.ply"),
-          this.loadTexture(response.data.data.model_jpg),
-          this.loadPLY(response.data.data.model_ply),
-          this.loadPLY(response.data.data.brain_ply),
-          this.loadPLY(response.data.data.skull_ply),
+          this.loadTexture(this.props.inspection_data.model_jpg),
+          this.loadPLY(this.props.inspection_data.model_ply),
+          this.loadPLY(this.props.inspection_data.brain_ply),
+          this.loadPLY(this.props.inspection_data.skull_ply),
           this.loadTexture("./assets/textures/brain_diffuse.jpg"),
           this.loadTexture("./assets/textures/brain_normal.png"),
         ];
@@ -67,7 +72,7 @@ class AvatarInspectionModel extends Component {
 
           this.loadedAssets();
         });
-      })
+      // })
   };
 
   bufferGeoToGeo = (bufferGeo) => {

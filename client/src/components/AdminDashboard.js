@@ -392,7 +392,8 @@ class AdminDashboard extends React.Component {
                     'h' + inc++,
                     'h' + inc++
                 ],
-                this.state.OrganizationList[i].sensor,
+                // this.state.OrganizationList[i].sensor,
+                '',
                 this.state.OrganizationList[i].organization,
                 this.state.OrganizationList[i].user_cognito_id,
                 Number(this.state.OrganizationList[i].simulation_count),
