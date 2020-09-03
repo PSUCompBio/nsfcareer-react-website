@@ -213,12 +213,14 @@ class AvatarInspectionModel extends Component {
     this.avatarMat = new THREE.MeshStandardMaterial({
       map: this.avatarTex,
       side: THREE.FrontSide,
-      clipShadows: true
+      clipShadows: true,
+      roughness: 1
     });
     this.avatarMat2 = new THREE.MeshStandardMaterial({
       color: 0xff9f80,
       side: THREE.BackSide,
-      clipShadows: true
+      clipShadows: true,
+      roughness: 1
     });
 
     this.avatarGeo.center();
