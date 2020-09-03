@@ -95,6 +95,7 @@ class Profile extends React.Component {
             isDisplay: { display: 'none' },
             isDisplay2: { display: 'none' },
             isDeskTop: false,
+            isCamera: false,
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -669,9 +670,9 @@ class Profile extends React.Component {
     handleCameraPopup = (e) =>{
         console.log('delete',e)
         if (this.state.isDisplay2.display === 'none') {
-          this.setState({ isDisplay2: {display:'flex'} });
+          this.setState({ isDisplay2: {display:'flex'},isCamera: true });
         } else {
-          this.setState({ isDisplay2: {display:'none'} });
+          this.setState({ isDisplay2: {display:'none'},isCamera: false });
         }
     }
 
@@ -680,7 +681,7 @@ class Profile extends React.Component {
     }
 
     makeVisible2 = (data) => {
-        this.setState({ isDisplay2: data });
+        this.setState({ isDisplay2: data,isCamera: false });
     }
     isUpdateData = (data) =>{
         console.log('isUpdateData',data);
@@ -709,8 +710,9 @@ class Profile extends React.Component {
         let isClearable = true;
         return (
             <React.Fragment>
-            <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
-
+            {this.state.isCamera &&
+                <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+            }
                 <div
                     style={{
                         marginTop : "10%"
@@ -1249,11 +1251,17 @@ class Profile extends React.Component {
                                                             display : "none"
                                                         }}
                                                         />
+                                                    <label onClick={this.handleCameraPopup} className = "inspect-btn mt-1 mb-4" style={{
+                                                            textAlign : "center"
+                                                        }}>
+                                                        Take New Photo
+                                                    </label>
                                                     <label for="file1" className = "inspect-btn mt-1 mb-4" style={{
                                                             textAlign : "center"
                                                         }}>
                                                         Upload
                                                     </label>
+
                                                 </div>)}
                                             </Col>
                                             {/*

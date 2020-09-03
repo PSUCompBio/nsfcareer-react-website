@@ -3,7 +3,7 @@ import ToggleToken from '../Buttons/ToggleToken';
 import { formDataToJson } from '../../utilities/utility';
 import { deleteItem } from '../../apis';
 import Spinner from './../Spinner/Spinner';
-import Camera from 'react-html5-camera-photo';
+import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 
 import { UncontrolledAlert,
@@ -30,7 +30,8 @@ class CameraPopup extends React.Component {
         isRequesting : false,
         OrganizationName: '',
         isDeskTop: false,
-        dataUri: ''
+        dataUri: '',
+        isCameraErr: false,
     };
 
   }
@@ -57,20 +58,21 @@ class CameraPopup extends React.Component {
       dataUri: this.state.dataUri
     }
     this.props.isUpdateData(updateData);
-    this.props.makeVisible2({ display: 'none' })
+    this.props.makeVisible2({ display: 'none' });
   }
  
   componentWillMount() {
       
   }
   handleTakePhoto = (dataUri)=> {
-    // Do stuff with the photo...
-    console.log('takePhoto',dataUri);
+  
     this.setState({dataUri: dataUri})
   }
   handleCameraError =( error) =>{
     console.log('handleCameraError', error);
+    this.setState({isCameraErr: true})
   }
+  
 
   render() {
     var width = 400;
@@ -78,8 +80,8 @@ class CameraPopup extends React.Component {
    
     if(window.innerWidth > 480){
        console.log('width',window.innerWidth)
-      width = 550;
-      height = 410
+      width = 768 ;
+      height = 576
     }
    
     return (
@@ -99,19 +101,53 @@ class CameraPopup extends React.Component {
                 <Camera
                     onTakePhoto = { (dataUri) => { this.handleTakePhoto(dataUri); } }
                     onCameraError = { (error) => { this.handleCameraError(error); } }
-                    idealResolution = {{width: width, height: height}}                    
+                    idealResolution = {{width: width, height: height}}   
+                    idealFacingMode = {FACING_MODES.ENVIRONMENT}
                   />
-                  <div className="camera-circle">
+                  {!this.state.isCameraErr &&
+                    <React.Fragment>
+                      <div className="camera-circle">
 
-                  </div>
-                  <div className="camera-alert">
-                    <p>No Glasses.</p>
-                    <p>Align your face.</p>
-                    <p>Do not smile.</p>
-                  </div>
+                      </div>
+                      <div className="camera-alert">
+                        <p>No Glasses.</p>
+                        <p>Align your face.</p>
+                        <p>Do not smile.</p>
+                      </div>
+                    </React.Fragment>
+                  }
               </div>
               : 
               <div>
+                <img src={this.state.dataUri} style={{'width': '100%'}}/>
+              </div>
+            
+            : null
+          }
+          {this.state.isDeskTop ?
+            !this.state.dataUri ?
+              <div>
+                <Camera
+                  onTakePhoto = { (dataUri) => { this.handleTakePhoto(dataUri); } }
+                  onCameraError = { (error) => { this.handleCameraError(error); } }
+                  idealResolution = {{width: width, height: height}}
+                  idealFacingMode = {FACING_MODES.ENVIRONMENT}
+                />
+                {!this.state.isCameraErr &&
+                  <React.Fragment>
+                    <div className="camera-circle-desktop">
+
+                    </div>
+                    <div className="camera-alert-desktop">
+                      <p>No Glasses.</p>
+                      <p>Align your face.</p>
+                      <p>Do not smile.</p>
+                    </div>
+                  </React.Fragment>
+                }
+              </div>
+            : 
+              <div style={{'margin-top': '35px'}}>
                 <img src={this.state.dataUri} style={{'width': '100%'}}/>
               </div>
             
