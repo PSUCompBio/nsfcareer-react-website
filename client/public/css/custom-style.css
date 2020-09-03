@@ -592,10 +592,12 @@ button.btn.button-yes{
 }
 .camera-box{
     height: auto!important;
+    padding: 0px 20px;
     top: 25%!important;
     background-color: #f8f9fa!important;
     box-shadow: inherit!important;
-    width: 56%!important;
+    width: 42%!important;
+    padding-bottom: 7px!important;
 }
 .react-html5-camera-photo {
     margin-top: 4%!important;
@@ -642,7 +644,7 @@ button.btn.button-yes{
 }
 .camera-circle{
    border: 9px solid #0f66ae;
-    width: 54%;
+    width: 200px;
     height: 228px;
     left: 50%;
     transition: auto;
@@ -851,4 +853,41 @@ button.btn.button-yes{
     float: right!important;
     padding-right: 38px!important;
 
+}
+.camera-circle-desktop{
+    border: 9px solid #0f66ae;
+    width: 25%;
+    height: 228px;
+    left: 50%;
+    transition: auto;
+    top: 36%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    border-radius: 100%;
+}
+.camera-alert-desktop{
+    height: 158px;
+    width: 100%;
+    background: #0f66ae;
+    margin-top: -162px;
+    position: sticky;
+}
+.camera-alert-desktop p{
+        font-weight: 800;
+}
+.individuals-search-input{
+    text-align: center!important;
+    top: 10px!important;
+}
+.individuals-search-input label{
+    font-size: 21px!important;
+    font-weight: 600!important;
+    padding: 0px 22px!important;
+    float: left!important;
+}
+
+.individuals-search-input input{
+    border: 1px solid!important;
+    padding: 2px 15px!important;
+    border-radius: 11px!important;
 }

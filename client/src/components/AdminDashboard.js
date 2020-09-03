@@ -96,12 +96,13 @@ class AdminDashboard extends React.Component {
             })
         }else if(e.target.name == 'individuals'){
             var the = this;
-            console.log('playerList',this.state.playerList)
+            setTimeout(function(){ 
+                the.hadnlesearch();
+            }, 2000);
             if(this.state.playerList == ''){
                 the.setState({isFetching: true});
                 getPlayerList({type: 'playersList'})
                 .then(players => {
-                    console.log('playerList',players.data.data)
                     this.setState({
                         playerList:players.data.data,
                         isSensor: false,
@@ -112,7 +113,11 @@ class AdminDashboard extends React.Component {
 
                      setTimeout(function(){ 
                         the.setState({isFetching: false});
+                        the.hadnlesearch();
                     }, 3000);
+                    setTimeout(function(){ 
+                        the.hadnlesearch();
+                    }, 4000);
                 }).catch(err=>{
                     console.log('err',err)
                 })
@@ -125,6 +130,17 @@ class AdminDashboard extends React.Component {
                 })
             }
         }
+    }
+    hadnlesearch =() =>{
+        console.log('button',$("#myInput").html())
+        $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            console.log('keyup',value)
+            $("#myTable tr").filter(function() {
+                console.log($(this).text().toLowerCase().indexOf(value))
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
     }
     checkIfDarkModeActive = () => {
         if (getStatusOfDarkmode().status === true) {
@@ -174,7 +190,6 @@ class AdminDashboard extends React.Component {
             console.log('view',view)
             this.setState({view: view})
         }
-
         isAuthenticated(JSON.stringify({}))
             .then((value) => {
                 if (value.data.message === 'success') {
@@ -691,7 +706,6 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{organization.organization}</td>
-                        <td>{organization.sensor ? organization.sensor : 'NA'}</td>
                         <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
                         <td>{organization.team_name ? organization.team_name : 'NA'}</td> 
                     </tr>;
@@ -741,7 +755,6 @@ class AdminDashboard extends React.Component {
                         <td>{team.team_name ? team.team_name : 'NA'}</td> 
                         <td>{team.simulation_count ? team.simulation_count : '0'}</td>
                         <td>{team.organization}</td>
-                        <td>{team.sensor ? team.sensor : 'NA'}</td>
                     </tr>;
                 }
             }, this)
@@ -777,7 +790,15 @@ class AdminDashboard extends React.Component {
                                         <img src={listView} onClick={() => this.handleViewChange('listView')} />
                                     </div>
                                 }
+                               
                             
+                        </div>
+                        <div className="col-md-12 individuals-search-input">
+                            {this.state.isPlayers && 
+                                <label>
+                                    Search: <input id="myInput" type="text"  placeholder="Search.."/>
+                                </label>
+                            }
                         </div>
                         <div className="col-md-12  dashboard-custom-button2">
                             <button type="button" className={this.state.isSensor ?  "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
@@ -889,7 +910,7 @@ class AdminDashboard extends React.Component {
                                                         <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>
                                                         </tr>
                                                     </thead>
-                                                  <tbody className="player-table">
+                                                  <tbody id="myTable" className="player-table" >
                                                         {this.state.playerList.map(function (player, index) {
                                                             if (player.simulation_data.length > 0) {
                                                                 let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
@@ -984,7 +1005,7 @@ class AdminDashboard extends React.Component {
                                                         <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>   
                                                         </tr>
                                                     </thead>
-                                                  <tbody className="player-table">
+                                                  <tbody className="player-table" id="myTable">
                                                         {this.state.playerList.map(function (player, index) {
                                                             if (player.simulation_data.length > 0) {
                                                                 let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
@@ -1080,7 +1101,6 @@ class AdminDashboard extends React.Component {
                                                         <tr>
                                                             <th scope="col">S.No.</th>
                                                             <th scope="col">Organization</th>
-                                                            <th scope="col">Sensor</th>
                                                             <th scope="col">Simulations</th>
                                                             <th scope="col">Team Name</th>
                                                         </tr>
@@ -1097,9 +1117,7 @@ class AdminDashboard extends React.Component {
                                                             <th scope="col">S.No.</th>
                                                             <th scope="col">Team Name</th>
                                                             <th scope="col">Simulations</th>
-                                                            <th scope="col">Organization</th>
-                                                            <th scope="col">Sensor</th>
-                                                           
+                                                            <th scope="col">Organization</th> 
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">

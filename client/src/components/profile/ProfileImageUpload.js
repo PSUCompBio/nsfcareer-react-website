@@ -41,7 +41,8 @@ class ProfileImageUpload extends React.Component {
             isDeskTop: false,
             selectedFile: '',
             userData: '',
-            Redirect: false
+            Redirect: false,
+            isCamera: false,
         }
     }
 
@@ -114,13 +115,13 @@ class ProfileImageUpload extends React.Component {
         console.log('delete',e)
         this.setState({DelData: {type: 'team',data:e} })
         if (this.state.isDisplay2.display === 'none') {
-          this.setState({ isDisplay2: {display:'flex'} });
+          this.setState({ isDisplay2: {display:'flex'}, isCamera: true });
         } else {
-          this.setState({ isDisplay2: {display:'none'} });
+          this.setState({ isDisplay2: {display:'none'}, isCamera: false });
         }
     }
   makeVisible2 = (data) => {
-      this.setState({ isDisplay2: data });
+      this.setState({ isDisplay2: data, isCamera: false });
   }
   handleFormSubmit = (e) => {
     e.preventDefault();
@@ -129,6 +130,7 @@ class ProfileImageUpload extends React.Component {
     console.log('isUpdateData',data);
     var file = data.dataUri;
     var the = this;
+    this.setState({isCamera: false})
     if(file){
      fetch(file)
       .then(function(res){return res.arrayBuffer();})
@@ -148,11 +150,18 @@ class ProfileImageUpload extends React.Component {
   render() {
     console.log("Props are - ", this.props);
     if(this.state.Redirect){
-      return <Redirect to="/Dashboard" />;
+         this.props.history.push({
+              pathname : '/Login',
+              state : {
+                  message : this.state.userData.message_details
+              }
+          })
     }
     return (
       <React.Fragment>
-        <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+        {this.state.isCamera &&
+          <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+        }
         <div className="container-fluid pl-0 pr-0 overflow-hidden">
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <div className="col-md-6 col-lg-6 offset-md-3 mb-5">

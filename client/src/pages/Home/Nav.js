@@ -631,9 +631,7 @@ getUploadFileExtension(url){
 
         <div style={(this.props.location.pathname == "/IRB" || this.props.location.pathname == "/irb" ) ? { display : "none"} : { display : "block"} }>
 
-        <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
-
-
+       {/* <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />  */}
                 <nav
 
               className={`navbar navbar-dark  navbar-expand-lg ${
@@ -702,11 +700,9 @@ getUploadFileExtension(url){
                         display : "none"
                     }}
                   />
-                {this.state.isDeskTop ? 
+                
                   <label for="file" style={{'margin-bottom':'0px'}}><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
-                :
-                  <label onClick={this.handleCameraPopup} style={{'margin-bottom':'0px'}}><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
-                }
+               
                 </div>
               
               {this.state.isUploading ? (

@@ -88,7 +88,7 @@ class IRBLinkContent extends React.Component {
         console.log('width',height)
         return (
             <React.Fragment>
-            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll",overflowX: "hidden"}} class="container">
+            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll",overflowX: "hidden"}} className="container irb-header">
 
                 <br></br>
                 <br></br>
@@ -347,7 +347,7 @@ class IRBLinkContent extends React.Component {
 
 
                                 </div>
-                                <div style={{gridTemplateColumns: "1fr auto", marginTop:"1%"}} class="container">
+                                <div style={{gridTemplateColumns: "1fr auto", marginTop:"1%"}} class="container irb-bottom">
 
                                 <SignatureCanvas penColor='black'
                                     onBegin={this.cleanPlaceholderTemplate}
