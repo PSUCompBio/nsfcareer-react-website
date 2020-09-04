@@ -37,6 +37,7 @@ class CameraPopupDesktop extends React.Component {
   }
   // Function to update the array holding type of user
   componentDidMount() {
+    console.log('facing mode', FACING_MODES.USER)
      if(window.innerWidth < 480){
       this.setState({
         isDeskTop: true,
@@ -75,15 +76,10 @@ class CameraPopupDesktop extends React.Component {
   
 
   render() {
-    var width = 400;
-    var height = 600
    
-    if(window.innerWidth > 480){
-       console.log('width',window.innerWidth)
-      width = 768 ;
-      height = 576
-    }
-   
+    var  width = 768 ;
+    var  height = 576
+ 
     return (
       <div style={this.props.isVisible2} className="modal__wrapper ">
          {this.props.isVisible2 ? this.scrollToTop() : null}

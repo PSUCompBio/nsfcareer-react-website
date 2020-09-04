@@ -595,7 +595,7 @@ function addPlayerToTeamOfOrganization(org, team, player_id) {
                 const scanData = concatArrays(item);
                 if (scanData.length > 0) {
                     // If Player does not exists in Team
-                    if (scanData[0].requested_player_list.indexOf(player_id) <= -1) {
+                    if (scanData[0].requested_player_list && scanData[0].requested_player_list.indexOf(player_id) <= -1) {
                         const dbUpdate = {
                             TableName: "organizations",
                             Key: {

@@ -891,3 +891,11 @@ button.btn.button-yes{
     padding: 2px 15px!important;
     border-radius: 11px!important;
 }
+.switch_cam{
+    text-align: right;
+    padding: 22px 30px;
+}
+
+.switch_cam img{
+    width: 20%;
+}

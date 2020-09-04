@@ -589,6 +589,12 @@
 	.Simulationvideo, .impact-video {
 	    height: 144px;
 	}
+	.camera .camera-box {
+	    width: 99%!important;
+	}
+	.camera-box .delete__icon {
+    	right: 0px!important;
+    }
 }
 @media screen and (max-width: 320px){
 	.custom-button{
