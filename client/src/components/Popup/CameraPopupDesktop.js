@@ -19,7 +19,7 @@ import { UncontrolledAlert,
 
 var USER_TYPES = [];
 
-class CameraPopup extends React.Component {
+class CameraPopupDesktop extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -37,7 +37,7 @@ class CameraPopup extends React.Component {
   }
   // Function to update the array holding type of user
   componentDidMount() {
-     if(window.innerWidth > 480){
+     if(window.innerWidth < 480){
       this.setState({
         isDeskTop: true,
         dataUri: ''
@@ -94,31 +94,31 @@ class CameraPopup extends React.Component {
             src="/img/icon/close.svg"
             alt=""
           />
+         
           {!this.state.isDeskTop ?
-
-            !this.state.dataUri ? 
+            !this.state.dataUri ?
               <div>
                 <Camera
-                    onTakePhoto = { (dataUri) => { this.handleTakePhoto(dataUri); } }
-                    onCameraError = { (error) => { this.handleCameraError(error); } }
-                    idealResolution = {{width: width, height: height}}   
-                    idealFacingMode = {FACING_MODES.ENVIRONMENT}
-                  />
-                  {!this.state.isCameraErr &&
-                    <React.Fragment>
-                      <div className="camera-circle">
+                  onTakePhoto = { (dataUri) => { this.handleTakePhoto(dataUri); } }
+                  onCameraError = { (error) => { this.handleCameraError(error); } }
+                  idealResolution = {{width: width, height: height}}
+                  idealFacingMode = {FACING_MODES.ENVIRONMENT}
+                />
+                {!this.state.isCameraErr &&
+                  <React.Fragment>
+                    <div className="camera-circle-desktop">
 
-                      </div>
-                      <div className="camera-alert">
-                        <p>No Glasses.</p>
-                        <p>Align your face.</p>
-                        <p>Do not smile.</p>
-                      </div>
-                    </React.Fragment>
-                  }
+                    </div>
+                    <div className="camera-alert-desktop">
+                      <p>No Glasses.</p>
+                      <p>Align your face.</p>
+                      <p>Do not smile.</p>
+                    </div>
+                  </React.Fragment>
+                }
               </div>
-              : 
-              <div>
+            : 
+              <div style={{'margin-top': '35px'}}>
                 <img src={this.state.dataUri} style={{'width': '100%'}}/>
               </div>
             
@@ -138,4 +138,4 @@ class CameraPopup extends React.Component {
   }
 }
 
-export default CameraPopup;
+export default CameraPopupDesktop;

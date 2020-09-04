@@ -52,6 +52,7 @@ import Img from 'react-fix-image-orientation'
 import AvatarInspectionModel from '../Popup/AvatarInspectionModel';
 import camera from './camera.png';
 import CameraPopup from '../Popup/CameraPopup';
+import CameraPopupDesktop from '../Popup/CameraPopupDesktop';
 let options = [];
 class Profile extends React.Component {
     constructor(props) {
@@ -683,6 +684,7 @@ class Profile extends React.Component {
     }
 
     makeVisible2 = (data) => {
+        console.log('makeVisible2')
         this.setState({ isDisplay2: data,isCamera: false });
     }
     isUpdateData = (data) =>{
@@ -711,10 +713,18 @@ class Profile extends React.Component {
         });
         let isClearable = true;
         let disable_btn = !this.state.inspection_data ? 'disable_btn' : '';
+        console.log('tdd',this.state.isCamera)
         return (
             <React.Fragment>
-            {this.state.isCamera &&
-                <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+            {!this.state.isDeskTop ?
+                this.state.isCamera ?
+                    <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+                : null
+                :
+
+                this.state.isCamera ?
+                    <CameraPopupDesktop isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
+                : null
             }
                 <div
                     style={{
