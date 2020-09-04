@@ -3529,8 +3529,8 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
                             if (simulation_records.length > 0) {
                                 getPlayerSimulationStatus(simulation_records[0].image_id)
                                     .then(simulation => {
-                                        org["simulation_status"] = simulation.status;
-                                        org["computed_time"] = simulation.computed_time;
+                                        org["simulation_status"] = simulation ? simulation.status : '';
+                                        org["computed_time"] = simulation ? simulation.computed_time : '';
                                         org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
                                         counter++;
                                         if (counter == orgList.length) {
@@ -3680,8 +3680,8 @@ app.post(`${apiPrefix}getTeamList`, (req, res) => {
                             if (simulation_records.length > 0) {
                                 getPlayerSimulationStatus(simulation_records[0].image_id)
                                     .then(simulation => {
-                                        team["simulation_status"] = simulation.status;
-                                        team["computed_time"] = simulation.computed_time;
+                                        team["simulation_status"] = simulation ? simulation.status : '';
+                                        team["computed_time"] = simulation ? simulation.computed_time : '';
                                         team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
                                         counter++;
                                         if (counter == teamList.length) {
@@ -3840,8 +3840,8 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                                     .then(simulation => {
                                         // console.log('simulation',simulation.status)
                                         k++;
-                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation.status;
-                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation.computed_time;
+                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
                                         
                                         if (k == p_datalen) {
                                             res.send({
