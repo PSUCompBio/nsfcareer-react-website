@@ -15,6 +15,7 @@ class AvatarInspectionModel extends Component {
     super();
     this.state = {
       isLoading: true,
+      isToggle: false,
       showBrain: false,
     };
   }
@@ -33,13 +34,23 @@ class AvatarInspectionModel extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.isVisible.display === 'flex') {
-      this.resetCamera();
+    if (this.props.isVisible.display === 'flex' && !this.state.isToggle) {
+        this.resetCamera();
         if (this.el && this.camera) {
           this.onWindowResize();
         }
     }
-  } 
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.isVisible.display === 'none') {
+      return {
+        isToggle: false
+      };
+    }
+    // Return null if the state hasn't changed
+    return null;
+  }
 
   loadAssets = () => {
     // getAvatarInspection({ user_cognito_id: this.props.user_cognito_id })
@@ -348,6 +359,7 @@ class AvatarInspectionModel extends Component {
     }
 
     this.setState({
+      isToggle: true,
       showBrain: !this.state.showBrain
     });
   };
