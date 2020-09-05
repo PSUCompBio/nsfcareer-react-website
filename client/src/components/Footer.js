@@ -82,7 +82,7 @@ class Footer extends React.Component {
           <div className="row text-center">
             <div className="col-md-12 pb-3">
               <p onClick={redirectToOther} className="copyright">
-                © 2019 Copyright: Penn State Computational Biomechanics Group
+                © 2020 Copyright: Penn State Computational Biomechanics Group
               </p>
             </div>
           </div>

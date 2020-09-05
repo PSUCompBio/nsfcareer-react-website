@@ -16,6 +16,7 @@ import { UncontrolledAlert,
     Col,
     Row
 } from 'reactstrap';
+import flip_camera from './flip_camera.png'
 
 var USER_TYPES = [];
 
@@ -32,11 +33,14 @@ class CameraPopup extends React.Component {
         isDeskTop: false,
         dataUri: '',
         isCameraErr: false,
+        selfie: true,
     };
 
   }
   // Function to update the array holding type of user
   componentDidMount() {
+    console.log('facing mode', FACING_MODES.USER)
+
      if(window.innerWidth > 480){
       this.setState({
         isDeskTop: true,
@@ -60,6 +64,15 @@ class CameraPopup extends React.Component {
     this.props.isUpdateData(updateData);
     this.props.makeVisible2({ display: 'none' });
   }
+  changeFacingMode =()=>{
+    if(this.state.selfie){
+      console.log('rear camera')
+      this.setState({selfie: false})
+    }else{
+       console.log('selfie camera')
+      this.setState({selfie: true})
+    }
+  }
  
   componentWillMount() {
       
@@ -77,15 +90,8 @@ class CameraPopup extends React.Component {
   render() {
     var width = 400;
     var height = 600
-   
-    if(window.innerWidth > 480){
-       console.log('width',window.innerWidth)
-      width = 768 ;
-      height = 576
-    }
-   
     return (
-      <div style={this.props.isVisible2} className="modal__wrapper ">
+      <div style={this.props.isVisible2} className="modal__wrapper camera">
          {this.props.isVisible2 ? this.scrollToTop() : null}
         <div className="modal__show camera-box">
           <img
@@ -102,7 +108,7 @@ class CameraPopup extends React.Component {
                     onTakePhoto = { (dataUri) => { this.handleTakePhoto(dataUri); } }
                     onCameraError = { (error) => { this.handleCameraError(error); } }
                     idealResolution = {{width: width, height: height}}   
-                    idealFacingMode = {FACING_MODES.ENVIRONMENT}
+                    idealFacingMode = {this.state.selfie ? FACING_MODES.USER : FACING_MODES.ENVIRONMENT}
                   />
                   {!this.state.isCameraErr &&
                     <React.Fragment>
@@ -113,6 +119,9 @@ class CameraPopup extends React.Component {
                         <p>No Glasses.</p>
                         <p>Align your face.</p>
                         <p>Do not smile.</p>
+                        <div className="switch_cam">
+                          <img src={flip_camera} onClick={this.changeFacingMode}/>
+                        </div>
                       </div>
                     </React.Fragment>
                   }

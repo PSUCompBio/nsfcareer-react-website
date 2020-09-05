@@ -373,7 +373,7 @@ class TeamnAdmin extends React.Component {
                                                         }                                        
                                                     }
                                                 }} >
-                                                    <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Player</button> 
+                                                    <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Organization Staff</button> 
                                                 </Link>
                                             <table style={{ whiteSpace: "nowrap" }} className="table">
                                                 <thead>
