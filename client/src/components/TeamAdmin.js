@@ -10,13 +10,16 @@ import {
     getUserDetails,
     getUserDBDetails,
     getAllteamsOfOrganizationOfSensorBrand,
-    fetchStaffMembers
+    fetchStaffMembers,
+    fetchOrgStaffMembers
 } from '../apis';
 
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import MilitaryVersionBtn from './MilitaryVersionBtn';
+import gridView from './girdView.png';
+import listView from './listView.png';
 
 class TeamnAdmin extends React.Component {
     constructor() {
@@ -34,8 +37,9 @@ class TeamnAdmin extends React.Component {
             rostersArray: [],
             organization: 'PSU',
             buttonSelected: 'overview',
-            staffList: [],
-            sensorOrgTeamList: []
+            staffList: '',
+            sensorOrgTeamList: [],
+            view: 'gridView'
         };
     }
     toggleTab = (value) => {
@@ -86,9 +90,19 @@ class TeamnAdmin extends React.Component {
             });
         }
     };
+    handleViewChange = (view) =>{
+        console.log('view',view)
+        localStorage.setItem('OrgTeamView', view);
+        this.setState({view:view})
+    }
 
     componentDidMount() {
         // Scrolling winddow to top when user clicks on about us page
+        var view = localStorage.getItem('OrgTeamView');
+        if(view){
+            console.log('OrgView',view)
+            this.setState({view: view})
+        }
         window.scrollTo(0, 0)
         if (this.props.location.state) {
             console.log('this.props.location.state', this.props.location.state);
@@ -113,13 +127,13 @@ class TeamnAdmin extends React.Component {
                                                     sensorOrgTeamList: teams.data.data
                                                 }));
 
-                                                return fetchStaffMembers({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                                                return fetchOrgStaffMembers({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
                                             })
                                             .then(response => {
-                                                console.log('fetchStaffMembers',response)
+                                                console.log('fetchOrgStaffMembers',response)
                                                 // for (var i = 0; i < response.data.data.length; i++) {
                                                     this.setState(prevState => ({
-                                                        staffList: [...prevState.staffList, response.data.data],
+                                                        staffList: response.data.data,
                                                         isFetching: false
                                                     }));
                                                 // }
@@ -264,6 +278,52 @@ class TeamnAdmin extends React.Component {
         return cards;
 
     };
+    tableTeams = ()=>{
+        console.log(this.state.sensorOrgTeamList)
+
+        var body =  this.state.sensorOrgTeamList.map(function (team, index) {
+                if (team) {
+
+                    let cls = team.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (team.simulation_status == 'completed') {
+                        let computed_time = team.computed_time ? parseFloat(team.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(team.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+                    return <tr className={cls} key={index} onClick={() => {
+                        this.props.history.push({
+                            pathname: '/TeamAdmin/team/players',
+                            state: {
+                                team: {
+                                    brand: team.sensor,
+                                    organization: team.organization,
+                                    team_name: team.team_name,
+                                    user_cognito_id: this.state.userDetails.user_cognito_id,
+                                    staff: this.state.staffList
+                                }
+                            }
+                        })
+                        
+                    }}
+                    >
+                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                        <td>{team.team_name ? team.team_name : 'NA'}</td> 
+                        <td>{team.simulation_count ? team.simulation_count : '0'}</td>
+                        <td>{team.organization}</td>
+                    </tr>;
+                }
+            }, this)
+        return body
+    }
 
     retunrnRosterBtn = () => {
         return (
@@ -331,7 +391,14 @@ class TeamnAdmin extends React.Component {
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div className="col-md-12 Admintitle" >
-                                    <h1>Organization Dashboard</h1>
+                                    <h1>Organization Dashboard
+                                        <div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
+                                            <div className="View">
+                                                <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
+                                                <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                            </div>
+                                        </div>
+                                    </h1>
                                 </div>
                                 <div
                                     ref="cardContainer"
@@ -381,29 +448,48 @@ class TeamnAdmin extends React.Component {
                                                         <th scope="col">#</th>
                                                         <th scope="col">Name</th>
                                                         <th scope="col">Email</th>
-                                                        <th scope="col">Organization</th>
-                                                        
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
-                                                    {this.state.staffList.map(function (staff, index) {
-                                                        return <tr className="player-data-table-row" key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{staff.first_name} {staff.last_name}</td>
-                                                             <td>{staff.email} </td>
-                                                            <td>{staff.organization}</td>
-                                                        </tr>
-                                                    })}
+                                                    {this.state.staffList ? 
+                                                        this.state.staffList.map(function (staff, index) {
+                                                            return <tr className="player-data-table-row" key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{staff.first_name} {staff.last_name}</td>
+                                                                <td>{staff.email} </td>
+                                                            </tr>
+                                                        })
+                                                    :
+                                                    <p>No Data to display</p>
+
+                                                    }
                                                 </tbody>
 
                                             </table>
                                         </div>
                                     }
                                     {!this.state.tabActive ?
-                                        <div className="football-container mt-4 d-flex flex-wrap">
-                                            {this.iterateTeam()}
+                                        this.state.view == 'gridView' ?
+                                            <div className="football-container mt-4 d-flex flex-wrap">
+                                                {this.iterateTeam()}
+                                            </div>
+                                        :
+                                        <div ref="table" className="commander-data-table table-responsive ">
+                                            <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">S.No.</th>
+                                                        <th scope="col">Team Name</th>
+                                                        <th scope="col">Simulations</th>
+                                                        <th scope="col">Organization</th> 
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="player-table">
+                                                    {this.tableTeams()}
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        : null}
+                                    : null}
                                 </div>
                             </div>
                         </div>

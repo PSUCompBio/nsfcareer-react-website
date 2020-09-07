@@ -899,3 +899,24 @@ button.btn.button-yes{
 .switch_cam img{
     width: 20%;
 }
+.takePhoto-icons{
+    width: 100%;
+}
+.capture .take-photo{
+    width: 9%;
+    margin-left: 9%;
+
+}
+
+.capture .camera-switch{
+    width: 9%;
+    float: right;
+    padding-right: 10px;
+    padding-top: 6px;
+}
+#videoId{
+    width: 100%;
+}
+.capture img{
+    cursor: pointer;
+}

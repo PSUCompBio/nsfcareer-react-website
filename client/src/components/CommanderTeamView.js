@@ -768,7 +768,7 @@ class CommanderTeamView extends React.Component {
                             </div>
                             {!this.state.tabActive ?
                                 <div ref="table" className="commander-data-table table-responsive ">
-                                    
+                                   
                                     <table style={{ whiteSpace: "nowrap" }} className="table ">
                                         <thead>
                                             <tr>
@@ -956,6 +956,7 @@ class CommanderTeamView extends React.Component {
                                         }} >
                                         <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Player</button> 
                                     </Link>*/}
+                                    
                                     <table style={{ whiteSpace: "nowrap" }} className="table">
                                         <thead>
                                             <tr>

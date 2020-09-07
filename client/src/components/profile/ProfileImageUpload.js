@@ -227,7 +227,7 @@ class ProfileImageUpload extends React.Component {
                       
                     </React.Fragment>
                   }
-                   <Link to="/Login"> <button className="btn singup-cancel-btn">Skip For Now</button></Link>
+                  <button className="btn singup-cancel-btn" onClick={()=>this.setState({Redirect:true})}>Skip For Now</button>
                   </div>
                 </div>
               </div>

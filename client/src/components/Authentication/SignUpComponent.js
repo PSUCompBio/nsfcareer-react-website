@@ -502,7 +502,7 @@ class SignUpComponent extends React.Component {
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src="img/icon/gender.svg" alt="" />
+                <img style={{"width": "25px"}} src="img/icon/orgicon.png" alt="" />
               </span>
             </div>
             {/*<SelectSearch options={options} search  onChange={this.handleOrgChange} placeholder="(Optional) Select your organization" />*/}
@@ -533,7 +533,7 @@ class SignUpComponent extends React.Component {
             <div className="input-group mb-3">
               <div className="input-group-prepend">
                 <span className="input-group-text" id="basic-addon1">
-                  <img src="img/icon/gender.svg" alt="" />
+                  <img style={{"width": "25px"}} src="img/icon/orgicon.png" alt="" />
                 </span>
               </div>
               {/*<SelectSearch options={this.state.teams} search  placeholder="(Optional) Select your Team" />*/}

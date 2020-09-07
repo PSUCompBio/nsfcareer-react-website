@@ -576,6 +576,18 @@ export const fetchStaffMembers = (request) => {
     })
 }
 
+export const fetchOrgStaffMembers = (request) => {
+    return new Promise((resolve,reject)=>{
+        axios.post(`/fetchOrgStaffMembers`, request, {withCredentials: true})
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error)
+        });
+    })
+}
+
 export const getAllCumulativeAccelerationTimeRecords = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
