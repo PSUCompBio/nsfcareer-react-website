@@ -156,7 +156,7 @@ div.section-one {
   padding-right: 10% !important;
   position: fixed !important;
   width: 100% !important;
-  z-index: 2 !important;
+  z-index: 3 !important;
 }
 
 .navbar-hide {

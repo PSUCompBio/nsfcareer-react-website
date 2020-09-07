@@ -37,6 +37,9 @@ class CommanderTeamView extends React.Component {
         this.state = {
             isAuthenticated: false,
             isCheckingAuth: true,
+            isUpdating: false,
+            sensor_id: '',
+            editableId: '',
             userDetails: {},
             avgLoad: 0.02,
             alerts: 0,
@@ -327,9 +330,9 @@ class CommanderTeamView extends React.Component {
         return `${month}/${date}/${year}`
     }
 
-    handleCheck=(checked, event, id)=> {
+    handleCheck = (checked, event, id) => {
         this.setState({ 
-            isLoaded: false
+            isUpdating: id
         });
        let status = checked ? 'approved' : 'pending';
         updateUserStatus({user_cognito_id: id, status: status})
@@ -344,15 +347,66 @@ class CommanderTeamView extends React.Component {
                 this.setState({ 
                     //checked,
                     requestedUsers: requestedUsers,
-                    isLoaded: true
+                    isUpdating: false
                 });
             })
             .catch(err => {
                 console.log(err);
                 this.setState({
-                    isLoaded: true
+                    isUpdating: false
                 });
             })
+    }
+
+    handleCheck1 = (checked, event, id) => {
+        this.setState({ 
+            isUpdating: id
+        });
+       let status = checked ? 'approved' : 'pending';
+        updateUserStatus({user_cognito_id: id, status: status})
+            .then(data => {
+                let users = this.state.users.map(function (player) {
+                    if (player.simulation_data[0]['user_data'].user_cognito_id === id) {
+                        player.simulation_data[0]['user_data'].player_status = status;
+                    }
+                    return player
+                })
+        
+                this.setState({ 
+                    //checked,
+                    users: users,
+                    isUpdating: false
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({
+                    isUpdating: false
+                });
+            })
+    }
+
+    editable = (id) => {
+        this.setState({ 
+            editableId: id,
+            sensor_id: ''
+        });
+    }
+
+    handleChange = (e) => {
+        this.setState({ [e.target.name] : e.target.value });
+    }
+    
+    updateSensorId = () => {
+        // alert(this.state.sensor_id)
+    }
+
+    renderSwitch = (player) => {
+        if (player.simulation_data[0]['user_data']) {
+            return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
+        } else {
+            return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+        }
     }
 
     tConvert = (time) => {
@@ -376,8 +430,11 @@ class CommanderTeamView extends React.Component {
     }
 
     getUrl = (obj) => {
-        if (obj.player_status === 'approved') {
+        if (obj && obj.player_status === 'approved') {
             return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.user_cognito_id}>Profile</a>;
+        }
+        if (!obj) {
+            return <button className="btn btn-primary" disabled={true}>Profile</button>;
         }
     }
 
@@ -403,7 +460,7 @@ class CommanderTeamView extends React.Component {
                                 }
                             }} >{'Admin > '}</Link>
                         : null}
-                        {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
+                        {this.props.location.state.team.brand && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
                             <Link style={{ fontWeight: "400" }} to={{
                                 pathname: '/OrganizationAdmin',
                                 state: {
@@ -717,7 +774,10 @@ class CommanderTeamView extends React.Component {
                                             <tr>
 
                                                 <th scope="col">Player ID</th>
-                                                <th scope="col">Player Name</th>
+                                                <th scope="col">Sensor ID</th>
+                                                { this.state.userDetails.level > 300 &&
+                                                    <th scope="col">Player Name</th>
+                                                }
                                                 <th scope="col"># of Simulations</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
@@ -764,21 +824,33 @@ class CommanderTeamView extends React.Component {
                                                     }
                                                   }
 
-                                                    return <tr className={cls} key={index} onClick={() => {
-
-                                                        this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0])
-                                                    }}
-                                                    >
-                                                        <th style={{ verticalAlign: "middle" }} scope="row">
+                                                    return <tr className={cls} key={index} >
+                                                        <th style={{ verticalAlign: "middle" }} scope="row" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                         {  
                                                             player.simulation_data[0].player_id.split('$')[0]
 
                                                         }</th>
-                                                        <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                        <td>{player.simulation_data.length}</td>
-                                                        <td style={{ alignItems: "center" }}>
+                                                        <td>
+                                                            {this.state.editableId && this.state.editableId === player.simulation_data[0]['user_data'].user_cognito_id ?
+                                                                <input type="text" 
+                                                                onBlur={this.updateSensorId} 
+                                                                onChange={this.handleChange}
+                                                                name="sensor_id"
+                                                                value={this.state.sensor_id}
+                                                                />
+                                                            : 
+                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data'].user_cognito_id) }} style={{padding: '10px 10px 10px 10px', border: '1px solid #daefff', background: '#eee'}}>
+                                                                    {'Sensor ID'} <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                </span>
+                                                            }
+                                                        </td>
+                                                        { this.state.userDetails.level > 300 &&
+                                                            <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                        }
+                                                        <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                              {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
-                                                        <td style={{ alignItems: "center" }}>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                              {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
@@ -795,12 +867,26 @@ class CommanderTeamView extends React.Component {
                                                                                 </div>
                                                                                 </td>
                                                                                 */}
-                                                        <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
-                                                        <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{dateTime.split(' ')[0]}</td>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{this.tConvert(dateTime.split(' ')[1])}</td>
                                                         { this.state.userDetails.level > 200 &&
                                                             <React.Fragment>
-                                                                <td style={{ alignItems: "center" }}><Switch uncheckedIcon={true}  offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={true} checked={this.state.checked} /></td>
-                                                                <td></td>
+                                                                <td style={{ alignItems: "center" }}>
+                                                                   
+                                                                    {this.state.isUpdating && this.state.isUpdating === player.simulation_data[0]['user_data'].user_cognito_id ?
+                                                                        <div className="d-flex justify-content-center center-spinner">
+                                                                            <div
+                                                                                className="spinner-border text-primary"
+                                                                                role="status"
+                                                                            ></div>
+                                                                        </div>
+                                                                    :
+                                                                        this.renderSwitch(player)
+                                                                    } 
+                                                                </td>
+                                                                <td>
+                                                                    {this.getUrl(player.simulation_data[0]['user_data'])}
+                                                                </td>
                                                             </React.Fragment>
                                                         }
                                                     </tr>;
@@ -810,7 +896,23 @@ class CommanderTeamView extends React.Component {
                                                 let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
                                                 return <tr key={r_index} style={{lineHeight: lineHeight}}>
                                                         <td>-</td>
-                                                        <td>{r_player.first_name + ' ' + r_player.last_name}</td>
+                                                        <td>
+                                                            {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
+                                                                <input type="text" 
+                                                                    onBlur={this.updateSensorId} 
+                                                                    onChange={this.handleChange}
+                                                                    name="sensor_id"
+                                                                    value={this.state.sensor_id}
+                                                                />
+                                                            : 
+                                                                <span onClick={() => {this.editable(r_player.user_cognito_id) }} style={{padding: '10px 10px 10px 10px', border: '1px solid #daefff', background: '#eee'}}>
+                                                                    {'Sensor ID'} <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                </span>
+                                                            }
+                                                        </td>
+                                                        { this.state.userDetails.level > 300 &&
+                                                            <td>{r_player.first_name + ' ' + r_player.last_name}</td>
+                                                        }
                                                         <td>-</td>
                                                         <td>-</td>
                                                         <td>-</td>
@@ -820,10 +922,19 @@ class CommanderTeamView extends React.Component {
                                                             <React.Fragment>
                                                                 <td style={{ alignItems: "center" }}>
                                                                     {this.getStatus(r_player.player_status)}   
-                                                                    <Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+                                                                    {this.state.isUpdating && this.state.isUpdating === r_player.user_cognito_id ?
+                                                                        <div className="d-flex justify-content-center center-spinner">
+                                                                            <div
+                                                                                className="spinner-border text-primary"
+                                                                                role="status"
+                                                                            ></div>
+                                                                        </div>
+                                                                    :
+                                                                        <Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+                                                                    }
                                                                 </td>
                                                                 <td>
-                                                                    {this.state.userDetails.level > 200 ? this.getUrl(r_player) : ''}
+                                                                    {this.getUrl(r_player)}
                                                                 </td>
                                                             </React.Fragment>
                                                         }
