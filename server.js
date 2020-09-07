@@ -527,8 +527,6 @@ function createUserDbEntry(event, callback) {
             // event["sensor"] = 'Blackbox Biometrics';
             // event["organization"] = 'Army Research Laboratory';
             delete event.user_name;
-            delete event.organization;
-            delete event.team;
             dbInsert = {
                 TableName: "users",
                 Item: event
@@ -554,8 +552,6 @@ function createUserDbEntry(event, callback) {
         // event["sensor"] = 'Blackbox Biometrics';
         // event["organization"] = 'Army Research Laboratory';
         delete event.user_name;
-        delete event.organization;
-        delete event.team;
         dbInsert = {
             TableName: "users",
             Item: event
@@ -2565,7 +2561,9 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             });
         }
         else {
-            console.log('data',data)
+            console.log('data------------\n',data);
+            
+
             var UserData = data.User;
             req.body["user_cognito_id"] = UserData.Username;
             user_cognito_id = UserData.Username;
@@ -2593,6 +2591,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                 var mergedObject = { ...req.body, ...tempData };
                 delete mergedObject.userName;
                 delete mergedObject.name;
+                console.log('mergedObject------------\n',mergedObject);
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
                     if (err) {
                         console.log("DB ERRRRRR =============================== \n", err);
@@ -2631,7 +2630,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                 // Merging objects
                 var mergedObject = { ...req.body, ...tempData };
-
+                console.log('mergedObject------------\n',mergedObject);
                 delete mergedObject.userName;
                 delete mergedObject.name;
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
@@ -3978,6 +3977,54 @@ app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
     //
   
 });
+
+function fetchOrgStaffMembers(organization) {
+    console.log('organization',organization)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#organization = :organization and #level = :level",
+            ExpressionAttributeNames: {
+                "#organization": "organization",
+                "#level": "level",
+            },
+            ExpressionAttributeValues: {
+                ":organization": organization,
+                ":level": 300
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+app.post(`${apiPrefix}fetchOrgStaffMembers`, (req,res) =>{ 
+    console.log('fetchOrgStaffMembers',req.body);
+    fetchOrgStaffMembers(req.body.organization).
+    then(data=>{
+        console.log('staff',data);
+        res.send({
+            message : "success",
+            data : data
+        })
+    }).catch(err=>{
+        console.log('er',err);
+        res.send({
+            message : "failure",
+            error : err,
+            data : []
+        })  
+    })
+})
 
 //getting only user db details
 app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {

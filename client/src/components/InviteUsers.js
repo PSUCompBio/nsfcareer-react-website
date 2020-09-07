@@ -364,6 +364,11 @@ class InviteUsers extends React.Component {
          this.setState({
           sensorBrandList: this.selectOption(location.sensorBrandList,'Sensor','sensor'),
         }); 
+      }else if(location.type == 'Family'){
+        console.log('location',location.sensorBrandList);
+         this.setState({
+          sensorBrandList: this.selectOption(location.sensorBrandList,'Sensor','sensor'),
+        }); 
       }else{
         
       }

@@ -183,6 +183,13 @@
 	.camera-circle-desktop {
     	height: 155px;
     }
+    .camera-alert-desktop {
+	    height: 158px;
+	    width: 100%;
+	    background: #0f66ae;
+	    margin-top: -86px;
+	    position: sticky;
+	}
 }
 
 @media screen and (max-width: 600px){
@@ -460,6 +467,22 @@
 	    position: absolute;
 	    border-radius: 100%;
 	}
+	.camera .camera-box {
+	    width: 99%!important;
+	}
+	.camera-box .delete__icon {
+    	right: 0px!important;
+    }
+    .camera-alert-desktop {
+	    height: 123px;
+	    width: 100%;
+	    background: #0f66ae;
+	    margin-top: -28px;
+	    position: sticky;
+	}
+	.capture .camera-switch {
+	    width: 10%;
+	}
 }
 
 @media screen and (max-width: 414px){
@@ -503,6 +526,9 @@
 
 	.rostar-btn {
 		font-size: 12px;
+	}
+	.capture .take-photo {
+	    width: 11%;
 	}
 }
 
@@ -567,6 +593,11 @@
 	.impact-video p {
 	    font-size: 15px;
 	}
+	.camera-circle {
+	    border: 9px solid #0f66ae;
+	    width: 119px;
+	    height: 133px;
+	}
 }
 
 @media screen and (max-width: 360px){
@@ -630,11 +661,17 @@
 	    width: 38%;
 	}
 	.camera-circle {
-	   	width: 54%;
-	    height: 181px;
+	    width: 39%;
+	    height: 134px;
 	    left: 50%;
 	    transition: auto;
 	    top: 32%;
+	}
+	.capture .take-photo {
+	    width: 15%;
+	}
+	.capture .camera-switch {
+	    width: 15%;
 	}
 }
 
