@@ -386,10 +386,10 @@ class CommanderTeamView extends React.Component {
             })
     }
 
-    editable = (id) => {
+    editable = (obj) => {
         this.setState({ 
-            editableId: id,
-            sensor_id: ''
+            editableId: obj ? obj.user_cognito_id : '',
+            sensor_id: obj ? obj.sensor_id_number : ''
         });
     }
 
@@ -398,8 +398,44 @@ class CommanderTeamView extends React.Component {
     }
     
     updateSensorId = (e) => {
-        console.log(e)
-        // alert(this.state.sensor_id)
+        this.updateSensor();
+    }
+
+    updateSensorIdOnEnter = (e) => {
+        if (e.key === 'Enter') {
+            this.updateSensor();
+        }
+    }
+
+    updateSensor = () => {
+        const sensor_id = this.state.sensor_id;
+        const editableId = this.state.editableId;
+
+        updateUserStatus({user_cognito_id: editableId, sensor_id_number: sensor_id})
+            .then(data => {
+                let users = this.state.users.map(function (player) {
+                    if (player.simulation_data[0]['user_data'].user_cognito_id === editableId) {
+                        player.simulation_data[0]['user_data'].sensor_id_number = sensor_id;
+                    }
+                    return player
+                })
+
+                let requestedUsers = this.state.requestedUsers.map(function (r_player) {
+                    if (r_player.user_cognito_id === editableId) {
+                        r_player.sensor_id_number = sensor_id;
+                    }
+                    return r_player
+                })
+                
+                this.setState({
+                    users: users,
+                    requestedUsers: requestedUsers,
+                    editableId: ''
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     renderSwitch = (player) => {
@@ -834,15 +870,17 @@ class CommanderTeamView extends React.Component {
                                                         <td>
                                                             {this.state.editableId && this.state.editableId === player.simulation_data[0]['user_data'].user_cognito_id ?
                                                                 <input type="text" 
-                                                                onBlur={this.updateSensorId} 
+                                                                onBlur={this.updateSensorId}
+                                                                onKeyDown={this.updateSensorIdOnEnter}
                                                                 onChange={this.handleChange}
                                                                 name="sensor_id"
                                                                 value={this.state.sensor_id}
                                                                 className="update-sensorid-input"
+                                                                autoFocus
                                                                 />
                                                             : 
-                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data'].user_cognito_id) }} className="edit-sensor-box">
-                                                                    {'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
+                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
+                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
                                                                 </span>
                                                             }
                                                         </td>
@@ -901,15 +939,17 @@ class CommanderTeamView extends React.Component {
                                                         <td>
                                                             {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
                                                                 <input type="text" 
-                                                                    onBlur={this.updateSensorId} 
+                                                                    onKeyDown={this.updateSensorId}
+                                                                    onKeyDown={this.updateSensorIdOnEnter}
                                                                     onChange={this.handleChange}
                                                                     name="sensor_id"
                                                                     value={this.state.sensor_id}
                                                                     className="update-sensorid-input"
+                                                                    autoFocus
                                                                 />
                                                             : 
-                                                                <span onClick={() => {this.editable(r_player.user_cognito_id) }} className="edit-sensor-box">
-                                                                    {'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
+                                                                <span onClick={() => {this.editable(r_player) }} className="edit-sensor-box">
+                                                                    { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
                                                                 </span>
                                                             }
                                                         </td>

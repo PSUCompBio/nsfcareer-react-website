@@ -5779,18 +5779,34 @@ app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
 
 function updateUserStatus(obj) {
     return new Promise((resolve, reject) => {
-        var userParams = {
-            TableName: "users",
-            Key: {
-                user_cognito_id: obj.user_cognito_id,
-            },
-            UpdateExpression:
-                "set player_status = :player_status",
-            ExpressionAttributeValues: {
-                ":player_status": obj.status,
-            },
-            ReturnValues: "UPDATED_NEW",
-        };
+        if (obj.sensor_id_number) {
+            var userParams = {
+                TableName: "users",
+                Key: {
+                    user_cognito_id: obj.user_cognito_id,
+                },
+                UpdateExpression:
+                    "set sensor_id_number = :sensor_id_number",
+                ExpressionAttributeValues: {
+                    ":sensor_id_number": obj.sensor_id_number,
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+        } else {
+            var userParams = {
+                TableName: "users",
+                Key: {
+                    user_cognito_id: obj.user_cognito_id,
+                },
+                UpdateExpression:
+                    "set player_status = :player_status",
+                ExpressionAttributeValues: {
+                    ":player_status": obj.status,
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+        }
+        
         docClient.update(userParams, (err, data) => {
             if (err) {
                 reject(err);
