@@ -397,7 +397,8 @@ class CommanderTeamView extends React.Component {
         this.setState({ [e.target.name] : e.target.value });
     }
     
-    updateSensorId = () => {
+    updateSensorId = (e) => {
+        console.log(e)
         // alert(this.state.sensor_id)
     }
 
@@ -774,7 +775,7 @@ class CommanderTeamView extends React.Component {
                                             <tr>
 
                                                 <th scope="col">Player ID</th>
-                                                <th scope="col">Sensor ID</th>
+                                                <th scope="col" style={{'text-align': 'center'}}>Sensor ID</th>
                                                 { this.state.userDetails.level > 300 &&
                                                     <th scope="col">Player Name</th>
                                                 }
@@ -837,10 +838,11 @@ class CommanderTeamView extends React.Component {
                                                                 onChange={this.handleChange}
                                                                 name="sensor_id"
                                                                 value={this.state.sensor_id}
+                                                                className="update-sensorid-input"
                                                                 />
                                                             : 
-                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data'].user_cognito_id) }} style={{padding: '10px 10px 10px 10px', border: '1px solid #daefff', background: '#eee'}}>
-                                                                    {'Sensor ID'} <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data'].user_cognito_id) }} className="edit-sensor-box">
+                                                                    {'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
                                                                 </span>
                                                             }
                                                         </td>
@@ -903,10 +905,11 @@ class CommanderTeamView extends React.Component {
                                                                     onChange={this.handleChange}
                                                                     name="sensor_id"
                                                                     value={this.state.sensor_id}
+                                                                    className="update-sensorid-input"
                                                                 />
                                                             : 
-                                                                <span onClick={() => {this.editable(r_player.user_cognito_id) }} style={{padding: '10px 10px 10px 10px', border: '1px solid #daefff', background: '#eee'}}>
-                                                                    {'Sensor ID'} <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                                <span onClick={() => {this.editable(r_player.user_cognito_id) }} className="edit-sensor-box">
+                                                                    {'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
                                                                 </span>
                                                             }
                                                         </td>

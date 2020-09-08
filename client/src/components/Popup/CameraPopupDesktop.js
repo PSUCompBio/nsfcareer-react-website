@@ -1,10 +1,5 @@
 import React from 'react';
-import ToggleToken from '../Buttons/ToggleToken';
-import { formDataToJson } from '../../utilities/utility';
-import { deleteItem } from '../../apis';
-import Spinner from './../Spinner/Spinner';
-// import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
-import 'react-html5-camera-photo/build/css/index.css';
+import $ from "jquery";
 import CameraPhoto, { FACING_MODES, IMAGE_TYPES } from 'jslib-html5-camera-photo';
 import flip_camera from './flip_camera.png'
 import capture from './capture.png'
@@ -90,11 +85,12 @@ class CameraPopupDesktop extends React.Component {
             console.log('No camera to stop!:', error);
           });
       }
-    },2000);
+    },300);
      
   }
   stopcamera=()=> {
-    this.props.makeVisible2({ display: 'none' })
+    this.state.camera.stopCamera();
+    setTimeout(()=>this.props.makeVisible2({ display: 'none' }),200);
   }
 
   scrollToTop(){
@@ -105,16 +101,20 @@ class CameraPopupDesktop extends React.Component {
       dataUri: this.state.dataUri
     }
     this.props.isUpdateData(updateData);
-    this.props.makeVisible2({ display: 'none' });
-    this.state.camera.stopCamera()
+    this.state.camera.stopCamera();
+    setTimeout(()=>this.props.makeVisible2({ display: 'none' }),200);
   }
  
   componentWillMount() {
       
   }
   handleTakePhoto = (dataUri)=> {
-  
-    this.setState({dataUri: dataUri})
+    $("#white-flash").addClass("do-transition");
+    var the = this;
+    setTimeout(() => {
+      the.setState({ dataUri: dataUri })
+      $("#white-flash").removeClass("do-transition")
+    }, 700);
   }
   changeFacingMode = ()=>{
     if(this.state.facing_mode == "environment"){
@@ -124,9 +124,11 @@ class CameraPopupDesktop extends React.Component {
       this.setState({facing_mode: FACING_MODES.ENVIRONMENT});
     } 
     var the = this;
+    $("#white-flash").addClass("do-transition");
     setTimeout(function(){
       the.startCamera();
-    },1000)
+      $("#white-flash").removeClass("do-transition")
+    },300)
   }
   handleCameraError =( error) =>{
     console.log('handleCameraError', error);
@@ -149,36 +151,6 @@ class CameraPopupDesktop extends React.Component {
             src="/img/icon/close.svg"
             alt=""
           />
-         
-          {/*!this.state.isDeskTop ?
-            !this.state.dataUri ?
-              <div>
-                <Camera
-                  onTakePhoto = { (dataUri) => { this.handleTakePhoto(dataUri); } }
-                  onCameraError = { (error) => { this.handleCameraError(error); } }
-                  idealResolution = {{width: width, height: height}}
-                  idealFacingMode = {FACING_MODES.ENVIRONMENT}
-                />
-                {!this.state.isCameraErr &&
-                  <React.Fragment>
-                    <div className="camera-circle-desktop">
-
-                    </div>
-                    <div className="camera-alert-desktop">
-                      <p>No Glasses.</p>
-                      <p>Align your face.</p>
-                      <p>Do not smile.</p>
-                    </div>
-                  </React.Fragment>
-                }
-              </div>
-            : 
-              <div style={{'margin-top': '35px'}}>
-                <img src={this.state.dataUri} style={{'width': '100%'}}/>
-              </div>
-            
-            : null
-          */}
           {!this.state.dataUri ?
             <div>
               <video id="videoId" autoplay="true">
@@ -201,9 +173,7 @@ class CameraPopupDesktop extends React.Component {
               <img src={this.state.dataUri} style={{'width': '100%'}}/>
             </div>
           }
-           {/* <button >takePhoto</button>
-            <button id="stopCameraButtonId">stopCamera</button>
-              <img alt="imgId" id="imgId"/>*/}
+           <div id="white-flash" className="normal"></div>
           
           {this.state.dataUri ? 
             <div className="delete-confirmation-button">
