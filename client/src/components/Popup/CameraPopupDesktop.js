@@ -89,8 +89,15 @@ class CameraPopupDesktop extends React.Component {
      
   }
   stopcamera=()=> {
-    this.state.camera.stopCamera();
-    setTimeout(()=>this.props.makeVisible2({ display: 'none' }),200);
+    var the = this;
+    this.state.camera.stopCamera().then(() => {
+        console.log('Camera closed !');
+        the.props.makeVisible2({ display: 'none' });
+        the.setState({camera: ''})
+    })
+    .catch((error) => {
+      console.error('Camera not started!', error);
+    });
   }
 
   scrollToTop(){
@@ -101,8 +108,15 @@ class CameraPopupDesktop extends React.Component {
       dataUri: this.state.dataUri
     }
     this.props.isUpdateData(updateData);
-    this.state.camera.stopCamera();
-    setTimeout(()=>this.props.makeVisible2({ display: 'none' }),200);
+    var the = this;
+    this.state.camera.stopCamera().then(() => {
+        console.log('Camera closed !');
+        the.props.makeVisible2({ display: 'none' });
+        the.setState({camera: ''});
+    })
+    .catch((error) => {
+      console.error('Camera not started!', error);
+    });
   }
  
   componentWillMount() {

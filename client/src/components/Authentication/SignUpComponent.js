@@ -533,7 +533,7 @@ class SignUpComponent extends React.Component {
             <div className="input-group mb-3">
               <div className="input-group-prepend">
                 <span className="input-group-text" id="basic-addon1">
-                  <img style={{"width": "25px"}} src="img/icon/orgicon.png" alt="" />
+                  <img style={{"width": "25px"}} src="img/icon/team-icon.png" alt="" />
                 </span>
               </div>
               {/*<SelectSearch options={this.state.teams} search  placeholder="(Optional) Select your Team" />*/}

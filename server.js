@@ -2710,7 +2710,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                                 else {
                                                     res.send({
                                                         message : "success",
-                                                        message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, youw will be a part of the study!",
+                                                        message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
                                                         user_cognito_id: user_cognito_id
                                                     })
                                                 }
