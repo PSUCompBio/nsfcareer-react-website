@@ -939,7 +939,7 @@ class CommanderTeamView extends React.Component {
                                                         <td>
                                                             {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
                                                                 <input type="text" 
-                                                                    onKeyDown={this.updateSensorId}
+                                                                    onBlur={this.updateSensorId}
                                                                     onKeyDown={this.updateSensorIdOnEnter}
                                                                     onChange={this.handleChange}
                                                                     name="sensor_id"
