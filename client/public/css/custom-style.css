@@ -552,7 +552,7 @@ input#MyrangeSlider3:focus {
   font-size: 20px;
 }
 .delete-confirmation-button {
-  position: absolute;
+ 
   bottom: 0;
   padding: 20px;
 }
@@ -603,6 +603,17 @@ button.btn.button-yes {
   box-shadow: inherit !important;
   /* width: 42% !important; */
   padding-bottom: 7px !important;
+  position: fixed;
+  color: #fff;
+  text-align: center;
+  margin-top: -100px !important;
+  animation: fadeIn 1s, slideIn 0.8s linear;
+  margin: auto;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-flow: column;
 }
 .delete__icon {
   z-index: 1;
@@ -923,10 +934,12 @@ button.btn.button-yes {
   padding: 0px 20px 20px 0px;
 }
 
-.delete-confirmation-button {
+.popup-delete-confirmation-button {
   position: absolute;
   height: 180px;
   width: 100%;
+   bottom: 0;
+  padding: 20px;
   background: #0f66ae;
   display: flex;
   justify-content: center;
@@ -935,7 +948,7 @@ button.btn.button-yes {
 }
 
 @media screen and (max-width: 480px) {
-  .delete-confirmation-button {
+  .popup-delete-confirmation-button {
     width: 100%;
     margin-bottom: 15px;
   }
@@ -1021,4 +1034,57 @@ button.btn.button-yes {
 }
 .camera-alert p {
     line-height: 24.5px;
+}
+/*Model validation css start */
+.model-validation-head, .modael-validation-body{
+  text-align: center;
+
+}
+.model-validation-head  h1, .modael-validation-body h4{
+  color: #09497B;
+  width: 100%
+}
+.model-validation-head  h4{
+  color: #767171;
+}
+.model-validation-subhead{
+  background: gainsboro;
+  text-align: left;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.model-validation-subhead p{
+  font-size: 19px;
+}
+.modael-validation-body{
+  margin-top: 20px;
+}
+.modael-validation-box{
+  background: #DAE3F3;
+  font-size: 22px;
+  font-weight: 400;
+  text-align: left;
+  padding: 24px 3px;
+  border-radius: 6px;
+  border: 1px solid #0e7ed7;
+  cursor: pointer;
+  transition: transform .2s;
+}
+.modael-validation-box img{
+  float: right;
+  width: 15%;
+  vertical-align: middle;
+
+}
+.modael-validation-box:hover {
+    transform: scale(1.01);
+    box-shadow: 0px 0px 6px #b3b3b3;
+}
+.modael-validation-body a{
+  color: black;
+  text-decoration: none;
+  width: 100%;
+  height: auto;
+  display: flex;
 }

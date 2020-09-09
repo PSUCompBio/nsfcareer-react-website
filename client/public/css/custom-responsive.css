@@ -106,6 +106,10 @@
   .impact-video p {
     font-size: 16px;
   }
+  .modael-validation-box img{
+    float: right;
+    width: 44%;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -138,6 +142,10 @@
   .camera-circle-desktop {
     height: 155px;
   }
+  .modael-validation-box img{
+    float: right;
+    width: 70%;
+  }
 }
 @media (max-width: 767px){
   .modal__show{
@@ -145,6 +153,7 @@
   }
 
 }
+
 @media screen and (max-width: 600px) {
    .modal__show{
     width: auto!important;
@@ -234,6 +243,13 @@
   }
   .impact-video p {
     font-size: 19px;
+  }
+}
+@media (max-width: 575px){
+  .modael-validation-box img{
+      float: left;
+      width: 8%;
+      padding: 6px;
   }
 }
 
@@ -399,6 +415,9 @@
   .camera-box {
     padding: 15px 8px !important;
   }
+  .model-validation-subhead p{
+    padding: 12px;
+  }
 }
 
 @media screen and (max-width: 414px) {
@@ -443,6 +462,10 @@
 
   .rostar-btn {
     font-size: 12px;
+  }
+  .modael-validation-box {
+    background: #DAE3F3;
+    font-size: 19px;
   }
 }
 
