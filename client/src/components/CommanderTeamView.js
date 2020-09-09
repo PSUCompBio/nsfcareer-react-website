@@ -411,7 +411,7 @@ class CommanderTeamView extends React.Component {
         const sensor_id = this.state.sensor_id;
         const editableId = this.state.editableId;
 
-        updateUserStatus({user_cognito_id: editableId, sensor_id_number: sensor_id})
+        updateUserStatus({user_cognito_id: editableId, sensor_id_number: sensor_id, type: 'uodate_sensor_id'})
             .then(data => {
                 let users = this.state.users.map(function (player) {
                     if (player.simulation_data[0]['user_data'].user_cognito_id === editableId) {

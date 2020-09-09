@@ -350,7 +350,7 @@ function verifyImageToken(token, item){
 function getImageFromS3(image_record){
     return new Promise((resolve, reject) =>{
         var params = {
-            Bucket: config_env.usersbucket,
+            Bucket: image_record.bucket_name ? image_record.bucket_name : config_env.usersbucket,
             Key: image_record.path
         };
         s3.getObject(params, function(err, data) {
@@ -591,32 +591,52 @@ function addPlayerToTeamOfOrganization(org, team, player_id) {
                 const scanData = concatArrays(item);
                 if (scanData.length > 0) {
                     // If Player does not exists in Team
-                    if (scanData[0].requested_player_list && scanData[0].requested_player_list.indexOf(player_id) <= -1) {
+                    if (scanData[0].requested_player_list) {
+                        if (scanData[0].requested_player_list.indexOf(player_id) <= -1) {
+                            const dbUpdate = {
+                                TableName: "organizations",
+                                Key: {
+                                    organization_id: scanData[0].organization_id
+                                },
+                                UpdateExpression: "set #list = list_append(#list, :newItem)",
+                                ExpressionAttributeNames: {
+                                    "#list": "requested_player_list",
+                                },
+                                ExpressionAttributeValues: {
+                                    ":newItem": [player_id],
+                                },
+                                ReturnValues: "UPDATED_NEW",
+                            };
+    
+                            docClient.update(dbUpdate, function (err, data) {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(data);
+                                }
+                            });
+                        } else {
+                            console.log("PLAYER ALREADY EXISTS IN TEAM");
+                            resolve("PLAYER ALREADY EXISTS IN TEAM");
+                        }
+                    } else {
                         const dbUpdate = {
                             TableName: "organizations",
-                            Key: {
-                                organization_id: scanData[0].organization_id
+                            Item: {
+                                organization_id: scanData[0].organization_id,
+                                organization: org,
+                                team_name: team,
+                                requested_player_list: [player_id]
                             },
-                            UpdateExpression: "set #list = list_append(#list, :newItem)",
-                            ExpressionAttributeNames: {
-                                "#list": "requested_player_list",
-                            },
-                            ExpressionAttributeValues: {
-                                ":newItem": [player_id],
-                            },
-                            ReturnValues: "UPDATED_NEW",
                         };
-
-                        docClient.update(dbUpdate, function (err, data) {
+                        docClient.put(dbUpdate, function (err, data) {
                             if (err) {
+                                console.log(err);
                                 reject(err);
                             } else {
                                 resolve(data);
                             }
                         });
-                    } else {
-                        console.log("PLAYER ALREADY EXISTS IN TEAM");
-                        resolve("PLAYER ALREADY EXISTS IN TEAM");
                     }
                 } else {
                     const dbInsert = {
@@ -1257,7 +1277,7 @@ function adminCreateUser(User, cb) {
         DesiredDeliveryMediums: [
             "EMAIL",
         ],
-        // MessageAction: 'SUPPRESS',
+        // MessageAction: 'SUPPRESS', 
         // TemporaryPassword: '12345678', // BrainComputing2020!
         UserAttributes: [
             {
@@ -1758,10 +1778,10 @@ function getPlayerCgValues(player_id) {
 
 function getPresignedMovieUrl(image_details) {
   return new Promise((resolve, reject) => {
-    const { movie_path } = image_details;
+    const { movie_path, bucket_name } = image_details;
     if(movie_path) {
       var params = {
-          Bucket: BUCKET_NAME,
+          Bucket: bucket_name ? bucket_name : config_env.usersbucket,
           Key: movie_path,
           Expires: 1800
       };
@@ -5779,7 +5799,7 @@ app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
 
 function updateUserStatus(obj) {
     return new Promise((resolve, reject) => {
-        if (obj.sensor_id_number) {
+        if (obj.type && obj.type === 'uodate_sensor_id') {
             var userParams = {
                 TableName: "users",
                 Key: {
