@@ -716,15 +716,11 @@ class Profile extends React.Component {
         console.log('tdd',this.state.isCamera)
         return (
             <React.Fragment>
-            {!this.state.isDeskTop ?
+            {
                 this.state.isCamera ?
                     <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
                 : null
-                :
-
-                this.state.isCamera ?
-                    <CameraPopupDesktop isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
-                : null
+                
             }
                 <div
                     style={{
