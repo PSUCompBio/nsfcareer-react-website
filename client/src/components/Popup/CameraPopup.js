@@ -338,7 +338,7 @@ class CameraPopup extends React.Component {
     return (
       <div style={this.props.isVisible2} className="modal__wrapper">
       <div style={{ display: "flex" }} className="modal__wrapper">
-        <div className="modal__show camera-box" ref={this.modalWrapper} style={{'width':'auto'}}>
+        <div className=" camera-box" ref={this.modalWrapper} style={{'width':'auto'}}>
           <img
             className="delete__icon"
              onClick={() => this.props.makeVisible2({ display: 'none' })}
@@ -388,7 +388,7 @@ class CameraPopup extends React.Component {
             />
           )}
           {this.state.dataUri && (
-            <div className="delete-confirmation-button">
+            <div className="popup-delete-confirmation-button" style={{width: sizeOfCanvas.width}}>
               <button className="btn button-back" onClick={this.cancelCapture}>
                 Cancel
               </button>

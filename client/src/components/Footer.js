@@ -71,7 +71,7 @@ class Footer extends React.Component {
           <div className="row text-center">
             <div className="col-sm-12 col-md-12 col-lg-12">
               <p>
-                <i class="fa fa-envelope" aria-hidden="true"></i> info@NSFCAREER.IO <br />
+                 <a href="mailto:info@nsfcareer.io?cc=reuben.kraft@psu.edu" style={{'color':'white'}}><i class="fa fa-envelope" aria-hidden="true"></i> info@NSFCAREER.IO </a><br />
                 <span className="ip-irb-link" onClick={()=>this.props.history.push('/IP')}> IP </span> | Privacy
                     Policy &amp;{' '}
                     <span className="ip-irb-link" onClick={() => this.props.history.push('/IRB')}> IRB </span> |

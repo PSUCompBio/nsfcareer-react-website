@@ -35,7 +35,10 @@ import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDe
 import InviteUsers from '../../components/InviteUsers';
 import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
 import ProfileImageUpload from '../../components/profile/ProfileImageUpload';
-
+import ModelValidation from '../../components/ModelValidation/ModelValidation';
+import ModelValidationPressureResponse from '../../components/ModelValidation/ModelValidationPressureResponse';
+import ModelValidationDisplacementResponse from '../../components/ModelValidation/ModelValidationDisplacementResponse';
+import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -336,6 +339,26 @@ class Routing extends React.Component {
             exact
             path="/profile-image-upload"
             render={(props) => <ProfileImageUpload {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/model-validation"
+            render={(props) => <ModelValidation {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/model-pressure-response"
+            render={(props) => <ModelValidationPressureResponse {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/model-displacement-response"
+            render={(props) => <ModelValidationDisplacementResponse {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/model-strain-response"
+            render={(props) => <ModelValidationStrainResponse {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
       </React.Fragment>
     );
