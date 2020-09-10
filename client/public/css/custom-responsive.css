@@ -362,7 +362,11 @@
   }
 
   .View img {
-    width: 15% !important;
+    width: 20% !important;
+  }
+   .col-md-12.organization-admin-table-margin-5-mobile-overview .View img {
+      margin-top: 15px!important;
+      width: 12% !important;
   }
 
   .custom-button {
@@ -410,7 +414,7 @@
     right: 0 !important;
   }
   .irb-header {
-    height: 300px !important;
+    height: calc(100vh - 350px) !important;
   }
   .camera-box {
     padding: 15px 8px !important;
@@ -459,7 +463,9 @@
   .impact-video {
     height: 172px;
   }
-
+  .View img {
+    width:25% !important;
+  }
   .rostar-btn {
     font-size: 12px;
   }
@@ -481,7 +487,7 @@
     padding: 5px 11px !important;
   }
   .View img {
-    width: 17% !important;
+    width:28% !important;
   }
   /* Navigation text css  
 	.team-admin-page-navigation {
@@ -571,7 +577,7 @@
     padding: 5px 11px !important;
   }
   .View img {
-    width: 24% !important;
+    width: 28% !important;
   }
   .Admintitle h1 {
     font-size: 1.3rem !important;

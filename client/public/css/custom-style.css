@@ -1017,6 +1017,10 @@ button.btn.button-yes {
 .react-html5-camera-photo-fullscreen > video {
   width: 100%;
   height: 100%;
+  -webkit-object-fit: cover;
+  -moz-object-fit: cover;
+  -o-object-fit: cover;
+  object-fit: cover;
 }
 
 .react-html5-camera-photo-fullscreen > video {
@@ -1029,12 +1033,26 @@ button.btn.button-yes {
   height: 100%;
 }
 
-.captured-img {
-  margin-top: 4% !important;
-}
+
 .camera-alert p {
     line-height: 24.5px;
 }
+
+.edit-sensor-box{
+    border: 0.5px solid #0e7dd59e;
+    padding: 5px 13px;
+    border-radius: 7px;
+    font-size: 15px;    
+    background: #e9ecef;
+}
+.update-sensorid-input{
+    border: 0.5px solid #0e7dd59e!important;
+    padding: 1px 2px;
+    border-radius: 7px!important;
+    background: #e9ecef;
+}
+
+
 /*Model validation css start */
 .model-validation-head, .modael-validation-body{
   text-align: center;
@@ -1087,4 +1105,11 @@ button.btn.button-yes {
   width: 100%;
   height: auto;
   display: flex;
+}
+.captured-img {
+  margin-top: 4% !important;
+  -webkit-object-fit: cover;
+  -moz-object-fit: cover;
+  -o-object-fit: cover;
+  object-fit: cover;
 }

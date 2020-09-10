@@ -804,7 +804,7 @@ class AdminDashboard extends React.Component {
                             <button type="button" className={this.state.isOrganization ?  "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
                             <button type="button" className={this.state.isTeams ?  "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
                         </div>
-                        <div className="col-md-8 dashboard-custom-button2">
+                         <div className="col-md-8 dashboard-custom-button2">
                             <button type="button" className= "btn   custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
                             <button type="button"  className={this.state.isPlayers ?  "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
                             {!this.state.isPlayers && 

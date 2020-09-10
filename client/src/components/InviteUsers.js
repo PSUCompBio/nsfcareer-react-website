@@ -75,7 +75,9 @@ class InviteUsers extends React.Component {
       organization: '',
       sensorBrandList: '',
       TeamList: '',
-      team: ''
+      team: '',
+      IsOrg: false,
+      isRedirect:false,
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -125,7 +127,7 @@ class InviteUsers extends React.Component {
         'sensor':sensor,
         'team': team
       };
-
+      var the  = this;
       console.log('formJsonData',formJsonData);
       InviteUser(formJsonData).then((response) => {
         console.log('response',response);
@@ -137,7 +139,12 @@ class InviteUsers extends React.Component {
             failuer: false,
             invited: true,
             isLoading: false
-          })
+          });
+          if(this.state.IsOrg){
+            setTimeout(()=>{
+              the.setState({isRedirect:true})
+            },2000);
+          }
         }else{
           this.setState({
             failuer: true,
@@ -225,7 +232,20 @@ class InviteUsers extends React.Component {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth && this.props.location.state.lavelFor) {
       return <Redirect to="/Login" />;
     }
-
+    if(this.state.isRedirect){
+        return <Redirect 
+            to={{
+                pathname: '/TeamAdmin',
+                state: {
+                    brand: {
+                        brand:  this.props.location.state.data.data.brand.brand,
+                        organization: this.props.location.state.data.data.brand.organization,
+                        user_cognito_id: this.props.location.state.data.data.brand.user_cognito_id
+                    }
+                }
+            }}
+          />;
+    }
     if (!isLoaded) return <Spinner />;
     if (this.state.isFetching) {
           return <Spinner />;
@@ -329,7 +349,26 @@ class InviteUsers extends React.Component {
                                 
                             </div>
                         </div>
-                    ) : this.state.failuer ? 'Failed Try Again' : this.state.invited? 'Invited' : 'Invite'}</button>
+                    ) : 'Invite'}</button>
+
+                     {this.state.invited ? (
+                            <UncontrolledAlert
+                                color="success"
+                                style={{ marginTop: '5px' }}
+                                >
+                                Invited successfully.
+                            </UncontrolledAlert>
+                        ) : null}
+                        {this.state.failuer ? (
+                            <UncontrolledAlert
+                                style={{ marginTop: '5px' }}
+                                color="danger"
+
+                                >
+                               Failed Try Again
+
+                            </UncontrolledAlert>
+                        ) : null}
                     
                   </div>
                 </Form>
@@ -344,6 +383,7 @@ class InviteUsers extends React.Component {
   }
   componentDidMount() {
     if(this.props.location.state.lavelFor){
+      
       var location = this.props.location.state.data;
       if(location.type == 'organization'){
         // console.log('sensorOrgList',this.selectOption(location.sensorOrgList,'Organization','organization'));
@@ -351,15 +391,17 @@ class InviteUsers extends React.Component {
           selectioptions: this.selectOption(location.sensorOrgList,'Organization','organization'),
           sensor:location.sensor
         });  
-      }else if(location.type == 'TeamnAdmin'){
-        console.log('location',location);
+      }
+      else if(location.type == 'TeamnAdmin'){
+        
          this.setState({
           sensor:location.sensorOrgTeamList[0].sensor,
           organization:location.sensorOrgTeamList[0].organization,
           TeamList: this.selectOption2(location.sensorOrgTeamList,'Team','team_name','team'),
           team: location.sensorOrgTeamList[0].team_name
         }); 
-      }else if(location.type == 'AdminOrganization'){
+      }
+      else if(location.type == 'AdminOrganization'){
         console.log('location',location.sensorBrandList);
          this.setState({
           sensorBrandList: this.selectOption(location.sensorBrandList,'Sensor','sensor'),
@@ -369,8 +411,13 @@ class InviteUsers extends React.Component {
          this.setState({
           sensorBrandList: this.selectOption(location.sensorBrandList,'Sensor','sensor'),
         }); 
-      }else{
-        
+      }else if(location.type == 'OrgAdmin'){
+        console.log('location',this.props.location);
+        this.setState({
+          sensor:location.data.brand.brand,
+          organization:location.data.brand.organization,
+          IsOrg: true,
+        })
       }
     }
     isAuthenticated(JSON.stringify({}))

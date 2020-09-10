@@ -433,10 +433,10 @@ class TeamnAdmin extends React.Component {
                                              <Link  to={{
                                                     pathname: '/InviteUsers',
                                                     state: {
-                                                        lavelFor: '200',
+                                                        lavelFor: '300',
                                                         data:{
-                                                            type: 'TeamnAdmin',
-                                                            sensorOrgTeamList: this.state.sensorOrgTeamList,
+                                                            type: 'OrgAdmin',
+                                                            data: this.props.location.state,
                                                         }                                        
                                                     }
                                                 }} >
