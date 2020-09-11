@@ -1113,3 +1113,7 @@ button.btn.button-yes {
   -o-object-fit: cover;
   object-fit: cover;
 }
+.camera-error {
+  color: black;
+  text-align: center;
+}
