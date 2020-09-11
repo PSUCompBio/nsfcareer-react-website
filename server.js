@@ -3957,6 +3957,74 @@ const fetchSensor = (sensor) => {
           });
       })
 }
+app.post(`${apiPrefix}fetchAdminStaffMembers`, (req,res) =>{ 
+     
+    var params = {
+        TableName: 'users',
+        FilterExpression: "#level = :level",
+        ExpressionAttributeNames: {
+            "#level": "level",
+        },
+        ExpressionAttributeValues: {
+            ":level": 1000
+        }
+    };
+    var item = [];
+    docClient.scan(params).eachPage((err, data, done) => {
+        if (err) {
+            res.send({
+                message : "failure",
+                error : err,
+                data : []
+            }) 
+        }
+        if (data == null) {
+            res.send({
+                message : "success",
+                data : concatArrays(item)
+            })
+        } else {
+            item.push(data.Items);
+        }
+        done();
+    });
+});
+app.post(`${apiPrefix}fetchTeamStaffMembers`, (req,res) =>{ 
+ console.log('fetchTeamStaffMembers',req.body)
+    var params = {
+        TableName: 'users',
+        FilterExpression: "#level = :level and #organization = :organization and #team =:team",
+        ExpressionAttributeNames: {
+            "#level": "level",
+            "#organization": "organization",
+            "#team": "team"
+        },
+        ExpressionAttributeValues: {
+            ":level": 200,
+            ":organization": req.body.organization,
+            ":team": req.body.team_name
+        }
+    };
+    var item = [];
+    docClient.scan(params).eachPage((err, data, done) => {
+        if (err) {
+            res.send({
+                message : "failure",
+                error : err,
+                data : []
+            }) 
+        }
+        if (data == null) {
+            res.send({
+                message : "success",
+                data : concatArrays(item)
+            })
+        } else {
+            item.push(data.Items);
+        }
+        done();
+    });
+})
 
 app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{ 
      fetchSensor(req.body.brand)
@@ -4698,6 +4766,9 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
 
     // API To upload profile pic to S310m
     app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
+
+    // API To upload selfie pic to S310m
+    app.post(`${apiPrefix}uploadProfileSelfie`, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
 
     app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
         // Fetch user group data and check if he is Admin or not

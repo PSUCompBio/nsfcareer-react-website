@@ -15,6 +15,7 @@ import {
     getUserDBDetails,
     uploadSensorDataAndCompute,
     getTeamAdminData,
+    fetchTeamStaffMembers,
     // getImpactHistory,
     // getImpactSummary,
     getPlayersData,
@@ -275,6 +276,19 @@ class CommanderTeamView extends React.Component {
                                             });
                                     } else {
 
+                                    }
+                                    return fetchTeamStaffMembers({
+                                        sensor: this.props.location.state.team.brand,
+                                        organization: this.props.location.state.team.organization,
+                                        team_name: this.props.location.state.team.team_name
+                                    });
+                                }).then(staff=>{
+                                    console.log('staff',staff);
+                                    var response = staff.data;
+                                    if(response.message == 'success'){
+                                        this.setState(prevState => ({
+                                            staffList: response.data,
+                                        }));
                                     }
                                 })
                                 .catch((error) => {
@@ -933,94 +947,97 @@ class CommanderTeamView extends React.Component {
                                                 }
                                             }, this)}
                                             {this.state.requestedUsers.map(function (r_player, r_index) {
-                                                let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
-                                                return <tr key={r_index} style={{lineHeight: lineHeight}}>
-                                                        <td>-</td>
-                                                        <td>
-                                                            {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
-                                                                <input type="text" 
-                                                                    onBlur={this.updateSensorId}
-                                                                    onKeyDown={this.updateSensorIdOnEnter}
-                                                                    onChange={this.handleChange}
-                                                                    name="sensor_id"
-                                                                    value={this.state.sensor_id}
-                                                                    className="update-sensorid-input"
-                                                                    autoFocus
-                                                                />
-                                                            : 
-                                                                <span onClick={() => {this.editable(r_player) }} className="edit-sensor-box">
-                                                                    { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
-                                                                </span>
+                                                if(r_player){
+                                                    let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
+                                                    return <tr key={r_index} style={{lineHeight: lineHeight}}>
+                                                            <td>-</td>
+                                                            <td>
+                                                                {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
+                                                                    <input type="text" 
+                                                                        onBlur={this.updateSensorId}
+                                                                        onKeyDown={this.updateSensorIdOnEnter}
+                                                                        onChange={this.handleChange}
+                                                                        name="sensor_id"
+                                                                        value={this.state.sensor_id}
+                                                                        className="update-sensorid-input"
+                                                                        autoFocus
+                                                                    />
+                                                                : 
+                                                                    <span onClick={() => {this.editable(r_player) }} className="edit-sensor-box">
+                                                                        { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
+                                                                    </span>
+                                                                }
+                                                            </td>
+                                                            { this.state.userDetails.level > 300 &&
+                                                                <td>{r_player.first_name + ' ' + r_player.last_name}</td>
                                                             }
-                                                        </td>
-                                                        { this.state.userDetails.level > 300 &&
-                                                            <td>{r_player.first_name + ' ' + r_player.last_name}</td>
-                                                        }
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        <td>-</td>
-                                                        { this.state.userDetails.level > 200 &&
-                                                            <React.Fragment>
-                                                                <td style={{ alignItems: "center" }}>
-                                                                    {this.getStatus(r_player.player_status)}   
-                                                                    {this.state.isUpdating && this.state.isUpdating === r_player.user_cognito_id ?
-                                                                        <div className="d-flex justify-content-center center-spinner">
-                                                                            <div
-                                                                                className="spinner-border text-primary"
-                                                                                role="status"
-                                                                            ></div>
-                                                                        </div>
-                                                                    :
-                                                                        <Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
-                                                                    }
-                                                                </td>
-                                                                <td>
-                                                                    {this.getUrl(r_player)}
-                                                                </td>
-                                                            </React.Fragment>
-                                                        }
-                                                       
-                                                     </tr>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            { this.state.userDetails.level > 200 &&
+                                                                <React.Fragment>
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                        {this.getStatus(r_player.player_status)}   
+                                                                        {this.state.isUpdating && this.state.isUpdating === r_player.user_cognito_id ?
+                                                                            <div className="d-flex justify-content-center center-spinner">
+                                                                                <div
+                                                                                    className="spinner-border text-primary"
+                                                                                    role="status"
+                                                                                ></div>
+                                                                            </div>
+                                                                        :
+                                                                            <Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        {this.getUrl(r_player)}
+                                                                    </td>
+                                                                </React.Fragment>
+                                                            }
+                                                           
+                                                         </tr>
+                                                    }
                                             }, this)}
                                         </tbody>
                                     </table>
                                 </div>
                                 : <div className="commander-data-table">
-                                    {/*<Link  to={{
+                                   <Link  to={{
                                         pathname: '/InviteUsers',
                                         state: {
-                                            lavelFor: '100',
+                                            lavelFor: '200',
                                             data:{
-                                                type: 'Player',
+                                                type: 'TeamnAdmin',
+                                                bk_data: this.props.location.state,
                                             }                                        
                                         }
-                                        }} >
-                                        <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Player</button> 
-                                    </Link>*/}
+                                    }} >
+                                        <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Staff</button> 
+                                    </Link>
                                     
                                     <table style={{ whiteSpace: "nowrap" }} className="table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Name</th>
-                                                 <th scope="col">Email</th>
-                                                <th scope="col">Organization</th>
-                                                
+                                                <th scope="col">Email</th>
                                             </tr>
                                         </thead>
-                                        {/*<tbody className="player-table">
-                                            {this.props.location.state.team.staff.map(function (staff, index) {
-
-                                                return <tr className="player-data-table-row" key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{staff.first_name} {staff.last_name}</td>
-                                                     <td>{staff.email} </td>
-                                                    <td>{staff.organization}</td>
-                                                </tr>
+                                        <tbody className="player-table">
+                                             {this.state.staffList && 
+                                                this.state.staffList.map(function (staff, index) {
+                                                    return <tr className="player-data-table-row" key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{staff.first_name} {staff.last_name}</td>
+                                                        <td>{staff.email}</td>
+                                                    </tr>
                                             })}
-                                        </tbody>*/}
+                                            {!this.state.staffList && 
+                                                <p>No data to show here.</p>
+                                            }
+                                        </tbody>
 
                                     </table>
                                 </div>
