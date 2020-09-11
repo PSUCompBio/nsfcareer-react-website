@@ -1,11 +1,11 @@
-import React, { Component } from "react";
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-import { ThreeBSP } from "three-js-csg-es6";
+import React, { Component } from 'react';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { ThreeBSP } from 'three-js-csg-es6';
 
-import "./AvatarView.css";
+import './AvatarView.css';
 // import {
 //   getAvatarInspection
 // } from '../../apis';
@@ -16,7 +16,7 @@ class AvatarInspectionModel extends Component {
     this.state = {
       isLoading: true,
       isToggle: false,
-      showBrain: false,
+      showBrain: false
     };
   }
 
@@ -25,20 +25,19 @@ class AvatarInspectionModel extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.handleWindowResize);
-    window.removeEventListener("click", this.handleMouseClick);
+    window.removeEventListener('resize', this.handleWindowResize);
+    window.removeEventListener('click', this.handleMouseClick);
     window.cancelAnimationFrame(this.requestID);
 
-    if (this.controller)
-      this.controller.dispose();
+    if (this.controller) this.controller.dispose();
   }
 
   componentDidUpdate() {
     if (this.props.isVisible.display === 'flex' && !this.state.isToggle) {
-        this.resetCamera();
-        if (this.el && this.camera) {
-          this.onWindowResize();
-        }
+      this.resetCamera();
+      if (this.el && this.camera) {
+        this.onWindowResize();
+      }
     }
   }
 
@@ -55,35 +54,35 @@ class AvatarInspectionModel extends Component {
   loadAssets = () => {
     // getAvatarInspection({ user_cognito_id: this.props.user_cognito_id })
     //   .then((response) => {
-        const promises = [
-          // this.loadTexture("https://assets.codepen.io/3194077/model.jpg"),
-          // this.loadPLY("https://assets.codepen.io/3194077/model.ply"),
-          // this.loadPLY("./assets/models/brain.ply"),
-          // this.loadPLY("./assets/models/skull.ply"),
-          this.loadTexture(this.props.inspection_data.model_jpg),
-          this.loadPLY(this.props.inspection_data.model_ply),
-          this.loadPLY(this.props.inspection_data.brain_ply),
-          this.loadPLY(this.props.inspection_data.skull_ply),
-          this.loadTexture("./assets/textures/brain_diffuse.jpg"),
-          this.loadTexture("./assets/textures/brain_normal.png"),
-        ];
+    const promises = [
+      // this.loadTexture("https://assets.codepen.io/3194077/model.jpg"),
+      // this.loadPLY("https://assets.codepen.io/3194077/model.ply"),
+      // this.loadPLY("./assets/models/brain.ply"),
+      // this.loadPLY("./assets/models/skull.ply"),
+      this.loadTexture(this.props.inspection_data.model_jpg),
+      this.loadPLY(this.props.inspection_data.model_ply),
+      this.loadPLY(this.props.inspection_data.brain_ply),
+      this.loadPLY(this.props.inspection_data.skull_ply),
+      this.loadTexture('./assets/textures/brain_diffuse.jpg'),
+      this.loadTexture('./assets/textures/brain_normal.png')
+    ];
 
-        Promise.all(promises).then((result) => {
-          this.avatarTex = result[0];
-          this.avatarGeo = this.bufferGeoToGeo(result[1]);
-          this.brainGeo = this.bufferGeoToGeo(result[2]);
-          this.skullGeo = this.bufferGeoToGeo(result[3]);
-          this.brainTex = result[4];
-          this.brainNormalTex = result[5];
-          this.brainTex.wrapS = THREE.RepeatWrapping;
-          this.brainTex.wrapT = THREE.RepeatWrapping;
-          this.brainTex.repeat.set(0.5, 0.5);
+    Promise.all(promises).then((result) => {
+      this.avatarTex = result[0];
+      this.avatarGeo = this.bufferGeoToGeo(result[1]);
+      this.brainGeo = this.bufferGeoToGeo(result[2]);
+      this.skullGeo = this.bufferGeoToGeo(result[3]);
+      this.brainTex = result[4];
+      this.brainNormalTex = result[5];
+      this.brainTex.wrapS = THREE.RepeatWrapping;
+      this.brainTex.wrapT = THREE.RepeatWrapping;
+      this.brainTex.repeat.set(0.5, 0.5);
 
-          this.uvGenerate(this.brainGeo);
+      this.uvGenerate(this.brainGeo);
 
-          this.loadedAssets();
-        });
-      // })
+      this.loadedAssets();
+    });
+    // })
   };
 
   bufferGeoToGeo = (bufferGeo) => {
@@ -170,7 +169,7 @@ class AvatarInspectionModel extends Component {
 
     this.objectSetup();
 
-    window.addEventListener("resize", this.onWindowResize, false);
+    window.addEventListener('resize', this.onWindowResize, false);
   };
 
   sceneSetup = () => {
@@ -290,10 +289,10 @@ class AvatarInspectionModel extends Component {
     const box = new THREE.Mesh(new THREE.BoxGeometry(500, 500, 500));
     box.position.x += 245.1;
 
-    this.skull2 = this.intersectMesh(this.skull, box).csg;
-    this.skull2.material = this.skullMat;
+    // this.skull2 = this.intersectMesh(this.skull, box).csg;
+    // this.skull2.material = this.skullMat;
 
-    this.scene.add(this.skull2);
+    // this.scene.add(this.skull2);
   };
 
   intersectMesh = (mesh1, mesh2) => {
@@ -307,8 +306,7 @@ class AvatarInspectionModel extends Component {
   };
 
   resetCamera = () => {
-    if (this.controller)
-      this.controller.reset();
+    if (this.controller) this.controller.reset();
   };
 
   subtractMesh = (mesh1, mesh2) => {
@@ -373,7 +371,10 @@ class AvatarInspectionModel extends Component {
     return (
       <div style={this.props.isVisible} className="modal__wrapper ">
         {this.props.isVisible ? this.scrollToTop() : null}
-        <div className="modal__show modal_form avatar-inspection-box" style={{ 'height': 'auto' }}>
+        <div
+          className="modal__show modal_form avatar-inspection-box"
+          style={{ height: 'auto' }}
+        >
           <img
             className="delete__icon"
             onClick={() => this.props.makeVisible({ display: 'none' })}
@@ -383,13 +384,12 @@ class AvatarInspectionModel extends Component {
           {isLoading ? (
             <div>loading</div>
           ) : (
-              <div className="CanvasContainer" ref={(ref) => (this.el = ref)}>
-                <button className="ToggleBrain" onClick={this.toggleBrain}>
-                  {showBrain ? "Hide Brain" : "Show Brain"}
-                </button>
-              </div>
-            )
-          }
+            <div className="CanvasContainer" ref={(ref) => (this.el = ref)}>
+              <button className="ToggleBrain" onClick={this.toggleBrain}>
+                {showBrain ? 'Hide Brain' : 'Show Brain'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );

@@ -467,10 +467,9 @@ class CommanderTeamView extends React.Component {
     }
 
     getUrl = (obj) => {
-        if (obj && obj.player_status === 'approved') {
+        if (obj) {
             return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.user_cognito_id}>Profile</a>;
-        }
-        if (!obj) {
+        } else {
             return <button className="btn btn-primary" disabled={true}>Profile</button>;
         }
     }
