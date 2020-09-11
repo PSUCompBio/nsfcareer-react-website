@@ -342,7 +342,7 @@ class Routing extends React.Component {
         />
         <Route
             exact
-            path="/model-validation"
+            path="/validation"
             render={(props) => <ModelValidation {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route

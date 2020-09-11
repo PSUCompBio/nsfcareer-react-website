@@ -891,6 +891,10 @@ button.btn.button-yes {
 .camera-container {
   position: relative;
   margin-top: 4% !important;
+  display: flex;
+      justify-content: center;
+    align-items: center;
+
 }
 
 .camera-circle {
