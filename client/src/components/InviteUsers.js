@@ -140,11 +140,9 @@ class InviteUsers extends React.Component {
             invited: true,
             isLoading: false
           });
-          if(this.state.IsOrg){
-            setTimeout(()=>{
-              the.setState({isRedirect:true})
-            },2000);
-          }
+          setTimeout(()=>{
+            the.setState({isRedirect:true})
+          },2000);
         }else{
           this.setState({
             failuer: true,
@@ -233,18 +231,39 @@ class InviteUsers extends React.Component {
       return <Redirect to="/Login" />;
     }
     if(this.state.isRedirect){
+      console.log(this.props.location.state.lavelFor)
+      if(this.props.location.state.lavelFor == '300'){
         return <Redirect 
-            to={{
-                pathname: '/TeamAdmin',
-                state: {
-                    brand: {
-                        brand:  this.props.location.state.data.data.brand.brand,
-                        organization: this.props.location.state.data.data.brand.organization,
-                        user_cognito_id: this.props.location.state.data.data.brand.user_cognito_id
-                    }
-                }
-            }}
+          to={{
+              pathname: '/TeamAdmin',
+              state: {
+                  brand: {
+                      brand:  this.props.location.state.data.data.brand.brand,
+                      organization: this.props.location.state.data.data.brand.organization,
+                      user_cognito_id: this.props.location.state.data.data.brand.user_cognito_id
+                  }
+              }
+          }}
+        />;
+      }else if(this.props.location.state.lavelFor == '1000'){
+        return <Redirect 
+            to='/AdminDashboard'
           />;
+      }else if(this.props.location.state.lavelFor == '400'){
+        return <Redirect 
+          to={{
+              pathname: '/OrganizationAdmin',
+              state: this.state.bk_data
+          }}
+        />;
+      }else if(this.props.location.state.lavelFor == '200'){
+        return <Redirect 
+          to={{
+              pathname: '/TeamAdmin/team/players',
+              state: this.state.bk_data
+          }}
+        />;
+      }
     }
     if (!isLoaded) return <Spinner />;
     if (this.state.isFetching) {
@@ -395,16 +414,17 @@ class InviteUsers extends React.Component {
       else if(location.type == 'TeamnAdmin'){
         
          this.setState({
-          sensor:location.sensorOrgTeamList[0].sensor,
-          organization:location.sensorOrgTeamList[0].organization,
-          TeamList: this.selectOption2(location.sensorOrgTeamList,'Team','team_name','team'),
-          team: location.sensorOrgTeamList[0].team_name
+          sensor:location.bk_data.team.brand,
+          organization:location.bk_data.team.organization,
+          team: location.bk_data.team.team_name,
+          bk_data:location.bk_data
         }); 
       }
-      else if(location.type == 'AdminOrganization'){
+      else if(location.type == 'sensorAdmin'){
         console.log('location',location.sensorBrandList);
          this.setState({
-          sensorBrandList: this.selectOption(location.sensorBrandList,'Sensor','sensor'),
+          sensor: location.sensor,
+          bk_data: location.bk_data
         }); 
       }else if(location.type == 'Family'){
         console.log('location',location.sensorBrandList);

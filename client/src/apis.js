@@ -193,6 +193,18 @@ export const uploadProfilePic = (request) =>{
   })
 }
 
+export const uploadProfileSelfie = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/uploadProfileSelfie`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const uploadSensorDataAndCompute = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/uploadSensorDataAndCompute`, request,{withCredentials: true})
@@ -576,9 +588,32 @@ export const fetchStaffMembers = (request) => {
     })
 }
 
+export const fetchAdminStaffMembers = (request) => {
+    return new Promise((resolve,reject)=>{
+        axios.post(`/fetchAdminStaffMembers`, request, {withCredentials: true})
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error)
+        });
+    })
+}
 export const fetchOrgStaffMembers = (request) => {
     return new Promise((resolve,reject)=>{
         axios.post(`/fetchOrgStaffMembers`, request, {withCredentials: true})
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error)
+        });
+    })
+}
+//fetchTeamStaffMembers
+export const fetchTeamStaffMembers = (request) => {
+    return new Promise((resolve,reject)=>{
+        axios.post(`/fetchTeamStaffMembers`, request, {withCredentials: true})
         .then(function (response) {
           resolve(response);
         })

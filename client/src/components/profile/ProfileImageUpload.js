@@ -3,7 +3,7 @@ import { getStatusOfDarkmode } from '../../reducer';
 import SignatureCanvas from 'react-signature-canvas'
 import Footer from '../Footer';
 
-import { uploadProfilePic } from '../../apis';
+import { uploadProfileSelfie } from '../../apis';
 
 import Spinner from '../Spinner/Spinner';
 import { formDataToJson } from '../../utilities/utility';
@@ -15,6 +15,7 @@ import {
     UncontrolledAlert
 } from 'reactstrap';
 import camera from './camera.png';
+import upload from './upload.png'
 import CameraPopup from '../Popup/CameraPopup';
 import axios from 'axios';
 
@@ -81,7 +82,7 @@ class ProfileImageUpload extends React.Component {
       console.log(this.state.userData.user_cognito_id)
       data.append('profile_pic', profile_pic);
       data.append('user_cognito_id', user_id);
-      uploadProfilePic(data)
+      uploadProfileSelfie(data)
       .then((response) => {
           console.log(response);
           if (response.data.message === 'success') {
@@ -210,7 +211,7 @@ class ProfileImageUpload extends React.Component {
                   ) : null}
                   {this.state.isDeskTop ? 
                     <React.Fragment>
-                      <label className="btn profile-picture-btn" for="file_profile" > <img src={camera} className="profileCameraIcon" />  Upload Photo</label>
+                      <label className="btn profile-picture-btn" for="file_profile" > <img src={upload} className="profileCameraIcon" />  Upload Photo</label>
                       <input
                         onChange={this.onChangeHandler2}
                         type="file"
@@ -220,6 +221,8 @@ class ProfileImageUpload extends React.Component {
                             display : "none"
                         }}
                       />
+                      <p className="h5 p_h4" style={{'text-align': 'center'}}>OR</p>
+                      <button className="btn profile-picture-btn" onClick={this.handleCameraPopup} > <img src={camera} className="profileCameraIcon" /> Take Profile</button>
                     </React.Fragment>
                     : 
                     <React.Fragment>

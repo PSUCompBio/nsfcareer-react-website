@@ -8,7 +8,7 @@ import Spinner from './Spinner/Spinner';
 import {
     isAuthenticated,
     getAllSensorBrands,
-    fetchStaffMembers,
+    fetchAdminStaffMembers,
     getOrganizationList,
     getTeamList,
     getPlayerList
@@ -239,7 +239,15 @@ class AdminDashboard extends React.Component {
                                     isCheckingAuth: false
                                 })
                             })
-                           // return fetchStaffMembers({})
+                            return fetchAdminStaffMembers({});
+                        }).then(staff=>{
+                            console.log('staff',staff);
+                            var response = staff.data;
+                            if(response.message == 'success'){
+                                this.setState(prevState => ({
+                                    staffList: response.data,
+                                }));
+                            }
                         })
                         .catch(err => {
                             alert(err);
@@ -782,15 +790,12 @@ class AdminDashboard extends React.Component {
 
                         </div>
                          <div className="col-md-2 dashboard-custom-button" >
-                            
-                                {!this.state.isPlayers && 
-                                    <div className="View">
-                                        <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
-                                        <img src={listView} onClick={() => this.handleViewChange('listView')} />
-                                    </div>
-                                }
-                               
-                            
+                            {!this.state.isPlayers && 
+                                <div className="View">
+                                    <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
+                                    <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                </div>
+                            }
                         </div>
                         <div className="col-md-12 individuals-search-input">
                             {this.state.isPlayers && 
@@ -814,7 +819,7 @@ class AdminDashboard extends React.Component {
                                 </div>
                             }
                         </div>
-                       
+                        
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
@@ -847,7 +852,7 @@ class AdminDashboard extends React.Component {
                                         </div>
                                         :
                                         <div className="commander-data-table">
-                                            <Link  to={{
+                                            {/*<Link  to={{
                                                     pathname: '/InviteUsers',
                                                     state: {
                                                         lavelFor: '400',
@@ -858,7 +863,7 @@ class AdminDashboard extends React.Component {
                                                     }
                                                 }} >
                                                     <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Organization Admin</button> 
-                                                </Link>
+                                                </Link>*/}
                                                 <Link  to={{
                                                     pathname: '/InviteUsers',
                                                     state: {
@@ -875,19 +880,21 @@ class AdminDashboard extends React.Component {
                                                     <tr>
                                                         <th scope="col">#</th>
                                                         <th scope="col">Name</th>
-                                                        <th scope="col">Organization</th>
-                                                        <th scope="col">Department</th>
+                                                        <th scope="col">Email</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
-                                                    {this.state.staffList.map(function (staff, index) {
-                                                        return <tr className="player-data-table-row" key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{staff.first_name} {staff.last_name}</td>
-                                                            <td>{staff.organization}</td>
-                                                            <td>CTE</td>
-                                                        </tr>
+                                                    {this.state.staffList && 
+                                                        this.state.staffList.map(function (staff, index) {
+                                                            return <tr className="player-data-table-row" key={index}>
+                                                                <td>{index + 1}</td>
+                                                                <td>{staff.first_name} {staff.last_name}</td>
+                                                                <td>{staff.email}</td>
+                                                            </tr>
                                                     })}
+                                                    {!this.state.staffList && 
+                                                        <p>No data to show here.</p>
+                                                    }
                                                 </tbody>
 
                                             </table>

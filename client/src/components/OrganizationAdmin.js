@@ -712,10 +712,10 @@ class OrganizationAdmin extends React.Component {
                                             <Link  to={{
                                                     pathname: '/InviteUsers',
                                                     state: {
-                                                        lavelFor: '300',
+                                                        lavelFor: '400',
                                                         data:{
-                                                            type: 'organization',
-                                                            sensorOrgList: this.state.sensorOrgList,
+                                                            type: 'sensorAdmin',
+                                                            bk_data: this.props.location.state,
                                                             sensor: this.props.location.state.brand.brand
                                                         }                                        
                                                     }
