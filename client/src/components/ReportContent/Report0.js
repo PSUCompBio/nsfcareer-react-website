@@ -39,6 +39,12 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         marginBottom : '6px'
     },
+    tableRowCenter: {
+        flex: 1,
+        marginLeft : '5%',
+        flexDirection : 'row',
+        marginBottom : '6px'
+    },
     rowHeadBorder:{
         width:'100%',
         backgroundColor:'#4472C4',
@@ -59,6 +65,15 @@ const styles = StyleSheet.create({
         color:'#686868',
         fontSize: 16,
         display: 'inline-block'
+    },
+    rowHead2_2Text:{
+        marginTop: '5px',
+        color:'#686868',
+        fontSize: 16,
+        flex: 1,
+        display: 'inline-block',
+        flexDirection : 'column',
+
     },
     rowHead2TextSub: {
         marginTop: '22px',
@@ -171,6 +186,26 @@ const styles = StyleSheet.create({
         borderBottomColor: 'grey',
         display:'inline-block',
         float:'left'
+    },
+     tableColRight4: {
+        display : 'inline-block',
+        width : '75%',
+        float : 'left',
+        flexDirection : 'column',
+        color : '#686868',
+        fontSize : 16,
+        textAlign : 'right',
+        marginTop: '5px'
+    },
+    tableColLeft4: {
+        display : 'inline-block',
+        width : '20%',
+        float : 'left',
+        flexDirection : 'column',
+        color : '#686868',
+        fontSize : 10,
+        textAlign : 'left',
+        marginTop: '10px'
     },
      tableColLeft2: {
         borderBottom: 1,
@@ -327,7 +362,11 @@ class Report extends React.Component {
                                     {/*<Text style={styles.rowHead2TextSub}>7.5</Text>*/}
                                     {/* <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s   )</Text>*/}
                                     {/* <Text style={styles.rowHead2Text2Sub}>-1</Text>*/}
-                                    <Text  style={styles.rowHead2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>
+                                    {/*<Text  style={styles.rowHead2_2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>*/}
+                                     <View style={styles.tableRowCenter}>
+                                        <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
+                                        <Text style={styles.tableColLeft4}>_15</Text>
+                                    </View>
                                     <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
                                 </View>
                             </View>

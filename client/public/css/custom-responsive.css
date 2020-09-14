@@ -416,11 +416,14 @@
   .irb-header {
     height: calc(100vh - 350px) !important;
   }
-  .camera-box {
+  /*.camera-box {
     padding: 15px 8px !important;
-  }
+  }*/
   .model-validation-subhead p{
     padding: 12px;
+  }
+  .camera-container{
+    margin-top: 3% !important;
   }
 }
 
@@ -561,9 +564,7 @@
   .camera .camera-box {
     width: 99% !important;
   }
-  .camera-box .delete__icon {
-    right: 0px !important;
-  }
+
 }
 @media screen and (max-width: 320px) {
   .custom-button {
