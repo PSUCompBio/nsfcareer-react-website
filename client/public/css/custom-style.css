@@ -597,8 +597,7 @@ button.btn.button-yes {
 }
 .camera-box {
   height: auto !important;
-  padding: 0px 20px;
-  top: 25% !important;
+  padding: 0px 8px;
   background-color: #f8f9fa !important;
   box-shadow: inherit !important;
   /* width: 42% !important; */
@@ -606,10 +605,11 @@ button.btn.button-yes {
   position: fixed;
   color: #fff;
   text-align: center;
-  margin-top: -100px !important;
+/*    top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%);*/
   animation: fadeIn 1s, slideIn 0.8s linear;
   margin: auto;
-  border-radius: 10px;
   align-items: center;
   justify-content: center;
   display: flex;
@@ -890,7 +890,7 @@ button.btn.button-yes {
 
 .camera-container {
   position: relative;
-  margin-top: 4% !important;
+     margin-top: 2% !important;
   display: flex;
       justify-content: center;
     align-items: center;
@@ -1039,12 +1039,12 @@ button.btn.button-yes {
 
 
 .camera-alert p {
-    line-height: 24.5px;
+    line-height: 26.5px;
 }
 
 .edit-sensor-box{
     border: 0.5px solid #0e7dd59e;
-    padding: 5px 13px;
+    padding: 5px 8px;
     border-radius: 7px;
     font-size: 15px;    
     background: #e9ecef;

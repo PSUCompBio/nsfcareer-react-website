@@ -828,7 +828,7 @@ class CommanderTeamView extends React.Component {
                                                 { this.state.userDetails.level > 300 &&
                                                     <th scope="col">Player Name</th>
                                                 }
-                                                <th scope="col"># of Simulations</th>
+                                                <th scope="col"># of<br/> Simulations</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
                                                 <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>

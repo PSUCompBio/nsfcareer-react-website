@@ -2750,88 +2750,233 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     })
 });
 
+function getUserAlreadyExists(email) {
+    console.log('mail',email)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#email = :email",
+            ExpressionAttributeNames: {
+                "#email": "email",
+            },
+            ExpressionAttributeValues: {
+                ":email": email,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+function upDateuser(body,user_cognito_id) {
+    // body...
+    return new Promise((resolve, reject) => {
+         let update_details = {
+            TableName : 'users',
+            Key : {
+                "user_cognito_id": user_cognito_id
+            },
+            UpdateExpression : "set first_name = :first_name, last_name = :last_name, #level = :level, organization= :organization, sensor = :sensor, team = :team",
+             ExpressionAttributeNames: {
+                "#level": "level",
+            },
+            ExpressionAttributeValues : {
+                ":first_name" : body.first_name,
+                ":last_name" : body.last_name,
+                ":level" : body.level,
+                ":organization": body.organization,
+                ":sensor" : body.sensor,
+                ":team" : body.team
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        docClient.update(update_details, function(err, data){
+            if(err) {
+               reject(err);
+            } else {
+                resolve(data);
+            }
+        })
+    })
+}
+
+function updateCognitoUser(body, user_cognito_id) {
+    return new Promise((resolve, reject) => {
+        var params = {
+            UserAttributes: [ /* required */
+              {
+                Name: 'name', /* required */
+                Value: body.first_name+body.last_name,
+              },
+              {
+                Name: 'custom:level', /* required */
+                Value: body.level,
+              },
+              /* more items */
+            ],
+            UserPoolId: cognito.userPoolId, /* required */
+            Username: user_cognito_id, /* required */
+          };
+          COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+            if (err) {
+                reject(err);
+            } // an error occurred
+            else {
+                resolve(data);
+            }             // successful response
+          });
+    })
+}
+
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
-    createInviteUserDbEntry(req.body, function (dberr, dbdata) {
-        if (dberr) {
-            console.log("DB ERRRRRR =============================== \n", dberr);
+    getUserAlreadyExists(req.body.email)
+    .then(data=>{
+        if(data){
+            console.log('data',data[0].user_cognito_id);
+            let mailBody = 'You have been added as a super admin. Go to your dashboard with this link '+config.FrontendUrl
+            if(req.body['level'] == '400'){
+                mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link '+config.FrontendUrl+'/OrganizationAdmin';
+            }else if(req.body['level'] == '300'){
+                mailBody = 'You have been added as a organization admin. Go to your dashboard with this link '+config.FrontendUrl+'/TeamAdmin';
+            }else if(req.body['level'] == '200'){
+                mailBody = 'You have been added as a team admin. Go to your dashboard with this link '+config.FrontendUrl+'/TeamAdmin/team/players';
+            }
+            updateCognitoUser(req.body,data[0].user_cognito_id)
+            .then(result=>{
+                req.body['level'] = parseInt(req.body.level);
+                return  upDateuser(req.body,data[0].user_cognito_id);
+            })
+            .then(result=>{
+                 var params = {
+                      Destination: { /* required */
+                        ToAddresses: [
+                          req.body.email,
+                          /* more items */
+                        ]
+                      },
+                      Message: { /* required */
+                        Body: { /* required */
+                          Text: {
+                           Charset: "UTF-8",
+                           Data: mailBody
+                          }
+                         },
+                         Subject: {
+                          Charset: 'UTF-8',
+                          Data: 'Your level has been changed'
+                         }
+                        },
+                      Source: 'info@NSFCAREER.IO', /* required */
+                      ReplyToAddresses: [
+                         'info@NSFCAREER.IO',
+                        /* more items */
+                      ],
+                    };
 
-            res.send({
-                message: "faiure",
-                error: dberr.code
-            });
-        }
-        else {
-            console.log('dbdata',dbdata)
-            // var mailOptions = {
-            //   from: 'mukesh.rawat@brihaspatitech.com',
-            //   to: dbdata.email,
-            //   subject: 'Thank you for joining Nsfcareer',
-            //   text: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
-            // };
+                // Create the promise and SES service object
+                var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
 
-            // transporter.sendMail(mailOptions, function(error, info){
-            //   if (error) {
-            //     console.log('error',error)
-            //     res.send({
-            //         message: "faiure",
-            //         error: error
-            //     });
-            //   } else {
-            //     console.log('Email sent: ' + info.response);
-            //     res.send({
-            //         message: "Success",
-            //         data: info.response
-            //     });
-            //   }
-            // });
-            var params = {
-              Destination: { /* required */
-                ToAddresses: [
-                  dbdata.email,
-                  /* more items */
-                ]
-              },
-              Message: { /* required */
-                Body: { /* required */
-                  Text: {
-                   Charset: "UTF-8",
-                   Data: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
-                  }
-                 },
-                 Subject: {
-                  Charset: 'UTF-8',
-                  Data: 'Thank you for joining Nsfcareer'
-                 }
-                },
-              Source: 'info@NSFCAREER.IO', /* required */
-              ReplyToAddresses: [
-                 'info@NSFCAREER.IO',
-                /* more items */
-              ],
-            };
-
-            // Create the promise and SES service object
-            var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
-
-            // Handle promise's fulfilled/rejected states
-            sendPromise.then(
-              function(data) {
-                console.log(data.MessageId);
-                res.send({
-                    message: "Success",
-                    data: data.MessageId
+                // Handle promise's fulfilled/rejected states
+                sendPromise.then(
+                  function(data) {
+                    console.log(data.MessageId);
+                    res.send({
+                        message: "Success",
+                        data: data.MessageId
+                    });
+                }).catch(
+                    function(err) {
+                    console.error(err, err.stack);
+                    res.send({
+                        message: "faiure",
+                        error: err
+                    });
                 });
-              }).catch(
-                function(err) {
-                console.error(err, err.stack);
-                res.send({
-                    message: "faiure",
-                    error: err
-                });
-              });
+            })
+            .catch(err=>{
+                console.log("err ERRRRRR =============================== \n", err);
+
+                    res.send({
+                        message: "faiure",
+                        error: err
+                    });
+            })
+        }else{
+            createInviteUserDbEntry(req.body, function (dberr, dbdata) {
+                if (dberr) {
+                    console.log("DB ERRRRRR =============================== \n", dberr);
+
+                    res.send({
+                        message: "faiure",
+                        error: dberr.code
+                    });
+                }
+                else {
+                    console.log('dbdata',dbdata)
+                    var params = {
+                      Destination: { /* required */
+                        ToAddresses: [
+                          dbdata.email,
+                          /* more items */
+                        ]
+                      },
+                      Message: { /* required */
+                        Body: { /* required */
+                          Text: {
+                           Charset: "UTF-8",
+                           Data: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+                          }
+                         },
+                         Subject: {
+                          Charset: 'UTF-8',
+                          Data: 'Thank you for joining Nsfcareer'
+                         }
+                        },
+                      Source: 'info@NSFCAREER.IO', /* required */
+                      ReplyToAddresses: [
+                         'info@NSFCAREER.IO',
+                        /* more items */
+                      ],
+                    };
+
+                    // Create the promise and SES service object
+                    var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+                    // Handle promise's fulfilled/rejected states
+                    sendPromise.then(
+                      function(data) {
+                        console.log(data.MessageId);
+                        res.send({
+                            message: "Success",
+                            data: data.MessageId
+                        });
+                      }).catch(
+                        function(err) {
+                        console.error(err, err.stack);
+                        res.send({
+                            message: "faiure",
+                            error: err
+                        });
+                      });
+                }
+            })
         }
+    }).catch(err=>{
+        console.log('err',err)
     })
+    
 });
 
 //Delete organizations
