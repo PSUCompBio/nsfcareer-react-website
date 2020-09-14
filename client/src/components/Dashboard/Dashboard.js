@@ -64,11 +64,11 @@ class Dashboard extends React.Component {
           pathname: '/TeamAdmin/user/dashboard',
           state: {
             team: {
-              organization: '',
-              team_name: ''
+              organization: this.state.userDetails.organization,
+              team_name: this.state.userDetails.team
             },
             cognito_user_id: this.state.userDetails.user_cognito_id,
-            player_name: this.state.name
+            player_name: this.state.userDetails.sensor_id_number
           }
         }} />;
       }

@@ -174,7 +174,7 @@ class UserDashboarForAdmin extends React.Component {
             className="player-dashboard-sub-head Individual-Head-Acceleration-player-dash">
             Individual Head Acceleration Events
           </p>
-          { this.state.user.level !== 100 &&
+          { this.state.cumulativeAccelerationTimeAllRecords.length > 0 &&
           <div className="row" >
              <div className="col-md-12 player-dash-chart-setting">
               <div className="col-md-12">
@@ -208,7 +208,7 @@ class UserDashboarForAdmin extends React.Component {
             </div>
         </div>
         }
-          { this.state.user.level === 100 &&
+          { this.state.cumulativeAccelerationTimeAllRecords.length === 0 &&
             <div className="row" style={{border: '1px solid #000', marginBottom: '20px'}}>
               <div className="col-md-12" style={{textAlign: 'center', display: 'block', marginTop: '50px', marginBottom: '100px'}}>
                     <span>No impacts have been recorded yet.</span>
@@ -216,7 +216,7 @@ class UserDashboarForAdmin extends React.Component {
             </div>
           }
           
-          {this.state.user.level !== 100 && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
+          {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
 
             <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} state={this.props.location.state}/>
           ))

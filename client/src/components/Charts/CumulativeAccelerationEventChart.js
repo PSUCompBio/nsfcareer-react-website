@@ -52,9 +52,9 @@ class CumulativeAccelerationEventChart extends React.Component {
     }
 
     render() {
-        // console.log('this.state.userDetails',this.state.userDetails)
+        console.log('this.state.data',this.props.data)
         var fileName = '';
-        if(this.props.data.player_id && this.props.data.player_id.length > 0){
+        if(this.props.data.player_id && this.props.data.player_id.length > 0 && this.props.user.length > 0){
        
             console.log('props',this.props);
             fileName = this.props.user[0].sensor_data.player['first-name']+'_'+this.props.user[0].sensor_data.player['last-name']+'_'+this.props.user[0].sensor_data.player_id.split('$')[1];
@@ -106,6 +106,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                 }} className="top-heading__login player-dashboard-title">
                     Player Dashboard
                 </h1>
+                { this.props.data.player &&
                 <div
                     className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1 player-dashboard-user-datials-header"
                    >
@@ -145,6 +146,7 @@ class CumulativeAccelerationEventChart extends React.Component {
 
                     </div>
                 </div>
+                }
                 <div
                     className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft Cumulative-Overview-player-dash"
                     

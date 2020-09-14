@@ -1588,7 +1588,7 @@ class Profile extends React.Component {
                                             }
                                             this.props.isDarkModeSet(this.state.isDarkMode);
                                         }
-                                        return getAvatarInspection({ user_cognito_id: this.props.user_cognito_id })
+                                        return getAvatarInspection({ user_cognito_id: this.state.profile_to_view })
                                     })
                                     .then(result => {
                                         let inspection_data = '';
