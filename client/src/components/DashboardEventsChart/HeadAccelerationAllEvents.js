@@ -1,7 +1,9 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
-import simulationLoading from '../simulationLoading.png'
+import simulationLoading from '../simulationLoading.png';
+import Report from '../ReportContent/Report0';
+import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -172,6 +174,7 @@ class HeadAccelerationAllEvents extends React.Component {
     }
 
     render() {
+        console.log("THIS IS DATA RECEIVED CumulativeAccelerationEventChart2", this.props);
         if (this.props.data.sensor_data['impact-time']) {
             let split = this.props.data.sensor_data['impact-time'].split(":");
             this.props.data.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
@@ -182,6 +185,14 @@ class HeadAccelerationAllEvents extends React.Component {
             split = split.split(":");
             this.props.data.sensor_data['time'] = split.slice(0, split.length - 1).join(":");
           }
+          var fileName = '';
+        if(this.props.data.sensor_data.player_id && this.props.data.sensor_data.player_id.length > 0){
+       
+            console.log('props',this.props);
+            fileName = this.props.data.sensor_data.player['first-name']+'_'+ this.props.data.sensor_data.player['last-name']+'_'+ this.props.data.sensor_data.player_id.split('$')[1];
+            // console.log('fileName',fileName)
+          
+        }
         return (
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
                 <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.getDate(this.props.data.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(this.props.data.sensor_data['impact-time']) : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.getDate(this.props.data.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(this.props.data.sensor_data['time'])  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
@@ -224,6 +235,14 @@ class HeadAccelerationAllEvents extends React.Component {
 
                                         }} ><button className="btn btn-primary ">View Details</button></Link>
                                     }
+                                    <button className="btn btn-primary " style={{'margin-top': '5px'}}>
+                                    <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
+                                        color: 'white'
+                                    }}>
+                                     Export Impact Report
+                                    {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                                    </PDFDownloadLink>
+                                    </button>
                                 </div>
                             </div>
                         </div>

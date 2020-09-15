@@ -269,9 +269,22 @@ const styles = StyleSheet.create({
 class Report extends React.Component {
     constructor(props) {
         super(props);
-        console.log('props are ', this.props.jsonData);
-        this.state = {
-            jsonData : this.props.jsonData[0].jsonOutputFile
+        console.log('Rports props are ', this.props);
+        if(this.props.jsonData){
+            this.state = {
+                jsonData : this.props.jsonData[0].jsonOutputFile,
+                data: this.props.data.player
+            }
+        }else if(this.props.data){
+            this.state = {
+                jsonData : this.props.data,
+                data: this.props.data.sensor_data.player
+            }
+        }else{
+            this.state = {
+                jsonData : '',
+                data: ''
+            } 
         }
     }
 
@@ -336,22 +349,22 @@ class Report extends React.Component {
                                     marginBottom : '2%',
                                     fontSize : 26,
                                 }}>
-                                {this.props.data.player['first-name'] +' '+this.props.data.player['last-name']}
+                                {this.state.data['first-name'] +' '+this.state.data['last-name']}
                             </Text>
 
                             <View style={styles.tableRow}>
 
 
 
-                                <Text style={styles.tableColLeft}> DOB : {this.props.user.dob ? this.props.user.dob : "N/A"} </Text>
+                                <Text style={styles.tableColLeft}> DOB : {"N/A"} </Text>
                                 <Text style={styles.tableColRight}> Referring physician : Unknown </Text>
 
                             </View>
                             <View style={styles.tableRow}>
 
-                                <Text style={styles.tableColLeft}> Sex : {this.props.user.gender ? this.props.user.gender.toUpperCase() : "N/A"} </Text>
+                                <Text style={styles.tableColLeft}> Sex : {"N/A"} </Text>
 
-                                <Text style={styles.tableColRight}> Organization : {this.props.team != undefined ? this.props.team.organization : this.props.user.organization ? this.props.user.organization : "N/A" } </Text>
+                                <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
                             </View>
                            
@@ -431,15 +444,15 @@ class Report extends React.Component {
 
 
 
-                                            <Text style={styles.tableColLeft}> DOB : {this.props.user.dob ? this.props.user.dob : "N/A"} </Text>
+                                            <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
                                             <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
 
                                         </View>
                                         <View style={styles.tableRow}>
 
-                                            <Text style={styles.tableColLeft}> Sex : {this.props.user.gender ? this.props.user.gender.toUpperCase() : "N/A"} </Text>
+                                            <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
 
-                                            <Text style={styles.tableColRight}> Organization : {this.props.team != undefined ? this.props.team.organization : this.props.user.organization ? this.props.user.organization : "N/A" } </Text>
+                                            <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
                                         </View>
                                     </View>

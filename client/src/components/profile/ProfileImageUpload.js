@@ -163,7 +163,7 @@ class ProfileImageUpload extends React.Component {
         {this.state.isCamera &&
           <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />
         }
-        <div className="container-fluid pl-0 pr-0 overflow-hidden">
+        <div className="container-fluid pl-0 pr-0 overflow-hidden bottom-margin">
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <div className="col-md-6 col-lg-6 offset-md-3 mb-5">
               <div className="text-center">
@@ -244,7 +244,13 @@ class ProfileImageUpload extends React.Component {
             </div>
           </div>
         ) : null}
-        <Footer />
+        <div style={{
+            position: "absolute",
+            width: "100%",
+            bottom: '0'
+        }}>
+          <Footer />
+        </div>
       </React.Fragment>
   );
 }

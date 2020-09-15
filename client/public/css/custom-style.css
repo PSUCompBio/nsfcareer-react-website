@@ -1121,3 +1121,6 @@ button.btn.button-yes {
   color: black;
   text-align: center;
 }
+.bottom-margin{
+  margin-bottom: 210px!important;
+}

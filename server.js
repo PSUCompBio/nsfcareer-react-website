@@ -2843,8 +2843,8 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
     getUserAlreadyExists(req.body.email)
     .then(data=>{
-        if(data){
-            console.log('data',data[0].user_cognito_id);
+        if(data[0]){
+            console.log('data --------------------\n',data);
             let mailBody = 'You have been added as a super admin. Go to your dashboard with this link '+config.FrontendUrl
             if(req.body['level'] == '400'){
                 mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link '+config.FrontendUrl+'/OrganizationAdmin';

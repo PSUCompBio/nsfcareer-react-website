@@ -494,7 +494,7 @@ class CommanderTeamView extends React.Component {
         return (
             <div
                 ref="rosterContainer"
-                className="container t-roster  animated1 zoomIn1 team-admin-page-navigation"
+                className="container t-roster  animated1 zoomIn1 team-admin-page-navigation bottom-margin"
             >
                 <div className="row" >
                      <div className="col-md-12">
@@ -1027,7 +1027,12 @@ class CommanderTeamView extends React.Component {
                                         <tbody className="player-table">
                                              {this.state.staffList && 
                                                 this.state.staffList.map(function (staff, index) {
-                                                    return <tr className="player-data-table-row" key={index}>
+                                                    return <tr className="player-data-table-row" key={index}
+                                                        onClick={()=>{
+                                                            var win = window.open('/admin/view/user?id='+staff.user_cognito_id);
+                                                            win.focus();
+                                                        }}
+                                                    >
                                                         <td>{index + 1}</td>
                                                         <td>{staff.first_name} {staff.last_name}</td>
                                                         <td>{staff.email}</td>
@@ -1113,7 +1118,13 @@ class CommanderTeamView extends React.Component {
                         <React.Fragment>
                             {this.militaryVersionOrNormal()}
                             {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-                            <Footer style={{ display: "none" }} className="violent" />
+                             <div style={{
+                                position: "absolute",
+                                width: "100%",
+                                bottom: '0'
+                            }}>
+                                <Footer style={{ display: "none" }} className="violent" />
+                            </div>
                         </React.Fragment>
                     )}
             </React.Fragment>

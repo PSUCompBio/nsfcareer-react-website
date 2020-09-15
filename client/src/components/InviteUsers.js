@@ -313,7 +313,7 @@ class InviteUsers extends React.Component {
           </ScrollToTop>
         </div>
 
-        <div className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2" style={{'margin-top': '10%'}}>
+        <div className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2 bottom-margin" style={{'margin-top': '10%'}}>
             <div class="section-title animated zoomIn profile-section-title" style={{'align-content': 'center', 'text-align': 'center'}}>
               <h1 class="font-weight-bold">Invite User</h1>
             </div>
@@ -396,7 +396,13 @@ class InviteUsers extends React.Component {
             </div>
 
         </div>
-        <Footer />
+        <div style={{
+            position: "absolute",
+            width: "100%",
+            bottom: '0'
+        }}>
+            <Footer />
+        </div>
       </React.Fragment>
     );
   }

@@ -38,7 +38,7 @@ class UserDashboarForAdmin extends React.Component {
   constructor(props) {
     super(props);
     // console.log('User Dashboard For Admin Is ',this.props);
-    console.log("USER DASHBOARD PROPS", this.props)
+    // console.log("USER DASHBOARD PROPS", this.props)
     this.state = {
       isAuthenticated: false,
       user: null,
@@ -162,7 +162,7 @@ class UserDashboarForAdmin extends React.Component {
           </ScrollToTop>
         </div>
 
-        <div className="container dashboard UserDashboarForAdmin-page-navigation">
+        <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
         {this.state.jsonData && 
           <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
         }
@@ -223,7 +223,16 @@ class UserDashboarForAdmin extends React.Component {
           }
          
         </div>
-        <Footer />
+        <React.Fragment>
+            <div style={{
+                position: "absolute",
+                width: "100%",
+                bottom: '0'
+            }}>
+                <Footer />
+            </div>
+
+        </React.Fragment>
       </React.Fragment>
     );
   }

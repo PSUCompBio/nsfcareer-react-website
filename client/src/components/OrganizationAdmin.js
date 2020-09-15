@@ -636,7 +636,7 @@ class OrganizationAdmin extends React.Component {
         return (
             <React.Fragment>
 
-                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1">
+                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1 bottom-margin">
 
                     {this.props.isMilitaryVersionActive ? (
                         <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
@@ -663,7 +663,7 @@ class OrganizationAdmin extends React.Component {
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div className="col-md-12 Admintitle" >
-                                    <h1>Organization Dashboard 
+                                    <h1 style={{'text-decoration': 'underline','letter-spacing': '1px','font-family': 'sans-serif'}}>DASHBOARD 
                                         <div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
                                             <div className="View">
                                                 <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
@@ -757,6 +757,10 @@ class OrganizationAdmin extends React.Component {
                                     {!this.state.tabActive ?
                                         this.state.view == 'gridView' ?
                                             <div className="football-container mt-4 d-flex flex-wrap">
+                                                {this.state.userDetails.level === 1000 &&
+                                                    <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>ORGANIZATIONS</h2>
+                                                }
+                                                
                                                 {
                                                     <React.Fragment>
                                                         {this.iterateTeam()}
@@ -777,6 +781,9 @@ class OrganizationAdmin extends React.Component {
                                             </div>
                                             : 
                                             <div ref="table" className="commander-data-table table-responsive ">
+                                             {this.state.userDetails.level === 1000 &&
+                                                    <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>ORGANIZATIONS</h2>
+                                                }
                                                 <table style={{ whiteSpace: "nowrap" }} className="table ">
                                                     <thead>
                                                         <tr>
@@ -889,7 +896,8 @@ class OrganizationAdmin extends React.Component {
                             {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
                             <div style={{
                                 position: "absolute",
-                                width: "100%"
+                                width: "100%",
+                                bottom: '0'
                             }}>
                                 <Footer />
                             </div>

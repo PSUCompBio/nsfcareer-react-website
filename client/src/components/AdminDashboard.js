@@ -772,7 +772,7 @@ class AdminDashboard extends React.Component {
         return (
             <React.Fragment>
 
-                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1">
+                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1 bottom-margin">
 
                     {this.props.isMilitaryVersionActive ? (
                         <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
@@ -886,7 +886,12 @@ class AdminDashboard extends React.Component {
                                                 <tbody className="player-table">
                                                     {this.state.staffList && 
                                                         this.state.staffList.map(function (staff, index) {
-                                                            return <tr className="player-data-table-row" key={index}>
+                                                            return <tr className="player-data-table-row" key={index}
+                                                                onClick={()=>{
+                                                                    var win = window.open('/admin/view/user?id='+staff.user_cognito_id);
+                                                                    win.focus();
+                                                                }}
+                                                            >
                                                                 <td>{index + 1}</td>
                                                                 <td>{staff.first_name} {staff.last_name}</td>
                                                                 <td>{staff.email}</td>
@@ -1195,7 +1200,8 @@ class AdminDashboard extends React.Component {
                             {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
                             <div style={{
                                 position: "absolute",
-                                width: "100%"
+                                width: "100%",
+                                bottom: '0'
                             }}>
                                 <Footer />
                             </div>

@@ -41,7 +41,7 @@ class ModelValidationDisplacementResponse extends React.Component {
     console.log("Props are - ", this.props);
     return (
       <React.Fragment> 
-        <div className="container-fluid pl-0 pr-0 overflow-hidden">
+        <div className="container-fluid pl-0 pr-0 overflow-hidden bottom-margin">
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <Container>
               <Row className="model-validation-head">
@@ -57,7 +57,13 @@ class ModelValidationDisplacementResponse extends React.Component {
           </div>
         </div>
         
-        <Footer />
+        <div style={{
+            position: "absolute",
+            width: "100%",
+            bottom: '0'
+          }}>
+          <Footer />
+        </div>
       </React.Fragment>
   );
 }

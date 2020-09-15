@@ -564,6 +564,9 @@
   .camera .camera-box {
     width: 99% !important;
   }
+  .commander-data-table h1{
+    font-size: 26px;
+  }
 
 }
 @media screen and (max-width: 320px) {

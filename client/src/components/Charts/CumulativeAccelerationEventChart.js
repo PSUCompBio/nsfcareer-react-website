@@ -161,7 +161,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                         </div>
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             
-                             {
+                             {/*
                             !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
                                null
 
@@ -176,7 +176,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                   {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                                     </PDFDownloadLink>
                                 </button>
-                        }
+                        */}
                         </div>
 
                     </div>
@@ -185,7 +185,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                     
                 </div>
                
-                 {
+                 {/*
                             !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
                                null
 
@@ -200,7 +200,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                       {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                         </PDFDownloadLink>
                     </button>
-                        }
+                        */}
             </React.Fragment>
         )
     }
