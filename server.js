@@ -2717,32 +2717,38 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                     }
                                     else {
                                         console.log("response body from irb", httpResponse.body);
-                                        if( age > 18 ) {
-                                            res.send({
-                                                message: "success",
-                                                message_details : "Successfully created account ! Check your mail for temporary login credentials",
-                                                user_cognito_id: user_cognito_id
-                                            })
-                                        } else {
+                                        // if( age > 18 ) {
+                                        //     res.send({
+                                        //         message: "success",
+                                        //         message_details : "Successfully created account ! Check your mail for temporary login credentials",
+                                        //         user_cognito_id: user_cognito_id
+                                        //     })
+                                        // } else {
 
-                                            disableUser(req.body.user_name, function (err, data) {
-                                                if (err) {
-                                                    console.log("Failed to disable user",req.body.user_name )
-                                                    res.send({
-                                                        message: "failure",
-                                                        error: err
-                                                    })
-                                                }
-                                                else {
-                                                    res.send({
-                                                        message : "success",
-                                                        message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
-                                                        user_cognito_id: user_cognito_id
-                                                    })
-                                                }
-                                            })
+                                        //     disableUser(req.body.user_name, function (err, data) {
+                                        //         if (err) {
+                                        //             console.log("Failed to disable user",req.body.user_name )
+                                        //             res.send({
+                                        //                 message: "failure",
+                                        //                 error: err
+                                        //             })
+                                        //         }
+                                        //         else {
+                                        //             res.send({
+                                        //                 message : "success",
+                                        //                 message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
+                                        //                 user_cognito_id: user_cognito_id
+                                        //             })
+                                        //         }
+                                        //     })
 
-                                        }
+                                        // }
+
+                                        res.send({
+                                            message: "success",
+                                            message_details : "Successfully created account ! Check your mail for temporary login credentials",
+                                            user_cognito_id: user_cognito_id
+                                        })
 
                                     }
                                 })
