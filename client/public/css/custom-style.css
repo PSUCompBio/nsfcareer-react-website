@@ -182,7 +182,7 @@ button.settings-buttons {
 .div-chart-labels .chart-label span {
   height: 23px;
   padding: 0px 24px 1px;
-  content: "";
+  content: '';
   margin-right: 8px;
 }
 
@@ -552,7 +552,6 @@ input#MyrangeSlider3:focus {
   font-size: 20px;
 }
 .delete-confirmation-button {
- 
   bottom: 0;
   padding: 20px;
 }
@@ -595,28 +594,22 @@ button.btn.button-yes {
   font-weight: 900 !important;
   line-height: 32px !important;
 }
+
 .camera-box {
   height: auto !important;
-  padding: 0px 8px;
-  background-color: #f8f9fa !important;
   box-shadow: inherit !important;
-  /* width: 42% !important; */
-  padding-bottom: 7px !important;
-  position: fixed;
-  color: #fff;
-  text-align: center;
-/*    top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%);*/
-  animation: fadeIn 1s, slideIn 0.8s linear;
-  margin: auto;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-flow: column;
+  z-index: 2;
 }
+
 .delete__icon {
   z-index: 1;
+}
+
+.camera-modal .del__icon {
+  position: absolute;
+  z-index: 1;
+  transform: translate(50%, -50%);
+  cursor: pointer;
 }
 
 /**
@@ -625,7 +618,7 @@ button.btn.button-yes {
 .select-search {
   width: 300px;
   position: relative;
-  font-family: "Nunito Sans", sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   box-sizing: border-box;
 }
 
@@ -644,7 +637,7 @@ button.btn.button-yes {
 }
 
 .select-search__value::after {
-  content: "";
+  content: '';
   display: inline-block;
   position: absolute;
   top: calc(50% - 9px);
@@ -666,7 +659,7 @@ button.btn.button-yes {
   box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.15);
   border-radius: 3px;
   outline: none;
-  font-family: "Noto Sans", sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 14px;
   text-align: left;
   text-overflow: ellipsis;
@@ -718,7 +711,7 @@ button.btn.button-yes {
   background: #fff;
   border: none;
   outline: none;
-  font-family: "Noto Sans", sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 14px;
   text-align: left;
   cursor: pointer;
@@ -890,11 +883,9 @@ button.btn.button-yes {
 
 .camera-container {
   position: relative;
-     margin-top: 2% !important;
   display: flex;
-      justify-content: center;
-    align-items: center;
-
+  justify-content: center;
+  align-items: center;
 }
 
 .camera-circle {
@@ -916,18 +907,20 @@ button.btn.button-yes {
   }
 }
 
-.camera-alert {
+.camera-bottom-section {
   position: absolute;
   height: 180px;
-  width: 100%;
-  bottom: 0;
-  left: 50%;
+  width: calc(100% + 1px);
+  bottom: -2px;
+  left: calc(50% + 0.5px);
   transform: translate(-50%);
   background: #0f66ae;
   font-weight: bold;
   font-size: 18px;
-  line-height: 0.7;
+  line-height: 1.2; /* This line height works well on my side. And I checked on iPhone. So, can't be sure if it's right to adjust to make it works on your machine.*/
   padding: 15px;
+  color: white;
+  text-align: center;
 }
 
 .switch_cam {
@@ -942,7 +935,7 @@ button.btn.button-yes {
   position: absolute;
   height: 180px;
   width: 100%;
-   bottom: 0;
+  bottom: 0;
   padding: 20px;
   background: #0f66ae;
   display: flex;
@@ -1037,53 +1030,52 @@ button.btn.button-yes {
   height: 100%;
 }
 
-
 .camera-alert p {
-    line-height: 26.5px;
+  line-height: 26.5px;
 }
 
-.edit-sensor-box{
-    border: 0.5px solid #0e7dd59e;
-    padding: 5px 8px;
-    border-radius: 7px;
-    font-size: 15px;    
-    background: #e9ecef;
+.edit-sensor-box {
+  border: 0.5px solid #0e7dd59e;
+  padding: 5px 8px;
+  border-radius: 7px;
+  font-size: 15px;
+  background: #e9ecef;
 }
-.update-sensorid-input{
-    border: 0.5px solid #0e7dd59e!important;
-    padding: 1px 2px;
-    border-radius: 7px!important;
-    background: #e9ecef;
+.update-sensorid-input {
+  border: 0.5px solid #0e7dd59e !important;
+  padding: 1px 2px;
+  border-radius: 7px !important;
+  background: #e9ecef;
 }
-
 
 /*Model validation css start */
-.model-validation-head, .modael-validation-body{
+.model-validation-head,
+.modael-validation-body {
   text-align: center;
-
 }
-.model-validation-head  h1, .modael-validation-body h4{
-  color: #09497B;
-  width: 100%
+.model-validation-head h1,
+.modael-validation-body h4 {
+  color: #09497b;
+  width: 100%;
 }
-.model-validation-head  h4{
+.model-validation-head h4 {
   color: #767171;
 }
-.model-validation-subhead{
+.model-validation-subhead {
   background: gainsboro;
   text-align: left;
   padding: 20px;
   margin-top: 20px;
 }
 
-.model-validation-subhead p{
+.model-validation-subhead p {
   font-size: 19px;
 }
-.modael-validation-body{
+.modael-validation-body {
   margin-top: 20px;
 }
-.modael-validation-box{
-  background: #DAE3F3;
+.modael-validation-box {
+  background: #dae3f3;
   font-size: 22px;
   font-weight: 400;
   text-align: left;
@@ -1091,19 +1083,18 @@ button.btn.button-yes {
   border-radius: 6px;
   border: 1px solid #0e7ed7;
   cursor: pointer;
-  transition: transform .2s;
+  transition: transform 0.2s;
 }
-.modael-validation-box img{
+.modael-validation-box img {
   float: right;
   width: 15%;
   vertical-align: middle;
-
 }
 .modael-validation-box:hover {
-    transform: scale(1.01);
-    box-shadow: 0px 0px 6px #b3b3b3;
+  transform: scale(1.01);
+  box-shadow: 0px 0px 6px #b3b3b3;
 }
-.modael-validation-body a{
+.modael-validation-body a {
   color: black;
   text-decoration: none;
   width: 100%;
@@ -1111,7 +1102,6 @@ button.btn.button-yes {
   display: flex;
 }
 .captured-img {
-  margin-top: 4% !important;
   -webkit-object-fit: cover;
   -moz-object-fit: cover;
   -o-object-fit: cover;
@@ -1121,6 +1111,17 @@ button.btn.button-yes {
   color: black;
   text-align: center;
 }
-.bottom-margin{
-  margin-bottom: 210px!important;
+.bottom-margin {
+  margin-bottom: 210px !important;
+}
+
+.confirm-btn-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-background {
+  background: #f8f9fa;
+  z-index: 1;
 }

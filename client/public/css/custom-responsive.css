@@ -106,7 +106,7 @@
   .impact-video p {
     font-size: 16px;
   }
-  .modael-validation-box img{
+  .modael-validation-box img {
     float: right;
     width: 44%;
   }
@@ -142,21 +142,20 @@
   .camera-circle-desktop {
     height: 155px;
   }
-  .modael-validation-box img{
+  .modael-validation-box img {
     float: right;
     width: 70%;
   }
 }
-@media (max-width: 767px){
-  .modal__show{
-    width: auto!important;
+@media (max-width: 767px) {
+  .modal__show {
+    width: auto !important;
   }
-
 }
 
 @media screen and (max-width: 600px) {
-   .modal__show{
-    width: auto!important;
+  .modal__show {
+    width: auto !important;
   }
   /* Navigation text css  */
   .team-admin-page-navigation .nav-p {
@@ -245,11 +244,11 @@
     font-size: 19px;
   }
 }
-@media (max-width: 575px){
-  .modael-validation-box img{
-      float: left;
-      width: 8%;
-      padding: 6px;
+@media (max-width: 575px) {
+  .modael-validation-box img {
+    float: left;
+    width: 8%;
+    padding: 6px;
   }
 }
 
@@ -330,7 +329,7 @@
   .div-chart-labels .chart-label span {
     height: 23px;
     padding: 0px 11px 1px;
-    content: "";
+    content: '';
     margin-right: 8px;
   }
   .div-chart-labels .chart-label span {
@@ -364,9 +363,9 @@
   .View img {
     width: 20% !important;
   }
-   .col-md-12.organization-admin-table-margin-5-mobile-overview .View img {
-      margin-top: 15px!important;
-      width: 12% !important;
+  .col-md-12.organization-admin-table-margin-5-mobile-overview .View img {
+    margin-top: 15px !important;
+    width: 12% !important;
   }
 
   .custom-button {
@@ -419,11 +418,8 @@
   /*.camera-box {
     padding: 15px 8px !important;
   }*/
-  .model-validation-subhead p{
+  .model-validation-subhead p {
     padding: 12px;
-  }
-  .camera-container{
-    margin-top: 3% !important;
   }
 }
 
@@ -467,13 +463,13 @@
     height: 172px;
   }
   .View img {
-    width:25% !important;
+    width: 25% !important;
   }
   .rostar-btn {
     font-size: 12px;
   }
   .modael-validation-box {
-    background: #DAE3F3;
+    background: #dae3f3;
     font-size: 19px;
   }
 }
@@ -490,20 +486,20 @@
     padding: 5px 11px !important;
   }
   .View img {
-    width:28% !important;
+    width: 28% !important;
   }
   /* Navigation text css  
-	.team-admin-page-navigation {
-	    margin-top: 6rem!important;
-	}
-	.action_btn_block .lobe_btn {
-	    width: 40px !important;
-	    font-size: 9px !important;
-	    margin-right: 2px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 2px!important;
-	}
-	/* Navigation text end  */
+  .team-admin-page-navigation {
+      margin-top: 6rem!important;
+  }
+  .action_btn_block .lobe_btn {
+      width: 40px !important;
+      font-size: 9px !important;
+      margin-right: 2px !important;
+      margin-bottom: 6px !important;
+      margin-left: 2px!important;
+  }
+  /* Navigation text end  */
 }
 @media screen and (max-width: 375px) {
   .custom-button,
@@ -564,10 +560,9 @@
   .camera .camera-box {
     width: 99% !important;
   }
-  .commander-data-table h1{
+  .commander-data-table h1 {
     font-size: 26px;
   }
-
 }
 @media screen and (max-width: 320px) {
   .custom-button {
