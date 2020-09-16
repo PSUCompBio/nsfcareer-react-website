@@ -133,8 +133,10 @@ class ExportPlayerReport extends React.Component {
 			{
 				afterDraw: (chart) => {
 					if (this.state.loadedActionButtons) return;
-
-					setTimeout(() => this.afterDrawChart(chart), 100);
+					console.log('chart',chart)
+					if(chart.canvas && chart.canvas != null){
+						setTimeout(() => this.afterDrawChart(chart), 100);
+					}
 				}
 			}
 		];

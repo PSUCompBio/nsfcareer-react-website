@@ -278,7 +278,7 @@ class Report extends React.Component {
         }else if(this.props.data){
             this.state = {
                 jsonData : this.props.data,
-                data: this.props.data.sensor_data.player
+                data: this.props.data.sensor_data.player ? this.props.data.sensor_data.player : ''
             }
         }else{
             this.state = {

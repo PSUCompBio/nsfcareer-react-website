@@ -733,19 +733,22 @@ class OrganizationAdmin extends React.Component {
                                                 </thead>
                                                 <tbody className="player-table">
                                                     {staffList && staffList[0].map(function (staff, index) {
-
-                                                        return <tr className="player-data-table-row" key={index}
-                                                            onClick={()=>{
-                                                                if(staff.data && level === 1000){
-                                                                var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id);
-                                                                  win.focus();
-                                                                }
-                                                            }}
-                                                        >
-                                                            <td>{staff.data ?  index + 1 : ''}</td>
-                                                            <td>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
-                                                            <td>{staff.data ? staff.data.email : ''} </td>
-                                                        </tr>
+                                                        if(staff.data){
+                                                            if(staff.data.level == 400){
+                                                                return <tr className="player-data-table-row" key={index}
+                                                                    onClick={()=>{
+                                                                        if(staff.data && level === 1000){
+                                                                        var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id);
+                                                                          win.focus();
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <td>{staff.data ?  index + 1 : ''}</td>
+                                                                    <td>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
+                                                                    <td>{staff.data ? staff.data.email : ''} </td>
+                                                                </tr>
+                                                            }
+                                                        }
                                                     })}
 
                                                 </tbody>

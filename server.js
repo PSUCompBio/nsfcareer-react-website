@@ -1525,7 +1525,7 @@ const fetchStaffMembers = (user_cognito_id,brand) => {
         var params = {
             TableName: 'users',
              Key: {
-                "user_cognito_id": user_cognito_id
+                "user_cognito_id": user_cognito_id,
             }
            
         };
@@ -2556,7 +2556,12 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
     req.body["name"] = req.body.first_name + req.body.last_name;
-    req.body["email"] = req.body.user_name;
+    var user_name = req.body.user_name;
+    console.log('user_name',user_name)
+
+    req.body["email"] = user_name.toLowerCase();
+    req.body["user_name"] = user_name.toLowerCase();
+    console.log('email',req.body["email"] )
     req.body["is_selfie_image_uploaded"] = false;
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
@@ -2841,10 +2846,15 @@ function updateCognitoUser(body, user_cognito_id) {
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
+    let email = req.body.email;
+    req.body['email'] = email.toLowerCase();
     getUserAlreadyExists(req.body.email)
     .then(data=>{
         if(data[0]){
             console.log('data --------------------\n',data);
+            if(!req.body['sensor']){
+                req.body['sensor'] = ''
+            }
             let mailBody = 'You have been added as a super admin. Go to your dashboard with this link '+config.FrontendUrl
             if(req.body['level'] == '400'){
                 mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link '+config.FrontendUrl+'/OrganizationAdmin';
@@ -2855,8 +2865,25 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
             }
             updateCognitoUser(req.body,data[0].user_cognito_id)
             .then(result=>{
+                let isReturn = false;
                 req.body['level'] = parseInt(req.body.level);
-                return  upDateuser(req.body,data[0].user_cognito_id);
+                if(req.body['level'] == 400){
+                    InsertUserIntoSensor(data[0].user_cognito_id,req.body['sensor']).
+                    then(sensor_data => {
+                       
+                        console.log('sensor_data',sensor_data);
+                         return  upDateuser(req.body,data[0].user_cognito_id);
+                    })
+                    .catch(err => {
+                        res.send({
+                            message: "faiure",
+                            error: err
+                        });
+                        isReturn = false;
+                    })
+                }else{
+                     return  upDateuser(req.body,data[0].user_cognito_id);
+                }
             })
             .then(result=>{
                  var params = {
@@ -2906,7 +2933,7 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
                 });
             })
             .catch(err=>{
-                console.log("err ERRRRRR =============================== \n", err);
+                console.log("err updateCognitoUser =============================== \n", err);
 
                     res.send({
                         message: "faiure",
@@ -3364,6 +3391,8 @@ app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
 app.post(`${apiPrefix}logIn`, (req, res) => {
     console.log("Log In API Called!",req.body);
     // Getting user data of that user
+    let user_name = req.body.user_name;
+    req.body['user_name'] = user_name.toLowerCase();
     getUser(req.body.user_name, function (err, data) {
         if (err) {
             console.log('err0',err);
@@ -3509,6 +3538,8 @@ app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
 
 // Login first time with temporary password
 app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
+    let user_name = req.body.user_name;
+    req.body['user_name'] = user_name.toLowerCase();
     loginFirstTime(req.body, function (err, result) {
         if (err) {
             res.send({
