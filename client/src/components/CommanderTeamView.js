@@ -494,7 +494,7 @@ class CommanderTeamView extends React.Component {
         return (
             <div
                 ref="rosterContainer"
-                className="container t-roster  animated1 zoomIn1 team-admin-page-navigation bottom-margin"
+                className="container t-roster container_1200 animated1 zoomIn1 team-admin-page-navigation bottom-margin"
             >
                 <div className="row" >
                      <div className="col-md-12">
@@ -819,7 +819,7 @@ class CommanderTeamView extends React.Component {
                             {!this.state.tabActive ?
                                 <div ref="table" className="commander-data-table table-responsive ">
                                    
-                                    <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                    <table  className="table ">
                                         <thead>
                                             <tr>
 
@@ -893,12 +893,12 @@ class CommanderTeamView extends React.Component {
                                                                 />
                                                             : 
                                                                 <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
-                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
+                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'float': 'right','margin-top':'10%'}}></i>
                                                                 </span>
                                                             }
                                                         </td>
                                                         { this.state.userDetails.level > 300 &&
-                                                            <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                            <td style={{'max-width':'162px'}} className="wrap-cell" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         }
                                                         <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
@@ -963,12 +963,12 @@ class CommanderTeamView extends React.Component {
                                                                     />
                                                                 : 
                                                                     <span onClick={() => {this.editable(r_player) }} className="edit-sensor-box">
-                                                                        { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px'}}></i>
+                                                                        { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px','float': 'right','margin-top':'10%'}}></i>
                                                                     </span>
                                                                 }
                                                             </td>
                                                             { this.state.userDetails.level > 300 &&
-                                                                <td>{r_player.first_name + ' ' + r_player.last_name}</td>
+                                                                <td style={{'max-width':'162px'}} className="wrap-cell">{r_player.first_name + ' ' + r_player.last_name}</td>
                                                             }
                                                             <td>-</td>
                                                             <td>-</td>
@@ -1016,7 +1016,7 @@ class CommanderTeamView extends React.Component {
                                         <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Staff</button> 
                                     </Link>
                                     
-                                    <table style={{ whiteSpace: "nowrap" }} className="table">
+                                    <table  className="table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
