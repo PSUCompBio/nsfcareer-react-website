@@ -2863,11 +2863,11 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
             }
             let mailBody = 'You have been added as a super admin. Go to your dashboard with this link '+config.FrontendUrl
             if(req.body['level'] == '400'){
-                mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link '+config.FrontendUrl+'/OrganizationAdmin';
+                mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link '+config.FrontendUrl+'OrganizationAdmin';
             }else if(req.body['level'] == '300'){
-                mailBody = 'You have been added as a organization admin. Go to your dashboard with this link '+config.FrontendUrl+'/TeamAdmin';
+                mailBody = 'You have been added as a organization admin. Go to your dashboard with this link '+config.FrontendUrl+'TeamAdmin';
             }else if(req.body['level'] == '200'){
-                mailBody = 'You have been added as a team admin. Go to your dashboard with this link '+config.FrontendUrl+'/TeamAdmin/team/players';
+                mailBody = 'You have been added as a team admin. Go to your dashboard with this link '+config.FrontendUrl+'TeamAdmin/team/players';
             }
             updateCognitoUser(req.body,data[0].user_cognito_id)
             .then(result=>{

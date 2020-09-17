@@ -1,4 +1,14 @@
 /* Responsive layout  */
+@media (min-width: 992px){
+  .container_1200{
+    max-width: 1186px!important;
+  }
+}
+@media (min-width: 1200px){
+  .container_1200{
+    max-width: 1210px!important;
+  }
+}
 
 @media screen and (max-width: 1024px) {
   /* Navigation text css  */
