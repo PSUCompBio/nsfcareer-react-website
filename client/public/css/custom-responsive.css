@@ -431,6 +431,9 @@
   .model-validation-subhead p {
     padding: 12px;
   }
+  .bottom-margin {
+      margin-bottom: 350px !important;
+  }
 }
 
 @media screen and (max-width: 414px) {
