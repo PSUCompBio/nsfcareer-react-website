@@ -2528,8 +2528,8 @@ app.post(`${apiPrefix}singUpWithToken`, (req, res) => {
 
 app.post(`${apiPrefix}updateCognitoUser`, (req, res) => {
     let obj = {};
-    obj.user_name = 'ec3acb86-fae0-408a-93a5-9319de4f9766';
-    obj.email = 'ben@hitiq.com';
+    obj.user_name = '9005758e-5fa9-4d83-898b-065ab520af2f';
+    obj.email = 'rooks.t@gmail.com';
 
     adminUpdateUser(obj, function (err, data) {
         if (err) {
