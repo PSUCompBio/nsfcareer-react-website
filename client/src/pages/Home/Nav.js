@@ -726,7 +726,7 @@ getUploadFileExtension(url){
                 Details <span className="sr-only">(current)</span>
               </Link>
               <div className={LineUnderLink.linkeMaker('/About')} />
-              {this.props.isLoggedIn === true ? (
+              {/*this.props.isLoggedIn === true ? (
                 <React.Fragment>
                   <Link
                     onClick={this.handleClick}
@@ -739,7 +739,7 @@ getUploadFileExtension(url){
                 </React.Fragment>
               ) : (
                 ''
-              )}
+              )*/}
 
               <Link
                 onClick={this.handleClick}

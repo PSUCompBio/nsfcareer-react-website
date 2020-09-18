@@ -60,6 +60,13 @@ const styles = StyleSheet.create({
         padding: '10px',
         textAlign: 'center'
     },
+    rowHead2subHead:{
+        width:'100%',
+        borderTop:'1px solid',
+        marginTop: '0px',
+        padding: '10px',
+        textAlign: 'center'
+    },
     rowHead2Text:{
         marginTop: '5px',
         color:'#686868',
@@ -97,6 +104,11 @@ const styles = StyleSheet.create({
         marginTop: '7px',
         color:'#686868',
         fontSize: 9
+    },
+    rowHead2Text2subHead:{
+        marginTop: '7px',
+        color:'#686868',
+        fontSize: 15
     },
     tableHead:{
         flex: 1,
@@ -205,7 +217,7 @@ const styles = StyleSheet.create({
         color : '#686868',
         fontSize : 10,
         textAlign : 'left',
-        marginTop: '10px'
+        marginTop: '13px'
     },
      tableColLeft2: {
         borderBottom: 1,
@@ -247,7 +259,7 @@ const styles = StyleSheet.create({
         borderBottom: 1,
         borderBottomColor: 'grey',
         display : 'inline-block',
-        width : '25 %',
+        width : '19%',
         float : 'right',
         flexDirection : 'column',
         color : 'grey',
@@ -378,9 +390,16 @@ class Report extends React.Component {
                                     {/*<Text  style={styles.rowHead2_2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>*/}
                                      <View style={styles.tableRowCenter}>
                                         <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
-                                        <Text style={styles.tableColLeft4}>_15</Text>
+                                        <Text style={styles.tableColLeft4}>15</Text>
                                     </View>
                                     <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                </View>
+                            </View>
+                            <View style={styles.col12}>
+                                <View style={styles.rowHead2subHead}>
+                                    <Text  style={styles.rowHead2Text2subHead}>
+                                        Maximum CSDM15 in Each Brain Region
+                                    </Text>
                                 </View>
                             </View>
                             <View style={styles.tableRow}>

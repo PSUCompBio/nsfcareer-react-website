@@ -1111,7 +1111,7 @@ class ExportPlayerReport extends React.Component {
 			<React.Fragment>
 				<div className="row text-center">
 					<div className="col-md-5 d-flex align-items-center justify-content-center" >
-						<div className="row" style={{ width: '100%', height: '100%', display: 'block' }}>
+						<div className="row" style={{ width: '100%', display: 'block',height: '100%', }} className="three_D_model_div">
 							{this.state.isLoading ? (
 								<div className="model_loader d-flex justify-content-center center-spinner">
 									<div
@@ -1122,7 +1122,7 @@ class ExportPlayerReport extends React.Component {
 									</div>
 								</div>
 							) : null}
-							<div className="col-md-12" style={{ width: '100%', height: '80%', display: 'block' }} ref={(ref) => (this.threeCanvasContainer = ref)}>
+							<div className="col-md-12 three_D_model_div" style={{ width: '100%', height: '80%', display: 'block' }} ref={(ref) => (this.threeCanvasContainer = ref)}>
 								<canvas id="c" style={{ width: '100%', height: '100%' }}></canvas>
 							</div>
 							<div className="col-md-12">

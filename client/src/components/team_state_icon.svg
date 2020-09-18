@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 169 111" width="169" height="111">
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #2e53bc;stroke: #000000;paint-order:stroke fill markers;stroke-width: 2 } 
+		.shp1 { fill: #4ec749;stroke: #000000;paint-order:stroke fill markers;stroke-width: 2 } 
+		.shp2 { fill: #f5891f;stroke: #000000;paint-order:stroke fill markers;stroke-width: 2 } 
+		.shp3 { fill: #b21717;stroke: #000000;paint-order:stroke fill markers;stroke-width: 2 } 
+		.shp4 { fill: #000000 } 
+	</style>
+	<path id="Layer 1" class="shp0" d="M6.13 45.24L43.91 45.24L43.91 109.76L6.13 109.76L6.13 45.24Z" />
+	<path id="Layer 1 copy" class="shp1" d="M45.44 1L83.22 1L83.22 109.76L45.44 109.76L45.44 1Z" />
+	<path id="Layer 1 copy 2" class="shp2" d="M84.76 31.97L122.54 31.97L122.54 109.76L84.76 109.76L84.76 31.97Z" />
+	<path id="Layer 1 copy 3" class="shp3" d="M124.07 72.52L161.85 72.52L161.85 109.76L124.07 109.76L124.07 72.52Z" />
+	<path id="Layer 3" class="shp4" d="M0 107.92L169 107.92L169 110.13L0 110.13L0 107.92Z" />
+</svg>

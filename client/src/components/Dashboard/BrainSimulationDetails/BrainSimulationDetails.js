@@ -380,7 +380,7 @@ class BrainSimulationDetails extends React.Component {
 
                                
                           <div>
-                            <img src={lock} className="unlock-img"/>
+                            <img src={unlock} className="unlock-img"/>
                             <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>

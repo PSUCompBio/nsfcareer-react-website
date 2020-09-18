@@ -391,11 +391,12 @@ class TeamnAdmin extends React.Component {
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div className="col-md-12 Admintitle" >
-                                    <h1 style={{'text-decoration': 'underline','letter-spacing': '1px','font-family': 'sans-serif'}}>DASHBOARD 
+                                    <h1 className="title-grey-color" style={{'text-decoration': 'underline','letter-spacing': '1px','font-family': 'sans-serif'}}>DASHBOARD 
                                         <div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
                                             <div className="View">
-                                                <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
-                                                <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                                <p className="head-team-mobile">Teams</p>
+                                                <img src={gridView} className="team-view-icon" onClick={() => this.handleViewChange('gridView')} /> 
+                                                <img src={listView} className="team-view-icon" onClick={() => this.handleViewChange('listView')} />
                                             </div>
                                         </div>
                                     </h1>
@@ -477,20 +478,20 @@ class TeamnAdmin extends React.Component {
                                         this.state.view == 'gridView' ?
                                             <div className="football-container mt-4 d-flex flex-wrap">
                                                 {this.state.userDetails.level === 1000 &&
-                                                    <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>TEAMS</h2>
+                                                    <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}} className="head-team-desktop title-grey-color">TEAMS</h2>
                                                 }
                                                 {this.state.userDetails.level === 400 &&
-                                                    <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>TEAMS</h2>
+                                                    <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}} className="head-team-desktop title-grey-color">TEAMS</h2>
                                                 }
                                                 {this.iterateTeam()}
                                             </div>
                                         :
                                         <div ref="table" className="commander-data-table table-responsive ">
                                             {this.state.userDetails.level === 1000 &&
-                                                <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>TEAMS</h2>
+                                                <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}} className="head-team-desktop title-grey-color">TEAMS</h2>
                                             }
                                             {this.state.userDetails.level === 400 &&
-                                                <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>TEAMS</h2>
+                                                <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}} className="head-team-desktop title-grey-color" >TEAMS</h2>
                                             }
                                             <table style={{ whiteSpace: "nowrap" }} className="table ">
 

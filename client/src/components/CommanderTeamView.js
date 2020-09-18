@@ -30,6 +30,7 @@ import socketIOClient from 'socket.io-client'
 
 import Spinner from './Spinner/Spinner';
 import Switch from "react-switch";
+import team_state_icon from './team_state_icon.svg'
 
 class CommanderTeamView extends React.Component {
     constructor(props) {
@@ -71,7 +72,9 @@ class CommanderTeamView extends React.Component {
             simulations_completed: 0,
             simulations_pending: 0,
             simulation_failed: 0,
-            checked: true
+            checked: true,
+            isSensorIdUpdating: false,
+            isMobile: true,
         };
     }
     activateTab = (value) => {
@@ -122,7 +125,6 @@ class CommanderTeamView extends React.Component {
                                     users: [...prevState.users, response.data.data[i]]
                                 }));
                             }
-                            this.setState({});
                             getSimulationStatusCount({
 				                brand: this.props.location.state.team.brand,
                                 user_cognito_id: this.props.location.state.team.user_cognito_id,
@@ -232,6 +234,9 @@ class CommanderTeamView extends React.Component {
                                                         users: [...prevState.users, response.data.data[i]]
                                                     }));
                                                 }
+                                                 if(response.data.data.length > 4){
+                                                    this.setState({isMobile: false});
+                                                } 
                                                 for (var i = 0; i < response.data.requested_players.length; i++) {
                                                     this.setState(prevState => ({
                                                         requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
@@ -424,32 +429,34 @@ class CommanderTeamView extends React.Component {
     updateSensor = () => {
         const sensor_id = this.state.sensor_id;
         const editableId = this.state.editableId;
-
+        this.setState({isSensorIdUpdating:true})
         updateUserStatus({user_cognito_id: editableId, sensor_id_number: sensor_id, type: 'uodate_sensor_id'})
-            .then(data => {
-                let users = this.state.users.map(function (player) {
-                    if (player.simulation_data[0]['user_data'].user_cognito_id === editableId) {
-                        player.simulation_data[0]['user_data'].sensor_id_number = sensor_id;
-                    }
-                    return player
-                })
+        .then(data => {
+            let users = this.state.users.map(function (player) {
+                if (player.simulation_data[0]['user_data'].user_cognito_id === editableId) {
+                    player.simulation_data[0]['user_data'].sensor_id_number = sensor_id;
+                }
+                return player
+            })
 
-                let requestedUsers = this.state.requestedUsers.map(function (r_player) {
-                    if (r_player.user_cognito_id === editableId) {
-                        r_player.sensor_id_number = sensor_id;
-                    }
-                    return r_player
-                })
-                
-                this.setState({
-                    users: users,
-                    requestedUsers: requestedUsers,
-                    editableId: ''
-                });
+            let requestedUsers = this.state.requestedUsers.map(function (r_player) {
+                if (r_player.user_cognito_id === editableId) {
+                    r_player.sensor_id_number = sensor_id;
+                }
+                return r_player
             })
-            .catch(err => {
-                console.log(err);
-            })
+            
+            this.setState({
+                users: users,
+                requestedUsers: requestedUsers,
+                editableId: '',
+                isSensorIdUpdating: false
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+        console.log('updating')
     }
 
     renderSwitch = (player) => {
@@ -494,7 +501,7 @@ class CommanderTeamView extends React.Component {
         return (
             <div
                 ref="rosterContainer"
-                className="container t-roster container_1200 animated1 zoomIn1 team-admin-page-navigation bottom-margin"
+                className={this.state.isMobile ? "container t-roster container_1200 animated1 zoomIn1 team-admin-page-navigation bottom-margin" : "container t-roster container_1200 animated1 zoomIn1 team-admin-page-navigation"}
             >
                 <div className="row" >
                      <div className="col-md-12">
@@ -780,7 +787,14 @@ class CommanderTeamView extends React.Component {
                 <div className="row mb-5 mt-5">
                     <div className="col-md-12">
                         <div className="col-md-12 Admintitle2" >
-                            <h1>Team Dashboard</h1>
+                            <h1>
+                                <span className="team-page-title">Team Dashboard</span>
+                                <div className="col-md-4 team-edit-button">
+                                    <button className="btn  button-edit" style={{'margin-right': '4px'}}>Edit</button>
+                                    <button className="btn  button-edit" style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                   
+                                </div>
+                            </h1>
                         </div>
                         {/*<div className="text-left">
                                                 <button type="btn" className="impact-sumary-btn">
@@ -882,6 +896,7 @@ class CommanderTeamView extends React.Component {
                                                         }</th>
                                                         <td>
                                                             {this.state.editableId && this.state.editableId === player.simulation_data[0]['user_data'].user_cognito_id ?
+                                                                <>
                                                                 <input type="text" 
                                                                 onBlur={this.updateSensorId}
                                                                 onKeyDown={this.updateSensorIdOnEnter}
@@ -891,11 +906,14 @@ class CommanderTeamView extends React.Component {
                                                                 className="update-sensorid-input"
                                                                 autoFocus
                                                                 />
+                                                                {this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>}
+                                                                </>
                                                             : 
                                                                 <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
                                                                     { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'float': 'right','margin-top':'10%'}}></i>
                                                                 </span>
                                                             }
+                                                            
                                                         </td>
                                                         { this.state.userDetails.level > 300 &&
                                                             <td style={{'max-width':'162px'}} className="wrap-cell" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
@@ -952,6 +970,7 @@ class CommanderTeamView extends React.Component {
                                                             <td>-</td>
                                                             <td>
                                                                 {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
+                                                                    <>
                                                                     <input type="text" 
                                                                         onBlur={this.updateSensorId}
                                                                         onKeyDown={this.updateSensorIdOnEnter}
@@ -961,6 +980,8 @@ class CommanderTeamView extends React.Component {
                                                                         className="update-sensorid-input"
                                                                         autoFocus
                                                                     />
+                                                                    {this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{'font-size':'24px','margin-left':'2px'}}></i>}
+                                                                    </>
                                                                 : 
                                                                     <span onClick={() => {this.editable(r_player) }} className="edit-sensor-box">
                                                                         { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px','float': 'right','margin-top':'10%'}}></i>
@@ -1118,11 +1139,11 @@ class CommanderTeamView extends React.Component {
                         <React.Fragment>
                             {this.militaryVersionOrNormal()}
                             {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-                             <div style={{
+                             <div style={this.state.isMobile ? {
                                 position: "absolute",
                                 width: "100%",
                                 bottom: '0'
-                            }}>
+                            } : {}}>
                                 <Footer style={{ display: "none" }} className="violent" />
                             </div>
                         </React.Fragment>

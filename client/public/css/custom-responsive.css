@@ -59,6 +59,16 @@
     float: right !important;
     padding-right: 18px !important;
   }
+   .team-page-title{
+         margin-left: 0%; 
+  }
+}
+@media screen and (max-width: 844px) {
+  .team-edit-button {
+    display: inline-block!important;
+  }
+
+
 }
 
 @media screen and (max-width: 800px) {
@@ -434,6 +444,20 @@
   .bottom-margin {
       margin-bottom: 350px !important;
   }
+  .head-team-desktop{
+    display: none;
+  }
+  .head-team-mobile{
+    display: inline-block;
+    padding: 15px 0px;
+    margin-left: calc(100% - 247px);
+  }
+  .team-view-icon{
+    float: right!important;
+  }
+  .three_D_model_div{
+    height: auto!important;
+  }
 }
 
 @media screen and (max-width: 414px) {
@@ -547,6 +571,9 @@
   }
   .impact-video p {
     font-size: 15px;
+  }
+  .head-team-mobile {
+      margin-left: calc(100% - 176px);
   }
 }
 

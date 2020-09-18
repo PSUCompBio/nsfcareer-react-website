@@ -663,7 +663,7 @@ class OrganizationAdmin extends React.Component {
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div className="col-md-12 Admintitle" >
-                                    <h1 style={{'text-decoration': 'underline','letter-spacing': '1px','font-family': 'sans-serif'}}>DASHBOARD 
+                                    <h1 className="title-grey-color"  style={{'text-decoration': 'underline','letter-spacing': '1px','font-family': 'sans-serif'}}>DASHBOARD 
                                         <div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
                                             <div className="View">
                                                 <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
@@ -761,7 +761,7 @@ class OrganizationAdmin extends React.Component {
                                         this.state.view == 'gridView' ?
                                             <div className="football-container mt-4 d-flex flex-wrap">
                                                 {this.state.userDetails.level === 1000 &&
-                                                    <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>ORGANIZATIONS</h2>
+                                                    <h2  className="title-grey-color" style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>ORGANIZATIONS</h2>
                                                 }
                                                 
                                                 {
