@@ -1140,3 +1140,43 @@ button.btn.button-yes {
 .title-grey-color{
   color: #686868!important;
 }
+.tab_login_buttons{
+  width: 100%;
+    text-align: center;
+    float: left;
+    color: white;
+    background: #3a559f;
+    margin-top: 6px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+.tab_login_buttons p{
+      font-weight: 600;
+    margin-top: 6px;
+}
+.tab_login_buttons img{
+    width: 13%;
+    padding: 3px;
+    float: left;
+}
+.tab_login_buttons2{
+    width: 100%;
+    text-align: center;
+    float: left;
+    color: white;
+    background: #4aa1ff;
+    margin-top: 6px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.tab_login_buttons2 img{
+    width: 12%;
+    float: left;
+    padding: 2px;
+    border-radius: 2px;
+}
+.tab_login_buttons2 p{
+      font-weight: 600;
+    margin-top: 6px;
+}

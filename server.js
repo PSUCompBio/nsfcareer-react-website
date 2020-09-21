@@ -3394,8 +3394,54 @@ app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
     
 })
 
+function getUserDbDataByUserId(userID, cb) {
+    var params = {
+        TableName: 'users',
+        FilterExpression: "#userID = :userID",
+        ExpressionAttributeNames: {
+            "#userID": "userID",
+        },
+        ExpressionAttributeValues: {
+            ":userID": userID,
+        }
+    };
+    let item = [];
+    docClient.scan(params).eachPage((err, data, done) => {
+        if (err) {
+           cb(err, "");
+        }
+        if (data == null) {
+           
+            cb("", concatArrays(item));
+        } else {
+            item.push(data.Items);
+        }
+        done();
+    });    
+}
+
+//LoginWithoutEmail
+app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
+    console.log("LoginWithoutEmail In API Called!",req.body);
+    let userID = req.body.userID;
+    getUserDbDataByUserId(userID, function (err, data) {
+        if(err){
+            console.log('err',err) 
+        }else{
+            console.log('data',data);
+            if(data[0]){
+
+            }else{
+                res.send({
+                    status:'success',
+                    message:'notExists'
+                });
+            }
+        }
+    })
+})
 app.post(`${apiPrefix}logIn`, (req, res) => {
-    console.log("Log In API Called!",req.body);
+    
     // Getting user data of that user
     let user_name = req.body.user_name;
     req.body['user_name'] = user_name.toLowerCase();

@@ -6,6 +6,7 @@ import header1 from './header1.png';
 import footer1 from '../footer1.jpg';
 import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
+import trangle from './trangle.png'
 import ClinicalReportHeader from './Clinical-Report-Header.png';
 // import logo 
 // Create styles
@@ -61,11 +62,12 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     rowHead2subHead:{
+        flex:1,
         width:'100%',
         borderTop:'1px solid',
         marginTop: '0px',
         padding: '10px',
-        textAlign: 'center'
+        flexDirection:'row'
     },
     rowHead2Text:{
         marginTop: '5px',
@@ -108,7 +110,22 @@ const styles = StyleSheet.create({
     rowHead2Text2subHead:{
         marginTop: '7px',
         color:'#686868',
-        fontSize: 15
+        fontSize: 15,
+        display : 'inline-block',
+        width : '50%',
+        float : 'left',
+        flexDirection : 'column',
+        textAlign : 'right',
+    },
+    rowHead2Text2subHead_2:{
+        marginTop: '7px',
+        color:'#686868',
+        fontSize: 15,
+        display : 'inline-block',
+        width : '40%',
+        float : 'left',
+        flexDirection : 'column',
+        textAlign : 'left',
     },
     tableHead:{
         flex: 1,
@@ -120,6 +137,11 @@ const styles = StyleSheet.create({
     logo: {
         textAlign:'center',
         width: '100%',
+    },
+    trangle: {
+        textAlign:'center',
+        width: '25%',
+        marginLeft: '30%'
     },
     tableRowHeadtitle: {
         flex: 1,
@@ -219,6 +241,16 @@ const styles = StyleSheet.create({
         textAlign : 'left',
         marginTop: '13px'
     },
+    tableColLeft4_2: {
+        display : 'inline-block',
+        width : '3%',
+        float : 'left',
+        flexDirection : 'column',
+        color : '#686868',
+        fontSize : 10,
+        textAlign : 'left',
+        marginTop: '13px'
+    },
      tableColLeft2: {
         borderBottom: 1,
         borderBottomColor: 'grey',
@@ -241,7 +273,7 @@ const styles = StyleSheet.create({
         fontSize : 12,
         textAlign : 'left',
         marginRight: '15px',
-        marginTop: '2px'
+        marginTop: '6px'
     },
     tableColRight2: {
         borderBottom: 1,
@@ -253,6 +285,16 @@ const styles = StyleSheet.create({
         color : 'grey',
         fontSize : 12,
         marginTop: '25px',
+        textAlign : 'center'
+    },
+    tableColRight2_2: {
+        display : 'inline-block',
+        width : '10%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        marginTop: '4px',
         textAlign : 'center'
     },
     tableColRight3: {
@@ -398,7 +440,11 @@ class Report extends React.Component {
                             <View style={styles.col12}>
                                 <View style={styles.rowHead2subHead}>
                                     <Text  style={styles.rowHead2Text2subHead}>
-                                        Maximum CSDM15 in Each Brain Region
+                                        Maximum CSDM
+                                    </Text>
+                                    <Text style={styles.tableColLeft4_2}>15</Text>
+                                    <Text  style={styles.rowHead2Text2subHead_2}>
+                                        in Each Brain Region
                                     </Text>
                                 </View>
                             </View>
@@ -417,15 +463,27 @@ class Report extends React.Component {
                             </View>
                             <View style={styles.tableRow}>
                                 <Text style={styles.tableTd1}>Fontal</Text>
+                                <View style={styles.tableColRight2_2}>
+                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                </View>
                             </View>
                             <View style={styles.tableRow}>
                                 <Text style={styles.tableTd1}>Parietal</Text>
+                                <View style={styles.tableColRight2_2}>
+                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                </View>
                             </View>
                             <View style={styles.tableRow}>
                                 <Text style={styles.tableTd1}>Occipital</Text>
+                                <View style={styles.tableColRight2_2}>
+                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                </View>
                             </View>
                             <View style={styles.tableRow}>
                                 <Text style={styles.tableTd1}>Temporal</Text>
+                                <View style={styles.tableColRight2_2}>
+                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                </View>
                             </View>
                         </View>
 

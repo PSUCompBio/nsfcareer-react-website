@@ -39,6 +39,7 @@ import ModelValidation from '../../components/ModelValidation/ModelValidation';
 import ModelValidationPressureResponse from '../../components/ModelValidation/ModelValidationPressureResponse';
 import ModelValidationDisplacementResponse from '../../components/ModelValidation/ModelValidationDisplacementResponse';
 import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
+import LoginComponentHidden  from '../../components/Authentication/LoginComponentHidden';
 
 class Routing extends React.Component {
   constructor(props) {
@@ -187,6 +188,20 @@ class Routing extends React.Component {
           path="/Login"
           render={(props) =>
             <Login
+              {...this.props}
+              screenWidth={this.state.windowWidth}
+              isDarkModeSet={this.checkDarkMode}
+              isAuthenticated={(value) => this.settingAuthentication(value)}
+              setUserDetails={(value) => this.setUserDetails(value)}
+
+            />
+          }
+        />
+        <Route
+          exact
+          path="/Login-hidden"
+          render={(props) =>
+            <LoginComponentHidden
               {...this.props}
               screenWidth={this.state.windowWidth}
               isDarkModeSet={this.checkDarkMode}
