@@ -13,6 +13,7 @@ import facebook_icon from './facebook_icon.png';
 import google_icon from './google_icon.png';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
+import axios from 'axios';
 
 class LoginComponentHidden extends React.Component {
   constructor(props) {
@@ -30,7 +31,9 @@ class LoginComponentHidden extends React.Component {
       name: '',
       cognito_user_id: '',
       signUpStatus: false,
-      IRBProcessMessage: ''
+      IRBProcessMessage: '',
+      signupData: '',
+      isSingup:false
     };
     if (this.props.location.state && this.props.location.state.message) {
       this.state.IRBProcessMessage = this.props.location.state.message;
@@ -80,166 +83,216 @@ class LoginComponentHidden extends React.Component {
     // converting formData to JSON
     const formJsonData = formDataToJson(formData);
     console.log(formJsonData)
-    // if (this.state.tempPasswordRequired) {
-    //   // call API of first Time Login with Temporary Password
-    //   logInFirstTime(formJsonData)
-    //     .then((response) => {
-    //       if (response.data.message === 'success') {
-    //         u_details = response.data.user_details;
-    //         this.setState({
-    //           isLoading: false,
-    //           isSignInSuccessed: true
-    //         });
-    //         store.dispatch(setIsSignedInSucceeded());
-    //         store.dispatch(userDetails(u_details));
-    //         this.props.isAuthenticated(true);
-    //       } else {
-    //         // show error
-    //         this.setState({
-    //           loginError: response.data.error,
-    //           isLoginError: true,
-    //           isLoading: false
-    //         });
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   var u_details = '';
-    //   logIn(formJsonData)
-    //     .then((response) => {
-    //       console.log('Login ', response);
-    //       if (response.data.message === 'success') {
-    //         if (response.data.status === 'FORCE_CHANGE_PASSWORD') {
-    //           this.setState({
-    //             tempPasswordRequired: true,
-    //             isLoading: false
-    //           });
-    //         } else {
-    //           // login redirect code here
-    //           u_details = response.data.user_details;
-    //           console.log("Cognito ", u_details);
+    if (this.state.tempPasswordRequired) {
+      // call API of first Time Login with Temporary Password
+      logInFirstTime(formJsonData)
+        .then((response) => {
+          if (response.data.message === 'success') {
+            u_details = response.data.user_details;
+            this.setState({
+              isLoading: false,
+              isSignInSuccessed: true
+            });
+            store.dispatch(setIsSignedInSucceeded());
+            store.dispatch(userDetails(u_details));
+            this.props.isAuthenticated(true);
+          } else {
+            // show error
+            this.setState({
+              loginError: response.data.error,
+              isLoginError: true,
+              isLoading: false
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      var u_details = '';
+      logIn(formJsonData)
+        .then((response) => {
+          console.log('Login ', response);
+          if (response.data.message === 'success') {
+            if (response.data.status === 'FORCE_CHANGE_PASSWORD') {
+              this.setState({
+                tempPasswordRequired: true,
+                isLoading: false
+              });
+            } else {
+              // login redirect code here
+              u_details = response.data.user_details;
+              console.log("Cognito ", u_details);
 
-    //           checkIfPlayerExists({ name: response.data.user_details.first_name + " " + response.data.user_details.last_name })
-    //             .then(res => {
+              checkIfPlayerExists({ name: response.data.user_details.first_name + " " + response.data.user_details.last_name })
+                .then(res => {
 
-    //               this.setState({
-    //                 isValidPlayer: res.data.flag,
-    //                 isLoading: false,
-    //                 isSignInSuccessed: true,
-    //                 userType: u_details.user_type,
-    //                 userDetails: u_details,
-    //                 name: u_details.first_name + " " + u_details.last_name,
-    //                 cognito_user_id: u_details.user_cognito_id
-    //               })
-    //               console.log("USER DETAILS ", u_details);
-    //               store.dispatch(setIsSignedInSucceeded());
-    //               store.dispatch(userDetails(u_details));
+                  this.setState({
+                    isValidPlayer: res.data.flag,
+                    isLoading: false,
+                    isSignInSuccessed: true,
+                    userType: u_details.user_type,
+                    userDetails: u_details,
+                    name: u_details.first_name + " " + u_details.last_name,
+                    cognito_user_id: u_details.user_cognito_id
+                  })
+                  console.log("USER DETAILS ", u_details);
+                  store.dispatch(setIsSignedInSucceeded());
+                  store.dispatch(userDetails(u_details));
 
-    //               this.props.isAuthenticated(true);
-    //             })
-    //             .catch(err => {
-    //               this.setState({
-    //                 isLoginError: true,
-    //                 isLoading: false,
-    //                 loginError: response.data.error
-    //               });
-    //             })
+                  this.props.isAuthenticated(true);
+                })
+                .catch(err => {
+                  this.setState({
+                    isLoginError: true,
+                    isLoading: false,
+                    loginError: response.data.error
+                  });
+                })
 
-    //         }
-    //       } else {
-    //         this.setState({
-    //           isLoginError: true,
-    //           isLoading: false,
-    //           loginError: response.data.error
-    //         });
-    //       }
+            }
+          } else {
+            this.setState({
+              isLoginError: true,
+              isLoading: false,
+              loginError: response.data.error
+            });
+          }
 
-    //       // Now update the state with data that we added
-    //     })
-    //     .catch((err) => {
-    //       e.target.reset();
-    //       // catch error
-    //       this.setState({
-    //         isLoginError: true,
-    //         isLoading: false,
-    //         loginError: err
-    //       });
-    //       console.log('error : ', err);
-    //     });
-    // }
+          // Now update the state with data that we added
+        })
+        .catch((err) => {
+          e.target.reset();
+          // catch error
+          this.setState({
+            isLoginError: true,
+            isLoading: false,
+            loginError: err
+          });
+          console.log('error : ', err);
+        });
+    }
   }
   responseFacebook=(response)=> {
     console.log('fb rs',response);
     if(response.email){
-      console.log('email true')
+       var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name}
+      this.setState({
+        signupData:{
+          userID: response.userID,
+          first_name: response.first_name,
+          last_name: response.last_name,
+          email: response.email
+        }
+      })
+      this.LoginWithoutEmail(formJsonData);
     }else{
       console.log(response.first_name,response.userID);
-      var formJsonData = {userID : response.userID}
+      var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name}
+      this.setState({
+        signupData:{
+          userID: response.userID,
+          first_name: response.first_name,
+          last_name: response.last_name,
+          email: ''
+        }
+      })
       this.LoginWithoutEmail(formJsonData);
     }
   }
   LoginWithoutEmail =(formJsonData)=>{
-    console.log(formJsonData);
+    this.setState({isLoading: true})
     loginWithoutEmail(formJsonData)
     .then(res=>{
       console.log('res',res);
-      if(res.message == 'notExists'){
-        
+      if(res.data.message == 'notExists'){
+        this.setState({
+          isSingup: true,
+          isLoading: false
+        })
+      }else if(res.data.message == 'success'){
+        if (res.data.status === 'FORCE_CHANGE_PASSWORD') {
+          formJsonData['user_name'] = res.data.user_name;
+          formJsonData['password'] = formJsonData.userID;
+          formJsonData['new_password'] = formJsonData.userID;
+          this.handleChangePassword(formJsonData);
+        }else{
+          var u_details = res.data.user_details;
+          console.log("Cognito ", u_details);
+
+          checkIfPlayerExists({ name: res.data.user_details.first_name + " " + res.data.user_details.last_name })
+            .then(res => {
+
+              this.setState({
+                isValidPlayer: res.data.flag,
+                isLoading: false,
+                isSignInSuccessed: true,
+                userType: u_details.user_type,
+                userDetails: u_details,
+                name: u_details.first_name + " " + u_details.last_name,
+                cognito_user_id: u_details.user_cognito_id
+              })
+              console.log("USER DETAILS ", u_details);
+              store.dispatch(setIsSignedInSucceeded());
+              store.dispatch(userDetails(u_details));
+
+              this.props.isAuthenticated(true);
+            })
+            .catch(err => {
+              this.setState({
+                isLoginError: true,
+                isLoading: false,
+                loginError: res.data.error
+              });
+            })
+        }
       }
     }).catch(err=>{
       console.log('err',err);
     })
-
   }
   logIn =()=>{
 
   }
+  handleChangePassword=(formJsonData)=>{
+     axios.post(`/logInFirstTime`, formJsonData,{withCredentials: true})
+      .then((response) => {
+        console.log('logInFirstTime',response)
+        if (response.data.message === 'success') {
+         var u_details = response.data.user_details;
+          this.setState({
+            isLoading: false,
+            isSignInSuccessed: true
+          });
+          store.dispatch(setIsSignedInSucceeded());
+          store.dispatch(userDetails(u_details));
+          this.props.isAuthenticated(true);
+        } else {
+          // show error
+          this.setState({
+            loginError: response.data.error,
+            isLoginError: true,
+            isLoading: false
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   render() {
 
-    if (this.state.isSignInSuccessed) {
+  if (this.state.isSignInSuccessed) {
 
-      return <Redirect to="/Dashboard" />;
-
-      // if (this.state.userDetails.level === 1000) {
-      //   return <Redirect to="/AdminDashboard" />;
-      // } else if (this.state.userDetails.level === 400) {
-      //   return <Redirect to={{
-      //     pathname: '/OrganizationAdmin',
-      //     state: {
-      //       brand: {
-      //         brand: this.state.userDetails.sensor,
-      //         user_cognito_id: this.state.cognito_user_id
-      //       }
-      //     }
-      //   }} />;
-      // } else if (this.state.userDetails.level === 300) {
-      //   return <Redirect to={{
-      //     pathname: '/TeamAdmin',
-      //     state: {
-      //       brand: {
-      //         brand: this.state.userDetails.parents.sensor,
-      //         organization: this.state.userDetails.organization,
-      //         user_cognito_id: this.state.userDetails.parents.user_cognito_id
-      //       }
-      //     }
-      //   }} />;
-      // } else {
-      //   return <Redirect to={{
-      //     pathname: '/TeamAdmin/user/dashboard',
-      //     state: {
-      //       team: {
-      //         organization: '',
-      //         team_name: ''
-      //       },
-      //       cognito_user_id: this.state.cognito_user_id,
-      //       player_name: this.state.name
-      //     }
-      //   }} />;
-      // }
-    }
+    return <Redirect to="/Dashboard" />;
+  }
+  if(this.state.isSingup){
+    return <Redirect to={{
+      pathname : '/User/SignUp/',
+      state : { data : this.state.signupData }
+    }} />
+  }
   const responseGoogle = (response) => {
     console.log(response);
   }
@@ -373,7 +426,7 @@ class LoginComponentHidden extends React.Component {
                     </form>
                     
                      <FacebookLogin
-                      appId="1209398062759554"
+                      appId="372593693091338"
                       autoLoad={true}
                       fields="first_name, last_name,email,picture,gender"
                       callback={this.responseFacebook}
@@ -386,7 +439,7 @@ class LoginComponentHidden extends React.Component {
                       )}
                     />
                     <GoogleLogin
-                      clientId="658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com"
+                      clientId="326094957146-had76ksm970g5gkvt5do3span6bs0v2a.apps.googleusercontent.com"
                       render={renderProps => (
                         <>
                           <div className="tab_login_buttons2" onClick={renderProps.onClick} disabled={renderProps.disabled}>
@@ -399,7 +452,7 @@ class LoginComponentHidden extends React.Component {
                       onFailure={responseGoogle}
                       cookiePolicy={'single_host_origin'}
                     />
-                   
+                    <div style={{'float':'left','width': '100%'}}>
                     {this.state.isLoading ? (
                       <div className="d-flex justify-content-center center-spinner">
                         <div
@@ -418,6 +471,7 @@ class LoginComponentHidden extends React.Component {
                         <strong >Failed! </strong> {this.state.loginError}.
                       </div>
                     ) : null}
+                    </div>
                     <div className="text-center">
                       <p ref="p1" className="mt-4 sign-up-link">
                         Don't have an account?{' '}

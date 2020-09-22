@@ -221,7 +221,9 @@ class Login extends React.Component {
                 <div className="text-center">
                   <p style={{
                     fontSize: "20px",
-                    fontWeight: "900"
+                    fontWeight: "900",
+                    width: '44%',
+                    margin: 'auto'
                   }} className="top-heading__login animated fadeInUp">
                     The Dashboard gives users and administrators a cumulative
                     overview, as well as an in-depth analysis on each head

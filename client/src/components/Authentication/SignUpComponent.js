@@ -17,6 +17,7 @@ import moment from 'moment';
 import MaskedInput from 'react-text-mask'
 import SelectSearch from 'react-select-search';
 import Select from 'react-select';
+import $ from 'jquery';
 let options = [];
 
 class SignUpComponent extends React.Component {
@@ -101,7 +102,34 @@ class SignUpComponent extends React.Component {
         console.log('err',err)
       })
 
-    } else if (this.props.location.pathname === '/SignUpElse') {
+    }else if (this.props.location.pathname === '/User/SignUp/') {
+      var data = this.props.location.state.data;
+      if(!data){
+        this.props.history.push({
+            pathname : '/Login',
+            state : {}
+        });
+      }
+      $('#first_name').val(data.first_name);
+      $('#last_name').val(data.last_name);
+      $('#user_name').val(data.email);
+      $('#userID').val(data.userID);
+      this.setState({
+        signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' },
+        isDirectSingUp: true
+      });
+      getOrgUniqueList()
+      .then(data =>{
+          if(data.data.message == "success"){
+            this.setState({
+              organizationList: data.data.data
+            })
+          }
+      }).catch(err =>{
+        console.log('err',err)
+      })
+
+    }else if (this.props.location.pathname === '/SignUpElse') {
       this.setState({
         signupOrElse: {
           email: 'Contact email for this individual',
@@ -202,33 +230,6 @@ class SignUpComponent extends React.Component {
     // converting formData to JSON
     const formJsonData = formDataToJson(formData);
     console.log(formJsonData);
-    // signUp(formJsonData)
-    //   .then((response) => {
-    //     this.refs.signUpForm.reset();
-    //     // Now update the state with data that we added
-    //     if (response.data.message === 'success') {
-    //       // show alert
-    //       this.setState({
-    //         isSignUpError: false,
-    //         isSignUpConfirmed: true,
-    //         isLoading: false
-    //       });
-    //     } else {
-    //       this.setState({
-    //         isSignUpError: true,
-    //         isSignUpConfirmed: false,
-    //         isLoading: false,
-    //         signUpError: response.data.error
-    //       });
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     e.target.reset();
-    //     // catch error
-    //     console.log('error : ', err);
-    //   });
-
-    // Redirect User to IRB form
     this.props.history.push({
         pathname : '/IRB',
         state : { formData : formJsonData }
@@ -247,6 +248,7 @@ class SignUpComponent extends React.Component {
         <input
           type="text"
           className="form-control"
+          id={name}
           placeholder={placeholder}
           name={name}
           aria-label={name}
@@ -428,6 +430,7 @@ class SignUpComponent extends React.Component {
             required
           />
         </div>
+        <input type="hidden" name="userID" id="userID"/>
         <div className="form-row">
           <div className="input-group mb-5">
             <div className="input-group-prepend">
@@ -440,6 +443,7 @@ class SignUpComponent extends React.Component {
               className="form-control"
               placeholder={this.state.signupOrElse.email}
               name="user_name"
+              id="user_name"
               required
               aria-label="Username"
               aria-describedby="basic-addon1"
@@ -449,7 +453,7 @@ class SignUpComponent extends React.Component {
           </div>
         </div>
 
-        {this.props.location.pathname === '/SignUp' ?
+        {this.props.location.pathname === '/SignUp' || this.props.location.pathname === '/User/SignUp/' ?
             (this.state.selectedAge != null && this.state.selectedAge < 18) ?
 
                 <div className="form-row">
@@ -671,6 +675,7 @@ class SignUpComponent extends React.Component {
               className="form-control"
               placeholder={this.state.signupOrElse.email}
               name="user_name"
+              id="user_name"
               value={this.state.email}
               required
               aria-label="Username"

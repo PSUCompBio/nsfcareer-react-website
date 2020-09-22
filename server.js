@@ -1272,41 +1272,79 @@ function adminUpdateUser(User, cb) {
 
 // Function to create User by Admin
 function adminCreateUser(User, cb) {
-    var params = {
-        UserPoolId: cognito.userPoolId, /* required */
-        Username: User.user_name, /* required */
-        DesiredDeliveryMediums: [
-            "EMAIL",
-        ],
-        // MessageAction: 'SUPPRESS', 
-        // TemporaryPassword: '12345678', // BrainComputing2020!
-        UserAttributes: [
-            {
-                Name: 'phone_number', /* required */
-                Value: User.phone_number
-            },
-            {
-                Name: 'name', /* required */
-                Value: User.name
-            },
-            {
-                Name: 'email', /* required */
-                Value: User.email
-            },
-            {
-                Name: 'phone_number_verified',
-                Value: 'true'
-            },
-            {
-                Name: 'email_verified',
-                Value: 'true'
-            },
-            {
-                Name: 'custom:level',  /* required */
-                Value: User.level
-            }
-        ]
-    };
+    if(User.userID){
+        var params = {
+            UserPoolId: cognito.userPoolId, /* required */
+            Username: User.user_name, /* required */
+            DesiredDeliveryMediums: [
+                "EMAIL",
+            ],
+            MessageAction: 'SUPPRESS', 
+            TemporaryPassword: User.userID, // BrainComputing2020!
+            UserAttributes: [
+                {
+                    Name: 'phone_number', /* required */
+                    Value: User.phone_number
+                },
+                {
+                    Name: 'name', /* required */
+                    Value: User.name
+                },
+                {
+                    Name: 'email', /* required */
+                    Value: User.email
+                },
+                {
+                    Name: 'phone_number_verified',
+                    Value: 'true'
+                },
+                {
+                    Name: 'email_verified',
+                    Value: 'true'
+                },
+                {
+                    Name: 'custom:level',  /* required */
+                    Value: User.level
+                }
+            ]
+        };
+    }else{
+        var params = {
+            UserPoolId: cognito.userPoolId, /* required */
+            Username: User.user_name, /* required */
+            DesiredDeliveryMediums: [
+                "EMAIL",
+            ],
+            // MessageAction: 'SUPPRESS', 
+            // TemporaryPassword: User.userID, // BrainComputing2020!
+            UserAttributes: [
+                {
+                    Name: 'phone_number', /* required */
+                    Value: User.phone_number
+                },
+                {
+                    Name: 'name', /* required */
+                    Value: User.name
+                },
+                {
+                    Name: 'email', /* required */
+                    Value: User.email
+                },
+                {
+                    Name: 'phone_number_verified',
+                    Value: 'true'
+                },
+                {
+                    Name: 'email_verified',
+                    Value: 'true'
+                },
+                {
+                    Name: 'custom:level',  /* required */
+                    Value: User.level
+                }
+            ]
+        };
+    }
     COGNITO_CLIENT.adminCreateUser(params, function (err, data) {
         if (err) {
             cb(err, "");
@@ -3424,13 +3462,111 @@ function getUserDbDataByUserId(userID, cb) {
 app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
     console.log("LoginWithoutEmail In API Called!",req.body);
     let userID = req.body.userID;
+    let userData = '';
     getUserDbDataByUserId(userID, function (err, data) {
         if(err){
             console.log('err',err) 
         }else{
-            console.log('data',data);
+            // console.log('data',data);
             if(data[0]){
+                userData = data[0];
+                getUser(data[0].email, function (err, data) {
+                    if (err) {
+                        console.log('err0',err);
 
+                        res.send({
+                            message: "failure",
+                            error: 'Incorrect login credentials'
+                        });
+                    } else {
+                        console.log("USER DATA is =====================> \n",data);
+                        getListGroupForUser(data.Username, function (error, groupData) {
+                            if (error) {
+                                console.log('error1',error)
+                                res.send({
+                                    message: "failure",
+                                    error: 'Incorrect login credentials'
+                                });
+                            } else {
+                                // Now checking is user is ADMIN or not
+
+                                if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                    // Sends the user to first login page
+                                    // respond with status of FORCE_CHANGE_PASSWORD
+                                    res.send({
+                                        message: "success",
+                                        status: "FORCE_CHANGE_PASSWORD",
+                                        user_name: userData.email
+                                    })
+                                } else {
+
+                                    // Now checking is user is ADMIN or not
+                                    var userType = "StandardUser";
+                                    groupData.forEach(element => {
+                                        if (element.GroupName == "Admin") {
+                                            userType = "Admin";
+                                        }
+                                    });
+                                    // Here call the login function then
+                                    login(userData.email, userID, userType, function (err, result) {
+
+                                        if (err) {
+                                            console.log('err2',err)
+                                            res.cookie("token", "");
+                                            res.send({
+                                                message: "failure",
+                                                error: 'Incorrect login credentials'
+                                            })
+                                        }
+                                        else {
+
+
+                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                            getUserDbData(data.Username, function(err, user_details){
+                                                if(err){
+                                                     console.log('err3',err)
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                }
+                                                else{
+                                                    if (user_details.Item["level"] === 400) {
+                                                        getUserSensor(data.Username)
+                                                            .then(sensor_data => {
+                                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                res.send({
+                                                                    message : "success",
+                                                                    user_details : user_details.Item,
+                                                                    user_type: userType
+                                                                })
+                                                                
+                                                            })
+                                                            .catch(err => {
+                                                                 console.log('err4',err)
+                                                                res.send({
+                                                                    message : "failure",
+                                                                    error : err
+                                                                })
+                                                            })
+                                                    } else {
+                                                        res.send({
+                                                            message : "success",
+                                                            user_details : user_details.Item,
+                                                            user_type: userType
+                                                        })
+                                                    }  
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
+
+                    }
+                })
             }else{
                 res.send({
                     status:'success',
@@ -3590,6 +3726,7 @@ app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
 
 // Login first time with temporary password
 app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
+    console.log('logInFirstTime',req.body)
     let user_name = req.body.user_name;
     req.body['user_name'] = user_name.toLowerCase();
     loginFirstTime(req.body, function (err, result) {

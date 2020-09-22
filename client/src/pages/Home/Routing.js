@@ -229,6 +229,11 @@ class Routing extends React.Component {
         />
         <Route
             exact
+            path="/User/SignUp/"
+            render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+            exact
             path="/SignUpElse"
             render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
         />
