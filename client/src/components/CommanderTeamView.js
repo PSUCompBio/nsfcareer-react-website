@@ -40,6 +40,7 @@ class CommanderTeamView extends React.Component {
             isAuthenticated: false,
             isCheckingAuth: true,
             isUpdating: false,
+            teamStats: false,
             sensor_id: '',
             editableId: '',
             userDetails: {},
@@ -495,6 +496,12 @@ class CommanderTeamView extends React.Component {
         }
     }
 
+    teamStats = () => {
+        this.setState({
+            teamStats: true
+        })
+    }
+
     militaryVersionOrNormal = () => {
         console.log('users',this.state.users)
         let me = this;
@@ -790,8 +797,8 @@ class CommanderTeamView extends React.Component {
                             <h1>
                                 <span className="team-page-title">Team Dashboard</span>
                                 <div className="col-md-4 team-edit-button">
-                                    <button className="btn  button-edit" style={{'margin-right': '4px'}}>Edit</button>
-                                    <button className="btn  button-edit" style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                    <button className="btn button-edit" style={{'margin-right': '4px'}}>Edit</button>
+                                    <button className="btn button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
                                    
                                 </div>
                             </h1>
@@ -1122,6 +1129,19 @@ class CommanderTeamView extends React.Component {
             }} />
         }
 
+        if (this.state.teamStats) {
+            return <Redirect push to={{
+                pathname: '/TeamStats',
+                state: {
+                    user_cognito_id: this.props.location.state.team.user_cognito_id,
+                    team: {
+                        brand: this.props.location.state.team.brand,
+                        team_name: this.props.location.state.team.team_name,
+                        organization: this.props.location.state.team.organization
+                    }
+                }
+            }} />
+        }
 
         return (
             <React.Fragment>

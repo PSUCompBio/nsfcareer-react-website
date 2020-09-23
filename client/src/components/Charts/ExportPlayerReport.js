@@ -1113,7 +1113,7 @@ class ExportPlayerReport extends React.Component {
 					<div className="col-md-5 d-flex align-items-center justify-content-center" >
 						<div className="row" style={{ width: '100%', display: 'block',height: '100%', }} className="three_D_model_div">
 							{this.state.isLoading ? (
-								<div className="model_loader d-flex justify-content-center center-spinner">
+								<div className="model_loader d-flex justify-content-center center-spinner" style={{zIndex: '999'}}>
 									<div
 										className="spinner-border text-primary"
 										role="status"

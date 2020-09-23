@@ -23,6 +23,7 @@ import Users from '../../components/Users';
 import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
+import TeamStats from '../../components/TeamStats';
 import TeamPlayers from '../../components/CommanderTeamView';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
@@ -251,7 +252,12 @@ class Routing extends React.Component {
           exact
           path="/number-verification"
           render={(props) => <AddUsers {...props} isDarkModeSet={this.checkDarkMode} />}
-        /> 
+        />
+        <Route
+          exact
+          path="/TeamStats"
+          render={(props) => <TeamStats {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
         <Route
           exact
           path="/TeamAdmin/user/dashboard"
