@@ -40,6 +40,7 @@ class SignUpComponent extends React.Component {
       isFetching: false,
       first_name: '',
       last_name: '',
+      password: '',
       Invaliduser: false,
       email: '',
       level: '',
@@ -280,6 +281,29 @@ class SignUpComponent extends React.Component {
     );
   };
 
+  forJsxPassowrd = (imgSrc, placeholder, name) => {
+    return (
+      <div className="input-group mb-5">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            <img src={imgSrc} alt="" />
+          </span>
+        </div>
+        <input
+          type="password"
+          autocomplete="new-password" 
+          className="form-control"
+          id={name}
+          placeholder={placeholder}
+          name={name}
+          aria-label={name}
+          aria-describedby="basic-addon1"
+          required
+        />
+      </div>
+    );
+  };
+
   forJsxRole = (imgSrc) => {
     return (
       <div className="input-group mb-5">
@@ -346,6 +370,7 @@ class SignUpComponent extends React.Component {
       <form className="mt-5" onSubmit={this.handleSubmit} ref="signUpForm">
         {this.forJsx('img/icon/user.svg', 'First name', 'first_name')}
         {this.forJsx('img/icon/user.svg', 'Last name', 'last_name')}
+        
         {(this.props.location.pathname === '/SignUpElse')? this.forJsx('img/icon/user.svg', 'Organization', 'organization'): null}
         {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
 
@@ -479,6 +504,8 @@ class SignUpComponent extends React.Component {
             : null
         }
 
+        {this.forJsxPassowrd('img/icon/user.svg', 'Password', 'password')}
+
         <div className="form-row mb-3">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
@@ -586,6 +613,7 @@ class SignUpComponent extends React.Component {
       <form className="mt-5" onSubmit={this.handleSubmitTokenForm} ref="signUpForm">
         {this.forJsx2(this.state.baseUrl+'/'+'img/icon/user.svg', 'First name', 'first_name',this.state.first_name)}
         {this.forJsx2(this.state.baseUrl+'/'+'img/icon/user.svg', 'Last name', 'last_name',this.state.last_name)}
+        
         {(this.props.location.pathname === '/SignUpElse')? this.forJsx('img/icon/user.svg', 'Organization', 'organization'): null}
         {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
 
@@ -711,6 +739,8 @@ class SignUpComponent extends React.Component {
             : null
         }
 
+        {this.forJsxPassowrd(this.state.baseUrl+'/'+'img/icon/user.svg', 'Password', 'password',this.state.password)}
+
         <div className="form-row">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
@@ -818,7 +848,7 @@ class SignUpComponent extends React.Component {
                     role="alert"
                   >
                     <strong>Account created Successfully! </strong> Check your
-                    mail for temporary password .
+                    mail to verify your account.
                   </div>
                 ) : null}
                 {this.state.isSignUpError ? (

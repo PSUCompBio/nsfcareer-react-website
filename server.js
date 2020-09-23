@@ -1272,86 +1272,118 @@ function adminUpdateUser(User, cb) {
 
 // Function to create User by Admin
 function adminCreateUser(User, cb) {
-    if(User.userID){
-        var params = {
-            UserPoolId: cognito.userPoolId, /* required */
-            Username: User.user_name, /* required */
-            DesiredDeliveryMediums: [
-                "EMAIL",
-            ],
-            MessageAction: 'SUPPRESS', 
-            TemporaryPassword: User.userID, // BrainComputing2020!
-            UserAttributes: [
-                {
-                    Name: 'phone_number', /* required */
-                    Value: User.phone_number
-                },
-                {
-                    Name: 'name', /* required */
-                    Value: User.name
-                },
-                {
-                    Name: 'email', /* required */
-                    Value: User.email
-                },
-                {
-                    Name: 'phone_number_verified',
-                    Value: 'true'
-                },
-                {
-                    Name: 'email_verified',
-                    Value: 'true'
-                },
-                {
-                    Name: 'custom:level',  /* required */
-                    Value: User.level
-                }
-            ]
-        };
-    }else{
-        var params = {
-            UserPoolId: cognito.userPoolId, /* required */
-            Username: User.user_name, /* required */
-            DesiredDeliveryMediums: [
-                "EMAIL",
-            ],
-            // MessageAction: 'SUPPRESS', 
-            // TemporaryPassword: User.userID, // BrainComputing2020!
-            UserAttributes: [
-                {
-                    Name: 'phone_number', /* required */
-                    Value: User.phone_number
-                },
-                {
-                    Name: 'name', /* required */
-                    Value: User.name
-                },
-                {
-                    Name: 'email', /* required */
-                    Value: User.email
-                },
-                {
-                    Name: 'phone_number_verified',
-                    Value: 'true'
-                },
-                {
-                    Name: 'email_verified',
-                    Value: 'true'
-                },
-                {
-                    Name: 'custom:level',  /* required */
-                    Value: User.level
-                }
-            ]
-        };
-    }
-    COGNITO_CLIENT.adminCreateUser(params, function (err, data) {
+    // if(User.userID){
+    //     var params = {
+    //         UserPoolId: cognito.userPoolId, /* required */
+    //         Username: User.user_name, /* required */
+    //         DesiredDeliveryMediums: [
+    //             "EMAIL",
+    //         ],
+    //         MessageAction: 'SUPPRESS', 
+    //         TemporaryPassword: User.userID, // BrainComputing2020!
+    //         UserAttributes: [
+    //             {
+    //                 Name: 'phone_number', /* required */
+    //                 Value: User.phone_number
+    //             },
+    //             {
+    //                 Name: 'name', /* required */
+    //                 Value: User.name
+    //             },
+    //             {
+    //                 Name: 'email', /* required */
+    //                 Value: User.email
+    //             },
+    //             {
+    //                 Name: 'phone_number_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'email_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'custom:level',  /* required */
+    //                 Value: User.level
+    //             }
+    //         ]
+    //     };
+    // }else{
+    //     var params = {
+    //         UserPoolId: cognito.userPoolId, /* required */
+    //         Username: User.user_name, /* required */
+    //         DesiredDeliveryMediums: [
+    //             "EMAIL",
+    //         ],
+    //         // MessageAction: 'SUPPRESS', 
+    //         // TemporaryPassword: User.userID, // BrainComputing2020!
+    //         UserAttributes: [
+    //             {
+    //                 Name: 'phone_number', /* required */
+    //                 Value: User.phone_number
+    //             },
+    //             {
+    //                 Name: 'name', /* required */
+    //                 Value: User.name
+    //             },
+    //             {
+    //                 Name: 'email', /* required */
+    //                 Value: User.email
+    //             },
+    //             {
+    //                 Name: 'phone_number_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'email_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'custom:level',  /* required */
+    //                 Value: User.level
+    //             }
+    //         ]
+    //     };
+    // }
+    // COGNITO_CLIENT.adminCreateUser(params, function (err, data) {
+    //     if (err) {
+    //         cb(err, "");
+    //     } // an error occurred
+    //     else {
+    //         cb("", data);
+    //     }             // successful response
+    // });
+
+    var params = {
+        ClientId: cognito.ClientId, /* required */
+        Username: User.user_name, /* required */
+        Password: User.password,
+        UserAttributes: [
+            {
+                Name: 'phone_number', /* required */
+                Value: User.phone_number
+            },
+            {
+                Name: 'name', /* required */
+                Value: User.name
+            },
+            {
+                Name: 'email', /* required */
+                Value: User.email
+            },
+            {
+                Name: 'custom:level',  /* required */
+                Value: User.level
+            }
+        ]
+    };
+    COGNITO_CLIENT.signUp(params, function (err, data) {
         if (err) {
             cb(err, "");
-        } // an error occurred
+        }
         else {
             cb("", data);
-        }             // successful response
+        }
     });
 }
 
@@ -2627,17 +2659,15 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
         else {
             console.log('data------------\n',data);
             
-
-            var UserData = data.User;
-            req.body["user_cognito_id"] = UserData.Username;
-            user_cognito_id = UserData.Username;
+            req.body["user_cognito_id"] = data.UserSub;
+            user_cognito_id = data.UserSub;
             //Now check type of User and give permission accordingly
             // res.send(data);
             // user_type
             // userName
             var tempData = {};
-            tempData["user_name"] = UserData.Username;
-            tempData["userName"] = UserData.Username;
+            tempData["user_name"] = data.UserSub;
+            tempData["userName"] = data.UserSub;
 
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
@@ -2655,6 +2685,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                 var mergedObject = { ...req.body, ...tempData };
                 delete mergedObject.userName;
                 delete mergedObject.name;
+                delete mergedObject.password;
                 console.log('mergedObject------------\n',mergedObject);
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
                     if (err) {
@@ -2697,6 +2728,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                 console.log('mergedObject------------\n',mergedObject);
                 delete mergedObject.userName;
                 delete mergedObject.name;
+                delete mergedObject.password;
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
                     if (err) {
                         console.log("DB ERRRRRR =============================== \n", err);
@@ -2784,7 +2816,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                                         res.send({
                                             message: "success",
-                                            message_details : "Successfully created account ! Check your mail for temporary login credentials",
+                                            message_details : "Successfully created account ! Check your mail to verify your account.",
                                             user_cognito_id: user_cognito_id
                                         })
 
