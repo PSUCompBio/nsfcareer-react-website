@@ -197,7 +197,9 @@ class LoginComponentHidden extends React.Component {
           email: ''
         }
       })
-      this.LoginWithoutEmail(formJsonData);
+      if(response.status != "unknown"){
+        this.LoginWithoutEmail(formJsonData);
+      }
     }
   }
   LoginWithoutEmail =(formJsonData)=>{
@@ -246,6 +248,12 @@ class LoginComponentHidden extends React.Component {
               });
             })
         }
+      }else {
+        this.setState({
+          isLoginError: true,
+          isLoading: false,
+          loginError: res.data.error
+        });
       }
     }).catch(err=>{
       console.log('err',err);
@@ -439,7 +447,7 @@ class LoginComponentHidden extends React.Component {
                       )}
                     />
                     <GoogleLogin
-                      clientId="326094957146-had76ksm970g5gkvt5do3span6bs0v2a.apps.googleusercontent.com"
+                      clientId="2204546519-6oqassj4ircoq48qaecu4nb30r1fthsk.apps.googleusercontent.com"
                       render={renderProps => (
                         <>
                           <div className="tab_login_buttons2" onClick={renderProps.onClick} disabled={renderProps.disabled}>

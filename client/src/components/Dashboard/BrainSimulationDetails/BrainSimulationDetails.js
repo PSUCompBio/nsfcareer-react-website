@@ -47,6 +47,7 @@ import { Carousel } from 'react-responsive-carousel';
 import Spinner from '../../Spinner/Spinner';
 
 import ScrollToTop from 'react-scroll-up';
+import $ from 'jquery';
 
 import { getStatusOfDarkmode } from '../../../reducer';
 class BrainSimulationDetails extends React.Component {
@@ -81,7 +82,8 @@ class BrainSimulationDetails extends React.Component {
       simulation_log:'',
       uploadPercentage: 0,
       IsAcceleration: false,
-      label_remove_video: 'Remove Video'
+      label_remove_video: 'Remove Video',
+      video_time: 0
     };
   }
  
@@ -193,12 +195,34 @@ class BrainSimulationDetails extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
 
-
- 
+  vidocontrol =()=>{
+    const player = document.querySelector('.player');
+    const video = player.querySelector('.viewer');
+    
+    const progressBar = document.querySelector('.progress__filled');
+    let the = this;
+    let controls = {
+      //Updating scroller to video time
+      handleProgress:  ()=> {
+        const percent = (video.currentTime / video.duration) * 100;
+        $('.progress__filled').val(percent)
+      },
+      scrub: (e) =>{
+        const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+        video.currentTime = scrubTime;
+      }
+    }
+    video.addEventListener('timeupdate', controls.handleProgress);
+    progressBar.addEventListener('click', controls.scrub);
+    let mousedown = false;
+    progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
+    progressBar.addEventListener('mousedown', () => mousedown = true);
+    progressBar.addEventListener('mouseup', () => mousedown = false);
+  }
+  handleChangeRange =(event)=>{
+    this.setState({video_time: event.target.value});
+  }
   render() {
-    console.log('props',this.props.location.state)
-    // const isLoaded = this.state.user;
-    console.log(this.state.user);
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
     }
@@ -216,7 +240,10 @@ class BrainSimulationDetails extends React.Component {
         {file.name} - {file.size} bytes
       </span>
     ));
-
+    var the = this;
+    if(this.state.impact_video_url){
+      setTimeout(()=>{the.vidocontrol()},1000);
+    }
     return (
       <React.Fragment>
         <div className="center-scroll-up-mobile">
@@ -374,14 +401,17 @@ class BrainSimulationDetails extends React.Component {
                                 </section>
                               )}
                             </Dropzone>)
-                            : <video src={this.state.impact_video_url} style={{'width':'100%'}} controls></video>
+                            : 
+                              <div className="player">
+                                <video src={this.state.impact_video_url} style={{'width':'100%'}} className="player__video viewer" controls></video>
+                              </div>
                              
                           }
 
                                
                           <div>
                             <img src={unlock} className="unlock-img"/>
-                            <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
+                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           <div>
@@ -393,7 +423,7 @@ class BrainSimulationDetails extends React.Component {
                         <div className="" style={{'padding': '0px 14px'}}>
                           <div>
                             <img src={unlock} className="unlock-img2"/>
-                            <input type="range" min="1" max="100" className="MyrangeSlider3" id="MyrangeSlider3" />
+                            <input type="range"  min="1" max="100" value="50" className="MyrangeSlider3" id="MyrangeSlider3" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                         </div>

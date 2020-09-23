@@ -3547,7 +3547,7 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
                                             res.cookie("token", "");
                                             res.send({
                                                 message: "failure",
-                                                error: 'Incorrect login credentials'
+                                                error: err
                                             })
                                         }
                                         else {
@@ -3660,7 +3660,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                 res.cookie("token", "");
                                 res.send({
                                     message: "failure",
-                                    error: 'Incorrect login credentials'
+                                    error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
                                 })
                             }
                             else {

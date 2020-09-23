@@ -8,6 +8,7 @@ import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
 import trangle from './trangle.png'
 import ClinicalReportHeader from './Clinical-Report-Header.png';
+import taxture1  from './taxture1.jpg'
 // import logo 
 // Create styles
 const styles = StyleSheet.create({
@@ -51,6 +52,13 @@ const styles = StyleSheet.create({
         backgroundColor:'#4472C4',
         marginTop: '10px',
         height: '3px',
+        textAlign: 'center'
+    },
+    tableFootBorder:{
+        width:'100%',
+        backgroundColor:'grey',
+        marginTop: '10px',
+        height: '2px',
         textAlign: 'center'
     },
     rowHead2:{
@@ -317,6 +325,16 @@ const styles = StyleSheet.create({
         backgroundColor: 'grey',
         height: '11px',
         marginTop: '25px'
+    },
+    taxture1_div:{
+        width: '79%',
+        marginLeft: '22%',
+        position: 'absolute',
+        marginTop: '63%'
+    },
+    taxture1: {
+        width: '100%',
+        textAlign:'center'
     }
 });
 
@@ -462,28 +480,52 @@ class Report extends React.Component {
                                 <Text style={styles.tableColRight3}>NOTES</Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Fontal</Text>
+                                <Text style={styles.tableTd1}>Frontal Lobe</Text>
                                 <View style={styles.tableColRight2_2}>
                                     <Image  style={styles.trangle} src={trangle} alt="trangle"/>
                                 </View>
+                                <Text style={styles.tableColRight2_2}></Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Parietal</Text>
+                                <Text style={styles.tableTd1}>Parietal Lobe</Text>
                                 <View style={styles.tableColRight2_2}>
                                     <Image  style={styles.trangle} src={trangle} alt="trangle"/>
                                 </View>
+                                <Text style={styles.tableColRight2_2}></Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Occipital</Text>
+                                <Text style={styles.tableTd1}>Occipital Lobe</Text>
                                 <View style={styles.tableColRight2_2}>
                                     <Image  style={styles.trangle} src={trangle} alt="trangle"/>
                                 </View>
+                                <Text style={styles.tableColRight2_2}></Text>
                             </View>
                             <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Temporal</Text>
+                                <Text style={styles.tableTd1}>Temporal Lobe</Text>
                                 <View style={styles.tableColRight2_2}>
                                     <Image  style={styles.trangle} src={trangle} alt="trangle"/>
                                 </View>
+                                <Text style={styles.tableColRight2_2}></Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableTd1}>Cerebellum</Text>
+                                <View style={styles.tableColRight2_2}>
+                                    
+                                </View>
+                                <Text style={styles.tableColRight2_2}></Text>
+                            </View>
+                            <View style={styles.tableRow}>
+                                <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                <View style={styles.tableColRight2_2}>
+                                    
+                                </View>
+                                <Text style={styles.tableColRight2_2}></Text>
+                            </View>
+                            <View style={styles.col12}>
+                                <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                            </View>
+                            <View style={styles.taxture1_div}>
+                                <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
                             </View>
                         </View>
 
