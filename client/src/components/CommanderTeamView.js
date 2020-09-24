@@ -1137,7 +1137,8 @@ class CommanderTeamView extends React.Component {
                     team: {
                         brand: this.props.location.state.team.brand,
                         team_name: this.props.location.state.team.team_name,
-                        organization: this.props.location.state.team.organization
+                        organization: this.props.location.state.team.organization,
+                        staff: this.props.location.state.team.staff
                     }
                 }
             }} />

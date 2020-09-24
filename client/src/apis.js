@@ -826,6 +826,18 @@ export const getTeamList = (request) =>{
   })
 }
 
+export const getTeamSpheres = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamSpheres`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getPlayerList = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getPlayerList/`,request, {withCredentials: true})
