@@ -33,7 +33,8 @@ import {
   getBrainSimulationMovie,
   uploadSidelineImpactVideo,
   getBrainSimulationLogFile,
-  removeVideo
+  removeVideo,
+  setVideoTime
 } from '../../../apis';
 import axios from 'axios';
 
@@ -50,6 +51,8 @@ import ScrollToTop from 'react-scroll-up';
 import $ from 'jquery';
 
 import { getStatusOfDarkmode } from '../../../reducer';
+let lock_time = 0;
+let lock_percent = 0;
 class BrainSimulationDetails extends React.Component {
   constructor(props) {
     super(props);
@@ -83,7 +86,9 @@ class BrainSimulationDetails extends React.Component {
       uploadPercentage: 0,
       IsAcceleration: false,
       label_remove_video: 'Remove Video',
-      video_time: 0
+      video_time: 0,
+      video_lock_time: false,
+      isTimeUpdating: false
     };
   }
  
@@ -200,6 +205,8 @@ class BrainSimulationDetails extends React.Component {
     const video = player.querySelector('.viewer');
     
     const progressBar = document.querySelector('.progress__filled');
+    const lockButton = document.querySelector('.lock_video');
+    
     let the = this;
     let controls = {
       //Updating scroller to video time
@@ -209,16 +216,63 @@ class BrainSimulationDetails extends React.Component {
       },
       scrub: (e) =>{
         const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
-        video.currentTime = scrubTime;
+        if(scrubTime){
+          video.currentTime = scrubTime;
+        }
+      },
+      lockVideo:()=>{
+        console.log('clicked');
+        lock_time = video.currentTime;
+        const percent2 = (video.currentTime / video.duration) * 100;
+        lock_percent = percent2;
+        setTimeout(()=>{$('.progress__filled').val(percent2)},1000);
+        
+      },
+      setvideoTime:(time)=>{
+        console.log('time',time)
+        video.currentTime = time
       }
+    }
+    if(video && this.state.video_lock_time){
+      controls.setvideoTime(this.state.video_lock_time);
     }
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
+    lockButton.addEventListener('click', controls.lockVideo);
     let mousedown = false;
     progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
     progressBar.addEventListener('mousedown', () => mousedown = true);
     progressBar.addEventListener('mouseup', () => mousedown = false);
   }
+  handlelock_video =()=>{
+    console.log('lock_time',lock_time)
+    if(this.state.video_lock_time){
+      this.setState({video_lock_time: 0});
+      this.setVideoTime(0);
+    }else{
+      this.setState({video_lock_time: lock_time});
+      this.setVideoTime(lock_time);
+    }
+    
+  }
+  //Setting video lockTime
+  setVideoTime =(time)=>{
+    this.setState({isTimeUpdating: true})
+    setVideoTime({image_id:this.props.location.state.data.sensor_data.image_id,video_lock_time:time})
+    .then((response) => {
+      console.log(response)
+      if(response.data.message == 'success'){
+        this.setState({isTimeUpdating: false});
+        $('.progress__filled').val(lock_percent);
+      }else{
+        this.setState({isTimeUpdating: false});
+         $('.progress__filled').val(lock_percent);
+      }
+    }).catch(err=>{
+      console.log('err',err)
+    })
+  }
+
   handleChangeRange =(event)=>{
     this.setState({video_time: event.target.value});
   }
@@ -408,9 +462,11 @@ class BrainSimulationDetails extends React.Component {
                              
                           }
 
-                               
                           <div>
-                            <img src={unlock} className="unlock-img"/>
+                          {this.state.isTimeUpdating ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
+                          </div>
+                          <div>
+                            <img src={this.state.video_lock_time? lock : unlock} className="unlock-img lock_video" onClick={this.handlelock_video}/>
                             <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
@@ -475,6 +531,7 @@ class BrainSimulationDetails extends React.Component {
                     this.setState({
                         movie_link:response.data.movie_link,
                         impact_video_url: response.data.impact_video_url,
+                        video_lock_time: response.data.video_lock_time, 
                     });
                     getBrainSimulationLogFile(this.props.location.state.data.sensor_data.image_id).then((response) => {
                       console.log('response',response)

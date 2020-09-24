@@ -202,6 +202,23 @@ class LoginComponentHidden extends React.Component {
       }
     }
   }
+  //google response
+  responseGoogle = (response) => {
+    console.log(response);
+    if(response.profileObj){
+      var formJsonData = {userID : response.profileObj.googleId,first_name: response.profileObj.familyName,last_name: response.profileObj.givenName}
+      this.setState({
+        signupData:{
+          userID: response.profileObj.googleId,
+          first_name: response.profileObj.familyName,
+          last_name: response.profileObj.givenName,
+          email: response.profileObj.email
+        }
+      })
+      this.LoginWithoutEmail(formJsonData);
+    }
+  }
+
   LoginWithoutEmail =(formJsonData)=>{
     this.setState({isLoading: true})
     loginWithoutEmail(formJsonData)
@@ -300,9 +317,6 @@ class LoginComponentHidden extends React.Component {
       pathname : '/User/SignUp/',
       state : { data : this.state.signupData }
     }} />
-  }
-  const responseGoogle = (response) => {
-    console.log(response);
   }
     return (
       <React.Fragment>
@@ -435,7 +449,7 @@ class LoginComponentHidden extends React.Component {
                     
                      <FacebookLogin
                       appId="372593693091338"
-                      autoLoad={true}
+                      autoLoad={false}
                       fields="first_name, last_name,email,picture,gender"
                       callback={this.responseFacebook}
                       render={renderProps => (
@@ -456,8 +470,8 @@ class LoginComponentHidden extends React.Component {
                         </>
                       )}
                       buttonText="Login"
-                      onSuccess={responseGoogle}
-                      onFailure={responseGoogle}
+                      onSuccess={this.responseGoogle}
+                      onFailure={this.responseGoogle}
                       cookiePolicy={'single_host_origin'}
                     />
                     <div style={{'float':'left','width': '100%'}}>

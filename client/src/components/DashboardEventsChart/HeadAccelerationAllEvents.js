@@ -3,6 +3,7 @@ import { Line } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import simulationLoading from '../simulationLoading.png';
 import Report from '../ReportContent/Report0';
+import DownloadReportPopup from '.././Popup/DownloadReportPopup';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 const options = {
     responsive: true,
@@ -52,6 +53,7 @@ class HeadAccelerationAllEvents extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            isDisplay: { display: 'none' },
             data: {
                 labels: this.props.data.time,
                 fill: false,
@@ -146,6 +148,19 @@ class HeadAccelerationAllEvents extends React.Component {
             data: temp_data
         };
     }
+    downloadReport = (e) =>{
+        console.log('delete',e)
+        this.setState({DelData: {type: 'team',data:e} })
+        if (this.state.isDisplay.display === 'none') {
+          this.setState({ isDisplay: {display:'flex',background:'transparent'} });
+        } else {
+          this.setState({ isDisplay: {display:'none',background:'transparent'} });
+        }
+    }
+
+    makeVisible = (data) => {
+        this.setState({ isDisplay: data });
+    }
 
     getDate = (timestamp) => {
 
@@ -194,6 +209,8 @@ class HeadAccelerationAllEvents extends React.Component {
           
         }
         return (
+            <>
+            <DownloadReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
                 <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.getDate(this.props.data.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(this.props.data.sensor_data['impact-time']) : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.getDate(this.props.data.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(this.props.data.sensor_data['time'])  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
                     <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
@@ -235,7 +252,7 @@ class HeadAccelerationAllEvents extends React.Component {
 
                                         }} ><button className="btn btn-primary ">View Details</button></Link>
                                     }
-                                    <button className="btn btn-primary " style={{'margin-top': '5px'}}>
+                                    <button className="btn btn-primary " style={{'margin-top': '5px'}} >
                                     <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
                                         color: 'white'
                                     }}>
@@ -249,6 +266,7 @@ class HeadAccelerationAllEvents extends React.Component {
                     </div>
                 </div>
             </div>
+            </>
         );
     }
 }

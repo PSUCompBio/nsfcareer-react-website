@@ -2142,12 +2142,12 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
             res.send({
                 message : "success",
                 movie_link : movie_link_url,
-                impact_video_url: impact_video_url
+                impact_video_url: impact_video_url,
+                video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : ''
             })
         })
         .catch(err => {
             console.log(err);
-            // res.removeHeader('X-Frame-Options');
             if("authorized" in err){
                 res.send({
                     message : "failure",
@@ -2162,6 +2162,53 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         })
 });
 
+/*+++++++++++++++++ Set video lock time funtion start here ++++++++++++++++ */
+app.post(`${apiPrefix}setVideoTime`, (req, res) => {
+    console.log(req.body);
+    setVideoTime(req.body.image_id, req.body.video_lock_time)
+    .then(data=>{
+        res.send({
+            message:'success',
+            status: '200',
+            data:data
+        })
+    }).catch(err=>{
+        res.send({
+            message:'failure',
+            status: '300',
+            data: []
+        })
+    })
+});
+
+function setVideoTime(image_id,video_lock_time) {
+    console.log('user_name',image_id,video_lock_time)
+    return new Promise((resolve, reject) => {
+       var userParams = {
+            TableName: "simulation_images",
+            Key: {
+                image_id: image_id,
+            },
+            UpdateExpression:
+                "set video_lock_time = :video_lock_time",
+            ExpressionAttributeValues: {
+                ":video_lock_time": video_lock_time,
+            },
+            ReturnValues: "UPDATED_NEW",
+        };
+        docClient.update(userParams, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+/*+++++++++++++++++ Set video lock time funtion end here ++++++++++++++++ */
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
 });
