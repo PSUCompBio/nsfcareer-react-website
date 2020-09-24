@@ -920,3 +920,15 @@ export const getOrgUniqueTeams = (request) =>{
       });
   })
 }
+
+export const setVideoTime = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/setVideoTime/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

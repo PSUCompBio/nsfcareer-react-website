@@ -449,7 +449,7 @@ class LoginComponentHidden extends React.Component {
                     
                      <FacebookLogin
                       appId="372593693091338"
-                      autoLoad={true}
+                      autoLoad={false}
                       fields="first_name, last_name,email,picture,gender"
                       callback={this.responseFacebook}
                       render={renderProps => (
