@@ -166,6 +166,10 @@
     float: right;
     width: 70%;
   }
+  .download-report-box {
+    width: 43%!important;
+    left: 30%;
+  }
 }
 @media (max-width: 767px) {
   .modal__show {
@@ -457,6 +461,10 @@
   }
   .three_D_model_div{
     height: auto!important;
+  }
+  .download-report-box {
+    width: 80%!important;
+    left: 9%;
   }
 }
 

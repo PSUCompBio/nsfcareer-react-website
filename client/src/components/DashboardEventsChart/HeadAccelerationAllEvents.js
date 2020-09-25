@@ -145,7 +145,6 @@ class HeadAccelerationAllEvents extends React.Component {
 
     static getDerivedStateFromProps (props, state) {
         let temp_data = state.data;
-        console.log(props.linearUnit)
         if (props.linearUnit === 'ms') {
             options.scales.yAxes[0].scaleLabel.labelString = 'Linear Acceleration (m/s2)';
             temp_data.datasets[0].data = props.data.linear_acceleration['xv'] ? props.data.linear_acceleration['xv'] : [];
@@ -162,10 +161,9 @@ class HeadAccelerationAllEvents extends React.Component {
         };
     }
     downloadReport = (e) =>{
-        console.log('delete',e)
         this.setState({DelData: {type: 'team',data:e} })
         if (this.state.isDisplay.display === 'none') {
-          this.setState({ isDisplay: {display:'flex',background:'transparent'} });
+          this.setState({ isDisplay: {display:'block',background:'transparent'} });
         } else {
           this.setState({ isDisplay: {display:'none',background:'transparent'} });
         }
@@ -202,28 +200,24 @@ class HeadAccelerationAllEvents extends React.Component {
     }
 
     render() {
-        console.log("THIS IS DATA RECEIVED CumulativeAccelerationEventChart2", this.props);
+        console.log("propsData 1", this.props);
         if (this.props.data.sensor_data['impact-time']) {
             let split = this.props.data.sensor_data['impact-time'].split(":");
             this.props.data.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
-          }
+        }
 
-          if (this.props.data.sensor_data['time']) {
+        if (this.props.data.sensor_data['time']) {
             let split = this.props.data.sensor_data['time'].toString();
             split = split.split(":");
             this.props.data.sensor_data['time'] = split.slice(0, split.length - 1).join(":");
-          }
-          var fileName = '';
+        }
+        var fileName = '';
         if(this.props.data.sensor_data.player_id && this.props.data.sensor_data.player_id.length > 0){
-       
-            console.log('props',this.props);
-            fileName = this.props.data.sensor_data.player['first-name']+'_'+ this.props.data.sensor_data.player['last-name']+'_'+ this.props.data.sensor_data.player_id.split('$')[1];
-            // console.log('fileName',fileName)
-          
+            fileName = this.props.data.sensor_data.player['first-name']+'_'+ this.props.data.sensor_data.player['last-name']+'_'+ this.props.data.sensor_data.player_id.split('$')[1];  
         }
         return (
             <>
-            <DownloadReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />
+            <DownloadReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} Report={this.props} fileName={fileName}/>
             <div className="position-relative animated fadeInRight  bg-white acc-evnt">
                 <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.getDate(this.props.data.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(this.props.data.sensor_data['impact-time']) : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.getDate(this.props.data.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(this.props.data.sensor_data['time'])  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
                     <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
@@ -265,13 +259,13 @@ class HeadAccelerationAllEvents extends React.Component {
 
                                         }} ><button className="btn btn-primary ">View Details</button></Link>
                                     }
-                                    <button className="btn btn-primary " style={{'margin-top': '5px'}} >
-                                    <PDFDownloadLink document={<Report jsonData={this.state.simulationData.jsonOutputFile} {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
+                                    <button className="btn btn-primary " style={{'margin-top': '5px'}} onClick={this.downloadReport}>Export Impact Report
+                                    {/*<PDFDownloadLink document={<Report jsonData={this.state.simulationData.jsonOutputFile} {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
                                         color: 'white'
                                     }}>
                                      Export Impact Report
                                     {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-                                    </PDFDownloadLink>
+                                    </PDFDownloadLink>*/}
                                     </button>
                                 </div>
                             </div>

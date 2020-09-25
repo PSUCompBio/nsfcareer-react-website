@@ -342,20 +342,25 @@ class Report extends React.Component {
     constructor(props) {
         super(props);
         console.log('Rports props are ', this.props);
+        console.log('metric ', this.props.Metric);
+
         if(this.props.jsonData){
             this.state = {
                 jsonData : this.props.jsonData[0].jsonOutputFile,
-                data: this.props.data.player
+                data: this.props.data.player,
+                metric: ''
             }
         }else if(this.props.data){
             this.state = {
                 jsonData : this.props.data,
-                data: this.props.data.sensor_data.player ? this.props.data.sensor_data.player : ''
+                data: this.props.data.sensor_data.player ? this.props.data.sensor_data.player : '',
+                metric: this.props.Metric,
             }
         }else{
             this.state = {
                 jsonData : '',
-                data: ''
+                data: '',
+                metric: ''
             } 
         }
     }
@@ -381,7 +386,6 @@ class Report extends React.Component {
 
 
     render() {
-        
         var csdm;
         if(this.props.jsonData){
             if(this.props.jsonData['csdm-15']){
@@ -439,94 +443,88 @@ class Report extends React.Component {
                                 <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
                             </View>
-                           
-                            <View style={styles.col12}>
-                                 <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
-                                <View style={styles.rowHead2}>
-                                    {/*<Text  style={styles.rowHead2Text}>10% of brain tissue has exceeded MASxSR</Text>*/}
-                                    {/*<Text style={styles.rowHead2TextSub}>7.5</Text>*/}
-                                    {/* <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s   )</Text>*/}
-                                    {/* <Text style={styles.rowHead2Text2Sub}>-1</Text>*/}
-                                    {/*<Text  style={styles.rowHead2_2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>*/}
-                                     <View style={styles.tableRowCenter}>
-                                        <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
-                                        <Text style={styles.tableColLeft4}>15</Text>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                        <View style={styles.rowHead2}>
+                                             <View style={styles.tableRowCenter}>
+                                                <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
+                                                <Text style={styles.tableColLeft4}>15</Text>
+                                            </View>
+                                            <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                        </View>
                                     </View>
-                                    <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
-                                </View>
-                            </View>
-                            <View style={styles.col12}>
-                                <View style={styles.rowHead2subHead}>
-                                    <Text  style={styles.rowHead2Text2subHead}>
-                                        Maximum CSDM
-                                    </Text>
-                                    <Text style={styles.tableColLeft4_2}>15</Text>
-                                    <Text  style={styles.rowHead2Text2subHead_2}>
-                                        in Each Brain Region
-                                    </Text>
-                                </View>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
-                                <Text style={styles.tableColRight2}>0-7.5</Text>
-                                <Text style={styles.hLine}></Text>
-                                <Text style={styles.tableColRight2}>7.5-15</Text>
-                                <Text style={styles.hLine}></Text>
-                                <Text style={styles.tableColRight2}>15-25</Text>
-                                <Text style={styles.hLine}></Text>
-                                <Text style={styles.tableColRight2}>25-30</Text>
-                                <Text style={styles.hLine}></Text>
-                                <Text style={styles.tableColRight2}>30-50</Text>
-                                <Text style={styles.tableColRight3}>NOTES</Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Frontal Lobe</Text>
-                                <View style={styles.tableColRight2_2}>
-                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                </View>
-                                <Text style={styles.tableColRight2_2}></Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                <View style={styles.tableColRight2_2}>
-                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                </View>
-                                <Text style={styles.tableColRight2_2}></Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Occipital Lobe</Text>
-                                <View style={styles.tableColRight2_2}>
-                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                </View>
-                                <Text style={styles.tableColRight2_2}></Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                <View style={styles.tableColRight2_2}>
-                                    <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                </View>
-                                <Text style={styles.tableColRight2_2}></Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Cerebellum</Text>
-                                <View style={styles.tableColRight2_2}>
-                                    
-                                </View>
-                                <Text style={styles.tableColRight2_2}></Text>
-                            </View>
-                            <View style={styles.tableRow}>
-                                <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
-                                <View style={styles.tableColRight2_2}>
-                                    
-                                </View>
-                                <Text style={styles.tableColRight2_2}></Text>
-                            </View>
-                            <View style={styles.col12}>
-                                <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
-                            </View>
-                            <View style={styles.taxture1_div}>
-                                <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
-                            </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHead2subHead}>
+                                            <Text  style={styles.rowHead2Text2subHead}>
+                                                Maximum CSDM
+                                            </Text>
+                                            <Text style={styles.tableColLeft4_2}>15</Text>
+                                            <Text  style={styles.rowHead2Text2subHead_2}>
+                                                in Each Brain Region
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
+                                        <Text style={styles.tableColRight2}>0-7.5</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>7.5-15</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>15-25</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>25-30</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>30-50</Text>
+                                        <Text style={styles.tableColRight3}>NOTES</Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Frontal Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Parietal Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Occipital Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Temporal Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Cerebellum</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                    </View>
+                                    <View style={styles.taxture1_div}>
+                                        <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
+                                    </View>
                         </View>
 
                         {/* <View style={{
