@@ -598,7 +598,7 @@ class BrainSimulationDetails extends React.Component {
                             <button className="btn gray">MASxSR<sub>15</sub></button>
                           </div>
                           <div className="col-md-12">
-                            <img class="img-fluid svg" width="100%" height="60%" src={this.props.location.state.data.simulation_image ? 'data:image/png;base64,' + this.props.location.state.data.simulation_image : simulationLoading} alt="" />
+                            <img class="img-fluid svg" width="100%" height="60%" src={this.props.location.state.simulationImage ? 'data:image/png;base64,' + this.props.location.state.simulationImage : simulationLoading} alt="" />
                             
                           </div>
                       </div>

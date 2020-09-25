@@ -254,7 +254,8 @@ class HeadAccelerationAllEvents extends React.Component {
                                             
                                            state:{
                                             state: this.props.state,
-                                            data:this.props.data
+                                            data:this.props.data,
+					    simulationImage: this.state.simulationData.simulationImage,
                                            } 
 
                                         }} ><button className="btn btn-primary ">View Details</button></Link>
