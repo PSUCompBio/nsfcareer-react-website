@@ -92,7 +92,7 @@ class ExportPlayerReport extends React.Component {
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
-					name: "Motor and Sensor Cortex",
+					name: "Motor/Sensor Cortex",
 					shortenName: "Motor& Sensor Cortex"
 				},
 				{

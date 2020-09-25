@@ -30,7 +30,7 @@ class DownloadReportPopup extends React.Component {
     this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
   }
   render() {
-    console.log("propsData 2", this.props.Report);
+    console.log("propsData 2", this.props.jsonData);
     return (
       <div style={this.props.isVisible} className="modal__wrapper ">
          {this.props.isVisible ? this.scrollToTop() : null}
@@ -66,13 +66,21 @@ class DownloadReportPopup extends React.Component {
             </table>
             <div className="report-download-buttons">
               <button><img src={share_icon} style={{width:'24px'}}/>  Share</button><br/>
-              
-                <PDFDownloadLink document={<Report {...this.props.Report} Metric={this.state}/>} className="export-cumulative-player" fileName={this.props.fileName} style={{
+              {this.state.csdm_15 ?
+                <PDFDownloadLink document={<Report {...this.props.Report} Metric={this.state} jsonfile={this.props.jsonData}/>} className="export-cumulative-player" fileName={this.props.fileName} style={{
                         color: 'white'
                     }}>
                      <button>  Download</button>
                     {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                     </PDFDownloadLink>
+                  : <PDFDownloadLink document={<Report {...this.props.Report} Metric={this.state} jsonfile={this.props.jsonData}/>} className="export-cumulative-player" fileName={this.props.fileName} style={{
+                        color: 'white'
+                    }}>
+                     <button>  Download</button>
+                    {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                    </PDFDownloadLink>
+              }
+              
               
             </div>
           </div>

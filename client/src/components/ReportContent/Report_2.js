@@ -338,12 +338,10 @@ const styles = StyleSheet.create({
     }
 });
 
-class Report extends React.Component {
+class Report_2 extends React.Component {
     constructor(props) {
         super(props);
-        console.log('Rports props are ', this.props);
-        console.log('metric ', this.props.Metric);
-
+        
         if(this.props.jsonData){
             this.state = {
                 jsonData : this.props.jsonData[0].jsonOutputFile,
@@ -443,88 +441,6 @@ class Report extends React.Component {
                                 <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
                             </View>
-                                    <View style={styles.col12}>
-                                        <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
-                                        <View style={styles.rowHead2}>
-                                             <View style={styles.tableRowCenter}>
-                                                <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
-                                                <Text style={styles.tableColLeft4}>15</Text>
-                                            </View>
-                                            <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.col12}>
-                                        <View style={styles.rowHead2subHead}>
-                                            <Text  style={styles.rowHead2Text2subHead}>
-                                                Maximum CSDM
-                                            </Text>
-                                            <Text style={styles.tableColLeft4_2}>15</Text>
-                                            <Text  style={styles.rowHead2Text2subHead_2}>
-                                                in Each Brain Region
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
-                                        <Text style={styles.tableColRight2}>0-7.5</Text>
-                                        <Text style={styles.hLine}></Text>
-                                        <Text style={styles.tableColRight2}>7.5-15</Text>
-                                        <Text style={styles.hLine}></Text>
-                                        <Text style={styles.tableColRight2}>15-25</Text>
-                                        <Text style={styles.hLine}></Text>
-                                        <Text style={styles.tableColRight2}>25-30</Text>
-                                        <Text style={styles.hLine}></Text>
-                                        <Text style={styles.tableColRight2}>30-50</Text>
-                                        <Text style={styles.tableColRight3}>NOTES</Text>
-                                    </View>
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Frontal Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                        </View>
-                                        <Text style={styles.tableColRight2_2}></Text>
-                                    </View>
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                        </View>
-                                        <Text style={styles.tableColRight2_2}></Text>
-                                    </View>
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Occipital Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                        </View>
-                                        <Text style={styles.tableColRight2_2}></Text>
-                                    </View>
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
-                                        </View>
-                                        <Text style={styles.tableColRight2_2}></Text>
-                                    </View>
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Cerebellum</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            
-                                        </View>
-                                        <Text style={styles.tableColRight2_2}></Text>
-                                    </View>
-                                    <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            
-                                        </View>
-                                        <Text style={styles.tableColRight2_2}></Text>
-                                    </View>
-                                    <View style={styles.col12}>
-                                        <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
-                                    </View>
-                                    <View style={styles.taxture1_div}>
-                                        <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
-                                    </View>
                         </View>
 
                         {/* <View style={{
@@ -630,4 +546,4 @@ class Report extends React.Component {
 
 
 
-                export default Report;
+                export default Report_2;
