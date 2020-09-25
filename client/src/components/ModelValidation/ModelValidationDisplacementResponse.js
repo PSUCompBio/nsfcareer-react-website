@@ -7,7 +7,7 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col ,Card} from 'react-bootstrap';
 
 import axios from 'axios';
 import grater_icon from "./grater_icon.png"
@@ -52,7 +52,20 @@ class ModelValidationDisplacementResponse extends React.Component {
               </Row>
             </Container>
             {/*Body Section start here*/}
-          
+            <Container>
+              <Row className="model-validation-head">
+                <Col sm={6}>
+                  <Card>
+                    <Card.Header>Hardy et al.</Card.Header>
+                  </Card>
+                </Col>
+                <Col sm={6}>
+                  <Card>
+                    <Card.Header>Panzer et al.</Card.Header>
+                  </Card>
+                </Col>
+              </Row>
+            </Container>
             {/*Body Section end here*/}
           </div>
         </div>

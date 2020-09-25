@@ -1186,6 +1186,20 @@ button.btn.button-yes {
     width: 35%!important;
     height: auto!important;
     padding: 23px!important;
+    position: fixed;
+    color: #fff;
+    text-align: center;
+    top: 50%;
+    left: 33%;
+    margin-top: -100px !important;
+    animation: fadeIn 1s, slideIn 0.8s linear;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px #999;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-flow: column;
 }
 .popu-body{
   text-align: left!important;
@@ -1198,7 +1212,7 @@ button.btn.button-yes {
   text-align: center;
 }
 .report-download-buttons button{
-    width: 200px;
+    width: 100%;
     background: #0A5794;
     border: none;
     border-radius: 4px;
@@ -1214,4 +1228,34 @@ button.btn.button-yes {
 .popu-body p{
       font-size: 19px;
     font-weight: 600;
+}
+.model-validation-head .card{
+  width: 60%;
+  margin: 0 auto;
+  border: 2px solid #2F528F;
+  border-radius: 22px;
+  height: 150px;
+  background: #D9D9D9;
+  margin-top: 51px;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+.model-validation-head .card-header{
+  background: #D9D9D9;
+    font-size: 29px;
+    color: #0A5794;
+    font-weight: 600;
+        border-bottom: none;
+  position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+.model-validation-head .card:hover{
+      transform: scale(1.01);
+      box-shadow: 0px 0px 6px #b3b3b3;
 }
