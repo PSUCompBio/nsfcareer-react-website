@@ -381,11 +381,11 @@ class Report extends React.Component {
 
 
     render() {
-        console.log(this.state.jsonData)
+        
         var csdm;
-        if(this.state.jsonData){
-            if(this.state.jsonData['csdm-15']){
-                csdm = this.state.jsonData['csdm-15'];
+        if(this.props.jsonData){
+            if(this.props.jsonData['csdm-15']){
+                csdm = this.props.jsonData['csdm-15'];
             }
         }
         return (

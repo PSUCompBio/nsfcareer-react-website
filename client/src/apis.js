@@ -647,6 +647,18 @@ export const getAllCumulativeAccelerationTimeRecords = (request) =>{
   })
 }
 
+export const getSimulationDetail = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getSimulationDetail`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getAllCumulativeAccelerationJsonData = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllCumulativeAccelerationJsonData`, request,{withCredentials: true})

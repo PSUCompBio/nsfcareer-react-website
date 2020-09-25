@@ -6455,6 +6455,60 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
         }) 
 });
 
+app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
+    let jsonOutputFile = '';
+    let simulationImage = '';
+    let simulationData = '';
+    getSimulationImageRecord(req.body.image_id)
+        .then(simulation_data => {
+            simulationData = simulation_data;
+            if (simulationData.path && simulationData.path != 'null') {
+                return getFileFromS3(simulationData.path, simulationData.bucket_name);
+            } else {
+                if (simulationData.root_path && simulationData.root_path != 'null') {
+                    let image_path = simulationData.root_path + simulationData.image_id + '.png';
+                    return getFileFromS3(image_path, simulationData.bucket_name);
+                }
+            }
+        })
+        .then(image_s3 => {
+            if (image_s3) {
+                return getImageFromS3Buffer(image_s3);
+            }
+        })
+        .then(image => {
+            simulationImage = image;
+            if (simulationData.ouput_file_path && simulationData.ouput_file_path != 'null') {
+                let file_path = simulationData.ouput_file_path;
+                file_path = file_path.replace(/'/g, "");
+                return getFileFromS3(file_path, simulationData.bucket_name);
+            } else {
+                if (simulationData.root_path && simulationData.root_path != 'null') {
+                    let summary_path = simulationData.root_path + simulationData.image_id + '_output.json';
+                    summary_path = summary_path.replace(/'/g, "");
+                    console.log('summary_path',summary_path)
+                    return getFileFromS3(summary_path, simulationData.bucket_name);
+                }
+            }
+        })
+        .then(json_output_file => {
+            if (json_output_file){
+                jsonOutputFile = JSON.parse(json_output_file.Body.toString('utf-8'));
+            }
+
+            res.send({
+                message: "success",
+                data: {simulationImage: simulationImage, jsonOutputFile: jsonOutputFile},
+            })
+        }) 
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })  
+})
+
 function getTeamSpheres(obj) {
     return new Promise((resolve, reject) => {
         let params;

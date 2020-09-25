@@ -5,6 +5,9 @@ import simulationLoading from '../simulationLoading.png';
 import Report from '../ReportContent/Report0';
 import DownloadReportPopup from '.././Popup/DownloadReportPopup';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
+import {
+    getSimulationDetail,
+  } from '../../apis';
 const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -54,6 +57,7 @@ class HeadAccelerationAllEvents extends React.Component {
         super(props);
         this.state = {
             isDisplay: { display: 'none' },
+            simulationData: '',
             data: {
                 labels: this.props.data.time,
                 fill: false,
@@ -128,6 +132,15 @@ class HeadAccelerationAllEvents extends React.Component {
             is_selfie_simulation_file_uploaded: props.is_selfie_simulation_file_uploaded,
             imageUrl: props.imageUrl
         };
+    }
+
+    componentDidMount() {
+        getSimulationDetail({image_id: this.props.data.sensor_data.image_id})
+            .then(response => {
+                this.setState({
+                    simulationData: response.data.data,
+                });
+            })
     }
 
     static getDerivedStateFromProps (props, state) {
@@ -236,7 +249,7 @@ class HeadAccelerationAllEvents extends React.Component {
                                         </div>
                                     */}
                                    
-                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.props.data.simulation_image ? 'data:image/png;base64,' + this.props.data.simulation_image : simulationLoading} alt="" />
+                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading} alt="" />
                                      {
                                     !this.props.data.sensor_data ?
                                        null
@@ -253,7 +266,7 @@ class HeadAccelerationAllEvents extends React.Component {
                                         }} ><button className="btn btn-primary ">View Details</button></Link>
                                     }
                                     <button className="btn btn-primary " style={{'margin-top': '5px'}} >
-                                    <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
+                                    <PDFDownloadLink document={<Report jsonData={this.state.simulationData.jsonOutputFile} {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
                                         color: 'white'
                                     }}>
                                      Export Impact Report
