@@ -159,6 +159,15 @@
   .button-edit {
     float: initial !important;
   }
+  .plyar-button-edit{
+    float: right!important;
+  }
+  .team-edit-button{
+        margin-top: 10px;
+  }
+  .plyar-button-edit:first-child{
+    margin-right: 0%!important;
+  }
   .camera-circle-desktop {
     height: 155px;
   }
@@ -426,6 +435,12 @@
   .button-edit {
     float: initial !important;
   }
+  .plyar-button-edit{
+    float: right!important;
+  }
+  .plyar-button-edit:first-child {
+    margin-right: 13%!important;
+  }
   .org-edit-button {
     text-align: center !important;
     left: 25% !important;
@@ -465,6 +480,13 @@
   .download-report-box {
     width: 80%!important;
     left: 9%;
+  }
+
+  .top-heading__login{
+    width: 100%!important;
+  }
+  .three_D_model_div canvas{
+    width: 100%!important;
   }
 }
 
@@ -517,6 +539,9 @@
     background: #dae3f3;
     font-size: 19px;
   }
+  .plyar-button-edit:first-child {
+      margin-right: 6%!important;
+  }
 }
 
 @media screen and (max-width: 412px) {
@@ -546,6 +571,12 @@
   }
   /* Navigation text end  */
 }
+@media screen and (max-width: 394px){
+  .plyar-button-edit:first-child {
+      margin-right: 2%!important;
+  }
+}
+
 @media screen and (max-width: 375px) {
   .custom-button,
   .custom-button2 {
@@ -582,6 +613,12 @@
   }
   .head-team-mobile {
       margin-left: calc(100% - 176px);
+  }
+   .plyar-button-edit:first-child {
+      margin-right: 0 %!important;
+  }
+  .plyar-button-edit {
+      float: initial !important;
   }
 }
 

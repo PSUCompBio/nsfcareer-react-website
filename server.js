@@ -5845,6 +5845,29 @@ app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
     })
 })
 
+app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('AllCumulativeAccelerationTimeRecords',req.body)
+    request.post({ url: config.ComputeInstanceEndpoint + "AllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('getCumulativeAccelerationTimeRecords',req.body)
+    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
 app.post(`${apiPrefix}getAllCumulativeAccelerationJsonData`, (req,res) =>{
     
     request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationJsonData", json: req.body }, function (err, httpResponse, body) {

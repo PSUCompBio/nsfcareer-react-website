@@ -647,6 +647,30 @@ export const getAllCumulativeAccelerationTimeRecords = (request) =>{
   })
 }
 
+export const getCumulativeAccelerationTimeRecords = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const AllCumulativeAccelerationTimeRecords = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/AllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getSimulationDetail = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getSimulationDetail`, request,{withCredentials: true})

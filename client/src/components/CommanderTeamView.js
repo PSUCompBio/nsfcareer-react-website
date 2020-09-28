@@ -796,9 +796,9 @@ class CommanderTeamView extends React.Component {
                         <div className="col-md-12 Admintitle2" >
                             <h1>
                                 <span className="team-page-title">Team Dashboard</span>
-                                <div className="col-md-4 team-edit-button">
-                                    <button className="btn button-edit" style={{'margin-right': '4px'}}>Edit</button>
-                                    <button className="btn button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                <div className="col-md-6 team-edit-button">
+                                    <button className="btn button-edit plyar-button-edit" style={{'margin-right': '4px'}}>Edit</button>
+                                    <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
                                    
                                 </div>
                             </h1>

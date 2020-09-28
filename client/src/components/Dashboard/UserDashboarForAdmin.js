@@ -17,10 +17,12 @@ import {
   getCumulativeAccelerationData,
   getSimulationFilesOfPlayer,
   getAllCumulativeAccelerationTimeRecords,
-  getAllCumulativeAccelerationJsonData
+  AllCumulativeAccelerationTimeRecords,
+  getAllCumulativeAccelerationJsonData,
+  getCumulativeAccelerationTimeRecords
 } from '../../apis';
 
-import { Form } from 'react-bootstrap';
+import { Form,Button, Collapse,Accordion, Card } from 'react-bootstrap';
 
 
 
@@ -55,12 +57,16 @@ class UserDashboarForAdmin extends React.Component {
       eventDateValue: '-1',
       simulationFilePaths: null,
       cumulativeAccelerationTimeAllRecords: [],
+      cumulativeAccelerationTimeAlldata: [],
       frontal_Lobe: [],
-      jsonData: ''
+      jsonData: '',
+      open: false,
+      loading: false
     };
   }
 
   componentDidUpdate() {
+    console.log('thi props',this.props)
     svgToInline();
   }
 
@@ -70,18 +76,15 @@ class UserDashboarForAdmin extends React.Component {
 
   onDateChange = (event) => {
     this.setState({ eventDateValue: event.target.value });
-    console.log("Value changed", event.target.value);
     this.setState({
       simulationFilePaths: []
     })
     if (event.target.value != "-1") {
       getSimulationFilesOfPlayer({ path: event.target.value })
         .then(response => {
-          console.log("STATE IS ", this.state.simulationFilePaths);
           this.setState({
             simulationFilePaths: this.state.simulationFilePaths.concat(response.data.data)
           })
-          console.log("AFTER FIX IS ", this.state.simulationFilePaths);
         })
         .catch(err => {
           alert("Internal Server Error !");
@@ -109,9 +112,52 @@ class UserDashboarForAdmin extends React.Component {
       });
     }
   }
+  handleCollapse =(e)=>{
+    this.setState({cumulativeAccelerationTimeAlldata: [],loading:true});
+    if(e.indexOf(this.state.open) == -1){
+      this.setState({open: e});
+      getCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: e, team: this.props.location.state.team.team_name })
+      .then(res=>{
+        console.log('res',res)
+        this.setState({
+           cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
+           loading: false
+        })
+      }).catch(err=>{
+        console.log('err',err)
+      })
+    }else{
+      this.setState({open: false})
+    }
+  }
+
+  getDate = (timestamp) => {
+
+      const plus0 = num => `0${num.toString()}`.slice(-2)
+    
+      const d = new Date(timestamp)
+    
+      const year = d.getFullYear()
+      const monthTmp = d.getMonth() + 1
+      const month = plus0(monthTmp)
+      const date = plus0(d.getDate())
+      
+      return `${month}/${date}/${year}`+' |'
+  }
+
+  tConvert = (time) => {
+      // Check correct time format and split into components
+      time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+    
+      if (time.length > 1) { // If time format correct
+        time = time.slice (1);  // Remove full string match value
+        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+        time[0] = +time[0] % 12 || 12; // Adjust hours
+      }
+      return time.join (''); // return adjusted time or original string
+  }
 
   render() {
-    console.log('this.props.location.state',this.props.location.state)
     const isLoaded = this.state.user;
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
@@ -215,12 +261,45 @@ class UserDashboarForAdmin extends React.Component {
                 </div>
             </div>
           }
-          
-          {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
+        {/*------------- Collapse chart start here -----------*/}
+        <div className="charts-container">
+          <Accordion className="player-collapes-div">
+            {this.state.cumulativeAccelerationTimeAllRecords && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
+              <Card >
+                <Card.Header>
+                  <Accordion.Toggle as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id)} eventKey={item.sensor_data.player_id} >
+                    <span className="title-left" >ID: {item.sensor_data.player_id.split('$')[1]}</span>
+                    <span className="title-left">{`${item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(item.sensor_data['impact-time']) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(item.sensor_data['time'])  : 'Unkown Date and Time'}`}</span>
+                    <span className="title-right" style={this.state.open == item.sensor_data.player_id ? {'transform': 'rotate(90deg)'} : {}}>></span>
+                  </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey={item.sensor_data.player_id}>
+                  <Card.Body>
+                    {this.state.open == item.sensor_data.player_id && this.state.cumulativeAccelerationTimeAlldata ? 
+                        this.state.cumulativeAccelerationTimeAlldata.map((item, index) => (
+
+                          <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} state={this.props.location.state}/>
+                        ))
+                      : 
+                        null
+                    }
+                    {this.state.loading && 
+                      <i class="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>
+                    }
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            ))
+            }
+          </Accordion>
+        </div>
+        {/*------------- Collapse chart end here -----------*/}
+       
+          {/*this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
 
             <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} state={this.props.location.state}/>
           ))
-          }
+          */}
          
         </div>
         <React.Fragment>
@@ -245,11 +324,11 @@ class UserDashboarForAdmin extends React.Component {
               this.setState({
                 cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: this.props.location.state.team.brand, team: this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, staff: this.props.location.state.team.staff, player_id: this.props.location.state.player_name, simulationCount: response.data.simulationCount}
               });
-              return getAllCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
+              return AllCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
             })
 
             .then(response => {
-              console.log('response',response.data);
+              console.log('cumulativeAccelerationTimeAllRecords',response)
               this.setState({
                 cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
 		            brainRegions: response.data.brainRegions,
