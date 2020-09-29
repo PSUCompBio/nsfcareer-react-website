@@ -1296,3 +1296,14 @@ button.btn.button-yes {
 .Individual-Head-Acceleration-player-dash-image button, .download-report-box button{
   text-align: center;
 }
+.model-validation-head a{
+  text-decoration: none;
+}
+.Hardy_et_al-header{
+    text-align: center;
+    background: #D9D9D9;
+    padding: 15px;
+    border: 2px solid #0d74c6;
+    font-weight: 500;
+        margin-top: 18px;
+}

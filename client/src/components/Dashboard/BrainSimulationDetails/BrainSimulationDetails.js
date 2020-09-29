@@ -456,20 +456,21 @@ class BrainSimulationDetails extends React.Component {
                   </div>
                   <h1 className="top-heading__login brain-simlation-details-title" >Brain Simulation Details</h1>
                   {/* this.state.simulation_log_path && <p className="top-heading__login brain-simlation-details-title" ><a href={this.state.simulation_log_path} target="_blank">Simulation Log File</a></p>*/}
-                  <div style={{'text-align':'center','width':'100%'}}>{this.state.simulation_log && 
+                  <div style={{'text-align':'center','width':'100%'}}>
+
                     <Link 
                     to={{
                       pathname: '/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog',
                       state: {
                         state: this.props.location.state.state,
                         data: this.props.location.state.data,
-                        simulation_log: this.state.simulation_log
+                        image_id: this.props.location.state.data.sensor_data.image_id
                       }
                     }}>
                    
                       Simulation Log File
                     </Link>
-                  }</div>
+                  </div>
                   <h4 className="brain-simlation-details-subtitle">Player and Impact Number Details</h4>
                 </div>
                 <div className="col-md-12" > 
@@ -631,21 +632,9 @@ class BrainSimulationDetails extends React.Component {
                         impact_video_url: response.data.impact_video_url,
                         video_lock_time: response.data.video_lock_time, 
                         video_lock_time_2: response.data.video_lock_time_2, 
-                    });
-                    getBrainSimulationLogFile(this.props.location.state.data.sensor_data.image_id).then((response) => {
-                      console.log('response',response)
-                        this.setState({
-                          simulation_log:response.data.data,
-                          isLoaded: true,
-                          isAuthenticated: true,
-                          isCheckingAuth: false
-                      });
-                    }).catch((error) => {
-                        this.setState({
-                            isLoaded: true,
-                            userDetails: {},
-                            isCheckingAuth: false
-                        });
+                        isLoaded: true,
+                        isAuthenticated: true,
+                        isCheckingAuth: false
                     });
                   }).catch((error) => {
                     this.setState({

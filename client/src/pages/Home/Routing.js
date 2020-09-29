@@ -41,7 +41,7 @@ import ModelValidationPressureResponse from '../../components/ModelValidation/Mo
 import ModelValidationDisplacementResponse from '../../components/ModelValidation/ModelValidationDisplacementResponse';
 import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
 import LoginComponentHidden  from '../../components/Authentication/LoginComponentHidden';
-
+import Hardy_et_al from '../../components/ModelValidation/Hardy_et_al';
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -385,6 +385,11 @@ class Routing extends React.Component {
             exact
             path="/model-strain-response"
             render={(props) => <ModelValidationStrainResponse {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/Hardy-et-al"
+            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
       </React.Fragment>
     );

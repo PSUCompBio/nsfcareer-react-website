@@ -7,13 +7,13 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-import { Container, Row, Col ,Card} from 'react-bootstrap';
+import { Container, Row, Col , Card, Button} from 'react-bootstrap';
 
 import axios from 'axios';
 import grater_icon from "./grater_icon.png"
 
 let sigPad = {};
-class ModelValidationDisplacementResponse extends React.Component {
+class Hardy_et_al extends React.Component {
 
     constructor(props){
         super(props);
@@ -53,18 +53,31 @@ class ModelValidationDisplacementResponse extends React.Component {
             </Container>
             {/*Body Section start here*/}
             <Container>
-              <Row className="model-validation-head">
-                <Col sm={6}>
-                  <Link to='/Hardy-et-al'>
-                    <Card>
-                      <Card.Header>Hardy et al.</Card.Header>
-                    </Card>
-                  </Link>
+              <Row>
+                <Col className="Hardy_et_al-header">
+                  <p>
+                    This validation data is from: Hardy, W.N., Mason, M.J., Foster, C.D., Kopacz, J.M., Yang, K.H., King, A.I., Bishop, J., Bey, M., Anderst, W. and Tashman, S., 2007. A study of the response of the human cadaver head to impact. <i>Stapp car crash jourmal, 51, p.17.</i>
+                  </p>
                 </Col>
-                <Col sm={6}>
-                  <Card>
-                    <Card.Header>Panzer et al.</Card.Header>
-                  </Card>
+              </Row>
+            </Container>
+            <Container>
+              <Row>
+                <Col sm={12} className="text-center mt-4">
+                  <h1>Validation Cases</h1>
+                </Col>
+               
+              </Row>
+              <Row  className=" mt-4">
+                <Col sm={3}>
+                  <p><b>Cora</b> (CORrelation and Analysis) <b>Biofidelic Scale:</b></p>
+                </Col>
+                <Col sm={9}>
+                  <Button variant="danger">Unacceptable</Button>
+                  <Button variant="warning">Marginal</Button>
+                  <Button variant="warning">Fair</Button>
+                  <Button variant="success">Good</Button>
+                  <Button variant="success">Excellent</Button>
                 </Col>
               </Row>
             </Container>
@@ -84,4 +97,4 @@ class ModelValidationDisplacementResponse extends React.Component {
 }
 }
 
-export default ModelValidationDisplacementResponse;
+export default Hardy_et_al;

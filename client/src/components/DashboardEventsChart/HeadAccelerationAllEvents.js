@@ -51,7 +51,7 @@ const options = {
         }]
     }
 };
-
+let isPageloaded = false
 class HeadAccelerationAllEvents extends React.Component {
     constructor(props) {
         super(props);
@@ -198,23 +198,26 @@ class HeadAccelerationAllEvents extends React.Component {
         }
         return time.join (''); // return adjusted time or original string
     }
-
+    
     render() {
-        console.log("propsData 1", this.props);
-        if (this.props.data.sensor_data['impact-time']) {
-            let split = this.props.data.sensor_data['impact-time'].split(":");
-            this.props.data.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
-        }
+            console.log(isPageloaded,"propsData 1\n", this.props);
+            if (this.props.data.sensor_data['impact-time']) {
+                let split = this.props.data.sensor_data['impact-time'].split(":");
+                this.props.data.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
+            }
 
-        if (this.props.data.sensor_data['time']) {
-            let split = this.props.data.sensor_data['time'].toString();
-            split = split.split(":");
-            this.props.data.sensor_data['time'] = split.slice(0, split.length - 1).join(":");
-        }
-        var fileName = '';
-        if(this.props.data.sensor_data.player_id && this.props.data.sensor_data.player_id.length > 0){
-            fileName = this.props.data.sensor_data.player['first-name']+'_'+ this.props.data.sensor_data.player['last-name']+'_'+ this.props.data.sensor_data.player_id.split('$')[1];  
-        }
+            if (this.props.data.sensor_data['time']) {
+                let split = this.props.data.sensor_data['time'].toString();
+                split = split.split(":");
+                this.props.data.sensor_data['time'] = split.slice(0, split.length - 1).join(":");
+            }
+            var fileName = '';
+            if(this.props.data.sensor_data.player_id && this.props.data.sensor_data.player_id.length > 0){
+                fileName = this.props.data.sensor_data.player['first-name']+'_'+ this.props.data.sensor_data.player['last-name']+'_'+ this.props.data.sensor_data.player_id.split('$')[1];  
+            }
+            if(!isPageloaded){
+              setTimeout(()=>{ isPageloaded = true },1000)  
+            }
         return (
             <>
             <DownloadReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} Report={this.props} jsonData={this.state.simulationData.jsonOutputFile} fileName={fileName}/>
@@ -231,7 +234,6 @@ class HeadAccelerationAllEvents extends React.Component {
                             
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-chart">
-                            
                             <Line id="goodCanvas1"  data={this.state.data} options={options} redraw={true} aria-label="Cumulative Overview of All Events" role="chart"/>
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-image   ">
@@ -276,6 +278,7 @@ class HeadAccelerationAllEvents extends React.Component {
             </div>
             </>
         );
+        
     }
 }
 
