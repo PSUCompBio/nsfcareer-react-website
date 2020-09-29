@@ -72,12 +72,105 @@ class Hardy_et_al extends React.Component {
                 <Col sm={3}>
                   <p><b>Cora</b> (CORrelation and Analysis) <b>Biofidelic Scale:</b></p>
                 </Col>
-                <Col sm={9}>
+                <Col sm={9} className="Hardy_et_al-buttons">
                   <Button variant="danger">Unacceptable</Button>
                   <Button variant="warning">Marginal</Button>
-                  <Button variant="warning">Fair</Button>
-                  <Button variant="success">Good</Button>
+                  <Button className="orange">Fair</Button>
+                  <Button className="good">Good</Button>
                   <Button variant="success">Excellent</Button>
+                </Col>
+              </Row>
+            </Container>
+            <Container style={{'margin-top': '30px'}}>
+              <Row className="Hardy_et_al-card">
+                <Col sm>
+                  <Card className="bg-warning">
+                    <Card.Body>
+                      <Card.Title>C288-T3</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>TBD</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>TBD</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>TBD</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+
+              <Row className="Hardy_et_al-card">
+                <Col sm>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>TBD</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>TBD</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>TBD</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+
+                <Col sm>
+                  <Card>
+                    <Card.Body>
+                      <Card.Title>TBD</Card.Title>
+                      <Card.Text>
+                        CORA: TBD
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
                 </Col>
               </Row>
             </Container>

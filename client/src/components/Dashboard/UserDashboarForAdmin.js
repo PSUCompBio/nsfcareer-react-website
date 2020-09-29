@@ -268,7 +268,7 @@ class UserDashboarForAdmin extends React.Component {
               <Card >
                 <Card.Header>
                   <Accordion.Toggle as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id)} eventKey={item.sensor_data.player_id} >
-                    <span className="title-left" >ID: {item.sensor_data.player_id.split('$')[1]}</span>
+                    <span className="title-left" >ID: #{item.sensor_data.player_id.split('$')[1]}</span>
                     <span className="title-left">{`${item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(item.sensor_data['impact-time']) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(item.sensor_data['time'])  : 'Unkown Date and Time'}`}</span>
                     <span className="title-right" style={this.state.open == item.sensor_data.player_id ? {'transform': 'rotate(90deg)'} : {}}>></span>
                   </Accordion.Toggle>

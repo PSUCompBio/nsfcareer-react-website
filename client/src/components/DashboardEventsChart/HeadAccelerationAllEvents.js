@@ -10,6 +10,7 @@ import {
   } from '../../apis';
 const options = {
     responsive: true,
+    animation: false,
     maintainAspectRatio: false,
     fill: false,
 
@@ -221,8 +222,8 @@ class HeadAccelerationAllEvents extends React.Component {
         return (
             <>
             <DownloadReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} Report={this.props} jsonData={this.state.simulationData.jsonOutputFile} fileName={fileName}/>
-            <div className="position-relative animated fadeInRight  bg-white acc-evnt">
-                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.getDate(this.props.data.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(this.props.data.sensor_data['impact-time']) : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.getDate(this.props.data.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(this.props.data.sensor_data['time'])  : 'Unkown Date and Time'}`} className="position-relative head-acc-evnt-chart pl-2 pr-2">
+            <div className="position-relative animated fadeInRight  bg-white">
+                <div data-descr={`${this.props.data.sensor_data['impact-date'] ? this.getDate(this.props.data.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(this.props.data.sensor_data['impact-time']) : this.props.data.sensor_data['date'] && this.props.data.sensor_data['time'] ? this.getDate(this.props.data.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(this.props.data.sensor_data['time'])  : 'Unkown Date and Time'}`} className="position-relative pl-2 pr-2">
                     <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
                          <div className="div-chart-labels"> 
                             <label className="chart-label label-1"><span></span> X Linear Acceleration</label>

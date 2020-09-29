@@ -1,9 +1,4 @@
-/* Responsive layout  */
-@media (min-width: 992px){
-  .container_1200{
-    max-width: 1186px!important;
-  }
-}
+
 @media (min-width: 1200px){
   .container_1200{
     max-width: 1210px!important;
@@ -61,6 +56,17 @@
   }
    .team-page-title{
          margin-left: 0%; 
+  }
+}
+/* Responsive layout  */
+@media (min-width: 992px){
+  .container_1200{
+    max-width: 1186px!important;
+  }
+}
+@media (max-width: 992px){
+  .Hardy_et_al-buttons button {
+    width: auto;
   }
 }
 @media screen and (max-width: 844px) {
