@@ -3211,6 +3211,30 @@ function getOrganizatonBynameSensor(organization, sensor){
         });
     })
 }
+function getOrganizatonByTeam(organization, team_name){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "organizations",
+                FilterExpression: "team_name = :team_name and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":team_name": team_name,
+                ":organization": organization,
+                },
+            };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
 
 app.post(`${apiPrefix}deleteItem`, (req, res) => {
     console.log(req.body)  
@@ -3262,6 +3286,50 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
             })
         })
         
+    }else if(type == 'orgTeam'){
+        getOrganizatonByTeam(data.organization, data.TeamName)
+        .then(org =>{
+            var orglen = org.length;
+            orglen = orglen-1;
+            if(org){
+                org.forEach(function (record, index) {
+                    console.log('record',record.organization_id);
+                    console.log(index, orglen)
+                    DeleteOrganization(record.organization_id)
+                    .then(data => {
+                        console.log('res',data)
+                        if(index == orglen){
+                            res.send({
+                                message: 'success',
+                                status: 200
+                            })
+                        }
+                    }).catch(err => {
+                        console.log('err',err)
+                        if(index == orglen){
+                             res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
+                res.send({
+                    message: 'failure',
+                    status: 300,
+                    err: err
+                })
+            }
+        }).catch(err => {
+            console.log('err',err)
+            res.send({
+                message: 'failure',
+                status: 300,
+                err: err
+            })
+        })
     }
 })
 
@@ -3459,6 +3527,7 @@ app.post(`${apiPrefix}addOrganization`, (req, res) => {
 })
 
 
+
 //Merge organization
 function MergeOrganization(OrganizationName, organization_id) {
     console.log('user_name',OrganizationName,organization_id)
@@ -3490,6 +3559,295 @@ function MergeOrganization(OrganizationName, organization_id) {
     });
 }
 
+/*============ Team edit funtions start here===================*/
+
+//Add organization
+function addorgTeam(TeamName, organization,sensor) {
+    return new Promise((resolve, reject) =>{
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        dbInsert = {
+            TableName: "organizations",
+            Item: {
+                organization: organization,
+                organization_id: 'org-'+Date.now(),
+                player_list: [],
+                sensor: sensor,
+                team_name: TeamName,
+                user_cognito_id: ' '
+            }
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                reject(dbErr)
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                resolve(dbData);
+            }
+        });
+    })
+}
+
+app.post(`${apiPrefix}addorgTeam`, (req, res) => {
+    console.log(req.body);
+    addorgTeam(req.body.TeamName, req.body.organization,req.body.sensor)
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+});
+
+function getSernsorDataByTeam(team_name, organization){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "sensor_data",
+                FilterExpression: "team = :team and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":team": team_name,
+                ":organization": organization,
+                },
+            };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+
+function renameTeam(team_name,organization_id) {
+    console.log('organization_id',organization_id)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            },
+            UpdateExpression: "set #team_name = :team_name",
+            ExpressionAttributeNames: {
+                "#team_name": "team_name"
+            },
+            ExpressionAttributeValues: {
+                ":team_name": team_name
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+function getUserByTeam(team_name, organization){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "users",
+                FilterExpression: "team = :team and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":team": team_name,
+                ":organization": organization,
+                },
+                ProjectionExpression: "user_cognito_id",
+                ScanIndexForward: false
+            };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+function renameUsers(user_cognito_id, team_name) {
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "users",
+            Key: { 
+                "user_cognito_id": user_cognito_id
+            },
+            UpdateExpression: "set #team = :team",
+            ExpressionAttributeNames: {
+                "#team": "team"
+            },
+            ExpressionAttributeValues: {
+                ":team": team_name
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating sensor data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+// function renameSernosrTeam(team,player_id, team_name) {
+//     console.log('player_id',player_id)
+//     return new Promise((resolve, reject) => {
+//         var params = {
+//             TableName: "sensor_data",
+//             Key: { 
+//                 "team": team,
+//                 "player_id" : player_id
+//             },
+//             UpdateExpression: "set #team = :team",
+//             ExpressionAttributeNames: {
+//                 "#team": "team"
+//             },
+//             ExpressionAttributeValues: {
+//                 ":team": team_name
+//             },
+//             ReturnValues: "UPDATED_NEW"
+//         }
+//         docClient.update(params, function (err, data) {
+//             if (err) {
+//                 console.log("error when updating sensor data\n",err);
+//                 reject(err);
+
+//             } else {
+//                 resolve(data)
+//             }
+//         });
+//     });
+// }
+
+app.post(`${apiPrefix}renameTeam`, (req, res) => {
+    console.log('body',req.body);
+    let organization_id = req.body.organization_id;
+    let team_name =  req.body.TeamName;
+    let data = req.body.data;
+    renameTeam(team_name,organization_id)
+    .then(response=>{
+        // return getSernsorDataByTeam(data.TeamName,data.organization);
+        return getUserByTeam(data.TeamName,data.organization)
+    })
+    .then(response=>{
+        console.log('response',response);
+        let users_data = response;
+        if(users_data){
+            let userslen = users_data.length;
+            userslen = userslen-1;
+            users_data.forEach(function (record, index) {
+                renameUsers(record.user_cognito_id, team_name)
+                .then(data => {
+                    console.log('res',data)
+                    if(index == userslen){
+                        res.send({
+                            message: 'success',
+                            status: 200
+                        })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    if(index == userslen){
+                         res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
+                })
+            })
+        }else{
+            res.send({
+                message: 'success',
+                status: 200
+            })
+        }
+        // let sensor_data = response;
+        // if(sensor_data){
+        //     let orglen = sensor_data.length;
+        //     orglen = orglen-1;
+        //     sensor_data.forEach(function (record, index) {
+        //         console.log('record',record.team);
+        //         console.log(index, orglen)
+        //         renameSernosrTeam(record.team, record.player_id, team_name)
+        //         .then(data => {
+        //             console.log('res',data)
+        //             if(index == orglen){
+        //                 res.send({
+        //                     message: 'success',
+        //                     status: 200
+        //                 })
+        //             }
+        //         }).catch(err => {
+        //             console.log('err',err)
+        //             if(index == orglen){
+        //                  res.send({
+        //                     message: 'failure',
+        //                     status: 300,
+        //                     err: err
+        //                 })
+        //             }
+        //         })
+        //     })
+        // }else{
+        //     res.send({
+        //         message: 'success',
+        //         status: 200
+        //     })
+        // }
+    })
+    .catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+    // getSernsorDataByTeam(req.body.TeamName, req.body.organization)
+    // .then(data=>{
+    //     console.log('sernsor data -----------------\n',data)
+    // }).catch(err =>{
+    //     console.log(err)
+    //     res.send({
+    //         message: 'failure',
+    //         status: 300,
+    //         err: err
+    //     })
+    // })
+})
+/*============ Team edit funtions end here===================*/
 
 app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
     console.log('MergeOrganization',req.body);

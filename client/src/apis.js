@@ -908,10 +908,33 @@ export const renameOrganization = (request) =>{
   })
 }
 
+export const renameTeam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/renameTeam/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 
 export const addOrganization = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/addOrganization/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const addorgTeam= (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/addorgTeam/`,request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

@@ -320,7 +320,7 @@ class OrganizationAdmin extends React.Component {
                     this.setState({
                      isUpdated: false,
                         isUploading: false,
-                        Error: 'Somthing went wrong when renameing organization.',
+                        Error: 'Somthing went wrong when Adding organization.',
                         isDelete: false,
                         DelData: '',
                         isRename: false,
@@ -336,7 +336,7 @@ class OrganizationAdmin extends React.Component {
                 this.setState({
                     isUploading: false,
                     isUpdated: false,
-                    Error: 'Somthing went wrong when renameing organization.',
+                    Error: 'Somthing went wrong when Adding organization.',
                     isDelete: false,
                     DelData: '',
                     isRename: false,
