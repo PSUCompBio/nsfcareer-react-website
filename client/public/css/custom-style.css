@@ -1331,3 +1331,9 @@ button.btn.button-yes {
   font-weight: 600;
   border: 1px solid #0d74c6;
 }
+.rotate-collapse{
+  transform: rotate(90deg);
+}
+.spin_display{
+  display: block!important;
+}

@@ -14,7 +14,8 @@ import {
     fetchOrgStaffMembers,
     addorgTeam,
     deleteItem,
-    renameTeam
+    renameTeam,
+    MergeTeam
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -249,7 +250,7 @@ class TeamnAdmin extends React.Component {
             this.setState({addTeamData: {TeamName : data.TeamName, sensor: this.props.location.state.brand.brand,organization:this.props.location.state.brand.organization  }, isAddOrganization: true})
         }
         if(data.data.type == "mergeTeam"){
-            this.setState({mergeData: {OrganizationName : data.TeamName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
+            this.setState({mergeData: {TeamName : data.TeamName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
         }
         this.setState({ isDisplay2:{ display: 'none' } });
     }
@@ -315,7 +316,7 @@ class TeamnAdmin extends React.Component {
             .then(response => {
                 console.log('response',response)
                 if(response.data.message == "success"){
-                    this.handleAddTeam();
+                    this.handleMergeTeam();
                 }else{
                     this.setState({
                      isUpdated: false,
@@ -329,6 +330,33 @@ class TeamnAdmin extends React.Component {
                 this.setState({
                     isUploading: false,
                     Error: 'Somthing went wrong when renaming organization.'
+                })
+            })
+        }else{
+            this.handleMergeTeam();
+        }
+    }
+    handleMergeTeam = () => {
+        console.log('rename',this.state.mergeData)
+        if(this.state.isMerge){
+            MergeTeam(this.state.mergeData)
+            .then(response => {
+                console.log('response',response)
+                if(response.data.message == "success"){
+                    this.handleAddTeam();
+                }else{
+                    this.setState({
+                        isUpdated: false,
+                        isUploading: false,
+                        Error: 'Somthing went wrong when merging Team.'
+                    })
+                }
+
+            }).catch(err =>{
+                console.log('errRename',err);
+                this.setState({
+                    isUploading: false,
+                    Error: 'Somthing went wrong when merging Team.'
                 })
             })
         }else{
@@ -441,7 +469,7 @@ class TeamnAdmin extends React.Component {
             <div key={key} ref={''} className={this.state.editTeamClass}>
                  <ul className="organization-edit-icons isEdit">
                     <li><span><img src={pencil}  onClick={e => this.editRecord({TeamName:team, brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'renameTeam'})}/>Rename</span></li>
-                    <li><span><img src={merge}  onClick={e => this.editRecord({brand: brand, organization_id: organization_id,type: 'mergeTeam',sensorOrgList:this.state.sensorOrgTeamList,selectOrg: organization} )} />Merge</span></li>
+                    <li><span><img src={merge}  onClick={e => this.editRecord({TeamName:team, brand: brand, organization_id: organization_id,type: 'mergeTeam',sensorOrgList:this.state.sensorOrgTeamList,selectOrg: organization} )} />Merge</span></li>
                     <li><span><img src={delicon} onClick={e => this.deleteRecord({TeamName:team, brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id}) } />Delete</span></li>
                 </ul>
                 <div
