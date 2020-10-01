@@ -34,7 +34,7 @@ import Spinner from '../Spinner/Spinner';
 import ScrollToTop from 'react-scroll-up';
 
 import { getStatusOfDarkmode } from '../../reducer';
-
+import $ from 'jquery';
 
 class UserDashboarForAdmin extends React.Component {
   constructor(props) {
@@ -61,7 +61,8 @@ class UserDashboarForAdmin extends React.Component {
       frontal_Lobe: [],
       jsonData: '',
       open: false,
-      loading: false
+      loading: false,
+      loaded_data: [],
     };
   }
 
@@ -113,16 +114,23 @@ class UserDashboarForAdmin extends React.Component {
     }
   }
   handleCollapse =(e)=>{
-    this.setState({cumulativeAccelerationTimeAlldata: [],loading:true});
-    if(e.indexOf(this.state.open) == -1){
+    let col_id = e.split('$')[1]
+    $("#"+col_id).toggleClass('show');
+    $("#col_icon"+col_id).toggleClass('rotate-collapse');
+    $("#spin_"+col_id).toggleClass('spin_display');
+    var loaded_data = this.state.loaded_data;
+    if(this.state.loaded_data.indexOf(e) == -1){
+      this.setState({loaded_data : this.state.loaded_data.concat(e)});
       this.setState({open: e});
       getCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: e, team: this.props.location.state.team.team_name })
       .then(res=>{
-        console.log('res',res)
+        console.log('res',res);
         this.setState({
            cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
-           loading: false
-        })
+           loading: false,
+
+        });
+        $("#spin_"+res.data.data[0].sensor_data.player_id.split('$')[1]).toggleClass('spin_display');
       }).catch(err=>{
         console.log('err',err)
       })
@@ -162,6 +170,7 @@ class UserDashboarForAdmin extends React.Component {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
     }
+    var the = this;
     if (!isLoaded) return <Spinner />;
     return (
 
@@ -209,7 +218,7 @@ class UserDashboarForAdmin extends React.Component {
         </div>
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
-        {this.state.jsonData && 
+        {this.state.jsonData[0].sensor_data.player && 
           <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
         }
           <p
@@ -264,28 +273,29 @@ class UserDashboarForAdmin extends React.Component {
         {/*------------- Collapse chart start here -----------*/}
         <div className="charts-container">
           <Accordion className="player-collapes-div">
-            {this.state.cumulativeAccelerationTimeAllRecords && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
+            {this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data.player && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
               <Card >
                 <Card.Header>
-                  <Accordion.Toggle as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id)} eventKey={item.sensor_data.player_id} >
-                    <span className="title-left" >ID: #{item.sensor_data.player_id.split('$')[1]}</span>
-                    <span className="title-left">{`${item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(item.sensor_data['impact-time']) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(item.sensor_data['time'])  : 'Unkown Date and Time'}`}</span>
-                    <span className="title-right" style={this.state.open == item.sensor_data.player_id ? {'transform': 'rotate(90deg)'} : {}}>></span>
-                  </Accordion.Toggle>
+                  <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
+                    <span className="title-left" >ID: #{item.sensor_data && item.sensor_data.player_id.split('$')[1]}</span>
+                    <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(item.sensor_data['impact-time']) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(item.sensor_data['time'])  : 'Unkown Date and Time'}`}</span>
+                    <span className="title-right" id={item.sensor_data && 'col_icon'+item.sensor_data.player_id.split('$')[1]}>></span>
+                  </Accordion>
                 </Card.Header>
-                <Accordion.Collapse eventKey={item.sensor_data.player_id}>
+                <Accordion.Collapse eventKey={item.sensor_data.player_id} id={item.sensor_data && item.sensor_data.player_id.split('$')[1]}>
                   <Card.Body>
-                    {this.state.open == item.sensor_data.player_id && this.state.cumulativeAccelerationTimeAlldata ? 
-                        this.state.cumulativeAccelerationTimeAlldata.map((item, index) => (
-
-                          <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} state={this.props.location.state}/>
-                        ))
+                    {this.state.cumulativeAccelerationTimeAlldata ? 
+                        this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
+                          if(items.sensor_data.player_id == item.sensor_data.player_id){
+                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state}/>
+                          }
+                        })
                       : 
                         null
                     }
-                    {this.state.loading && 
+                    <div style={{'display':'none'}} id={"spin_"+item.sensor_data.player_id.split('$')[1]}>
                       <i class="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>
-                    }
+                    </div>
                   </Card.Body>
                 </Accordion.Collapse>
               </Card>

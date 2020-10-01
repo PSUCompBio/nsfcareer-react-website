@@ -3763,7 +3763,7 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
     .then(response=>{
         console.log('response',response);
         let users_data = response;
-        if(users_data){
+        if(users_data[0]){
             let userslen = users_data.length;
             userslen = userslen-1;
             users_data.forEach(function (record, index) {
@@ -3846,6 +3846,61 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
     //         err: err
     //     })
     // })
+});
+
+app.post(`${apiPrefix}MergeTeam`, (req, res) => {
+    console.log('body',req.body);
+    let data = req.body.data;
+    let organization_id = data.organization_id;
+    let team_name =  req.body.TeamName;
+    
+    renameTeam(team_name,organization_id)
+    .then(response=>{
+        // return getSernsorDataByTeam(data.TeamName,data.organization);
+        return getUserByTeam(data.TeamName,data.selectOrg)
+    })
+    .then(response=>{
+        console.log('response',response);
+        let users_data = response;
+        if(users_data[0]){
+            let userslen = users_data.length;
+            userslen = userslen-1;
+            users_data.forEach(function (record, index) {
+                renameUsers(record.user_cognito_id, team_name)
+                .then(data => {
+                    console.log('res',data)
+                    if(index == userslen){
+                        res.send({
+                            message: 'success',
+                            status: 200
+                        })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    if(index == userslen){
+                         res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
+                })
+            })
+        }else{
+            res.send({
+                message: 'success',
+                status: 200
+            })
+        }
+    })
+    .catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
 })
 /*============ Team edit funtions end here===================*/
 
