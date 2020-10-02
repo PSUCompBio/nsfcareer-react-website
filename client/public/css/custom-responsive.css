@@ -1,502 +1,693 @@
+
+@media (min-width: 1200px){
+  .container_1200{
+    max-width: 1210px!important;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  /* Navigation text css  */
+  .team-admin-page-navigation {
+    margin-top: 9rem;
+  }
+  .UserDashboarForAdmin-page-navigation {
+    margin-top: 9rem !important;
+  }
+  /* Navigation text end  */
+
+  .action_btn_block .lobe_btn {
+    width: 51px !important;
+    font-size: 9px !important;
+    margin-right: 16px !important;
+    margin-bottom: 6px !important;
+    margin-left: -1px !important;
+  }
+  .action_btn_block #motor_and_sensor_cortex {
+    width: 51px !important;
+  }
+  .bran-smiulation-dash-chart canvas {
+    /*height: 324px;*/
+  }
+  .div-chart-labels {
+    font-size: 12px;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader p {
+    font-size: 13px;
+    width: 51%;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader {
+    width: 90%;
+  }
+  .Simulationvideo {
+    height: 224px;
+  }
+  .impact-video {
+    height: 224px;
+  }
+  .View img {
+    width: 42% !important;
+    display: inline-block !important;
+    margin: 3px !important;
+    cursor: pointer !important;
+  }
+  .org-edit-button {
+    float: right !important;
+    padding-right: 18px !important;
+  }
+   .team-page-title{
+         margin-left: 0%; 
+  }
+}
 /* Responsive layout  */
-@media screen and (max-width: 1024px){
-	/* Navigation text css  */
-	.team-admin-page-navigation{
-		margin-top: 9rem;
-	}
-	.UserDashboarForAdmin-page-navigation{
-		margin-top: 9rem!important;
-	} 
-	/* Navigation text end  */
+@media (min-width: 992px){
+  .container_1200{
+    max-width: 1186px!important;
+  }
+}
+@media (max-width: 992px){
+  .Hardy_et_al-buttons button {
+    width: auto;
+  }
+}
+@media screen and (max-width: 844px) {
+  .team-edit-button {
+    display: inline-block!important;
+  }
 
-	.action_btn_block .lobe_btn{
-		width: 51px !important;
-	    font-size: 9px !important;
-	    margin-right: 16px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: -1px!important;
-	}
-	.action_btn_block #motor_and_sensor_cortex {
-	    width: 51px !important;
-	}
-	.bran-smiulation-dash-chart canvas {
-		/*height: 324px;*/
-	}
-	.div-chart-labels {
-		font-size: 12px;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader p{
-		font-size: 13px;
-	    width: 51%;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader{
-		width: 90%;
-	}
-	.Simulationvideo{
-		height: 224px;
-	}
-	.impact-video{
-		height: 224px;
-	}
+
 }
 
+@media screen and (max-width: 800px) {
+  /* Navigation text css  */
+  .team-admin-page-navigation .nav-p {
+    font-size: 25px;
+  }
+  .UserDashboarForAdmin-page-navigation .penstate {
+    color: #0f81dc;
+    font-size: 25px;
+  }
 
-@media screen and (max-width: 800px){
-	/* Navigation text css  */
-	.team-admin-page-navigation .nav-p {
-	    font-size: 25px;
-	}
-	.UserDashboarForAdmin-page-navigation .penstate{
-		color:#0f81dc;
-		font-size: 25px;
-	}
+  .team-admin-page-navigation .nav-p {
+    letter-spacing: 1.53px;
+  }
 
-	.team-admin-page-navigation .nav-p {
-		letter-spacing: 1.53px;
-	}
+  /* Navigation text end  */
 
-	/* Navigation text end  */
+  .action_btn_block .lobe_btn {
+    width: 40px !important;
+    font-size: 7px !important;
+    margin-right: 5px !important;
+    margin-bottom: 6px !important;
+    margin-left: 2px !important;
+  }
+  .action_btn_block #motor_and_sensor_cortex {
+    width: 38px !important;
+  }
 
-	.action_btn_block .lobe_btn{
-		width: 40px !important;
-		font-size: 7px !important;
-		margin-right: 5px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 2px!important;
-	}
-	.action_btn_block #motor_and_sensor_cortex {
-	    width: 38px !important;
-	}
-
-	.player-dash-chart-setting h4{
-		font-weight: 400;
-		text-align: left;
-	}
-	.backbutton{
-		margin-top: 19px;
-	}
-	.div-chart-labels .chart-label {
-    	width: 50%;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader p{
-		    padding: 4px;
-	    font-size: 9px;
-	    font-weight: 700;
-	    width: 46%;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader{
-		    width: 87%;
-	}
-	.Simulationvideo{
-		height: 156px;
-	}
-	.impact-video{
-		height: 156px;
-	}
-	.impact-video p{
-		font-size: 16px;
-	}
+  .player-dash-chart-setting h4 {
+    font-weight: 400;
+    text-align: left;
+  }
+  .backbutton {
+    margin-top: 19px;
+  }
+  .div-chart-labels .chart-label {
+    width: 50%;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader p {
+    padding: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    width: 46%;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader {
+    width: 87%;
+  }
+  .Simulationvideo {
+    height: 156px;
+  }
+  .impact-video {
+    height: 156px;
+  }
+  .impact-video p {
+    font-size: 16px;
+  }
+  .modael-validation-box img {
+    float: right;
+    width: 44%;
+  }
 }
 
-@media screen and (max-width: 768px){
-	.action_btn_block .lobe_btn{
-		width: 40px !important;
-		font-size: 7px !important;
-		margin-right: 5px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 2px!important;
-	}
-	.action_btn_block #motor_and_sensor_cortex {
-	    width: 38px !important;
-	}
-	.impact-video p{
-		font-size: 13px;
-	}
+@media screen and (max-width: 768px) {
+  .action_btn_block .lobe_btn {
+    width: 40px !important;
+    font-size: 7px !important;
+    margin-right: 5px !important;
+    margin-bottom: 6px !important;
+    margin-left: 2px !important;
+  }
+  .action_btn_block #motor_and_sensor_cortex {
+    width: 38px !important;
+  }
+  .impact-video p {
+    font-size: 13px;
+  }
+  .View img {
+    width: 10% !important;
+    display: inline-block !important;
+    margin: 3px !important;
+    cursor: pointer !important;
+  }
+  .org-edit-button {
+    text-align: center !important;
+    left: 35% !important;
+  }
+  .button-edit {
+    float: initial !important;
+  }
+  .plyar-button-edit{
+    float: right!important;
+  }
+  .team-edit-button{
+        margin-top: 10px;
+  }
+  .plyar-button-edit:first-child{
+    margin-right: 0%!important;
+  }
+  .camera-circle-desktop {
+    height: 155px;
+  }
+  .modael-validation-box img {
+    float: right;
+    width: 70%;
+  }
+  .download-report-box {
+    width: 43%!important;
+    left: 30%;
+  }
+}
+@media (max-width: 767px) {
+  .modal__show {
+    width: auto !important;
+  }
 }
 
-@media screen and (max-width: 600px){
-	/* Navigation text css  */
-	.team-admin-page-navigation .nav-p {
-	    font-style: normal;
-	    font-stretch: normal;
-	    line-height: normal;
-	    letter-spacing: inherit;
-	    font-size: 20px;
-	}
-	.team-admin-page-navigation{
-	    margin-top: 8rem;
-	}
-	.UserDashboarForAdmin-page-navigation .penstate{
-		 font-style: normal;
-	    font-stretch: normal;
-	    line-height: normal;
-	    letter-spacing: inherit;
-	    font-size: 20px;
-	}
-	.UserDashboarForAdmin-page-navigation{
-		margin-top: 7rem!important;
-	} 
-	/* Navigation text end  */
+@media screen and (max-width: 600px) {
+  .modal__show {
+    width: auto !important;
+  }
+  /* Navigation text css  */
+  .team-admin-page-navigation .nav-p {
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: inherit;
+    font-size: 20px;
+  }
+  .team-admin-page-navigation {
+    margin-top: 8rem;
+  }
+  .UserDashboarForAdmin-page-navigation .penstate {
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: inherit;
+    font-size: 20px;
+  }
+  .UserDashboarForAdmin-page-navigation {
+    margin-top: 7rem !important;
+  }
+  /* Navigation text end  */
 
-	/* Player dashboard css  start  */
-	.player-dashboard-user-datials-header {
-	    border: 1px solid rgb(15, 129, 220)!important;
-	    border-radius: 0.8rem!important;
-	    background: #D9D9D9!important;
-	    color: #000000!important;
-	}
-	
-	.player-dashboard-user-datials-header p{
-		text-align: left!important;
-		color: #000000;
-	}
-	.Individual-Head-Acceleration-player-dash-chart canvas{
-		height: 353px!important;
-	}
-	.Individual-Head-Acceleration-player-dash-chart, .Individual-Head-Acceleration-player-dash-image{
-		width: 100%;
-	}
-	.brain_model{
-		width: 50%!important;
-	}
+  /* Player dashboard css  start  */
+  .player-dashboard-user-datials-header {
+    border: 1px solid rgb(15, 129, 220) !important;
+    border-radius: 0.8rem !important;
+    background: #d9d9d9 !important;
+    color: #000000 !important;
+  }
 
-	.action_btn_block .lobe_btn{
-		width: 53px !important;
-		font-size: 9px !important;
-		margin-right: 12px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 2px!important;
-	}
+  .player-dashboard-user-datials-header p {
+    text-align: left !important;
+    color: #000000;
+  }
+  .Individual-Head-Acceleration-player-dash-chart canvas {
+    height: 353px !important;
+  }
+  .Individual-Head-Acceleration-player-dash-chart,
+  .Individual-Head-Acceleration-player-dash-image {
+    width: 100%;
+  }
+  .brain_model {
+    width: 50% !important;
+  }
 
-	.action_btn_block #motor_and_sensor_cortex {
-	    width: 38px !important;
-	}
-	/* Player dashboard css  end  */
+  .action_btn_block .lobe_btn {
+    width: 53px !important;
+    font-size: 9px !important;
+    margin-right: 12px !important;
+    margin-bottom: 6px !important;
+    margin-left: 2px !important;
+  }
 
-	.backbutton {
-    	position: unset;
-	}
-	.brain-simlation-details-metrics .metrics {
-		width: 100%;
-	}
-	.brain-simlation-details-movie .movie {
-	    width: 100%;
-	    text-align: center;
-	        padding: 20px 0px 20px;
-	    margin: 32px 0px 32px;
-	}
-	.div-chart-labels .chart-label {
-	    text-align: center;
-	    width: 100%;
-	    padding: 4px;
-	}
-	.Simulationvideo {
-    	height: 229px;
-	}
-	.impact-video{
-		height: 229px;
-		margin-top: 30px;
-	}
-	.impact-video p {
-		font-size: 19px;
-	}
+  .action_btn_block #motor_and_sensor_cortex {
+    width: 38px !important;
+  }
+  /* Player dashboard css  end  */
+
+  .backbutton {
+    position: unset;
+  }
+  .brain-simlation-details-metrics .metrics {
+    width: 100%;
+  }
+  .brain-simlation-details-movie .movie {
+    width: 100%;
+    text-align: center;
+    padding: 20px 0px 20px;
+    margin: 32px 0px 32px;
+  }
+  .div-chart-labels .chart-label {
+    text-align: center;
+    width: 100%;
+    padding: 4px;
+  }
+  .Simulationvideo {
+    height: 229px;
+  }
+  .impact-video {
+    height: 229px;
+    margin-top: 30px;
+  }
+  .impact-video p {
+    font-size: 19px;
+  }
+}
+@media (max-width: 575px) {
+  .modael-validation-box img {
+    float: left;
+    width: 8%;
+    padding: 6px;
+  }
 }
 
+@media screen and (max-width: 480px) {
+  .dashboard-custom-button2 {
+    display: inherit;
+  }
+  .banner-sign-in-button {
+    padding-left: 32% !important;
+    margin-top: 40%;
+  }
+  .navbar-bg-change {
+    background: linear-gradient(90deg, #083c66 10%, #078ae2) !important;
+  }
+  .signIn-btn {
+    padding: 9px 22px !important;
+    border: solid 3px #ffffff !important;
+    box-shadow: 0px 0px 4px #47525d !important;
+  }
+  .signIn-btn:hover {
+    background: #ffffff !important;
+    color: #1e76b9;
+    /*border: solid 3px #1e76b9!important;*/
+  }
+  /* Navigation text css  */
+  .team-admin-page-navigation .nav-p {
+    font-size: 13px;
+  }
+  .team-admin-page-navigation {
+    margin-top: 7rem !important;
+  }
+  .UserDashboarForAdmin-page-navigation .penstate {
+    font-size: 16px;
+  }
+  .UserDashboarForAdmin-page-navigation {
+    margin-top: 4rem !important;
+  }
+  /* Navigation text end  */
 
-@media screen and (max-width: 480px){
-	.dashboard-custom-button2{
-		display: inherit;
-	}
-	.banner-sign-in-button{
-	    padding-left: 32% !important;
-	    margin-top: 40%;
-	}
-	.navbar-bg-change{
-		background: linear-gradient(90deg,#083c66 10%,#078ae2)!important;
-	}
-	.signIn-btn{
-		padding: 9px 22px!important;
-    	border: solid 3px #ffffff!important;
-    	box-shadow: 0px 0px 4px #47525d!important;
-	}
-	.signIn-btn:hover{
-		background: #ffffff!important;
-		color: #1e76b9;
-		/*border: solid 3px #1e76b9!important;*/
-	}
-	/* Navigation text css  */
-	.team-admin-page-navigation .nav-p {
-	    font-size: 13px;
-	}
-	.team-admin-page-navigation {
-	    margin-top: 7rem!important;
-	}
-	.UserDashboarForAdmin-page-navigation .penstate{
-		font-size: 16px;
-	}
-	.UserDashboarForAdmin-page-navigation {
-	    margin-top: 4rem!important;
-	}
-	/* Navigation text end  */
+  /* Player dashboard css  start  */
+  .player-dashboard-user-datials-header p {
+    text-align: left !important;
+    color: #000000;
+    font-size: 15px !important;
+    letter-spacing: 1px;
+  }
+  .head-acc-evnt-chart::after {
+    line-height: 3.35 !important;
+  }
+  .action_btn_block .lobe_btn {
+    width: 40px !important;
+    font-size: 7px !important;
+    margin-right: 12px !important;
+    margin-bottom: 6px !important;
+    margin-left: 2px !important;
+  }
 
-	/* Player dashboard css  start  */
-	.player-dashboard-user-datials-header p {
-	    text-align: left!important;
-	    color: #000000;
-	    font-size: 15px!important;
-	    letter-spacing: 1px;
-	}
-	.head-acc-evnt-chart::after {
-	    line-height: 3.35!important;
-	}
-	.action_btn_block .lobe_btn{
-		width: 40px !important;
-		font-size: 7px !important;
-		margin-right: 12px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 2px!important;
-	}
+  .action_btn_block #motor_and_sensor_cortex {
+    width: 38px !important;
+  }
+  /* Player dashboard css end  */
+  .brain-simlation-details-movie .col-md-12 {
+    padding-right: 0px;
+    padding-left: 0px;
+  }
+  .div-chart-labels {
+    width: 100%;
+    text-align: left;
+    margin-left: 0px;
+    font-size: 11px;
+  }
+  .div-chart-labels .chart-label {
+    text-align: left;
+    width: 36%;
+    padding: 2px;
+    margin-left: 47px;
+  }
+  .div-chart-labels .chart-label span {
+    height: 23px;
+    padding: 0px 11px 1px;
+    content: '';
+    margin-right: 8px;
+  }
+  .div-chart-labels .chart-label span {
+    margin-right: 5px;
+  }
 
-	.action_btn_block #motor_and_sensor_cortex {
-	    width: 38px !important;
-	}
-	/* Player dashboard css end  */
-	.brain-simlation-details-movie  .col-md-12{
-		padding-right: 0px; 
-    	 padding-left: 0px;
-	}
-	.div-chart-labels {
-	    width: 100%;
-	    text-align: left;
-	    margin-left: 0px;
-	    font-size: 11px;
-	}
-	.div-chart-labels .chart-label {
-	    text-align: left;
-	    width: 36%;
-	    padding: 2px;
-	    margin-left: 47px;
-	}
-	.div-chart-labels .chart-label span {
-	    height: 23px;
-	    padding: 0px 11px 1px;
-	    content: '';
-	    margin-right: 8px;
-	}
-	.div-chart-labels .chart-label span {
-	    margin-right: 5px;
-	}
+  .export-player-report-1 {
+    display: none !important;
+  }
+  .export-player-report-2 {
+    display: block !important;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader p {
+    background: white;
+    padding: 8px;
+    font-size: 24px;
+    font-weight: 700;
+    width: 56%;
+    border: 1px solid;
+    margin: 0 auto;
+    box-shadow: 0px 0px 6px 0px #ccc;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader {
+    width: 93%;
+  }
+  .head-acc-evnt-chart::after {
+    top: -9% !important;
+    height: 59px !important;
+  }
 
-	.export-player-report-1{
-		display: none!important;
-	}
-	.export-player-report-2{
-		display: block!important;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader p {
-	    background: white;
-	    padding: 8px;
-	    font-size: 24px;
-	    font-weight: 700;
-	    width: 56%;
-	    border: 1px solid;
-	    margin: 0 auto;
-	    box-shadow: 0px 0px 6px 0px #ccc;
- 	}
- 	.Individual-Head-Acceleration-player-dash-image .loader {
-	    width: 93%;
-	}
-	.head-acc-evnt-chart::after {
-	    top: -9%!important;
-	    height: 59px!important;
-	}
+  .View img {
+    width: 20% !important;
+  }
+  .col-md-12.organization-admin-table-margin-5-mobile-overview .View img {
+    margin-top: 15px !important;
+    width: 12% !important;
+  }
 
-	.View img{
-		width: 15%!important;
-	}
-	
-	.custom-button{
-		font-size: 13px!important;
-		float: left!important;
-	    padding: 5px 15px!important;
-	}
-	.custom-button2{
-		font-size: 13px!important;
-		float: left!important;	
-	    padding: 5px 15px!important;;
-	}
-	.Admintitle h1{
-		font-size: 1.5rem;
-	}
-	.dashboard-custom-button{
-		display: none;
-	}
-	.unlock-img2{
-		width: 3.5%;
-	}
+  .custom-button {
+    font-size: 13px !important;
+    float: left !important;
+    padding: 5px 15px !important;
+  }
+  .custom-button2 {
+    font-size: 13px !important;
+    float: left !important;
+    padding: 5px 15px !important;
+  }
+  .Admintitle h1 {
+    font-size: 1.5rem;
+  }
+  .dashboard-custom-button {
+    display: none;
+  }
+  .unlock-img2 {
+    width: 3.5%;
+  }
+  #inner-circle {
+    top: 32px !important;
+    height: 44px !important;
+    width: 44px !important;
+  }
+  #outer-circle {
+    height: 62px !important;
+    width: 62px !important;
+  }
+  #container-circles {
+    bottom: 74px !important;
+  }
+  .button-edit {
+    float: initial !important;
+  }
+  .plyar-button-edit{
+    float: right!important;
+  }
+  .plyar-button-edit:first-child {
+    margin-right: 13%!important;
+  }
+  .org-edit-button {
+    text-align: center !important;
+    left: 25% !important;
+  }
+  .irb-bottom {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  .irb-header {
+    height: calc(100vh - 350px) !important;
+  }
+  /*.camera-box {
+    padding: 15px 8px !important;
+  }*/
+  .model-validation-subhead p {
+    padding: 12px;
+  }
+  .bottom-margin {
+      margin-bottom: 350px !important;
+  }
+  .head-team-desktop{
+    display: none;
+  }
+  .head-team-mobile{
+    display: inline-block;
+    padding: 15px 0px;
+    margin-left: calc(100% - 247px);
+  }
+  .team-view-icon{
+    float: right!important;
+  }
+  .three_D_model_div{
+    height: auto!important;
+  }
+  .download-report-box {
+    width: 80%!important;
+    left: 9%;
+  }
+
+  .top-heading__login{
+    width: 100%!important;
+  }
+  .three_D_model_div canvas{
+    width: 100%!important;
+  }
 }
 
-@media screen and (max-width: 414px){
-	.signIn-btn{
-		width: 136px!important;
-	}
-	.action_btn_block .lobe_btn {
-	    width: 29px !important;
-	    font-size: 7px !important;
-	    margin-right: 12px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 2px!important;
-	}
-	.player-dash-chart-setting h4 {
-	    font-weight: 400;
-	    text-align: left;
-	    font-size: 18px;
-	}
-	button.settings-buttons {
-	    padding: 2px 13px 2px;
-	    font-size: 15px;
-	}
-	.bran-smiulation-dash-chart canvas {
-		height: 322px;
-	}
-	.div-chart-labels {
-	    font-size: 9px;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader{
-		width: 91%;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader p{
-		    padding: 8px;
-	    font-size: 19px;
-	    font-weight: 700;
-	    width: 51%;
-	}
-	.Simulationvideo, .impact-video{
-		height: 172px;
-	}
-
-	.rostar-btn {
-		font-size: 12px;
-	}
+@media screen and (max-width: 414px) {
+  .signIn-btn {
+    width: 136px !important;
+  }
+  .action_btn_block .lobe_btn {
+    width: 29px !important;
+    font-size: 7px !important;
+    margin-right: 12px !important;
+    margin-bottom: 6px !important;
+    margin-left: 2px !important;
+  }
+  .player-dash-chart-setting h4 {
+    font-weight: 400;
+    text-align: left;
+    font-size: 18px;
+  }
+  button.settings-buttons {
+    padding: 2px 13px 2px;
+    font-size: 15px;
+  }
+  .bran-smiulation-dash-chart canvas {
+    height: 322px;
+  }
+  .div-chart-labels {
+    font-size: 9px;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader {
+    width: 91%;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader p {
+    padding: 8px;
+    font-size: 19px;
+    font-weight: 700;
+    width: 51%;
+  }
+  .Simulationvideo,
+  .impact-video {
+    height: 172px;
+  }
+  .View img {
+    width: 25% !important;
+  }
+  .rostar-btn {
+    font-size: 12px;
+  }
+  .modael-validation-box {
+    background: #dae3f3;
+    font-size: 19px;
+  }
+  .plyar-button-edit:first-child {
+      margin-right: 6%!important;
+  }
 }
 
-@media screen and (max-width: 412px){
-	.custom-button{
-		font-size: 13px!important;
-		float: left!important;
-	    padding: 5px 11px!important;
-	}
-	.custom-button2{
-		font-size: 13px!important;
-		float: left!important;	
-	    padding: 5px 11px!important;;
-	}
-	.View img {
-	    width: 17%!important;
-	}
-	/* Navigation text css  
-	.team-admin-page-navigation {
-	    margin-top: 6rem!important;
-	}
-	.action_btn_block .lobe_btn {
-	    width: 40px !important;
-	    font-size: 9px !important;
-	    margin-right: 2px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 2px!important;
-	}
-	/* Navigation text end  */
+@media screen and (max-width: 412px) {
+  .custom-button {
+    font-size: 13px !important;
+    float: left !important;
+    padding: 5px 11px !important;
+  }
+  .custom-button2 {
+    font-size: 13px !important;
+    float: left !important;
+    padding: 5px 11px !important;
+  }
+  .View img {
+    width: 28% !important;
+  }
+  /* Navigation text css  
+  .team-admin-page-navigation {
+      margin-top: 6rem!important;
+  }
+  .action_btn_block .lobe_btn {
+      width: 40px !important;
+      font-size: 9px !important;
+      margin-right: 2px !important;
+      margin-bottom: 6px !important;
+      margin-left: 2px!important;
+  }
+  /* Navigation text end  */
 }
-@media screen and (max-width: 375px){
-	.custom-button, .custom-button2{
-		font-size: 11px!important;
-		
-	}
-	.action_btn_block .lobe_btn {
-	    width: 34px !important;
-	    font-size: 6px !important;
-	    margin-right: 1px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 0px!important;
-	}
-	.div-chart-labels{
-		margin-left: 52px;
-		    font-size: 8px;
-	}
-	.div-chart-labels .chart-label {
-	  	    width: 50%;
-	     margin-left: 0px; 
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader p {
-	    background: white;
-	    padding: 7px;
-	    font-size: 12px;
-	    font-weight: 700;
-	    width: 43%;
-	   
-	}
-	.Simulationvideo, .impact-video{
-		height: 156px;
-	}
-	.impact-video p {
-	    font-size: 15px;
-	}
+@media screen and (max-width: 394px){
+  .plyar-button-edit:first-child {
+      margin-right: 2%!important;
+  }
 }
 
-@media screen and (max-width: 360px){
-	.action_btn_block .lobe_btn {
-	    width: 31px !important;
-	    font-size: 6px !important;
-	    margin-right: 1px !important;
-	    margin-bottom: 6px !important;
-	}
-	.player-dash-chart-setting h4 {
-		font-size: 16px;
-
-	}
-	.button.settings-buttons{
-		padding: 2px 11px 2px;
-	    margin-left: 3px;
-	    margin-top: 4px;
-	    font-size: 14px;
-	}
-	.Simulationvideo, .impact-video {
-	    height: 144px;
-	}
+@media screen and (max-width: 375px) {
+  .custom-button,
+  .custom-button2 {
+    font-size: 11px !important;
+  }
+  .action_btn_block .lobe_btn {
+    width: 34px !important;
+    font-size: 6px !important;
+    margin-right: 1px !important;
+    margin-bottom: 6px !important;
+    margin-left: 0px !important;
+  }
+  .div-chart-labels {
+    margin-left: 52px;
+    font-size: 8px;
+  }
+  .div-chart-labels .chart-label {
+    width: 50%;
+    margin-left: 0px;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader p {
+    background: white;
+    padding: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    width: 43%;
+  }
+  .Simulationvideo,
+  .impact-video {
+    height: 156px;
+  }
+  .impact-video p {
+    font-size: 15px;
+  }
+  .head-team-mobile {
+      margin-left: calc(100% - 176px);
+  }
+   .plyar-button-edit:first-child {
+      margin-right: 0 %!important;
+  }
+  .plyar-button-edit {
+      float: initial !important;
+  }
 }
-@media screen and (max-width: 320px){
-	.custom-button{
-		font-size: 9px!important;
-		float: left!important;
-	    padding: 5px 11px!important;
-	}
-	.custom-button2{
-		font-size: 7px!important;
-		float: left!important;	
-	    padding: 5px 11px!important;;
-	}
-	.View img {
-	    width: 24%!important;
-	}
-	.Admintitle h1{
-		font-size: 1.3rem!important;
-	}
-	.action_btn_block .lobe_btn {
-	    width: 24px !important;
-	    font-size: 6px !important;
-	    margin-right: 1px !important;
-	    margin-bottom: 6px !important;
-	    margin-left: 0px!important;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader{
-		width: 88%;
-	}
-	.Individual-Head-Acceleration-player-dash-image .loader p {				
-	    padding: 7px;
-	    font-size: 8px;
-	    font-weight: 700;
-	    width: 38%;
-	}
+
+@media screen and (max-width: 360px) {
+  .action_btn_block .lobe_btn {
+    width: 31px !important;
+    font-size: 6px !important;
+    margin-right: 1px !important;
+    margin-bottom: 6px !important;
+  }
+  .player-dash-chart-setting h4 {
+    font-size: 16px;
+  }
+  .button.settings-buttons {
+    padding: 2px 11px 2px;
+    margin-left: 3px;
+    margin-top: 4px;
+    font-size: 14px;
+  }
+  .Simulationvideo,
+  .impact-video {
+    height: 144px;
+  }
+  .camera .camera-box {
+    width: 99% !important;
+  }
+  .commander-data-table h1 {
+    font-size: 26px;
+  }
+}
+@media screen and (max-width: 320px) {
+  .custom-button {
+    font-size: 9px !important;
+    float: left !important;
+    padding: 5px 11px !important;
+  }
+  .custom-button2 {
+    font-size: 7px !important;
+    float: left !important;
+    padding: 5px 11px !important;
+  }
+  .View img {
+    width: 28% !important;
+  }
+  .Admintitle h1 {
+    font-size: 1.3rem !important;
+  }
+  .action_btn_block .lobe_btn {
+    width: 24px !important;
+    font-size: 6px !important;
+    margin-right: 1px !important;
+    margin-bottom: 6px !important;
+    margin-left: 0px !important;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader {
+    width: 88%;
+  }
+  .Individual-Head-Acceleration-player-dash-image .loader p {
+    padding: 7px;
+    font-size: 8px;
+    font-weight: 700;
+    width: 38%;
+  }
 }
 
 /* Responsive end  */

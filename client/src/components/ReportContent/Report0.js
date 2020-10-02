@@ -6,7 +6,9 @@ import header1 from './header1.png';
 import footer1 from '../footer1.jpg';
 import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
+import trangle from './trangle.png'
 import ClinicalReportHeader from './Clinical-Report-Header.png';
+import taxture1  from './taxture1.jpg'
 // import logo 
 // Create styles
 const styles = StyleSheet.create({
@@ -39,11 +41,24 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         marginBottom : '6px'
     },
+    tableRowCenter: {
+        flex: 1,
+        marginLeft : '5%',
+        flexDirection : 'row',
+        marginBottom : '6px'
+    },
     rowHeadBorder:{
         width:'100%',
         backgroundColor:'#4472C4',
         marginTop: '10px',
         height: '3px',
+        textAlign: 'center'
+    },
+    tableFootBorder:{
+        width:'100%',
+        backgroundColor:'grey',
+        marginTop: '10px',
+        height: '2px',
         textAlign: 'center'
     },
     rowHead2:{
@@ -54,11 +69,28 @@ const styles = StyleSheet.create({
         padding: '10px',
         textAlign: 'center'
     },
+    rowHead2subHead:{
+        flex:1,
+        width:'100%',
+        borderTop:'1px solid',
+        marginTop: '0px',
+        padding: '10px',
+        flexDirection:'row'
+    },
     rowHead2Text:{
         marginTop: '5px',
         color:'#686868',
         fontSize: 16,
         display: 'inline-block'
+    },
+    rowHead2_2Text:{
+        marginTop: '5px',
+        color:'#686868',
+        fontSize: 16,
+        flex: 1,
+        display: 'inline-block',
+        flexDirection : 'column',
+
     },
     rowHead2TextSub: {
         marginTop: '22px',
@@ -83,6 +115,26 @@ const styles = StyleSheet.create({
         color:'#686868',
         fontSize: 9
     },
+    rowHead2Text2subHead:{
+        marginTop: '7px',
+        color:'#686868',
+        fontSize: 15,
+        display : 'inline-block',
+        width : '50%',
+        float : 'left',
+        flexDirection : 'column',
+        textAlign : 'right',
+    },
+    rowHead2Text2subHead_2:{
+        marginTop: '7px',
+        color:'#686868',
+        fontSize: 15,
+        display : 'inline-block',
+        width : '40%',
+        float : 'left',
+        flexDirection : 'column',
+        textAlign : 'left',
+    },
     tableHead:{
         flex: 1,
         flexDirection : 'row',
@@ -93,6 +145,11 @@ const styles = StyleSheet.create({
     logo: {
         textAlign:'center',
         width: '100%',
+    },
+    trangle: {
+        textAlign:'center',
+        width: '25%',
+        marginLeft: '30%'
     },
     tableRowHeadtitle: {
         flex: 1,
@@ -150,15 +207,161 @@ const styles = StyleSheet.create({
         color : 'grey',
         fontSize : 10,
         marginLeft : 'auto'
+    },
+    column1:{
+        width:'25%',
+        marginTop: '25px',
+        fontSize: 10,
+        color : 'grey',
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display:'inline-block',
+        float:'left'
+
+    },
+    column2:{
+        width:'10%',
+        marginTop: '25px',
+        fontSize: 10,
+        color : 'grey',
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display:'inline-block',
+        float:'left'
+    },
+     tableColRight4: {
+        display : 'inline-block',
+        width : '75%',
+        float : 'left',
+        flexDirection : 'column',
+        color : '#686868',
+        fontSize : 16,
+        textAlign : 'right',
+        marginTop: '5px'
+    },
+    tableColLeft4: {
+        display : 'inline-block',
+        width : '20%',
+        float : 'left',
+        flexDirection : 'column',
+        color : '#686868',
+        fontSize : 10,
+        textAlign : 'left',
+        marginTop: '13px'
+    },
+    tableColLeft4_2: {
+        display : 'inline-block',
+        width : '3%',
+        float : 'left',
+        flexDirection : 'column',
+        color : '#686868',
+        fontSize : 10,
+        textAlign : 'left',
+        marginTop: '13px'
+    },
+     tableColLeft2: {
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display : 'inline-block',
+        width : '20%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        textAlign : 'left',
+        marginRight: '15px',
+        marginTop: '25px'
+    },
+    tableTd1: {
+        display : 'inline-block',
+        width : '20%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        textAlign : 'left',
+        marginRight: '15px',
+        marginTop: '6px'
+    },
+    tableColRight2: {
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display : 'inline-block',
+        width : '10%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        marginTop: '25px',
+        textAlign : 'center'
+    },
+    tableColRight2_2: {
+        display : 'inline-block',
+        width : '10%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        marginTop: '4px',
+        textAlign : 'center'
+    },
+    tableColRight3: {
+        borderBottom: 1,
+        borderBottomColor: 'grey',
+        display : 'inline-block',
+        width : '19%',
+        float : 'right',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 12,
+        marginLeft: '10px',
+        marginTop: '25px',
+        textAlign : 'center'
+    },
+    hLine : {
+        width : '1.5px',
+        float : 'left',
+        flexDirection : 'column',
+        backgroundColor: 'grey',
+        height: '11px',
+        marginTop: '25px'
+    },
+    taxture1_div:{
+        width: '79%',
+        marginLeft: '22%',
+        position: 'absolute',
+        marginTop: '63%'
+    },
+    taxture1: {
+        width: '100%',
+        textAlign:'center'
     }
 });
 
 class Report extends React.Component {
     constructor(props) {
         super(props);
-        console.log('props are ', this.props.jsonData);
-        this.state = {
-            jsonData : this.props.jsonData[0].jsonOutputFile
+        console.log('Rports props are ', this.props);
+        console.log('metric ', this.props.Metric);
+
+        if(this.props.jsonData){
+            this.state = {
+                jsonData : this.props.jsonData[0].jsonOutputFile,
+                data: this.props.data.player,
+                metric: ''
+            }
+        }else if(this.props.data){
+            this.state = {
+                jsonData : this.props.jsonfile,
+                data: this.props.data.sensor_data.player ? this.props.data.sensor_data.player : '',
+                metric: this.props.Metric,
+            }
+        }else{
+            this.state = {
+                jsonData : '',
+                data: '',
+                metric: ''
+            } 
         }
     }
 
@@ -183,11 +386,10 @@ class Report extends React.Component {
 
 
     render() {
-        console.log(this.state.jsonData)
         var csdm;
-        if(this.state.jsonData){
-            if(this.state.jsonData['csdm-15']){
-                csdm = this.state.jsonData['csdm-15'];
+        if(this.props.jsonData){
+            if(this.props.jsonData['csdm-15']){
+                csdm = this.props.jsonData['csdm-15'];
             }
         }
         return (
@@ -223,36 +425,106 @@ class Report extends React.Component {
                                     marginBottom : '2%',
                                     fontSize : 26,
                                 }}>
-                                {this.props.data.player['first-name'] +' '+this.props.data.player['last-name']}
+                                {this.state.data['first-name'] +' '+this.state.data['last-name']}
                             </Text>
 
                             <View style={styles.tableRow}>
 
 
 
-                                <Text style={styles.tableColLeft}> DOB : {this.props.user.dob ? this.props.user.dob : "N/A"} </Text>
-                                <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
+                                <Text style={styles.tableColLeft}> DOB : {"N/A"} </Text>
+                                <Text style={styles.tableColRight}> Referring physician : Unknown </Text>
 
                             </View>
                             <View style={styles.tableRow}>
 
-                                <Text style={styles.tableColLeft}> Sex : {this.props.user.gender ? this.props.user.gender.toUpperCase() : "N/A"} </Text>
+                                <Text style={styles.tableColLeft}> Sex : {"N/A"} </Text>
 
-                                <Text style={styles.tableColRight}> Organization : {this.props.team != undefined ? this.props.team.organization : this.props.user.organization ? this.props.user.organization : "N/A" } </Text>
+                                <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
                             </View>
-                           
-                            <View style={styles.col12}>
-                                 <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
-                                <View style={styles.rowHead2}>
-                                    {/*<Text  style={styles.rowHead2Text}>10% of brain tissue has exceeded MASxSR</Text>*/}
-                                    {/*<Text style={styles.rowHead2TextSub}>7.5</Text>*/}
-                                    {/* <Text  style={styles.rowHead2Text2}>(maximum axonal strain times strain-rate of elements that exeed 7.5 s   )</Text>*/}
-                                    {/* <Text style={styles.rowHead2Text2Sub}>-1</Text>*/}
-                                    <Text  style={styles.rowHead2Text}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM_15</Text>
-                                    <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
-                                </View>
-                            </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                        <View style={styles.rowHead2}>
+                                             <View style={styles.tableRowCenter}>
+                                                <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
+                                                <Text style={styles.tableColLeft4}>15</Text>
+                                            </View>
+                                            <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHead2subHead}>
+                                            <Text  style={styles.rowHead2Text2subHead}>
+                                                Maximum CSDM
+                                            </Text>
+                                            <Text style={styles.tableColLeft4_2}>15</Text>
+                                            <Text  style={styles.rowHead2Text2subHead_2}>
+                                                in Each Brain Region
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
+                                        <Text style={styles.tableColRight2}>0-7.5</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>7.5-15</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>15-25</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>25-30</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>30-50</Text>
+                                        <Text style={styles.tableColRight3}>NOTES</Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Frontal Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Parietal Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Occipital Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Temporal Lobe</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Cerebellum</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                    </View>
+                                    <View style={styles.taxture1_div}>
+                                        <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
+                                    </View>
                         </View>
 
                         {/* <View style={{
@@ -289,15 +561,15 @@ class Report extends React.Component {
 
 
 
-                                            <Text style={styles.tableColLeft}> DOB : {this.props.user.dob ? this.props.user.dob : "N/A"} </Text>
+                                            <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
                                             <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
 
                                         </View>
                                         <View style={styles.tableRow}>
 
-                                            <Text style={styles.tableColLeft}> Sex : {this.props.user.gender ? this.props.user.gender.toUpperCase() : "N/A"} </Text>
+                                            <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
 
-                                            <Text style={styles.tableColRight}> Organization : {this.props.team != undefined ? this.props.team.organization : this.props.user.organization ? this.props.user.organization : "N/A" } </Text>
+                                            <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
                                         </View>
                                     </View>

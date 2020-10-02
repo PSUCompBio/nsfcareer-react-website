@@ -2,7 +2,7 @@ import React from 'react';
 import LoginComponent from './LoginComponent';
 import { Link, withRouter, Redirect } from 'react-router-dom';
 import { formDataToJson } from '../../utilities/utility';
-import { signUp,singUpWithToken, getUserDBDetails, getUserTokenDBDetails } from '../../apis';
+import { signUp,singUpWithToken, getUserDBDetails, getUserTokenDBDetails, getOrgUniqueList, getOrgUniqueTeams } from '../../apis';
 import { useParams } from "react-router";
 import '../../mixed_style.css';
 import Footer from '../Footer';
@@ -14,7 +14,11 @@ import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
 import DarkMode from '../DarkMode';
 import moment from 'moment';
-
+import MaskedInput from 'react-text-mask'
+import SelectSearch from 'react-select-search';
+import Select from 'react-select';
+import $ from 'jquery';
+let options = [];
 
 class SignUpComponent extends React.Component {
   constructor(props) {
@@ -36,13 +40,21 @@ class SignUpComponent extends React.Component {
       isFetching: false,
       first_name: '',
       last_name: '',
+      password: '',
       Invaliduser: false,
       email: '',
       level: '',
       sensor:'',
       team: '',
       organization:'',
-      baseUrl: window.location.origin.toString()
+      baseUrl: window.location.origin.toString(),
+      isDirectSingUp: false,
+      organizationList: [],
+      teams: [],
+      option_team: false,
+      selectedOption: null,
+      teamselectedOption: null,
+      team: ''
     };
     if(this.props.location.state && this.props.location.state.message ) {
       this.state.message = this.props.location.state.message;
@@ -77,9 +89,51 @@ class SignUpComponent extends React.Component {
 
     if (this.props.location.pathname === '/SignUp') {
       this.setState({
-        signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' }
+        signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' },
+        isDirectSingUp: true
       });
-    } else if (this.props.location.pathname === '/SignUpElse') {
+      getOrgUniqueList()
+      .then(data =>{
+          if(data.data.message == "success"){
+            this.setState({
+              organizationList: data.data.data
+            })
+          }
+      }).catch(err =>{
+        console.log('err',err)
+      })
+
+    }else if (this.props.location.pathname === '/User/SignUp/') {
+      var data = this.props.location.state.data;
+      if(!data){
+        this.props.history.push({
+            pathname : '/Login',
+            state : {}
+        });
+      }
+      $('#first_name').val(data.first_name);
+      $('#last_name').val(data.last_name);
+      $('#user_name').val(data.email);
+      $('#userID').val(data.userID);
+      $('#password').closest('.input-group').css({'display':'none'})
+      $('#password').attr('type','hidden');
+      $('#password').val(data.userID);
+      this.setState({
+        signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' },
+        isDirectSingUp: true
+      });
+      getOrgUniqueList()
+      .then(data =>{
+          if(data.data.message == "success"){
+            this.setState({
+              organizationList: data.data.data
+            })
+          }
+      }).catch(err =>{
+        console.log('err',err)
+      })
+
+    }else if (this.props.location.pathname === '/SignUpElse') {
       this.setState({
         signupOrElse: {
           email: 'Contact email for this individual',
@@ -180,33 +234,6 @@ class SignUpComponent extends React.Component {
     // converting formData to JSON
     const formJsonData = formDataToJson(formData);
     console.log(formJsonData);
-    // signUp(formJsonData)
-    //   .then((response) => {
-    //     this.refs.signUpForm.reset();
-    //     // Now update the state with data that we added
-    //     if (response.data.message === 'success') {
-    //       // show alert
-    //       this.setState({
-    //         isSignUpError: false,
-    //         isSignUpConfirmed: true,
-    //         isLoading: false
-    //       });
-    //     } else {
-    //       this.setState({
-    //         isSignUpError: true,
-    //         isSignUpConfirmed: false,
-    //         isLoading: false,
-    //         signUpError: response.data.error
-    //       });
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     e.target.reset();
-    //     // catch error
-    //     console.log('error : ', err);
-    //   });
-
-    // Redirect User to IRB form
     this.props.history.push({
         pathname : '/IRB',
         state : { formData : formJsonData }
@@ -225,6 +252,7 @@ class SignUpComponent extends React.Component {
         <input
           type="text"
           className="form-control"
+          id={name}
           placeholder={placeholder}
           name={name}
           aria-label={name}
@@ -248,6 +276,29 @@ class SignUpComponent extends React.Component {
           placeholder={placeholder}
           name={name}
           value={value}
+          aria-label={name}
+          aria-describedby="basic-addon1"
+          required
+        />
+      </div>
+    );
+  };
+
+  forJsxPassowrd = (imgSrc, placeholder, name) => {
+    return (
+      <div className="input-group mb-5">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            <img src={imgSrc} alt="" />
+          </span>
+        </div>
+        <input
+          type="password"
+          autocomplete="new-password" 
+          className="form-control"
+          id={name}
+          placeholder={placeholder}
+          name={name}
           aria-label={name}
           aria-describedby="basic-addon1"
           required
@@ -281,18 +332,55 @@ class SignUpComponent extends React.Component {
     );
   };
 
+  handleOrgChange = (selectedOption)=>{
+      console.log(selectedOption);
+      this.setState({ selectedOption });
+      if(selectedOption){
+        this.setState({isUploading: true})
+        getOrgUniqueTeams({org:selectedOption.value })
+        .then(data => {
+          console.log('teams',data)
+          if(data.data.message == 'success'){
+            var opt = data.data.data;
+            opt = opt.filter(item => item.team_name);
+            console.log('opt',opt)
+            opt = opt.map(function(team, index){
+              return {name: team.team_name, label: team.team_name}
+            }) 
+            this.setState({teams: opt,option_team: true,isUploading: false});
+          }
+        }).catch(err=>{   
+            console.log('err',err)
+        })
+      }else{
+        this.setState({
+          option_team: false,
+          teams: ''
+        })
+      }
+  }
+  handleTeamChange = (teamselectedOption)=>{
+    console.log(teamselectedOption);
+    this.setState({ teamselectedOption });
+    this.setState({team: teamselectedOption.name})
+  }
   getForm = () => {
+    options = this.state.organizationList.map(function(organization,index){
+      return {value:organization.organization,label:organization.organization }
+    })
+    let isClearable = true;
     return (
       <form className="mt-5" onSubmit={this.handleSubmit} ref="signUpForm">
-        {this.forJsx('img/icon/user.svg', 'First name', 'first_name')}
-        {this.forJsx('img/icon/user.svg', 'Last name', 'last_name')}
-        {(this.props.location.pathname === '/SignUpElse')? this.forJsx('img/icon/user.svg', 'Organization', 'organization'): null}
-        {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
+        {this.forJsx(this.state.baseUrl+'/'+'img/icon/user.svg', 'First name', 'first_name')}
+        {this.forJsx(this.state.baseUrl+'/'+'img/icon/user.svg', 'Last name', 'last_name')}
+        
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsx(this.state.baseUrl+'/'+'img/icon/user.svg', 'Organization', 'organization'): null}
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole(this.state.baseUrl+'/'+'img/icon/arrowDown.svg'): null}
 
         <div className="input-group mb-5">
           <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon1">
-              <img className="age" src="img/icon/age.svg" alt="" />
+              <img className="age" src={this.state.baseUrl+'/'+"img/icon/age.svg"} alt="" />
             </span>
           </div>
           <DatePicker
@@ -347,7 +435,7 @@ class SignUpComponent extends React.Component {
               </span>
             </span>
           </div>
-          <input
+          {/* <input
             type="text"
             className="form-control contact-number"
             placeholder="(800) 867-5309"
@@ -357,13 +445,25 @@ class SignUpComponent extends React.Component {
             aria-label="contact number"
             aria-describedby="basic-addon1"
             required
+          /> */}
+          <MaskedInput
+            mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+            className="form-control contact-number"
+            guide={false}
+            placeholder="(800) 867-5309"
+            name="phone_number"
+            value={this.state.phone_number}
+            aria-label="contact number"
+            aria-describedby="basic-addon1"
+            required
           />
         </div>
+        <input type="hidden" name="userID" id="userID"/>
         <div className="form-row">
           <div className="input-group mb-5">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src="img/icon/envelop.svg" alt="" />
+                <img src={this.state.baseUrl+'/'+"img/icon/envelop.svg"} alt="" />
               </span>
             </div>
             <input
@@ -371,6 +471,7 @@ class SignUpComponent extends React.Component {
               className="form-control"
               placeholder={this.state.signupOrElse.email}
               name="user_name"
+              id="user_name"
               required
               aria-label="Username"
               aria-describedby="basic-addon1"
@@ -380,14 +481,14 @@ class SignUpComponent extends React.Component {
           </div>
         </div>
 
-        {this.props.location.pathname === '/SignUp' ?
+        {this.props.location.pathname === '/SignUp' || this.props.location.pathname === '/User/SignUp/' ?
             (this.state.selectedAge != null && this.state.selectedAge < 18) ?
 
                 <div className="form-row">
                   <div className="input-group mb-5">
                     <div className="input-group-prepend">
                       <span className="input-group-text" id="basic-addon1">
-                        <img src="img/icon/envelop.svg" alt="" />
+                        <img src={this.state.baseUrl+'/'+"img/icon/envelop.svg"} alt="" />
                       </span>
                     </div>
                     <input
@@ -406,11 +507,13 @@ class SignUpComponent extends React.Component {
             : null
         }
 
-        <div className="form-row">
+        {this.forJsxPassowrd(this.state.baseUrl+'/'+'img/icon/lock.svg', 'Password', 'password')}
+
+        <div className="form-row mb-3">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src="img/icon/gender.svg" alt="" />
+                <img src={this.state.baseUrl+'/'+"img/icon/gender.svg"} alt="" />
               </span>
             </div>
             <input type="hidden" name="user_type" defaultValue={this.state.userType} />
@@ -429,6 +532,76 @@ class SignUpComponent extends React.Component {
           </div>
         </div>
 
+        <div className="form-row mb-4">
+          <div className="input-group mb-3">
+            <div className="input-group-prepend">
+              <span className="input-group-text" id="basic-addon1">
+                <img style={{"width": "25px"}} src={this.state.baseUrl+'/'+"img/icon/orgicon.png"} alt="" />
+              </span>
+            </div>
+            {/*<SelectSearch options={options} search  onChange={this.handleOrgChange} placeholder="(Optional) Select your organization" />*/}
+            <Select
+              className="custom-react-serach"
+              value={this.state.selectedOption}
+              name="organization"
+              placeholder="(Optional) Select your organization"
+              onChange={this.handleOrgChange}
+              options={options}
+              isClearable={isClearable}
+            />
+          </div>
+        </div>
+        {this.state.isUploading ? (
+            <div className="d-flex justify-content-center center-spinner">
+                <div
+                    className="spinner-border text-primary"
+                    role="status"
+                    >
+                    <span className="sr-only">Uploading...</span>
+                </div>
+            </div>
+        ) : null}
+        <input type="hidden" name="team" defaultValue={this.state.team} />
+        {this.state.option_team && 
+          <div className="form-row mb-4">
+            <div className="input-group mb-3">
+              <div className="input-group-prepend">
+                <span className="input-group-text" id="basic-addon1">
+                  <img style={{"width": "25px"}} src={this.state.baseUrl+'/'+"img/icon/team-icon.png"} alt="" />
+                </span>
+              </div>
+              {/*<SelectSearch options={this.state.teams} search  placeholder="(Optional) Select your Team" />*/}
+              <Select
+                className="custom-react-serach"
+                value={this.state.teamselectedOption}
+                placeholder="(Optional) Select your Team"
+                onChange={this.handleTeamChange}
+                options={this.state.teams}
+                isClearable={isClearable}
+              />
+            </div>
+          </div>
+        }
+        <div className="form-row">
+          <div className="input-group mb-2">
+            <div className="input-group-prepend">
+              <span className="input-group-text" id="basic-addon1">
+                <img src={this.state.baseUrl+'/'+"img/icon/age.svg"} alt="" />
+              </span>
+            </div>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="(Optional) Enter your mouthguard or sensor ID number"
+              name="mouthguard"
+              aria-label="mouthguard"
+              aria-describedby="basic-addon1"
+              ref={this.usernameEmail}
+              
+            />
+          </div>
+        </div>
+
         <button
           type="submit"
           className="btn btn-primary sign-up-btn btn-block mt-5"
@@ -443,6 +616,7 @@ class SignUpComponent extends React.Component {
       <form className="mt-5" onSubmit={this.handleSubmitTokenForm} ref="signUpForm">
         {this.forJsx2(this.state.baseUrl+'/'+'img/icon/user.svg', 'First name', 'first_name',this.state.first_name)}
         {this.forJsx2(this.state.baseUrl+'/'+'img/icon/user.svg', 'Last name', 'last_name',this.state.last_name)}
+        
         {(this.props.location.pathname === '/SignUpElse')? this.forJsx('img/icon/user.svg', 'Organization', 'organization'): null}
         {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
 
@@ -532,6 +706,7 @@ class SignUpComponent extends React.Component {
               className="form-control"
               placeholder={this.state.signupOrElse.email}
               name="user_name"
+              id="user_name"
               value={this.state.email}
               required
               aria-label="Username"
@@ -566,6 +741,8 @@ class SignUpComponent extends React.Component {
                 : null
             : null
         }
+
+        {this.forJsxPassowrd(this.state.baseUrl+'/'+'img/icon/lock.svg', 'Password', 'password',this.state.password)}
 
         <div className="form-row">
           <div className="input-group mb-3">
@@ -613,6 +790,7 @@ class SignUpComponent extends React.Component {
     if (this.state.isFetching) {
           return <Spinner />;
       }
+
     return (
         <React.Fragment>
           <div className="dynamic__height">
@@ -673,7 +851,7 @@ class SignUpComponent extends React.Component {
                     role="alert"
                   >
                     <strong>Account created Successfully! </strong> Check your
-                    mail for temporary password .
+                    mail to verify your account.
                   </div>
                 ) : null}
                 {this.state.isSignUpError ? (

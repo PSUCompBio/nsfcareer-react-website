@@ -16,6 +16,7 @@ import videoSimulationLoading from './videoSimulationLoading.png';
 import unlock from './unlock.png';
 import lock from './lock.png';
 import upload from './upload.png';
+import remove from './remove.png';
 
 
 import uploadicon from './upload-icon.png'
@@ -31,7 +32,9 @@ import {
   getAllCumulativeAccelerationTimeRecords,
   getBrainSimulationMovie,
   uploadSidelineImpactVideo,
-  getBrainSimulationLogFile
+  getBrainSimulationLogFile,
+  removeVideo,
+  setVideoTime
 } from '../../../apis';
 import axios from 'axios';
 
@@ -45,8 +48,15 @@ import { Carousel } from 'react-responsive-carousel';
 import Spinner from '../../Spinner/Spinner';
 
 import ScrollToTop from 'react-scroll-up';
+import $ from 'jquery';
 
 import { getStatusOfDarkmode } from '../../../reducer';
+let lock_time = 0;
+let lock_percent = 0;
+let called = false;
+let lock_time_2 = 0;
+let lock_percent_2 = 0;
+let called_2 = false;
 class BrainSimulationDetails extends React.Component {
   constructor(props) {
     super(props);
@@ -78,7 +88,14 @@ class BrainSimulationDetails extends React.Component {
       simulation_log_path: '',
       simulation_log:'',
       uploadPercentage: 0,
-      IsAcceleration: false
+      IsAcceleration: false,
+      label_remove_video: 'Remove Video',
+      video_time: 0,
+      video_time_2: 0,
+      video_lock_time: false,
+      video_lock_time_2:false,
+      isTimeUpdating: false,
+      isTimeUpdating_2: false
     };
   }
  
@@ -117,6 +134,30 @@ class BrainSimulationDetails extends React.Component {
     console.log('files', event.target.files[0]);
     this.setState({impact_video_url: ''});
     this.upload(event.target.files[0]);
+  }
+  handalRemoveVideo = () =>{
+    console.log('remove')
+     this.setState({
+      label_remove_video: 'Removing...',
+      isLoading: false
+    })
+    removeVideo({'image_id':this.props.location.state.data.sensor_data.image_id})
+    .then(res => {
+      console.log(res)
+      if(res.data.message == 'success'){
+        this.setState({
+          label_remove_video: 'Removed'
+        })
+        var the = this;
+        setTimeout(function(){
+          the.setState({impact_video_url: ''})
+        },2000)
+      }else{
+        alert(res.data.err);
+      }
+    }).catch(err =>{
+      console.log(err)
+    })
   }
 
   upload =(file)=>{
@@ -166,12 +207,168 @@ class BrainSimulationDetails extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
 
+  vidocontrol =()=>{
+    const player = document.querySelector('.player');
+    const video = player.querySelector('.viewer');
+    
+    const progressBar = document.querySelector('.progress__filled');
+    const lockButton = document.querySelector('.lock_video');
+    
+    let the = this;
+    let controls = {
+      //Updating scroller to video time
+      handleProgress:  ()=> {
+        const percent = (video.currentTime / video.duration) * 100;
+        $('.progress__filled').val(percent);
+        lock_percent = percent
+      },
+      scrub: (e) =>{
+        const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+        if(scrubTime){
+          video.currentTime = scrubTime;
+        }
+      },
+      lockVideo:()=>{
+        console.log('clicked');
+        lock_time = video.currentTime;
+        const percent2 = (video.currentTime / video.duration) * 100;
+        lock_percent = percent2;
+        setTimeout(()=>{$('.progress__filled').val(percent2)},1000);
+        
+      },
+      setvideoTime:(time)=>{
+        console.log('time',time)
+        video.currentTime = time
+      }
+    }
+    if(video && this.state.video_lock_time){
+      controls.setvideoTime(this.state.video_lock_time);
+    }
+    video.addEventListener('timeupdate', controls.handleProgress);
+    progressBar.addEventListener('click', controls.scrub);
+    lockButton.addEventListener('click', controls.lockVideo);
+    let mousedown = false;
+    progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
+    progressBar.addEventListener('mousedown', () => mousedown = true);
+    progressBar.addEventListener('mouseup', () => mousedown = false);
+  }
 
- 
+   vidocontrol2 =()=>{
+    const player = document.querySelector('.Simulationvideo');
+    const video = player.querySelector('.viewer_2');
+    
+    const progressBar = document.querySelector('.progress__filled_2');
+    const lockButton = document.querySelector('.lock_video_2');
+    
+    let the = this;
+    let controls = {
+      //Updating scroller to video time
+      handleProgress:  ()=> {
+        const percent = (video.currentTime / video.duration) * 100;
+        $('.progress__filled_2').val(percent);
+        lock_percent_2 = percent;
+      },
+      scrub: (e) =>{
+        const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+        if(scrubTime){
+          video.currentTime = scrubTime;
+        }
+      },
+      lockVideo:()=>{
+        console.log('clicked');
+        lock_time_2 = video.currentTime;
+        const percent2 = (video.currentTime / video.duration) * 100;
+        lock_percent_2 = percent2;
+        setTimeout(()=>{$('.progress__filled_2').val(percent2)},1000);
+        
+      },
+      setvideoTime:(time)=>{
+        console.log('time',time)
+        video.currentTime = time
+      }
+    }
+    if(video && this.state.video_lock_time_2){
+      controls.setvideoTime(this.state.video_lock_time_2);
+    }
+    video.addEventListener('timeupdate', controls.handleProgress);
+    progressBar.addEventListener('click', controls.scrub);
+    lockButton.addEventListener('click', controls.lockVideo);
+    let mousedown = false;
+    progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
+    progressBar.addEventListener('mousedown', () => mousedown = true);
+    progressBar.addEventListener('mouseup', () => mousedown = false);
+  }
+
+  handlelock_video =()=>{
+    console.log('lock_time',lock_time)
+    if(this.state.video_lock_time){
+      this.setState({video_lock_time: 0});
+      this.setVideoTime(0);
+    }else{
+      this.setState({video_lock_time: lock_time});
+      this.setVideoTime(lock_time);
+    }
+    
+  }
+  handlelock_video_2=()=>{
+    console.log('lock_time',lock_time_2)
+    if(this.state.video_lock_time_2){
+      this.setState({video_lock_time_2: 0});
+      this.setVideoTime_2(0);
+    }else{
+      this.setState({video_lock_time_2: lock_time_2});
+      this.setVideoTime_2(lock_time_2);
+    }
+    
+  }
+   //Setting video lockTime
+  setVideoTime_2 =(time)=>{
+    this.setState({isTimeUpdating_2: true})
+    setVideoTime({image_id:this.props.location.state.data.sensor_data.image_id,video_lock_time:time,type:'setVideoTime_2'})
+    .then((response) => {
+      console.log(response)
+      if(response.data.message == 'success'){
+        this.setState({isTimeUpdating_2: false});
+        $('.progress__filled_2').val(lock_percent_2);
+        $('.progress__filled').val(lock_percent);
+         console.log(lock_percent_2,lock_percent)
+      }else{
+        this.setState({isTimeUpdating_2: false});
+         $('.progress__filled_2').val(lock_percent_2);
+         $('.progress__filled').val(lock_percent);
+      }
+    }).catch(err=>{
+      console.log('err',err)
+    })
+  }
+  //Setting video lockTime
+  setVideoTime =(time)=>{
+    this.setState({isTimeUpdating: true})
+    setVideoTime({image_id:this.props.location.state.data.sensor_data.image_id,video_lock_time:time,type: 'setVideoTime'})
+    .then((response) => {
+      console.log(response)
+      if(response.data.message == 'success'){
+        this.setState({isTimeUpdating: false});
+        $('.progress__filled').val(lock_percent);
+        console.log(lock_percent_2,lock_percent)
+        $('.progress__filled_2').val(lock_percent_2);
+      }else{
+        this.setState({isTimeUpdating: false});
+         $('.progress__filled').val(lock_percent);
+         $('.progress__filled_2').val(lock_percent_2);
+      }
+    }).catch(err=>{
+      console.log('err',err)
+    })
+  }
+
+  handleChangeRange =(event)=>{
+    this.setState({video_time: event.target.value});
+  }
+  handleChangeRange_2=(event)=>{
+    this.setState({video_time_2: event.target.value});
+  }
   render() {
-    console.log('props',this.props.location.state)
-    // const isLoaded = this.state.user;
-    console.log(this.state.user);
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
     }
@@ -189,7 +386,15 @@ class BrainSimulationDetails extends React.Component {
         {file.name} - {file.size} bytes
       </span>
     ));
-
+    var the = this;
+    if(this.state.impact_video_url && !called){
+      setTimeout(()=>{the.vidocontrol()},1000);
+      called = true;
+    }
+    if(this.state.movie_link && !called_2){
+      setTimeout(()=>{the.vidocontrol2()},1000);
+      called_2 = true
+    }
     return (
       <React.Fragment>
         <div className="center-scroll-up-mobile">
@@ -251,20 +456,21 @@ class BrainSimulationDetails extends React.Component {
                   </div>
                   <h1 className="top-heading__login brain-simlation-details-title" >Brain Simulation Details</h1>
                   {/* this.state.simulation_log_path && <p className="top-heading__login brain-simlation-details-title" ><a href={this.state.simulation_log_path} target="_blank">Simulation Log File</a></p>*/}
-                  <div style={{'text-align':'center','width':'100%'}}>{this.state.simulation_log && 
+                  <div style={{'text-align':'center','width':'100%'}}>
+
                     <Link 
                     to={{
                       pathname: '/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog',
                       state: {
                         state: this.props.location.state.state,
                         data: this.props.location.state.data,
-                        simulation_log: this.state.simulation_log
+                        image_id: this.props.location.state.data.sensor_data.image_id
                       }
                     }}>
                    
                       Simulation Log File
                     </Link>
-                  }</div>
+                  </div>
                   <h4 className="brain-simlation-details-subtitle">Player and Impact Number Details</h4>
                 </div>
                 <div className="col-md-12" > 
@@ -303,6 +509,7 @@ class BrainSimulationDetails extends React.Component {
                               <React.Fragment>
                                 <label for="uploadFile"><img src={upload} />  Replace Video</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
+                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
                               </React.Fragment>
                             }
                           </div>
@@ -313,12 +520,13 @@ class BrainSimulationDetails extends React.Component {
                               <img src={videoSimulationLoading} style={{'width':'50%'}} />
                             }
                             {this.state.movie_link &&
-                              <video src={this.state.movie_link} style={{'width':'100%'}} controls></video>
+                              <video src={this.state.movie_link} style={{'width':'100%'}} className="player__video_2 viewer_2" controls></video>
                             }
                           </div>
                           <div>
-                            <img src={unlock} className="unlock-img"/>
-                            <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
+                            {this.state.isTimeUpdating_2 ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
+                            <img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2}/>
+                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                         </div>
@@ -346,14 +554,19 @@ class BrainSimulationDetails extends React.Component {
                                 </section>
                               )}
                             </Dropzone>)
-                            : <video src={this.state.impact_video_url} style={{'width':'100%'}} controls></video>
+                            : 
+                              <div className="player">
+                                <video src={this.state.impact_video_url} style={{'width':'100%'}} className="player__video viewer" controls></video>
+                              </div>
                              
                           }
 
-                               
                           <div>
-                            <img src={lock} className="unlock-img"/>
-                            <input type="range" min="1" max="100" className="MyrangeSlider1" id="MyrangeSlider1" />
+                          {this.state.isTimeUpdating ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
+                          </div>
+                          <div>
+                            <img src={this.state.video_lock_time? lock : unlock} className="unlock-img lock_video" onClick={this.handlelock_video}/>
+                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           <div>
@@ -365,7 +578,7 @@ class BrainSimulationDetails extends React.Component {
                         <div className="" style={{'padding': '0px 14px'}}>
                           <div>
                             <img src={unlock} className="unlock-img2"/>
-                            <input type="range" min="1" max="100" className="MyrangeSlider3" id="MyrangeSlider3" />
+                            <input type="range"  min="1" max="100" value="50" className="MyrangeSlider3" id="MyrangeSlider3" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                         </div>
@@ -386,7 +599,7 @@ class BrainSimulationDetails extends React.Component {
                             <button className="btn gray">MASxSR<sub>15</sub></button>
                           </div>
                           <div className="col-md-12">
-                            <img class="img-fluid svg" width="100%" height="60%" src={this.props.location.state.data.simulation_image ? 'data:image/png;base64,' + this.props.location.state.data.simulation_image : simulationLoading} alt="" />
+                            <img class="img-fluid svg" width="100%" height="60%" src={this.props.location.state.simulationImage ? 'data:image/png;base64,' + this.props.location.state.simulationImage : simulationLoading} alt="" />
                             
                           </div>
                       </div>
@@ -417,21 +630,11 @@ class BrainSimulationDetails extends React.Component {
                     this.setState({
                         movie_link:response.data.movie_link,
                         impact_video_url: response.data.impact_video_url,
-                    });
-                    getBrainSimulationLogFile(this.props.location.state.data.sensor_data.image_id).then((response) => {
-                      console.log('response',response)
-                        this.setState({
-                          simulation_log:response.data.data,
-                          isLoaded: true,
-                          isAuthenticated: true,
-                          isCheckingAuth: false
-                      });
-                    }).catch((error) => {
-                        this.setState({
-                            isLoaded: true,
-                            userDetails: {},
-                            isCheckingAuth: false
-                        });
+                        video_lock_time: response.data.video_lock_time, 
+                        video_lock_time_2: response.data.video_lock_time_2, 
+                        isLoaded: true,
+                        isAuthenticated: true,
+                        isCheckingAuth: false
                     });
                   }).catch((error) => {
                     this.setState({

@@ -28,14 +28,15 @@ global.fetch = require('node-fetch');
 var _ = require('lodash');
 
 var nodemailer = require('nodemailer');
-
-var transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'tbitest987@gmail.com',
-    pass: 'Developer@981'
-  }
-});
+// var transporter = nodemailer.createTransport({
+//   host: 'email.us-west-2.amazonaws.com',
+//   port: 465,
+//   secure: true,
+//   auth: {
+//     user: 'AKIA5UBJSELBMRFTI2QO',
+//     pass: 'BPwKxokCSkorDHhAnyrVaNbML8Ydlo3scXbQEmwbPJay'
+//   }
+// });
 
 
 // ================================================
@@ -71,6 +72,7 @@ io.on('connection', socket => {
 // ================================================
 //            SERVER CONFIGURATION
 // ================================================
+
 
 
 global.navigator = () => null;
@@ -221,7 +223,7 @@ var uploadModelRealData = multer({
 const awsWorker = require('./controllers/aws.controller.js');
 
 
-var s3 = new AWS.S3();
+var s3 = new AWS.S3({useAccelerateEndpoint: true});
 
 // Cognito client who initializes the AWS Credentials to invoke
 // commands on behalf of the developer
@@ -349,7 +351,7 @@ function verifyImageToken(token, item){
 function getImageFromS3(image_record){
     return new Promise((resolve, reject) =>{
         var params = {
-            Bucket: config_env.usersbucket,
+            Bucket: image_record.bucket_name ? image_record.bucket_name : config_env.usersbucket,
             Key: image_record.path
         };
         s3.getObject(params, function(err, data) {
@@ -378,6 +380,24 @@ function getImageFromS3Buffer(image_data){
     })
 }
 
+function getFileFromS3(url, bucket_name) {
+    // console.log('url', url)
+    return new Promise((resolve, reject) => {
+        var params = {
+            Bucket: bucket_name ? bucket_name : config_env.usersbucket,
+            Key: url
+        };
+        s3.getObject(params, function (err, data) {
+            if (err) {
+                // reject(err)
+                resolve(null);
+            }
+            else {
+                resolve(data);
+            }
+        });
+    })
+}
 
 // Enable the user in cognito
 function enableUser(user_name, cb) {
@@ -454,6 +474,28 @@ function getFileSignedUrl(key, cb, type) {
     });
 }
 
+function getAvatarInspectionFileSignedUrl(key, cb) {
+
+    var params = {
+        Bucket: BUCKET_NAME,
+        Key: key
+    };
+
+    s3.headObject(params, function (err, metadata) {  
+        if (err && err.code === 'NotFound') {  
+          // Handle no object on cloud here 
+          cb(err, "");
+        } else {  
+            s3.getSignedUrl('getObject', params, function (err, url) {
+                if (err) {
+                    cb(err, "");
+                } else {
+                    cb("", url);
+                }
+            });
+        }
+      });
+}
 
 // Get user details & all his attributes
 function getUser(user_name, cb) {
@@ -493,28 +535,153 @@ function forgotPassword(user_name, cb) {
 
 
 function createUserDbEntry(event, callback) {
-    var dbInsert = {};
-    // adding key with name user_cognito_id
-    // deleting the key from parameter from "user_name"
-    event["user_cognito_id"] = event.user_name;
-    // event["sensor"] = 'Blackbox Biometrics';
-    // event["organization"] = 'Army Research Laboratory';
-    delete event.user_name;
-    dbInsert = {
-        TableName: "users",
-        Item: event
+
+    if (event.organization && event.team) {
+        addPlayerToTeamOfOrganization(event.organization, event.team, event.user_name)
+        .then(result => {
+            var dbInsert = {};
+            // adding key with name user_cognito_id
+            // deleting the key from parameter from "user_name"
+            event["user_cognito_id"] = event.user_name;
+            // event["sensor"] = 'Blackbox Biometrics';
+            // event["organization"] = 'Army Research Laboratory';
+            delete event.user_name;
+            dbInsert = {
+                TableName: "users",
+                Item: event
+            }
+
+
+            docClient.put(dbInsert, function (dbErr, dbData) {
+                if (dbErr) {
+                    callback(dbErr, null);
+                    console.log(dbErr);
+                }
+                else {
+                    console.log(dbData);
+                    callback(null, event);
+                }
+            });
+        })
+    } else {
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        event["user_cognito_id"] = event.user_name;
+        // event["sensor"] = 'Blackbox Biometrics';
+        // event["organization"] = 'Army Research Laboratory';
+        delete event.user_name;
+        dbInsert = {
+            TableName: "users",
+            Item: event
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                callback(dbErr, null);
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                callback(null, event);
+            }
+        });
     }
+}
 
-
-    docClient.put(dbInsert, function (dbErr, dbData) {
-        if (dbErr) {
-            callback(dbErr, null);
-            console.log(dbErr);
-        }
-        else {
-            console.log(dbData);
-            callback(null, event);
-        }
+function addPlayerToTeamOfOrganization(org, team, player_id) {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: "organizations",
+            FilterExpression: "organization = :organization and team_name = :team",
+            ExpressionAttributeValues: {
+                ":organization": org,
+                ":team": team,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+           
+            if (data == null) {
+                const scanData = concatArrays(item);
+                if (scanData.length > 0) {
+                    // If Player does not exists in Team
+                    if (scanData[0].requested_player_list) {
+                        if (scanData[0].requested_player_list.indexOf(player_id) <= -1) {
+                            const dbUpdate = {
+                                TableName: "organizations",
+                                Key: {
+                                    organization_id: scanData[0].organization_id
+                                },
+                                UpdateExpression: "set #list = list_append(#list, :newItem)",
+                                ExpressionAttributeNames: {
+                                    "#list": "requested_player_list",
+                                },
+                                ExpressionAttributeValues: {
+                                    ":newItem": [player_id],
+                                },
+                                ReturnValues: "UPDATED_NEW",
+                            };
+    
+                            docClient.update(dbUpdate, function (err, data) {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(data);
+                                }
+                            });
+                        } else {
+                            console.log("PLAYER ALREADY EXISTS IN TEAM");
+                            resolve("PLAYER ALREADY EXISTS IN TEAM");
+                        }
+                    } else {
+                        const dbUpdate = {
+                            TableName: "organizations",
+                            Item: {
+                                organization_id: scanData[0].organization_id,
+                                organization: org,
+                                team_name: team,
+                                requested_player_list: [player_id]
+                            },
+                        };
+                        docClient.put(dbUpdate, function (err, data) {
+                            if (err) {
+                                console.log(err);
+                                reject(err);
+                            } else {
+                                resolve(data);
+                            }
+                        });
+                    }
+                } else {
+                    const dbInsert = {
+                        TableName: "organizations",
+                        Item: {
+                            organization_id: 'org-' + Date.now(),
+                            organization: org,
+                            team_name: team,
+                            requested_player_list: [player_id]
+                        },
+                    };
+                    docClient.put(dbInsert, function (err, data) {
+                        if (err) {
+                            console.log(err);
+                            reject(err);
+                        } else {
+                            resolve(data);
+                        }
+                    });
+                }
+                //resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        }); 
     });
 }
 
@@ -1022,7 +1189,6 @@ function getUserSensor(user_name) {
     });
 }
 function getOrganizationList() {
-    console.log('getOrganizationList')
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
@@ -1097,57 +1263,6 @@ function InsertImpactVideoKey(video_id,impact_video_path) {
             }
         });
     });
-
-    //  return new Promise((resolve, reject) =>{
-    //     var dbInsert = {};
-    //     // adding key with name user_cognito_id
-    //     // deleting the key from parameter from "user_name"
-    //     dbInsert = {
-    //         TableName: "impact_sideline_video",
-    //         Item: {
-    //                 'video_id' :  video_id,
-    //                 'impact_video_path' :  impact_video_path
-    //             }
-    //     }
-
-
-    //     docClient.put(dbInsert, function (dbErr, dbData) {
-    //         if (dbErr) {
-    //             reject(dbErr)
-    //             console.log(dbErr);
-    //         }
-    //         else {
-    //             console.log(dbData);
-    //             resolve(dbData);
-    //         }
-    //     });
-    // })
-    // return new Promise((resolve, reject) => {
-    //     var dbInsert = {
-    //         TableName: "simulation_images",
-    //         Key: { 
-    //             "image_id" : image_id
-    //         },
-    //         UpdateExpression: "set #impact_video_path = :key",
-    //         ExpressionAttributeNames: {
-    //             "#impact_video_path": "impact_video_path"
-    //         },
-    //         ExpressionAttributeValues: {
-    //             ":key":key
-    //         },
-    //         ReturnValues: "UPDATED_NEW"
-    //     }
-
-    //     docClient.update(dbInsert, function (err, data) {
-    //         if (err) {
-    //             console.log("ERROR WHILE CREATING DATA",err);
-    //             reject(err);
-
-    //         } else {
-    //             resolve(data)
-    //         }
-    //     });
-    // });
 }
 
 function adminUpdateUser(User, cb) {
@@ -1175,14 +1290,92 @@ function adminUpdateUser(User, cb) {
 
 // Function to create User by Admin
 function adminCreateUser(User, cb) {
+    // if(User.userID){
+    //     var params = {
+    //         UserPoolId: cognito.userPoolId, /* required */
+    //         Username: User.user_name, /* required */
+    //         DesiredDeliveryMediums: [
+    //             "EMAIL",
+    //         ],
+    //         MessageAction: 'SUPPRESS', 
+    //         TemporaryPassword: User.userID, // BrainComputing2020!
+    //         UserAttributes: [
+    //             {
+    //                 Name: 'phone_number', /* required */
+    //                 Value: User.phone_number
+    //             },
+    //             {
+    //                 Name: 'name', /* required */
+    //                 Value: User.name
+    //             },
+    //             {
+    //                 Name: 'email', /* required */
+    //                 Value: User.email
+    //             },
+    //             {
+    //                 Name: 'phone_number_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'email_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'custom:level',  /* required */
+    //                 Value: User.level
+    //             }
+    //         ]
+    //     };
+    // }else{
+    //     var params = {
+    //         UserPoolId: cognito.userPoolId, /* required */
+    //         Username: User.user_name, /* required */
+    //         DesiredDeliveryMediums: [
+    //             "EMAIL",
+    //         ],
+    //         // MessageAction: 'SUPPRESS', 
+    //         // TemporaryPassword: User.userID, // BrainComputing2020!
+    //         UserAttributes: [
+    //             {
+    //                 Name: 'phone_number', /* required */
+    //                 Value: User.phone_number
+    //             },
+    //             {
+    //                 Name: 'name', /* required */
+    //                 Value: User.name
+    //             },
+    //             {
+    //                 Name: 'email', /* required */
+    //                 Value: User.email
+    //             },
+    //             {
+    //                 Name: 'phone_number_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'email_verified',
+    //                 Value: 'true'
+    //             },
+    //             {
+    //                 Name: 'custom:level',  /* required */
+    //                 Value: User.level
+    //             }
+    //         ]
+    //     };
+    // }
+    // COGNITO_CLIENT.adminCreateUser(params, function (err, data) {
+    //     if (err) {
+    //         cb(err, "");
+    //     } // an error occurred
+    //     else {
+    //         cb("", data);
+    //     }             // successful response
+    // });
+
     var params = {
-        UserPoolId: cognito.userPoolId, /* required */
+        ClientId: cognito.ClientId, /* required */
         Username: User.user_name, /* required */
-        DesiredDeliveryMediums: [
-            "EMAIL",
-        ],
-        // MessageAction: 'SUPPRESS',
-        // TemporaryPassword: '12345678', // BrainComputing2020!
+        Password: User.password,
         UserAttributes: [
             {
                 Name: 'phone_number', /* required */
@@ -1197,26 +1390,18 @@ function adminCreateUser(User, cb) {
                 Value: User.email
             },
             {
-                Name: 'phone_number_verified',
-                Value: 'true'
-            },
-            {
-                Name: 'email_verified',
-                Value: 'true'
-            },
-            {
                 Name: 'custom:level',  /* required */
                 Value: User.level
             }
         ]
     };
-    COGNITO_CLIENT.adminCreateUser(params, function (err, data) {
+    COGNITO_CLIENT.signUp(params, function (err, data) {
         if (err) {
             cb(err, "");
-        } // an error occurred
+        }
         else {
             cb("", data);
-        }             // successful response
+        }
     });
 }
 
@@ -1428,7 +1613,7 @@ const fetchStaffMembers = (user_cognito_id,brand) => {
         var params = {
             TableName: 'users',
              Key: {
-                "user_cognito_id": user_cognito_id
+                "user_cognito_id": user_cognito_id,
             }
            
         };
@@ -1682,10 +1867,10 @@ function getPlayerCgValues(player_id) {
 
 function getPresignedMovieUrl(image_details) {
   return new Promise((resolve, reject) => {
-    const { movie_path } = image_details;
+    const { movie_path, bucket_name } = image_details;
     if(movie_path) {
       var params = {
-          Bucket: BUCKET_NAME,
+          Bucket: bucket_name ? bucket_name : config_env.usersbucket,
           Key: movie_path,
           Expires: 1800
       };
@@ -1957,12 +2142,14 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
             res.send({
                 message : "success",
                 movie_link : movie_link_url,
-                impact_video_url: impact_video_url
+                impact_video_url: impact_video_url,
+                video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
+                video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
+
             })
         })
         .catch(err => {
             console.log(err);
-            // res.removeHeader('X-Frame-Options');
             if("authorized" in err){
                 res.send({
                     message : "failure",
@@ -1977,6 +2164,68 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         })
 });
 
+/*+++++++++++++++++ Set video lock time funtion start here ++++++++++++++++ */
+app.post(`${apiPrefix}setVideoTime`, (req, res) => {
+    console.log(req.body);
+    setVideoTime(req.body.image_id, req.body.video_lock_time,req.body.type)
+    .then(data=>{
+        res.send({
+            message:'success',
+            status: '200',
+            data:data
+        })
+    }).catch(err=>{
+        res.send({
+            message:'failure',
+            status: '300',
+            data: []
+        })
+    })
+});
+
+function setVideoTime(image_id,video_lock_time,type) {
+    console.log('user_name',image_id,video_lock_time)
+    return new Promise((resolve, reject) => {
+        if(type == 'setVideoTime'){
+            var userParams = {
+                TableName: "simulation_images",
+                Key: {
+                    image_id: image_id,
+                },
+                UpdateExpression:
+                    "set video_lock_time = :video_lock_time",
+                ExpressionAttributeValues: {
+                    ":video_lock_time": video_lock_time,
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+        }else{
+            var userParams = {
+                TableName: "simulation_images",
+                Key: {
+                    image_id: image_id,
+                },
+                UpdateExpression:
+                    "set video_lock_time_2 = :video_lock_time_2",
+                ExpressionAttributeValues: {
+                    ":video_lock_time_2": video_lock_time,
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+        }
+        docClient.update(userParams, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+/*+++++++++++++++++ Set video lock time funtion end here ++++++++++++++++ */
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
 });
@@ -2015,6 +2264,118 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
         })
     })
 });
+
+/*++++++++++++++++ Geting org unique list ++++++++++++++++++++++*/
+function getOrgUniqueList() {
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#level = :level",
+            ExpressionAttributeValues: {
+                ":level": 300,
+            },
+            ExpressionAttributeNames: {
+                "#level": "level",
+            },
+            ProjectionExpression: "organization"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getOrgUniqueList`, (req, res) => {
+    console.log('get org list')
+    getOrgUniqueList()
+    .then(list => {
+        let uniqueList = [];
+        var orgList = list.filter(function (organization) {
+            if (uniqueList.indexOf(organization.organization) === -1) {
+                uniqueList.push(organization.organization);
+                return organization;
+            }
+        });
+        console.log('uniqueList',orgList)
+        res.send({
+            message: 'success',
+            status: 200,
+            data: orgList
+        })
+    })
+    .catch(err=>{
+        console.log('err',err);
+        res.send({
+            message: 'faiure',
+            status: 300,
+            data: []
+        })
+    })
+})
+
+/*++++++++++++ Getting Organization teams +++++++++++++++++*/
+
+function getOrgUniqueTeams(organization) {
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'organizations',
+            FilterExpression: "organization = :organization",
+            ExpressionAttributeValues: {
+            ":organization": organization
+            },
+            ProjectionExpression: "team_name"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getOrgUniqueTeams`, (req, res) => {
+    console.log('org name', req.body);
+    getOrgUniqueTeams(req.body.org)
+    .then(list => {
+        let uniqueList = [];
+        var teamList = list.filter(function (team) {
+            if (uniqueList.indexOf(team.team_name) === -1) {
+                uniqueList.push(team.team_name);
+                return team;
+            }
+        });
+        console.log('uniqueList',teamList)
+        res.send({
+            message: 'success',
+            status: 200,
+            data: teamList
+        })
+    })
+    .catch(err=>{
+        console.log('err',err);
+        res.send({
+            message: 'faiure',
+            status: 300,
+            data: []
+        })
+    })
+})
 
 
 app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
@@ -2056,6 +2417,34 @@ app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
                         message : 'success'
                     })
                 }
+            })
+        }
+    })
+})
+
+app.post(`${apiPrefix}updateUserMouthguardDetails`,(req, res) => {
+    console.log('req',req.body);
+    let update_details = {
+        TableName : 'users',
+        Key : {
+            "user_cognito_id": req.body.user_cognito_id
+        },
+        UpdateExpression : "set sensor = :sensor, sensor_id_number = :sensor_id_number",
+        ExpressionAttributeValues : {
+            ":sensor" : req.body.sensor,
+            ":sensor_id_number" : req.body.sensor_id_number
+        },
+        ReturnValues: "UPDATED_NEW"
+    };
+
+    docClient.update(update_details, function(err, data){
+        if(err) {
+            res.send({
+                message : 'failure'
+            })
+        } else {
+            res.send({
+                message : 'success'
             })
         }
     })
@@ -2291,8 +2680,8 @@ app.post(`${apiPrefix}singUpWithToken`, (req, res) => {
 
 app.post(`${apiPrefix}updateCognitoUser`, (req, res) => {
     let obj = {};
-    obj.user_name = 'ec3acb86-fae0-408a-93a5-9319de4f9766';
-    obj.email = 'ben@hitiq.com';
+    obj.user_name = '9005758e-5fa9-4d83-898b-065ab520af2f';
+    obj.email = 'rooks.t@gmail.com';
 
     adminUpdateUser(obj, function (err, data) {
         if (err) {
@@ -2319,7 +2708,12 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
     req.body["name"] = req.body.first_name + req.body.last_name;
-    req.body["email"] = req.body.user_name;
+    var user_name = req.body.user_name;
+    console.log('user_name',user_name)
+
+    req.body["email"] = user_name.toLowerCase();
+    req.body["user_name"] = user_name.toLowerCase();
+    console.log('email',req.body["email"] )
     req.body["is_selfie_image_uploaded"] = false;
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
@@ -2330,8 +2724,10 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     if(!req.body.level){
         req.body["level"] = '100';
     }
+    req.body.phone_number = req.body.phone_number.replace(/[-() ]/g, '');
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
+    var user_cognito_id = '';
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
     adminCreateUser(req.body, function (err, data) {
         if (err) {
@@ -2343,16 +2739,17 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
             });
         }
         else {
-            console.log('data',data)
-            var UserData = data.User;
-            req.body["user_cognito_id"] = UserData.Username;
+            console.log('data------------\n',data);
+            
+            req.body["user_cognito_id"] = data.UserSub;
+            user_cognito_id = data.UserSub;
             //Now check type of User and give permission accordingly
             // res.send(data);
             // user_type
             // userName
             var tempData = {};
-            tempData["user_name"] = UserData.Username;
-            tempData["userName"] = UserData.Username;
+            tempData["user_name"] = data.UserSub;
+            tempData["userName"] = data.UserSub;
 
             tempData["user_type"] = req.body.user_type;
             tempData["phone_number"] = req.body.phone_number;
@@ -2370,6 +2767,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                 var mergedObject = { ...req.body, ...tempData };
                 delete mergedObject.userName;
                 delete mergedObject.name;
+                delete mergedObject.password;
+                console.log('mergedObject------------\n',mergedObject);
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
                     if (err) {
                         console.log("DB ERRRRRR =============================== \n", err);
@@ -2396,7 +2795,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                             else {
                                 // On success
                                 res.send({
-                                    message: 'success'
+                                    message: 'success',
+                                    user_cognito_id: user_cognito_id
                                 });
                             }
                         });
@@ -2407,9 +2807,10 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                 // Merging objects
                 var mergedObject = { ...req.body, ...tempData };
-
+                console.log('mergedObject------------\n',mergedObject);
                 delete mergedObject.userName;
                 delete mergedObject.name;
+                delete mergedObject.password;
                 createUserDbEntry(mergedObject, function (dberr, dbdata) {
                     if (err) {
                         console.log("DB ERRRRRR =============================== \n", err);
@@ -2451,12 +2852,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                 mergedObject["age"] = age;
 
                                 if( age < 18) {
-
                                     // Disable user account
-
-
-
-
                                 }
 
                                 // Sending request to service to generate IRB form
@@ -2473,91 +2869,1245 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                     }
                                     else {
                                         console.log("response body from irb", httpResponse.body);
-                                        if( age > 18 ) {
-                                            res.send({
-                                                message: "success",
-                                                message_details : "Successfully created account ! Check your mail for temporary login credentials"
-                                            })
-                                        } else {
+                                        // if( age > 18 ) {
+                                        //     res.send({
+                                        //         message: "success",
+                                        //         message_details : "Successfully created account ! Check your mail for temporary login credentials",
+                                        //         user_cognito_id: user_cognito_id
+                                        //     })
+                                        // } else {
 
-                                            disableUser(req.body.user_name, function (err, data) {
-                                                if (err) {
-                                                    console.log("Failed to disable user",req.body.user_name )
-                                                    res.send({
-                                                        message: "failure",
-                                                        error: err
-                                                    })
-                                                }
-                                                else {
-                                                    res.send({
-                                                        message : "success",
-                                                        message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, youw will be a part of the study!"
-                                                    })
-                                                }
-                                            })
+                                        //     disableUser(req.body.user_name, function (err, data) {
+                                        //         if (err) {
+                                        //             console.log("Failed to disable user",req.body.user_name )
+                                        //             res.send({
+                                        //                 message: "failure",
+                                        //                 error: err
+                                        //             })
+                                        //         }
+                                        //         else {
+                                        //             res.send({
+                                        //                 message : "success",
+                                        //                 message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
+                                        //                 user_cognito_id: user_cognito_id
+                                        //             })
+                                        //         }
+                                        //     })
 
-                                        }
+                                        // }
+
+                                        res.send({
+                                            message: "success",
+                                            message_details : "Successfully created account ! Check your mail to verify your account.",
+                                            user_cognito_id: user_cognito_id
+                                        })
 
                                     }
                                 })
-
-
                             }
                         });
                     }
                 })
             }
-
-
-
         }
     })
-
-
 });
+
+function getUserAlreadyExists(email) {
+    console.log('mail',email)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#email = :email",
+            ExpressionAttributeNames: {
+                "#email": "email",
+            },
+            ExpressionAttributeValues: {
+                ":email": email,
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+function upDateuser(body,user_cognito_id) {
+    // body...
+    return new Promise((resolve, reject) => {
+         let update_details = {
+            TableName : 'users',
+            Key : {
+                "user_cognito_id": user_cognito_id
+            },
+            UpdateExpression : "set first_name = :first_name, last_name = :last_name, #level = :level, organization= :organization, sensor = :sensor, team = :team",
+             ExpressionAttributeNames: {
+                "#level": "level",
+            },
+            ExpressionAttributeValues : {
+                ":first_name" : body.first_name,
+                ":last_name" : body.last_name,
+                ":level" : body.level,
+                ":organization": body.organization,
+                ":sensor" : body.sensor,
+                ":team" : body.team
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        docClient.update(update_details, function(err, data){
+            if(err) {
+               reject(err);
+            } else {
+                resolve(data);
+            }
+        })
+    })
+}
+
+function updateCognitoUser(body, user_cognito_id) {
+    return new Promise((resolve, reject) => {
+        var params = {
+            UserAttributes: [ /* required */
+              {
+                Name: 'name', /* required */
+                Value: body.first_name+body.last_name,
+              },
+              {
+                Name: 'custom:level', /* required */
+                Value: body.level,
+              },
+              /* more items */
+            ],
+            UserPoolId: cognito.userPoolId, /* required */
+            Username: user_cognito_id, /* required */
+          };
+          COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+            if (err) {
+                reject(err);
+            } // an error occurred
+            else {
+                resolve(data);
+            }             // successful response
+          });
+    })
+}
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
-    createInviteUserDbEntry(req.body, function (dberr, dbdata) {
-        if (dberr) {
-            console.log("DB ERRRRRR =============================== \n", dberr);
+    let email = req.body.email;
+    req.body['email'] = email.toLowerCase();
+    getUserAlreadyExists(req.body.email)
+    .then(data=>{
+        if(data[0]){
+            console.log('data --------------------\n',data);
+            if(!req.body['sensor']){
+                req.body['sensor'] = ''
+            }
+            let mailBody = 'You have been added as a super admin. Go to your dashboard with this link '+config.FrontendUrl
+            if(req.body['level'] == '400'){
+                mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link '+config.FrontendUrl+'OrganizationAdmin';
+            }else if(req.body['level'] == '300'){
+                mailBody = 'You have been added as a organization admin. Go to your dashboard with this link '+config.FrontendUrl+'TeamAdmin';
+            }else if(req.body['level'] == '200'){
+                mailBody = 'You have been added as a team admin. Go to your dashboard with this link '+config.FrontendUrl+'TeamAdmin/team/players';
+            }
+            updateCognitoUser(req.body,data[0].user_cognito_id)
+            .then(result=>{
+                let isReturn = false;
+                req.body['level'] = parseInt(req.body.level);
+                if(req.body['level'] == 400){
+                    InsertUserIntoSensor(data[0].user_cognito_id,req.body['sensor']).
+                    then(sensor_data => {
+                       
+                        console.log('sensor_data',sensor_data);
+                         return  upDateuser(req.body,data[0].user_cognito_id);
+                    })
+                    .catch(err => {
+                        res.send({
+                            message: "faiure",
+                            error: err
+                        });
+                        isReturn = false;
+                    })
+                }else{
+                     return  upDateuser(req.body,data[0].user_cognito_id);
+                }
+            })
+            .then(result=>{
+                 var params = {
+                      Destination: { /* required */
+                        ToAddresses: [
+                          req.body.email,
+                          /* more items */
+                        ]
+                      },
+                      Message: { /* required */
+                        Body: { /* required */
+                          Text: {
+                           Charset: "UTF-8",
+                           Data: mailBody
+                          }
+                         },
+                         Subject: {
+                          Charset: 'UTF-8',
+                          Data: 'Your level has been changed'
+                         }
+                        },
+                      Source: 'info@NSFCAREER.IO', /* required */
+                      ReplyToAddresses: [
+                         'info@NSFCAREER.IO',
+                        /* more items */
+                      ],
+                    };
 
-            res.send({
-                message: "faiure",
-                error: dberr.code
-            });
+                // Create the promise and SES service object
+                var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+                // Handle promise's fulfilled/rejected states
+                sendPromise.then(
+                  function(data) {
+                    console.log(data.MessageId);
+                    res.send({
+                        message: "Success",
+                        data: data.MessageId
+                    });
+                }).catch(
+                    function(err) {
+                    console.error(err, err.stack);
+                    res.send({
+                        message: "faiure",
+                        error: err
+                    });
+                });
+            })
+            .catch(err=>{
+                console.log("err updateCognitoUser =============================== \n", err);
+
+                    res.send({
+                        message: "faiure",
+                        error: err
+                    });
+            })
+        }else{
+            createInviteUserDbEntry(req.body, function (dberr, dbdata) {
+                if (dberr) {
+                    console.log("DB ERRRRRR =============================== \n", dberr);
+
+                    res.send({
+                        message: "faiure",
+                        error: dberr.code
+                    });
+                }
+                else {
+                    console.log('dbdata',dbdata)
+                    var params = {
+                      Destination: { /* required */
+                        ToAddresses: [
+                          dbdata.email,
+                          /* more items */
+                        ]
+                      },
+                      Message: { /* required */
+                        Body: { /* required */
+                          Text: {
+                           Charset: "UTF-8",
+                           Data: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+                          }
+                         },
+                         Subject: {
+                          Charset: 'UTF-8',
+                          Data: 'Thank you for joining Nsfcareer'
+                         }
+                        },
+                      Source: 'info@NSFCAREER.IO', /* required */
+                      ReplyToAddresses: [
+                         'info@NSFCAREER.IO',
+                        /* more items */
+                      ],
+                    };
+
+                    // Create the promise and SES service object
+                    var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+                    // Handle promise's fulfilled/rejected states
+                    sendPromise.then(
+                      function(data) {
+                        console.log(data.MessageId);
+                        res.send({
+                            message: "Success",
+                            data: data.MessageId
+                        });
+                      }).catch(
+                        function(err) {
+                        console.error(err, err.stack);
+                        res.send({
+                            message: "faiure",
+                            error: err
+                        });
+                      });
+                }
+            })
         }
-        else {
-            console.log('dbdata',dbdata)
-            var mailOptions = {
-              from: 'mukesh.rawat@brihaspatitech.com',
-              to: dbdata.email,
-              subject: 'Thank you for joining Nsfcareer',
-              text: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+    }).catch(err=>{
+        console.log('err',err)
+    })
+    
+});
+
+//Delete organizations
+function DeleteOrganization(organization_id) {
+    console.log('organization_id',organization_id)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            }
+        }
+
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                console.log("error when deleting data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+function getOrganizatonBynameSensor(organization, sensor){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "organizations",
+                FilterExpression: "sensor = :sensor and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":sensor": sensor,
+                ":organization": organization,
+                },
             };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+function getOrganizatonByTeam(organization, team_name){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "organizations",
+                FilterExpression: "team_name = :team_name and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":team_name": team_name,
+                ":organization": organization,
+                },
+            };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
 
-            transporter.sendMail(mailOptions, function(error, info){
-              if (error) {
+app.post(`${apiPrefix}deleteItem`, (req, res) => {
+    console.log(req.body)  
+    let type = req.body.type;
+    let data = req.body.data;
+    if(type == 'team'){
+        console.log('data',data)
+        getOrganizatonBynameSensor(data.organization, data.brand)
+        .then(org =>{
+            var orglen = org.length;
+            orglen = orglen-1;
+            if(org){
+                org.forEach(function (record, index) {
+                    console.log('record',record.organization_id);
+                    console.log(index, orglen)
+                    DeleteOrganization(record.organization_id)
+                    .then(data => {
+                        console.log('res',data)
+                        if(index == orglen){
+                            res.send({
+                                message: 'success',
+                                status: 200
+                            })
+                        }
+                    }).catch(err => {
+                        console.log('err',err)
+                        if(index == orglen){
+                             res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
                 res.send({
-                    message: "faiure",
-                    error: error
-                });
-              } else {
-                console.log('Email sent: ' + info.response);
+                    message: 'failure',
+                    status: 300,
+                    err: err
+                })
+            }
+        }).catch(err => {
+            console.log('err',err)
+            res.send({
+                message: 'failure',
+                status: 300,
+                err: err
+            })
+        })
+        
+    }else if(type == 'orgTeam'){
+        getOrganizatonByTeam(data.organization, data.TeamName)
+        .then(org =>{
+            var orglen = org.length;
+            orglen = orglen-1;
+            if(org){
+                org.forEach(function (record, index) {
+                    console.log('record',record.organization_id);
+                    console.log(index, orglen)
+                    DeleteOrganization(record.organization_id)
+                    .then(data => {
+                        console.log('res',data)
+                        if(index == orglen){
+                            res.send({
+                                message: 'success',
+                                status: 200
+                            })
+                        }
+                    }).catch(err => {
+                        console.log('err',err)
+                        if(index == orglen){
+                             res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
                 res.send({
-                    message: "Success",
-                    data: info.response
-                });
-              }
-            });
+                    message: 'failure',
+                    status: 300,
+                    err: err
+                })
+            }
+        }).catch(err => {
+            console.log('err',err)
+            res.send({
+                message: 'failure',
+                status: 300,
+                err: err
+            })
+        })
+    }
+})
+
+//Rename organization
+
+
+function getOrgSensorData(organization, sensor){
+    return new Promise((resolve, reject) =>{
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "organization= :organization and sensor = :sensor",
+            ExpressionAttributeValues: {
+               ":sensor": sensor,
+               ":organization": organization
+            },
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+
+
+function renameOrganization(OrganizationName,organization_id) {
+    console.log('organization_id',organization_id)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            },
+            UpdateExpression: "set #organization = :organization",
+            ExpressionAttributeNames: {
+                "#organization": "organization"
+            },
+            ExpressionAttributeValues: {
+                ":organization": OrganizationName
+            },
+            ReturnValues: "UPDATED_NEW"
         }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+function renameSensorOrganization(OrganizationName,player_id, team) {
+    console.log('OrganizationName',OrganizationName)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "sensor_data",
+            Key: { 
+                "team": team,
+                "player_id" : player_id
+            },
+            UpdateExpression: "set #organization = :organization",
+            ExpressionAttributeNames: {
+                "#organization": "organization"
+            },
+            ExpressionAttributeValues: {
+                ":organization": OrganizationName
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating sensor data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+app.post(`${apiPrefix}renameOrganization`, (req, res) => {
+    console.log(req.body) ;
+    let organization = req.body.data.organization;
+    let sensor = req.body.data.brand;
+    let OrganizationName = req.body.OrganizationName;
+   
+    renameOrganization(req.body.OrganizationName, req.body.organization_id)
+    .then(data => {
+        console.log('res',data)
+        getOrgSensorData(organization, sensor)
+        .then(sensor_data => {
+            console.log('sensor_data',sensor_data);
+            let sensorlen = sensor_data.length;
+            if(sensorlen > 0){
+                sensorlen = sensorlen-1;
+                sensor_data.forEach(function (record, index) {
+                    // console.log('sensor',record);
+                    renameSensorOrganization(OrganizationName, record.player_id, record.team)
+                    .then(response=>{
+                        console.log('response',response)
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'success',
+                                status: 200,
+                            })
+                        }
+                    }).catch(err=>{
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
+                res.send({
+                    message: 'success',
+                    status: 200,
+                })
+            }
+        }).catch(err => {
+            console.log("er",err)
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+})
+
+//Add organization
+function addOrganization(OrganizationName, sensor) {
+    return new Promise((resolve, reject) =>{
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        dbInsert = {
+            TableName: "organizations",
+            Item: {
+                organization: OrganizationName,
+                organization_id: 'org-'+Date.now(),
+                player_list: [],
+                sensor: sensor,
+                team_name: ' ',
+                user_cognito_id: ' '
+            }
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                reject(dbErr)
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                resolve(dbData);
+            }
+        });
+    })
+}
+
+app.post(`${apiPrefix}addOrganization`, (req, res) => {
+    console.log(req.body);
+    addOrganization(req.body.OrganizationName, req.body.sensor)
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+})
+
+
+
+//Merge organization
+function MergeOrganization(OrganizationName, organization_id) {
+    console.log('user_name',OrganizationName,organization_id)
+    return new Promise((resolve, reject) => {
+        var dbInsert = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            },
+            UpdateExpression: "set #organization = :organization",
+            ExpressionAttributeNames: {
+                "#organization": "organization"
+            },
+            ExpressionAttributeValues: {
+                ":organization": OrganizationName
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+
+        docClient.update(dbInsert, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+/*============ Team edit funtions start here===================*/
+
+//Add organization
+function addorgTeam(TeamName, organization,sensor) {
+    return new Promise((resolve, reject) =>{
+        var dbInsert = {};
+        // adding key with name user_cognito_id
+        // deleting the key from parameter from "user_name"
+        dbInsert = {
+            TableName: "organizations",
+            Item: {
+                organization: organization,
+                organization_id: 'org-'+Date.now(),
+                player_list: [],
+                sensor: sensor,
+                team_name: TeamName,
+                user_cognito_id: ' '
+            }
+        }
+
+
+        docClient.put(dbInsert, function (dbErr, dbData) {
+            if (dbErr) {
+                reject(dbErr)
+                console.log(dbErr);
+            }
+            else {
+                console.log(dbData);
+                resolve(dbData);
+            }
+        });
+    })
+}
+
+app.post(`${apiPrefix}addorgTeam`, (req, res) => {
+    console.log(req.body);
+    addorgTeam(req.body.TeamName, req.body.organization,req.body.sensor)
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
     })
 });
 
+function getSernsorDataByTeam(team_name, organization){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "sensor_data",
+                FilterExpression: "team = :team and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":team": team_name,
+                ":organization": organization,
+                },
+            };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
 
+function renameTeam(team_name,organization_id) {
+    console.log('organization_id',organization_id)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id" : organization_id
+            },
+            UpdateExpression: "set #team_name = :team_name",
+            ExpressionAttributeNames: {
+                "#team_name": "team_name"
+            },
+            ExpressionAttributeValues: {
+                ":team_name": team_name
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+function getUserByTeam(team_name, organization){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "users",
+                FilterExpression: "team = :team and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":team": team_name,
+                ":organization": organization,
+                },
+                ProjectionExpression: "user_cognito_id",
+                ScanIndexForward: false
+            };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+function renameUsers(user_cognito_id, team_name) {
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "users",
+            Key: { 
+                "user_cognito_id": user_cognito_id
+            },
+            UpdateExpression: "set #team = :team",
+            ExpressionAttributeNames: {
+                "#team": "team"
+            },
+            ExpressionAttributeValues: {
+                ":team": team_name
+            },
+            ReturnValues: "UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating sensor data\n",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
+// function renameSernosrTeam(team,player_id, team_name) {
+//     console.log('player_id',player_id)
+//     return new Promise((resolve, reject) => {
+//         var params = {
+//             TableName: "sensor_data",
+//             Key: { 
+//                 "team": team,
+//                 "player_id" : player_id
+//             },
+//             UpdateExpression: "set #team = :team",
+//             ExpressionAttributeNames: {
+//                 "#team": "team"
+//             },
+//             ExpressionAttributeValues: {
+//                 ":team": team_name
+//             },
+//             ReturnValues: "UPDATED_NEW"
+//         }
+//         docClient.update(params, function (err, data) {
+//             if (err) {
+//                 console.log("error when updating sensor data\n",err);
+//                 reject(err);
+
+//             } else {
+//                 resolve(data)
+//             }
+//         });
+//     });
+// }
+
+app.post(`${apiPrefix}renameTeam`, (req, res) => {
+    console.log('body',req.body);
+    let organization_id = req.body.organization_id;
+    let team_name =  req.body.TeamName;
+    let data = req.body.data;
+    renameTeam(team_name,organization_id)
+    .then(response=>{
+        // return getSernsorDataByTeam(data.TeamName,data.organization);
+        return getUserByTeam(data.TeamName,data.organization)
+    })
+    .then(response=>{
+        console.log('response',response);
+        let users_data = response;
+        if(users_data[0]){
+            let userslen = users_data.length;
+            userslen = userslen-1;
+            users_data.forEach(function (record, index) {
+                renameUsers(record.user_cognito_id, team_name)
+                .then(data => {
+                    console.log('res',data)
+                    if(index == userslen){
+                        res.send({
+                            message: 'success',
+                            status: 200
+                        })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    if(index == userslen){
+                         res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
+                })
+            })
+        }else{
+            res.send({
+                message: 'success',
+                status: 200
+            })
+        }
+        // let sensor_data = response;
+        // if(sensor_data){
+        //     let orglen = sensor_data.length;
+        //     orglen = orglen-1;
+        //     sensor_data.forEach(function (record, index) {
+        //         console.log('record',record.team);
+        //         console.log(index, orglen)
+        //         renameSernosrTeam(record.team, record.player_id, team_name)
+        //         .then(data => {
+        //             console.log('res',data)
+        //             if(index == orglen){
+        //                 res.send({
+        //                     message: 'success',
+        //                     status: 200
+        //                 })
+        //             }
+        //         }).catch(err => {
+        //             console.log('err',err)
+        //             if(index == orglen){
+        //                  res.send({
+        //                     message: 'failure',
+        //                     status: 300,
+        //                     err: err
+        //                 })
+        //             }
+        //         })
+        //     })
+        // }else{
+        //     res.send({
+        //         message: 'success',
+        //         status: 200
+        //     })
+        // }
+    })
+    .catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+    // getSernsorDataByTeam(req.body.TeamName, req.body.organization)
+    // .then(data=>{
+    //     console.log('sernsor data -----------------\n',data)
+    // }).catch(err =>{
+    //     console.log(err)
+    //     res.send({
+    //         message: 'failure',
+    //         status: 300,
+    //         err: err
+    //     })
+    // })
+});
+
+app.post(`${apiPrefix}MergeTeam`, (req, res) => {
+    console.log('body',req.body);
+    let data = req.body.data;
+    let organization_id = data.organization_id;
+    let team_name =  req.body.TeamName;
+    
+    renameTeam(team_name,organization_id)
+    .then(response=>{
+        // return getSernsorDataByTeam(data.TeamName,data.organization);
+        return getUserByTeam(data.TeamName,data.selectOrg)
+    })
+    .then(response=>{
+        console.log('response',response);
+        let users_data = response;
+        if(users_data[0]){
+            let userslen = users_data.length;
+            userslen = userslen-1;
+            users_data.forEach(function (record, index) {
+                renameUsers(record.user_cognito_id, team_name)
+                .then(data => {
+                    console.log('res',data)
+                    if(index == userslen){
+                        res.send({
+                            message: 'success',
+                            status: 200
+                        })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    if(index == userslen){
+                         res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
+                })
+            })
+        }else{
+            res.send({
+                message: 'success',
+                status: 200
+            })
+        }
+    })
+    .catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+})
+/*============ Team edit funtions end here===================*/
+
+app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
+    console.log('MergeOrganization',req.body);
+    MergeOrganization(req.body.OrganizationName, req.body.organization_id)
+    .then(data => {
+        console.log('res',data)
+        let organization = req.body.data.selectOrg;
+        let sensor = req.body.data.brand;
+        let OrganizationName = req.body.OrganizationName;
+        getOrgSensorData(organization, sensor)
+        .then(sensor_data => {
+            console.log('sensor_data',sensor_data);
+            let sensorlen = sensor_data.length;
+            if(sensorlen > 0){
+                sensorlen = sensorlen-1;
+                sensor_data.forEach(function (record, index) {
+                    // console.log('sensor',record);
+                    renameSensorOrganization(OrganizationName, record.player_id, record.team)
+                    .then(response=>{
+                        console.log('response',response)
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'success',
+                                status: 200,
+                            })
+                        }
+                    }).catch(err=>{
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
+                })
+            }else{
+                res.send({
+                    message: 'success',
+                    status: 200,
+                })
+            }
+        }).catch(err => {
+            console.log("er",err)
+        })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+    
+})
+
+function getUserDbDataByUserId(userID, cb) {
+    var params = {
+        TableName: 'users',
+        FilterExpression: "#userID = :userID",
+        ExpressionAttributeNames: {
+            "#userID": "userID",
+        },
+        ExpressionAttributeValues: {
+            ":userID": userID,
+        }
+    };
+    let item = [];
+    docClient.scan(params).eachPage((err, data, done) => {
+        if (err) {
+           cb(err, "");
+        }
+        if (data == null) {
+           
+            cb("", concatArrays(item));
+        } else {
+            item.push(data.Items);
+        }
+        done();
+    });    
+}
+
+//LoginWithoutEmail
+app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
+    console.log("LoginWithoutEmail In API Called!",req.body);
+    let userID = req.body.userID;
+    let userData = '';
+    getUserDbDataByUserId(userID, function (err, data) {
+        if(err){
+            console.log('err',err) 
+        }else{
+            // console.log('data',data);
+            if(data[0]){
+                userData = data[0];
+                getUser(data[0].email, function (err, data) {
+                    if (err) {
+                        console.log('err0',err);
+
+                        res.send({
+                            message: "failure",
+                            error: 'Incorrect login credentials'
+                        });
+                    } else {
+                        console.log("USER DATA is =====================> \n",data);
+                        getListGroupForUser(data.Username, function (error, groupData) {
+                            if (error) {
+                                console.log('error1',error)
+                                res.send({
+                                    message: "failure",
+                                    error: 'Incorrect login credentials'
+                                });
+                            } else {
+                                // Now checking is user is ADMIN or not
+
+                                if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                    // Sends the user to first login page
+                                    // respond with status of FORCE_CHANGE_PASSWORD
+                                    res.send({
+                                        message: "success",
+                                        status: "FORCE_CHANGE_PASSWORD",
+                                        user_name: userData.email
+                                    })
+                                } else {
+
+                                    // Now checking is user is ADMIN or not
+                                    var userType = "StandardUser";
+                                    groupData.forEach(element => {
+                                        if (element.GroupName == "Admin") {
+                                            userType = "Admin";
+                                        }
+                                    });
+                                    // Here call the login function then
+                                    login(userData.email, userID, userType, function (err, result) {
+
+                                        if (err) {
+                                            console.log('err2',err)
+                                            res.cookie("token", "");
+                                            res.send({
+                                                message: "failure",
+                                                error: err
+                                            })
+                                        }
+                                        else {
+
+
+                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                            getUserDbData(data.Username, function(err, user_details){
+                                                if(err){
+                                                     console.log('err3',err)
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                }
+                                                else{
+                                                    if (user_details.Item["level"] === 400) {
+                                                        getUserSensor(data.Username)
+                                                            .then(sensor_data => {
+                                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                res.send({
+                                                                    message : "success",
+                                                                    user_details : user_details.Item,
+                                                                    user_type: userType
+                                                                })
+                                                                
+                                                            })
+                                                            .catch(err => {
+                                                                 console.log('err4',err)
+                                                                res.send({
+                                                                    message : "failure",
+                                                                    error : err
+                                                                })
+                                                            })
+                                                    } else {
+                                                        res.send({
+                                                            message : "success",
+                                                            user_details : user_details.Item,
+                                                            user_type: userType
+                                                        })
+                                                    }  
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
+
+                    }
+                })
+            }else{
+                res.send({
+                    status:'success',
+                    message:'notExists'
+                });
+            }
+        }
+    })
+})
 app.post(`${apiPrefix}logIn`, (req, res) => {
-    console.log("Log In API Called!",req.body);
+    
     // Getting user data of that user
+    let user_name = req.body.user_name;
+    req.body['user_name'] = user_name.toLowerCase();
     getUser(req.body.user_name, function (err, data) {
         if (err) {
             console.log('err0',err);
@@ -2605,7 +4155,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                 res.cookie("token", "");
                                 res.send({
                                     message: "failure",
-                                    error: 'Incorrect login credentials'
+                                    error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
                                 })
                             }
                             else {
@@ -2703,6 +4253,9 @@ app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
 
 // Login first time with temporary password
 app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
+    console.log('logInFirstTime',req.body)
+    let user_name = req.body.user_name;
+    req.body['user_name'] = user_name.toLowerCase();
     loginFirstTime(req.body, function (err, result) {
         if (err) {
             res.send({
@@ -2792,7 +4345,7 @@ function getBrandOrganizationData(sensor, organization) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (sensor != '') {
+        if (sensor !== '') {
             params = {
                 TableName: "sensor_data",
                 FilterExpression: "sensor = :sensor and organization = :organization",
@@ -2809,7 +4362,7 @@ function getBrandOrganizationData(sensor, organization) {
                 ExpressionAttributeValues: {
                    ":organization": organization
                 },
-                ProjectionExpression: "sensor,image_id"
+                ProjectionExpression: "sensor,image_id,player_id,computed_time"
             };
         }
         
@@ -2845,97 +4398,90 @@ function getPlayerSimulationStatus(image_id) {
     });
 }
 app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
-    console.log(req.body)
     getOrganizationList()
-    .then(list =>{
-        console.log('list',list.length)
-        let uniqueList = [];
-        var orgList = list.filter(function (organization) {
-            if (uniqueList.indexOf(organization.organization) === -1) {
-                uniqueList.push(organization.organization);
-                return organization;
-            }
-        });
+        .then(list => {
+            let uniqueList = [];
+            var orgList = list.filter(function (organization) {
+                if (uniqueList.indexOf(organization.organization) === -1) {
+                    uniqueList.push(organization.organization);
+                    return organization;
+                }
+            });
 
-        let counter = 0;
-        if (orgList.length == 0) {
-            res.send({
-                message: "success",
-                data: []
-            })
-        } else {
-            orgList.forEach(function (org, index) {
-                let data = org;
-                let i = index;
-                getBrandOrganizationData(data.sensor ? data.sensor : '' , data.organization )
-                    .then(simulation_records => {
-                        counter++;
-                        org["simulation_count"] = Number(simulation_records.length).toString();
+            let counter = 0;
+            if (orgList.length == 0) {
+                res.send({
+                    message: "success",
+                    data: []
+                })
+            } else {
+                orgList.forEach(function (org, index) {
+                    let data = org;
+                    let i = index;
+                    getBrandOrganizationData('' , data.organization )
+                        .then(simulation_records => {
+                            
+                            org["simulation_count"] = Number(simulation_records.length).toString();
+                            org["simulation_status"] = '';
+                            org["computed_time"] = '';
+                            org["simulation_timestamp"] = '';
 
-                        simulation_records.forEach(function (simulation_record, index) {
-                            simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            simulation_records.forEach(function (simulation_record, index) {
+                                simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            })
+
+                            simulation_records.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+
+                            if (simulation_records.length > 0) {
+                                getPlayerSimulationStatus(simulation_records[0].image_id)
+                                    .then(simulation => {
+                                        org["simulation_status"] = simulation ? simulation.status : '';
+                                        org["computed_time"] = simulation ? simulation.computed_time : '';
+                                        org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                        counter++;
+                                        if (counter == orgList.length) {
+                                            res.send({
+                                                message: "success",
+                                                data: orgList
+                                            })
+                                        }
+                                    }).catch(err => {
+                                        console.log('err',err);
+                                    })
+                            } else {
+                                counter++;
+                                if (counter == orgList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: orgList
+                                    })
+                                }
+                            }
                         })
-
-                        simulation_records.sort(function (b, a) {
-                            var keyA = a.date_time,
-                                keyB = b.date_time;
-                            if (keyA < keyB) return -1;
-                            if (keyA > keyB) return 1;
-                            return 0;
-                        });
-
-                        org["simulation_status"] = '';
-                        org["computed_time"] = '';
-                        org["simulation_timestamp"] = '';
-                        
-                        if (simulation_records.length > 0) {
-                            console.log(simulation_records[0].image_id);
-                            getPlayerSimulationStatus(simulation_records[0].image_id)
-                                .then(simulation => {
-                                    org["simulation_status"] = simulation.status;
-                                    org["computed_time"] = simulation.computed_time;
-                                    org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
-
-                                    if (counter == orgList.length) {
-                                        res.send({
-                                            message: "success",
-                                            data: orgList
-                                        })
-                                    }
-
-                                }).catch(err => {
-                                    console.log('err',err);
-                                })
-                        } else {
+                        .catch(err => {
+                            counter++
                             if (counter == orgList.length) {
                                 res.send({
-                                    message: "success",
-                                    data: orgList
+                                    message: "failure",
+                                    error: err
                                 })
                             }
-                        }
-                    })
-                    .catch(err => {
-                        counter++
-                        if (counter == orgList.length) {
-                            res.send({
-                                message: "failure",
-                                error: err
-                            })
-                        }
-                    })
-            })
-        }
-    })
-    .catch(err =>{
-        console.log('err',err)
-    })
-
-
+                        })
+                })
+            }
+        })
+        .catch(err =>{
+            console.log('err',err)
+        })
 })
 
 function getTeamList() {
-    console.log('getTeamList')
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
@@ -3002,84 +4548,94 @@ function getOrganizationTeamData(obj) {
 }
 
 app.post(`${apiPrefix}getTeamList`, (req, res) => {
-    console.log(req.body);
-    getTeamList().then(list=>{
-        // console.log('list',list)
-        let uniqueList = [];
-        var teamList = list.filter(function (team_name) {
-            return (!("teamList" in team_name));
-        });
+    getTeamList()
+        .then(list=>{
+            // console.log('list',list)
+            let uniqueList = [];
+            var teamList = list.filter(function (team_name) {
+                return (!("teamList" in team_name));
+            });
 
-        // console.log(teamList);
-
-        let counter = 0;
-        if (teamList.length == 0) {
-            res.send({
-                message: "success",
-                data: []
-            })
-        } else {
             // console.log(teamList);
-            teamList.forEach(function (team, index) {
-                let data = team;
-                let i = index;
-                getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false , organization: data.organization, team: data.team_name})
-                    .then(simulation_records => {
-                        // console.log('simulation_records',simulation_records)
-                        counter++;
-                        team["simulation_count"] = Number(simulation_records.length).toString();
-                        team["simulation_status"] = '';
-                        team["computed_time"] = '';
-                        team["simulation_timestamp"] = '';
-                        if (simulation_records.length > 0) {
-                            //console.log(simulation_records[0].image_id);
-                            getPlayerSimulationStatus(simulation_records[0].image_id)
-                                .then(simulation => {
-                                    team["simulation_status"] = simulation.status;
-                                    team["computed_time"] = simulation.computed_time;
-                                    team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
 
-                                    if (counter == teamList.length) {
-                                        res.send({
-                                            message: "success",
-                                            data: teamList
-                                        })
-                                    }
+            let counter = 0;
+            if (teamList.length == 0) {
+                res.send({
+                    message: "success",
+                    data: []
+                })
+            } else {
+                // console.log(teamList);
+                teamList.forEach(function (team, index) {
+                    let data = team;
+                    let i = index;
+                    getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false , organization: data.organization, team: data.team_name})
+                        .then(simulation_records => {
+                            
+                            team["simulation_count"] = Number(simulation_records.length).toString();
+                            team["simulation_status"] = '';
+                            team["computed_time"] = '';
+                            team["simulation_timestamp"] = '';
 
-                                }).catch(err => {
-                                    console.log('err',err);
-                                })
-                        } else {
+                            simulation_records.forEach(function (simulation_record, index) {
+                                simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            })
+
+                            simulation_records.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+
+                            if (simulation_records.length > 0) {
+                                getPlayerSimulationStatus(simulation_records[0].image_id)
+                                    .then(simulation => {
+                                        team["simulation_status"] = simulation ? simulation.status : '';
+                                        team["computed_time"] = simulation ? simulation.computed_time : '';
+                                        team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                        counter++;
+                                        if (counter == teamList.length) {
+                                            res.send({
+                                                message: "success",
+                                                data: teamList
+                                            })
+                                        }
+
+                                    }).catch(err => {
+                                        console.log('err',err);
+                                    })
+                            } else {
+                                counter++;
+                                if (counter == teamList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: teamList
+                                    })
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            counter++
                             if (counter == teamList.length) {
                                 res.send({
-                                    message: "success",
-                                    data: teamList
+                                    message: "failure",
+                                    error: err
                                 })
                             }
-                        }
-                    })
-                    .catch(err => {
-                        counter++
-                        if (counter == teamList.length) {
-                            res.send({
-                                message: "failure",
-                                error: err
-                            })
-                        }
-                    })
+                        })
+                })
+            }
+        }).catch(err => {
+            res.send({
+                message: "failure",
+                error: err
             })
-        }
-    }).catch(err =>{
-        console.log('err',err)
-        res.send({
-            message: "failure",
-            error: err
         })
-    })
 });
 
 function getPlayerList() {
-    console.log('getTeamList')
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
@@ -3098,23 +4654,39 @@ function getPlayerList() {
         });
     });
 }
-function getTeamDataWithPlayerRecords(player_id,team,sensor,organization) {
-    console.log('player_id',player_id,team,sensor,organization)
+function getTeamDataWithPlayerRecords(player_id, team, sensor, organization) {
     return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "sensor_data",
-            FilterExpression: "sensor = :sensor and organization = :organization and team = :team and begins_with(player_id,:player_id)",
-            ExpressionAttributeValues: {
-               ":sensor": sensor,
-               ":organization": organization,
-               ":team": team,
-               ":player_id": player_id,
-            }
-        };
+        let params;
+
+        if (sensor) {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                ":sensor": sensor,
+                ":organization": organization,
+                ":team": team,
+                ":player_id": player_id + '$',
+                },
+                ScanIndexForward: false
+            };
+        } else {
+            params = {
+                TableName: "sensor_data",
+                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                ":organization": organization,
+                ":team": team,
+                ":player_id": player_id + '$',
+                },
+                ScanIndexForward: false
+            };
+        }
         var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
+        docClient.query(params).eachPage((err, data, done) => {
             if (err) {
-                console.log('err',err)
                 reject(err);
             }
             if (data == null) {
@@ -3122,23 +4694,18 @@ function getTeamDataWithPlayerRecords(player_id,team,sensor,organization) {
             } else {
                 item.push(data.Items);
             }
-                console.log(data)
             done();
         });
     });
 }
 
 app.post(`${apiPrefix}getPlayerList`, (req, res) => {
-    console.log(req.body);
-    getPlayerList().then(players=>{
-        // console.log('player',players)
+    getPlayerList().then(players => {
         var player_list = [];
         for(var i =0; i < players.length; i++){
             if(players[i].player_list){
                 var list = players[i].player_list;
                 for(var j = 0;j < list.length; j++){
-                // console.log(list[j])
-
                     player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
                 }
             }
@@ -3153,13 +4720,12 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
             var counter = 0;
             var indx = 0;
             var p_data = [];
-            var player_listLn = player_list.length - 1;
+            var player_listLn = player_list.length;
             player_list.forEach(function (player, index) {
                 let p = player;
-                let j = index;
                 let playerData = '';
                 if(player.player_id && player.player_id != 'undefined'){
-                    getTeamDataWithPlayerRecords(player.player_id, player.team,  player.sensor, player.organization)
+                    getTeamDataWithPlayerRecords(player.player_id, player.team, player.sensor, player.organization)
                     .then(player_data => {
                         playerData = player_data;
                         counter++;
@@ -3167,9 +4733,9 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                             player_name: p,
                             //vsimulation_image: image ? image : '',
                             simulation_data: playerData,
-                            simulation_status : 'completed'
+                            date_time: playerData[0].player_id.split('$')[1],
                         });
-                        var y = 0;
+                       
                          if (counter == player_listLn) {
                             p_data.sort(function (b, a) {
                                 var keyA = a.date_time,
@@ -3177,21 +4743,18 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                                 if (keyA < keyB) return -1;
                                 if (keyA > keyB) return 1;
                                 return 0;
-                            });
+                            }); 
 
                             let k = 0;
-                            var p_datalen = p_data.length - 1;
+                            var p_datalen = p_data.length;
                             p_data.forEach(function (record, index) {
-                                getPlayerSimulationStatus(player_data[0].image_id)
+                                getPlayerSimulationStatus(record.simulation_data[0].image_id)
                                     .then(simulation => {
-                                        console.log('simulation',simulation.status)
+                                        // console.log('simulation',simulation.status)
                                         k++;
-                                        if(simulation.status != 'completed'){
-                                           p_data[index].simulation_status = 'pending';
-                                        }
-                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation.status;
-                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation.computed_time;
-                                        console.log(k, p_datalen)
+                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+                                        
                                         if (k == p_datalen) {
                                             res.send({
                                                 message: "success",
@@ -3199,46 +4762,12 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                                             })
                                         }
                                     })
+                                    .catch(err => {
+                                        console.log(err);
+                                    })
                             })
                         }
-                        // if (counter == player_listLn) {
-                        //     for(var i = 0; i < player_data.length; i++){
-                        //         var ind = indx;
-                        //         getPlayerSimulationStatus(player_data[i].image_id)
-                        //         .then(data => {
-                        //             if(data.status != 'completed'){
-                        //                 p_data[ind].simulation_status = 'pending';
-                        //             }
-                        //             console.log('data.status', p_data[indx].simulation_status)
-
-                        //             y++;
-                        //             if(y == player_data.length){
-                        //                 res.send({
-                        //                     message: "success",
-                        //                     data: p_data
-                        //                 })
-                        //             }
-                        //         }).catch(err => {
-                        //             console.log('err',err)
-                        //         })
-                        //     }
-                            
-                        // }else{
-                        //     for(var i = 0; i < player_data.length; i++){
-                        //         var ind = indx;
-                        //         getPlayerSimulationStatus(player_data[indx].image_id)
-                        //         .then(data => {
-                        //             console.log('data.status', p_data[indx].simulation_status)
-
-                        //             if(data.status != 'completed'){
-                        //                p_data[ind].simulation_status = 'pending';
-                        //             }
-                        //             y++;
-                        //         }).catch(err => {
-                        //             console.log('err',err)
-                        //         })
-                        //     }
-                        // }
+                        
                         indx++;
                     })
                     .catch(err => {
@@ -3250,6 +4779,8 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                             })
                         }
                     })
+                } else {
+                    counter++;
                 }
             })
         }
@@ -3318,6 +4849,74 @@ const fetchSensor = (sensor) => {
           });
       })
 }
+app.post(`${apiPrefix}fetchAdminStaffMembers`, (req,res) =>{ 
+     
+    var params = {
+        TableName: 'users',
+        FilterExpression: "#level = :level",
+        ExpressionAttributeNames: {
+            "#level": "level",
+        },
+        ExpressionAttributeValues: {
+            ":level": 1000
+        }
+    };
+    var item = [];
+    docClient.scan(params).eachPage((err, data, done) => {
+        if (err) {
+            res.send({
+                message : "failure",
+                error : err,
+                data : []
+            }) 
+        }
+        if (data == null) {
+            res.send({
+                message : "success",
+                data : concatArrays(item)
+            })
+        } else {
+            item.push(data.Items);
+        }
+        done();
+    });
+});
+app.post(`${apiPrefix}fetchTeamStaffMembers`, (req,res) =>{ 
+ console.log('fetchTeamStaffMembers',req.body)
+    var params = {
+        TableName: 'users',
+        FilterExpression: "#level = :level and #organization = :organization and #team =:team",
+        ExpressionAttributeNames: {
+            "#level": "level",
+            "#organization": "organization",
+            "#team": "team"
+        },
+        ExpressionAttributeValues: {
+            ":level": 200,
+            ":organization": req.body.organization,
+            ":team": req.body.team_name
+        }
+    };
+    var item = [];
+    docClient.scan(params).eachPage((err, data, done) => {
+        if (err) {
+            res.send({
+                message : "failure",
+                error : err,
+                data : []
+            }) 
+        }
+        if (data == null) {
+            res.send({
+                message : "success",
+                data : concatArrays(item)
+            })
+        } else {
+            item.push(data.Items);
+        }
+        done();
+    });
+})
 
 app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{ 
      fetchSensor(req.body.brand)
@@ -3359,6 +4958,54 @@ app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
     //
   
 });
+
+function fetchOrgStaffMembers(organization) {
+    console.log('organization',organization)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#organization = :organization and #level = :level",
+            ExpressionAttributeNames: {
+                "#organization": "organization",
+                "#level": "level",
+            },
+            ExpressionAttributeValues: {
+                ":organization": organization,
+                ":level": 300
+            }
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+app.post(`${apiPrefix}fetchOrgStaffMembers`, (req,res) =>{ 
+    console.log('fetchOrgStaffMembers',req.body);
+    fetchOrgStaffMembers(req.body.organization).
+    then(data=>{
+        console.log('staff',data);
+        res.send({
+            message : "success",
+            data : data
+        })
+    }).catch(err=>{
+        console.log('er',err);
+        res.send({
+            message : "failure",
+            error : err,
+            data : []
+        })  
+    })
+})
 
 //getting only user db details
 app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
@@ -3407,6 +5054,72 @@ app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
     });
 });
 
+app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
+    if (req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
+    }
+    if (req.user_cognito_id) { 
+        let userData = {};
+        getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/brain.ply", function (err, brain_ply) {
+            if (err) {
+                userData["brain_ply"] = "";
+                res.send({
+                    message: "failure",
+                    data: userData
+                })
+            }
+            else {
+                userData["brain_ply"] = brain_ply;
+                getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/skull.ply", function (err, skull_ply) {
+                    if (err) {
+                        userData["skull_ply"] = "";
+                        res.send({
+                            message: "failure",
+                            data: userData
+                        })
+                    }
+                    else {
+                        userData["skull_ply"] = skull_ply;
+                        getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.ply", function (err, model_ply) {
+                            if (err) {
+                                userData["model_ply"] = "";
+                                res.send({
+                                    message: "failure",
+                                    data: userData
+                                })
+                            }
+                            else {
+                                userData["model_ply"] = model_ply;
+                                getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.jpg", function (err, model_jpg) {
+                                    if (err) {
+                                        userData["model_jpg"] = "";
+                                        res.send({
+                                            message: "failure",
+                                            data: userData
+                                        })
+                                    }
+                                    else {
+                                        userData["model_jpg"] = model_jpg;
+                                        res.send({
+                                            message: "success",
+                                            data: userData
+                                        })
+
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+        })    
+    } else {
+        res.send({
+            message: "failure",
+            error: 'User cognito id is required '
+        })
+    }
+})    
 
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
@@ -3946,6 +5659,9 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // API To upload profile pic to S310m
     app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
 
+    // API To upload selfie pic to S310m
+    app.post(`${apiPrefix}uploadProfileSelfie`, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
+
     app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
         // Fetch user group data and check if he is Admin or not
         getListGroupForUser(req.user_cognito_id, function (err, groupData) {
@@ -4100,6 +5816,69 @@ app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res)=> {
 
 })
 
+function removes3Object(path){
+    return new Promise((resolve, reject) =>{
+        var params = {
+            Bucket: config_env.usersbucket,
+            Key: path
+        };
+        s3.deleteObject(params, function(err, data) {
+            if (err) {
+                // reject(err)
+                reject(err);
+            }
+            else{
+                resolve(data);
+            }
+        });
+    })
+}
+
+app.post(`${apiPrefix}removeVideo`, (req, res)=> {
+    console.log('req',req.body)
+    var image_id = req.body.image_id;
+    var imageData = '';
+    getSimulationImageRecord(image_id)
+    .then(image_data =>{
+        console.log('image_data',image_data);
+        imageData = image_data;
+       
+        if (imageData.impact_video_path && imageData.impact_video_path != 'null') {
+            removes3Object(imageData.impact_video_path)
+            .then(response =>{
+                // console.log('res',res);
+                InsertImpactVideoKey(image_id,false)
+                .then(response => {
+                    res.send({
+                        message: "success",
+                        data: res
+                    });
+                }) .catch(err =>{
+                    console.log('errdatabase',err)
+                    res.send({
+                        message: "success",
+                        data: err
+                    });
+                })
+            })
+            .catch(err =>{
+                console.log('errremoves3Object',err)
+                res.send({
+                    message: "failure",
+                    err: 'Somthing went wrong! Please try again.'
+                });
+            })
+        }else{
+            res.send({
+                message: "failure",
+                err: 'Video not found.'
+            });
+        }
+    }).catch(err =>{
+        console.log('err',err)
+    })
+
+})
 // Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
         console.log('file',req.body);
@@ -4470,6 +6249,29 @@ app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
 app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
     console.log('getAllCumulativeAccelerationTimeRecords',req.body)
     request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+
+app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('AllCumulativeAccelerationTimeRecords',req.body)
+    request.post({ url: config.ComputeInstanceEndpoint + "AllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
+        if (err) {
+            res.send({ message: 'failure', error: err });
+        }
+        else {
+            res.send(httpResponse.body);
+        }
+    })
+})
+app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('getCumulativeAccelerationTimeRecords',req.body)
+    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
         }
@@ -4878,7 +6680,9 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                 req.body["sensor_brand"] = user_details.Item["sensor"];
                                 req.body["level"] = user_details.Item["level"];
-                                req.body["organization"] = user_details.Item["organization"];
+                                if (user_details.Item["level"] === 300) {
+                                    req.body["organization"] = user_details.Item["organization"];
+                                }
                                 req.body["upload_file"] = base64File;
                                 req.body["data_filename"] = data_filename;
                                 req.body["selfie"] = base64Selfie;
@@ -4964,6 +6768,279 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
     })
 })
 
+app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
+    getTeamSpheres(req.body)
+        .then(data => {
+            res.send({
+                message: "success",
+                data: data
+            });
+        })
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })
+});
+
+app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
+    getTeamSpheres(req.body)
+        .then(data => {
+
+            let brainRegions = {};
+            let principal_max_strain = {};
+            let principal_min_strain = {};
+            let axonal_strain_max = {};
+            let csdm_max = {};
+            let masXsr_15_max = {};
+
+            if (data.length === 0){
+                brainRegions['principal-max-strain'] = {};
+                brainRegions['principal-min-strain'] = {};
+                brainRegions['axonal-strain-max'] = {};
+                brainRegions['csdm-max'] = {};
+                brainRegions['masXsr-15-max'] = {};
+                
+                res.send({
+                    message: "success",
+                    brainRegions: brainRegions
+                })
+            }
+
+            let players = [];
+            const processData = data.map(acc_data => {
+                return new Promise((resolve, reject) => {
+                    let player_id = acc_data.player_id.split('$')[0];
+                    if (!players.includes(player_id)) {
+                        players.push(player_id);
+                        getPlayerSimulationStatus(acc_data.image_id)
+                            .then(imageData => {
+                                if (imageData.player_name && imageData.player_name != 'null') {
+                                    console.log(imageData.player_name + '/simulation/summary.json');
+                                    let file_path = imageData.player_name + '/simulation/summary.json';
+                                    return getFileFromS3(file_path, imageData.bucket_name);
+                                }
+                            })
+                            .then(output_file => {
+                                console.log(players)
+                                if (output_file) {
+                                    outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                    if (outputFile.Insults) {
+                                        outputFile.Insults.forEach(function (summary_data, index) {
+                                            if (summary_data['principal-max-strain']) {
+                                                let coordinate = {};
+                                                coordinate.x = summary_data['principal-max-strain'].location[0];
+                                                coordinate.y = summary_data['principal-max-strain'].location[1];
+                                                coordinate.z = summary_data['principal-max-strain'].location[2];
+                                                region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                                principal_max_strain[region] = principal_max_strain[region] || [];
+                                                principal_max_strain[region].push(coordinate);
+                                            }
+                                            if (summary_data['principal-min-strain']) {
+                                                let coordinate = {};
+                                                coordinate.x = summary_data['principal-min-strain'].location[0];
+                                                coordinate.y = summary_data['principal-min-strain'].location[1];
+                                                coordinate.z = summary_data['principal-min-strain'].location[2];
+                                                region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                                                principal_min_strain[region] = principal_min_strain[region] || [];
+                                                principal_min_strain[region].push(coordinate);
+                                            }
+                                            if (summary_data['axonal-strain-max']) {
+                                                let coordinate = {};
+                                                coordinate.x = summary_data['axonal-strain-max'].location[0];
+                                                coordinate.y = summary_data['axonal-strain-max'].location[1];
+                                                coordinate.z = summary_data['axonal-strain-max'].location[2];
+                                                region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                                                axonal_strain_max[region] = axonal_strain_max[region] || [];
+                                                axonal_strain_max[region].push(coordinate);
+                                            }
+                                            if (summary_data['csdm-max']) {
+                                                let coordinate = {};
+                                                coordinate.x = summary_data['csdm-max'].location[0];
+                                                coordinate.y = summary_data['csdm-max'].location[1];
+                                                coordinate.z = summary_data['csdm-max'].location[2];
+                                                region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                                                csdm_max[region] = csdm_max[region] || [];
+                                                csdm_max[region].push(coordinate);
+                                            }
+                                            if (summary_data['masXsr-15-max']) {
+                                                let coordinate = {};
+                                                coordinate.x = summary_data['masXsr-15-max'].location[0];
+                                                coordinate.y = summary_data['masXsr-15-max'].location[1];
+                                                coordinate.z = summary_data['masXsr-15-max'].location[2];
+                                                region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                                                masXsr_15_max[region] = masXsr_15_max[region] || [];
+                                                masXsr_15_max[region].push(coordinate);
+                                            }
+                                        })
+                                    }
+                                }
+                                resolve(null);
+                            })
+                            .catch(err => {
+                                reject(err);
+                            })
+                    } else {
+                        resolve(null);
+                    }
+                })
+            })
+
+            Promise.all(processData).then(resolveData => {
+                console.log('All executed');
+                brainRegions['principal-max-strain'] = principal_max_strain;
+                brainRegions['principal-min-strain'] = principal_min_strain;
+                brainRegions['axonal-strain-max'] = axonal_strain_max;
+                brainRegions['csdm-max'] = csdm_max;
+                brainRegions['masXsr-15-max'] = masXsr_15_max;
+                res.send({
+                    message: "success",
+                    data: brainRegions
+                });
+            });
+        })
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }) 
+});
+
+app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
+    let jsonOutputFile = '';
+    let simulationImage = '';
+    let simulationData = '';
+    getSimulationImageRecord(req.body.image_id)
+        .then(simulation_data => {
+            simulationData = simulation_data;
+            if (simulationData.path && simulationData.path != 'null') {
+                return getFileFromS3(simulationData.path, simulationData.bucket_name);
+            } else {
+                if (simulationData.root_path && simulationData.root_path != 'null') {
+                    let image_path = simulationData.root_path + simulationData.image_id + '.png';
+                    return getFileFromS3(image_path, simulationData.bucket_name);
+                }
+            }
+        })
+        .then(image_s3 => {
+            if (image_s3) {
+                return getImageFromS3Buffer(image_s3);
+            }
+        })
+        .then(image => {
+            simulationImage = image;
+            if (simulationData.ouput_file_path && simulationData.ouput_file_path != 'null') {
+                let file_path = simulationData.ouput_file_path;
+                file_path = file_path.replace(/'/g, "");
+                return getFileFromS3(file_path, simulationData.bucket_name);
+            } else {
+                if (simulationData.root_path && simulationData.root_path != 'null') {
+                    let summary_path = simulationData.root_path + simulationData.image_id + '_output.json';
+                    summary_path = summary_path.replace(/'/g, "");
+                    console.log('summary_path',summary_path)
+                    return getFileFromS3(summary_path, simulationData.bucket_name);
+                }
+            }
+        })
+        .then(json_output_file => {
+            if (json_output_file){
+                jsonOutputFile = JSON.parse(json_output_file.Body.toString('utf-8'));
+            }
+
+            res.send({
+                message: "success",
+                data: {simulationImage: simulationImage, jsonOutputFile: jsonOutputFile},
+            })
+        }) 
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })  
+})
+
+function getTeamSpheres(obj) {
+    return new Promise((resolve, reject) => {
+        let params;
+
+        if (obj.brand) {
+            params = {
+                TableName: "sensor_data",
+                FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+                ExpressionAttributeValues: {
+                   ":sensor": obj.brand,
+                   ":organization": obj.organization,
+                   ":team": obj.team,
+                }
+            };
+        } else {
+            params = {
+                TableName: "sensor_data",
+                FilterExpression: "organization = :organization and team = :team",
+                ExpressionAttributeValues: {
+                   ":organization": obj.organization,
+                   ":team": obj.team,
+                }
+            };
+        }
+        
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+function updateUserStatus(obj) {
+    return new Promise((resolve, reject) => {
+        if (obj.type && obj.type === 'uodate_sensor_id') {
+            var userParams = {
+                TableName: "users",
+                Key: {
+                    user_cognito_id: obj.user_cognito_id,
+                },
+                UpdateExpression:
+                    "set sensor_id_number = :sensor_id_number",
+                ExpressionAttributeValues: {
+                    ":sensor_id_number": obj.sensor_id_number,
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+        } else {
+            var userParams = {
+                TableName: "users",
+                Key: {
+                    user_cognito_id: obj.user_cognito_id,
+                },
+                UpdateExpression:
+                    "set player_status = :player_status",
+                ExpressionAttributeValues: {
+                    ":player_status": obj.status,
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+        }
+        
+        docClient.update(userParams, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
 
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {

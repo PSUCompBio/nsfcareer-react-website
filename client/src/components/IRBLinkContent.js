@@ -27,7 +27,7 @@ import SignatureCanvas from 'react-signature-canvas'
 import Footer from './Footer';
 import { signUp } from '../apis';
 import Spinner from './Spinner/Spinner';
-import { Redirect } from 'react-router-dom';
+import { Redirect ,Link} from 'react-router-dom';
 import template_data from './../config/template_images.json'
 import "./irb.css"
 
@@ -80,10 +80,15 @@ class IRBLinkContent extends React.Component {
     }
     render() {
 
-
+        var height = 100;
+        console.log(window.innerWidth);
+        if(window.innerWidth <= 480){
+            height = 300;  
+        }
+        console.log('width',height)
         return (
             <React.Fragment>
-            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll",overflowX: "hidden"}} class="container">
+            <div style={{gridTemplateColumns: "1fr auto", marginTop: "10vh", padding : "5px",paddingLeft : "25px", height : "400px", overflow : "scroll",overflowX: "hidden"}} className="container irb-header">
 
                 <br></br>
                 <br></br>
@@ -342,121 +347,129 @@ class IRBLinkContent extends React.Component {
 
 
                                 </div>
-                                <div style={{gridTemplateColumns: "1fr auto", marginTop:"1%"}} class="container">
+                                <div style={{gridTemplateColumns: "1fr auto", marginTop:"1%"}} class="container irb-bottom">
 
                                 <SignatureCanvas penColor='black'
                                     onBegin={this.cleanPlaceholderTemplate}
-                                    canvasProps={{height: 100, className: 'sigCanvas'}} ref={(ref) => { this.userSignature = ref;}}/>
-                                <button type="button"
-                                    onClick={(e)=> {
-                                        let user_details = this.state.user_details
-                                        user_details["user_signature"] = this.userSignature.toDataURL("base64string");
-                                        console.log("USER DETAILS ARE ", user_details)
-                                        this.setState({
-                                            isLoading : true
-                                        })
-                                        signUp(JSON.stringify(user_details))
-                                        .then((response) => {
-                                            console.log("RESPONSE FROM SERVER IS ", response)
-                                            if(response.data.message == "success") {
-                                                this.props.history.push({
-                                                    pathname : '/Login',
-                                                    state : {
-                                                        message : response.data.message_details
+                                    canvasProps={{height: height, className: 'sigCanvas'}} ref={(ref) => { this.userSignature = ref;}}/>
+                                <div className="col-md-6" style={{'padding-left': '0px','padding-right': '0px','margin':'0 auto'}}>
+                                    <button type="button"
+                                        onClick={(e)=> {
+                                            let user_details = this.state.user_details
+                                            user_details["user_signature"] = this.userSignature.toDataURL("base64string");
+                                            console.log("USER DETAILS ARE ", user_details)
+                                            this.setState({
+                                                isLoading : true
+                                            })
+                                            signUp(JSON.stringify(user_details))
+                                            .then((response) => {
+                                                console.log("RESPONSE FROM SERVER IS ", response)
+                                                if(response.data.message == "success") {
+                                                    this.props.history.push({
+                                                        pathname : '/profile-image-upload',
+                                                        state : {
+                                                            message : response.data
+                                                        }
+                                                    })
+                                                } else {
+                                                    // Check if error is valid object
+                                                    if(response.data.error){
+                                                        if(user_details.InviteToken){
+                                                             this.props.history.push({
+                                                                pathname : '/SignUp/'+user_details.InviteToken,
+                                                                state : {
+                                                                    message : response.data.error
+                                                                }
+                                                            })
+                                                        }else{
+                                                            this.props.history.push({
+                                                                pathname : '/SignUp',
+                                                                state : {
+                                                                    message : response.data.error
+                                                                }
+                                                            })
+                                                        }
                                                     }
-                                                })
-                                            } else {
-                                                // Check if error is valid object
-                                                if(response.data.error){
-                                                    if(user_details.InviteToken){
-                                                         this.props.history.push({
-                                                            pathname : '/SignUp/'+user_details.InviteToken,
-                                                            state : {
-                                                                message : response.data.error
-                                                            }
-                                                        })
-                                                    }else{
+                                                    else{
                                                         this.props.history.push({
                                                             pathname : '/SignUp',
                                                             state : {
-                                                                message : response.data.error
+                                                                message : "Failed to Sign Up!"
                                                             }
                                                         })
                                                     }
-                                                }
-                                                else{
-                                                    this.props.history.push({
-                                                        pathname : '/SignUp',
-                                                        state : {
-                                                            message : "Failed to Sign Up!"
-                                                        }
-                                                    })
+
                                                 }
 
                                             }
+                                            // Now update the state with data that we added
+                                            // if (response.data.message === 'success') {
+                                            //   // show alert
+                                            //   // this.setState({
+                                            //   //   isSignUpError: false,
+                                            //   //   isSignUpConfirmed: true,
+                                            //   //   isLoading: false
+                                            //   // });
+                                            //   window.location.href = "/Login"
+                                            //
+                                            // } else {
+                                            //   // this.setState({
+                                            //   //   isSignUpError: true,
+                                            //   //   isSignUpConfirmed: false,
+                                            //   //   isLoading: false,
+                                            //   //   signUpError: response.data.error
+                                            //   // });
+                                            //   window.location.href="/SignUp"
+                                            // }
+                                            )
+                                            .catch((err) => {
 
-                                        }
-                                        // Now update the state with data that we added
-                                        // if (response.data.message === 'success') {
-                                        //   // show alert
-                                        //   // this.setState({
-                                        //   //   isSignUpError: false,
-                                        //   //   isSignUpConfirmed: true,
-                                        //   //   isLoading: false
-                                        //   // });
-                                        //   window.location.href = "/Login"
-                                        //
-                                        // } else {
-                                        //   // this.setState({
-                                        //   //   isSignUpError: true,
-                                        //   //   isSignUpConfirmed: false,
-                                        //   //   isLoading: false,
-                                        //   //   signUpError: response.data.error
-                                        //   // });
-                                        //   window.location.href="/SignUp"
-                                        // }
-                                        )
-                                        .catch((err) => {
+                                            this.props.history.push({
+                                            pathname : '/SignUp',
+                                            state : {
+                                            message : "Failed to Sign Up !"
+                                            }
+                                            })
+                                            });
+                                            }
+                                            }
+                                            className="singup-sbumit-btn"
+                                            style={{
+                                            width: "100%",
+                                            lineHeight: "50px",
+                                            textAlign: "center",
+                                            color: "#fff",
+                                            fontSize: "18px",
+                                            fontWeight: "900",
+                                            border: "1px solid #fff",
+                                            cursor: "pointer",
+                                            marginTop: "1%",
 
-                                        this.props.history.push({
-                                        pathname : '/SignUp',
-                                        state : {
-                                        message : "Failed to Sign Up !"
-                                        }
-                                        })
-                                        });
-                                        }
-                                        }
-                                        style={{
-                                        width: "100%",
-                                        background: "#174f86",
-                                        lineHeight: "50px",
-                                        textAlign: "center",
-                                        color: "#fff",
-                                        fontSize: "18px",
-                                        fontWeight: "900",
-                                        border: "1px solid #fff",
-                                        cursor: "pointer",
-                                        marginTop: "1%",
+                                            }}> Submit</button>
+                                            <Link to={{ 
+                                                pathname: '/SignUp',
+                                            state: {}
+                                            }}
+                                             ><button className="btn singup-cancel-btn">Cancel</button></Link>
+                                    
+                                            {this.state.isLoading ? (
+                                            <div style={{textAlign : "center", marginTop: "1%",
+                                            marginBottom: "10%"}}>
+                                            <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                            </div>
+                                            <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                            </div>
+                                            <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                            </div>
 
-                                        }}> Submit</button>
-                                        {this.state.isLoading ? (
-                                        <div style={{textAlign : "center", marginTop: "1%",
-                                        marginBottom: "10%"}}>
-                                        <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
-                                        <span class="sr-only">Loading...</span>
+                                            </div>
+
+
+                                            ) : null}
                                         </div>
-                                        <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
-                                        <span class="sr-only">Loading...</span>
-                                        </div>
-                                        <div style={{marginLeft : "2px", marginRight : "2px"}} class="spinner-grow spinner-grow-sm text-dark" role="status">
-                                        <span class="sr-only">Loading...</span>
-                                        </div>
-
-                                        </div>
-
-
-                                        ) : null}
                                         </div>
                                         </React.Fragment>
                                 );

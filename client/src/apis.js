@@ -61,6 +61,18 @@ export const logIn = (request) =>{
   })
 }
 
+export const loginWithoutEmail = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/LoginWithoutEmail`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const InviteUser = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/InviteUsers`, request,{withCredentials: true})
@@ -84,6 +96,19 @@ export const updateUserDetails = (request) =>{
       });
   })
 }
+
+export const updateUserMouthguardDetails = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/updateUserMouthguardDetails`, JSON.parse(request),{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 
 export const VerifyVerificationCode = (request) =>{
   return new Promise((resolve,reject)=>{
@@ -180,6 +205,18 @@ export const uploadProfilePic = (request) =>{
   })
 }
 
+export const uploadProfileSelfie = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/uploadProfileSelfie`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const uploadSensorDataAndCompute = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/uploadSensorDataAndCompute`, request,{withCredentials: true})
@@ -203,10 +240,34 @@ export const uploadSidelineImpactVideo = (request) =>{
   })
 }
 
+export const removeVideo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/removeVideo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 
 export const getUserDetails = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getUserDetails`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getAvatarInspection = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAvatarInspection`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -539,9 +600,80 @@ export const fetchStaffMembers = (request) => {
     })
 }
 
+export const fetchAdminStaffMembers = (request) => {
+    return new Promise((resolve,reject)=>{
+        axios.post(`/fetchAdminStaffMembers`, request, {withCredentials: true})
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error)
+        });
+    })
+}
+export const fetchOrgStaffMembers = (request) => {
+    return new Promise((resolve,reject)=>{
+        axios.post(`/fetchOrgStaffMembers`, request, {withCredentials: true})
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error)
+        });
+    })
+}
+//fetchTeamStaffMembers
+export const fetchTeamStaffMembers = (request) => {
+    return new Promise((resolve,reject)=>{
+        axios.post(`/fetchTeamStaffMembers`, request, {withCredentials: true})
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error)
+        });
+    })
+}
+
 export const getAllCumulativeAccelerationTimeRecords = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getCumulativeAccelerationTimeRecords = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const AllCumulativeAccelerationTimeRecords = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/AllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getSimulationDetail = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getSimulationDetail`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -730,9 +862,151 @@ export const getTeamList = (request) =>{
   })
 }
 
+export const getTeamSpheres = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamSpheres`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getPlayerList = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getPlayerList/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+export const deleteItem = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteItem/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+export const renameOrganization = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/renameOrganization/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const renameTeam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/renameTeam/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const addOrganization = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/addOrganization/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const addorgTeam= (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/addorgTeam/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const updateUserStatus = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/updateUserStatus/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const MergeOrganization = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/MergeOrganization/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const MergeTeam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/MergeTeam/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getOrgUniqueList = () =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getOrgUniqueList/`, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getOrgUniqueTeams = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getOrgUniqueTeams/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const setVideoTime = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/setVideoTime/`,request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

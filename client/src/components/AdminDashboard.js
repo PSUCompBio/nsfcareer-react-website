@@ -8,10 +8,14 @@ import Spinner from './Spinner/Spinner';
 import {
     isAuthenticated,
     getAllSensorBrands,
-    fetchStaffMembers,
+    fetchAdminStaffMembers,
     getOrganizationList,
     getTeamList,
-    getPlayerList
+    getPlayerList,
+    deleteItem,
+    renameOrganization,
+    addOrganization,
+    MergeOrganization
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -21,8 +25,15 @@ import MilitaryVersionBtn from './MilitaryVersionBtn';
 import gridView from './girdView.png';
 import listView from './listView.png';
 import $ from "jquery";
-
-
+import delicon from './icons/delete.png';
+import merge from './icons/merge.png';
+import pencil from './icons/pencil.png';
+import plus from './icons/plus.png'
+import { 
+    UncontrolledAlert
+} from 'reactstrap';
+import DeletePopup from './Popup/DeletePopup';
+import UpdatePopup from './Popup/UpdatePopup';
 class AdminDashboard extends React.Component {
     constructor() {
         super();
@@ -51,6 +62,21 @@ class AdminDashboard extends React.Component {
             playerList: [],
             cognito_user_id: '',
             view: 'gridView',
+            isDisplay: { display: 'none' },
+            isDisplay2: { display: 'none' },
+            DelData: '',
+            renameData : '',
+            isEdit: false,
+            isDelete: false,
+            isUploading: false,
+            isUpdated:false,
+            Error: '',
+            data: '',
+            isRename: false,
+            addOrganizationData: '',
+            isAddOrganization: false,
+            mergeData: '',
+            isMerge: false,
         };
     }
     toggleTab = (value) => {
@@ -96,12 +122,13 @@ class AdminDashboard extends React.Component {
             })
         }else if(e.target.name == 'individuals'){
             var the = this;
-            console.log('playerList',this.state.playerList)
+            setTimeout(function(){ 
+                the.hadnlesearch();
+            }, 2000);
             if(this.state.playerList == ''){
                 the.setState({isFetching: true});
                 getPlayerList({type: 'playersList'})
                 .then(players => {
-                    console.log('playerList',players.data.data)
                     this.setState({
                         playerList:players.data.data,
                         isSensor: false,
@@ -112,7 +139,11 @@ class AdminDashboard extends React.Component {
 
                      setTimeout(function(){ 
                         the.setState({isFetching: false});
+                        the.hadnlesearch();
                     }, 3000);
+                    setTimeout(function(){ 
+                        the.hadnlesearch();
+                    }, 4000);
                 }).catch(err=>{
                     console.log('err',err)
                 })
@@ -125,6 +156,277 @@ class AdminDashboard extends React.Component {
                 })
             }
         }
+    }
+    /*===================================
+    
+        Organization edit funtion start here
+
+    =============================================*/
+    handleEdit = (e) =>{
+        console.log('edit')
+        $('.isEdit').css({'display':'inherit'});
+        $('.button-edit').addClass('button-edit-active');
+        this.setState({
+            isEdit:true,
+            DelData: '',
+            isDelete: false,
+            isUpdated: false,
+            Error: ''
+        })
+    }
+
+    handleCencel =()=>{
+        $('.isEdit').css({'display':'none'});
+        $('.button-edit').removeClass('button-edit-active');
+        this.setState({
+            isEdit:false,
+            DelData: '',
+            isDelete: false,
+            isUpdated: false,
+            Error: '',
+            isUploading:false,
+            renameData: '',
+            isRename: false,
+            isAddOrganization: false,
+            addOrganizationData: '',
+            mergeData: '',
+            isMerge: false
+        })
+    }
+
+    editRecord = (e) =>{
+        console.log('data',e.type)
+        this.setState({data:e })
+        if (this.state.isDisplay2.display === 'none') {
+          this.setState({ isDisplay2: {display:'flex'} });
+        } else {
+          this.setState({ isDisplay2: {display:'none'} });
+        }
+    }
+
+     makeVisible = (data) => {
+        this.setState({ isDisplay: data });
+    }
+    makeVisible2 = (data) => {
+        this.setState({ isDisplay2: data });
+    }
+
+    deleteRecord = (e) =>{
+        console.log('delete',e)
+        this.setState({DelData: {type: 'team',data:e} })
+        if (this.state.isDisplay.display === 'none') {
+          this.setState({ isDisplay: {display:'flex'} });
+        } else {
+          this.setState({ isDisplay: {display:'none'} });
+        }
+    }
+
+    isDeleteData = (isDelete) => {
+        console.log('isDelete',isDelete)
+        this.setState({ isDelete: isDelete });
+        this.setState({ isDisplay:{ display: 'none' } });
+    }
+
+    isUpdateData = (data) =>{
+        console.log('isUpdateData',data);
+        if(data.data.type == "rename"){
+            this.setState({renameData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data}, isRename: true})
+        }
+        if(data.data.type == "addOrganization"){
+            this.setState({addOrganizationData: {OrganizationName : data.OrganizationName, sensor: ''  }, isAddOrganization: true})
+        }
+        if(data.data.type == "merge"){
+            this.setState({mergeData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
+        }
+        this.setState({ isDisplay2:{ display: 'none' } });
+    }
+
+    handleChangeSave = () =>{
+        console.log('Save',this.state.renameData, this.state.addOrganizationData);
+        this.setState({isUploading: true});
+        if(this.state.isDelete){
+              console.log('deleting')
+              deleteItem(this.state.DelData)
+              .then(res => {
+                  console.log('res',res);
+                    if(res.data.message == 'success'){
+                         this.setState(prevState => ({
+                            isUpdated: false,
+                        }));
+                        this.handleRenmaeOrganization();
+                    }else{
+                        this.setState({
+                            isUploading: false,
+                            Error: 'Somthing went wrong when deleting data.'
+                        })
+                    }
+                
+              }).catch(err=>{
+                    console.log(err)
+                    this.setState({
+                        isUploading: false,
+                        isUpdated: false,
+                        Error: 'Somthing went wrong when deleting data.'
+                    })
+              })
+        }else{
+            this.handleRenmaeOrganization();
+        }
+    }
+
+    handleRenmaeOrganization = () => {
+        console.log('rename',this.state.data)
+        if(this.state.isRename){
+            renameOrganization(this.state.renameData)
+            .then(response => {
+                console.log('response',response)
+                if(response.data.message == "success"){
+                    this.handleMergeOrganization();
+                }else{
+                    this.setState({
+                     isUpdated: false,
+                        isUploading: false,
+                        Error: 'Somthing went wrong when renaming organization.'
+                    })
+                }
+
+            }).catch(err =>{
+                console.log('errRename',err);
+                this.setState({
+                    isUploading: false,
+                    Error: 'Somthing went wrong when renaming organization.'
+                })
+            })
+        }else{
+            this.handleMergeOrganization();
+        }
+    }
+
+    handleMergeOrganization = () => {
+        console.log('rename',this.state.mergeData)
+        if(this.state.isMerge){
+            MergeOrganization(this.state.mergeData)
+            .then(response => {
+                console.log('response',response)
+                if(response.data.message == "success"){
+                    this.handleAddOrganization();
+                }else{
+                    this.setState({
+                        isUpdated: false,
+                        isUploading: false,
+                        Error: 'Somthing went wrong when merging organization.'
+                    })
+                }
+
+            }).catch(err =>{
+                console.log('errRename',err);
+                this.setState({
+                    isUploading: false,
+                    Error: 'Somthing went wrong when merging organization.'
+                })
+            })
+        }else{
+            this.handleAddOrganization();
+        }
+    }
+
+    handleAddOrganization=()=>{
+        console.log('addOrganization',this.state.addOrganizationData);
+        if(this.state.isAddOrganization){
+            addOrganization(this.state.addOrganizationData)
+            .then(response =>{
+                 console.log('response',response)
+                if(response.data.message == "success"){
+                    getOrganizationList({type:'organizations'})
+                    .then(orgs => {
+                        $('.isEdit').css({'display':'none'});
+                        $('.button-edit').removeClass('button-edit-active');
+                        this.setState(prevState => ({
+                            totalOrganization: orgs.data.data.length,
+                            OrganizationList: orgs.data.data,
+                            isEdit: false,
+                            isUpdated: true,
+                            isUploading: false,
+                            isDelete: false,
+                            DelData: '',
+                            isRename: false,
+                            renameData: '',
+                            isMerge: false,
+                            mergeData: '',
+                            isAddOrganization: false,
+                            addOrganizationData: ''
+                        }));
+                    })
+                }else{
+                    this.setState({
+                     isUpdated: false,
+                        isUploading: false,
+                        Error: 'Somthing went wrong when Adding organization.',
+                        isDelete: false,
+                        DelData: '',
+                        isRename: false,
+                        renameData: '',
+                        isMerge: false,
+                        mergeData: '',
+                        isAddOrganization: false,
+                        addOrganizationData: ''
+                    })
+                }    
+            }).catch(err =>{
+                console.log('erradd',err);
+                this.setState({
+                    isUploading: false,
+                    isUpdated: false,
+                    Error: 'Somthing went wrong when Adding organization.',
+                    isDelete: false,
+                    DelData: '',
+                    isRename: false,
+                    renameData: '',
+                    isMerge: false,
+                    mergeData: '',
+                    isAddOrganization: false,
+                    addOrganizationData: ''
+                })
+            })
+        }else{
+            getOrganizationList({type:'organizations'})
+            .then(orgs => {
+                $('.isEdit').css({'display':'none'});
+                $('.button-edit').removeClass('button-edit-active');
+                this.setState(prevState => ({
+                    totalOrganization: orgs.data.data.length,
+                    OrganizationList: orgs.data.data,
+                    isEdit: false,
+                    isUpdated: true,
+                    isUploading: false,
+                    isDelete: false,
+                    DelData: '',
+                    isRename: false,
+                    renameData: '',
+                    isMerge: false,
+                    mergeData: '',
+                    isAddOrganization: false,
+                    addOrganizationData: ''
+                }));
+            })
+        }
+
+    }
+  /*===================================
+    
+        Organization edit funtion end here
+
+    =============================================*/
+    hadnlesearch =() =>{
+        console.log('button',$("#myInput").html())
+        $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            console.log('keyup',value)
+            $("#myTable tr").filter(function() {
+                console.log($(this).text().toLowerCase().indexOf(value))
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
     }
     checkIfDarkModeActive = () => {
         if (getStatusOfDarkmode().status === true) {
@@ -174,7 +476,6 @@ class AdminDashboard extends React.Component {
             console.log('view',view)
             this.setState({view: view})
         }
-
         isAuthenticated(JSON.stringify({}))
             .then((value) => {
                 if (value.data.message === 'success') {
@@ -224,7 +525,15 @@ class AdminDashboard extends React.Component {
                                     isCheckingAuth: false
                                 })
                             })
-                           // return fetchStaffMembers({})
+                            return fetchAdminStaffMembers({});
+                        }).then(staff=>{
+                            console.log('staff',staff);
+                            var response = staff.data;
+                            if(response.message == 'success'){
+                                this.setState(prevState => ({
+                                    staffList: response.data,
+                                }));
+                            }
                         })
                         .catch(err => {
                             alert(err);
@@ -260,8 +569,22 @@ class AdminDashboard extends React.Component {
         })
     }
 
-    smallCards = (reference, brand, user_cognito_id, noOfSimulation, key) => {
-        // console.log(reference);
+    smallCards = (simulation_status, computed_time, simulation_timestamp, reference, brand, user_cognito_id, noOfSimulation, key) => {
+        let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
+        if (simulation_status == 'completed') {
+            let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
+
+            let currentStamp = new Date().getTime();
+            let simulationTimestamp = parseFloat(simulation_timestamp);
+            var diff =(currentStamp - simulationTimestamp) / 1000;
+            diff /= 60;
+            let minutes =  Math.abs(Math.round(diff));
+            console.log('minutes', minutes);
+            minutes = minutes - computed_time;
+            if (minutes <= 10) {
+                cls = 'completedSimulation tech-football m-3';
+            }
+        }
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <div
@@ -277,7 +600,7 @@ class AdminDashboard extends React.Component {
                             }
                         })
                     }}
-                    className={`tech-football m-3`}
+                    className={cls}
                 >
 
                     <div style={this.state.hideEditElement}>
@@ -301,7 +624,7 @@ class AdminDashboard extends React.Component {
         );
     };
 
-     smallCards2 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
+     smallCards2 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key,organization_id) => {
         // console.log(reference);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status == 'completed') {
@@ -320,6 +643,11 @@ class AdminDashboard extends React.Component {
         }
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
+                <ul className="organization-edit-icons isEdit">
+                    <li><span><img src={pencil}  onClick={e => this.editRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'rename'})}/>Rename</span></li>
+                    
+                    <li><span><img src={delicon} onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
+                </ul>
                 <div
                     ref={reference[0]}
                     onClick={(e) => {
@@ -382,7 +710,8 @@ class AdminDashboard extends React.Component {
                 this.state.OrganizationList[i].organization,
                 this.state.OrganizationList[i].user_cognito_id,
                 Number(this.state.OrganizationList[i].simulation_count),
-                i
+                i,
+                this.state.OrganizationList[i].organization_id,
             );
             j++;
         }
@@ -506,8 +835,11 @@ class AdminDashboard extends React.Component {
         for (let i = 0; i < this.state.totalBrand; i++) {
 
             const brand = this.state.sensorBrandList[i];
-            console.log("POP IT ", brand);
+            
             cards[i] = this.smallCards(
+                this.state.sensorBrandList[i].simulation_status,
+                this.state.sensorBrandList[i].computed_time,
+                this.state.sensorBrandList[i].simulation_timestamp,
                 [
                     'smCard' + i,
                     'parentChildTop' + i,
@@ -543,8 +875,35 @@ class AdminDashboard extends React.Component {
         const second = plus0(d.getSeconds())
         const rest = timestamp.toString().slice(-5)
       
-        return `${month}-${date}-${year} ${hour}:${minute}:${second}:${rest}`
+        return `${month}/${date}/${year} ${hour}:${minute}:${second}`
     }
+
+    getDate = (timestamp) => {
+
+        const plus0 = num => `0${num.toString()}`.slice(-2)
+      
+        const d = new Date(timestamp)
+      
+        const year = d.getFullYear()
+        const monthTmp = d.getMonth() + 1
+        const month = plus0(monthTmp)
+        const date = plus0(d.getDate())
+        
+        return `${month}/${date}/${year}`
+    }
+
+    tConvert = (time) => {
+        // Check correct time format and split into components
+        time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+      
+        if (time.length > 1) { // If time format correct
+          time = time.slice (1);  // Remove full string match value
+          time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+          time[0] = +time[0] % 12 || 12; // Adjust hours
+        }
+        return time.join (''); // return adjusted time or original string
+    }
+
 
     retunrnRosterBtn = () => {
         return (
@@ -571,7 +930,24 @@ class AdminDashboard extends React.Component {
     tableSensor = () => {
         var body =  this.state.sensorBrandList.map(function (sensor, index) {
                 if (sensor) {
-                    return <tr className="player-data-table-row" key={index} onClick={() => {
+
+                    let cls = sensor.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (sensor.simulation_status == 'completed') {
+                        let computed_time = sensor.computed_time ? parseFloat(sensor.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(sensor.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+
+                    return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/OrganizationAdmin',
                             state: {
@@ -597,7 +973,24 @@ class AdminDashboard extends React.Component {
         console.log(this.state.OrganizationList)
         var body =  this.state.OrganizationList.map(function (organization, index) {
                 if (organization) {
-                    return <tr className={organization.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`}  key={index} onClick={() => {
+
+                    let cls = organization.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (organization.simulation_status == 'completed') {
+                        let computed_time = organization.computed_time ? parseFloat(organization.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(organization.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+
+                    return <tr className={cls}  key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin',
                             state: {
@@ -612,9 +1005,7 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{organization.organization}</td>
-                        <td>{organization.sensor ? organization.sensor : 'NA'}</td>
                         <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
-                        <td>{organization.team_name ? organization.team_name : 'NA'}</td> 
                     </tr>;
                 }
             }, this)
@@ -626,7 +1017,23 @@ class AdminDashboard extends React.Component {
 
         var body =  this.state.teamList.map(function (team, index) {
                 if (team) {
-                    return <tr className={team.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
+
+                    let cls = team.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                    if (team.simulation_status == 'completed') {
+                        let computed_time = team.computed_time ? parseFloat(team.computed_time) / (1000 * 60) : 0;
+
+                        let currentStamp = new Date().getTime();
+                        let simulationTimestamp = parseFloat(team.simulation_timestamp);
+                        var diff =(currentStamp - simulationTimestamp) / 1000;
+                        diff /= 60;
+                        let minutes =  Math.abs(Math.round(diff));
+                        console.log('minutes', minutes);
+                        minutes = minutes - computed_time;
+                        if (minutes <= 10) {
+                            cls = 'completedSimulation tech-football m-3';
+                        }
+                    }
+                    return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin/team/players',
                             state: {
@@ -646,7 +1053,6 @@ class AdminDashboard extends React.Component {
                         <td>{team.team_name ? team.team_name : 'NA'}</td> 
                         <td>{team.simulation_count ? team.simulation_count : '0'}</td>
                         <td>{team.organization}</td>
-                        <td>{team.sensor ? team.sensor : 'NA'}</td>
                     </tr>;
                 }
             }, this)
@@ -657,7 +1063,7 @@ class AdminDashboard extends React.Component {
         return (
             <React.Fragment>
 
-                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1">
+                <div ref="rosterContainer" className="container t-roster animated1 zoomIn1 bottom-margin">
 
                     {this.props.isMilitaryVersionActive ? (
                         <MilitaryVersionBtn> {this.retunrnRosterBtn()}</MilitaryVersionBtn>
@@ -675,21 +1081,26 @@ class AdminDashboard extends React.Component {
 
                         </div>
                          <div className="col-md-2 dashboard-custom-button" >
-                            
-                                {!this.state.isPlayers && 
-                                    <div className="View">
-                                        <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
-                                        <img src={listView} onClick={() => this.handleViewChange('listView')} />
-                                    </div>
-                                }
-                            
+                            {!this.state.isPlayers && 
+                                <div className="View">
+                                    <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
+                                    <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                </div>
+                            }
+                        </div>
+                        <div className="col-md-12 individuals-search-input">
+                            {this.state.isPlayers && 
+                                <label>
+                                    Search: <input id="myInput" type="text"  placeholder="Search.."/>
+                                </label>
+                            }
                         </div>
                         <div className="col-md-12  dashboard-custom-button2">
                             <button type="button" className={this.state.isSensor ?  "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
                             <button type="button" className={this.state.isOrganization ?  "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
                             <button type="button" className={this.state.isTeams ?  "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
                         </div>
-                        <div className="col-md-8 dashboard-custom-button2">
+                         <div className="col-md-8 dashboard-custom-button2">
                             <button type="button" className= "btn   custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
                             <button type="button"  className={this.state.isPlayers ?  "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
                             {!this.state.isPlayers && 
@@ -699,7 +1110,14 @@ class AdminDashboard extends React.Component {
                                 </div>
                             }
                         </div>
-                       
+                        {this.state.isOrganization && 
+                            <div className="col-md-12 Admintitle" >
+                                <div className="col-md-2 org-edit-button" >
+                                    <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button>
+                                   
+                                </div>
+                            </div>
+                        }
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
@@ -732,7 +1150,7 @@ class AdminDashboard extends React.Component {
                                         </div>
                                         :
                                         <div className="commander-data-table">
-                                            <Link  to={{
+                                            {/*<Link  to={{
                                                     pathname: '/InviteUsers',
                                                     state: {
                                                         lavelFor: '400',
@@ -743,7 +1161,7 @@ class AdminDashboard extends React.Component {
                                                     }
                                                 }} >
                                                     <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Organization Admin</button> 
-                                                </Link>
+                                                </Link>*/}
                                                 <Link  to={{
                                                     pathname: '/InviteUsers',
                                                     state: {
@@ -760,19 +1178,26 @@ class AdminDashboard extends React.Component {
                                                     <tr>
                                                         <th scope="col">#</th>
                                                         <th scope="col">Name</th>
-                                                        <th scope="col">Organization</th>
-                                                        <th scope="col">Department</th>
+                                                        <th scope="col">Email</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
-                                                    {this.state.staffList.map(function (staff, index) {
-                                                        return <tr className="player-data-table-row" key={index}>
-                                                            <td>{index + 1}</td>
-                                                            <td>{staff.first_name} {staff.last_name}</td>
-                                                            <td>{staff.organization}</td>
-                                                            <td>CTE</td>
-                                                        </tr>
+                                                    {this.state.staffList && 
+                                                        this.state.staffList.map(function (staff, index) {
+                                                            return <tr className="player-data-table-row" key={index}
+                                                                onClick={()=>{
+                                                                    var win = window.open('/admin/view/user?id='+staff.user_cognito_id);
+                                                                    win.focus();
+                                                                }}
+                                                            >
+                                                                <td>{index + 1}</td>
+                                                                <td>{staff.first_name} {staff.last_name}</td>
+                                                                <td>{staff.email}</td>
+                                                            </tr>
                                                     })}
+                                                    {!this.state.staffList && 
+                                                        <p>No data to show here.</p>
+                                                    }
                                                 </tbody>
 
                                             </table>
@@ -785,39 +1210,64 @@ class AdminDashboard extends React.Component {
                                                 <table style={{ whiteSpace: "nowrap" }} className="table ">
                                                     <thead>
                                                         <tr>
-
-                                                            <th scope="col">Player ID</th>
-                                                            <th scope="col">Player Name</th>
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
-                                                            <th scope="col">Impact Date & Time</th>
-                                                            <th scope="col">Simulation Date & Time</th>
+                                                        <th scope="col">Player ID</th>
+                                                        <th scope="col">Player Name</th>
+                                                        <th scope="col"># of Simulations</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>
                                                         </tr>
                                                     </thead>
-                                                  <tbody className="player-table">
+                                                  <tbody id="myTable" className="player-table" >
                                                         {this.state.playerList.map(function (player, index) {
                                                             if (player.simulation_data.length > 0) {
-                                                              let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+              
+                                                                if (player.simulation_data[0]['impact-time']) {
+                                                                  let split = player.simulation_data[0]['impact-time'].split(":");
+                                                                  player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0]['time']) {
+                                                                  let split = player.simulation_data[0]['time'].toString();
+                                                                  split = split.split(":");
+                                                                  player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0].simulation_status === 'completed' ) {
+              
+                                                                  let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
+              
+                                                                  let currentStamp = new Date().getTime();
+                                                                  let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
+                                                                  var diff =(currentStamp - simulationTimestamp) / 1000;
+                                                                  diff /= 60;
+                                                                  let minutes =  Math.abs(Math.round(diff));
+                                                                  console.log('minutes', minutes);
+                                                                  minutes = minutes - computed_time;
+                                                                  if (minutes <= 10) {
+                                                                      cls = 'completedSimulation player-data-table-row';
+                                                                  }
+                                                                }
 
-                                                                return <tr className="player-data-table-row" key={index} onClick={() => {
+                                                                return <tr className={cls} key={index} onClick={() => {
 
                                                                     this.setRedirectData(Number(index + 1).toString(), player.player_name)
                                                                 }}
                                                                 >
                                                                     <th style={{ verticalAlign: "middle" }} scope="row">
                                                                     {  
-                                                                        player.simulation_data[0].player_id.split('$')[1]
+                                                                        player.simulation_data[0].player_id.split('$')[0]
 
                                                                     }</th>
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td>}
-
-                                                                    {/*<td>{Number(player.impact)}</td>*/}
+                                                                    <td>{player.simulation_data.length}</td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                         {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']:  player.simulation_data[0]['date']  && player.simulation_data[0]['time']? player.simulation_data[0]['date'] +' '+ player.simulation_data[0]['time']  : 'Unkown Date and Time' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
@@ -833,7 +1283,8 @@ class AdminDashboard extends React.Component {
                                                                                             </div>
                                                                                             </td>
                                                                                             */}
-                                                                    <td style={{ alignItems: "center" }}>{dateTime}</td>
+                                                                    <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
+                                                                    <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
                                                                 </tr>;
                                                             }
                                                         }, this)}
@@ -843,9 +1294,26 @@ class AdminDashboard extends React.Component {
                                             </div>
                                         ) :
                                          (<div className="football-container mt-4 d-flex flex-wrap">
+                                            <>
                                             {this.state.isSensor && this.iterateTeam()}
-                                            {this.state.isOrganization && this.iterateTeam2()}
+                                            {this.state.isOrganization && 
+                                                <>
+                                                    {this.iterateTeam2()}
+                                                    <div  className="isEdit" >
+                                                        <div
+                                                            className="tech-football m-3 add-box"
+                                                            onClick={e => this.editRecord( {type: 'addOrganization'})}
+                                                        >
+                                                            <div className="wrap_img">
+                                                           <img src={plus} />
+                                                            <h4>Add New</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            }
                                             {this.state.isTeams && this.iterateTeam3()}
+                                            </>
                                         </div>)
                                         :   
                                         this.state.isPlayers ? (
@@ -854,38 +1322,64 @@ class AdminDashboard extends React.Component {
                                                     <thead>
                                                         <tr>
 
-                                                            <th scope="col">Player ID</th>
-                                                            <th scope="col">Player Name</th>
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Sport</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
-                                                            {this.props.screenWidth <= 768 ? null : <th scope="col">Brain Simulations</th>}
-                                                            <th scope="col">Impact Date & Time</th>
-                                                            <th scope="col">Simulation Date & Time</th>
+                                                        <th scope="col">Player ID</th>
+                                                        <th scope="col">Player Name</th>
+                                                        <th scope="col"># of Simulations</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>   
                                                         </tr>
                                                     </thead>
-                                                  <tbody className="player-table">
+                                                  <tbody className="player-table" id="myTable">
                                                         {this.state.playerList.map(function (player, index) {
                                                             if (player.simulation_data.length > 0) {
-                                                              let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+              
+                                                                if (player.simulation_data[0]['impact-time']) {
+                                                                  let split = player.simulation_data[0]['impact-time'].split(":");
+                                                                  player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0]['time']) {
+                                                                  let split = player.simulation_data[0]['time'].toString();
+                                                                  split = split.split(":");
+                                                                  player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                                }
+              
+                                                                if (player.simulation_data[0].simulation_status === 'completed' ) {
+              
+                                                                  let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
+              
+                                                                  let currentStamp = new Date().getTime();
+                                                                  let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
+                                                                  var diff =(currentStamp - simulationTimestamp) / 1000;
+                                                                  diff /= 60;
+                                                                  let minutes =  Math.abs(Math.round(diff));
+                                                                  console.log('minutes', minutes);
+                                                                  minutes = minutes - computed_time;
+                                                                  if (minutes <= 10) {
+                                                                      cls = 'completedSimulation player-data-table-row';
+                                                                  }
+                                                                }
 
-                                                                return <tr className={player.simulation_status == 'pending' ? `pendingSimulation player-data-table-row` : `player-data-table-row`} key={index} onClick={() => {
+                                                                return <tr className={cls} key={index} onClick={() => {
 
                                                                     this.setRedirectData(Number(index + 1).toString(), player.player_name)
                                                                 }}
                                                                 >
                                                                     <th style={{ verticalAlign: "middle" }} scope="row">
                                                                     {  
-                                                                        player.simulation_data[0].player_id.split('$')[1]
+                                                                        player.simulation_data[0].player_id.split('$')[0]
 
                                                                     }</th>
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.sport}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
-                                                                    {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td>}
-
-                                                                    {/*<td>{Number(player.impact)}</td>*/}
+                                                                    <td>{player.simulation_data.length}</td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                         {player.simulation_data[0]['impact-date'] ? player.simulation_data[0]['impact-date'] +' '+ player.simulation_data[0]['impact-time']:  player.simulation_data[0]['date']  && player.simulation_data[0]['time']? player.simulation_data[0]['date'] +' '+ player.simulation_data[0]['time']  : 'Unkown Date and Time' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
@@ -901,7 +1395,8 @@ class AdminDashboard extends React.Component {
                                                                                             </div>
                                                                                             </td>
                                                                                             */}
-                                                                    <td style={{ alignItems: "center" }}>{dateTime}</td>
+                                                                    <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
+                                                                    <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
                                                                 </tr>;
                                                             }
                                                         }, this)}
@@ -932,9 +1427,7 @@ class AdminDashboard extends React.Component {
                                                         <tr>
                                                             <th scope="col">S.No.</th>
                                                             <th scope="col">Organization</th>
-                                                            <th scope="col">Sensor</th>
                                                             <th scope="col">Simulations</th>
-                                                            <th scope="col">Team Name</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">
@@ -949,9 +1442,7 @@ class AdminDashboard extends React.Component {
                                                             <th scope="col">S.No.</th>
                                                             <th scope="col">Team Name</th>
                                                             <th scope="col">Simulations</th>
-                                                            <th scope="col">Organization</th>
-                                                            <th scope="col">Sensor</th>
-                                                           
+                                                            <th scope="col">Organization</th> 
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">
@@ -961,6 +1452,41 @@ class AdminDashboard extends React.Component {
                                             }
                                         </div>)
                                         : null}
+                                    {this.state.isUploading ? (
+                                            <div className="d-flex justify-content-center center-spinner">
+                                                <div
+                                                    className="spinner-border text-primary"
+                                                    role="status"
+                                                    >
+                                                    <span className="sr-only">Uploading...</span>
+                                                </div>
+                                            </div>
+                                        ) : null}
+
+                                        {this.state.isUpdated ? (
+                                            <UncontrolledAlert
+                                                color="success"
+                                                style={{ marginTop: '5px' }}
+                                                >
+                                                Changes has been done successfully.
+                                            </UncontrolledAlert>
+                                        ) : null}
+                                        {this.state.Error ? (
+                                            <UncontrolledAlert
+                                                style={{ marginTop: '5px' }}
+                                                color="danger"
+
+                                                >
+                                                {this.state.Error}
+
+                                            </UncontrolledAlert>
+                                        ) : null}
+                                    {this.state.isOrganization &&
+                                        <div className="delete-confirmation-button isEdit">
+                                            <button className="btn button-back " onClick={this.handleCencel}>Cancel</button>
+                                            <button className="btn button-yes " onClick={this.handleChangeSave} >Save</button>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -1004,7 +1530,9 @@ class AdminDashboard extends React.Component {
 
         return (
             <React.Fragment>
-
+                <DeletePopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData)? this.props.isDeleteData : this.isDeleteData} />
+                <UpdatePopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData} data={this.state.data}/>
+                
                 {this.props.isMilitaryVersionActive === true ? (
                     <div className="militay-view">
                         <div className="military-sidebar">
@@ -1024,7 +1552,8 @@ class AdminDashboard extends React.Component {
                             {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
                             <div style={{
                                 position: "absolute",
-                                width: "100%"
+                                width: "100%",
+                                bottom: '0'
                             }}>
                                 <Footer />
                             </div>

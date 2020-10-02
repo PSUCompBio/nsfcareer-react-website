@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const options = {
     responsive: true,
+    animation: false,
     maintainAspectRatio: false,
     fill: false,
     legend: {

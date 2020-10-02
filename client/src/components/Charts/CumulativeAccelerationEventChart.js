@@ -46,18 +46,22 @@ class CumulativeAccelerationEventChart extends React.Component {
                 }]
             },
             is_selfie_image_uploaded: props.is_selfie_image_uploaded,
-            imageUrl: props.imageUrl
+            imageUrl: props.imageUrl,
+            isReport: false
         };
     }
 
     render() {
-        // console.log('this.state.userDetails',this.state.userDetails)
+        console.log('this.state.data',this.props.data)
         var fileName = '';
-        if(this.props.user){
+        if(this.props.data.player_id && this.props.data.player_id.length > 0 && this.props.user.length > 0){
+       
             console.log('props',this.props);
             fileName = this.props.user[0].sensor_data.player['first-name']+'_'+this.props.user[0].sensor_data.player['last-name']+'_'+this.props.user[0].sensor_data.player_id.split('$')[1];
             // console.log('fileName',fileName)
+          
         }
+      
         return (
             <React.Fragment>
                 {this.props.data.team ?
@@ -102,6 +106,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                 }} className="top-heading__login player-dashboard-title">
                     Player Dashboard
                 </h1>
+                { this.props.data.player &&
                 <div
                     className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1 player-dashboard-user-datials-header"
                    >
@@ -115,7 +120,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                 ref="h1"
                                 className="player-dashboard-sub-head"
                             >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
-                            Number of impacts :     
+                            Number of Simulations : {this.props.data.simulationCount ? this.props.data.simulationCount : ''}
                             </p>
                         </div>
                         {
@@ -141,6 +146,7 @@ class CumulativeAccelerationEventChart extends React.Component {
 
                     </div>
                 </div>
+                }
                 <div
                     className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft Cumulative-Overview-player-dash"
                     
@@ -154,35 +160,47 @@ class CumulativeAccelerationEventChart extends React.Component {
                             >Cumulative Overview of All Events</p>
                         </div>
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            <button style={{
-                                marginRight: "5% !important"
-                            }}
-                                className="btn btn-primary pull-right sub-head-button export-player-report-1"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>&nbsp;
-                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
-                                    color: 'white'
-                                }}>
-                                    Export Impact Report
-                              {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-                                </PDFDownloadLink>
-                            </button>
+                            
+                             {/*
+                            !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
+                               null
+
+                                : <button style={{
+                                    marginRight: "5% !important"
+                                }}
+                                    className="btn btn-primary pull-right sub-head-button export-player-report-1"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>&nbsp;
+                                    <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
+                                        color: 'white'
+                                    }}>
+                                        Export Impact Report
+                                  {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                                    </PDFDownloadLink>
+                                </button>
+                        */}
                         </div>
 
                     </div>
 
-                   <ExportPlayerReport brainRegions={this.props.brainRegions} />
+                    <ExportPlayerReport brainRegions={this.props.brainRegions} />
                     
                 </div>
-                 <button style={{
-                                marginRight: "5% !important"
-                            }}
-                                className="btn btn-primary pull-right sub-head-button export-player-report-2"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>&nbsp;
-                                <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
-                                    color: 'white'
-                                }}>
-                                    Export Impact Report
-                              {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-                                </PDFDownloadLink>
-                            </button>
+               
+                 {/*
+                            !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
+                               null
+
+                                : <button style={{
+                    marginRight: "5% !important"
+                    }}
+                        className="btn btn-primary pull-right sub-head-button export-player-report-2"><i class="fa fa-arrow-circle-o-down" aria-hidden="true"> </i>&nbsp;
+                        <PDFDownloadLink document={<Report {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
+                            color: 'white'
+                        }}>
+                            Export Impact Report
+                      {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                        </PDFDownloadLink>
+                    </button>
+                        */}
             </React.Fragment>
         )
     }

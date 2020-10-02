@@ -23,6 +23,7 @@ import Users from '../../components/Users';
 import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
+import TeamStats from '../../components/TeamStats';
 import TeamPlayers from '../../components/CommanderTeamView';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
@@ -34,6 +35,13 @@ import Report from '../../components/ReportContent/Report0';
 import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
 import InviteUsers from '../../components/InviteUsers';
 import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
+import ProfileImageUpload from '../../components/profile/ProfileImageUpload';
+import ModelValidation from '../../components/ModelValidation/ModelValidation';
+import ModelValidationPressureResponse from '../../components/ModelValidation/ModelValidationPressureResponse';
+import ModelValidationDisplacementResponse from '../../components/ModelValidation/ModelValidationDisplacementResponse';
+import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
+import LoginComponentHidden  from '../../components/Authentication/LoginComponentHidden';
+import Hardy_et_al from '../../components/ModelValidation/Hardy_et_al';
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -192,6 +200,20 @@ class Routing extends React.Component {
         />
         <Route
           exact
+          path="/Login-hidden"
+          render={(props) =>
+            <LoginComponentHidden
+              {...this.props}
+              screenWidth={this.state.windowWidth}
+              isDarkModeSet={this.checkDarkMode}
+              isAuthenticated={(value) => this.settingAuthentication(value)}
+              setUserDetails={(value) => this.setUserDetails(value)}
+
+            />
+          }
+        />
+        <Route
+          exact
           path="/Profile"
           render={(props) => <Profile {...props} isDarkModeSet={this.checkDarkMode} />}
         />
@@ -204,6 +226,11 @@ class Routing extends React.Component {
         <Route
             exact
             path="/SignUp/"
+            render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+            exact
+            path="/User/SignUp/"
             render={(props) => <SignUp {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
@@ -225,7 +252,12 @@ class Routing extends React.Component {
           exact
           path="/number-verification"
           render={(props) => <AddUsers {...props} isDarkModeSet={this.checkDarkMode} />}
-        /> 
+        />
+        <Route
+          exact
+          path="/TeamStats"
+          render={(props) => <TeamStats {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
         <Route
           exact
           path="/TeamAdmin/user/dashboard"
@@ -329,7 +361,36 @@ class Routing extends React.Component {
             path="/IRBParentConsent"
             render={(props) => <IRBParentConsent {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
-       
+         <Route
+            exact
+            path="/profile-image-upload"
+            render={(props) => <ProfileImageUpload {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/validation"
+            render={(props) => <ModelValidation {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/model-pressure-response"
+            render={(props) => <ModelValidationPressureResponse {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/model-displacement-response"
+            render={(props) => <ModelValidationDisplacementResponse {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/model-strain-response"
+            render={(props) => <ModelValidationStrainResponse {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/Hardy-et-al"
+            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
       </React.Fragment>
     );
   }

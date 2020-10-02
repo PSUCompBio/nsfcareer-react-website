@@ -32,7 +32,7 @@ class ContactPage extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="container-fluid  contact__page-center-align pl-0">
+        <div className="container-fluid  contact__page-center-align pl-0 bottom-margin">
           <div className="row mobile-section-top-fix pt-surface  animated zoomIn text-center">
             <div  className="col-md-7 order-12 pr-0 contact-img-container" style = {{
               height : "auto"
@@ -67,7 +67,13 @@ class ContactPage extends React.Component {
         </div>
         {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
         
-        <Footer />
+          <div style={{
+            position: "absolute",
+            width: "100%",
+            bottom: '0'
+          }}>
+          <Footer />
+        </div>
       </React.Fragment>
     );
   }

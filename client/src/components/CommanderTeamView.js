@@ -15,10 +15,12 @@ import {
     getUserDBDetails,
     uploadSensorDataAndCompute,
     getTeamAdminData,
+    fetchTeamStaffMembers,
     // getImpactHistory,
     // getImpactSummary,
     getPlayersData,
-    getSimulationStatusCount
+    getSimulationStatusCount,
+    updateUserStatus,
 } from '../apis';
 
 import { FilePond } from 'react-filepond';
@@ -27,7 +29,8 @@ import 'filepond/dist/filepond.min.css';
 import socketIOClient from 'socket.io-client'
 
 import Spinner from './Spinner/Spinner';
-
+import Switch from "react-switch";
+import team_state_icon from './team_state_icon.svg'
 
 class CommanderTeamView extends React.Component {
     constructor(props) {
@@ -36,6 +39,10 @@ class CommanderTeamView extends React.Component {
         this.state = {
             isAuthenticated: false,
             isCheckingAuth: true,
+            isUpdating: false,
+            teamStats: false,
+            sensor_id: '',
+            editableId: '',
             userDetails: {},
             avgLoad: 0.02,
             alerts: 0,
@@ -58,13 +65,17 @@ class CommanderTeamView extends React.Component {
             impactHistoryData: {},
             uploadMessageLog: '',
             users: [],
+            requestedUsers: [],
             redirectData: {},
             cognito_user_id: '',
             player_name: '',
             buttonSelected: 'overview',
             simulations_completed: 0,
             simulations_pending: 0,
-            simulation_failed: 0
+            simulation_failed: 0,
+            checked: true,
+            isSensorIdUpdating: false,
+            isMobile: true,
         };
     }
     activateTab = (value) => {
@@ -101,7 +112,7 @@ class CommanderTeamView extends React.Component {
             .then((response) => {
                 if (response.data.message === "success") {
                     getPlayersData({
-			brand: this.props.location.state.team.brand,
+			            brand: this.props.location.state.team.brand,
                         user_cognito_id: this.props.location.state.team.user_cognito_id,
                         organization: this.props.location.state.team.organization,
                         team_name: this.props.location.state.team.team_name
@@ -115,7 +126,6 @@ class CommanderTeamView extends React.Component {
                                     users: [...prevState.users, response.data.data[i]]
                                 }));
                             }
-                            this.setState({});
                             getSimulationStatusCount({
 				                brand: this.props.location.state.team.brand,
                                 user_cognito_id: this.props.location.state.team.user_cognito_id,
@@ -210,9 +220,10 @@ class CommanderTeamView extends React.Component {
                                         isAuthenticated: true,
                                         isCheckingAuth: false
                                     });
-                                    if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300 || response.data.data.level === 200) {
+                                    let user_level = response.data.data.level;
+                                    if (user_level === 1000 || user_level === 400 || user_level === 300 || user_level === 200) {
                                         getPlayersData({
-					    brand: this.props.location.state.team.brand,
+					                        brand: user_level === 300 ? '' : this.props.location.state.team.brand,
                                             user_cognito_id: this.props.location.state.team.user_cognito_id,
                                             organization: this.props.location.state.team.organization,
                                             team_name: this.props.location.state.team.team_name
@@ -224,13 +235,20 @@ class CommanderTeamView extends React.Component {
                                                         users: [...prevState.users, response.data.data[i]]
                                                     }));
                                                 }
+                                                 if(response.data.data.length > 4){
+                                                    this.setState({isMobile: false});
+                                                } 
+                                                for (var i = 0; i < response.data.requested_players.length; i++) {
+                                                    this.setState(prevState => ({
+                                                        requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
+                                                    }));
+                                                } 
                                                 return getSimulationStatusCount({
-						    brand: this.props.location.state.team.brand,
+						                            brand: user_level === 300 ? '' : this.props.location.state.team.brand,
                                                     user_cognito_id: this.props.location.state.team.user_cognito_id,
                                                     organization: this.props.location.state.team.organization,
                                                     team: this.props.location.state.team.team_name
                                                 })
-                        
                                             })
                                             .then(response => {
                         
@@ -264,6 +282,19 @@ class CommanderTeamView extends React.Component {
                                             });
                                     } else {
 
+                                    }
+                                    return fetchTeamStaffMembers({
+                                        sensor: this.props.location.state.team.brand,
+                                        organization: this.props.location.state.team.organization,
+                                        team_name: this.props.location.state.team.team_name
+                                    });
+                                }).then(staff=>{
+                                    console.log('staff',staff);
+                                    var response = staff.data;
+                                    if(response.message == 'success'){
+                                        this.setState(prevState => ({
+                                            staffList: response.data,
+                                        }));
                                     }
                                 })
                                 .catch((error) => {
@@ -319,6 +350,124 @@ class CommanderTeamView extends React.Component {
         return `${month}/${date}/${year}`
     }
 
+    handleCheck = (checked, event, id) => {
+        this.setState({ 
+            isUpdating: id
+        });
+       let status = checked ? 'approved' : 'pending';
+        updateUserStatus({user_cognito_id: id, status: status})
+            .then(data => {
+                let requestedUsers = this.state.requestedUsers.map(function (r_player) {
+                    if (r_player.user_cognito_id === id) {
+                        r_player.player_status = status;
+                    }
+                    return r_player
+                })
+        
+                this.setState({ 
+                    //checked,
+                    requestedUsers: requestedUsers,
+                    isUpdating: false
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({
+                    isUpdating: false
+                });
+            })
+    }
+
+    handleCheck1 = (checked, event, id) => {
+        this.setState({ 
+            isUpdating: id
+        });
+       let status = checked ? 'approved' : 'pending';
+        updateUserStatus({user_cognito_id: id, status: status})
+            .then(data => {
+                let users = this.state.users.map(function (player) {
+                    if (player.simulation_data[0]['user_data'].user_cognito_id === id) {
+                        player.simulation_data[0]['user_data'].player_status = status;
+                    }
+                    return player
+                })
+        
+                this.setState({ 
+                    //checked,
+                    users: users,
+                    isUpdating: false
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                this.setState({
+                    isUpdating: false
+                });
+            })
+    }
+
+    editable = (obj) => {
+        this.setState({ 
+            editableId: obj ? obj.user_cognito_id : '',
+            sensor_id: obj ? obj.sensor_id_number : ''
+        });
+    }
+
+    handleChange = (e) => {
+        this.setState({ [e.target.name] : e.target.value });
+    }
+    
+    updateSensorId = (e) => {
+        this.updateSensor();
+    }
+
+    updateSensorIdOnEnter = (e) => {
+        if (e.key === 'Enter') {
+            this.updateSensor();
+        }
+    }
+
+    updateSensor = () => {
+        const sensor_id = this.state.sensor_id;
+        const editableId = this.state.editableId;
+        this.setState({isSensorIdUpdating:true})
+        updateUserStatus({user_cognito_id: editableId, sensor_id_number: sensor_id, type: 'uodate_sensor_id'})
+        .then(data => {
+            let users = this.state.users.map(function (player) {
+                if (player.simulation_data[0]['user_data'].user_cognito_id === editableId) {
+                    player.simulation_data[0]['user_data'].sensor_id_number = sensor_id;
+                }
+                return player
+            })
+
+            let requestedUsers = this.state.requestedUsers.map(function (r_player) {
+                if (r_player.user_cognito_id === editableId) {
+                    r_player.sensor_id_number = sensor_id;
+                }
+                return r_player
+            })
+            
+            this.setState({
+                users: users,
+                requestedUsers: requestedUsers,
+                editableId: '',
+                isSensorIdUpdating: false
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+        console.log('updating')
+    }
+
+    renderSwitch = (player) => {
+        if (player.simulation_data[0]['user_data']) {
+            return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
+        } else {
+            return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+        }
+    }
+
     tConvert = (time) => {
         // Check correct time format and split into components
         time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
@@ -331,13 +480,35 @@ class CommanderTeamView extends React.Component {
         return time.join (''); // return adjusted time or original string
     }
 
+    getStatus = (status) => {
+        if (status === 'pending') {
+            return <div>Pending<br></br></div>;
+        } else {
+            return <div style={{paddingTop: '10px'}}></div>;
+        }
+    }
+
+    getUrl = (obj) => {
+        if (obj && this.state.userDetails.level > 300) {
+            return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.user_cognito_id}>Profile</a>;
+        } else {
+            return <button className="btn btn-primary" disabled={true}>Profile</button>;
+        }
+    }
+
+    teamStats = () => {
+        this.setState({
+            teamStats: true
+        })
+    }
+
     militaryVersionOrNormal = () => {
         console.log('users',this.state.users)
         let me = this;
         return (
             <div
                 ref="rosterContainer"
-                className="container t-roster  animated1 zoomIn1 team-admin-page-navigation"
+                className={this.state.isMobile ? "container t-roster container_1200 animated1 zoomIn1 team-admin-page-navigation bottom-margin" : "container t-roster container_1200 animated1 zoomIn1 team-admin-page-navigation"}
             >
                 <div className="row" >
                      <div className="col-md-12">
@@ -353,7 +524,7 @@ class CommanderTeamView extends React.Component {
                                 }
                             }} >{'Admin > '}</Link>
                         : null}
-                        {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
+                        {this.props.location.state.team.brand && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
                             <Link style={{ fontWeight: "400" }} to={{
                                 pathname: '/OrganizationAdmin',
                                 state: {
@@ -623,7 +794,14 @@ class CommanderTeamView extends React.Component {
                 <div className="row mb-5 mt-5">
                     <div className="col-md-12">
                         <div className="col-md-12 Admintitle2" >
-                            <h1>Team Dashboard</h1>
+                            <h1>
+                                <span className="team-page-title">Team Dashboard</span>
+                                <div className="col-md-6 team-edit-button">
+                                    <button className="btn button-edit plyar-button-edit" style={{'margin-right': '4px'}}>Edit</button>
+                                    <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                   
+                                </div>
+                            </h1>
                         </div>
                         {/*<div className="text-left">
                                                 <button type="btn" className="impact-sumary-btn">
@@ -661,18 +839,27 @@ class CommanderTeamView extends React.Component {
                             </div>
                             {!this.state.tabActive ?
                                 <div ref="table" className="commander-data-table table-responsive ">
-                                    
-                                    <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                   
+                                    <table  className="table ">
                                         <thead>
                                             <tr>
 
                                                 <th scope="col">Player ID</th>
-                                                <th scope="col">Player Name</th>
-                                                {this.props.screenWidth <= 768 ? null : <th scope="col">Position</th>}
-                                                <th scope="col">Impact Date</th>
-                                                <th scope="col">Impact Time</th>
-                                                <th scope="col">Simulation Date</th>
-                                                <th scope="col">Simulation Time</th>
+                                                <th scope="col" style={{'text-align': 'center'}}>Sensor ID</th>
+                                                { this.state.userDetails.level > 300 &&
+                                                    <th scope="col">Player Name</th>
+                                                }
+                                                <th scope="col"># of<br/> Simulations</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
+                                                <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>
+                                                { this.state.userDetails.level > 200 &&
+                                                    <React.Fragment>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Team</span>Status</th>
+                                                        <th scope="col" ><span style={{display: 'block'}}>Profile</span>Settings</th>
+                                                    </React.Fragment>
+                                                }
                                             </tr>
                                         </thead>
                                       <tbody className="player-table">
@@ -708,24 +895,40 @@ class CommanderTeamView extends React.Component {
                                                     }
                                                   }
 
-                                                    return <tr className={cls} key={index} onClick={() => {
-
-                                                        this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0])
-                                                    }}
-                                                    >
-                                                        <th style={{ verticalAlign: "middle" }} scope="row">
+                                                    return <tr className={cls} key={index} >
+                                                        <th style={{ verticalAlign: "middle" }} scope="row" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                         {  
                                                             player.simulation_data[0].player_id.split('$')[0]
 
                                                         }</th>
-                                                        <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                        {this.props.screenWidth <= 768 ? null : <td>{player.simulation_data[0].player.position}</td>}
-                                                        { /* this.props.screenWidth <= 768 ? null : <td>{player.simulation_data.length}</td> */}
-
-                                                        {/*<td>{Number(player.impact)}</td>*/}
-                                                        <td style={{ alignItems: "center" }}>
+                                                        <td>
+                                                            {this.state.editableId && this.state.editableId === player.simulation_data[0]['user_data'].user_cognito_id ?
+                                                                <>
+                                                                <input type="text" 
+                                                                onBlur={this.updateSensorId}
+                                                                onKeyDown={this.updateSensorIdOnEnter}
+                                                                onChange={this.handleChange}
+                                                                name="sensor_id"
+                                                                value={this.state.sensor_id}
+                                                                className="update-sensorid-input"
+                                                                autoFocus
+                                                                />
+                                                                {this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>}
+                                                                </>
+                                                            : 
+                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
+                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'float': 'right','margin-top':'10%'}}></i>
+                                                                </span>
+                                                            }
+                                                            
+                                                        </td>
+                                                        { this.state.userDetails.level > 300 &&
+                                                            <td style={{'max-width':'162px'}} className="wrap-cell" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                        }
+                                                        <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                              {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
-                                                        <td style={{ alignItems: "center" }}>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                              {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
@@ -742,48 +945,131 @@ class CommanderTeamView extends React.Component {
                                                                                 </div>
                                                                                 </td>
                                                                                 */}
-                                                        <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
-                                                        <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{dateTime.split(' ')[0]}</td>
+                                                        <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{this.tConvert(dateTime.split(' ')[1])}</td>
+                                                        { this.state.userDetails.level > 200 &&
+                                                            <React.Fragment>
+                                                                <td style={{ alignItems: "center" }}>
+                                                                   
+                                                                    {this.state.isUpdating && this.state.isUpdating === player.simulation_data[0]['user_data'].user_cognito_id ?
+                                                                        <div className="d-flex justify-content-center center-spinner">
+                                                                            <div
+                                                                                className="spinner-border text-primary"
+                                                                                role="status"
+                                                                            ></div>
+                                                                        </div>
+                                                                    :
+                                                                        this.renderSwitch(player)
+                                                                    } 
+                                                                </td>
+                                                                <td>
+                                                                    {this.getUrl(player.simulation_data[0]['user_data'])}
+                                                                </td>
+                                                            </React.Fragment>
+                                                        }
                                                     </tr>;
                                                 }
                                             }, this)}
-
+                                            {this.state.requestedUsers.map(function (r_player, r_index) {
+                                                if(r_player){
+                                                    let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
+                                                    return <tr key={r_index} style={{lineHeight: lineHeight}}>
+                                                            <td>-</td>
+                                                            <td>
+                                                                {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
+                                                                    <>
+                                                                    <input type="text" 
+                                                                        onBlur={this.updateSensorId}
+                                                                        onKeyDown={this.updateSensorIdOnEnter}
+                                                                        onChange={this.handleChange}
+                                                                        name="sensor_id"
+                                                                        value={this.state.sensor_id}
+                                                                        className="update-sensorid-input"
+                                                                        autoFocus
+                                                                    />
+                                                                    {this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{'font-size':'24px','margin-left':'2px'}}></i>}
+                                                                    </>
+                                                                : 
+                                                                    <span onClick={() => {this.editable(r_player) }} className="edit-sensor-box">
+                                                                        { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true"  style={{'color': '#0e7dd59e', 'padding-left': '6px','float': 'right','margin-top':'10%'}}></i>
+                                                                    </span>
+                                                                }
+                                                            </td>
+                                                            { this.state.userDetails.level > 300 &&
+                                                                <td style={{'max-width':'162px'}} className="wrap-cell">{r_player.first_name + ' ' + r_player.last_name}</td>
+                                                            }
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            { this.state.userDetails.level > 200 &&
+                                                                <React.Fragment>
+                                                                    <td style={{ alignItems: "center" }}>
+                                                                        {this.getStatus(r_player.player_status)}   
+                                                                        {this.state.isUpdating && this.state.isUpdating === r_player.user_cognito_id ?
+                                                                            <div className="d-flex justify-content-center center-spinner">
+                                                                                <div
+                                                                                    className="spinner-border text-primary"
+                                                                                    role="status"
+                                                                                ></div>
+                                                                            </div>
+                                                                        :
+                                                                            <Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000"  onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+                                                                        }
+                                                                    </td>
+                                                                    <td>
+                                                                        {this.getUrl(r_player)}
+                                                                    </td>
+                                                                </React.Fragment>
+                                                            }
+                                                           
+                                                         </tr>
+                                                    }
+                                            }, this)}
                                         </tbody>
                                     </table>
                                 </div>
                                 : <div className="commander-data-table">
-                                    {/*<Link  to={{
+                                   <Link  to={{
                                         pathname: '/InviteUsers',
                                         state: {
-                                            lavelFor: '100',
+                                            lavelFor: '200',
                                             data:{
-                                                type: 'Player',
+                                                type: 'TeamnAdmin',
+                                                bk_data: this.props.location.state,
                                             }                                        
                                         }
-                                        }} >
-                                        <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Player</button> 
-                                    </Link>*/}
-                                    <table style={{ whiteSpace: "nowrap" }} className="table">
+                                    }} >
+                                        <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Team Staff</button> 
+                                    </Link>
+                                    
+                                    <table  className="table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Name</th>
-                                                 <th scope="col">Email</th>
-                                                <th scope="col">Organization</th>
-                                                
+                                                <th scope="col">Email</th>
                                             </tr>
                                         </thead>
-                                        {/*<tbody className="player-table">
-                                            {this.props.location.state.team.staff.map(function (staff, index) {
-
-                                                return <tr className="player-data-table-row" key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>{staff.first_name} {staff.last_name}</td>
-                                                     <td>{staff.email} </td>
-                                                    <td>{staff.organization}</td>
-                                                </tr>
+                                        <tbody className="player-table">
+                                             {this.state.staffList && 
+                                                this.state.staffList.map(function (staff, index) {
+                                                    return <tr className="player-data-table-row" key={index}
+                                                        onClick={()=>{
+                                                            var win = window.open('/admin/view/user?id='+staff.user_cognito_id);
+                                                            win.focus();
+                                                        }}
+                                                    >
+                                                        <td>{index + 1}</td>
+                                                        <td>{staff.first_name} {staff.last_name}</td>
+                                                        <td>{staff.email}</td>
+                                                    </tr>
                                             })}
-                                        </tbody>*/}
+                                            {!this.state.staffList && 
+                                                <p>No data to show here.</p>
+                                            }
+                                        </tbody>
 
                                     </table>
                                 </div>
@@ -843,6 +1129,20 @@ class CommanderTeamView extends React.Component {
             }} />
         }
 
+        if (this.state.teamStats) {
+            return <Redirect push to={{
+                pathname: '/TeamStats',
+                state: {
+                    user_cognito_id: this.props.location.state.team.user_cognito_id,
+                    team: {
+                        brand: this.props.location.state.team.brand,
+                        team_name: this.props.location.state.team.team_name,
+                        organization: this.props.location.state.team.organization,
+                        staff: this.props.location.state.team.staff
+                    }
+                }
+            }} />
+        }
 
         return (
             <React.Fragment>
@@ -860,7 +1160,13 @@ class CommanderTeamView extends React.Component {
                         <React.Fragment>
                             {this.militaryVersionOrNormal()}
                             {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-                            <Footer style={{ display: "none" }} className="violent" />
+                             <div style={this.state.isMobile ? {
+                                position: "absolute",
+                                width: "100%",
+                                bottom: '0'
+                            } : {}}>
+                                <Footer style={{ display: "none" }} className="violent" />
+                            </div>
                         </React.Fragment>
                     )}
             </React.Fragment>

@@ -225,7 +225,7 @@ select.select-gender {
 }
 
 .organization-admin-pt-8 {
-    margin-top: 8% !important;
+  margin-top: 8% !important;
 }
 
 .edit-team-btn {
@@ -276,10 +276,10 @@ input.team-edit-input {
   background-color: transparent !important;
 }
 .team-form {
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 10%;
-    padding-right: 10%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 .modal__show {
   position: fixed;
@@ -491,11 +491,11 @@ div.titles {
     color: #fff;
     font-size: 12px;
   }
-  div.organization_team{
+  div.organization_team {
     width: 105%;
-    height: 39vh!important;
+    height: 39vh !important;
   }
-  div.t-roster{
+  div.t-roster {
     margin-top: 10vh;
   }
 }
@@ -505,17 +505,15 @@ div.titles {
   input.upload-btn {
     width: 225px;
   }
-  div.t-roster{
+  div.t-roster {
     margin-top: 10vh;
   }
-
 }
 
-@media (min-width : 768px){
-    .adminDashboardTop {
-        display: inline-flex;
-    }
-
+@media (min-width: 768px) {
+  .adminDashboardTop {
+    display: inline-flex;
+  }
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1500px) {
@@ -527,12 +525,12 @@ div.titles {
   div.organization_team {
     bottom: -35.4vh;
   }
-  div.profile-mt{
+  div.profile-mt {
     height: 71.2vh;
     align-items: center;
     display: grid;
   }
-  div.profile-container{
+  div.profile-container {
     position: relative;
   }
 }
@@ -575,77 +573,105 @@ div.titles {
     padding-top: 287px;
   }
 }
-.brain-card-pt-2-5{
-padding-top: 1.5rem !important;
+.brain-card-pt-2-5 {
+  padding-top: 1.5rem !important;
 }
 
-@media (max-width: 768px){
-.adminDashboardTop {
-        display: block !important;
-    }
+@media (max-width: 768px) {
+  .adminDashboardTop {
+    display: block !important;
+  }
 
-.brain-card-pt-2-5{
-padding-top: 2.5rem !important;
-}
-.cumm {
+  .brain-card-pt-2-5 {
+    padding-top: 2.5rem !important;
+  }
+  .cumm {
     margin-top: 10%;
-}
-.player-dashboard-sub-head{
-text-align: center !important;
-align-items: center !important;
-
-}
-.sub-head-button{
+  }
+  .player-dashboard-sub-head {
+    text-align: center !important;
+    align-items: center !important;
+  }
+  .sub-head-button {
     margin-top: 2% !important;
     margin-bottom: 2% !important;
     margin-right: 0px !important;
-    width:100%;
-    display:"block";
-}
+    width: 100%;
+    display: 'block';
+  }
 
-.player-dashboard-title{
-
+  .player-dashboard-title {
     margin-bottom: 5% !important;
-}
-
-
-
+  }
 }
 
 .widget-subheading {
-    font-weight: 300;
-    color: #80878e;
-    font-size: smaller;
-    font-family: "Roboto",sans-serif;
+  font-weight: 300;
+  color: #80878e;
+  font-size: smaller;
+  font-family: 'Roboto', sans-serif;
 }
 
-.widget-numbers{
-    font-weight: 800;
-    text-decoration: overline;
-    font-size: 1.4em;
-    color: #0f81dc !important;
+.widget-numbers {
+  font-weight: 800;
+  text-decoration: overline;
+  font-size: 1.4em;
+  color: #0f81dc !important;
 }
 
 .chart-container {
   position: relative !important;
-  height:90px;
-  width:100% !important;
+  height: 90px;
+  width: 100% !important;
 }
 
-.player-dashboard-sub-head{
-    padding-left: 5%;
-    font-size: 1.4rem !important;
-    font-weight: 900;
-    font-family: 'Segoe UI Regular';
-    font-weight: 600;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.94;
-    letter-spacing: 3.53px;
-    text-align: left;
-    color: #686868;
-
+.player-dashboard-sub-head {
+  padding-left: 5%;
+  font-size: 1.4rem !important;
+  font-weight: 900;
+  font-family: 'Segoe UI Regular';
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.94;
+  letter-spacing: 3.53px;
+  text-align: left;
+  color: #686868;
 }
-.sub-head-button{
-    margin-right: 5%;
+.sub-head-button {
+  margin-right: 5%;
+}
+
+.camera-modal__wrapper {
+  position: fixed;
+  z-index: 4;
+  height: 100%;
+  background: transparent;
+  width: 100%;
+  background: #205b912e;
+}
+
+.camera-modal {
+  position: fixed;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
+  margin: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  animation: fadeIn 1s, camera-modal-slideIn 0.8s linear;
+}
+
+@keyframes camera-modal-slideIn {
+  0% {
+    transform: translate(-50%, 50%);
+    animation-timing-function: linear;
+  }
+
+  100% {
+    transform: translate(-50%, -50%);
+    animation-timing-function: ease-in;
+  }
 }

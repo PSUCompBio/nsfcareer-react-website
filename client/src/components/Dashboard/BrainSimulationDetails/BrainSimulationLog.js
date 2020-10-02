@@ -16,6 +16,7 @@ import {
   getUserDetails,
   getUserDBDetails,
   isAuthenticated,
+  getBrainSimulationLogFile
   
 } from '../../../apis';
 
@@ -50,35 +51,9 @@ class BrainSimulationLog extends React.Component {
       isLoading: false,
       status: '',
       impact_video_url: '',
-      simulation_log_path: ''
+      simulation_log_path: '',
+      simulation_log: ''
     };
-  }
-  getUploadFileExtension3(url){
-    console.log()
-    if(new RegExp(".mp4").test(url)){
-        return ".mp4";
-    }
-    if(new RegExp(".mov").test(url)){
-        return ".mov";
-    }
-    if(new RegExp(".3gp").test(url)){
-        return ".3gp";
-    }
-    if(new RegExp(".ogg").test(url)){
-        return ".ogg";
-    }
-    if(new RegExp(".wmv").test(url)){
-        return ".wmv";
-    }
-    if(new RegExp(".webm").test(url)){
-        return ".webm";
-    }
-    if(new RegExp(".flv").test(url)){
-        return ".flv";
-    }
-    if(new RegExp(".TIFF").test(url)){
-        return ".TIFF";
-    }
   }
   componentDidUpdate() {
     svgToInline();
@@ -91,15 +66,17 @@ class BrainSimulationLog extends React.Component {
 
  
   render() {
-    // console.log('props',this.props.location.state)
-    var logs = this.props.location.state.simulation_log;
-    logs = logs.split('\n');
-    var log = logs.map(function (log, index) {
-      return <p>{log}</p>
-    })
-    // if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
-    //   return <Redirect to="/Login" />;
-    // }
+    console.log('props',this.props.location.state)
+    if(this.state.simulation_log){
+      var logs = this.state.simulation_log;
+      logs = logs.split('\n');
+      var log = logs.map(function (log, index) {
+        return <p>{log}</p>
+      })
+    }
+    if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
+      return <Redirect to="/Login" />;
+    }
     if (!this.props.location.state) {
       return <Redirect to="/Login" />;
     }
@@ -162,7 +139,10 @@ class BrainSimulationLog extends React.Component {
                   >&lt; Back To Details
                   </Link>
                 </div>
-                <p style={{'width': '100%','margin-top': '124px'}}>{this.props.location.state && log}</p>
+                <p style={{'width': '100%','margin-top': '124px'}}>{this.state.simulation_log && log}</p>
+                {!this.state.simulation_log && 
+                  <p>No Logs available</p>
+                }
               </div>
             </div>
         </div>
@@ -180,10 +160,24 @@ class BrainSimulationLog extends React.Component {
                   this.setState({
                       user: true,
                       userDetails: response.data.data,
-                      isLoaded: true,
                           isAuthenticated: true,
                           isCheckingAuth: true
                   })
+                  getBrainSimulationLogFile(this.props.location.state.image_id).then((response) => {
+                    console.log('response',response)
+                      this.setState({
+                        simulation_log:response.data.data,
+                        isLoaded: true,
+                        isAuthenticated: true,
+                        isCheckingAuth: false
+                    });
+                  }).catch((error) => {
+                      this.setState({
+                          isLoaded: true,
+                          userDetails: {},
+                          isCheckingAuth: false
+                      });
+                  });
               }).catch((error) => {
                   this.setState({
                      user: true,

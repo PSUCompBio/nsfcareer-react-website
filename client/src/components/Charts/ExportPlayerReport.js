@@ -2,13 +2,13 @@ import React from 'react';
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import brain from './Cumulative/brain1.glb';
-import {Bar} from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './Cumulative/dash.css';
 
-let camera, scene, renderer, canvas, raycaster, root;
+let camera, scene, renderer, canvas, raycaster, root, sphereContainer;
 let brainModel;
-let aspectRatio, width, height, mouse, currentSubCamera, prevIntersectObj, pickHelper;
+let aspectRatio, width, height, currentSubCamera, initialRatio, prevCanvasWidth;
 const defaultTransparency = 0.3;
 const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
@@ -16,7 +16,7 @@ const highlightColor = 0xadab24;
 const highlightEmissiveIntensity = 0.6;
 
 const amount = 2;
-const space = 4;
+const space = 10;
 const near = 0.1;
 const far = 100;
 const cameraAttArr = [
@@ -57,32 +57,462 @@ const pickPosition = { x: 0, y: 0 };
 
 raycaster = new THREE.Raycaster();
 let pickedObject = null;
+let prevPickedObject = null;
 let pickedObjectSavedColor = 0;
-let defaultBarColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
+let defaultBarColors = [
+	"#7CB5EC",
+	"#7CB5EC",
+	"#7CB5EC",
+	"#7CB5EC",
+	"#7CB5EC",
+	"#7CB5EC",
+	"#7CB5EC"
+];
 
-let frontal_Lobe_json = [];
-let cerebellum_Lobe_json = [];
-let middle_Part_of_the_Brain_json = [];
-let Occipital_Lobe_json = [];
-let Pariental_Lobe_json = [];
-let Temporal_Lobe_json = [];
+let stem_json = [];
+let csf_json = [];
+let frontal_lobe_json = [];
+let cerebellum_lobe_json = [];
+let middle_part_of_the_brain_json = [];
+let occipital_lobe_json = [];
+let pariental_lobe_json = [];
+let temporal_lobe_json = [];
 let all_spheres_json = [];
 
 class ExportPlayerReport extends React.Component {
-	
+
 	constructor(props) {
 		super(props);
 		this.state = {
-			isLoading: false,
+			isLoading: true,
+			brainStrainActive: 'principal-max-strain',
 			barColors: defaultBarColors,
-			brainStrainActive: 'principal-max-strain'
+			loadedActionButtons: false,
+			chartHovered: false,
+			actionButtons: [
+				{
+					id: "motor_and_sensor_cortex",
+					name: "Motor/Sensor Cortex",
+					shortenName: "Motor& Sensor Cortex"
+				},
+				{
+					id: "stem_btn",
+					name: "Stem",
+					shortenName: "Stem"
+				},
+				{
+					id: "cerebellum_btn",
+					name: "Cerebellum Lobe",
+					shortenName: "Cerebellum"
+				},
+				{
+					id: "temporal_btn",
+					name: "Temporal Lobe",
+					shortenName: "Temporal"
+				},
+				{
+					id: "occipital_btn",
+					name: "Occipital Lobe",
+					shortenName: "Occipital"
+				},
+				{
+					id: "pariental_btn",
+					name: "Parietal Lobe",
+					shortenName: "Parietal"
+				},
+				{
+					id: "front_btn",
+					name: "Frontal Lobe",
+					shortenName: "Frontal"
+				}
+			],
+			actionButtonPositions: []
 		};
+
+		this.plugins = [
+			{
+				afterDraw: (chart) => {
+					if (this.state.loadedActionButtons) return;
+					console.log('chart',chart)
+					if(chart.canvas && chart.canvas != null){
+						setTimeout(() => this.afterDrawChart(chart), 100);
+					}
+				}
+			}
+		];
 	}
 
 	componentDidMount() {
 		// Scrolling the screen to top
 		window.scrollTo(0, 0);
 
+		this.init();
+
+		window.addEventListener("resize", this.onWindowResize, false);
+		window.addEventListener("mousemove", this.onMouseMove, false);
+		window.addEventListener("mouseout", this.onMouseOut, false);
+		window.addEventListener("mouseleave", this.onMouseLeave, false);
+		window.addEventListener("touchstart", this.onTouchStart, false);
+		window.addEventListener("touchmove", this.onTouchMove, false);
+		window.addEventListener("touchend", this.onTouchEnd, false);
+
+		this.startAnimationLoop();
+	}
+
+	componentDidUpdate() {
+		if (
+			!this.state.loadedActionButtons &&
+			this.state.actionButtonPositions.length !== 0
+		) {
+			this.setState({
+				loadedActionButtons: true
+			});
+
+			let me = this;
+
+			// Highlight brain model on mouse hover on brain button
+			document.getElementById("front_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "Frontal_Lobe_node_Frontal_Lobe");
+				},
+				false
+			);
+			document.getElementById("pariental_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
+					);
+				},
+				false
+			);
+			document.getElementById("occipital_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "node_Mesh_16");
+				},
+				false
+			);
+			document.getElementById("temporal_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "Temporal_Lobe_node_Temporal_Lobe");
+				},
+				false
+			);
+			document.getElementById("cerebellum_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(event, "Cerebellum_node_Cerebellum");
+				},
+				false
+			);
+			document.getElementById("motor_and_sensor_cortex").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex"
+					);
+				},
+				false
+			);
+			document.getElementById("stem_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
+					);
+				},
+				false
+			);
+		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener("resize", this.onWindowResize);
+		window.removeEventListener("mousemove", this.onMouseMove);
+		window.removeEventListener("mouseout", this.onMouseOut);
+		window.removeEventListener("mouseleave", this.onMouseLeave);
+		window.removeEventListener("touchstart", this.onTouchStart);
+		window.removeEventListener("touchmove", this.onTouchMove);
+		window.removeEventListener("touchend", this.onTouchEnd);
+	}
+
+	afterDrawChart = (chart) => {
+		var ctx = chart.chart.ctx;
+
+		const rect = chart.canvas.getBoundingClientRect();
+		ctx.save();
+		var xAxis = chart.scales["x-axis-0"];
+		var yAxis = chart.scales["y-axis-0"];
+		let actionButtonPosArr = [];
+
+		xAxis.ticks.forEach((v, i) => {
+			var x = xAxis.getPixelForTick(i);
+			actionButtonPosArr = [
+				{
+					x: x,
+					y: yAxis.bottom
+				},
+				...actionButtonPosArr
+			];
+		});
+		ctx.restore();
+
+		this.setState({
+			actionButtonPositions: actionButtonPosArr
+		});
+	};
+
+	createLobeSheres = (type) => {
+		let me = this;
+
+		// Remove prev spheres
+		me.removeSpheres();
+
+		// Add new spheres
+		switch (type) {
+			case "Frontal_Lobe_node_Frontal_Lobe":
+				frontal_lobe_json.forEach(function (object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				});
+				break;
+			case "node_Mesh_16":
+				occipital_lobe_json.forEach(function (object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				});
+				break;
+			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
+				pariental_lobe_json.forEach(function (object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				});
+				break;
+			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
+				stem_json.forEach(function (object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				});
+				break;
+			case "Temporal_Lobe_node_Temporal_Lobe":
+				temporal_lobe_json.forEach(function (object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				});
+				break;
+			case "Cerebellum_node_Cerebellum":
+				cerebellum_lobe_json.forEach(function (object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				});
+				break;
+			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
+				middle_part_of_the_brain_json.forEach(function (object, index) {
+					var i = parseInt(index + 1);
+					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				});
+				break;
+			default:
+				break;
+		}
+	};
+
+	showAllSpheres = () => {
+		const me = this;
+		all_spheres_json.forEach(function (object, index) {
+			var i = parseInt(index + 1);
+			me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+		});
+	};
+
+	generateSphere = (x, y, z, sphereName) => {
+		if (root) {
+			// Add pointer(s) to brain model as children
+			const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);
+			const sphereMat = new THREE.MeshStandardMaterial({
+				color: 0xff0000
+			});
+			const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+			const pointerPos = new THREE.Vector3(x, y, z);
+			// (x, y, z) --> (x, -z, y)
+			sphere.position.x += pointerPos.x;
+			sphere.position.y += pointerPos.z;
+			sphere.position.z -= pointerPos.y;
+			sphere.name = sphereName;
+			sphereContainer.add(sphere);
+		}
+	};
+
+	removeSpheres = () => {
+		if (root) {
+			for (let i = sphereContainer.children.length - 1; i >= 0; i--) {
+				sphereContainer.remove(sphereContainer.children[i]);
+			}
+		}
+	};
+
+	highlightGraphBar = (type) => {
+		let barColors = defaultBarColors;
+		switch (type) {
+			case "Frontal_Lobe_node_Frontal_Lobe":
+				barColors = [
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
+				];
+				break;
+			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
+				barColors = [
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
+				];
+				break;
+			case "node_Mesh_16":
+				barColors = [
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
+				];
+				break;
+			case "Temporal_Lobe_node_Temporal_Lobe":
+				barColors = [
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC"
+				];
+				break;
+			case "Cerebellum_node_Cerebellum":
+				barColors = [
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC",
+					"#7CB5EC"
+				];
+				break;
+			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
+				barColors = [
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)",
+					"#7CB5EC"
+				];
+				break;
+			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
+				barColors = [
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"#7CB5EC",
+					"rgba(255,255,102)"
+				];
+				break;
+			default:
+				break;
+		}
+
+		this.setState({
+			barColors: barColors
+		});
+	};
+
+	reset = () => {
+		this.unHighlightPickedObject();
+		pickedObject = null;
+		prevPickedObject = null;
+
+		let barColors = defaultBarColors;
+
+		this.setState({
+			barColors: barColors
+		});
+
+		this.setState({
+			barColors: barColors,
+			chartHovered: false
+		});
+
+		this.removeSpheres();
+		// Show all spheres
+		this.showAllSpheres();
+	};
+
+	pick = (normalizedPosition, pickingScene, pickingCamera) => {
+		// cast a ray through the frustum
+		raycaster.setFromCamera(normalizedPosition, pickingCamera);
+		// get the list of objects the ray intersected
+		const intersectedObjects = raycaster.intersectObjects(
+			brainModel.children[0].children[0].children
+		);
+
+		if (intersectedObjects.length) {
+			// pick the first object. It's the closest one
+			pickedObject = intersectedObjects[0].object;
+			this.highlightGraphBar(pickedObject.name);
+
+			if (prevPickedObject && prevPickedObject.name === pickedObject.name)
+				return;
+
+			this.unHighlightPickedObject();
+			prevPickedObject = pickedObject;
+			this.highlightPickedObject();
+			this.createLobeSheres(pickedObject.name);
+		} else {
+			if (!this.state.chartHovered) this.reset();
+		}
+	};
+
+	unHighlightPickedObject = () => {
+		// restore the color if there is a picked object
+		if (prevPickedObject) {
+			prevPickedObject.material.emissive.setHex(pickedObjectSavedColor);
+			prevPickedObject.material.opacity = defaultTransparency;
+			prevPickedObject.material.emissiveIntensity = 1;
+			this.cursorAdd(false);
+		}
+	};
+
+	highlightPickedObject = () => {
+		this.cursorAdd(true);
+		// save its color
+		pickedObjectSavedColor = pickedObject.material.emissive.getHex();
+		// set its emissive color to flashing red/yellow
+		pickedObject.material.emissiveIntensity = highlightEmissiveIntensity;
+		pickedObject.material.opacity = highlightTransparency;
+		pickedObject.material.emissive.setHex(highlightColor);
+	};
+
+	init = () => {
 		this.sceneSetup();
 
 		this.cameraSetup();
@@ -92,191 +522,24 @@ class ExportPlayerReport extends React.Component {
 		this.objectSetup();
 
 		this.clearPickPosition();
-
-		window.addEventListener('resize', this.onWindowResize, false);
-		window.addEventListener('mousemove', this.onMouseMove, false);
-		window.addEventListener('mouseout', this.onMouseOut, false);
-		window.addEventListener('mouseleave', this.onMouseLeave, false);
-		window.addEventListener('touchstart', this.onTouchStart, false);
-		window.addEventListener('touchmove', this.onTouchMove, false);
-		window.addEventListener('touchend', this.onTouchEnd, false);
-
-		this.startAnimationLoop();
-
-		let me = this;
-
-		// Highlight brain model on mouse hover on brain button
-		document.getElementById("front_btn").addEventListener('mouseover', function (event) {
-			me.onMouseHover(event, 'Frontal_Lobe_node_Frontal_Lobe');
-		}, false);
-		document.getElementById("pariental_btn").addEventListener('mouseover', function (event) {
-			me.onMouseHover(event, 'node_Mesh_16');
-		}, false);
-		document.getElementById("occipital_btn").addEventListener('mouseover', function (event) {
-			me.onMouseHover(event, 'Brainstem_Spinal_cord_node_Brainstem_Spinal_cord');
-		}, false);
-		document.getElementById("temporal_btn").addEventListener('mouseover', function (event) {
-			me.onMouseHover(event, 'Temporal_Lobe_node_Temporal_Lobe');
-		}, false);
-		document.getElementById("cerebellum_btn").addEventListener('mouseover', function (event) {
-			me.onMouseHover(event, 'Cerebellum_node_Cerebellum');
-		}, false);
-		document.getElementById("motor_and_sensor_cortex").addEventListener('mouseover', function (event) {
-			me.onMouseHover(event, 'Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex');
-		}, false);
-	}
+	};
 
 	startAnimationLoop = () => {
-		if (brainModel && currentSubCamera) this.pick(pickPosition, scene, currentSubCamera);
+		if (brainModel && currentSubCamera)
+			this.pick(pickPosition, scene, currentSubCamera);
 
+		// canvas.width = this.threeCanvasContainer.offsetWidth;
+		// canvas.height = this.threeCanvasContainer.offsetHeight;
+		// console.log('an' + canvas.width);
 		renderer.render(scene, camera);
 		requestAnimationFrame(this.startAnimationLoop);
-	}
-
-	onMouseHover = (event, type) => {
-		if (event !== '') event.preventDefault();
-
-		if (event !== '') {
-			this.highlightGraphBar(type);
-		}
-		
-		this.createLobeSheres(type);
-	}
-
-	createLobeSheres = (type) => {
-		let me = this;
-		
-		// Remove prev spheres
-		me.removeSpheres();
-		
-		// Add new spheres
-		switch(type) {
-			case "Frontal_Lobe_node_Frontal_Lobe":			
-				frontal_Lobe_json.forEach(function(object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case "node_Mesh_16":
-				Pariental_Lobe_json.forEach(function(object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
-				Occipital_Lobe_json.forEach(function(object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case "Temporal_Lobe_node_Temporal_Lobe":
-				Temporal_Lobe_json.forEach(function(object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case "Cerebellum_node_Cerebellum":
-				cerebellum_Lobe_json.forEach(function(object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
-				middle_Part_of_the_Brain_json.forEach(function(object, index) {
-					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-				});
-				break;
-		}
-	}
-
-	showAllSpheres = () => {
-		const me = this;
-		all_spheres_json.forEach(function(object, index) {
-			var i = parseInt(index + 1);
-			me.generateSphere(object.x, object.y, object.z, 'pointer' + i);
-		});
-	}
-
-	highlightGraphBar = (type) => {
-		let barColors = defaultBarColors;
-		switch(type) {
-			case "Frontal_Lobe_node_Frontal_Lobe":
-				barColors = ['rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
-				break;
-			case "node_Mesh_16":
-				barColors = ['#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
-				break;
-			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
-				barColors = ['#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC', '#7CB5EC'];
-				break;
-			case "Temporal_Lobe_node_Temporal_Lobe":
-				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC', '#7CB5EC']
-				break;
-			case "Cerebellum_node_Cerebellum":
-				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)', '#7CB5EC'];
-				break;
-			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
-				barColors = ['#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', '#7CB5EC', 'rgba(255,255,102)'];
-				break;
-		}
-		
-		this.setState({
-			barColors: barColors
-		});
-	}
-
-	resetHighLight = () => {
-
-		// Clear pick position
-		this.clearPickPosition();
-		
-		let barColors = defaultBarColors;
-		
-		this.setState({
-			barColors: barColors
-		});
-
-		// Show all spheres
-		this.showAllSpheres();
-	}
-
-	pick = (normalizedPosition, pickingScene, pickingCamera) => {
-		// restore the color if there is a picked object
-		if (pickedObject) {
-			pickedObject.material.emissive.setHex(pickedObjectSavedColor);
-			pickedObject.material.opacity = defaultTransparency;
-			pickedObject.material.emissiveIntensity = 1;
-			pickedObject = undefined;
-			this.cursorAdd(false);
-		}
-
-		// cast a ray through the frustum
-		raycaster.setFromCamera(normalizedPosition, pickingCamera);
-		// get the list of objects the ray intersected
-		const intersectedObjects = raycaster.intersectObjects(brainModel.children[0].children[0].children);
-
-		if (intersectedObjects.length) {
-			this.cursorAdd(true);
-			// pick the first object. It's the closest one
-			pickedObject = intersectedObjects[0].object;
-			// save its color
-			pickedObjectSavedColor = pickedObject.material.emissive.getHex();
-			// set its emissive color to flashing red/yellow
-			pickedObject.material.emissiveIntensity = highlightEmissiveIntensity;
-			pickedObject.material.opacity = highlightTransparency;
-			pickedObject.material.emissive.setHex(highlightColor);
-
-			this.highlightGraphBar(pickedObject.name);
-			this.createLobeSheres(pickedObject.name);
-		}
-	}
+	};
 
 	sceneSetup = () => {
 		scene = new THREE.Scene();
-		scene.background = new THREE.Color('black');
+		scene.background = new THREE.Color("white");
 
-		canvas = document.querySelector('#c');
+		canvas = document.querySelector("#c");
 
 		renderer = new THREE.WebGLRenderer({
 			canvas: canvas,
@@ -284,12 +547,24 @@ class ExportPlayerReport extends React.Component {
 			alpha: true
 		});
 
-		aspectRatio = window.innerWidth / window.innerHeight;
-		width = (canvas.clientWidth / amount) * window.devicePixelRatio;
-		height = (canvas.clientHeight / amount) * window.devicePixelRatio;
+		aspectRatio =
+			this.threeCanvasContainer.offsetWidth /
+			this.threeCanvasContainer.offsetHeight;
+
+		initialRatio = 1 / aspectRatio;
+
+		width =
+			(this.threeCanvasContainer.offsetWidth / amount) *
+			window.devicePixelRatio;
+		height =
+			(this.threeCanvasContainer.offsetHeight / amount) *
+			window.devicePixelRatio;
 		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-	}
+		renderer.setSize(
+			this.threeCanvasContainer.offsetWidth,
+			this.threeCanvasContainer.offsetHeight
+		);
+	};
 
 	cameraSetup = () => {
 		let cameras = [];
@@ -302,8 +577,18 @@ class ExportPlayerReport extends React.Component {
 
 				if (cameraAtt.length === 0) cameraAtt[0] = defaultCamAtt;
 
-				const subCamera = new THREE.PerspectiveCamera(cameraAtt[0].fov, aspectRatio, near, far);
-				subCamera.viewport = new THREE.Vector4(Math.floor(x * width + space / 2), Math.floor(y * height + space / 2), Math.ceil(width) - space, Math.ceil(height) - space);
+				const subCamera = new THREE.PerspectiveCamera(
+					cameraAtt[0].fov,
+					aspectRatio,
+					near,
+					far
+				);
+				subCamera.viewport = new THREE.Vector4(
+					Math.floor(x * width + space / 2),
+					Math.floor(y * height + space / 2),
+					Math.ceil(width) - space,
+					Math.ceil(height) - space
+				);
 
 				const subCameraContainer = new THREE.Object3D();
 				subCameraContainer.add(subCamera);
@@ -323,44 +608,15 @@ class ExportPlayerReport extends React.Component {
 
 		camera = new THREE.ArrayCamera(cameras);
 		camera.position.z = 3;
-	}
-
-	lightSetup = () => {
-		const hemLight = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 1);
-		scene.add(hemLight);
-
-		const dirLight = new THREE.DirectionalLight(0xFFFFFF, 1);
-		dirLight.position.set(10, 20, 10);
-		scene.add(dirLight);
-	}
-
-	generateSphere = (x, y, z, sphereName) => {
-		if (root) {
-			// Add pointer(s) to brain model as children
-			const sphereGeo = new THREE.SphereGeometry(.003, 32, 32);
-			const sphereMat = new THREE.MeshStandardMaterial({
-				color: 0xff0000
-			});
-			const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-			const pointerPos = new THREE.Vector3(x, y, z);
-			// (x, y, z) --> (x, -z, y)
-			sphere.position.x += pointerPos.x;
-			sphere.position.y += pointerPos.z;
-			sphere.position.z -= pointerPos.y;
-			sphere.name = sphereName
-			root.add(sphere);
-		}
 	};
 
-	removeSpheres = () => {
-		if (root) {
-			root.traverse((n) => {
-				let match = n.name.match(/pointer/g);
-				if (match) {
-					n.visible = false;
-				}
-			})
-		}
+	lightSetup = () => {
+		const hemLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 1);
+		scene.add(hemLight);
+
+		const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+		dirLight.position.set(10, 20, 10);
+		scene.add(dirLight);
 	};
 
 	objectSetup = () => {
@@ -388,79 +644,137 @@ class ExportPlayerReport extends React.Component {
 
 		let me = this;
 
-		me.setState({
+		this.setState({
 			isLoading: true
 		});
 
 		// Load&Add brain
 		const gltfLoader = new GLTFLoader();
-		gltfLoader.load(brain, (gltf) => {
-			root = gltf.scene;
+		gltfLoader.load(brain,
+			(gltf) => {
+				root = gltf.scene;
 
-			const box = new THREE.Box3().setFromObject(root);
-			const boxSize = box.getSize(new THREE.Vector3()).length();
-			const boxCenter = box.getCenter(new THREE.Vector3());
+				const box = new THREE.Box3().setFromObject(root);
+				const boxSize = box.getSize(new THREE.Vector3()).length();
+				const boxCenter = box.getCenter(new THREE.Vector3());
 
-			// Add pointer(s) to brain model as children
-			// const sphereGeo = new THREE.SphereGeometry(.003, 32, 32);
-			// const sphereMat = new THREE.MeshStandardMaterial({
-			// 	color: 0xff0000
-			// });
-			// const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-			// const pointerPos = new THREE.Vector3(0.0160951, -0.34639, -0.049492);
-			// // (x, y, z) --> (x, -z, y)
-			// sphere.position.x += pointerPos.x;
-			// sphere.position.y += pointerPos.z;
-			// sphere.position.z -= pointerPos.y;
-			// sphere.name = "pointer"
-			// root.add(sphere);
+				sphereContainer = new THREE.Object3D();
+				root.add(sphereContainer);
+				this.showUpdatedRegion();
 
-			// this.generateSphere(0.0160951, -0.34639, -0.049492, 'pointer1');
-			// this.generateSphere(0.00858463, -0.41321, 0.00714862, 'pointer2');
-			this.showAllSpheres();
+				root.position.x -= boxCenter.x;
+				root.position.y -= boxCenter.y;
+				root.position.z -= boxCenter.z;
 
-			root.position.x -= boxCenter.x;
-			root.position.y -= boxCenter.y;
-			root.position.z -= boxCenter.z;
+				root.traverse((n) => {
+					let match = n.name.match(/pointer/g);
 
-			root.traverse((n) => {
-				let match = n.name.match(/pointer/g);
-				
-				if (n.isMesh && !match) {
-					n.material = n.material.clone();
-					n.material.transparent = true;
-					n.material.map = null;
-					n.material.color.set(defaultColor);
-					n.material.opacity = defaultTransparency;
+					if (n.isMesh && !match) {
+						n.material = n.material.clone();
+						n.material.transparent = true;
+						n.material.map = null;
+						n.material.color.set(defaultColor);
+						n.material.opacity = defaultTransparency;
 
-					if (n.name !== "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord" && n.name !== "Cerebellum_node_Cerebellum" && n.name !== "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R" && n.name !== "Frontal_Lobe_node_Frontal_Lobe" && n.name !== "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex" && n.name !== "node_Mesh_16" && n.name !== "Temporal_Lobe_node_Temporal_Lobe")
-						n.visible = false;
+						if (
+							n.name !== "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord" &&
+							n.name !== "Cerebellum_node_Cerebellum" &&
+							n.name !== "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R" &&
+							n.name !== "Frontal_Lobe_node_Frontal_Lobe" &&
+							n.name !==
+							"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex" &&
+							n.name !== "node_Mesh_16" &&
+							n.name !== "Temporal_Lobe_node_Temporal_Lobe"
+						)
+							n.visible = false;
+					}
+				});
+
+				brainModel = new THREE.Object3D();
+				brainModel.add(root);
+				brainModel.rotation.x = Math.PI / 2;
+				brainModel.rotation.y = Math.PI;
+				brainModel.rotation.z = Math.PI;
+
+				scene.add(brainModel);
+
+				this.setState({
+					isLoading: false
+				});
+			}
+		);
+	};
+
+	getCanvasRelativePosition = (event) => {
+		const rect = canvas.getBoundingClientRect();
+
+		return {
+			x: ((event.clientX - rect.left) * canvas.width) / rect.width,
+			y: ((event.clientY - rect.top) * canvas.height) / rect.height
+		};
+	};
+
+	setPickPosition = (event) => {
+		const pos = this.getCanvasRelativePosition(event);
+
+		if (pos.x < 0 || pos.y < 0) return;
+
+		for (let y = 0; y < amount; y++) {
+			for (let x = 0; x < amount; x++) {
+				const startX = Math.floor(x * width + space / 2);
+				const endX =
+					Math.floor(x * width + space / 2) + Math.ceil(width - space);
+				const startY = Math.floor(y * height + space / 2);
+				const endY =
+					Math.floor(y * height + space / 2) + Math.ceil(height - space);
+
+				if (
+					pos.x >= startX &&
+					pos.x <= endX &&
+					amount * height - pos.y >= startY &&
+					amount * height - pos.y <= endY
+				) {
+					// Current camera
+					currentSubCamera = camera.cameras[amount * y + x];
+
+					pickPosition.x = ((pos.x - x * width) / width) * 2 - 1;
+					pickPosition.y =
+						((pos.y - (amount - 1 - y) * height) / height) * -2 + 1;
+
+					break;
 				}
-			});
+			}
+		}
+	};
 
-			brainModel = new THREE.Object3D();
-			brainModel.add(root);
-			brainModel.rotation.x = Math.PI / 2;
-			brainModel.rotation.y = Math.PI;
-			brainModel.rotation.z = Math.PI;
+	clearPickPosition = () => {
+		// unlike the mouse which always has a position
+		// if the user stops touching the screen we want
+		// to stop picking. For now we just pick a value
+		// unlikely to pick something
+		pickPosition.x = -100000;
+		pickPosition.y = -100000;
+	};
 
-			scene.add(brainModel);
-
-			me.setState({
-				isLoading: false
-			});
-		});
-	}
+	// Add cursor or not
+	cursorAdd = (flag) => {
+		flag
+			? canvas.classList.add("cursor-pointer")
+			: canvas.classList.remove("cursor-pointer");
+	};
 
 	onWindowResize = () => {
-		aspectRatio = window.innerWidth / window.innerHeight;
-		// width = (window.innerWidth / amount) * window.devicePixelRatio;
-		// height = (window.innerHeight / amount) * window.devicePixelRatio;
-		// renderer.setSize(window.innerWidth, window.innerHeight);
-		width = (canvas.clientWidth / amount) * window.devicePixelRatio;
-		height = (canvas.clientHeight / amount) * window.devicePixelRatio;
+		if (prevCanvasWidth === this.threeCanvasContainer.offsetWidth) return;
+
+		const canvasWidth = this.threeCanvasContainer.offsetWidth;
+		prevCanvasWidth = canvasWidth;
+		const canvasHeight = this.threeCanvasContainer.offsetWidth * initialRatio;
+
+		aspectRatio = canvasWidth / canvasHeight;
+		width = (canvasWidth / amount) * window.devicePixelRatio;
+		height = (canvasHeight / amount) * window.devicePixelRatio;
 		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+		renderer.setSize(canvasWidth, canvasHeight);
 
 		for (let y = 0; y < amount; y++) {
 			for (let x = 0; x < amount; x++) {
@@ -470,295 +784,374 @@ class ExportPlayerReport extends React.Component {
 					Math.floor(x * width + space / 2),
 					Math.floor(y * height + space / 2),
 					Math.ceil(width - space),
-					Math.ceil(height - space));
+					Math.ceil(height - space)
+				);
 
 				subCamera.aspect = aspectRatio;
 				subCamera.updateProjectionMatrix();
 			}
 		}
-	}
+
+		this.setState({
+			loadedActionButtons: false,
+			actionButtonPositions: []
+		});
+
+		this.removeEventListeners();
+	};
+
+	onMouseHover = (event, type) => {
+		if (event !== "") event.preventDefault();
+
+		this.setState({
+			chartHovered: true
+		});
+
+		pickedObject = scene.getObjectByName(type, true);
+		this.highlightGraphBar(type);
+
+		if (
+			!pickedObject ||
+			(prevPickedObject && prevPickedObject.name === pickedObject.name)
+		)
+			return;
+
+		this.unHighlightPickedObject();
+		prevPickedObject = pickedObject;
+		this.highlightPickedObject();
+		this.createLobeSheres(type);
+	};
 
 	onMouseMove = (event) => {
 		// Set pick position
 		this.setPickPosition(event);
-	}
+	};
 
 	onMouseOut = () => {
-
-		if (root) {
-			root.traverse((n) => {
-				let match = n.name.match(/pointer/g);
-				if (match) {
-					n.visible = true;
-				}
-			})
-		}
-
 		this.setState({
-			barColors: defaultBarColors
+			barColors: defaultBarColors,
+			chartHovered: false
 		});
-	}
+	};
 
 	onMouseLeave = () => {
 		// Clear pick position
 		this.clearPickPosition();
 
 		this.setState({
-			barColors: defaultBarColors
+			barColors: defaultBarColors,
+			chartHovered: false
 		});
-	}
+	};
 
 	onTouchStart = (event) => {
 		// prevent the window from scrolling
 		event.preventDefault();
 		this.setPickPosition(event.touches[0]);
-	}
+	};
 
 	onTouchMove = (event) => {
 		// Set pick position
 		this.setPickPosition(event.touches[0]);
-	}
+	};
 
 	onTouchEnd = () => {
 		// Clear pick position
 		// this.clearPickPosition();
-	}
+	};
 
-	getCanvasRelativePosition = (event) => {
-		const rect = canvas.getBoundingClientRect();
-		return {
-			x: (event.clientX - rect.left) * canvas.width / rect.width,
-			y: (event.clientY - rect.top) * canvas.height / rect.height,
-		};
-	}
-
-	setPickPosition = (event) => {
-		for (let y = 0; y < amount; y++) {
-			for (let x = 0; x < amount; x++) {
-				const startX = Math.floor(x * width + space / 2);
-				const endX = Math.floor(x * width + space / 2) + Math.ceil(width - space);
-				const startY = Math.floor(y * height + space / 2);
-				const endY = Math.floor(y * height + space / 2) + Math.ceil(height - space);
-
-				if (event.clientX * window.devicePixelRatio >= startX && event.clientX * window.devicePixelRatio <= endX && amount * height - event.clientY * window.devicePixelRatio >= startY && amount * height - event.clientY * window.devicePixelRatio <= endY) {
-					// Current camera
-					currentSubCamera = camera.cameras[amount * y + x];
-
-					const pos = this.getCanvasRelativePosition(event);
-					pickPosition.x = ((event.clientX * window.devicePixelRatio - x * width) / width) * 2 - 1;
-					pickPosition.y = ((event.clientY * window.devicePixelRatio - ((amount - 1) - y) * height) / height) * -2 + 1;
-
-					break;
-				}
-			}
-		}
-	}
-
-	clearPickPosition = () => {
-		// unlike the mouse which always has a position
-		// if the user stops touching the screen we want
-		// to stop picking. For now we just pick a value
-		// unlikely to pick something
-		pickPosition.x = -100000;
-		pickPosition.y = -100000;
-	}
-
-	// Add cursor or not
-	cursorAdd = (flag) => {
-		flag ? canvas.classList.add("cursor-pointer") : canvas.classList.remove("cursor-pointer");
-	}
+	removeEventListeners = () => {
+		if (document.getElementById("front_btn"))
+			document
+				.getElementById("front_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("pariental_btn"))
+			document
+				.getElementById("pariental_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("occipital_btn"))
+			document
+				.getElementById("occipital_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("temporal_btn"))
+			document
+				.getElementById("temporal_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("cerebellum_btn"))
+			document
+				.getElementById("cerebellum_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("motor_and_sensor_cortex"))
+			document
+				.getElementById("motor_and_sensor_cortex")
+				.removeEventListener("mouseover", this.onMouseHover);
+		if (document.getElementById("stem_btn"))
+			document
+				.getElementById("stem_btn")
+				.removeEventListener("mouseover", this.onMouseHover);
+	};
 
 	handleBrainStrain = (val) => {
-		this.setState({
+		let me = this;
+		me.setState({
 			brainStrainActive: val
+		}, () => {
+			me.removeSpheres();
+			me.showUpdatedRegion();
 		});
 	}
 
-  render() {
-	  
-	let me = this;
-	
-	const { brainStrainActive } = this.state;
-	frontal_Lobe_json = this.props.brainRegions[brainStrainActive].frontal || [{x: 0.00205875, y: -0.413274, z: -0.0556418}]
-	cerebellum_Lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || [{x: 0.00679913, y: -0.313188, z: 0.0161927}]
-	Occipital_Lobe_json = this.props.brainRegions[brainStrainActive].occipital || [{x: 0.0114976, y: -0.368995, z: 0.029747}]
-	Pariental_Lobe_json = this.props.brainRegions[brainStrainActive].parietal || [{x: 0.0057455, y: -0.413943, z: 0.0061665}]
-	Temporal_Lobe_json = this.props.brainRegions[brainStrainActive].temporal || [{x: 0.0261539, y: -0.338157, z: -0.0565029}]
-	middle_Part_of_the_Brain_json = this.props.brainRegions[brainStrainActive].motor || [{x: 0.00227188, y: -0.407034, z: -0.0116845}]
+	showUpdatedRegion = () => {
 
-	all_spheres_json = all_spheres_json.concat(frontal_Lobe_json);
-	all_spheres_json = all_spheres_json.concat(cerebellum_Lobe_json);
-	all_spheres_json = all_spheres_json.concat(Occipital_Lobe_json);
-	all_spheres_json = all_spheres_json.concat(Pariental_Lobe_json);
-	all_spheres_json = all_spheres_json.concat(Temporal_Lobe_json);
-	all_spheres_json = all_spheres_json.concat(middle_Part_of_the_Brain_json);
-	 
-	 const data = {
-		labels: [857, 1173, 3043, 1173, 1200, 1400],
-		datasets: [{
-			label: "Events",
-			lineTension: 0.1,
-			backgroundColor: this.state.barColors,
-			borderColor: '#1987DD',
-			hoverBackgroundColor: 'rgba(255,255,102)',
-			hoverBorderColor: 'rgba(255,255,102)',
-			data: [parseFloat(frontal_Lobe_json.length), parseFloat(Pariental_Lobe_json.length), parseFloat(Occipital_Lobe_json.length), parseFloat(Temporal_Lobe_json.length), parseFloat(cerebellum_Lobe_json.length), parseFloat(middle_Part_of_the_Brain_json.length)]
-		}]
-	};
-	
-	const options = {
-		animation: false,
-		responsive: true,
-		plugins: {
-			datalabels: {
-				color: '#007bff',
-			    font: {
-					weight: 'bold',
-				    size: 24,
-				},
-				formatter: function(value, context){
-					//console.log(context.dataIndex);
-					//return value;
-					
-					switch(context.dataIndex) {
-						case 0:
-							return frontal_Lobe_json.length;
-							break;
-						case 1:
-							return Pariental_Lobe_json.length;
-							break;
-						case 2:
-							return Occipital_Lobe_json.length;
-							break;
-						case 3:
-							return Temporal_Lobe_json.length;
-							break;
-						case 4:
-							return cerebellum_Lobe_json.length;
-							break;
-						case 5:
-							return middle_Part_of_the_Brain_json.length;
-							break;
+		const { brainStrainActive } = this.state;
+
+		frontal_lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
+		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
+		occipital_lobe_json = this.props.brainRegions[brainStrainActive].occipital || []
+		pariental_lobe_json = this.props.brainRegions[brainStrainActive].parietal || []
+		temporal_lobe_json = this.props.brainRegions[brainStrainActive].temporal || []
+		middle_part_of_the_brain_json = this.props.brainRegions[brainStrainActive].msc || []
+		stem_json = this.props.brainRegions[brainStrainActive].stem || []
+		//csf_json = this.props.brainRegions[brainStrainActive].csf || []
+
+		all_spheres_json = [];
+		all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
+		all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
+		all_spheres_json = all_spheres_json.concat(occipital_lobe_json);
+		all_spheres_json = all_spheres_json.concat(pariental_lobe_json);
+		all_spheres_json = all_spheres_json.concat(temporal_lobe_json);
+		all_spheres_json = all_spheres_json.concat(middle_part_of_the_brain_json);
+		all_spheres_json = all_spheres_json.concat(stem_json);
+		all_spheres_json = all_spheres_json.concat(csf_json);
+
+		this.showAllSpheres();
+	}
+
+	render() {
+
+		let me = this;
+
+		const data = {
+			labels: [0, 0, 0, 0, 0, 0, 0],
+			datasets: [
+				{
+					label: "Events",
+					lineTension: 0.1,
+					backgroundColor: this.state.barColors,
+					borderColor: "#1987DD",
+					hoverBackgroundColor: "rgba(255,255,102)",
+					hoverBorderColor: "rgba(255,255,102)",
+					data: [
+						parseFloat(frontal_lobe_json.length),
+						parseFloat(pariental_lobe_json.length),
+						parseFloat(occipital_lobe_json.length),
+						parseFloat(temporal_lobe_json.length),
+						parseFloat(cerebellum_lobe_json.length),
+						parseFloat(stem_json.length),
+						parseFloat(middle_part_of_the_brain_json.length)
+					]
+				}
+			]
+		};
+
+		const options = {
+			animation: false,
+			responsive: true,
+			plugins: {
+				datalabels: {
+					color: "#007bff",
+					font: {
+						weight: "bold",
+						size: 24
+					},
+					formatter: function (value, context) {
+						switch (context.dataIndex) {
+							case 0:
+								return frontal_lobe_json.length;
+								break;
+							case 1:
+								return pariental_lobe_json.length;
+								break;
+							case 2:
+								return occipital_lobe_json.length;
+								break;
+							case 3:
+								return temporal_lobe_json.length;
+								break;
+							case 4:
+								return cerebellum_lobe_json.length;
+								break;
+							case 5:
+								return stem_json.length;
+							case 6:
+								return middle_part_of_the_brain_json.length;
+								break;
+								break;
+							default:
+								break;
+						}
 					}
-				}
-			}
-        },
-		scales: {
-			yAxes: [{
-				scaleLabel: {
-					display: true,
-					labelString: 'Number of MASxSR 7.5  Thresholds Exceeded'
-				},
-				ticks: {
-					min: 0
-				}
-			}],
-			xAxes: [{
-				scaleLabel: {
-					display: false,
-					labelString: 'Angular Acceleration'
-				},
-				ticks: {
-					display: false //this will remove only the label
-				}
-			}]
-		},
-		legend: {
-			display: false
-		},
-		tooltips: {
-			callbacks: {
-				title: function(tooltipItem, data) {
-					//return data['labels'][tooltipItem[0]['index']];
-				},
-				label: function(tooltipItem, data) {
-			
-					let event = data['datasets'][0]['data'][tooltipItem['index']];
-					
-					// me.onMouseOut('');
-				
-					switch(tooltipItem['index']) {
-						case 0:
-							me.onMouseHover('', 'Frontal_Lobe_node_Frontal_Lobe');
-							break;
-						case 1:
-							me.onMouseHover('', 'node_Mesh_16');
-							break;
-						case 2:
-							me.onMouseHover('', 'Brainstem_Spinal_cord_node_Brainstem_Spinal_cord');
-							break;
-						case 3:
-							me.onMouseHover('', 'Temporal_Lobe_node_Temporal_Lobe');
-							break;
-						case 4:
-							me.onMouseHover('', 'Cerebellum_node_Cerebellum');
-							break;
-						case 5:
-							me.onMouseHover('', 'Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex');
-							break;
-					}
-					return ' ' + event + ' Events';
 				}
 			},
-			displayColors: false,
-			custom: function( tooltip ) {
-				if( tooltip.opacity > 0 ) {
-					//console.log( "Tooltip is showing" );
-				} else {
-					console.log( "Tooltip is hidden");
-					me.onMouseOut('');
-				}
-				return;
-			}
-		}
-	};
-	  
-    return (
-		<React.Fragment>
-			<div className="row text-center">
-				<div className="col-md-5 d-flex align-items-center justify-content-center" >
-					{this.state.isLoading ? (
-						<div className="model_loader d-flex justify-content-center center-spinner">
-							<div
-							  className="spinner-border text-primary"
-							  role="status"
-							>
-							  <span  className="sr-only">Loading...</span>
-							</div>
-						 </div>
-						) : null}
-						<div>
-							<canvas id="c" style={{ width: '100%', height: '100%', display: 'block' }}></canvas>
+			scales: {
+				yAxes: [
+					{
+						scaleLabel: {
+							display: true,
+							labelString: "Number of MASxSR 7.5  Thresholds Exceeded"
+						},
+						ticks: {
+							min: 0
+						}
+					}
+				],
+				xAxes: [
+					{
+						scaleLabel: {
+							display: false,
+							labelString: "Angular Acceleration"
+						},
+						ticks: {
+							display: false //this will remove only the label
+						}
+					}
+				]
+			},
+			legend: {
+				display: false
+			},
+			tooltips: {
+				callbacks: {
+					title: function (tooltipItem, data) {
+						//return data['labels'][tooltipItem[0]['index']];
+					},
+					label: function (tooltipItem, data) {
+						let event = data["datasets"][0]["data"][tooltipItem["index"]];
+						switch (tooltipItem["index"]) {
+							case 0:
+								me.onMouseHover("", "Frontal_Lobe_node_Frontal_Lobe");
+								break;
+							case 1:
+								me.onMouseHover(
+									"",
+									"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
+								);
+								break;
+							case 2:
+								me.onMouseHover("", "node_Mesh_16");
+								break;
+							case 3:
+								me.onMouseHover("", "Temporal_Lobe_node_Temporal_Lobe");
+								break;
+							case 4:
+								me.onMouseHover("", "Cerebellum_node_Cerebellum");
+								break;
+							case 5:
+								me.onMouseHover(
+									"",
+									"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
+								);
+								break;
+							case 6:
+								me.onMouseHover(
+									"",
+									"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex"
+								);
+								break;
+							default:
+								break;
+						}
 
-							<button onClick={() => this.handleBrainStrain('principal-max-strain')} className={this.state.brainStrainActive === 'principal-max-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Max Principal Strain</button>
-							<button onClick={() => this.handleBrainStrain('principal-min-strain')} className={this.state.brainStrainActive === 'principal-min-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Min Principal Strain</button>
-							<button onClick={() => this.handleBrainStrain('csdm-max')} className={this.state.brainStrainActive === 'csdm-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM<sub>15</sub></button>
-							<button onClick={() => this.handleBrainStrain('axonal-strain-max')} className={this.state.brainStrainActive === 'axonal-strain-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Axonal Strain<sub>15</sub></button>
-							<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
+						return " " + event + " Events";
+					}
+				},
+				displayColors: false,
+				custom: function (tooltip) {
+					if (tooltip.opacity > 0) {
+					} else {
+						me.onMouseOut("");
+					}
+					return;
+				}
+			}
+		};
+
+		const actionButtons = this.state.actionButtonPositions.map((pos, index) => {
+			return (
+				<button
+					className="btn btn-primary lobe_btn_temp"
+					id={this.state.actionButtons[index].id}
+					style={{
+						left: pos.x,
+						width: this.chartContainer
+							? this.chartContainer.getBoundingClientRect().width /
+							this.state.actionButtonPositions.length -
+							(window.innerWidth > window.innerHeight ? 20 : 15)
+							: 0
+					}}
+					key={index}
+				>
+					<span
+						style={{
+							transform:
+								window.innerWidth < window.innerHeight
+									? "rotate(-50deg)"
+									: "initial"
+						}}
+					>
+						{window.innerWidth < window.innerHeight
+							? this.state.actionButtons[index].shortenName
+							: this.state.actionButtons[index].name}
+					</span>
+				</button>
+			);
+		});
+
+		return (
+			<React.Fragment>
+				<div className="row text-center">
+					<div className="col-md-5 d-flex align-items-center justify-content-center" >
+						<div className="row" style={{ width: '100%', display: 'block',height: '100%', }} className="three_D_model_div">
+							{this.state.isLoading ? (
+								<div className="model_loader d-flex justify-content-center center-spinner" style={{zIndex: '999'}}>
+									<div
+										className="spinner-border text-primary"
+										role="status"
+									>
+										<span className="sr-only">Loading...</span>
+									</div>
+								</div>
+							) : null}
+							<div className="col-md-12 three_D_model_div" style={{ width: '100%', height: '80%', display: 'block' }} ref={(ref) => (this.threeCanvasContainer = ref)}>
+								<canvas id="c" style={{ width: '100%', height: '100%' }}></canvas>
+							</div>
+							<div className="col-md-12">
+								<button onClick={() => this.handleBrainStrain('principal-max-strain')} className={this.state.brainStrainActive === 'principal-max-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Max Principal Strain</button>
+								<button onClick={() => this.handleBrainStrain('principal-min-strain')} className={this.state.brainStrainActive === 'principal-min-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Min Principal Strain</button>
+								<button onClick={() => this.handleBrainStrain('csdm-max')} className={this.state.brainStrainActive === 'csdm-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM<sub>15</sub></button>
+								<button onClick={() => this.handleBrainStrain('axonal-strain-max')} className={this.state.brainStrainActive === 'axonal-strain-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Axonal Strain<sub>15</sub></button>
+								<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
+							</div>
 						</div>
-				</div>
-				<div className="col-md-7">
-				    <Bar data={data} options={options}/>
-					<div className="action_btn_block">
-						<button className="btn btn-primary lobe_btn" id="front_btn">Frontal Lobe</button>
-						<button className="btn btn-primary lobe_btn" id="pariental_btn">Parietal Lobe</button>
-						<button className="btn btn-primary lobe_btn" id="occipital_btn">Occipital Lobe</button>
-						<button className="btn btn-primary lobe_btn" id="temporal_btn">Temporal Lobe</button>
-						<button className="btn btn-primary lobe_btn cerebellum_btn" id="cerebellum_btn">Cerebellum Lobe</button>	
-						<button className="btn btn-primary lobe_btn motor_and_sensor_cortex" id="motor_and_sensor_cortex">Motor and Sensor Cortex</button>	
+
 					</div>
-					<div>
-						<span className="brain_txt">Select a Brain Region </span>
-					</div>
-					<div>
-						<button onClick={this.resetHighLight} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>	
+					<div className="col-md-7" ref={(ref) => (this.chartContainer = ref)}>
+						<Bar data={data} options={options} plugins={this.plugins} />
+						<div className="action-btn-container">
+							{actionButtons}
+						</div>
+						<div>
+							<span className="brain_txt">Select a Brain Region </span>
+						</div>
+						<div>
+							<button onClick={this.reset} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>
+						</div>
 					</div>
 				</div>
-			</div>
-			
-		</React.Fragment>
-    );
-  }
+
+			</React.Fragment>
+		);
+	}
 }
 
 export default ExportPlayerReport;

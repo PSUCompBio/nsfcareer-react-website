@@ -17,10 +17,12 @@ import {
   getCumulativeAccelerationData,
   getSimulationFilesOfPlayer,
   getAllCumulativeAccelerationTimeRecords,
-  getAllCumulativeAccelerationJsonData
+  AllCumulativeAccelerationTimeRecords,
+  getAllCumulativeAccelerationJsonData,
+  getCumulativeAccelerationTimeRecords
 } from '../../apis';
 
-import { Form } from 'react-bootstrap';
+import { Form,Button, Collapse,Accordion, Card } from 'react-bootstrap';
 
 
 
@@ -32,13 +34,13 @@ import Spinner from '../Spinner/Spinner';
 import ScrollToTop from 'react-scroll-up';
 
 import { getStatusOfDarkmode } from '../../reducer';
-
+import $ from 'jquery';
 
 class UserDashboarForAdmin extends React.Component {
   constructor(props) {
     super(props);
     // console.log('User Dashboard For Admin Is ',this.props);
-    console.log("USER DASHBOARD PROPS", this.props)
+    // console.log("USER DASHBOARD PROPS", this.props)
     this.state = {
       isAuthenticated: false,
       user: null,
@@ -55,12 +57,17 @@ class UserDashboarForAdmin extends React.Component {
       eventDateValue: '-1',
       simulationFilePaths: null,
       cumulativeAccelerationTimeAllRecords: [],
+      cumulativeAccelerationTimeAlldata: [],
       frontal_Lobe: [],
-      jsonData: ''
+      jsonData: '',
+      open: false,
+      loading: false,
+      loaded_data: [],
     };
   }
 
   componentDidUpdate() {
+    console.log('thi props',this.props)
     svgToInline();
   }
 
@@ -70,18 +77,15 @@ class UserDashboarForAdmin extends React.Component {
 
   onDateChange = (event) => {
     this.setState({ eventDateValue: event.target.value });
-    console.log("Value changed", event.target.value);
     this.setState({
       simulationFilePaths: []
     })
     if (event.target.value != "-1") {
       getSimulationFilesOfPlayer({ path: event.target.value })
         .then(response => {
-          console.log("STATE IS ", this.state.simulationFilePaths);
           this.setState({
             simulationFilePaths: this.state.simulationFilePaths.concat(response.data.data)
           })
-          console.log("AFTER FIX IS ", this.state.simulationFilePaths);
         })
         .catch(err => {
           alert("Internal Server Error !");
@@ -109,15 +113,67 @@ class UserDashboarForAdmin extends React.Component {
       });
     }
   }
+  handleCollapse =(e)=>{
+    let col_id = e.split('$')[1]
+    $("#"+col_id).toggleClass('show');
+    $("#col_icon"+col_id).toggleClass('rotate-collapse');
+    $("#spin_"+col_id).toggleClass('spin_display');
+    var loaded_data = this.state.loaded_data;
+    if(this.state.loaded_data.indexOf(e) == -1){
+      this.setState({loaded_data : this.state.loaded_data.concat(e)});
+      this.setState({open: e});
+      getCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: e, team: this.props.location.state.team.team_name })
+      .then(res=>{
+        console.log('res',res);
+        this.setState({
+           cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
+           loading: false,
+
+        });
+        $("#spin_"+res.data.data[0].sensor_data.player_id.split('$')[1]).toggleClass('spin_display');
+      }).catch(err=>{
+        console.log('err',err)
+      })
+    }else{
+      this.setState({open: false})
+    }
+  }
+
+  getDate = (timestamp) => {
+
+      const plus0 = num => `0${num.toString()}`.slice(-2)
+    
+      const d = new Date(timestamp)
+    
+      const year = d.getFullYear()
+      const monthTmp = d.getMonth() + 1
+      const month = plus0(monthTmp)
+      const date = plus0(d.getDate())
+      
+      return `${month}/${date}/${year}`+' |'
+  }
+
+  tConvert = (time) => {
+      // Check correct time format and split into components
+      time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+    
+      if (time.length > 1) { // If time format correct
+        time = time.slice (1);  // Remove full string match value
+        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+        time[0] = +time[0] % 12 || 12; // Adjust hours
+      }
+      return time.join (''); // return adjusted time or original string
+  }
 
   render() {
-    console.log('this.props.location.state',this.props.location.state)
     const isLoaded = this.state.user;
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
     }
+    var the = this;
     if (!isLoaded) return <Spinner />;
     return (
+
       <React.Fragment>
         <div className="center-scroll-up-mobile">
           <ScrollToTop
@@ -161,8 +217,8 @@ class UserDashboarForAdmin extends React.Component {
           </ScrollToTop>
         </div>
 
-        <div className="container dashboard UserDashboarForAdmin-page-navigation">
-        {this.state.jsonData && 
+        <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
+        {this.state.jsonData[0].sensor_data.player && 
           <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
         }
           <p
@@ -173,8 +229,9 @@ class UserDashboarForAdmin extends React.Component {
             className="player-dashboard-sub-head Individual-Head-Acceleration-player-dash">
             Individual Head Acceleration Events
           </p>
-          <div className="row">
-            <div className="col-md-12 player-dash-chart-setting">
+          { this.state.cumulativeAccelerationTimeAllRecords.length > 0 &&
+          <div className="row" >
+             <div className="col-md-12 player-dash-chart-setting">
               <div className="col-md-12">
                 <h1 className="">Settings</h1>
               </div>
@@ -204,14 +261,67 @@ class UserDashboarForAdmin extends React.Component {
                     </div>
                 </div>
             </div>
-          </div>
-          {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
+        </div>
+        }
+          { this.state.cumulativeAccelerationTimeAllRecords.length === 0 &&
+            <div className="row" style={{border: '1px solid #000', marginBottom: '20px'}}>
+              <div className="col-md-12" style={{textAlign: 'center', display: 'block', marginTop: '50px', marginBottom: '100px'}}>
+                    <span>No impacts have been recorded yet.</span>
+                </div>
+            </div>
+          }
+        {/*------------- Collapse chart start here -----------*/}
+        <div className="charts-container">
+          <Accordion className="player-collapes-div">
+            {this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data.player && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
+              <Card >
+                <Card.Header>
+                  <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
+                    <span className="title-left" >ID: #{item.sensor_data && item.sensor_data.player_id.split('$')[1]}</span>
+                    <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(item.sensor_data['impact-time']) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(item.sensor_data['time'])  : 'Unkown Date and Time'}`}</span>
+                    <span className="title-right" id={item.sensor_data && 'col_icon'+item.sensor_data.player_id.split('$')[1]}>></span>
+                  </Accordion>
+                </Card.Header>
+                <Accordion.Collapse eventKey={item.sensor_data.player_id} id={item.sensor_data && item.sensor_data.player_id.split('$')[1]}>
+                  <Card.Body>
+                    {this.state.cumulativeAccelerationTimeAlldata ? 
+                        this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
+                          if(items.sensor_data.player_id == item.sensor_data.player_id){
+                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state}/>
+                          }
+                        })
+                      : 
+                        null
+                    }
+                    <div style={{'display':'none'}} id={"spin_"+item.sensor_data.player_id.split('$')[1]}>
+                      <i class="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>
+                    </div>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            ))
+            }
+          </Accordion>
+        </div>
+        {/*------------- Collapse chart end here -----------*/}
+       
+          {/*this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => (
 
             <HeadAccelerationAllEvents key={index} linearUnit={this.state.linearUnit} is_selfie_simulation_file_uploaded={this.state.user.is_selfie_simulation_file_uploaded} imageUrl={this.state.user.simulation_file_url} data={item} state={this.props.location.state}/>
           ))
-          }
+          */}
+         
         </div>
-        <Footer />
+        <React.Fragment>
+            <div style={{
+                position: "absolute",
+                width: "100%",
+                bottom: '0'
+            }}>
+                <Footer />
+            </div>
+
+        </React.Fragment>
       </React.Fragment>
     );
   }
@@ -222,13 +332,13 @@ class UserDashboarForAdmin extends React.Component {
           getCumulativeAccelerationData({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
             .then(response => {
               this.setState({
-                cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: this.props.location.state.team.brand, team: this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, staff: this.props.location.state.team.staff, player_id: this.props.location.state.player_name }
+                cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: this.props.location.state.team.brand, team: this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, staff: this.props.location.state.team.staff, player_id: this.props.location.state.player_name, simulationCount: response.data.simulationCount}
               });
-              return getAllCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
+              return AllCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
             })
 
             .then(response => {
-              console.log('response',response.data);
+              console.log('cumulativeAccelerationTimeAllRecords',response)
               this.setState({
                 cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
 		            brainRegions: response.data.brainRegions,
