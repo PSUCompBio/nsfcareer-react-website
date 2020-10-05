@@ -4242,7 +4242,7 @@ app.post(`${apiPrefix}forgotPassword`, (req, res) => {
 /* Forget password function end */
 
 app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
-    console.log('checking isAuthenticated' )
+    console.log('checking isAuthenticated=============\n',req.user_cognito_id)
     if(req.user_cognito_id){
         res.send({
             message : "success",

@@ -7,6 +7,9 @@ import footer1 from '../footer1.jpg';
 import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
 import trangle from './trangle.png'
+import arrow_left from './arrow_left.png'
+import arrow_right from './arrow_right.png'
+
 import ClinicalReportHeader from './Clinical-Report-Header.png';
 import taxture1  from './taxture1.jpg'
 // import logo 
@@ -318,6 +321,17 @@ const styles = StyleSheet.create({
         marginTop: '25px',
         textAlign : 'center'
     },
+    footer_ST_1:{
+        display : 'inline-block',
+        width : '30%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'black',
+        fontSize : 12,
+        marginTop: '8px',
+        marginLeft: '38%',
+        textAlign : 'center'
+    },
     hLine : {
         width : '1.5px',
         float : 'left',
@@ -335,7 +349,53 @@ const styles = StyleSheet.create({
     taxture1: {
         width: '100%',
         textAlign:'center'
-    }
+    },
+    p1_footer_arrow_right: {
+        display : 'inline-block',
+        width : '8%',
+        float : 'left',
+        flexDirection : 'column',
+        marginTop: '4px',
+        textAlign : 'right',
+        marginLeft:'42%'
+    },
+    arrow_right: {
+        width: '80%',
+    },
+    P1_footer_t:{
+        display : 'inline-block',
+        width : '14%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'black',
+        fontSize : 12,
+        marginTop: '2px',
+        marginLeft: '5px',
+        textAlign : 'center'
+    },
+    P1_footer_t2:{
+        display : 'inline-block',
+        width : '4%',
+        float : 'left',
+        flexDirection : 'column',
+        color : 'grey',
+        fontSize : 8,
+        marginTop: '1px',
+        marginLeft: '0px',
+        textAlign : 'left'
+    },
+    p1_footer_arrow_left: {
+        display : 'inline-block',
+        width : '8%',
+        float : 'left',
+        flexDirection : 'column',
+        marginTop: '4px',
+        textAlign : 'left',
+        marginLeft:'0%'
+    },
+    arrow_left: {
+        width: '80%',
+    },
 });
 
 class Report extends React.Component {
@@ -525,6 +585,23 @@ class Report extends React.Component {
                                     <View style={styles.taxture1_div}>
                                         <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
                                     </View>
+                                {/*=============== page 1 footer sections start ===============*/}
+                                    <View style={styles.tableRow}>
+                                       
+                                        <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
+                                    </View>
+                                   
+                                    <View style={styles.tableRow}>
+                                        <View style={styles.p1_footer_arrow_right}>
+                                            <Image  style={styles.arrow_right} src={arrow_right} alt="arrow_right"/>
+                                        </View>
+                                        <Text style={styles.P1_footer_t}>SIGNIFICANT</Text>
+                                        <Text style={styles.P1_footer_t2}>1,2,3</Text>
+                                        <View style={styles.p1_footer_arrow_left}>
+                                            <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
+                                        </View>
+                                    </View>
+                                {/*=============== page 1 footer sections end ===============*/}
                         </View>
 
                         {/* <View style={{

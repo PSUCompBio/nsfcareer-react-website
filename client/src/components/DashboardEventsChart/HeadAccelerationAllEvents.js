@@ -258,12 +258,12 @@ class HeadAccelerationAllEvents extends React.Component {
                                            state:{
                                             state: this.props.state,
                                             data:this.props.data,
-					    simulationImage: this.state.simulationData.simulationImage,
+					                           simulationImage: this.state.simulationData.simulationImage,
                                            } 
 
                                         }} ><button className="btn btn-primary ">View Details</button></Link>
                                     }
-                                    <button className="btn btn-primary " style={{'margin-top': '5px'}} onClick={this.downloadReport}>Export Impact Report
+                                    <button className="btn btn-primary " style={{'margin-top': '5px'}} onClick={this.downloadReport}>Export Report
                                     {/*<PDFDownloadLink document={<Report jsonData={this.state.simulationData.jsonOutputFile} {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
                                         color: 'white'
                                     }}>
