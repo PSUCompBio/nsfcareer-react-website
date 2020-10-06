@@ -391,6 +391,11 @@ class Routing extends React.Component {
             path="/Hardy-et-al"
             render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
+        <Route
+            exact
+            path="/Hardy-et-al/:cases"
+            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
       </React.Fragment>
     );
   }

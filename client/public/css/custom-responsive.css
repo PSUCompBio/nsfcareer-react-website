@@ -490,6 +490,7 @@
 
   .top-heading__login{
     width: 100%!important;
+    padding: 10px;
   }
   .three_D_model_div canvas{
     width: 100%!important;
