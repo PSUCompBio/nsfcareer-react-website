@@ -26,7 +26,9 @@ class TeamStats extends React.Component {
             isCheckingAuth: true,
             isLoading: true,
             brainRegions: {},
+            insult: 'principal-max-strain',
         };
+        this.child = React.createRef();
     }
    
     componentDidMount() {
@@ -61,6 +63,11 @@ class TeamStats extends React.Component {
         
     }
 
+    handleChange = (e) => {
+        this.setState({ [e.target.name] : e.target.value });
+        this.child.current.handleBrainStrain(e.target.value);
+    };
+
     render() {
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
            return <Redirect to="/Login" />;
@@ -71,7 +78,8 @@ class TeamStats extends React.Component {
                  
                 <div className="container dashboard UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
                     <div className="container">
-                        <div className="backbutton" style={{position : 'relative'}}>
+                        <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>Team Stats</h1>
+                        <div className="backbutton11" style={{position : 'relative'}}>
                             <Link to={{
                                     pathname: '/TeamAdmin/team/players',
                                     state: {
@@ -84,9 +92,32 @@ class TeamStats extends React.Component {
                                         }
                                     } }}>&lt; Back To Team</Link>
                         </div>
+                        <div style={{textAlign: 'center'}}>
+                            <label style={{fontSize: '20px'}}>Display all member data with</label>
+                            <select style={{marginLeft: '20px'}} onChange={this.handleChange} name={this.state.insult}>
+                                <option value="principal-max-strain">Max Principal Strain</option>
+                                <option value="principal-min-strain">Min Principal Strain</option>
+                                <option value="csdm-max">CSDM 15</option>
+                                <option value="axonal-strain-max">Axonal Strain 15</option>
+                                <option value="masXsr-15-max">MASxSR 15</option>
+                            </select>
+                            <select style={{marginLeft: '20px'}} >
+                                <option>Less or Equal to</option>
+                                <option>Greater or Equal to</option>
+                            </select>
+                            <select style={{marginLeft: '20px'}}>
+                                <option>10 Gs</option>
+                                <option>20 Gs</option>
+                                <option>10 Gs</option>
+                                <option>10 Gs</option>
+                            </select>
+                        </div>
+                        <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>
+                            <button style={{padding: '5px 15px 5px 15px', background : '#007bff', fontWeight: '800'}}>Run Report</button>
+                        </div>
                         <div className="row">
                             <div className="col-md-12 col-lg-12">
-                                <ExportPlayerReport brainRegions={this.state.brainRegions} />
+                                <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />
                             </div>
                         </div>
                     </div>
