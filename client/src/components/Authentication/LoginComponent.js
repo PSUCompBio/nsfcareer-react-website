@@ -10,6 +10,9 @@ import { getStatusOfDarkmode } from '../../reducer';
 import { setIsSignedInSucceeded, userDetails } from '../../Actions';
 import DarkMode from '../DarkMode';
 
+let search = window.location.search;
+let params = new URLSearchParams(search);
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +36,8 @@ class Login extends React.Component {
     }
     console.log("JSON.STRINGIFY(THIS.STATE)", this.state);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    
   }
 
   isAdminType = (userType) => {
@@ -255,6 +260,22 @@ class Login extends React.Component {
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
                     </div>
+                    {params.get('error') ? (
+                      <div
+                        className="alert alert-info api-response-alert"
+                        role="alert"
+                      >
+                        <strong >Failed! </strong> {params.get('error')}.
+                      </div> 
+                    ) : null}
+                    {params.get('success') ? (
+                      <div
+                        className="alert alert-info api-response-alert-success"
+                        role="alert"
+                      >
+                        <strong >Success! </strong> Your account has been verified successfully.
+                      </div> 
+                    ) : null}
                     {this.state.IRBProcessMessage.length > 0 ? (
                       <div
                         className="alert alert-info api-response-alert-success"

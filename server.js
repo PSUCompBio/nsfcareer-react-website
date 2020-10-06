@@ -2225,6 +2225,35 @@ function setVideoTime(image_id,video_lock_time,type) {
     });
 }
 
+app.get(`${apiPrefix}userEmailVerification`, (req, res) => {
+    console.log(req.query.code);
+    const confirmationCode = req.query.code
+    const username = req.query.username
+    const clientId = req.query.clientId
+    const region = req.query.region
+    const email = req.query.email
+
+    let params = {
+        ClientId: clientId,
+        ConfirmationCode: confirmationCode,
+        Username: username
+    }
+
+    var confirmSignUp = COGNITO_CLIENT.confirmSignUp(params).promise()
+    confirmSignUp.then(
+        (data) => {
+            res
+            let redirectUrl = config.FrontendUrl + 'Login?success=true'
+            res.redirect(redirectUrl);
+        }
+    ).catch(
+        (error) => {
+            let redirectUrl = config.FrontendUrl + 'Login?error=' + error.message
+            res.redirect(redirectUrl);
+        }
+    )
+});
+
 /*+++++++++++++++++ Set video lock time funtion end here ++++++++++++++++ */
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
@@ -6907,6 +6936,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
             })
         }) 
 });
+
+
 
 app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
     let jsonOutputFile = '';
