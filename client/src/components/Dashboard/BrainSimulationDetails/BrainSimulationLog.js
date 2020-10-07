@@ -130,7 +130,7 @@ class BrainSimulationLog extends React.Component {
 
             <div className="container">
               <div className="row">
-                <div className="backbutton">
+                {/*<div className="backbutton">
                   <Link 
                     to={{
                       pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',
@@ -138,7 +138,7 @@ class BrainSimulationLog extends React.Component {
                   }}
                   >&lt; Back To Details
                   </Link>
-                </div>
+                </div>*/}
                 <p style={{'width': '100%','margin-top': '124px'}}>{this.state.simulation_log && log}</p>
                 {!this.state.simulation_log && 
                   <p>No Logs available</p>

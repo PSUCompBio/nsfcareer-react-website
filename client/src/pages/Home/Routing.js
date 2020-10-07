@@ -33,6 +33,7 @@ import Developer from '../Developer/DeveloperPage';
 import Dash from '../Dash/DashPage';
 import Report from '../../components/ReportContent/Report0';
 import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
+import Details from '../../components/Dashboard/BrainSimulationDetails/Details';
 import InviteUsers from '../../components/InviteUsers';
 import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
 import ProfileImageUpload from '../../components/profile/ProfileImageUpload';
@@ -395,6 +396,11 @@ class Routing extends React.Component {
             exact
             path="/Hardy-et-al/:cases"
             render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/Details/:image_id/:player_id"
+            render={(props) => <Details {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
       </React.Fragment>
     );
