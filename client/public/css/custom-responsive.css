@@ -68,6 +68,16 @@
   .Hardy_et_al-buttons button {
     width: auto;
   }
+  .Replace-video div label {
+    background: #4472c4;
+    color: white;
+    padding: 4px 6px;
+    margin-bottom: 0px !important;
+    margin-top: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 5px;
+  }
 }
 @media screen and (max-width: 844px) {
   .team-edit-button {
@@ -184,6 +194,16 @@
   .download-report-box {
     width: 43%!important;
     left: 30%;
+  }
+  .Replace-video-desktop{
+    display: none
+  }
+  .Replace-video-mobile{
+    display: inline-block;
+    width: 100%;
+  }
+  .Replace-video-mobile div{
+    width: 100%;
   }
 }
 @media (max-width: 767px) {

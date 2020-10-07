@@ -62,7 +62,7 @@ class DownloadReportPopup extends React.Component {
             alt=""
           />
           <div className="popu-body">
-            <h2>Select Injury Metric</h2>
+            <h2>Select Strain Metric</h2>
             <p>Select all that apply</p>
             <table>
               <tbody>

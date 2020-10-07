@@ -253,7 +253,7 @@ class HeadAccelerationAllEvents extends React.Component {
 
                                      : 
                                     <Link  to={{
-                                            pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',
+                                            pathname: '/Details/'+this.props.data.sensor_data.image_id+'/'+this.props.player_id+'?org='+this.props.organization+'&t='+this.props.team,
                                             
                                            state:{
                                             state: this.props.state,
@@ -261,7 +261,7 @@ class HeadAccelerationAllEvents extends React.Component {
 					                           simulationImage: this.state.simulationData.simulationImage,
                                            } 
 
-                                        }} ><button className="btn btn-primary ">View Details</button></Link>
+                                        }} target="_blank"><button className="btn btn-primary ">View Details</button></Link>
                                     }
                                     <button className="btn btn-primary " style={{'margin-top': '5px'}} onClick={this.downloadReport}>Export Report
                                     {/*<PDFDownloadLink document={<Report jsonData={this.state.simulationData.jsonOutputFile} {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{

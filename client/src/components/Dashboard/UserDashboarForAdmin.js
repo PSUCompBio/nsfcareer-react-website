@@ -124,7 +124,7 @@ class UserDashboarForAdmin extends React.Component {
       this.setState({open: e});
       getCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: e, team: this.props.location.state.team.team_name })
       .then(res=>{
-        console.log('res',res);
+        console.log('res'+this.props.location.state.user_cognito_id,res);
         this.setState({
            cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
            loading: false,
@@ -287,7 +287,7 @@ class UserDashboarForAdmin extends React.Component {
                     {this.state.cumulativeAccelerationTimeAlldata ? 
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
                           if(items.sensor_data.player_id == item.sensor_data.player_id){
-                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state}/>
+                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state} organization ={the.props.location.state.team.organization}  player_id={item.sensor_data.player_id} team={the.props.location.state.team.team_name}/>
                           }
                         })
                       : 

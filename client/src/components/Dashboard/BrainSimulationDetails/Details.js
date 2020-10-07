@@ -34,7 +34,9 @@ import {
   uploadSidelineImpactVideo,
   getBrainSimulationLogFile,
   removeVideo,
-  setVideoTime
+  setVideoTime,
+  getCumulativeAccelerationTimeRecords,
+  getSimulationDetail
 } from '../../../apis';
 import axios from 'axios';
 
@@ -57,7 +59,7 @@ let called = false;
 let lock_time_2 = 0;
 let lock_percent_2 = 0;
 let called_2 = false;
-class BrainSimulationDetails extends React.Component {
+class Details extends React.Component {
   constructor(props) {
     super(props);
     this.onDrop = (files) => {
@@ -95,7 +97,11 @@ class BrainSimulationDetails extends React.Component {
       video_lock_time: false,
       video_lock_time_2:false,
       isTimeUpdating: false,
-      isTimeUpdating_2: false
+      isTimeUpdating_2: false,
+      image_id: this.props.match.params.image_id,
+      player_id: this.props.match.params.player_id,
+      simulation_data: '',
+      simulationData: ''
     };
   }
  
@@ -141,7 +147,7 @@ class BrainSimulationDetails extends React.Component {
       label_remove_video: 'Removing...',
       isLoading: false
     })
-    removeVideo({'image_id':this.props.location.state.data.sensor_data.image_id})
+    removeVideo({'image_id':this.state.image_id})
     .then(res => {
       console.log(res)
       if(res.data.message == 'success'){
@@ -163,9 +169,7 @@ class BrainSimulationDetails extends React.Component {
   upload =(file)=>{
      const data = new FormData() 
     data.append('file',file);
-    data.append('image_id',this.props.location.state.data.sensor_data.image_id );
-    console.log(this.props.location.state.user_cognito_id)
-    data.append('user_cognito_id',this.props.location.state.user_cognito_id );
+    data.append('image_id',this.state.image_id );
     this.setState({isLoading:true,IsAcceleration:true})
     var myVar = '';
     var the = this;
@@ -323,7 +327,7 @@ class BrainSimulationDetails extends React.Component {
    //Setting video lockTime
   setVideoTime_2 =(time)=>{
     this.setState({isTimeUpdating_2: true})
-    setVideoTime({image_id:this.props.location.state.data.sensor_data.image_id,video_lock_time:time,type:'setVideoTime_2'})
+    setVideoTime({image_id:this.state.image_id,video_lock_time:time,type:'setVideoTime_2'})
     .then((response) => {
       console.log(response)
       if(response.data.message == 'success'){
@@ -343,7 +347,7 @@ class BrainSimulationDetails extends React.Component {
   //Setting video lockTime
   setVideoTime =(time)=>{
     this.setState({isTimeUpdating: true})
-    setVideoTime({image_id:this.props.location.state.data.sensor_data.image_id,video_lock_time:time,type: 'setVideoTime'})
+    setVideoTime({image_id:this.state.image_id,video_lock_time:time,type: 'setVideoTime'})
     .then((response) => {
       console.log(response)
       if(response.data.message == 'success'){
@@ -371,7 +375,7 @@ class BrainSimulationDetails extends React.Component {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
     }
-    if (!this.props.location.state) {
+    if (!this.props.match.params.image_id) {
       return <Redirect to="/Login" />;
     }
     if (!this.state.isLoaded) return <Spinner />;
@@ -444,7 +448,7 @@ class BrainSimulationDetails extends React.Component {
               <div className="row">
                 
                 <div className="col-md-12 col-lg-12">
-                  <div className="backbutton">
+                  {/*<div className="backbutton">
                     <Link 
                       to={{
                         pathname: '/TeamAdmin/user/dashboard/',
@@ -452,7 +456,7 @@ class BrainSimulationDetails extends React.Component {
                     }}
                     >&lt; Back To Player
                     </Link>
-                  </div>
+                  </div>*/}
                   <h1 className="top-heading__login brain-simlation-details-title" >Brain Simulation Details</h1>
                   {/* this.state.simulation_log_path && <p className="top-heading__login brain-simlation-details-title" ><a href={this.state.simulation_log_path} target="_blank">Simulation Log File</a></p>*/}
                   <div style={{'text-align':'center','width':'100%'}}>
@@ -461,9 +465,7 @@ class BrainSimulationDetails extends React.Component {
                     to={{
                       pathname: '/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog',
                       state: {
-                        state: this.props.location.state.state,
-                        data: this.props.location.state.data,
-                        image_id: this.props.location.state.data.sensor_data.image_id
+                        image_id: this.state.image_id
                       }
                     }}>
                    
@@ -474,23 +476,23 @@ class BrainSimulationDetails extends React.Component {
                 </div>
                 <div className="col-md-12" > 
                   <div className="user-simlation-details">
-                    <p>Name: {this.props.location.state.data.sensor_data.player['first-name'] +' '+this.props.location.state.data.sensor_data.player['last-name'] }</p>
+                    <p>Name: {this.state.simulation_data.sensor_data.player['first-name'] +' '+this.state.simulation_data.sensor_data.player['last-name'] }</p>
                     <p>Impact ID: </p>
-                    <p>Position: {this.props.location.state.data.sensor_data.player['position']}</p>
+                    <p>Position: {this.state.simulation_data.sensor_data.player['position']}</p>
                   </div>
                 </div>
 
                 {/*Graph section start*/}
                 <div className="col-md-12 col-lg-12 brain-simlation-details-graph">
                   <h4 className="brain-simlation-details-subtitle">Input From Sensor</h4>
-                  <div className="col-md-6" style={{'float':'left'}}>
+                 <div className="col-md-6" style={{'float':'left'}}>
                     
-                      <HeadLinearAccelerationAllEvents  key={this.props.location.state.data} data={this.props.location.state.data} state={this.props.location.state.state}/>
+                      <HeadLinearAccelerationAllEvents   data={this.state.simulation_data}/>
                     
                   </div>
                   <div className="col-md-6" style={{'float':'left'}}>
                     
-                      <HeadAngularAccelerationAllEvents  key={this.props.location.state.data} data={this.props.location.state.data} state={this.props.location.state.state}/>
+                      <HeadAngularAccelerationAllEvents   data={this.state.simulation_data}/>
                     
                     
                   </div>
@@ -582,7 +584,7 @@ class BrainSimulationDetails extends React.Component {
                           <div>
                             <img src={unlock} className="unlock-img"/>
                             <input type="range" min="1" max="100" className="MyrangeSlider2" id="MyrangeSlider2" />
-                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                            <p style={{'font-weight':'600'}}>Adjust the frame rate</p>
                           </div>
                         </div>
                         <div className="" style={{'padding': '0px 14px'}}>
@@ -609,7 +611,7 @@ class BrainSimulationDetails extends React.Component {
                             <button className="btn gray">MASxSR<sub>15</sub></button>
                           </div>
                           <div className="col-md-12">
-                            <img class="img-fluid svg" width="100%" height="60%" src={this.props.location.state.simulationImage ? 'data:image/png;base64,' + this.props.location.state.simulationImage : simulationLoading} alt="" />
+                            <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading} alt="" />
                             
                           </div>
                       </div>
@@ -624,7 +626,19 @@ class BrainSimulationDetails extends React.Component {
       </React.Fragment>
     );
   }
+  getSimlationImage =()=>{
+    getSimulationDetail({image_id: this.state.image_id})
+    .then(response => {
+        this.setState({
+            simulationData: response.data.data,
+        });
+    })
+  }
   componentDidMount() {
+    const params = new URLSearchParams(window.location.search)
+    console.log('this.props.match.params.player_id',params.get('org'))
+    let organization = params.get('org');
+    let team = params.get('t');
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
         
@@ -635,17 +649,44 @@ class BrainSimulationDetails extends React.Component {
                       user: true,
                       userDetails: response.data.data,
                   })
-                  getBrainSimulationMovie(this.props.location.state.data.sensor_data.image_id).then((response) => {
+                  getBrainSimulationMovie(this.state.image_id).then((response) => {
                   console.log('movie_link',response)
                     this.setState({
                         movie_link:response.data.movie_link,
                         impact_video_url: response.data.impact_video_url,
                         video_lock_time: response.data.video_lock_time, 
                         video_lock_time_2: response.data.video_lock_time_2, 
-                        isLoaded: true,
-                        isAuthenticated: true,
-                        isCheckingAuth: false
+                        
                     });
+                    this.getSimlationImage();
+                    getCumulativeAccelerationTimeRecords({  organization: organization, player_id: this.state.player_id, team: team })
+                    .then(res=>{
+                      console.log('res',res);
+                      if(res.data.message != "failure" && res.data.data[0]){
+                        console.log('success')
+                        console.log('res',res);
+                        this.setState({
+                          simulation_data: res.data.data[0],
+                          isLoaded: true,
+                          isAuthenticated: true,
+                          isCheckingAuth: true
+                        })
+                      }else{
+                        console.log('error')
+                         this.setState({
+                            isAuthenticated: false,
+                            isCheckingAuth: false
+                        });
+                      }
+                    }).catch(err=>{
+                      console.log('err',err);
+                      this.setState({
+                          isLoaded: true,
+                          userDetails: {},
+                          isAuthenticated: false,
+                          isCheckingAuth: false
+                      });
+                    })
                   }).catch((error) => {
                     this.setState({
                         isLoaded: true,
@@ -673,4 +714,4 @@ class BrainSimulationDetails extends React.Component {
   }
 }
 
-export default BrainSimulationDetails;
+export default Details;

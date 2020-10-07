@@ -1345,3 +1345,6 @@ button.btn.button-yes {
   transform: scale(1.01);
   box-shadow: 0px 0px 6px #b3b3b3;
 }
+.Replace-video-mobile{
+  display: none;
+}
