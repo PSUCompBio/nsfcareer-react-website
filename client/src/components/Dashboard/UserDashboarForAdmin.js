@@ -218,7 +218,7 @@ class UserDashboarForAdmin extends React.Component {
         </div>
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
-        {this.state.jsonData[0].sensor_data.player && 
+        {this.state.jsonData &&  
           <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
         }
           <p
@@ -233,7 +233,7 @@ class UserDashboarForAdmin extends React.Component {
           <div className="row" >
              <div className="col-md-12 player-dash-chart-setting">
               <div className="col-md-12">
-                <h1 className="">Settings</h1>
+                <h1 className=" ">Settings</h1>
               </div>
               <div className="col-md-12" >
                     <div className="col-md-12" style={{'float':'left'}}>
@@ -249,7 +249,7 @@ class UserDashboarForAdmin extends React.Component {
                     </div>
                     <div className="col-md-12" style={{'float':'left'}}>
                       <div className="col-md-4" style={{'float':'left'}}>
-                        <h4>Injury Metric: </h4>
+                        <h4>Strain Metric: </h4>
                       </div>
                       <div className="col-md-8"  style={{'float':'left'}}>
                         <div className="injury_matrix_section">
@@ -273,7 +273,7 @@ class UserDashboarForAdmin extends React.Component {
         {/*------------- Collapse chart start here -----------*/}
         <div className="charts-container">
           <Accordion className="player-collapes-div">
-            {this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data.player && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
+            {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
               <Card >
                 <Card.Header>
                   <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >

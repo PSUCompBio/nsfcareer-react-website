@@ -4956,6 +4956,14 @@ app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
             var cId_len2 = cId_len-1;
             var memebers = [];
             var f = 0;
+
+            if (cId_len === 0) {
+                res.send({
+                    message : "success",
+                    data : memebers
+                })
+            }
+
             for(var i = 0; i < cId_len; i++){
                 fetchStaffMembers(user_cognito_id[i],req.body.brand)
                 .then(data => {
