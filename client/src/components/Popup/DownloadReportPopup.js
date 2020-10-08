@@ -75,12 +75,12 @@ class DownloadReportPopup extends React.Component {
                   <td>CSDM<sub>15</sub></td>
                 </tr>
                 <tr>
-                  <td><input name="axonal_15" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>Axonal Strain<sub>15</sub></td>
+                  <td><input name="axonal_15" type="checkbox" onChange={this.handleChange} disabled/></td>
+                  <td style={{'color': '#b3b3b3'}}>Axonal Strain<sub>15</sub></td>
                 </tr>
                 <tr>
-                  <td><input name="masxsr_15" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>MASxSR<sub>15</sub></td>
+                  <td><input name="masxsr_15" type="checkbox" onChange={this.handleChange} disabled/></td>
+                  <td style={{'color': '#b3b3b3'}}>MASxSR<sub>15</sub></td>
                 </tr>
               </tbody>
             </table>

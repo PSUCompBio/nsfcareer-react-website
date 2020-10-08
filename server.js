@@ -22,7 +22,7 @@ moment = require('moment'),
 jwt = require('jsonwebtoken'),
 // Load the core build of Lodash.
 _array = require('lodash/array');
-
+var md5 = require('md5');
 global.fetch = require('node-fetch');
 
 var _ = require('lodash');
@@ -1290,92 +1290,10 @@ function adminUpdateUser(User, cb) {
 
 // Function to create User by Admin
 function adminCreateUser(User, cb) {
-    // if(User.userID){
-    //     var params = {
-    //         UserPoolId: cognito.userPoolId, /* required */
-    //         Username: User.user_name, /* required */
-    //         DesiredDeliveryMediums: [
-    //             "EMAIL",
-    //         ],
-    //         MessageAction: 'SUPPRESS', 
-    //         TemporaryPassword: User.userID, // BrainComputing2020!
-    //         UserAttributes: [
-    //             {
-    //                 Name: 'phone_number', /* required */
-    //                 Value: User.phone_number
-    //             },
-    //             {
-    //                 Name: 'name', /* required */
-    //                 Value: User.name
-    //             },
-    //             {
-    //                 Name: 'email', /* required */
-    //                 Value: User.email
-    //             },
-    //             {
-    //                 Name: 'phone_number_verified',
-    //                 Value: 'true'
-    //             },
-    //             {
-    //                 Name: 'email_verified',
-    //                 Value: 'true'
-    //             },
-    //             {
-    //                 Name: 'custom:level',  /* required */
-    //                 Value: User.level
-    //             }
-    //         ]
-    //     };
-    // }else{
-    //     var params = {
-    //         UserPoolId: cognito.userPoolId, /* required */
-    //         Username: User.user_name, /* required */
-    //         DesiredDeliveryMediums: [
-    //             "EMAIL",
-    //         ],
-    //         // MessageAction: 'SUPPRESS', 
-    //         // TemporaryPassword: User.userID, // BrainComputing2020!
-    //         UserAttributes: [
-    //             {
-    //                 Name: 'phone_number', /* required */
-    //                 Value: User.phone_number
-    //             },
-    //             {
-    //                 Name: 'name', /* required */
-    //                 Value: User.name
-    //             },
-    //             {
-    //                 Name: 'email', /* required */
-    //                 Value: User.email
-    //             },
-    //             {
-    //                 Name: 'phone_number_verified',
-    //                 Value: 'true'
-    //             },
-    //             {
-    //                 Name: 'email_verified',
-    //                 Value: 'true'
-    //             },
-    //             {
-    //                 Name: 'custom:level',  /* required */
-    //                 Value: User.level
-    //             }
-    //         ]
-    //     };
-    // }
-    // COGNITO_CLIENT.adminCreateUser(params, function (err, data) {
-    //     if (err) {
-    //         cb(err, "");
-    //     } // an error occurred
-    //     else {
-    //         cb("", data);
-    //     }             // successful response
-    // });
-
     var params = {
         ClientId: cognito.ClientId, /* required */
         Username: User.user_name, /* required */
-        Password: User.password,
+        Password: User.password_code,
         UserAttributes: [
             {
                 Name: 'phone_number', /* required */
@@ -2756,191 +2674,316 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body.phone_number = req.body.phone_number.replace(/[-() ]/g, '');
     req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
     req.body.country_code = req.body.country_code.split(" ")[0] ;
+    var length = 25,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#^&%$@",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    if(req.body.password){
+        req.body['password'] = md5(req.body.password);
+    }
+    req.body.password_code = retVal;
     var user_cognito_id = '';
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
-    adminCreateUser(req.body, function (err, data) {
-        if (err) {
-            console.log("COGNITO CREATE USER ERROR =========\n", err);
-
-            res.send({
-                message: "failure",
-                error: err.message
-            });
-        }
-        else {
-            console.log('data------------\n',data);
-            
-            req.body["user_cognito_id"] = data.UserSub;
-            user_cognito_id = data.UserSub;
-            //Now check type of User and give permission accordingly
-            // res.send(data);
-            // user_type
-            // userName
-            var tempData = {};
-            tempData["user_name"] = data.UserSub;
-            tempData["userName"] = data.UserSub;
-
-            tempData["user_type"] = req.body.user_type;
-            tempData["phone_number"] = req.body.phone_number;
-            if(!req.body.level){
-                tempData["level"] = 100;
-            }else{
-                 tempData["level"] =  parseInt(req.body.level);
-            }
-            
-            //tempData["is_sensor_company"] = true;
-
-            if (req.body.user_type == "Admin") {
-
-                // Admin User
-                var mergedObject = { ...req.body, ...tempData };
-                delete mergedObject.userName;
-                delete mergedObject.name;
-                delete mergedObject.password;
-                console.log('mergedObject------------\n',mergedObject);
-                createUserDbEntry(mergedObject, function (dberr, dbdata) {
-                    if (err) {
-                        console.log("DB ERRRRRR =============================== \n", err);
-
+    /*======================= Checkign user account exists or not =====================================*/
+    getUserAlreadyExists(req.body["email"])
+    .then(data =>{
+        console.log('data',data);
+        if(data && data[0]){
+            /*================== updating user for manual login =======================*/
+            if(req.body.password){
+                if(!data[0].password){
+                    upDateuserPassword(req.body, data[0].user_cognito_id)
+                    .then(success =>{
                         res.send({
-                            message: "faiure",
-                            error: dberr.code
+                            message: "success",
+                            message_details : "Successfully mereged account ! Your manul signUp has been completed successfully, You can update your profile from profile page",
+                            user_cognito_id: user_cognito_id
+                        })
+                    }).catch(err=>{
+                        console.log('err===========\n',err);
+                        res.send({
+                            message: "failure",
+                            error: 'Somethig went wrong when mereging account'
                         });
-                    }
-                    else {
-                        // Add user to corresponding group...
-                        // event.user_type
-                        // event.user_name
-                        console.log(tempData);
+                    })
+                }else{
+                    res.send({
+                        message: "failure",
+                        error: 'User already exists with this email'
+                    });
+                }
+            }
+            /* =================== Updating user for Facebook or google login ======================*/
+            else{
+                upDateUserFBGlid(req.body, data[0].user_cognito_id)  
+                .then(success =>{
+                    res.send({
+                        message: "success",
+                        message_details : "Your account mereged successfully! You can update your profile from profile page.",
+                        user_cognito_id: user_cognito_id
+                    })
+                }).catch(err=>{
+                    console.log('err===========\n',err);
+                    res.send({
+                        message: "failure",
+                        error: 'Somethig went wrong when mereging account'
+                    });
+                })
+            }
+        }else{
+            /*========================== Creating user entrey if not exists in database ================================*/
+            adminCreateUser(req.body, function (err, data) {
+                if (err) {
+                    console.log("COGNITO CREATE USER ERROR =========\n", err);
 
-                        addUserToGroup(tempData, function (groupAddErr, groupData) {
-                            if (groupAddErr) {
+                    res.send({
+                        message: "failure",
+                        error: err.message
+                    });
+                }
+                else {
+                    console.log('data------------\n',data);
+                    
+                    req.body["user_cognito_id"] = data.UserSub;
+                    user_cognito_id = data.UserSub;
+                    //Now check type of User and give permission accordingly
+                    // res.send(data);
+                    // user_type
+                    // userName
+                    var tempData = {};
+                    tempData["user_name"] = data.UserSub;
+                    tempData["userName"] = data.UserSub;
+
+                    tempData["user_type"] = req.body.user_type;
+                    tempData["phone_number"] = req.body.phone_number;
+                    if(!req.body.level){
+                        tempData["level"] = 100;
+                    }else{
+                         tempData["level"] =  parseInt(req.body.level);
+                    }
+                    
+                    //tempData["is_sensor_company"] = true;
+
+                    if (req.body.user_type == "Admin") {
+
+                        // Admin User
+                        var mergedObject = { ...req.body, ...tempData };
+                        delete mergedObject.userName;
+                        delete mergedObject.name;
+                        console.log('mergedObject------------\n',mergedObject);
+                        createUserDbEntry(mergedObject, function (dberr, dbdata) {
+                            if (err) {
+                                console.log("DB ERRRRRR =============================== \n", err);
 
                                 res.send({
                                     message: "faiure",
-                                    error: groupAddErr.message
-                                })
-                            }
-                            else {
-                                // On success
-                                res.send({
-                                    message: 'success',
-                                    user_cognito_id: user_cognito_id
+                                    error: dberr.code
                                 });
                             }
-                        });
-                    }
-                })
-            }
-            else {
-
-                // Merging objects
-                var mergedObject = { ...req.body, ...tempData };
-                console.log('mergedObject------------\n',mergedObject);
-                delete mergedObject.userName;
-                delete mergedObject.name;
-                delete mergedObject.password;
-                createUserDbEntry(mergedObject, function (dberr, dbdata) {
-                    if (err) {
-                        console.log("DB ERRRRRR =============================== \n", err);
-
-                        res.send({
-                            message: "failure",
-                            error: dberr.code
-                        });
-                    }
-                    else {
-                        if(mergedObject.level == 400){
-                            InsertUserIntoSensor(mergedObject.user_cognito_id,mergedObject.sensor).
-                                then(sensor_data => {
-                                   
-                                    console.log('sensor_data',sensor_data)
-                                })
-                                .catch(err => {
-                                   console.log('err',err)
-                                })
-                        }
-                        // Add user to corresponding group...
-                        // event.user_type
-                        // event.user_name
-                        // console.log(tempData);
-
-                        addUserToGroup(tempData, function (groupAddErr, groupData) {
-                            if (groupAddErr) {
-
-                                res.send({
-                                    message: "failure",
-                                    error: groupAddErr.message
-                                })
-                            }
                             else {
+                                // Add user to corresponding group...
+                                // event.user_type
+                                // event.user_name
+                                console.log(tempData);
 
-                                let age = getAge(mergedObject.dob);
-                                console.log("actual age is ", age);
-                                // Adding user's age in details
-                                mergedObject["age"] = age;
+                                addUserToGroup(tempData, function (groupAddErr, groupData) {
+                                    if (groupAddErr) {
 
-                                if( age < 18) {
-                                    // Disable user account
-                                }
-
-                                // Sending request to service to generate IRB form
-                                request.post({
-                                    url: config.ComputeInstanceEndpoint + "IRBFormGenerate",
-                                    json: mergedObject
-                                }, function (err, httpResponse, body) {
-                                    if (err) {
-                                        console.log('irb error is : ', err);
                                         res.send({
-                                            message: "failure",
-                                            error: err
+                                            message: "faiure",
+                                            error: groupAddErr.message
                                         })
                                     }
                                     else {
-                                        console.log("response body from irb", httpResponse.body);
-                                        // if( age > 18 ) {
-                                        //     res.send({
-                                        //         message: "success",
-                                        //         message_details : "Successfully created account ! Check your mail for temporary login credentials",
-                                        //         user_cognito_id: user_cognito_id
-                                        //     })
-                                        // } else {
+                                        // On success
+                                        res.send({
+                                            message: 'success',
+                                            user_cognito_id: user_cognito_id
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                    }
+                    else {
 
-                                        //     disableUser(req.body.user_name, function (err, data) {
-                                        //         if (err) {
-                                        //             console.log("Failed to disable user",req.body.user_name )
-                                        //             res.send({
-                                        //                 message: "failure",
-                                        //                 error: err
-                                        //             })
-                                        //         }
-                                        //         else {
-                                        //             res.send({
-                                        //                 message : "success",
-                                        //                 message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
-                                        //                 user_cognito_id: user_cognito_id
-                                        //             })
-                                        //         }
-                                        //     })
+                        // Merging objects
+                        var mergedObject = { ...req.body, ...tempData };
+                        console.log('mergedObject------------\n',mergedObject);
+                        delete mergedObject.userName;
+                        delete mergedObject.name;
+                        createUserDbEntry(mergedObject, function (dberr, dbdata) {
+                            if (err) {
+                                console.log("DB ERRRRRR =============================== \n", err);
 
-                                        // }
+                                res.send({
+                                    message: "failure",
+                                    error: dberr.code
+                                });
+                            }
+                            else {
+                                if(mergedObject.level == 400){
+                                    InsertUserIntoSensor(mergedObject.user_cognito_id,mergedObject.sensor).
+                                        then(sensor_data => {
+                                           
+                                            console.log('sensor_data',sensor_data)
+                                        })
+                                        .catch(err => {
+                                           console.log('err',err)
+                                        })
+                                }
+                                // Add user to corresponding group...
+                                // event.user_type
+                                // event.user_name
+                                // console.log(tempData);
+
+                                addUserToGroup(tempData, function (groupAddErr, groupData) {
+                                    if (groupAddErr) {
 
                                         res.send({
-                                            message: "success",
-                                            message_details : "Successfully created account ! Check your mail to verify your account.",
-                                            user_cognito_id: user_cognito_id
+                                            message: "failure",
+                                            error: groupAddErr.message
                                         })
-
                                     }
-                                })
+                                    else {
+
+                                        let age = getAge(mergedObject.dob);
+                                        console.log("actual age is ", age);
+                                        // Adding user's age in details
+                                        mergedObject["age"] = age;
+
+                                        if( age < 18) {
+                                            // Disable user account
+                                        }
+
+                                        // Sending request to service to generate IRB form
+                                        request.post({
+                                            url: config.ComputeInstanceEndpoint + "IRBFormGenerate",
+                                            json: mergedObject
+                                        }, function (err, httpResponse, body) {
+                                            if (err) {
+                                                console.log('irb error is : ', err);
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err
+                                                })
+                                            }
+                                            else {
+                                                console.log("response body from irb", httpResponse.body);
+                                                // if( age > 18 ) {
+                                                //     res.send({
+                                                //         message: "success",
+                                                //         message_details : "Successfully created account ! Check your mail for temporary login credentials",
+                                                //         user_cognito_id: user_cognito_id
+                                                //     })
+                                                // } else {
+
+                                                //     disableUser(req.body.user_name, function (err, data) {
+                                                //         if (err) {
+                                                //             console.log("Failed to disable user",req.body.user_name )
+                                                //             res.send({
+                                                //                 message: "failure",
+                                                //                 error: err
+                                                //             })
+                                                //         }
+                                                //         else {
+                                                //             res.send({
+                                                //                 message : "success",
+                                                //                 message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
+                                                //                 user_cognito_id: user_cognito_id
+                                                //             })
+                                                //         }
+                                                //     })
+
+                                                // }
+
+                                                res.send({
+                                                    message: "success",
+                                                    message_details : "Successfully created account ! Check your mail to verify your account.",
+                                                    user_cognito_id: user_cognito_id
+                                                })
+
+                                            }
+                                        })
+                                    }
+                                });
                             }
-                        });
+                        })
                     }
-                })
-            }
+                }
+            })
         }
     })
+    .catch(err=>{
+        console.log('err===========\n',err)
+    })
 });
+
+function upDateUserFBGlid(body,user_cognito_id) {
+    // body...
+    console.log('body',body)
+    return new Promise((resolve, reject) => {
+        if(body.userIDfacebook){
+            var update_details = {
+                TableName : 'users',
+                Key : {
+                    "user_cognito_id": user_cognito_id
+                },
+                UpdateExpression : "set userIDfacebook = :userIDfacebook",
+                ExpressionAttributeValues : {
+                    ":userIDfacebook" : body.userIDfacebook,
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+        }else{
+            var update_details = {
+                TableName : 'users',
+                Key : {
+                    "user_cognito_id": user_cognito_id
+                },
+                UpdateExpression : "set userIDgoogle = :userIDgoogle",
+                ExpressionAttributeValues : {
+                    ":userIDgoogle" : body.userIDgoogle,
+                },
+                ReturnValues: "UPDATED_NEW"
+            }; 
+        }
+
+        docClient.update(update_details, function(err, data){
+            if(err) {
+               reject(err);
+            } else {
+                resolve(data);
+            }
+        })
+    })
+}
+function upDateuserPassword(body,user_cognito_id) {
+    // body...
+    return new Promise((resolve, reject) => {
+         let update_details = {
+            TableName : 'users',
+            Key : {
+                "user_cognito_id": user_cognito_id
+            },
+            UpdateExpression : "set password = :password",
+            ExpressionAttributeValues : {
+                ":password" : body.password,
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        docClient.update(update_details, function(err, data){
+            if(err) {
+               reject(err);
+            } else {
+                resolve(data);
+            }
+        })
+    })
+}
 
 function getUserAlreadyExists(email) {
     console.log('mail',email)
@@ -3988,17 +4031,30 @@ app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
     
 })
 
-function getUserDbDataByUserId(userID, cb) {
-    var params = {
-        TableName: 'users',
-        FilterExpression: "#userID = :userID",
-        ExpressionAttributeNames: {
-            "#userID": "userID",
-        },
-        ExpressionAttributeValues: {
-            ":userID": userID,
-        }
-    };
+function getUserDbDataByUserId(userID,type, cb) {
+    if(type == "facebook"){
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#userIDfacebook = :userIDfacebook",
+            ExpressionAttributeNames: {
+                "#userIDfacebook": "userIDfacebook",
+            },
+            ExpressionAttributeValues: {
+                ":userIDfacebook": userID,
+            }
+        };
+    }else{
+        var params = {
+            TableName: 'users',
+            FilterExpression: "#userIDgoogle = :userIDgoogle",
+            ExpressionAttributeNames: {
+                "#userIDgoogle": "userIDgoogle",
+            },
+            ExpressionAttributeValues: {
+                ":userIDgoogle": userID,
+            }
+        };
+    }
     let item = [];
     docClient.scan(params).eachPage((err, data, done) => {
         if (err) {
@@ -4018,12 +4074,13 @@ function getUserDbDataByUserId(userID, cb) {
 app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
     console.log("LoginWithoutEmail In API Called!",req.body);
     let userID = req.body.userID;
+    let type = req.body.type;
     let userData = '';
-    getUserDbDataByUserId(userID, function (err, data) {
+    getUserDbDataByUserId(userID,type, function (err, data) {
         if(err){
             console.log('err',err) 
         }else{
-            // console.log('data',data);
+            console.log('data',data);
             if(data[0]){
                 userData = data[0];
                 getUser(data[0].email, function (err, data) {
@@ -4064,7 +4121,7 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
                                         }
                                     });
                                     // Here call the login function then
-                                    login(userData.email, userID, userType, function (err, result) {
+                                    login(userData.email, userData.password_code, userType, function (err, result) {
 
                                         if (err) {
                                             console.log('err2',err)
@@ -4132,6 +4189,132 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
         }
     })
 })
+/*--------------Hidden login start here .....................*/
+app.post(`${apiPrefix}logInHidden`, (req, res) => {
+    console.log('re',req.body)
+    // Getting user data of that user
+    let user_name = req.body.user_name;
+    req.body['user_name'] = user_name.toLowerCase();
+    let userData = '';
+    let data = '';
+    getUser(req.body.user_name, function (err, data) {
+        if (err) {
+            console.log('err0',err);
+
+            res.send({
+                message: "failure",
+                error: 'Incorrect login credentials'
+            });
+        } else {
+            data = data;
+            console.log("USER DATA is =====================> \n",data);
+            getUserAlreadyExists(req.body['user_name'])
+            .then(userresponse =>{
+                console.log('userresponse',userresponse);
+                if(userresponse[0]){
+                    userData = userresponse[0];
+                     // Now getting the list of Groups of user
+                     /*============== Match user password ===============*/
+                    if(userData.password == md5(req.body.password)){
+                        getListGroupForUser(data.Username, function (error, groupData) {
+                            if (error) {
+                                console.log('error1',error)
+                                res.send({
+                                    message: "failure",
+                                    error: 'Incorrect login credentials'
+                                });
+                            } else {
+                                // Now checking is user is ADMIN or not
+
+                                if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                    // Sends the user to first login page
+                                    // respond with status of FORCE_CHANGE_PASSWORD
+                                    res.send({
+                                        message: "success",
+                                        status: "FORCE_CHANGE_PASSWORD"
+                                    })
+                                } else {
+
+                                    // Now checking is user is ADMIN or not
+                                    var userType = "StandardUser";
+                                    groupData.forEach(element => {
+                                        if (element.GroupName == "Admin") {
+                                            userType = "Admin";
+                                        }
+                                    });
+                                    // Here call the login function then
+                                    login(req.body.user_name, userData.password_code, userType, function (err, result) {
+
+                                        if (err) {
+                                            console.log('err2',err)
+                                            res.cookie("token", "");
+                                            res.send({
+                                                message: "failure",
+                                                error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
+                                            })
+                                        }
+                                        else {
+
+
+                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                            getUserDbData(data.Username, function(err, user_details){
+                                                if(err){
+                                                     console.log('err3',err)
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                }
+                                                else{
+                                                    if (user_details.Item["level"] === 400) {
+                                                        getUserSensor(data.Username)
+                                                            .then(sensor_data => {
+                                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                res.send({
+                                                                    message : "success",
+                                                                    user_details : user_details.Item,
+                                                                    user_type: userType
+                                                                })
+                                                                
+                                                            })
+                                                            .catch(err => {
+                                                                 console.log('err4',err)
+                                                                res.send({
+                                                                    message : "failure",
+                                                                    error : err
+                                                                })
+                                                            })
+                                                    } else {
+                                                        res.send({
+                                                            message : "success",
+                                                            user_details : user_details.Item,
+                                                            user_type: userType
+                                                        })
+                                                    }  
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }else{
+                        res.send({
+                            message: "failure",
+                            error: 'Incorrect login password'
+                        });
+                    }
+                }else{
+
+                }
+            }).catch(err=>{
+
+            })
+        }
+    })
+})
+
 app.post(`${apiPrefix}logIn`, (req, res) => {
     
     // Getting user data of that user
