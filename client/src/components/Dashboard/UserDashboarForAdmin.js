@@ -263,7 +263,8 @@ class UserDashboarForAdmin extends React.Component {
             </div>
         </div>
         }
-          { this.state.cumulativeAccelerationTimeAllRecords.length > 0 &&
+          { this.state.cumulativeAccelerationTimeAllRecords.length > 0 && this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data ?
+            null :
             <div className="row" style={{border: '1px solid #000', marginBottom: '20px'}}>
               <div className="col-md-12" style={{textAlign: 'center', display: 'block', marginTop: '50px', marginBottom: '100px'}}>
                     <span>No impacts have been recorded yet.</span>
@@ -273,7 +274,7 @@ class UserDashboarForAdmin extends React.Component {
         {/*------------- Collapse chart start here -----------*/}
         <div className="charts-container">
           <Accordion className="player-collapes-div">
-            {this.state.cumulativeAccelerationTimeAllRecords.length === 0 && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
+            {this.state.cumulativeAccelerationTimeAllRecords.length > 0 && this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data ? this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
               <Card >
                 <Card.Header>
                   <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
@@ -299,7 +300,7 @@ class UserDashboarForAdmin extends React.Component {
                   </Card.Body>
                 </Accordion.Collapse>
               </Card>
-            ))
+            )) : null
             }
           </Accordion>
         </div>

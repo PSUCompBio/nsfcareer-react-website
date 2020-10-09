@@ -197,6 +197,7 @@ class Details extends React.Component {
         setTimeout(function(){
           the.setState({impact_video_url: res.data.impact_video_url});
         },2000)
+        setTimeout(()=>{the.vidocontrol()},1000);
       }else{
         the.setState({status: res.data.data.message});
       }
@@ -218,6 +219,13 @@ class Details extends React.Component {
     const lockButton = document.querySelector('.lock_video');
     
     let the = this;
+    video.onplay = ('play', function(e){
+      console.log('play');
+      if(the.state.video_lock_time){
+        video.pause();
+        video.currentTime = the.state.video_lock_time;
+      }
+    })
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
@@ -227,7 +235,7 @@ class Details extends React.Component {
       },
       scrub: (e) =>{
         const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
-        if(scrubTime){
+        if(scrubTime && !the.state.video_lock_time){
           video.currentTime = scrubTime;
         }
       },
@@ -262,8 +270,16 @@ class Details extends React.Component {
     
     const progressBar = document.querySelector('.progress__filled_2');
     const lockButton = document.querySelector('.lock_video_2');
-    
+      
     let the = this;
+    video.onplay = ('play', function(e){
+      console.log('play');
+      if(the.state.video_lock_time_2){
+        video.pause();
+        video.currentTime = the.state.video_lock_time_2;
+      }
+    })
+
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
@@ -273,7 +289,7 @@ class Details extends React.Component {
       },
       scrub: (e) =>{
         const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
-        if(scrubTime){
+        if(scrubTime && !the.state.video_lock_time_2){
           video.currentTime = scrubTime;
         }
       },
@@ -527,7 +543,7 @@ class Details extends React.Component {
                           <div>
                             {this.state.isTimeUpdating_2 ?<div> <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> </div>: ''}
                             <img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2}/>
-                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" />
+                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                         </div>
@@ -578,20 +594,20 @@ class Details extends React.Component {
                           </div>
                           <div>
                             <img src={this.state.video_lock_time? lock : unlock} className="unlock-img lock_video" onClick={this.handlelock_video}/>
-                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" />
+                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           <div>
                             <img src={unlock} className="unlock-img"/>
-                            <input type="range" min="1" max="100" className="MyrangeSlider2" id="MyrangeSlider2" />
+                            <input type="range" min="1" value max="100" className="MyrangeSlider2" id="MyrangeSlider2" />
                             <p style={{'font-weight':'600'}}>Adjust the frame rate</p>
                           </div>
                         </div>
                         <div className="" style={{'padding': '0px 14px'}}>
                           <div>
                             <img src={unlock} className="unlock-img2"/>
-                            <input type="range"  min="1" max="100" value="50" className="MyrangeSlider3" id="MyrangeSlider3" />
-                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                            <input type="range"  min="1" max="100" value="0" className="MyrangeSlider3" id="MyrangeSlider3" />
+                            <p style={{'font-weight':'600'}}>Drag slider to advance both movies. The start time for each video can be adjust and locked above.</p>
                           </div>
                         </div>
                       </div>

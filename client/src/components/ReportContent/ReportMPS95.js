@@ -446,10 +446,16 @@ class ReportMPS95 extends React.Component {
 
 
     render() {
-        var csdm;
-        if(this.props.jsonData){
-            if(this.props.jsonData['csdm-15']){
-                csdm = this.props.jsonData['csdm-15'];
+        var mps;
+        if(this.state.jsonData){
+            if(this.state.jsonData['MPS-95']){
+                var num = this.state.jsonData['MPS-95'].value;
+                mps = num.toFixed(2) ;
+                // if(num < 1){
+                //     mps = this.state.jsonData['MPS-95'].value;
+                // }else{
+                //     mps = num.toFixed(2) ;
+                // }
             }
         }
         return (
@@ -507,7 +513,7 @@ class ReportMPS95 extends React.Component {
                                         <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                         <View style={styles.rowHead2}>
                                              <View style={styles.tableRowCenter}>
-                                                <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded MPS</Text>
+                                                <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS</Text>
                                                 <Text style={styles.tableColLeft4}>95</Text>
                                             </View>
                                             <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>

@@ -3013,6 +3013,8 @@ function getUserAlreadyExists(email) {
     });
 }
 
+
+
 function upDateuser(body,user_cognito_id) {
     // body...
     return new Promise((resolve, reject) => {
@@ -3073,6 +3075,26 @@ function updateCognitoUser(body, user_cognito_id) {
           });
     })
 }
+/*=========== Set user default login password =============*/
+app.post(`${apiPrefix}setUserPassword`, (req, res) => {
+    console.log(req.body)
+    req.body['password'] = md5(req.body.password);
+    upDateuserPassword(req.body,req.body.user_cognito_id)
+    .then(data=>{
+        res.send({
+            message: "Success",
+            data: data
+        });
+    }).catch(err=>{
+        res.send({
+            message: "faiure",
+            error: err
+        });
+    })
+})
+
+/*=========== Set user default login password end =============*/
+
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
@@ -4213,9 +4235,110 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
                 console.log('userresponse',userresponse);
                 if(userresponse[0]){
                     userData = userresponse[0];
-                     // Now getting the list of Groups of user
-                     /*============== Match user password ===============*/
-                    if(userData.password == md5(req.body.password)){
+                    /* ======================
+    
+                        For new users
+                        
+                    ==========================*/
+                    if(userData.password){
+                         // Now getting the list of Groups of user
+                         /*============== Match user password ===============*/
+                        if(userData.password == md5(req.body.password)){
+                            getListGroupForUser(data.Username, function (error, groupData) {
+                                if (error) {
+                                    console.log('error1',error)
+                                    res.send({
+                                        message: "failure",
+                                        error: 'Incorrect login credentials'
+                                    });
+                                } else {
+                                    // Now checking is user is ADMIN or not
+
+                                    if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                        // Sends the user to first login page
+                                        // respond with status of FORCE_CHANGE_PASSWORD
+                                        res.send({
+                                            message: "success",
+                                            status: "FORCE_CHANGE_PASSWORD"
+                                        })
+                                    } else {
+
+                                        // Now checking is user is ADMIN or not
+                                        var userType = "StandardUser";
+                                        groupData.forEach(element => {
+                                            if (element.GroupName == "Admin") {
+                                                userType = "Admin";
+                                            }
+                                        });
+                                        // Here call the login function then
+                                        login(req.body.user_name, userData.password_code, userType, function (err, result) {
+
+                                            if (err) {
+                                                console.log('err2',err)
+                                                res.cookie("token", "");
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
+                                                })
+                                            }
+                                            else {
+
+
+                                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                                getUserDbData(data.Username, function(err, user_details){
+                                                    if(err){
+                                                         console.log('err3',err)
+                                                        res.send({
+                                                            message : "failure",
+                                                            error : err
+                                                        })
+                                                    }
+                                                    else{
+                                                        if (user_details.Item["level"] === 400) {
+                                                            getUserSensor(data.Username)
+                                                                .then(sensor_data => {
+                                                                    user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                    res.send({
+                                                                        message : "success",
+                                                                        user_details : user_details.Item,
+                                                                        user_type: userType
+                                                                    })
+                                                                    
+                                                                })
+                                                                .catch(err => {
+                                                                     console.log('err4',err)
+                                                                    res.send({
+                                                                        message : "failure",
+                                                                        error : err
+                                                                    })
+                                                                })
+                                                        } else {
+                                                            res.send({
+                                                                message : "success",
+                                                                user_details : user_details.Item,
+                                                                user_type: userType
+                                                            })
+                                                        }  
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
+                                }
+                            })
+                        }else{
+                            res.send({
+                                message: "failure",
+                                error: 'Incorrect login password'
+                            });
+                        }
+                    }else{
+                        /* ======================
+    
+                            For old users
+                        
+                        ==========================*/
                         getListGroupForUser(data.Username, function (error, groupData) {
                             if (error) {
                                 console.log('error1',error)
@@ -4243,7 +4366,7 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
                                         }
                                     });
                                     // Here call the login function then
-                                    login(req.body.user_name, userData.password_code, userType, function (err, result) {
+                                    login(req.body.user_name, req.body.password, userType, function (err, result) {
 
                                         if (err) {
                                             console.log('err2',err)
@@ -4299,11 +4422,6 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
                                 }
                             }
                         })
-                    }else{
-                        res.send({
-                            message: "failure",
-                            error: 'Incorrect login password'
-                        });
                     }
                 }else{
 
@@ -4316,10 +4434,12 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
 })
 
 app.post(`${apiPrefix}logIn`, (req, res) => {
-    
+    console.log('re',req.body)
     // Getting user data of that user
     let user_name = req.body.user_name;
     req.body['user_name'] = user_name.toLowerCase();
+    let userData = '';
+    let data = '';
     getUser(req.body.user_name, function (err, data) {
         if (err) {
             console.log('err0',err);
@@ -4329,92 +4449,206 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                 error: 'Incorrect login credentials'
             });
         } else {
-
+            data = data;
             console.log("USER DATA is =====================> \n",data);
+            getUserAlreadyExists(req.body['user_name'])
+            .then(userresponse =>{
+                console.log('userresponse',userresponse);
+                if(userresponse[0]){
+                    userData = userresponse[0];
+                    /* ======================
+    
+                        For new users
+                        
+                    ==========================*/
+                    if(userData.password){
+                         // Now getting the list of Groups of user
+                         /*============== Match user password ===============*/
+                        if(userData.password == md5(req.body.password)){
+                            getListGroupForUser(data.Username, function (error, groupData) {
+                                if (error) {
+                                    console.log('error1',error)
+                                    res.send({
+                                        message: "failure",
+                                        error: 'Incorrect login credentials'
+                                    });
+                                } else {
+                                    // Now checking is user is ADMIN or not
 
-            // Now getting the list of Groups of user
-            getListGroupForUser(data.Username, function (error, groupData) {
-                if (error) {
-                    console.log('error1',error)
-                    res.send({
-                        message: "failure",
-                        error: 'Incorrect login credentials'
-                    });
-                } else {
-                    // Now checking is user is ADMIN or not
-
-                    if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
-                        // Sends the user to first login page
-                        // respond with status of FORCE_CHANGE_PASSWORD
-                        res.send({
-                            message: "success",
-                            status: "FORCE_CHANGE_PASSWORD"
-                        })
-                    } else {
-
-                        // Now checking is user is ADMIN or not
-                        var userType = "StandardUser";
-                        groupData.forEach(element => {
-                            if (element.GroupName == "Admin") {
-                                userType = "Admin";
-                            }
-                        });
-                        // Here call the login function then
-                        login(req.body.user_name, req.body.password, userType, function (err, result) {
-
-                            if (err) {
-                                console.log('err2',err)
-                                res.cookie("token", "");
-                                res.send({
-                                    message: "failure",
-                                    error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
-                                })
-                            }
-                            else {
-
-
-                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
-
-                                getUserDbData(data.Username, function(err, user_details){
-                                    if(err){
-                                         console.log('err3',err)
+                                    if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                        // Sends the user to first login page
+                                        // respond with status of FORCE_CHANGE_PASSWORD
                                         res.send({
-                                            message : "failure",
-                                            error : err
+                                            message: "success",
+                                            status: "FORCE_CHANGE_PASSWORD"
+                                        })
+                                    } else {
+
+                                        // Now checking is user is ADMIN or not
+                                        var userType = "StandardUser";
+                                        groupData.forEach(element => {
+                                            if (element.GroupName == "Admin") {
+                                                userType = "Admin";
+                                            }
+                                        });
+                                        // Here call the login function then
+                                        login(req.body.user_name, userData.password_code, userType, function (err, result) {
+
+                                            if (err) {
+                                                console.log('err2',err)
+                                                res.cookie("token", "");
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
+                                                })
+                                            }
+                                            else {
+
+
+                                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                                getUserDbData(data.Username, function(err, user_details){
+                                                    if(err){
+                                                         console.log('err3',err)
+                                                        res.send({
+                                                            message : "failure",
+                                                            error : err
+                                                        })
+                                                    }
+                                                    else{
+                                                        if (user_details.Item["level"] === 400) {
+                                                            getUserSensor(data.Username)
+                                                                .then(sensor_data => {
+                                                                    user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                    res.send({
+                                                                        message : "success",
+                                                                        user_details : user_details.Item,
+                                                                        user_type: userType
+                                                                    })
+                                                                    
+                                                                })
+                                                                .catch(err => {
+                                                                     console.log('err4',err)
+                                                                    res.send({
+                                                                        message : "failure",
+                                                                        error : err
+                                                                    })
+                                                                })
+                                                        } else {
+                                                            res.send({
+                                                                message : "success",
+                                                                user_details : user_details.Item,
+                                                                user_type: userType
+                                                            })
+                                                        }  
+                                                    }
+                                                })
+                                            }
                                         })
                                     }
-                                    else{
-                                        if (user_details.Item["level"] === 400) {
-                                            getUserSensor(data.Username)
-                                                .then(sensor_data => {
-                                                    user_details.Item["sensor"] = sensor_data[0]["sensor"];
-                                                    res.send({
-                                                        message : "success",
-                                                        user_details : user_details.Item,
-                                                        user_type: userType
-                                                    })
-                                                    
-                                                })
-                                                .catch(err => {
-                                                     console.log('err4',err)
+                                }
+                            })
+                        }else{
+                            res.send({
+                                message: "failure",
+                                error: 'Incorrect login password'
+                            });
+                        }
+                    }else{
+                        /* ======================
+    
+                            For old users
+                        
+                        ==========================*/
+                        getListGroupForUser(data.Username, function (error, groupData) {
+                            if (error) {
+                                console.log('error1',error)
+                                res.send({
+                                    message: "failure",
+                                    error: 'Incorrect login credentials'
+                                });
+                            } else {
+                                // Now checking is user is ADMIN or not
+
+                                if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                    // Sends the user to first login page
+                                    // respond with status of FORCE_CHANGE_PASSWORD
+                                    res.send({
+                                        message: "success",
+                                        status: "FORCE_CHANGE_PASSWORD"
+                                    })
+                                } else {
+
+                                    // Now checking is user is ADMIN or not
+                                    var userType = "StandardUser";
+                                    groupData.forEach(element => {
+                                        if (element.GroupName == "Admin") {
+                                            userType = "Admin";
+                                        }
+                                    });
+                                    // Here call the login function then
+                                    login(req.body.user_name, req.body.password, userType, function (err, result) {
+
+                                        if (err) {
+                                            console.log('err2',err)
+                                            res.cookie("token", "");
+                                            res.send({
+                                                message: "failure",
+                                                error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
+                                            })
+                                        }
+                                        else {
+
+
+                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                            getUserDbData(data.Username, function(err, user_details){
+                                                if(err){
+                                                     console.log('err3',err)
                                                     res.send({
                                                         message : "failure",
                                                         error : err
                                                     })
-                                                })
-                                        } else {
-                                            res.send({
-                                                message : "success",
-                                                user_details : user_details.Item,
-                                                user_type: userType
+                                                }
+                                                else{
+                                                    if (user_details.Item["level"] === 400) {
+                                                        getUserSensor(data.Username)
+                                                            .then(sensor_data => {
+                                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                res.send({
+                                                                    message : "success",
+                                                                    user_details : user_details.Item,
+                                                                    user_type: userType
+                                                                })
+                                                                
+                                                            })
+                                                            .catch(err => {
+                                                                 console.log('err4',err)
+                                                                res.send({
+                                                                    message : "failure",
+                                                                    error : err
+                                                                })
+                                                            })
+                                                    } else {
+                                                        res.send({
+                                                            message : "success",
+                                                            user_details : user_details.Item,
+                                                            user_type: userType
+                                                        })
+                                                    }  
+                                                }
                                             })
-                                        }  
-                                    }
-                                })
+                                        }
+                                    })
+                                }
                             }
                         })
                     }
+                }else{
+
                 }
+            }).catch(err=>{
+
             })
         }
     })
