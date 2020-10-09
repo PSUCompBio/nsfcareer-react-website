@@ -875,6 +875,7 @@ class CommanderTeamView extends React.Component {
 
                                                   if (player.simulation_data[0]['time']) {
                                                     let split = player.simulation_data[0]['time'].toString();
+                                                    split = split.replace(".", ":");
                                                     split = split.split(":");
                                                     player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
                                                   }

@@ -273,11 +273,23 @@ class UserDashboarForAdmin extends React.Component {
         {/*------------- Collapse chart start here -----------*/}
         <div className="charts-container">
           <Accordion className="player-collapes-div">
-            {this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
-              <Card >
+            {this.state.cumulativeAccelerationTimeAllRecords.map(function (item, index) {  
+              if (item.sensor_data['impact-time']) {
+                let split = item.sensor_data['impact-time'].split(":");
+                item.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
+              }
+
+              if (item.sensor_data['time']) {
+                let split = item.sensor_data['time'].toString();
+                split = split.replace(".", ":");
+                split = split.split(":");
+                item.sensor_data['time'] = split.slice(0, split.length - 1).join(":");
+              }
+
+              return <Card >
                 <Card.Header>
                   <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
-                    <span className="title-left" >ID: #{item.sensor_data && item.sensor_data.player_id.split('$')[1]}</span>
+                    <span className="title-left" >ID: #{item.sensor_data && item.sensor_data['impact_id'] ? item.sensor_data['impact_id'] : item.sensor_data.player_id.split('$')[0]}</span>
                     <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(item.sensor_data['impact-time']) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(item.sensor_data['time'])  : 'Unkown Date and Time'}`}</span>
                     <span className="title-right" id={item.sensor_data && 'col_icon'+item.sensor_data.player_id.split('$')[1]}>></span>
                   </Accordion>
@@ -299,8 +311,7 @@ class UserDashboarForAdmin extends React.Component {
                   </Card.Body>
                 </Accordion.Collapse>
               </Card>
-            ))
-            }
+           }, this)}
           </Accordion>
         </div>
         {/*------------- Collapse chart end here -----------*/}
