@@ -61,9 +61,33 @@ export const logIn = (request) =>{
   })
 }
 
+export const logInHidden = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/logInHidden`, JSON.parse(request),{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const loginWithoutEmail = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/LoginWithoutEmail`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const setUserPassword = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/setUserPassword`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

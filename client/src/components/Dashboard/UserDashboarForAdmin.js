@@ -263,7 +263,8 @@ class UserDashboarForAdmin extends React.Component {
             </div>
         </div>
         }
-          { this.state.cumulativeAccelerationTimeAllRecords.length === 0 &&
+          { this.state.cumulativeAccelerationTimeAllRecords.length > 0 && this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data ?
+            null :
             <div className="row" style={{border: '1px solid #000', marginBottom: '20px'}}>
               <div className="col-md-12" style={{textAlign: 'center', display: 'block', marginTop: '50px', marginBottom: '100px'}}>
                     <span>No impacts have been recorded yet.</span>

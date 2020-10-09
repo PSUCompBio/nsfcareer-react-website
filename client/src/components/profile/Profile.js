@@ -21,7 +21,8 @@ import {
     VerifyNumber,
     getAllSensorBrands,
     getAvatarInspection,
-    updateUserMouthguardDetails
+    updateUserMouthguardDetails,
+    setUserPassword
 } from '../../apis';
 import Select from 'react-select';
 
@@ -99,6 +100,8 @@ class Profile extends React.Component {
             isDisplay2: { display: 'none' },
             isDeskTop: false,
             isCamera: false,
+            password: '',
+            confirm_password: ''
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -660,7 +663,68 @@ class Profile extends React.Component {
             console.log(err);
         });
     }
+    handleSetPassword=(e)=>{
+        console.log('e',e.target.value);
+        this.setState({[e.target.name] : e.target.value});
+        if(e.target.name == 'password'){
+            if(e.target.value.length < 8){
+                this.setState({lenerr: true,setpassword2: false})
+            }else{
+                this.setState({lenerr: false, setpassword1: true,setpassword2: false})
+            }
+        }else{
+            if(e.target.value != this.state.password){
+                this.setState({errmatch: true})
+            }else{
+                this.setState({errmatch: false,setpassword2: true});
+            }
+        }
+    }
+    setPassword =(e)=>{
+        e.preventDefault();
+        if(this.state.setpassword1 && this.state.setpassword2){
+            console.log(this.state.confirm_password);
+            if(this.state.profile_to_view){
+                var user_id = this.state.profile_to_view ;
+            }
+            else{
+                var user_id = this.state.user.user_cognito_id ;
+            }
+            this.setState({isLoading3: true})
+            setUserPassword({password: this.state.confirm_password, user_cognito_id: user_id})
+            .then(res=>{
+                console.log(res)
+                if(res.data.message == "Success"){
+                    this.setState({
+                       isLoading3: false,
+                       message3: true,
+                       isLoginError3:false
+                    });
+                    var the = this;
+                    setTimeout(()=>{
+                        the.setState({
+                            passwordupdated: true
+                        })
+                    },2000)
+                }else{
+                     this.setState({
+                       isLoading3: false,
+                       message3: false,
+                       isLoginError3:true
+                    })
+                }
+            }).catch(err=>{
+                console.log(err)
+                this.setState({
+                   isLoading3: false,
+                   message3: false,
+                   isLoginError3:true
+                })
+            })
+        }else{
 
+        }
+    }
     showModal = () => {
 
         if (this.state.isDisplay.display === 'none') {
@@ -1058,6 +1122,76 @@ class Profile extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+                                {/*============set password content ===================*/}
+                                {!this.state.user.password && this.state.user.password_code && !this.state.passwordupdated ? 
+                                    <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
+                                        <div ref="lightDark" style={{ border: "2px solid rgb(15, 129, 220)", borderRadius: "1.8rem" }} className="row profile-container">
+                                            <div className="col-md-10 ml-4 mt-2 pt-2">
+                                                <p className="player-dashboard-sub-head">
+                                                    Set your normal login password.
+                                                </p>
+                                                <Form className="mt-2" onSubmit = {this.setPassword} >
+                                                    
+                                                        <FormGroup row>
+                                                            <Label for="exampleEmail" sm={2}>Password</Label>
+                                                            <Col sm={6}>
+                                                                <div class="input-group">
+                                                                    <Input className="profile-input" type="password" name="password"  id="password" onChange={this.handleSetPassword} placeholder="************" required/>
+                                                                    {this.state.lenerr ? (
+                                                                        <p style={{'color':'red'}}>Password lenght must be minimum 8 characters.</p>
+                                                                    ) : null}
+                                                                </div>
+                                                            </Col>
+                                                        </FormGroup>
+                                                        
+                                                        <FormGroup row>
+                                                            <Label for="exampleEmail" sm={2}>Confirm Password</Label>
+                                                            <Col sm={6}>
+                                                                <div class="input-group">
+                                                                    <Input className="profile-input" type="password" name="confirm_password"   id="confirm_password" onChange={this.handleSetPassword} placeholder="************" required/>
+                                                                </div>
+                                                                {this.state.errmatch ? (
+                                                                    <p style={{'color':'red'}}>Password did not match.</p>
+                                                                ) : null}
+                                                            </Col>
+                                                        </FormGroup>
+                                                        <div className="text-center" style={{'margin-bottom': '14px'}}>
+                                                            <Button color="primary"> Save </Button>
+                                                        </div>
+                                                        {this.state.isLoading3 ? (
+                                                            <div className="d-flex justify-content-center center-spinner">
+                                                                <div
+                                                                    className="spinner-border text-primary"
+                                                                    role="status"
+                                                                    >
+                                                                    <span  className="sr-only">Loading...</span>
+                                                                </div>
+                                                            </div>
+                                                        ) : null}
+                                                        {this.state.message3 ? (
+                                                            <div
+                                                                className="alert alert-success"
+                                                                style={{'margin-top': '8px'}}
+                                                                role="alert">
+                                                                <strong > Password has been set successfully.</strong>
+                                                            </div>
+                                                        ) : null}
+                                                        {this.state.isLoginError3 ? (
+                                                            <div
+                                                                className="alert alert-info api-response-alert"
+                                                                role="alert"
+                                                                >
+                                                                <strong >Failed to update! </strong>
+                                                                </div>
+                                                        ) : null}
+                                                </Form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    : null
+                                }
+
+                            {/*============ Mouthguard of Sensor Information ===================*/}
                                 <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
                                     <div ref="lightDark" style={{ border: "2px solid rgb(15, 129, 220)", borderRadius: "1.8rem" }} className="row profile-container">
                                         <div className="col-md-10 ml-4 mt-2 pt-2">
@@ -1124,6 +1258,7 @@ class Profile extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+                                
                                 <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
                                     <div
                                         style={{

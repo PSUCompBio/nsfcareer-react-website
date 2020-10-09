@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
 class Report extends React.Component {
     constructor(props) {
         super(props);
-        console.log('Rports props are ', this.props);
+        console.log('Rports props are csdm-15', this.props);
         console.log('metric ', this.props.Metric);
 
         if(this.props.jsonData){
@@ -447,9 +447,14 @@ class Report extends React.Component {
 
     render() {
         var csdm;
-        if(this.props.jsonData){
-            if(this.props.jsonData['csdm-15']){
-                csdm = this.props.jsonData['csdm-15'];
+        if(this.state.jsonData){
+            if(this.state.jsonData['CSDM-15']){
+                var num = this.state.jsonData['CSDM-15'].value;
+                if(num < 1){
+                    csdm = this.state.jsonData['CSDM-15'].value;
+                }else{
+                    csdm = num.toFixed(2) ;
+                }
             }
         }
         return (

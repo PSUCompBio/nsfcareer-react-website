@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import Footer from '../Footer';
 import { formDataToJson } from '../../utilities/utility';
-import { logIn, logInFirstTime, checkIfPlayerExists, loginWithoutEmail } from '../../apis';
+import { logInHidden, logInFirstTime, checkIfPlayerExists, loginWithoutEmail } from '../../apis';
 import { connect } from 'react-redux';
 import store from '../../Store';
 import '../../mixed_style.css';
@@ -110,7 +110,7 @@ class LoginComponentHidden extends React.Component {
         });
     } else {
       var u_details = '';
-      logIn(formJsonData)
+      logInHidden(formJsonData)
         .then((response) => {
           console.log('Login ', response);
           if (response.data.message === 'success') {
@@ -176,25 +176,27 @@ class LoginComponentHidden extends React.Component {
   responseFacebook=(response)=> {
     console.log('fb rs',response);
     if(response.email){
-       var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name}
+       var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name,type:'facebook'}
       this.setState({
         signupData:{
           userID: response.userID,
           first_name: response.first_name,
           last_name: response.last_name,
-          email: response.email
+          email: response.email,
+          type:'facebook'
         }
       })
       this.LoginWithoutEmail(formJsonData);
     }else{
       console.log(response.first_name,response.userID);
-      var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name}
+      var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name,type:'facebook'}
       this.setState({
         signupData:{
           userID: response.userID,
           first_name: response.first_name,
           last_name: response.last_name,
-          email: ''
+          email: '',
+          type:'facebook'
         }
       })
       if(response.status != "unknown"){
@@ -206,13 +208,14 @@ class LoginComponentHidden extends React.Component {
   responseGoogle = (response) => {
     console.log(response);
     if(response.profileObj){
-      var formJsonData = {userID : response.profileObj.googleId,first_name: response.profileObj.familyName,last_name: response.profileObj.givenName}
+      var formJsonData = {userID : response.profileObj.googleId,first_name: response.profileObj.familyName,last_name: response.profileObj.givenName,type:'google'}
       this.setState({
         signupData:{
           userID: response.profileObj.googleId,
           first_name: response.profileObj.familyName,
           last_name: response.profileObj.givenName,
-          email: response.profileObj.email
+          email: response.profileObj.email,
+          type:'google'
         }
       })
       this.LoginWithoutEmail(formJsonData);
