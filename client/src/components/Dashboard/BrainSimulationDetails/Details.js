@@ -59,6 +59,7 @@ let called = false;
 let lock_time_2 = 0;
 let lock_percent_2 = 0;
 let called_2 = false;
+let called_3 = false;
 class Details extends React.Component {
   constructor(props) {
     super(props);
@@ -94,6 +95,7 @@ class Details extends React.Component {
       label_remove_video: 'Remove Video',
       video_time: 0,
       video_time_2: 0,
+      video_time_3: 0,
       video_lock_time: false,
       video_lock_time_2:false,
       isTimeUpdating: false,
@@ -101,7 +103,9 @@ class Details extends React.Component {
       image_id: this.props.match.params.image_id,
       player_id: this.props.match.params.player_id,
       simulation_data: '',
-      simulationData: ''
+      simulationData: '',
+      lock_video_3: false,
+      isCommonControl: false
     };
   }
  
@@ -157,7 +161,8 @@ class Details extends React.Component {
         var the = this;
         setTimeout(function(){
           the.setState({impact_video_url: ''})
-        },2000)
+          the.vidocontrol3()
+        },2000);
       }else{
         alert(res.data.err);
       }
@@ -184,7 +189,7 @@ class Details extends React.Component {
             if(the.state.uploadPercentage < 99){
               the.setState({uploadPercentage: the.state.uploadPercentage + 1});
             }
-          }, 2000)
+          }, 2000);
         }
       }
     }
@@ -196,8 +201,9 @@ class Details extends React.Component {
         the.setState({uploadPercentage:100});
         setTimeout(function(){
           the.setState({impact_video_url: res.data.impact_video_url});
-        },2000)
-        setTimeout(()=>{the.vidocontrol()},1000);
+        },2000);
+        setTimeout(()=>{the.vidocontrol3()},4000);
+        setTimeout(()=>{the.vidocontrol()},2000);
       }else{
         the.setState({status: res.data.data.message});
       }
@@ -231,7 +237,9 @@ class Details extends React.Component {
       handleProgress:  ()=> {
         const percent = (video.currentTime / video.duration) * 100;
         $('.progress__filled').val(percent);
-        lock_percent = percent
+        lock_percent = percent;
+        lock_time = video.currentTime;
+        the.setState({video_time: percent});
       },
       scrub: (e) =>{
         const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
@@ -264,7 +272,7 @@ class Details extends React.Component {
     progressBar.addEventListener('mouseup', () => mousedown = false);
   }
 
-   vidocontrol2 =()=>{
+  vidocontrol2 =()=>{
     const player = document.querySelector('.Simulationvideo');
     const video = player.querySelector('.viewer_2');
     
@@ -286,6 +294,8 @@ class Details extends React.Component {
         const percent = (video.currentTime / video.duration) * 100;
         $('.progress__filled_2').val(percent);
         lock_percent_2 = percent;
+        lock_time_2 = video.currentTime;
+        the.setState({video_time_2: percent});
       },
       scrub: (e) =>{
         const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
@@ -318,6 +328,66 @@ class Details extends React.Component {
     progressBar.addEventListener('mouseup', () => mousedown = false);
   }
 
+  /*====================================
+    Video controls of both movies start
+  ========================================*/
+  vidocontrol3=()=>{
+    if(this.state.impact_video_url && this.state.movie_link){
+      this.setState({isCommonControl: true});
+      if(this.state.video_lock_time && this.state.video_lock_time_2){
+        this.setState({lock_video_3: true});
+      }
+      //Player 1 controls ...
+      const player_1 = document.querySelector('.player');
+      const video_1 = player_1.querySelector('.viewer');
+
+      //player 2 controls ....
+      const player_2 = document.querySelector('.Simulationvideo');
+      const video_2 = player_2.querySelector('.viewer_2');
+
+      //Comman progress bar ...
+      const progressBar = document.querySelector('.progress__filled_3');
+      const lockButton = document.querySelector('.lock_video_3');
+      let video_duration_1 = video_1.duration;
+      let video_duration_2 = video_2.duration;
+
+      let controls = {
+       
+        scrub: (e) =>{
+          let scrubTime = 0;
+         
+          video_1.pause();
+          video_2.pause();
+          if(video_duration_1 > video_duration_2){
+            scrubTime = (e.offsetX / progressBar.offsetWidth) * video_duration_1;
+          }else{
+            scrubTime = (e.offsetX / progressBar.offsetWidth) * video_duration_2;
+          }
+         
+          if(video_duration_1 >= scrubTime) video_1.currentTime = scrubTime;
+          if(video_duration_2 >= scrubTime) video_2.currentTime = scrubTime;
+          // lock_time = video_1.currentTime;
+          // lock_time_2 = video_2.currentTime;
+           console.log(video_duration_1 , scrubTime);
+          // const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+          // if(scrubTime && !the.state.video_lock_time_2){
+          //   video.currentTime = scrubTime;
+          // }
+        }
+      }
+
+      progressBar.addEventListener('click', controls.scrub);
+      let mousedown = false;
+      progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
+      progressBar.addEventListener('mousedown', () => mousedown = true);
+      progressBar.addEventListener('mouseup', () => mousedown = false);
+    }else{
+      this.setState({isCommonControl: false , lock_video_3: false});
+    }
+  }
+  /*====================================
+    Video controls of both movies end
+  ========================================*/
   handlelock_video =()=>{
     console.log('lock_time',lock_time)
     if(this.state.video_lock_time){
@@ -340,7 +410,20 @@ class Details extends React.Component {
     }
     
   }
-   //Setting video lockTime
+  handlelock_video_3 = ()=>{
+    if(this.state.video_lock_time && this.state.video_lock_time_2){
+      this.setState({video_lock_time: 0 ,video_lock_time_2: 0});
+      this.setVideoTime(0);
+      this.setVideoTime_2(0);
+    }else{
+      this.setState({video_lock_time: lock_time,video_lock_time_2: lock_time_2});
+      console.log(lock_time, lock_time_2)
+      this.setVideoTime(lock_time);
+      this.setVideoTime_2(lock_time_2);
+    }
+   
+  }
+  //Setting video lockTime
   setVideoTime_2 =(time)=>{
     this.setState({isTimeUpdating_2: true})
     setVideoTime({image_id:this.state.image_id,video_lock_time:time,type:'setVideoTime_2'})
@@ -356,6 +439,7 @@ class Details extends React.Component {
          $('.progress__filled_2').val(lock_percent_2);
          $('.progress__filled').val(lock_percent);
       }
+      this.vidocontrol3();
     }).catch(err=>{
       console.log('err',err)
     })
@@ -376,6 +460,7 @@ class Details extends React.Component {
          $('.progress__filled').val(lock_percent);
          $('.progress__filled_2').val(lock_percent_2);
       }
+      this.vidocontrol3();
     }).catch(err=>{
       console.log('err',err)
     })
@@ -386,6 +471,9 @@ class Details extends React.Component {
   }
   handleChangeRange_2=(event)=>{
     this.setState({video_time_2: event.target.value});
+  }
+  handleChangeRange_3=(event)=>{
+    this.setState({video_time_3: event.target.value});
   }
   render() {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
@@ -413,6 +501,10 @@ class Details extends React.Component {
     if(this.state.movie_link && !called_2){
       setTimeout(()=>{the.vidocontrol2()},1000);
       called_2 = true
+    }
+    if(!called_3){
+      setTimeout(()=>{the.vidocontrol3()},2000);
+      called_3= true
     }
     return (
       <React.Fragment>
@@ -603,13 +695,15 @@ class Details extends React.Component {
                             <p style={{'font-weight':'600'}}>Adjust the frame rate</p>
                           </div>
                         </div>
-                        <div className="" style={{'padding': '0px 14px'}}>
-                          <div>
-                            <img src={unlock} className="unlock-img2"/>
-                            <input type="range"  min="1" max="100" value="0" className="MyrangeSlider3" id="MyrangeSlider3" />
-                            <p style={{'font-weight':'600'}}>Drag slider to advance both movies. The start time for each video can be adjust and locked above.</p>
+                        {this.state.isCommonControl && 
+                          <div className="" style={{'padding': '0px 14px'}}>
+                            <div>
+                              <img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>
+                              <input type="range"  min="1" max="100" value={this.state.video_time_3}  onChange={this.handleChangeRange_3} className="MyrangeSlider3 progress__filled_3" id="MyrangeSlider3" />
+                              <p style={{'font-weight':'600'}}>Drag slider to advance both movies. The start time for each video can be adjust and locked above.</p>
+                            </div>
                           </div>
-                        </div>
+                        }
                       </div>
                     </div>
                   </div>

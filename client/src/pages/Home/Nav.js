@@ -39,6 +39,7 @@ class Nav extends React.Component {
       isLoading: '',
       isDisplay2: { display: 'none' },
       isDeskTop: false,
+      baseUrl: window.location.origin.toString(),
     };
     console.log("STATE VALUES , ", this.state.user_details);
     this.handleClick = this.handleClick.bind(this);
@@ -643,7 +644,7 @@ getUploadFileExtension(url){
 
 
         <Link className="navbar-brand" to={'/Home'}>
-          <img className="logo-mobile" src="img/icon/logo.png" alt="" />
+          <img className="logo-mobile" src={this.state.baseUrl+"/img/icon/logo.png"} alt="" />
         </Link>
         <button
           onClick={this.handleClick}
