@@ -1310,8 +1310,13 @@ function adminCreateUser(User, cb) {
             {
                 Name: 'custom:level',  /* required */
                 Value: User.level
+            },
+            {
+                Name: 'custom:isSocialAccount',  /* required */
+                Value: User.isSocialAccount
+                
             }
-        ]
+        ],
     };
     COGNITO_CLIENT.signUp(params, function (err, data) {
         if (err) {
@@ -2685,6 +2690,11 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     }
     req.body.password_code = retVal;
     var user_cognito_id = '';
+    if(req.body.userIDfacebook || req.body.userIDgoogle){
+        req.body['isSocialAccount'] = 'yes';
+    }else{
+        req.body['isSocialAccount'] = 'no';
+    }
     console.log("-----------------------------\n",req.body,"----------------------------------------\n");
     /*======================= Checkign user account exists or not =====================================*/
     getUserAlreadyExists(req.body["email"])
@@ -2901,7 +2911,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                                                 res.send({
                                                     message: "success",
-                                                    message_details : "Successfully created account ! Check your mail to verify your account.",
+                                                    message_details : req.body['isSocialAccount'] == 'yes' ? 'Your account created successfully. Please log In' : "Successfully created account ! Check your mail to verify your account.",
                                                     user_cognito_id: user_cognito_id
                                                 })
 
@@ -4053,29 +4063,42 @@ app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
     
 })
 
-function getUserDbDataByUserId(userID,type, cb) {
-    if(type == "facebook"){
+function getUserDbDataByUserId(userID,type,email, cb) {
+    if(email){
         var params = {
             TableName: 'users',
-            FilterExpression: "#userIDfacebook = :userIDfacebook",
+            FilterExpression: "#email = :email",
             ExpressionAttributeNames: {
-                "#userIDfacebook": "userIDfacebook",
+                "#email": "email",
             },
             ExpressionAttributeValues: {
-                ":userIDfacebook": userID,
+                ":email": email,
             }
         };
     }else{
-        var params = {
-            TableName: 'users',
-            FilterExpression: "#userIDgoogle = :userIDgoogle",
-            ExpressionAttributeNames: {
-                "#userIDgoogle": "userIDgoogle",
-            },
-            ExpressionAttributeValues: {
-                ":userIDgoogle": userID,
-            }
-        };
+        if(type == "facebook"){
+            var params = {
+                TableName: 'users',
+                FilterExpression: "#userIDfacebook = :userIDfacebook",
+                ExpressionAttributeNames: {
+                    "#userIDfacebook": "userIDfacebook",
+                },
+                ExpressionAttributeValues: {
+                    ":userIDfacebook": userID,
+                }
+            };
+        }else{
+            var params = {
+                TableName: 'users',
+                FilterExpression: "#userIDgoogle = :userIDgoogle",
+                ExpressionAttributeNames: {
+                    "#userIDgoogle": "userIDgoogle",
+                },
+                ExpressionAttributeValues: {
+                    ":userIDgoogle": userID,
+                }
+            };
+        }
     }
     let item = [];
     docClient.scan(params).eachPage((err, data, done) => {
@@ -4097,14 +4120,29 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
     console.log("LoginWithoutEmail In API Called!",req.body);
     let userID = req.body.userID;
     let type = req.body.type;
+    if(req.body.email){
+        req.body['email'] = req.body.email.toLowerCase();
+    }
     let userData = '';
-    getUserDbDataByUserId(userID,type, function (err, data) {
+    getUserDbDataByUserId(userID,type, req.body.email, function (err, data) {
         if(err){
             console.log('err',err) 
         }else{
             console.log('data',data);
             if(data[0]){
                 userData = data[0];
+                if(type == "facebook"){
+                    if(!userData.userIDfacebook){
+                        req.body['userIDfacebook'] = userID;
+                        upDateUserFBGlid(req.body,userData.user_cognito_id)
+                    }
+                }else{
+                    if(!userData.userIDgoogle){
+                        req.body['userIDgoogle'] = userID;
+                        upDateUserFBGlid(req.body,userData.user_cognito_id)
+                    }
+                }
+
                 getUser(data[0].email, function (err, data) {
                     if (err) {
                         console.log('err0',err);
