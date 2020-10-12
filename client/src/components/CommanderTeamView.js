@@ -865,19 +865,21 @@ class CommanderTeamView extends React.Component {
                                       <tbody className="player-table">
                                             {this.state.users.map(function (player, index) {
                                                 if (player.simulation_data.length > 0) {
+                                                    let impact_time = '';
+                                                    let time = '';
                                                   let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
                                                   let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
 
                                                   if (player.simulation_data[0]['impact-time']) {
                                                     let split = player.simulation_data[0]['impact-time'].split(":");
-                                                    player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                    impact_time = split.slice(0, split.length - 1).join(":");
                                                   }
 
                                                   if (player.simulation_data[0]['time']) {
                                                     let split = player.simulation_data[0]['time'].toString();
                                                     split = split.replace(".", ":");
                                                     split = split.split(":");
-                                                    player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                    time = split.slice(0, split.length - 1).join(":");
                                                   }
 
                                                   if (player.simulation_data[0].simulation_status === 'completed' ) {
@@ -930,7 +932,7 @@ class CommanderTeamView extends React.Component {
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                              {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
-                                                             {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
+                                                             {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : player.simulation_data[0]['time'] ? this.tConvert(time) : 'Unkown Time' } </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
                                                                                 <td>

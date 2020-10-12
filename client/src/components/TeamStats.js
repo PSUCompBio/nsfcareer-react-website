@@ -108,8 +108,19 @@ class TeamStats extends React.Component {
                             <select style={{marginLeft: '20px'}}>
                                 <option>10 Gs</option>
                                 <option>20 Gs</option>
-                                <option>10 Gs</option>
-                                <option>10 Gs</option>
+                                <option>30 Gs</option>
+                                <option>40 Gs</option>
+                                <option>50 Gs</option>
+                                <option>60 Gs</option>
+                                <option>70 Gs</option>
+                                <option>80 Gs</option>
+                                <option>90 Gs</option>
+                                <option>100 Gs</option>
+                                <option>110 Gs</option>
+                                <option>120 Gs</option>
+                                <option>130 Gs</option>
+                                <option>140 Gs</option>
+                                <option>150 Gs</option>
                             </select>
                         </div>
                         <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>
