@@ -43,6 +43,8 @@ import ModelValidationDisplacementResponse from '../../components/ModelValidatio
 import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
 import LoginComponentHidden  from '../../components/Authentication/LoginComponentHidden';
 import Hardy_et_al from '../../components/ModelValidation/Hardy_et_al';
+import sendEmailVerifation from '../../components/Authentication/pages/sendEmailVerifation';
+
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -401,6 +403,11 @@ class Routing extends React.Component {
             exact
             path="/Details/:image_id/:player_id"
             render={(props) => <Details {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+         <Route
+            
+            path="/re-sendEmailVerifation"
+             component = {sendEmailVerifation}
         />
       </React.Fragment>
     );

@@ -18,6 +18,14 @@ import lock from './lock.png';
 import upload from './upload.png';
 import remove from './remove.png';
 
+import pause_b from '../../icons/pause_b.png';
+import pause_bl from '../../icons/pause_bl.png';
+import video_loop_b from '../../icons/video_loop_b.png';
+import video_loop_bl from '../../icons/video_loop_bl.png';
+import video_pause_b from '../../icons/video_pause_b.png';
+import video_play_bl from '../../icons/video_play_bl.png';
+import icon_download_white from '../../icons/icon_download_white.png';
+
 
 import uploadicon from './upload-icon.png'
 import 'jquery';
@@ -105,7 +113,9 @@ class Details extends React.Component {
       simulation_data: '',
       simulationData: '',
       lock_video_3: false,
-      isCommonControl: false
+      isCommonControl: false,
+      controlPlayVideo: false,
+      isRepeatVideo: false
     };
   }
  
@@ -226,7 +236,7 @@ class Details extends React.Component {
     
     let the = this;
     video.onplay = ('play', function(e){
-      console.log('play');
+      
       if(the.state.video_lock_time){
         video.pause();
         video.currentTime = the.state.video_lock_time;
@@ -263,6 +273,7 @@ class Details extends React.Component {
     if(video && this.state.video_lock_time){
       controls.setvideoTime(this.state.video_lock_time);
     }
+
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
     lockButton.addEventListener('click', controls.lockVideo);
@@ -278,7 +289,8 @@ class Details extends React.Component {
     
     const progressBar = document.querySelector('.progress__filled_2');
     const lockButton = document.querySelector('.lock_video_2');
-      
+
+
     let the = this;
     video.onplay = ('play', function(e){
       console.log('play');
@@ -319,6 +331,9 @@ class Details extends React.Component {
     if(video && this.state.video_lock_time_2){
       controls.setvideoTime(this.state.video_lock_time_2);
     }
+    //controls ....
+    
+
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
     lockButton.addEventListener('click', controls.lockVideo);
@@ -332,19 +347,65 @@ class Details extends React.Component {
     Video controls of both movies start
   ========================================*/
   vidocontrol3=()=>{
+    //Player 1 controls ...
+    let video_1 = '';
+    let video_2 = '';
+
+    const player_1 = document.querySelector('.player');
+    if(player_1){
+        video_1 = player_1.querySelector('.viewer');
+    }
+    
+    //player 2 controls ....
+    const player_2 = document.querySelector('.Simulationvideo');
+    if(player_2){
+       video_2 = player_2.querySelector('.viewer_2');
+    }
+    
+    let the = this;
+
+    const custom_controls = { 
+      play:()=>{
+        console.log('play');
+        if(the.state.controlPlayVideo){
+          if(video_1) video_1.pause();
+          if(video_2) video_2.pause();
+
+          the.setState({controlPlayVideo: false});
+        }else{
+          if(video_1) video_1.play();
+          if(video_2) video_2.play();
+
+          the.setState({controlPlayVideo: true, controlPouseVideo: false});
+        }
+      },
+      pause:()=>{
+        if(video_1) video_1.pause();
+        if(video_2) video_2.pause();
+        the.setState({controlPlayVideo: false, controlPouseVideo : true});
+      },
+      repeatVideo:()=>{
+
+        the.setState({isRepeatVideo: the.state.isRepeatVideo ? false : true });
+      },
+    }
+    //Video play controll button .......... 
+    const control_play_video = document.querySelector('.control_play_video');
+    const control_pouse_video = document.querySelector('.control_pouse_video');
+    const control_loop_video = document.querySelector('.control_loop_video');
+
+    //controls .......
+    control_play_video.addEventListener('click', custom_controls.play);
+    control_pouse_video.addEventListener('click', custom_controls.pause);
+    control_loop_video.addEventListener('click', custom_controls.repeatVideo);
+
+
     if(this.state.impact_video_url && this.state.movie_link){
       this.setState({isCommonControl: true});
       if(this.state.video_lock_time && this.state.video_lock_time_2){
         this.setState({lock_video_3: true});
       }
-      //Player 1 controls ...
-      const player_1 = document.querySelector('.player');
-      const video_1 = player_1.querySelector('.viewer');
-
-      //player 2 controls ....
-      const player_2 = document.querySelector('.Simulationvideo');
-      const video_2 = player_2.querySelector('.viewer_2');
-
+      
       //Comman progress bar ...
       const progressBar = document.querySelector('.progress__filled_3');
       const lockButton = document.querySelector('.lock_video_3');
@@ -629,8 +690,12 @@ class Details extends React.Component {
                               <img src={videoSimulationLoading} style={{'width':'50%'}} />
                             }
                             {this.state.movie_link &&
-                              <video src={this.state.movie_link} style={{'width':'100%'}} className="player__video_2 viewer_2" controls></video>
+                              <video src={this.state.movie_link} style={{'width':'100%','height':'284px'}} className="player__video_2 viewer_2" controls loop={this.state.isRepeatVideo ? true : false}></video>
                             }
+                           
+                          </div>
+                          <div>
+                            <p className="video-lebel">Simulation Video</p>
                           </div>
                           <div>
                             {this.state.isTimeUpdating_2 ?<div> <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> </div>: ''}
@@ -676,7 +741,10 @@ class Details extends React.Component {
                             </Dropzone>)
                             : 
                               <div className="player">
-                                <video src={this.state.impact_video_url} style={{'width':'100%'}} className="player__video viewer" controls></video>
+                                <video src={this.state.impact_video_url} style={{'width':'100%','height':'284px'}} className="player__video viewer" controls loop={this.state.isRepeatVideo ? true : false}></video>
+                                <div>
+                                  <p  className="video-lebel">Sideline Video</p>
+                                </div>
                               </div>
                              
                           }
@@ -698,12 +766,24 @@ class Details extends React.Component {
                         {this.state.isCommonControl && 
                           <div className="" style={{'padding': '0px 14px'}}>
                             <div>
-                              <img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>
+                              {/*<img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>*/}
                               <input type="range"  min="1" max="100" value={this.state.video_time_3}  onChange={this.handleChangeRange_3} className="MyrangeSlider3 progress__filled_3" id="MyrangeSlider3" />
                               <p style={{'font-weight':'600'}}>Drag slider to advance both movies. The start time for each video can be adjust and locked above.</p>
                             </div>
                           </div>
                         }
+                        <div className="col-md-12">
+                          <div className="video-controlls">
+                            <div className="col-sm-6" style={{'float':'left'}}>
+                              <img src={this.state.controlPlayVideo ? video_play_bl : video_pause_b} className="control-1 control_play_video"/>
+                              <img src={this.state.controlPouseVideo? pause_bl : pause_b}  className="control-1 control_pouse_video"/>
+                              <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b}  className="control-2 control_loop_video"/>
+                            </div>
+                            <div className="col-sm-6" style={{'float':'left'}}>
+                              <button><img src={icon_download_white} className="Combined-video-icon" />Export Combined Video</button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

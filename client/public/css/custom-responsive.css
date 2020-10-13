@@ -57,6 +57,9 @@
    .team-page-title{
          margin-left: 0%; 
   }
+  .player__video_2, .player__video{
+    height: 224px!important;
+  }
 }
 /* Responsive layout  */
 @media (min-width: 992px){
@@ -195,15 +198,12 @@
     width: 43%!important;
     left: 30%;
   }
-  .Replace-video-desktop{
-    display: none
-  }
-  .Replace-video-mobile{
-    display: inline-block;
-    width: 100%;
-  }
+ 
   .Replace-video-mobile div{
     width: 100%;
+  }
+  .player__video_2, .player__video {
+      height: 160px!important;
   }
 }
 @media (max-width: 767px) {
@@ -308,6 +308,13 @@
     float: left;
     width: 8%;
     padding: 6px;
+  }
+   .Replace-video-desktop{
+    display: none
+  }
+  .Replace-video-mobile{
+    display: inline-block;
+    width: 100%;
   }
 }
 
@@ -515,6 +522,14 @@
   .three_D_model_div canvas{
     width: 100%!important;
   }
+  .player__video_2, .player__video {
+      height: 217px!important;
+  }
+  .video-controlls {
+      width: 70%;
+      margin: auto;
+  }
+
 }
 
 @media screen and (max-width: 414px) {
@@ -569,6 +584,9 @@
   .plyar-button-edit:first-child {
       margin-right: 6%!important;
   }
+  .player__video_2, .player__video {
+    height: 170px!important;
+}
 }
 
 @media screen and (max-width: 412px) {
@@ -647,6 +665,9 @@
   .plyar-button-edit {
       float: initial !important;
   }
+  .player__video_2, .player__video {
+    height: 145px!important;
+}
 }
 
 @media screen and (max-width: 360px) {
@@ -675,6 +696,7 @@
   .commander-data-table h1 {
     font-size: 26px;
   }
+
 }
 @media screen and (max-width: 320px) {
   .custom-button {

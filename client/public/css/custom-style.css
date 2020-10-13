@@ -1348,3 +1348,40 @@ button.btn.button-yes {
 .Replace-video-mobile{
   display: none;
 }
+.video-lebel{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 8px;
+}
+.video-controlls .control-1 {
+    width: 20%;
+    padding: 8px;
+    margin: 0px 6px;
+    cursor: pointer;
+}
+.video-controlls .control-2 {
+    width: 24%;
+    padding: 8px;
+    margin: 0px 6px;
+    cursor: pointer;  
+}
+.video-controlls{
+  width: 50%;
+  margin: auto;
+}
+.video-controlls button{
+    background: #4472c4;
+    color: white;
+    padding: 7px 4px;
+    margin-bottom: 0px !important;
+    margin-top: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 10px;
+    width: 100%;
+    border: none;
+}
+.Combined-video-icon{
+  width: 18px;
+    margin: 3px;
+}

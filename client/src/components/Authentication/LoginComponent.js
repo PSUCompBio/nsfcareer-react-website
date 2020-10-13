@@ -360,6 +360,25 @@ class Login extends React.Component {
                         LOG IN
                       </button>
                     </form>
+                    {/* ============ re-send email verication button ===========*/}
+                      {params.get('error') == 'Invalid verification code provided, please try again.' ? 
+                        <Link to="/re-sendEmailVerifation">
+
+                          <button
+                            type="submit"
+                            style={{
+                                  'text-decoration': 'underline',
+                                  'color': '#0f81dc'
+                            }}
+                            className="btn btn-warning bg-warning log-in-btn btn-block mt-2"
+                          >
+                            get new verification link
+                          </button>
+                        </Link>
+                        : null
+                      }
+                    {/* ============ re-send email verication button end ===========*/}
+
                     {this.state.isLoading ? (
                       <div className="d-flex justify-content-center center-spinner">
                         <div
