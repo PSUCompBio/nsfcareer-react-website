@@ -828,6 +828,19 @@ class Profile extends React.Component {
                                 </p>
 
                                 <Form className="mt-2" onSubmit = {this.handleSubmit} >
+                                <FormGroup row>
+                                        <Label for="exampleEmail" sm={2}>Account Id</Label>
+
+                                        <Col sm={6}>
+                                            <Row>
+                                                <Col md={6} sm={12}>
+                                                    <div class="input-group">
+                                                        <Input className="profile-input" readOnly="reaonly" type="text" name="account_id" id="account_id" value={this.state.user.account_id} placeholder="Account Id" />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </FormGroup>
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Name</Label>
 
@@ -861,10 +874,8 @@ class Profile extends React.Component {
                                                         </div>
                                                     </Col>
                                                 </Row>
-                                            </Col>
-
-
-                                        </FormGroup>
+                                        </Col>
+                                    </FormGroup>
 
                                         <FormGroup row>
                                             <Label for="exampleEmail" sm={2}>Email</Label>

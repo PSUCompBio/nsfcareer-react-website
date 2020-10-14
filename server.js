@@ -535,7 +535,7 @@ function forgotPassword(user_name, cb) {
 
 
 function createUserDbEntry(event, callback) {
-
+    
     if (event.organization && event.team) {
         addPlayerToTeamOfOrganization(event.organization, event.team, event.user_name)
         .then(result => {
@@ -1314,8 +1314,11 @@ function adminCreateUser(User, cb) {
             {
                 Name: 'custom:isSocialAccount',  /* required */
                 Value: User.isSocialAccount
-                
-            }
+            },
+            {
+                Name: 'custom:account_id',  /* required */
+                Value: User.account_id
+            },
         ],
     };
     COGNITO_CLIENT.signUp(params, function (err, data) {
@@ -2656,7 +2659,9 @@ app.post(`${apiPrefix}updateCognitoUser`, (req, res) => {
 
 app.post(`${apiPrefix}signUp`, (req, res) => {
 
-
+    // Generate 10 digits unique number
+    const account_id = Math.floor(Math.random() * 9000000000) + 1000000000;
+    req.body["account_id"] = account_id.toString();
 
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
     req.body["name"] = req.body.first_name + req.body.last_name;
