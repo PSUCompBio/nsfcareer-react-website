@@ -154,7 +154,11 @@ class UserDashboarForAdmin extends React.Component {
   }
 
   tConvert = (time) => {
-      // Check correct time format and split into components
+    console.log(time)
+    if(time == 0){
+      return 'Unkown Time'
+    }else{
+       // Check correct time format and split into components
       time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
     
       if (time.length > 1) { // If time format correct
@@ -163,6 +167,7 @@ class UserDashboarForAdmin extends React.Component {
         time[0] = +time[0] % 12 || 12; // Adjust hours
       }
       return time.join (''); // return adjusted time or original string
+    }
   }
 
   render() {
@@ -277,20 +282,39 @@ class UserDashboarForAdmin extends React.Component {
             {this.state.cumulativeAccelerationTimeAllRecords.map(function (item, index) {  
               let impact_time = '';
               let time = '';
+              let cls = item.status === 'pending' ? 'card-orange' : '';
+              if (item.status === 'completed' ) {
+
+                let computed_time = item.computed_time ? parseFloat(item.computed_time) / (1000 * 60) : 0;
+
+                let currentStamp = new Date().getTime();
+                let simulationTimestamp = parseFloat(item.sensor_data.player_id.split('$')[1]);
+                var diff =(currentStamp - simulationTimestamp) / 1000;
+                diff /= 60;
+                let minutes =  Math.abs(Math.round(diff));
+                console.log('minutes', minutes);
+                minutes = minutes - computed_time;
+                if (minutes <= 10) {
+                    cls = 'card-green';
+                }
+              }
+
               if (item.sensor_data['impact-time']) {
                 let split = item.sensor_data['impact-time'].split(":");
                 impact_time = split.slice(0, split.length - 1).join(":");
               }
 
               if (item.sensor_data['time']) {
+
                 let split = item.sensor_data['time'].toString();
+                console.log(split)
                 split = split.replace(".", ":");
                 split = split.split(":");
                 time = split.slice(0, split.length - 1).join(":");
               }
 
               return <Card >
-                <Card.Header>
+                <Card.Header className={cls}>
                   <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
                     <span className="title-left" >ID: #{item.sensor_data && item.sensor_data['impact_id'] ? item.sensor_data['impact_id'] : item.sensor_data.player_id.split('$')[0]}</span>
                     <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(impact_time) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(time)  : 'Unkown Date and Time'}`}</span>
