@@ -1385,3 +1385,10 @@ button.btn.button-yes {
   width: 18px;
     margin: 3px;
 }
+.card-green{
+  background: #28a745!important;
+}
+
+.card-orange{
+  background: #ff8842e8!important;
+}

@@ -2180,6 +2180,56 @@ app.get(`${apiPrefix}userEmailVerification`, (req, res) => {
     )
 });
 
+/*================ Resend verfication email funtion start here ======================*/
+app.post(`${apiPrefix}reSendVerficationEmail`, (req, res) => {
+    console.log(req.body)
+    const {user_name} = req.body;
+  
+    getUserAlreadyExists(user_name)
+    .then(data=>{
+        if(data[0]){
+            var params = {
+              ClientId: cognito.ClientId, /* required */
+              Username: user_name, /* required */
+            };
+            COGNITO_CLIENT.resendConfirmationCode(params, function(err, data) {
+              if (err){
+                res.send({
+                    message: "failure",
+                    error: 'Somethig went wrong when sending verfication link.'
+                });
+              }
+              else {
+                res.send({
+                    message: "success",
+                    message_details : "Verification Link sended successfully in your mail account. Click on verify email button to verify your account.",
+                })
+              }    
+            });
+        }else{
+            res.send({
+                message: "failure",
+                error: 'Your account dose not exists! Please check your entered email account.'
+            });
+        }
+    }).catch(err=>{
+        res.send({
+            message: "failure",
+            error: 'Somethig went wrong when sending verfication link.'
+        });
+    })
+    
+})
+
+
+/*================ ======================================
+        
+        Resend verfication email funtion end  
+
+====================== =======================================*/
+
+
+
 /*+++++++++++++++++ Set video lock time funtion end here ++++++++++++++++ */
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));

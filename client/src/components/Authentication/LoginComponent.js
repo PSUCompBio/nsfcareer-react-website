@@ -265,7 +265,7 @@ class Login extends React.Component {
                         className="alert alert-info api-response-alert"
                         role="alert"
                       >
-                        <strong >Failed! </strong> {params.get('error')}.
+                        <strong >Failed! </strong> {params.get('error')}
                       </div> 
                     ) : null}
                     {params.get('success') ? (
@@ -289,7 +289,7 @@ class Login extends React.Component {
                         className="alert alert-info api-response-alert"
                         role="alert"
                       >
-                        <strong > Success !</strong> {this.state.message}.
+                        <strong > Success !</strong> {this.state.message}
                       </div>
                     ) : null}
                     <form onSubmit={this.handleSubmit} ref="signInForm">
@@ -361,7 +361,7 @@ class Login extends React.Component {
                       </button>
                     </form>
                     {/* ============ re-send email verication button ===========*/}
-                      {params.get('error') == 'Invalid verification code provided, please try again.' ? 
+                      {params.get('error') == 'Invalid verification code provided, please try again.' || params.get('error') == 'Invalid code provided, please request a code again.' ? 
                         <Link to="/re-sendEmailVerifation">
 
                           <button
