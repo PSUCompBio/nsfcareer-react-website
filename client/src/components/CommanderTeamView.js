@@ -358,7 +358,7 @@ class CommanderTeamView extends React.Component {
         updateUserStatus({user_cognito_id: id, status: status})
             .then(data => {
                 let requestedUsers = this.state.requestedUsers.map(function (r_player) {
-                    if (r_player.user_cognito_id === id) {
+                    if (r_player && r_player.user_cognito_id === id) {
                         r_player.player_status = status;
                     }
                     return r_player
@@ -441,7 +441,7 @@ class CommanderTeamView extends React.Component {
             })
 
             let requestedUsers = this.state.requestedUsers.map(function (r_player) {
-                if (r_player.user_cognito_id === editableId) {
+                if (r_player && r_player.user_cognito_id === editableId) {
                     r_player.sensor_id_number = sensor_id;
                 }
                 return r_player

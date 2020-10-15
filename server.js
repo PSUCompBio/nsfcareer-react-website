@@ -7042,7 +7042,9 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                 req.body["sensor_brand"] = user_details.Item["sensor"];
                                 req.body["level"] = user_details.Item["level"];
-                                req.body["organization"] = user_details.Item["organization"];
+                                if (user_details.Item["level"] === 300) {
+                                    req.body["organization"] = user_details.Item["organization"];
+                                }
                                 request.post({
                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
                                     json: req.body
@@ -7316,7 +7318,7 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
-    getTeamSpheres(req.body)
+    updateUserStatus(req.body)
         .then(data => {
             res.send({
                 message: "success",
