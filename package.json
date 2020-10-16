@@ -18,6 +18,8 @@
     "distinct-colors": "^1.0.4",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-concat": "^1.2.3",
     "font-awesome": "^4.7.0",
     "fs": "^0.0.1-security",
     "gh-pages": "^1.1.0",
@@ -44,6 +46,7 @@
     "socket.io": "^2.3.0",
     "three": "^0.108.0",
     "uuid": "^3.3.2",
+    "video-stitch": "^1.6.0",
     "webfontloader": "^1.6.28",
     "xlsx": "^0.15.1"
   },

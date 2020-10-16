@@ -54,6 +54,7 @@ const io = socketIO(server)
 
 // This is what the socket.io syntax is like, we will work this later
 let interval;
+var ffmpeg = require('ffmpeg');
 
 io.on('connection', socket => {
     console.log("New client connected");
@@ -6769,6 +6770,24 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
 
 })
 
+/****** ===============================================
+
+    
+        Merge video fuitons start here
+
+
+============================= ==============================******/
+
+app.post(`${apiPrefix}merge-video`, (req, res) => {
+    
+    res.send('<p>Merging</p>');
+
+        
+
+})
+
+
+/*=======================merge video end ======================*/
 
 app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getSimulationStatusCount", json: req.body }, function (err, httpResponse, body) {
@@ -7009,68 +7028,126 @@ app.post(`${apiPrefix}uploadModelRealData`, setConnectionTimeout('10m'), uploadM
 
 })
 
+function hadleAuthanticat(user_name,password){
+    return new Promise((resolve, reject) => {
+        // var password = password;
+        getUserAlreadyExists(user_name)
+        .then(userresponse =>{
+            console.log('userresponse',userresponse);
+            if(userresponse[0]){
+                userData = userresponse[0];
+                /* ======================
+
+                    For new users
+                    
+                ==========================*/
+                if(userData.password){
+                     // Now getting the list of Groups of user
+                     /*============== Match user password ===============*/
+                    if(userData.password === md5(password)){
+                       resolve({
+                            message: 'success',
+                            password: userData.password_code
+                       })
+                    }else{
+                        resolve({
+                            message: 'faiure',
+                            error: 'Login password dose not match.'
+                        })
+                    }
+                }else{
+                    resolve({
+                        message: 'success',
+                        password: password
+                    })
+                }
+            }else{
+                resolve({
+                    message: 'faiure',
+                    error: 'User not found.'
+                })
+            }
+        })
+    })
+}
+
 app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req, res) => {
     // TODO : Start receiving user type or remove user type from this function
     var user_type = "standard";
-    login(req.body.user_name, req.body.password, user_type, (err, data) => {
-        if (err) {
+    hadleAuthanticat(req.body.user_name, req.body.password)
+    .then(response =>{
+        if(response.message == 'failure'){
             res.send({
                 message: "failure",
-                error: err
+                error: response.error
             })
-        }
-        else {
-            getUser(req.body.user_name, function (err, data) {
+        }else{
+            login(req.body.user_name, response.password, user_type, (err, data) => {
                 if (err) {
-                    console.log(err);
-
                     res.send({
                         message: "failure",
                         error: err
-                    });
-                } else {
-                    getUserDbData(data.Username, function (err, user_details) {
+                    })
+                }
+                else {
+                    getUser(req.body.user_name, function (err, data) {
                         if (err) {
+                            console.log(err);
+
                             res.send({
                                 message: "failure",
                                 error: err
-                            })
-                        }
-                        else {
-                            if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
-                                // console.log(user_details.Item);
-                                req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-                                req.body["sensor_brand"] = user_details.Item["sensor"];
-                                req.body["level"] = user_details.Item["level"];
-                                if (user_details.Item["level"] === 300) {
-                                    req.body["organization"] = user_details.Item["organization"];
-                                }
-                                request.post({
-                                    url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
-                                    json: req.body
-                                }, function (err, httpResponse, body) {
-                                    if (err) {
+                            });
+                        } else {
+                            getUserDbData(data.Username, function (err, user_details) {
+                                if (err) {
+                                    res.send({
+                                        message: "failure",
+                                        error: err
+                                    })
+                                }else {
+                                    if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
+                                        // console.log(user_details.Item);
+                                        req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                        req.body["sensor_brand"] = user_details.Item["sensor"];
+                                        req.body["level"] = user_details.Item["level"];
+                                        if (user_details.Item["level"] === 300) {
+                                            req.body["organization"] = user_details.Item["organization"];
+                                        }
+                                        request.post({
+                                            url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                            json: req.body
+                                        }, function (err, httpResponse, body) {
+                                            if (err) {
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err
+                                                })
+                                            }
+                                            else {
+                                                res.send(httpResponse.body);
+                                            }
+                                        })
+                                    } else {
                                         res.send({
                                             message: "failure",
-                                            error: err
+                                            error: 'User is not sensor company.'
                                         })
                                     }
-                                    else {
-                                        res.send(httpResponse.body);
-                                    }
-                                })
-                            } else {
-                                res.send({
-                                    message: "failure",
-                                    error: 'User is not sensor company.'
-                                })
-                            }
+                                }
+                            })
                         }
                     })
                 }
             })
         }
+    }).catch(err=>{
+        res.send({
+            message: "failure",
+            error: 'Internal server error.'
+        })
     })
+    
 })
 
 // app.post(`${apiPrefix}api/upload/sensor`, (req, res) => {
@@ -7197,88 +7274,104 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
     //     filename: selfie,
     //     selfie : base64Selfie
     // });
-
     var user_type = "standard";
-    login(req.body.user, req.body.password, user_type, (err, data) => {
-        if (err) {
+    hadleAuthanticat(req.body.user, req.body.password)
+    .then(response =>{
+        console.log('response===================\n',response)
+        if(response.message == 'failure'){
             res.send({
                 message: "failure",
-                error: err
+                error: response.error
             })
-        }
-        else {
-            getUser(req.body.user, function (err, data) {
-                if (err) {
-                    console.log(err);
+        }else{
+            login(req.body.user, response.password, user_type, (err, data) => {
+            if (err) {
+                res.send({
+                    message: "failure",
+                    error: err
+                })
+            }
+            else {
+                getUser(req.body.user, function (err, data) {
+                    if (err) {
+                        console.log(err);
 
-                    res.send({
-                        message: "failure",
-                        error: err
-                    });
-                } else {
-                    getUserDbData(data.Username, function (err, user_details) {
-                        if (err) {
-                            res.send({
-                                message: "failure",
-                                error: err
-                            })
-                        }
-                        else {
-                            if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
-                                // console.log(user_details.Item);
-                                req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-                                req.body["sensor_brand"] = user_details.Item["sensor"];
-                                req.body["level"] = user_details.Item["level"];
-                                if (user_details.Item["level"] === 300) {
-                                    req.body["organization"] = user_details.Item["organization"];
-                                }
-                                req.body["upload_file"] = base64File;
-                                req.body["data_filename"] = data_filename;
-                                req.body["selfie"] = base64Selfie;
-                                req.body["filename"] = selfie; 
-                                request.post({
-                                    url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
-                                    json: req.body
-                                }, function (err, httpResponse, body) {
-                                    if (err) {
-                                        res.send({
-                                            message: "failure",
-                                            error: err
-                                        })
-                                    }
-                                    else {
-                                        if (httpResponse.body.image_url) {
-                                            let body = '<!DOCTYPE html>\
-                                                <html>\
-                                                <body>';
-                                            let counter = 0;                                                
-                                            httpResponse.body.image_url.forEach((url, m) => {
-                                                counter++;
-                                                body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
-                                                if (counter == httpResponse.body.image_url.length) {
-                                                    body += '</body>\
-                                                            </html>';
-                                                    res.send(body);
-                                                }
-                                            })
-                                        } else {
-                                            res.send(httpResponse.body);
-                                        }
-                                    }
-                                })
-                            } else {
+                        res.send({
+                            message: "failure",
+                            error: err
+                        });
+                    } else {
+                        getUserDbData(data.Username, function (err, user_details) {
+                            console.log('user_details =====================\n',user_details)
+                            if (err) {
                                 res.send({
                                     message: "failure",
-                                    error: 'User is not sensor company.'
+                                    error: err
                                 })
                             }
-                        }
-                    })
+                            else {
+                                if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
+                                    // console.log(user_details.Item);
+                                    req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                    req.body["sensor_brand"] = user_details.Item["sensor"];
+                                    req.body["level"] = user_details.Item["level"];
+                                    if (user_details.Item["level"] === 300) {
+                                        req.body["organization"] = user_details.Item["organization"];
+                                    }
+                                    req.body["upload_file"] = base64File;
+                                    req.body["data_filename"] = data_filename;
+                                    req.body["selfie"] = base64Selfie;
+                                    req.body["filename"] = selfie; 
+                                    request.post({
+                                        url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                        json: req.body
+                                    }, function (err, httpResponse, body) {
+                                        if (err) {
+                                            res.send({
+                                                message: "failure",
+                                                error: err
+                                            })
+                                        }
+                                        else {
+                                            if (httpResponse.body.image_url) {
+                                                let body = '<!DOCTYPE html>\
+                                                    <html>\
+                                                    <body>';
+                                                let counter = 0;                                                
+                                                httpResponse.body.image_url.forEach((url, m) => {
+                                                    counter++;
+                                                    body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
+                                                    if (counter == httpResponse.body.image_url.length) {
+                                                        body += '</body>\
+                                                                </html>';
+                                                        res.send(body);
+                                                    }
+                                                })
+                                            } else {
+                                                res.send(httpResponse.body);
+                                            }
+                                        }
+                                    })
+                                } else {
+                                    res.send({
+                                        message: "failure",
+                                        error: 'User is not sensor company.'
+                                    })
+                                }
+                            }
+                        })
+                    }
+                })
                 }
             })
         }
+    }).catch(err=>{
+        console.log('err==============\n',err)
+        res.send({
+            message: "failure",
+            error: 'Internal server error.'
+        })
     })
-
 })
 
 app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{

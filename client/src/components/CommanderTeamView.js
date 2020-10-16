@@ -229,7 +229,7 @@ class CommanderTeamView extends React.Component {
                                             team_name: this.props.location.state.team.team_name
                                         })
                                             .then(response => {
-                                                console.log(response);
+                                                console.log('getPlayersData ----------------------\n',response);
                                                 for (var i = 0; i < response.data.data.length; i++) {
                                                     this.setState(prevState => ({
                                                         users: [...prevState.users, response.data.data[i]]

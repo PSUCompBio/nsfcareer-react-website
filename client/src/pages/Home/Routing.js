@@ -189,7 +189,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/Login"
+          path="/Login-hidden"
           render={(props) =>
             <Login
               {...this.props}
@@ -203,7 +203,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/Login-hidden"
+          path="/Login"
           render={(props) =>
             <LoginComponentHidden
               {...this.props}

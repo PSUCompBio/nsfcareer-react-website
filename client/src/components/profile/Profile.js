@@ -770,7 +770,7 @@ class Profile extends React.Component {
       }
 
     showProfile = () => {
-        console.log('sensor', this.state.sensor)
+        console.log('this.state.user.first_name', this.state.user)
         // this.setState({phone_number: this.state.user.phone_number})
         options = this.state.sensors.map(function(sensors,index){
           return {value:sensors.sensor,label:sensors.sensor }
@@ -948,7 +948,7 @@ class Profile extends React.Component {
                                                                     {this.state.slectedCountryName}
                                                                 </span>
                                                                 <Input
-                                                                    className="profile-input phone-number-input-box" type="text" name="phone_number" onChange={this.Change} id="exampleEmail" defaultValue={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
+                                                                    className="profile-input phone-number-input-box" type="text" name="phone_number" onChange={this.Change} id="exampleEmail" defaultValue={this.state.user.phone_number ? this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length) : ''} placeholder="Your 10 Digit Mobile number" />
                                                                 <span class="input-group-addon profile-edit-icon"
                                                                     >
                                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -1657,7 +1657,10 @@ class Profile extends React.Component {
                                     getUserDetails({user_cognito_id : this.state.profile_to_view})
                                     .then((response) => {
                                         // store.dispatch(userDetails(response.data))
-                                        console.log('RESPONSE DATA IS ', response.data);
+                                        console.log('RESPONSE DATA IS -------------------\n', response.data);
+                                        this.setState({
+                                            user: response.data.data
+                                        })
                                         let inp_latest_url_details = ""
                                         let selfie_latest_url_details = ""
                                         let simulation_file_url_details = ""
@@ -1699,7 +1702,6 @@ class Profile extends React.Component {
                                             vtk_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
                                         }
                                         this.setState({
-                                            user: { ...this.state.user, ...response.data.data },
                                             phone_number: response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length),
                                             number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                                             selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
@@ -1737,6 +1739,7 @@ class Profile extends React.Component {
                                         return getAvatarInspection({ user_cognito_id: this.state.profile_to_view })
                                     })
                                     .then(result => {
+                                        console.log('getAvatarInspection ----------------------\n',result)
                                         let inspection_data = '';
                                         if (result.data.data.model_jpg && result.data.data.model_ply && result.data.data.brain_ply && result.data.data.skull_ply) {
                                             inspection_data = result.data.data;
@@ -1750,10 +1753,12 @@ class Profile extends React.Component {
                                         
                                     })
                                     .catch((error) => {
+                                        console.log('getAvatarInspection error----------------------\n',error)
                                         this.setState({
-                                            user: {},
-                                            isLoading: false,
-                                            isCheckingAuth: false
+                                           isLoading: false,
+                                            isAuthenticated: true,
+                                            isCheckingAuth: false,
+                                            inspection_data: ''
                                         });
                                     });
                                 } else {
