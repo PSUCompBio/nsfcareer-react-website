@@ -6,7 +6,11 @@ import header1 from './header1.png';
 import footer1 from '../footer1.jpg';
 import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
-import trangle from './trangle.png'
+import trangle from './trangle.png';
+import trangle_green from './trangle_green.png';
+import trangle_orange from './trangle_orange.png';
+import trangle_red from './trangle_red.png';
+
 import arrow_left from './arrow_left.png'
 import arrow_right from './arrow_right.png'
 
@@ -545,29 +549,97 @@ class ReportMPS95 extends React.Component {
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Frontal Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Parietal Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Occipital Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Temporal Lobe</Text>
+                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
@@ -589,7 +661,7 @@ class ReportMPS95 extends React.Component {
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
                                     <View style={styles.taxture1_div}>
-                                        <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
+                                        {mps < 15 && <Image  style={styles.trangle} src={taxture1} alt="trangle"/>}
                                     </View>
                                 {/*=============== page 1 footer sections start ===============*/}
                                     <View style={styles.tableRow}>

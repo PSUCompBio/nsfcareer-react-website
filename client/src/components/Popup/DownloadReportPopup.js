@@ -33,21 +33,27 @@ class DownloadReportPopup extends React.Component {
   }
   handleChange =(e)=>{
     console.log(e.target.name,!this.state[e.target.name] ? e.target.value :'' );
-    this.setState({
-      mps_95:'',
-      csdm_15:'',
-      axonal_15: '',
-      masxsr_15: '',
-      ischecked: false
-    });
-    $('input:checkbox').prop('checked', false).removeAttr('checked');
-    $('input:checkbox[name="'+e.target.name+'"]').prop('checked', true);
-    if(e.target.name == 'csdm_15'){
-      this.setState({
-        ischecked: true
-      });
-    }
+    this.setState({ischecked: false})
+    // this.setState({
+    //   mps_95:'',
+    //   csdm_15:'',
+    //   axonal_15: '',
+    //   masxsr_15: '',
+    //   ischecked: false
+    // });
+    // $('input:checkbox').prop('checked', false).removeAttr('checked');
+    // $('input:checkbox[name="'+e.target.name+'"]').prop('checked', true);
+    // if(e.target.name == 'csdm_15'){
+    //   this.setState({
+    //     ischecked: true
+    //   });
+    // }
+    let the = this;
+    setTimeout(()=>{
+      the.setState({ischecked: true});
+    },1000)
     this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
+
   }
   render() {
     console.log("propsData 2", this.props.jsonData);
@@ -71,7 +77,7 @@ class DownloadReportPopup extends React.Component {
                   <td>MPS95</td>
                 </tr>
                 <tr>
-                  <td><input name="csdm_15" type="checkbox" onChange={this.handleChange} checked={this.state.ischecked ? this.state.ischecked : false}/></td>
+                  <td><input name="csdm_15" type="checkbox" onChange={this.handleChange} /></td>
                   <td>CSDM<sub>15</sub></td>
                 </tr>
                 <tr>
@@ -86,26 +92,27 @@ class DownloadReportPopup extends React.Component {
             </table>
             <div className="report-download-buttons">
               <button><img src={share_icon} style={{width:'24px'}}/>  Share</button><br/>
-              {this.state.mps_95 ?
+              {/*this.state.mps_95 ?
                 <DownloadReportMPS95 Report={this.props.Report} fileName={this.props.fileName}  Metric={this.state} jsonfile={this.props.jsonData}/>
                 :
                 null
-              }
-              {this.state.axonal_15 ?
+              */}
+              {/*this.state.axonal_15 ?
                 <DownloadReportAxonalStrain15 Report={this.props.Report} fileName={this.props.fileName}  Metric={this.state} jsonfile={this.props.jsonData}/>
                 :
                 null
-              }
-              {this.state.csdm_15 || !this.state.masxsr_15 && !this.state.axonal_15 && !this.state.mps_95 && !this.state.csdm_15?
+              */}
+               {this.state.ischecked && <DownloadReportCSDM15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/> }
+              {/*this.state.csdm_15 || !this.state.masxsr_15 && !this.state.axonal_15 && !this.state.mps_95 && !this.state.csdm_15?
                 <DownloadReportCSDM15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/>
                 :
                 null
-              }
-              {this.state.masxsr_15 ?
+              */}
+              {/*this.state.masxsr_15 ?
                 <DownloadReportMASxSR15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/>
                 :
                 null
-              }
+              */}
 
               {/*this.state.csdm_15 ?
                 <PDFDownloadLink document={<Report {...this.props.Report} Metric={this.state} jsonfile={this.props.jsonData}/>} className="export-cumulative-player" fileName={this.props.fileName} style={{
