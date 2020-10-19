@@ -2,26 +2,26 @@
 //         INITIALIZING DEPENDENCIES
 // ======================================
 const express = require('express'),
-    app = express(),
-    bodyParser = require("body-parser"),
-    AWS = require('aws-sdk'),
-    cors = require('cors'),
-    AmazonCognitoIdentity = require('amazon-cognito-identity-js'),
-    utility = require('./utilities/utility'),
-    VerifyToken = require('./verify_user'),
-    cookieParser = require('cookie-parser'),
-    archiver = require("archiver"),
-    fs = require("fs"),
-    path = require("path"),
-    uploadFile = require("./upload.js"),
-    ms = require("ms"),
-    multer = require('multer'),
-    XLSX = require('xlsx'),
-    request = require('request'),
-    moment = require('moment'),
-    jwt = require('jsonwebtoken'),
-    // Load the core build of Lodash.
-    _array = require('lodash/array');
+app = express(),
+bodyParser = require("body-parser"),
+AWS = require('aws-sdk'),
+cors = require('cors'),
+AmazonCognitoIdentity = require('amazon-cognito-identity-js'),
+utility = require('./utilities/utility'),
+VerifyToken = require('./verify_user'),
+cookieParser = require('cookie-parser'),
+archiver = require("archiver"),
+fs = require("fs"),
+path = require("path"),
+uploadFile = require("./upload.js"),
+ms = require("ms"),
+multer = require('multer'),
+XLSX = require('xlsx'),
+request = require('request'),
+moment = require('moment'),
+jwt = require('jsonwebtoken'),
+// Load the core build of Lodash.
+_array = require('lodash/array');
 var md5 = require('md5');
 global.fetch = require('node-fetch');
 
@@ -58,7 +58,7 @@ let interval;
 
 io.on('connection', socket => {
     console.log("New client connected");
-    socket.on("connection", () => {
+    socket.on("connection", ()=> {
 
     })
 
@@ -107,7 +107,7 @@ console.log("DOMAIN IS ", process.env.DOMAIN);
 //     "FrontendUrl": process.env.FRONTEND_URL
 // };
 
-var config = require('./config/configuration_keys.json');
+var config = require('./config/configuration_keys.json'); 
 var config_env = config;
 
 //AWS.config.loadFromPath('./config/configuration_keys.json');
@@ -135,7 +135,7 @@ var upload = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         //var ext = path.extname(file.originalname);
-        console.log("This is filename ------> \n", file.originalname);
+        console.log("This is filename ------> \n",file.originalname);
 
         let jpgFile = new RegExp(".jpg").test(file.originalname);
         let jpegFile = new RegExp(".jpeg").test(file.originalname);
@@ -162,7 +162,7 @@ var uploadSensorData = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         //var ext = path.extname(file.originalname);
-        console.log("This is filename ------> \n", file.originalname);
+        console.log("This is filename ------> \n",file.originalname);
 
         let csv = new RegExp(".csv").test(file.originalname);
         let csv_upper = new RegExp(".CSV").test(file.originalname);
@@ -182,7 +182,7 @@ var uploadSidelineImpactVideo = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         //var ext = path.extname(file.originalname);
-        console.log("This is filename ------> \n", file);
+        console.log("This is filename ------> \n",file);
 
         // let csv = new RegExp(".csv").test(file.originalname);
         // let csv_upper = new RegExp(".CSV").test(file.originalname);
@@ -203,7 +203,7 @@ var uploadModelRealData = multer({
     storage: storage,
     fileFilter: function (req, file, callback) {
         //var ext = path.extname(file.originalname);
-        console.log("This is filename ------> \n", file.originalname);
+        console.log("This is filename ------> \n",file.originalname);
 
         let csv = new RegExp(".csv").test(file.originalname);
         let csv_upper = new RegExp(".CSV").test(file.originalname);
@@ -224,7 +224,7 @@ var uploadModelRealData = multer({
 const awsWorker = require('./controllers/aws.controller.js');
 
 
-var s3 = new AWS.S3({ useAccelerateEndpoint: true });
+var s3 = new AWS.S3({useAccelerateEndpoint: true});
 
 // Cognito client who initializes the AWS Credentials to invoke
 // commands on behalf of the developer
@@ -241,7 +241,7 @@ const docClient = new AWS.DynamoDB.DocumentClient({
 });
 
 // Make io accessible to our router
-app.use(function (req, res, next) {
+app.use(function(req,res,next){
     req.io = io;
     next();
 });
@@ -249,7 +249,7 @@ app.use(function (req, res, next) {
 // Express configured for POST Request handling of multiple types
 // xxx-url encoded (form type)  & json type
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(cookieParser());
 
 // app.use(cors(
@@ -263,8 +263,8 @@ app.use(express.static(path.join(__dirname, 'client', 'build')));
 
 function setConnectionTimeout(time) {
     var delay = typeof time === 'string'
-        ? ms(time)
-        : Number(time || 5000);
+    ? ms(time)
+    : Number(time || 5000);
 
     return function (req, res, next) {
         res.connection.setTimeout(delay);
@@ -311,8 +311,8 @@ function listAllUsers(user_attributes, cb) {
     });
 }
 
-function getSimulationImageRecord(image_id) {
-    return new Promise((resolve, reject) => {
+function getSimulationImageRecord(image_id){
+    return new Promise((resolve, reject) =>{
         var db_table = {
             TableName: 'simulation_images',
             Key: {
@@ -331,52 +331,52 @@ function getSimulationImageRecord(image_id) {
     })
 }
 
-function verifyImageToken(token, item) {
+function verifyImageToken(token, item){
     console.log(token, item);
     return new Promise((resolve, reject) => {
-        jwt.verify(token, item.secret, function (err, decoded) {
-            if (err) {
+        jwt.verify(token, item.secret, function(err, decoded) {
+            if(err){
                 console.log(err);
                 reject({
-                    err: err,
-                    authorized: false
+                    err : err,
+                    authorized : false
                 })
             }
-            else {
+            else{
                 resolve(decoded);
             }
         });
     })
 }
 
-function getImageFromS3(image_record) {
-    return new Promise((resolve, reject) => {
+function getImageFromS3(image_record){
+    return new Promise((resolve, reject) =>{
         var params = {
             Bucket: image_record.bucket_name ? image_record.bucket_name : config_env.usersbucket,
             Key: image_record.path
         };
-        s3.getObject(params, function (err, data) {
+        s3.getObject(params, function(err, data) {
             if (err) {
                 // reject(err)
                 resolve(null);
             }
-            else {
+            else{
                 resolve(data);
             }
         });
     })
 }
 
-function getImageFromS3Buffer(image_data) {
+function getImageFromS3Buffer(image_data){
     return new Promise((resolve, reject) => {
         // console.log(image_data.Body);
-        try {
-            resolve(image_data.Body.toString('base64'))
-        }
-        catch (e) {
-            //reject(e)
-            resolve(null);
-        }
+            try{
+                resolve(image_data.Body.toString('base64'))
+            }
+            catch (e){
+                //reject(e)
+                resolve(null);
+            }
 
     })
 }
@@ -459,11 +459,11 @@ function getFileSignedUrl(key, cb, type) {
     };
 
     if (type) {
-
+        
         let filename = key.split('/').pop();
         filename = filename.split('.')[0];
         filename = filename + '-' + type + '.zip';
-        params.ResponseContentDisposition = 'attachment; filename=' + filename
+        params.ResponseContentDisposition = 'attachment; filename=' + filename 
     }
 
     s3.getSignedUrl('getObject', params, function (err, url) {
@@ -482,11 +482,11 @@ function getAvatarInspectionFileSignedUrl(key, cb) {
         Key: key
     };
 
-    s3.headObject(params, function (err, metadata) {
-        if (err && err.code === 'NotFound') {
-            // Handle no object on cloud here 
-            cb(err, "");
-        } else {
+    s3.headObject(params, function (err, metadata) {  
+        if (err && err.code === 'NotFound') {  
+          // Handle no object on cloud here 
+          cb(err, "");
+        } else {  
             s3.getSignedUrl('getObject', params, function (err, url) {
                 if (err) {
                     cb(err, "");
@@ -495,12 +495,12 @@ function getAvatarInspectionFileSignedUrl(key, cb) {
                 }
             });
         }
-    });
+      });
 }
 
 // Get user details & all his attributes
 function getUser(user_name, cb) {
-    console.log('getUser', user_name)
+    console.log('getUser',user_name)
     var params = {
         UserPoolId: cognito.userPoolId,
         /* required */
@@ -518,7 +518,7 @@ function getUser(user_name, cb) {
 
 //forgot password
 function forgotPassword(user_name, cb) {
-    console.log('forgotPassword', user_name)
+    console.log('forgotPassword',user_name)
     var params = {
         ClientId: cognito.ClientId,
         /* required */
@@ -536,34 +536,34 @@ function forgotPassword(user_name, cb) {
 
 
 function createUserDbEntry(event, callback) {
-
+    
     if (event.organization && event.team) {
         addPlayerToTeamOfOrganization(event.organization, event.team, event.user_name)
-            .then(result => {
-                var dbInsert = {};
-                // adding key with name user_cognito_id
-                // deleting the key from parameter from "user_name"
-                event["user_cognito_id"] = event.user_name;
-                // event["sensor"] = 'Blackbox Biometrics';
-                // event["organization"] = 'Army Research Laboratory';
-                delete event.user_name;
-                dbInsert = {
-                    TableName: "users",
-                    Item: event
+        .then(result => {
+            var dbInsert = {};
+            // adding key with name user_cognito_id
+            // deleting the key from parameter from "user_name"
+            event["user_cognito_id"] = event.user_name;
+            // event["sensor"] = 'Blackbox Biometrics';
+            // event["organization"] = 'Army Research Laboratory';
+            delete event.user_name;
+            dbInsert = {
+                TableName: "users",
+                Item: event
+            }
+
+
+            docClient.put(dbInsert, function (dbErr, dbData) {
+                if (dbErr) {
+                    callback(dbErr, null);
+                    console.log(dbErr);
                 }
-
-
-                docClient.put(dbInsert, function (dbErr, dbData) {
-                    if (dbErr) {
-                        callback(dbErr, null);
-                        console.log(dbErr);
-                    }
-                    else {
-                        console.log(dbData);
-                        callback(null, event);
-                    }
-                });
-            })
+                else {
+                    console.log(dbData);
+                    callback(null, event);
+                }
+            });
+        })
     } else {
         var dbInsert = {};
         // adding key with name user_cognito_id
@@ -606,7 +606,7 @@ function addPlayerToTeamOfOrganization(org, team, player_id) {
             if (err) {
                 reject(err);
             }
-
+           
             if (data == null) {
                 const scanData = concatArrays(item);
                 if (scanData.length > 0) {
@@ -627,7 +627,7 @@ function addPlayerToTeamOfOrganization(org, team, player_id) {
                                 },
                                 ReturnValues: "UPDATED_NEW",
                             };
-
+    
                             docClient.update(dbUpdate, function (err, data) {
                                 if (err) {
                                     reject(err);
@@ -682,7 +682,7 @@ function addPlayerToTeamOfOrganization(org, team, player_id) {
                 item.push(data.Items);
             }
             done();
-        });
+        }); 
     });
 }
 
@@ -711,7 +711,7 @@ function createInviteUserDbEntry(event, callback) {
 }
 
 function addRecordInUsersDDB(event) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) =>{
         var dbInsert = {};
         // adding key with name user_cognito_id
         // deleting the key from parameter from "user_name"
@@ -766,16 +766,16 @@ function getSimulationFilePath(user_name, cb) {
         if (err) {
             //   console.log(err);
             console.log(err);
-            cb(err, '');
+            cb(err,'');
         }
         console.log(data);
         try {
-            var pathArray = data.CommonPrefixes;
+            var pathArray = data.CommonPrefixes ;
             const simulationDirectoryPaths = pathArray.map(d => d.Prefix);
-            cb('', simulationDirectoryPaths);
+            cb('',simulationDirectoryPaths);
 
         } catch (e) {
-            cb(err, '');
+            cb(err,'');
         }
     });
 }
@@ -791,14 +791,14 @@ function getSimulationFilesOfPlayer(path, cb) {
         if (err) {
             //   console.log(err);
             console.log(err);
-            cb(err, '');
+            cb(err,'');
         }
 
 
-        const imageList = data.Contents;
-        var counter = 0;
+        const imageList = data.Contents ;
+        var counter = 0 ;
         var url_arrary = [];
-        imageList.forEach(function (image, index) {
+        imageList.forEach(function(image,index){
             var params = {
                 Bucket: BUCKET_NAME,
                 Key: image.Key
@@ -812,21 +812,21 @@ function getSimulationFilesOfPlayer(path, cb) {
                     console.log(url);
                     url_arrary.push(url);
                 }
-                if (counter == imageList.length) {
-                    cb('', url_arrary);
+                if(counter == imageList.length){
+                    cb('',url_arrary);
                 }
             });
         });
     });
 }
 
-function getPlayersListFromTeamsDB(obj) {
-    return new Promise((resolve, reject) => {
+function getPlayersListFromTeamsDB(obj){
+    return new Promise((resolve, reject)=>{
         var db_table = {
             TableName: 'teams',
             Key: {
                 "organization": obj.organization,
-                "team_name": obj.team_name
+                "team_name" : obj.team_name
             }
         };
         docClient.get(db_table, function (err, data) {
@@ -842,66 +842,66 @@ function getPlayersListFromTeamsDB(obj) {
     })
 }
 
-app.post(`${apiPrefix}checkIfPlayerExists`, (req, res) => {
-    console.log("Checking player", req.body);
+app.post(`${apiPrefix}checkIfPlayerExists`, (req,res) =>{
+    console.log("Checking player",req.body);
     getPlayersListFromTeamsDB({
-        organization: "PSU",
-        team_name: "York Tech Football"
+        organization : "PSU",
+        team_name : "York Tech Football"
     })
-        .then(data => {
-            console.log("USER EXISTS ", data.player_list.indexOf(req.body.name));
-            if (data.player_list.indexOf(req.body.name) > -1) {
-                res.send({
-                    message: "success",
-                    flag: true
-                })
-            }
-            else {
-                res.send({
-                    message: "success",
-                    flag: false
-                })
-            }
-        })
-        .catch(err => {
+    .then(data => {
+        console.log("USER EXISTS ",data.player_list.indexOf(req.body.name));
+        if(data.player_list.indexOf(req.body.name)>-1){
             res.send({
-                message: "failure",
-                error: err
-            })
-        })
-})
-
-app.post(`${apiPrefix}getSimulationFilePath`, (req, res) => {
-    console.log(req.body);
-    getSimulationFilePath(req.body.player_id, function (err, data) {
-        if (err) {
-            res.send({
-                message: "failure",
-                error: err
+                message : "success",
+                flag : true
             })
         }
-        else {
+        else{
             res.send({
-                message: "success",
-                data: data
+                message : "success",
+                flag : false
             })
         }
     })
+    .catch(err => {
+        res.send({
+            message : "failure",
+            error : err
+        })
+    })
 })
 
-app.post(`${apiPrefix}getSimulationFilesOfPlayer`, (req, res) => {
+app.post(`${apiPrefix}getSimulationFilePath`, (req,res) =>{
     console.log(req.body);
-    getSimulationFilesOfPlayer(req.body.path, function (err, data) {
-        if (err) {
+    getSimulationFilePath(req.body.player_id,function(err, data){
+        if(err){
             res.send({
-                message: "failure",
-                error: err
+                message : "failure",
+                error : err
             })
         }
-        else {
+        else{
             res.send({
-                message: "success",
-                data: data
+                message : "success",
+                data : data
+            })
+        }
+    })
+})
+
+app.post(`${apiPrefix}getSimulationFilesOfPlayer`, (req,res) =>{
+    console.log(req.body);
+    getSimulationFilesOfPlayer(req.body.path,function(err, data){
+        if(err){
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }
+        else{
+            res.send({
+                message : "success",
+                data : data
             })
         }
     })
@@ -1156,14 +1156,14 @@ function getAge(dob) {
     let birthDate = new Date(dob);
     let age = currentDate.getFullYear() - birthDate.getFullYear()
     let month = currentDate.getMonth() - birthDate.getMonth()
-    if (month < 0 || (month === 0 && currentDate.getDate() < birthDate.getDate())) {
+    if ( month < 0 || ( month === 0 && currentDate.getDate() < birthDate.getDate() )) {
         age = age - 1
     }
     return age;
 }
 
 function getUserSensor(user_name) {
-    console.log('user_name', user_name)
+    console.log('user_name',user_name)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'sensors',
@@ -1209,13 +1209,13 @@ function getOrganizationList() {
     });
 }
 
-function InsertUserIntoSensor(user_name, sensor) {
-    console.log('user_name', user_name, sensor)
+function InsertUserIntoSensor(user_name,sensor) {
+    console.log('user_name',user_name,sensor)
     return new Promise((resolve, reject) => {
         var dbInsert = {
             TableName: "sensors",
-            Key: {
-                "sensor": sensor
+            Key: { 
+                "sensor" : sensor
             },
             UpdateExpression: "set #users = list_append(#users, :user_cognito_id)",
             ExpressionAttributeNames: {
@@ -1229,7 +1229,7 @@ function InsertUserIntoSensor(user_name, sensor) {
 
         docClient.update(dbInsert, function (err, data) {
             if (err) {
-                console.log("ERROR WHILE CREATING DATA", err);
+                console.log("ERROR WHILE CREATING DATA",err);
                 reject(err);
 
             } else {
@@ -1239,10 +1239,10 @@ function InsertUserIntoSensor(user_name, sensor) {
     });
 }
 
-function InsertImpactVideoKey(video_id, impact_video_path) {
-    console.log('user_name', video_id, impact_video_path)
+function InsertImpactVideoKey(video_id,impact_video_path) {
+    console.log('user_name',video_id,impact_video_path)
     return new Promise((resolve, reject) => {
-        var userParams = {
+       var userParams = {
             TableName: "simulation_images",
             Key: {
                 image_id: video_id,
@@ -1256,7 +1256,7 @@ function InsertImpactVideoKey(video_id, impact_video_path) {
         };
         docClient.update(userParams, function (err, data) {
             if (err) {
-                console.log("ERROR WHILE CREATING DATA", err);
+                console.log("ERROR WHILE CREATING DATA",err);
                 reject(err);
 
             } else {
@@ -1270,23 +1270,23 @@ function adminUpdateUser(User, cb) {
 
     var params = {
         UserAttributes: [ /* required */
-            {
-                Name: 'email', /* required */
-                Value: User.email
-            },
-            /* more items */
+          {
+            Name: 'email', /* required */
+            Value: User.email
+          },
+          /* more items */
         ],
         UserPoolId: cognito.userPoolId, /* required */
         Username: User.user_name, /* required */
-    };
-    COGNITO_CLIENT.adminUpdateUserAttributes(params, function (err, data) {
+      };
+      COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
         if (err) {
             cb(err, "");
         } // an error occurred
         else {
             cb("", data);
         }             // successful response
-    });
+      });
 }
 
 // Function to create User by Admin
@@ -1355,55 +1355,55 @@ function addUserToGroup(event, callback) {
 function parseDate(date, arg, timezone) {
     // var result = 0, arr = arg.split(':')
 
-    arg = arg.replace(".", ":");
+    arg = arg.replace(".",":");
     var t = arg.split(":");
-    var milliseconds;
-    var time_type;
+    var milliseconds ;
+    var time_type ;
     milliseconds = t[3].split(" ")[0];
     // x stores parsed time format
     var x = "";
-    if (t[3].indexOf('P') > -1) {
+    if(t[3].indexOf('P') > -1){
         x = `${t[0]}:${t[1]}:${t[2]} ${t[3].split(" ")[1]}`
     }
-    return moment.utc(date + " , " + x, 'MM/DD/YYYY , hh:mm:ss a', true).milliseconds(Number(milliseconds)).valueOf();
+    return moment.utc(date  + " , " +   x , 'MM/DD/YYYY , hh:mm:ss a', true).milliseconds(Number(milliseconds)).valueOf();
 }
 
 
-function convertXLSXDataToJSON(buf, cb) {
+function convertXLSXDataToJSON(buf,cb){
 
     // york_data.xlsx
-    var wb = XLSX.read(buf, { type: 'buffer' });
+    var wb = XLSX.read(buf, {type:'buffer'});
     var sheet_name_list = wb.SheetNames;
-    sheet_name_list.forEach(function (y) {
+    sheet_name_list.forEach(function(y) {
         var worksheet = wb.Sheets[y];
         var headers = {};
         var data = [];
-        for (z in worksheet) {
-            if (z[0] === '!') continue;
+        for(z in worksheet) {
+            if(z[0] === '!') continue;
             //parse out the column, row, and value
-            var col = z.substring(0, 1);
+            var col = z.substring(0,1);
             var row = parseInt(z.substring(1));
             var value = worksheet[z].v;
 
             //store header names
-            if (row == 1) {
+            if(row == 1) {
 
-                if (value == "Athlete") {
+                if(value == "Athlete"){
                     value = "player_id"
                 }
 
-                if ((/[{()}]/g).test(value)) {
-                    value = value.replace(/[{()}]/g, '')
-                }
+                 if ((/[{()}]/g).test(value)) {
+                     value = value.replace(/[{()}]/g, '')
+                 }
 
                 headers[col] = value
-                    .split(" ")
-                    .join("_")
-                    .toLowerCase();
+                .split(" ")
+                .join("_")
+                .toLowerCase();
                 continue;
             }
 
-            if (!data[row]) data[row] = {};
+            if(!data[row]) data[row]={};
 
             data[row][headers[col]] = value;
 
@@ -1413,11 +1413,11 @@ function convertXLSXDataToJSON(buf, cb) {
         //drop those first two rows which are empty
         data.shift();
         data.shift();
-        var data_array = data.filter(function (el) {
+        var data_array = data.filter(function(el) {
             return el.false_positive == false;
         });
         console.log("The impact data found is ", data_array.length);
-        for (var i = 0; i < data_array.length; i++) {
+        for(var i = 0 ; i < data_array.length ; i++){
             var d = data_array[i];
             // TODO : Parse Date here
             data_array[i]["timestamp"] = Number(parseDate(d.date, d.time, d.time_zone)).toString();
@@ -1429,19 +1429,19 @@ function convertXLSXDataToJSON(buf, cb) {
 
 }
 
-function convertDataToJSON(buf, cb) {
+function convertDataToJSON(buf,cb){
     // york_data.xlsx
 
-    var wb = XLSX.read(buf, { type: 'buffer' });
+    var wb = XLSX.read(buf, {type:'buffer'});
     var sheet_name_list = wb.SheetNames;
-    sheet_name_list.forEach(function (y) {
+    sheet_name_list.forEach(function(y) {
         var worksheet = wb.Sheets[y];
         var headers = {};
         var data = [];
-        for (z in worksheet) {
-            if (z[0] === '!') continue;
+        for(z in worksheet) {
+            if(z[0] === '!') continue;
             //parse out the column, row, and value
-            var col = z.substring(0, 1);
+            var col = z.substring(0,1);
             var row = parseInt(z.substring(1));
             var value = worksheet[z].v;
 
@@ -1453,24 +1453,24 @@ function convertDataToJSON(buf, cb) {
                 .join("_")
                 .replace(/[{()}]/g, '')
                 .toLowerCase(); */
-                switch (col) {
+                switch(col) {
                     case "A":
-                        headers[col] = 'time_msec';
-                        break;
+                    headers[col] = 'time_msec';
+                    break;
                     case "B":
-                        headers[col] = 'head_pressure_psi';
-                        break;
+                    headers[col] = 'head_pressure_psi';
+                    break;
                     case "C":
-                        headers[col] = 'shoulder_pressure_psi';
-                        break;
+                    headers[col] = 'shoulder_pressure_psi';
+                    break;
                     case "D":
-                        headers[col] = 'chest_pressure_psi';
-                        break;
+                    headers[col] = 'chest_pressure_psi';
+                    break;
                 }
                 continue;
             }
 
-            if (!data[row]) data[row] = {};
+            if(!data[row]) data[row]={};
 
             data[row][headers[col]] = value;
 
@@ -1485,13 +1485,13 @@ function convertDataToJSON(buf, cb) {
 
 }
 
-function storeSensorData(sensor_data_array) {
-    return new Promise((resolve, reject) => {
-        var counter = 0;
-        if (sensor_data_array.length == 0) {
+function storeSensorData(sensor_data_array){
+    return new Promise((resolve, reject) =>{
+        var counter = 0 ;
+        if(sensor_data_array.length == 0 ){
             resolve(true);
         }
-        for (var i = 0; i < sensor_data_array.length; i++) {
+        for(var i = 0 ; i < sensor_data_array.length ; i++){
             // TODO STORE SENSOR DATA
             let param = {
                 TableName: "sensor_data",
@@ -1503,7 +1503,7 @@ function storeSensorData(sensor_data_array) {
                     console.log(err);
                     reject(err)
                 }
-                if (counter == sensor_data_array.length) {
+                if(counter == sensor_data_array.length){
                     resolve(true);
                 }
             })
@@ -1535,42 +1535,42 @@ const fetchNumbers = () => {
     })
 }
 
-const fetchStaffMembers = (user_cognito_id, brand) => {
+const fetchStaffMembers = (user_cognito_id,brand) => {
     return new Promise(function (resolve, reject) {
         var params = {
             TableName: 'users',
-            Key: {
+             Key: {
                 "user_cognito_id": user_cognito_id,
             }
-
+           
         };
         //   var items
         var items = [];
+        
+          docClient.get(params, function (err, data) {
+              if (err) {
+                  reject(err)
 
-        docClient.get(params, function (err, data) {
-            if (err) {
-                reject(err)
-
-            } else {
+              } else {
                 // console.log('cg data is ',data);
                 resolve(data.Item);
-            }
-        });
-    })
-    // docClient.get(params).eachPage((err, data, done) => {
-    //     console.log('data',data)
-    //     if (err) {
-    //         reject(err);
-    //     }
-    //     if (data != null) {
-    //         console.log('items',data)
-    //         resolve(utility.concatArrays(data));
-    //     } else {
-    //         // items.push(data.Items);
-    //     }
-    //     done();
-    // });
-
+              }
+          });
+      })
+        // docClient.get(params).eachPage((err, data, done) => {
+        //     console.log('data',data)
+        //     if (err) {
+        //         reject(err);
+        //     }
+        //     if (data != null) {
+        //         console.log('items',data)
+        //         resolve(utility.concatArrays(data));
+        //     } else {
+        //         // items.push(data.Items);
+        //     }
+        //     done();
+        // });
+   
 }
 
 const fetchAllUsers = () => {
@@ -1695,13 +1695,13 @@ function getVtkFileLink(user_id) {
 }
 
 function addPlayerToTeamInDDB(org, team, player_id) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject)=>{
         // if flag is true it means data array is to be created
         let params = {
             TableName: "teams",
             Key: {
                 "organization": org,
-                "team_name": team
+                "team_name" : team
             }
         };
         docClient.get(params, function (err, data) {
@@ -1712,30 +1712,27 @@ function addPlayerToTeamInDDB(org, team, player_id) {
                 if (Object.keys(data).length == 0 && data.constructor === Object) {
                     var dbInsert = {
                         TableName: "teams",
-                        Item: {
-                            organization: org,
-                            team_name: team,
-                            player_list: [player_id]
-                        }
-                    };
-                    docClient.put(dbInsert, function (err, data) {
-                        if (err) {
-                            console.log(err);
-                            reject(err);
+                        Item: { organization : org,
+                            team_name : team,
+                            player_list : [player_id] }
+                        };
+                        docClient.put(dbInsert, function (err, data) {
+                            if (err) {
+                                console.log(err);
+                                reject(err);
 
-                        } else {
-                            resolve(data)
-                        }
-                    });
-                }
-                else {
-                    // If Player does not exists in Team
-                    if (data.Item.player_list.indexOf(player_id) <= -1) {
-                        var dbInsert = {
-                            TableName: "teams",
-                            Key: {
-                                "organization": org,
-                                "team_name": team
+                            } else {
+                                resolve(data)
+                            }
+                        });
+                    }
+                    else {
+                        // If Player does not exists in Team
+                        if(data.Item.player_list.indexOf(player_id) <= -1){
+                            var dbInsert = {
+                                TableName: "teams",
+                                Key: { "organization" : org,
+                                "team_name" : team
                             },
                             UpdateExpression: "set #list = list_append(#list, :newItem)",
                             ExpressionAttributeNames: {
@@ -1749,7 +1746,7 @@ function addPlayerToTeamInDDB(org, team, player_id) {
 
                         docClient.update(dbInsert, function (err, data) {
                             if (err) {
-                                console.log("ERROR WHILE CREATING DATA", err);
+                                console.log("ERROR WHILE CREATING DATA",err);
                                 reject(err);
 
                             } else {
@@ -1757,7 +1754,7 @@ function addPlayerToTeamInDDB(org, team, player_id) {
                             }
                         });
                     }
-                    else {
+                    else{
                         resolve("PLAYER ALREADY EXISTS IN TEAM");
                     }
 
@@ -1770,99 +1767,99 @@ function addPlayerToTeamInDDB(org, team, player_id) {
 }
 
 function getPlayerCgValues(player_id) {
-    return new Promise((resolve, reject) => {
-        var db_table = {
-            TableName: 'users',
-            Key: {
-                "user_cognito_id": player_id
-            },
-            ProjectionExpression: "cg_coordinates"
-        };
-        docClient.get(db_table, function (err, data) {
-            if (err) {
-                reject(err)
+  return new Promise((resolve, reject) =>{
+      var db_table = {
+          TableName: 'users',
+          Key: {
+              "user_cognito_id": player_id
+          },
+          ProjectionExpression: "cg_coordinates"
+      };
+      docClient.get(db_table, function (err, data) {
+          if (err) {
+              reject(err)
 
-            } else {
-                console.log('cg data is ', data);
-                if (JSON.stringify(data).length == 2) {
-                    resolve([]);
-                } else {
-                    resolve(data.Item.cg_coordinates);
-                }
-            }
-        });
-    })
+          } else {
+               console.log('cg data is ',data);
+              if(JSON.stringify(data).length==2) {
+                resolve([]);
+              } else {
+                resolve(data.Item.cg_coordinates);
+              }
+          }
+      });
+  })
 }
 
 
 function getPresignedMovieUrl(image_details) {
-    return new Promise((resolve, reject) => {
-        const { movie_path, bucket_name } = image_details;
-        if (movie_path) {
-            var params = {
-                Bucket: bucket_name ? bucket_name : config_env.usersbucket,
-                Key: movie_path,
-                Expires: 1800
-            };
-            s3.getSignedUrl('getObject', params, function (err, url) {
-                if (err) {
-                    //reject(err);
-                    resolve(false);
-                } else {
-                    resolve(url);
-                }
-            });
-        } else {
-            resolve(false);
-        }
-    })
+  return new Promise((resolve, reject) => {
+    const { movie_path, bucket_name } = image_details;
+    if(movie_path) {
+      var params = {
+          Bucket: bucket_name ? bucket_name : config_env.usersbucket,
+          Key: movie_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              //reject(err);
+              resolve(false);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
 }
-function getBrainSimulationLogFile(image_details) {
+function getBrainSimulationLogFile(image_details){
     // console.log('image_details',image_details)
     return new Promise((resolve, reject) => {
-        const { log_path } = image_details;
-        if (log_path) {
-            var params = {
-                Bucket: BUCKET_NAME,
-                Key: log_path,
-                Expires: 1800
-            };
-            s3.getSignedUrl('getObject', params, function (err, url) {
-                if (err) {
-                    //reject(err);
-                    resolve(false);
-                } else {
-                    resolve(url);
-                }
-            });
-        } else {
-            resolve(false);
-        }
-    })
+    const { log_path } = image_details;
+    if(log_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: log_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              //reject(err);
+              resolve(false);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
 
 }
 
 function ImpactVideoUrl(image_details) {
-    return new Promise((resolve, reject) => {
-        const { impact_video_path } = image_details;
-        console.log('impact_video_path', impact_video_path)
-        if (impact_video_path) {
-            var params = {
-                Bucket: BUCKET_NAME,
-                Key: impact_video_path,
-                Expires: 1800
-            };
-            s3.getSignedUrl('getObject', params, function (err, url) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(url);
-                }
-            });
-        } else {
-            resolve(false);
-        }
-    })
+  return new Promise((resolve, reject) => {
+    const { impact_video_path } = image_details;
+    console.log('impact_video_path',impact_video_path)
+    if(impact_video_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: impact_video_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
 }
 
 // Miliseconds to Human readable 
@@ -1904,30 +1901,30 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
     var imageData = '';
     // console.log(process.env.BRAIN_SIM_SERVICE_TOKEN)
     getSimulationImageRecord(req.params.image_id)
-        .then(image_data => {
-            imageData = image_data;
-            return getPlayerCgValues(image_data.player_name);
-        })
-        .then(cg_coordinates => {
-            // Setting cg values
-            if (cg_coordinates) {
-                imageData["cg_coordinates"] = cg_coordinates;
-            }
-            // convert Buffer to Image
-            return verifyImageToken(token, imageData);
-        })
-        .then(decoded_token => {
-            if (imageData.root_path && imageData.root_path != 'null') {
-                imageData.path = imageData.root_path + imageData.image_id + '.png';
-            } console.log(imageData.path);
-            return getImageFromS3(imageData);
-        })
-        .then(image_s3 => {
-            return getImageFromS3Buffer(image_s3);
-        })
-        .then(image => {
-            let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
-            res.send(`
+    .then(image_data => {
+        imageData = image_data;
+        return getPlayerCgValues(image_data.player_name);
+    })
+    .then(cg_coordinates => {
+      // Setting cg values
+      if(cg_coordinates) {
+        imageData["cg_coordinates"] = cg_coordinates;
+      }
+      // convert Buffer to Image
+      return verifyImageToken(token, imageData);
+    })
+    .then(decoded_token => {
+        if (imageData.root_path && imageData.root_path != 'null') {
+            imageData.path = imageData.root_path + imageData.image_id + '.png';
+        } console.log(imageData.path);
+        return getImageFromS3(imageData); 
+    })
+    .then(image_s3 => {
+        return getImageFromS3Buffer(image_s3);
+    })
+    .then(image => {
+        let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+        res.send(`
           <table style="text-align:left;">
             <tr>
               <th>Image Id</th>
@@ -1940,7 +1937,7 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
               <td>${imageData.player_name}</td>
             </tr>
             ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
-            ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>` : `<p></p>`}
+            ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
             ${computed_time ? `<tr><th>Compute Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
           </table>
             <div style="display:flex;">
@@ -1949,27 +1946,27 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
                 </div>
               </div>
           </div>`);
-        })
-        .catch(err => {
-            // res.removeHeader('X-Frame-Options');
-            if ("authorized" in err) {
-                res.send({
-                    message: "failure",
-                    error: "You are not authorized to access this resource."
-                })
-            }
-            else {
-                res.send({
-                    message: "Simulation is in process"
-                })
-            }
-        })
+    })
+    .catch(err => {
+        // res.removeHeader('X-Frame-Options');
+        if("authorized" in err){
+            res.send({
+                message : "failure",
+                error : "You are not authorized to access this resource."
+            })
+        }
+        else{
+            res.send({
+                message : "Simulation is in process"
+            })
+        }
+    })
 
 });
 
 // Get simulation movie link
 app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
-    const { image_id, token } = req.params;
+    const { image_id, token} = req.params;
     let imageData = '';
 
     getSimulationImageRecord(image_id)
@@ -1982,8 +1979,8 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
         })
         .then(cg_coordinates => {
             // Setting cg values
-            if (cg_coordinates) {
-                imageData["cg_coordinates"] = cg_coordinates;
+            if(cg_coordinates) {
+              imageData["cg_coordinates"] = cg_coordinates;
             }
             if (!imageData.movie_path) {
                 imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
@@ -2004,7 +2001,7 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
               <td>${imageData.player_name}</td>
             </tr>
             ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
-            ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>` : `<p></p>`}
+            ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>`:`<p></p>`}
             ${computed_time ? `<tr><th>Compute Time</th><th>:</th><td>${computed_time}</td></tr>` : `<p></p>`}
           </table>
             <div style="display:flex;">
@@ -2015,15 +2012,15 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
         .catch(err => {
             console.log(err);
             // res.removeHeader('X-Frame-Options');
-            if ("authorized" in err) {
+            if("authorized" in err){
                 res.send({
-                    message: "failure",
-                    error: "You are not authorized to access this resource."
+                    message : "failure",
+                    error : "You are not authorized to access this resource."
                 })
             }
-            else {
+            else{
                 res.send({
-                    message: "Simulation is in process"
+                    message : "Simulation is in process"
                 })
             }
         })
@@ -2057,21 +2054,21 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         .then(cg_coordinates => {
             if (!imageData.movie_path) {
                 imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
-            }
+            } 
             return getPresignedMovieUrl(imageData);
         })
         .then(movie_link => {
-            console.log('movie_link', movie_link);
+            console.log('movie_link',movie_link);
             movie_link_url = movie_link;
-
+           
             return ImpactVideoUrl(imageData);
-
-        })
+            
+        }) 
         .then(impact_video_url => {
-            console.log('movie_link_url', movie_link_url)
+            console.log('movie_link_url',movie_link_url)
             res.send({
-                message: "success",
-                movie_link: movie_link_url,
+                message : "success",
+                movie_link : movie_link_url,
                 impact_video_url: impact_video_url,
                 video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
                 video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
@@ -2080,15 +2077,15 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         })
         .catch(err => {
             console.log(err);
-            if ("authorized" in err) {
+            if("authorized" in err){
                 res.send({
-                    message: "failure",
-                    error: "You are not authorized to access this resource."
+                    message : "failure",
+                    error : "You are not authorized to access this resource."
                 })
             }
-            else {
+            else{
                 res.send({
-                    message: "Simulation is in process"
+                    message : "Simulation is in process"
                 })
             }
         })
@@ -2097,26 +2094,26 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
 /*+++++++++++++++++ Set video lock time funtion start here ++++++++++++++++ */
 app.post(`${apiPrefix}setVideoTime`, (req, res) => {
     console.log(req.body);
-    setVideoTime(req.body.image_id, req.body.video_lock_time, req.body.type)
-        .then(data => {
-            res.send({
-                message: 'success',
-                status: '200',
-                data: data
-            })
-        }).catch(err => {
-            res.send({
-                message: 'failure',
-                status: '300',
-                data: []
-            })
+    setVideoTime(req.body.image_id, req.body.video_lock_time,req.body.type)
+    .then(data=>{
+        res.send({
+            message:'success',
+            status: '200',
+            data:data
         })
+    }).catch(err=>{
+        res.send({
+            message:'failure',
+            status: '300',
+            data: []
+        })
+    })
 });
 
-function setVideoTime(image_id, video_lock_time, type) {
-    console.log('user_name', image_id, video_lock_time)
+function setVideoTime(image_id,video_lock_time,type) {
+    console.log('user_name',image_id,video_lock_time)
     return new Promise((resolve, reject) => {
-        if (type == 'setVideoTime') {
+        if(type == 'setVideoTime'){
             var userParams = {
                 TableName: "simulation_images",
                 Key: {
@@ -2129,7 +2126,7 @@ function setVideoTime(image_id, video_lock_time, type) {
                 },
                 ReturnValues: "UPDATED_NEW",
             };
-        } else {
+        }else{
             var userParams = {
                 TableName: "simulation_images",
                 Key: {
@@ -2145,7 +2142,7 @@ function setVideoTime(image_id, video_lock_time, type) {
         }
         docClient.update(userParams, function (err, data) {
             if (err) {
-                console.log("ERROR WHILE CREATING DATA", err);
+                console.log("ERROR WHILE CREATING DATA",err);
                 reject(err);
 
             } else {
@@ -2187,42 +2184,42 @@ app.get(`${apiPrefix}userEmailVerification`, (req, res) => {
 /*================ Resend verfication email funtion start here ======================*/
 app.post(`${apiPrefix}reSendVerficationEmail`, (req, res) => {
     console.log(req.body)
-    const { user_name } = req.body;
-
+    const {user_name} = req.body;
+  
     getUserAlreadyExists(user_name)
-        .then(data => {
-            if (data[0]) {
-                var params = {
-                    ClientId: cognito.ClientId, /* required */
-                    Username: user_name, /* required */
-                };
-                COGNITO_CLIENT.resendConfirmationCode(params, function (err, data) {
-                    if (err) {
-                        res.send({
-                            message: "failure",
-                            error: 'Somethig went wrong when sending verfication link.'
-                        });
-                    }
-                    else {
-                        res.send({
-                            message: "success",
-                            message_details: "Verification Link sended successfully in your mail account. Click on verify email button to verify your account.",
-                        })
-                    }
-                });
-            } else {
+    .then(data=>{
+        if(data[0]){
+            var params = {
+              ClientId: cognito.ClientId, /* required */
+              Username: user_name, /* required */
+            };
+            COGNITO_CLIENT.resendConfirmationCode(params, function(err, data) {
+              if (err){
                 res.send({
                     message: "failure",
-                    error: 'Your account dose not exists! Please check your entered email account.'
+                    error: 'Somethig went wrong when sending verfication link.'
                 });
-            }
-        }).catch(err => {
+              }
+              else {
+                res.send({
+                    message: "success",
+                    message_details : "Verification Link sended successfully in your mail account. Click on verify email button to verify your account.",
+                })
+              }    
+            });
+        }else{
             res.send({
                 message: "failure",
-                error: 'Somethig went wrong when sending verfication link.'
+                error: 'Your account dose not exists! Please check your entered email account.'
             });
-        })
-
+        }
+    }).catch(err=>{
+        res.send({
+            message: "failure",
+            error: 'Somethig went wrong when sending verfication link.'
+        });
+    })
+    
 })
 
 
@@ -2235,8 +2232,8 @@ app.post(`${apiPrefix}reSendVerficationEmail`, (req, res) => {
 
 
 /*+++++++++++++++++ Set video lock time funtion end here ++++++++++++++++ */
-app.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+app.get('/*', function(req, res) {
+    res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
 });
 
 
@@ -2306,29 +2303,29 @@ function getOrgUniqueList() {
 app.post(`${apiPrefix}getOrgUniqueList`, (req, res) => {
     console.log('get org list')
     getOrgUniqueList()
-        .then(list => {
-            let uniqueList = [];
-            var orgList = list.filter(function (organization) {
-                if (uniqueList.indexOf(organization.organization) === -1) {
-                    uniqueList.push(organization.organization);
-                    return organization;
-                }
-            });
-            console.log('uniqueList', orgList)
-            res.send({
-                message: 'success',
-                status: 200,
-                data: orgList
-            })
+    .then(list => {
+        let uniqueList = [];
+        var orgList = list.filter(function (organization) {
+            if (uniqueList.indexOf(organization.organization) === -1) {
+                uniqueList.push(organization.organization);
+                return organization;
+            }
+        });
+        console.log('uniqueList',orgList)
+        res.send({
+            message: 'success',
+            status: 200,
+            data: orgList
         })
-        .catch(err => {
-            console.log('err', err);
-            res.send({
-                message: 'faiure',
-                status: 300,
-                data: []
-            })
+    })
+    .catch(err=>{
+        console.log('err',err);
+        res.send({
+            message: 'faiure',
+            status: 300,
+            data: []
         })
+    })
 })
 
 /*++++++++++++ Getting Organization teams +++++++++++++++++*/
@@ -2339,7 +2336,7 @@ function getOrgUniqueTeams(organization) {
             TableName: 'organizations',
             FilterExpression: "organization = :organization",
             ExpressionAttributeValues: {
-                ":organization": organization
+            ":organization": organization
             },
             ProjectionExpression: "team_name"
         };
@@ -2361,69 +2358,69 @@ function getOrgUniqueTeams(organization) {
 app.post(`${apiPrefix}getOrgUniqueTeams`, (req, res) => {
     console.log('org name', req.body);
     getOrgUniqueTeams(req.body.org)
-        .then(list => {
-            let uniqueList = [];
-            var teamList = list.filter(function (team) {
-                if (uniqueList.indexOf(team.team_name) === -1) {
-                    uniqueList.push(team.team_name);
-                    return team;
-                }
-            });
-            console.log('uniqueList', teamList)
-            res.send({
-                message: 'success',
-                status: 200,
-                data: teamList
-            })
+    .then(list => {
+        let uniqueList = [];
+        var teamList = list.filter(function (team) {
+            if (uniqueList.indexOf(team.team_name) === -1) {
+                uniqueList.push(team.team_name);
+                return team;
+            }
+        });
+        console.log('uniqueList',teamList)
+        res.send({
+            message: 'success',
+            status: 200,
+            data: teamList
         })
-        .catch(err => {
-            console.log('err', err);
-            res.send({
-                message: 'faiure',
-                status: 300,
-                data: []
-            })
+    })
+    .catch(err=>{
+        console.log('err',err);
+        res.send({
+            message: 'faiure',
+            status: 300,
+            data: []
         })
+    })
 })
 
 
-app.post(`${apiPrefix}updateUserDetails`, (req, res) => {
-    console.log('req', req.body);
+app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
+    console.log('req',req.body);
     let obj = {};
     obj.user_name = req.body.user_cognito_id;
-    obj.phone_number = req.body.country_code + req.body.phone_number;
+    obj.phone_number = req.body.country_code+req.body.phone_number;
     obj.phone_number_verified = req.body.number_verified
     adminVerifyNumber(obj, function (err, data) {
         if (err) {
 
-        } else {
+        }else{
 
             let update_details = {
 
-                TableName: 'users',
-                Key: {
+                TableName : 'users',
+                Key : {
                     "user_cognito_id": req.body.user_cognito_id
                 },
-                UpdateExpression: "set first_name = :fname, last_name = :lname, dob = :dob, gender = :gender, phone_number = :phone_number, phone_number_verified = :phone_number_verified",
-                ExpressionAttributeValues: {
-                    ":fname": req.body.first_name,
-                    ":lname": req.body.last_name,
-                    ":dob": req.body.dob,
-                    ":gender": req.body.sex,
-                    ":phone_number": req.body.country_code + req.body.phone_number,
-                    ":phone_number_verified": req.body.number_verified
+                UpdateExpression : "set first_name = :fname, last_name = :lname, dob = :dob, gender = :gender, phone_number = :phone_number, phone_number_verified = :phone_number_verified",
+                ExpressionAttributeValues : {
+                    ":fname" : req.body.first_name,
+                    ":lname" : req.body.last_name,
+                    ":dob" : req.body.dob,
+                    ":gender" : req.body.sex,
+                    ":phone_number" : req.body.country_code + req.body.phone_number,
+                    ":phone_number_verified" : req.body.number_verified
                 },
                 ReturnValues: "UPDATED_NEW"
             };
 
-            docClient.update(update_details, function (err, data) {
-                if (err) {
+            docClient.update(update_details, function(err, data){
+                if(err) {
                     res.send({
-                        message: 'failure'
+                        message : 'failure'
                     })
                 } else {
                     res.send({
-                        message: 'success'
+                        message : 'success'
                     })
                 }
             })
@@ -2431,29 +2428,29 @@ app.post(`${apiPrefix}updateUserDetails`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}updateUserMouthguardDetails`, (req, res) => {
-    console.log('req', req.body);
+app.post(`${apiPrefix}updateUserMouthguardDetails`,(req, res) => {
+    console.log('req',req.body);
     let update_details = {
-        TableName: 'users',
-        Key: {
+        TableName : 'users',
+        Key : {
             "user_cognito_id": req.body.user_cognito_id
         },
-        UpdateExpression: "set sensor = :sensor, sensor_id_number = :sensor_id_number",
-        ExpressionAttributeValues: {
-            ":sensor": req.body.sensor,
-            ":sensor_id_number": req.body.sensor_id_number
+        UpdateExpression : "set sensor = :sensor, sensor_id_number = :sensor_id_number",
+        ExpressionAttributeValues : {
+            ":sensor" : req.body.sensor,
+            ":sensor_id_number" : req.body.sensor_id_number
         },
         ReturnValues: "UPDATED_NEW"
     };
 
-    docClient.update(update_details, function (err, data) {
-        if (err) {
+    docClient.update(update_details, function(err, data){
+        if(err) {
             res.send({
-                message: 'failure'
+                message : 'failure'
             })
         } else {
             res.send({
-                message: 'success'
+                message : 'success'
             })
         }
     })
@@ -2462,86 +2459,86 @@ function adminVerifyNumber(User, cb) {
 
     var params = {
         UserAttributes: [ /* required */
-            {
-                Name: 'phone_number', /* required */
-                Value: User.phone_number
-            },
-            {
-                Name: 'phone_number_verified', /* required */
-                Value: User.phone_number_verified
-            },
-            /* more items */
+          {
+            Name: 'phone_number', /* required */
+            Value: User.phone_number
+          },
+          {
+            Name: 'phone_number_verified', /* required */
+            Value: User.phone_number_verified
+          },
+          /* more items */
         ],
         UserPoolId: cognito.userPoolId, /* required */
         Username: User.user_name, /* required */
-    };
-    COGNITO_CLIENT.adminUpdateUserAttributes(params, function (err, data) {
+      };
+      COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
         if (err) {
             cb(err, "");
         } // an error occurred
         else {
             cb("", data);
         }             // successful response
-    });
+      });
 }
 
-app.post(`${apiPrefix}VerifyNumber`, (req, res) => {
-    console.log('req', req.body);
+app.post(`${apiPrefix}VerifyNumber`,(req, res) => {
+    console.log('req',req.body);
     let obj = {};
     obj.user_name = req.body.user_cognito_id;
-    obj.phone_number = req.body.country_code + req.body.phone_number;
+    obj.phone_number = req.body.country_code+req.body.phone_number;
     obj.phone_number_verified = 'true';
     var code = Math.floor(100000 + Math.random() * 900000);
-    var d = new Date(Date.now() + (5 * 60 * 1000));
+    var d  = new Date(Date.now() + (5 * 60 * 1000));
     var code_exp = d.getTime();
     console.log('obj.phone_number',)
     var params = {
-        Message: code + ' is your NSFCAREER verification code', /* required */
-        PhoneNumber: obj.phone_number,
+      Message: code+' is your NSFCAREER verification code', /* required */
+      PhoneNumber: obj.phone_number,
     };
 
     // Create promise and SNS service object
-    var publishTextPromise = new AWS.SNS({ apiVersion: '2010-03-31' }).publish(params).promise();
+    var publishTextPromise = new AWS.SNS({apiVersion: '2010-03-31'}).publish(params).promise();
 
     // Handle promise's fulfilled/rejected states
     publishTextPromise.then(
-        function (data) {
-            console.log("MessageID is " + data.MessageId);
-            let update_details = {
-                TableName: 'users',
-                Key: {
-                    "user_cognito_id": req.body.user_cognito_id
-                },
-                UpdateExpression: "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified,number_verified_code= :number_verified_code, number_verified_code_exp= :number_verified_code_exp",
-                ExpressionAttributeValues: {
-                    ":phone_number": obj.phone_number,
-                    ":country_code": req.body.country_code,
-                    ":phone_number_verified": 'false',
-                    ":number_verified_code": code,
-                    ":number_verified_code_exp": code_exp
-                },
-                ReturnValues: "UPDATED_NEW"
-            };
+    function(data) {
+        console.log("MessageID is " + data.MessageId);
+        let update_details = {
+            TableName : 'users',
+            Key : {
+                "user_cognito_id": req.body.user_cognito_id
+            },
+            UpdateExpression : "set phone_number = :phone_number, country_code = :country_code,phone_number_verified= :phone_number_verified,number_verified_code= :number_verified_code, number_verified_code_exp= :number_verified_code_exp",
+            ExpressionAttributeValues : {
+                ":phone_number" : obj.phone_number,
+                ":country_code" : req.body.country_code,
+                ":phone_number_verified" : 'false',
+                ":number_verified_code" : code,
+                ":number_verified_code_exp" : code_exp
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
 
-            docClient.update(update_details, function (err, data) {
-                if (err) {
-                    res.send({
-                        message: 'failure',
-                        err: 'Somthing went wrong! Please try later.'
-                    })
-                } else {
-                    res.send({
-                        message: 'success',
-                        data: data
-                    })
-                }
-            })
-        }).catch(err => {
+        docClient.update(update_details, function(err, data){
+            if(err) {
+                res.send({
+                    message : 'failure',
+                    err: 'Somthing went wrong! Please try later.'
+                })
+            } else {
+                res.send({
+                    message : 'success',
+                    data: data
+                })
+            }
+        })
+      }).catch( err =>{
             res.send({
-                message: 'failure',
+                message : 'failure',
                 err: 'Failed to send verification code, Please try later.'
             })
-        });
+      });
 
 
     // adminVerifyNumber(obj, function (err, data) {
@@ -2591,61 +2588,61 @@ app.post(`${apiPrefix}VerifyNumber`, (req, res) => {
     // })
 })
 
-app.post(`${apiPrefix}VerifyVerificationCode`, (req, res) => {
-    console.log('req', req.body);
+app.post(`${apiPrefix}VerifyVerificationCode`,(req, res) => {
+    console.log('req',req.body);
     var user_cognito_id = req.body.user_cognito_id;
     var numberVerificationCode = req.body.numberVerificationCode;
 
-    getUserDbData(user_cognito_id, function (err, user_details) {
-        if (err) {
-            console.log('err', err)
-        } else {
+    getUserDbData(user_cognito_id, function(err, user_details){
+        if(err){
+            console.log('err',err)
+        }else{
             console.log('user_details');
             let obj = {};
             obj.user_name = user_cognito_id;
             obj.phone_number = user_details.Item.phone_number;
             obj.phone_number_verified = 'true';
-            if (user_details.Item.number_verified_code) {
-                if (parseInt(numberVerificationCode) === user_details.Item.number_verified_code) {
+            if(user_details.Item.number_verified_code){
+                if(parseInt(numberVerificationCode) ===  user_details.Item.number_verified_code){
                     var currentTime = Date.now();
-                    if (user_details.Item.number_verified_code_exp < currentTime) {
+                    if(user_details.Item.number_verified_code_exp <  currentTime){
                         res.send({
                             message: "failure",
-                            error: "Verification code has been expired!"
+                            error:"Verification code has been expired!"
                         });
-                    } else {
+                    }else{
                         adminVerifyNumber(obj, function (err, data) {
                             if (err) {
                                 console.log("COGNITO CREATE USER ERROR =========\n", err);
 
                                 res.send({
-                                    message: "failure",
+                                    message: "failure", 
                                     error: err.message
                                 });
                             }
                             else {
                                 let update_details = {
 
-                                    TableName: 'users',
-                                    Key: {
+                                    TableName : 'users',
+                                    Key : {
                                         "user_cognito_id": user_cognito_id
                                     },
-                                    UpdateExpression: "set phone_number_verified= :phone_number_verified",
-                                    ExpressionAttributeValues: {
-                                        ":phone_number_verified": 'true'
+                                    UpdateExpression : "set phone_number_verified= :phone_number_verified",
+                                    ExpressionAttributeValues : {
+                                        ":phone_number_verified" : 'true'
                                     },
                                     ReturnValues: "UPDATED_NEW"
                                 };
 
-                                docClient.update(update_details, function (err, data) {
-                                    if (err) {
+                                docClient.update(update_details, function(err, data){
+                                    if(err) {
                                         res.send({
-                                            message: 'failure',
+                                            message : 'failure',
                                             err: err
                                         })
                                     } else {
                                         res.send({
-                                            message: 'success',
+                                            message : 'success',
                                             data: data
                                         })
                                     }
@@ -2653,13 +2650,13 @@ app.post(`${apiPrefix}VerifyVerificationCode`, (req, res) => {
                             }
                         })
                     }
-                } else {
+                }else{
                     res.send({
                         message: "failure",
-                        error: "Verification code dose not match."
+                        error:"Verification code dose not match."
                     });
                 }
-            } else {
+            }else{
                 res.send({
                     message: "failure",
                     error: "Your number can not verified yet."
@@ -2680,10 +2677,10 @@ app.post(`${apiPrefix}singUpWithToken`, (req, res) => {
     // Hardcoding Done Here need to be replaced with actual organization in request.
     req.body["organization"] = req.body.organization;
     req.body["level"] = req.body.level;
-    req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number;
-    req.body.country_code = req.body.country_code.split(" ")[0];
-    console.log("-----------------------------\n", req.body, "----------------------------------------\n");
-
+    req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
+    req.body.country_code = req.body.country_code.split(" ")[0] ;
+    console.log("-----------------------------\n",req.body,"----------------------------------------\n");
+    
 
 })
 
@@ -2720,333 +2717,333 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     // First we add an attirbute of `name` as cognito requires it from first_name and last_name
     req.body["name"] = req.body.first_name + req.body.last_name;
     var user_name = req.body.user_name;
-    console.log('user_name', user_name)
+    console.log('user_name',user_name)
 
     req.body["email"] = user_name.toLowerCase();
     req.body["user_name"] = user_name.toLowerCase();
-    console.log('email', req.body["email"])
+    console.log('email',req.body["email"] )
     req.body["is_selfie_image_uploaded"] = false;
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
     // Hardcoding Done Here need to be replaced with actual organization in request.
-    if (!req.body.organization) {
+    if(!req.body.organization){
         req.body["organization"] = "PSU";
     }
-    if (!req.body.level) {
+    if(!req.body.level){
         req.body["level"] = '100';
     }
     req.body.phone_number = req.body.phone_number.replace(/[-() ]/g, '');
-    req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number;
-    req.body.country_code = req.body.country_code.split(" ")[0];
+    req.body.phone_number = req.body.country_code.split(" ")[0] + req.body.phone_number ;
+    req.body.country_code = req.body.country_code.split(" ")[0] ;
     var length = 25,
         charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#^&%$@",
         retVal = "";
     for (var i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.floor(Math.random() * n));
     }
-    if (req.body.password) {
+    if(req.body.password){
         req.body['password'] = md5(req.body.password);
     }
     req.body.password_code = retVal;
     var user_cognito_id = '';
-    if (req.body.userIDfacebook || req.body.userIDgoogle) {
+    if(req.body.userIDfacebook || req.body.userIDgoogle){
         req.body['isSocialAccount'] = 'yes';
-    } else {
+    }else{
         req.body['isSocialAccount'] = 'no';
     }
-    console.log("-----------------------------\n", req.body, "----------------------------------------\n");
+    console.log("-----------------------------\n",req.body,"----------------------------------------\n");
     /*======================= Checkign user account exists or not =====================================*/
     getUserAlreadyExists(req.body["email"])
-        .then(data => {
-            console.log('data', data);
-            if (data && data[0]) {
-                /*================== updating user for manual login =======================*/
-                if (req.body.password) {
-                    if (!data[0].password) {
-                        upDateuserPassword(req.body, data[0].user_cognito_id)
-                            .then(success => {
-                                res.send({
-                                    message: "success",
-                                    message_details: "Successfully mereged account ! Your manul signUp has been completed successfully, You can update your profile from profile page",
-                                    user_cognito_id: user_cognito_id
-                                })
-                            }).catch(err => {
-                                console.log('err===========\n', err);
-                                res.send({
-                                    message: "failure",
-                                    error: 'Somethig went wrong when mereging account'
-                                });
-                            })
-                    } else {
+    .then(data =>{
+        console.log('data',data);
+        if(data && data[0]){
+            /*================== updating user for manual login =======================*/
+            if(req.body.password){
+                if(!data[0].password){
+                    upDateuserPassword(req.body, data[0].user_cognito_id)
+                    .then(success =>{
                         res.send({
-                            message: "failure",
-                            error: 'User already exists with this email'
-                        });
-                    }
-                }
-                /* =================== Updating user for Facebook or google login ======================*/
-                else {
-                    upDateUserFBGlid(req.body, data[0].user_cognito_id)
-                        .then(success => {
-                            res.send({
-                                message: "success",
-                                message_details: "Your account mereged successfully! You can update your profile from profile page.",
-                                user_cognito_id: user_cognito_id
-                            })
-                        }).catch(err => {
-                            console.log('err===========\n', err);
-                            res.send({
-                                message: "failure",
-                                error: 'Somethig went wrong when mereging account'
-                            });
+                            message: "success",
+                            message_details : "Successfully mereged account ! Your manul signUp has been completed successfully, You can update your profile from profile page",
+                            user_cognito_id: user_cognito_id
                         })
-                }
-            } else {
-                /*========================== Creating user entrey if not exists in database ================================*/
-                adminCreateUser(req.body, function (err, data) {
-                    if (err) {
-                        console.log("COGNITO CREATE USER ERROR =========\n", err);
-
+                    }).catch(err=>{
+                        console.log('err===========\n',err);
                         res.send({
                             message: "failure",
-                            error: err.message
+                            error: 'Somethig went wrong when mereging account'
                         });
-                    }
-                    else {
-                        console.log('data------------\n', data);
-
-                        req.body["user_cognito_id"] = data.UserSub;
-                        user_cognito_id = data.UserSub;
-                        //Now check type of User and give permission accordingly
-                        // res.send(data);
-                        // user_type
-                        // userName
-                        var tempData = {};
-                        tempData["user_name"] = data.UserSub;
-                        tempData["userName"] = data.UserSub;
-
-                        tempData["user_type"] = req.body.user_type;
-                        tempData["phone_number"] = req.body.phone_number;
-                        if (!req.body.level) {
-                            tempData["level"] = 100;
-                        } else {
-                            tempData["level"] = parseInt(req.body.level);
-                        }
-
-                        //tempData["is_sensor_company"] = true;
-
-                        if (req.body.user_type == "Admin") {
-
-                            // Admin User
-                            var mergedObject = { ...req.body, ...tempData };
-                            delete mergedObject.userName;
-                            delete mergedObject.name;
-                            console.log('mergedObject------------\n', mergedObject);
-                            createUserDbEntry(mergedObject, function (dberr, dbdata) {
-                                if (err) {
-                                    console.log("DB ERRRRRR =============================== \n", err);
-
-                                    res.send({
-                                        message: "faiure",
-                                        error: dberr.code
-                                    });
-                                }
-                                else {
-                                    // Add user to corresponding group...
-                                    // event.user_type
-                                    // event.user_name
-                                    console.log(tempData);
-
-                                    addUserToGroup(tempData, function (groupAddErr, groupData) {
-                                        if (groupAddErr) {
-
-                                            res.send({
-                                                message: "faiure",
-                                                error: groupAddErr.message
-                                            })
-                                        }
-                                        else {
-                                            // On success
-                                            res.send({
-                                                message: 'success',
-                                                user_cognito_id: user_cognito_id
-                                            });
-                                        }
-                                    });
-                                }
-                            })
-                        }
-                        else {
-
-                            // Merging objects
-                            var mergedObject = { ...req.body, ...tempData };
-                            console.log('mergedObject------------\n', mergedObject);
-                            delete mergedObject.userName;
-                            delete mergedObject.name;
-                            createUserDbEntry(mergedObject, function (dberr, dbdata) {
-                                if (err) {
-                                    console.log("DB ERRRRRR =============================== \n", err);
-
-                                    res.send({
-                                        message: "failure",
-                                        error: dberr.code
-                                    });
-                                }
-                                else {
-                                    if (mergedObject.level == 400) {
-                                        InsertUserIntoSensor(mergedObject.user_cognito_id, mergedObject.sensor).
-                                            then(sensor_data => {
-
-                                                console.log('sensor_data', sensor_data)
-                                            })
-                                            .catch(err => {
-                                                console.log('err', err)
-                                            })
-                                    }
-                                    // Add user to corresponding group...
-                                    // event.user_type
-                                    // event.user_name
-                                    // console.log(tempData);
-
-                                    addUserToGroup(tempData, function (groupAddErr, groupData) {
-                                        if (groupAddErr) {
-
-                                            res.send({
-                                                message: "failure",
-                                                error: groupAddErr.message
-                                            })
-                                        }
-                                        else {
-
-                                            let age = getAge(mergedObject.dob);
-                                            console.log("actual age is ", age);
-                                            // Adding user's age in details
-                                            mergedObject["age"] = age;
-
-                                            if (age < 18) {
-                                                // Disable user account
-                                            }
-
-                                            // Sending request to service to generate IRB form
-                                            request.post({
-                                                url: config.ComputeInstanceEndpoint + "IRBFormGenerate",
-                                                json: mergedObject
-                                            }, function (err, httpResponse, body) {
-                                                if (err) {
-                                                    console.log('irb error is : ', err);
-                                                    res.send({
-                                                        message: "failure",
-                                                        error: err
-                                                    })
-                                                }
-                                                else {
-                                                    console.log("response body from irb", httpResponse.body);
-                                                    // if( age > 18 ) {
-                                                    //     res.send({
-                                                    //         message: "success",
-                                                    //         message_details : "Successfully created account ! Check your mail for temporary login credentials",
-                                                    //         user_cognito_id: user_cognito_id
-                                                    //     })
-                                                    // } else {
-
-                                                    //     disableUser(req.body.user_name, function (err, data) {
-                                                    //         if (err) {
-                                                    //             console.log("Failed to disable user",req.body.user_name )
-                                                    //             res.send({
-                                                    //                 message: "failure",
-                                                    //                 error: err
-                                                    //             })
-                                                    //         }
-                                                    //         else {
-                                                    //             res.send({
-                                                    //                 message : "success",
-                                                    //                 message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
-                                                    //                 user_cognito_id: user_cognito_id
-                                                    //             })
-                                                    //         }
-                                                    //     })
-
-                                                    // }
-
-                                                    res.send({
-                                                        message: "success",
-                                                        message_details: req.body['isSocialAccount'] == 'yes' ? 'Your account created successfully. Please log In' : "Successfully created account ! Check your mail to verify your account.",
-                                                        user_cognito_id: user_cognito_id
-                                                    })
-
-                                                }
-                                            })
-                                        }
-                                    });
-                                }
-                            })
-                        }
-                    }
+                    })
+                }else{
+                    res.send({
+                        message: "failure",
+                        error: 'User already exists with this email'
+                    });
+                }
+            }
+            /* =================== Updating user for Facebook or google login ======================*/
+            else{
+                upDateUserFBGlid(req.body, data[0].user_cognito_id)  
+                .then(success =>{
+                    res.send({
+                        message: "success",
+                        message_details : "Your account mereged successfully! You can update your profile from profile page.",
+                        user_cognito_id: user_cognito_id
+                    })
+                }).catch(err=>{
+                    console.log('err===========\n',err);
+                    res.send({
+                        message: "failure",
+                        error: 'Somethig went wrong when mereging account'
+                    });
                 })
             }
-        })
-        .catch(err => {
-            console.log('err===========\n', err)
-        })
+        }else{
+            /*========================== Creating user entrey if not exists in database ================================*/
+            adminCreateUser(req.body, function (err, data) {
+                if (err) {
+                    console.log("COGNITO CREATE USER ERROR =========\n", err);
+
+                    res.send({
+                        message: "failure",
+                        error: err.message
+                    });
+                }
+                else {
+                    console.log('data------------\n',data);
+                    
+                    req.body["user_cognito_id"] = data.UserSub;
+                    user_cognito_id = data.UserSub;
+                    //Now check type of User and give permission accordingly
+                    // res.send(data);
+                    // user_type
+                    // userName
+                    var tempData = {};
+                    tempData["user_name"] = data.UserSub;
+                    tempData["userName"] = data.UserSub;
+
+                    tempData["user_type"] = req.body.user_type;
+                    tempData["phone_number"] = req.body.phone_number;
+                    if(!req.body.level){
+                        tempData["level"] = 100;
+                    }else{
+                         tempData["level"] =  parseInt(req.body.level);
+                    }
+                    
+                    //tempData["is_sensor_company"] = true;
+
+                    if (req.body.user_type == "Admin") {
+
+                        // Admin User
+                        var mergedObject = { ...req.body, ...tempData };
+                        delete mergedObject.userName;
+                        delete mergedObject.name;
+                        console.log('mergedObject------------\n',mergedObject);
+                        createUserDbEntry(mergedObject, function (dberr, dbdata) {
+                            if (err) {
+                                console.log("DB ERRRRRR =============================== \n", err);
+
+                                res.send({
+                                    message: "faiure",
+                                    error: dberr.code
+                                });
+                            }
+                            else {
+                                // Add user to corresponding group...
+                                // event.user_type
+                                // event.user_name
+                                console.log(tempData);
+
+                                addUserToGroup(tempData, function (groupAddErr, groupData) {
+                                    if (groupAddErr) {
+
+                                        res.send({
+                                            message: "faiure",
+                                            error: groupAddErr.message
+                                        })
+                                    }
+                                    else {
+                                        // On success
+                                        res.send({
+                                            message: 'success',
+                                            user_cognito_id: user_cognito_id
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                    }
+                    else {
+
+                        // Merging objects
+                        var mergedObject = { ...req.body, ...tempData };
+                        console.log('mergedObject------------\n',mergedObject);
+                        delete mergedObject.userName;
+                        delete mergedObject.name;
+                        createUserDbEntry(mergedObject, function (dberr, dbdata) {
+                            if (err) {
+                                console.log("DB ERRRRRR =============================== \n", err);
+
+                                res.send({
+                                    message: "failure",
+                                    error: dberr.code
+                                });
+                            }
+                            else {
+                                if(mergedObject.level == 400){
+                                    InsertUserIntoSensor(mergedObject.user_cognito_id,mergedObject.sensor).
+                                        then(sensor_data => {
+                                           
+                                            console.log('sensor_data',sensor_data)
+                                        })
+                                        .catch(err => {
+                                           console.log('err',err)
+                                        })
+                                }
+                                // Add user to corresponding group...
+                                // event.user_type
+                                // event.user_name
+                                // console.log(tempData);
+
+                                addUserToGroup(tempData, function (groupAddErr, groupData) {
+                                    if (groupAddErr) {
+
+                                        res.send({
+                                            message: "failure",
+                                            error: groupAddErr.message
+                                        })
+                                    }
+                                    else {
+
+                                        let age = getAge(mergedObject.dob);
+                                        console.log("actual age is ", age);
+                                        // Adding user's age in details
+                                        mergedObject["age"] = age;
+
+                                        if( age < 18) {
+                                            // Disable user account
+                                        }
+
+                                        // Sending request to service to generate IRB form
+                                        request.post({
+                                            url: config.ComputeInstanceEndpoint + "IRBFormGenerate",
+                                            json: mergedObject
+                                        }, function (err, httpResponse, body) {
+                                            if (err) {
+                                                console.log('irb error is : ', err);
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err
+                                                })
+                                            }
+                                            else {
+                                                console.log("response body from irb", httpResponse.body);
+                                                // if( age > 18 ) {
+                                                //     res.send({
+                                                //         message: "success",
+                                                //         message_details : "Successfully created account ! Check your mail for temporary login credentials",
+                                                //         user_cognito_id: user_cognito_id
+                                                //     })
+                                                // } else {
+
+                                                //     disableUser(req.body.user_name, function (err, data) {
+                                                //         if (err) {
+                                                //             console.log("Failed to disable user",req.body.user_name )
+                                                //             res.send({
+                                                //                 message: "failure",
+                                                //                 error: err
+                                                //             })
+                                                //         }
+                                                //         else {
+                                                //             res.send({
+                                                //                 message : "success",
+                                                //                 message_details : "Your request to join NSFCAREER study has successfully been mailed to your guardian for approval. Once they sign the consent form, you will be a part of the study!",
+                                                //                 user_cognito_id: user_cognito_id
+                                                //             })
+                                                //         }
+                                                //     })
+
+                                                // }
+
+                                                res.send({
+                                                    message: "success",
+                                                    message_details : req.body['isSocialAccount'] == 'yes' ? 'Your account created successfully. Please log In' : "Successfully created account ! Check your mail to verify your account.",
+                                                    user_cognito_id: user_cognito_id
+                                                })
+
+                                            }
+                                        })
+                                    }
+                                });
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    })
+    .catch(err=>{
+        console.log('err===========\n',err)
+    })
 });
 
-function upDateUserFBGlid(body, user_cognito_id) {
+function upDateUserFBGlid(body,user_cognito_id) {
     // body...
-    console.log('body', body)
+    console.log('body',body)
     return new Promise((resolve, reject) => {
-        if (body.userIDfacebook) {
+        if(body.userIDfacebook){
             var update_details = {
-                TableName: 'users',
-                Key: {
+                TableName : 'users',
+                Key : {
                     "user_cognito_id": user_cognito_id
                 },
-                UpdateExpression: "set userIDfacebook = :userIDfacebook",
-                ExpressionAttributeValues: {
-                    ":userIDfacebook": body.userIDfacebook,
+                UpdateExpression : "set userIDfacebook = :userIDfacebook",
+                ExpressionAttributeValues : {
+                    ":userIDfacebook" : body.userIDfacebook,
                 },
                 ReturnValues: "UPDATED_NEW"
             };
-        } else {
+        }else{
             var update_details = {
-                TableName: 'users',
-                Key: {
+                TableName : 'users',
+                Key : {
                     "user_cognito_id": user_cognito_id
                 },
-                UpdateExpression: "set userIDgoogle = :userIDgoogle",
-                ExpressionAttributeValues: {
-                    ":userIDgoogle": body.userIDgoogle,
+                UpdateExpression : "set userIDgoogle = :userIDgoogle",
+                ExpressionAttributeValues : {
+                    ":userIDgoogle" : body.userIDgoogle,
                 },
                 ReturnValues: "UPDATED_NEW"
-            };
+            }; 
         }
 
-        docClient.update(update_details, function (err, data) {
-            if (err) {
-                reject(err);
+        docClient.update(update_details, function(err, data){
+            if(err) {
+               reject(err);
             } else {
                 resolve(data);
             }
         })
     })
 }
-function upDateuserPassword(body, user_cognito_id) {
+function upDateuserPassword(body,user_cognito_id) {
     // body...
     return new Promise((resolve, reject) => {
-        let update_details = {
-            TableName: 'users',
-            Key: {
+         let update_details = {
+            TableName : 'users',
+            Key : {
                 "user_cognito_id": user_cognito_id
             },
-            UpdateExpression: "set password = :password",
-            ExpressionAttributeValues: {
-                ":password": body.password,
+            UpdateExpression : "set password = :password",
+            ExpressionAttributeValues : {
+                ":password" : body.password,
             },
             ReturnValues: "UPDATED_NEW"
         };
 
-        docClient.update(update_details, function (err, data) {
-            if (err) {
-                reject(err);
+        docClient.update(update_details, function(err, data){
+            if(err) {
+               reject(err);
             } else {
                 resolve(data);
             }
@@ -3055,7 +3052,7 @@ function upDateuserPassword(body, user_cognito_id) {
 }
 
 function getUserAlreadyExists(email) {
-    console.log('mail', email)
+    console.log('mail',email)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'users',
@@ -3084,32 +3081,32 @@ function getUserAlreadyExists(email) {
 
 
 
-function upDateuser(body, user_cognito_id) {
+function upDateuser(body,user_cognito_id) {
     // body...
     return new Promise((resolve, reject) => {
-        let update_details = {
-            TableName: 'users',
-            Key: {
+         let update_details = {
+            TableName : 'users',
+            Key : {
                 "user_cognito_id": user_cognito_id
             },
-            UpdateExpression: "set first_name = :first_name, last_name = :last_name, #level = :level, organization= :organization, sensor = :sensor, team = :team",
-            ExpressionAttributeNames: {
+            UpdateExpression : "set first_name = :first_name, last_name = :last_name, #level = :level, organization= :organization, sensor = :sensor, team = :team",
+             ExpressionAttributeNames: {
                 "#level": "level",
             },
-            ExpressionAttributeValues: {
-                ":first_name": body.first_name,
-                ":last_name": body.last_name,
-                ":level": body.level,
+            ExpressionAttributeValues : {
+                ":first_name" : body.first_name,
+                ":last_name" : body.last_name,
+                ":level" : body.level,
                 ":organization": body.organization,
-                ":sensor": body.sensor,
-                ":team": body.team
+                ":sensor" : body.sensor,
+                ":team" : body.team
             },
             ReturnValues: "UPDATED_NEW"
         };
 
-        docClient.update(update_details, function (err, data) {
-            if (err) {
-                reject(err);
+        docClient.update(update_details, function(err, data){
+            if(err) {
+               reject(err);
             } else {
                 resolve(data);
             }
@@ -3121,226 +3118,226 @@ function updateCognitoUser(body, user_cognito_id) {
     return new Promise((resolve, reject) => {
         var params = {
             UserAttributes: [ /* required */
-                {
-                    Name: 'name', /* required */
-                    Value: body.first_name + body.last_name,
-                },
-                {
-                    Name: 'custom:level', /* required */
-                    Value: body.level,
-                },
-                /* more items */
+              {
+                Name: 'name', /* required */
+                Value: body.first_name+body.last_name,
+              },
+              {
+                Name: 'custom:level', /* required */
+                Value: body.level,
+              },
+              /* more items */
             ],
             UserPoolId: cognito.userPoolId, /* required */
             Username: user_cognito_id, /* required */
-        };
-        COGNITO_CLIENT.adminUpdateUserAttributes(params, function (err, data) {
+          };
+          COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
             if (err) {
                 reject(err);
             } // an error occurred
             else {
                 resolve(data);
             }             // successful response
-        });
+          });
     })
 }
 /*=========== Set user default login password =============*/
 app.post(`${apiPrefix}setUserPassword`, (req, res) => {
     console.log(req.body)
     req.body['password'] = md5(req.body.password);
-    upDateuserPassword(req.body, req.body.user_cognito_id)
-        .then(data => {
-            res.send({
-                message: "Success",
-                data: data
-            });
-        }).catch(err => {
-            res.send({
-                message: "faiure",
-                error: err
-            });
-        })
+    upDateuserPassword(req.body,req.body.user_cognito_id)
+    .then(data=>{
+        res.send({
+            message: "Success",
+            data: data
+        });
+    }).catch(err=>{
+        res.send({
+            message: "faiure",
+            error: err
+        });
+    })
 })
 
 /*=========== Set user default login password end =============*/
 
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
-    console.log("InviteUsers Called!", req.body);
+    console.log("InviteUsers Called!",req.body);
     let email = req.body.email;
     req.body['email'] = email.toLowerCase();
     getUserAlreadyExists(req.body.email)
-        .then(data => {
-            if (data[0]) {
-                console.log('data --------------------\n', data);
-                if (!req.body['sensor']) {
-                    req.body['sensor'] = ''
-                }
-                let mailBody = 'You have been added as a super admin. Go to your dashboard with this link ' + config.FrontendUrl
-                if (req.body['level'] == '400') {
-                    mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link ' + config.FrontendUrl + 'OrganizationAdmin';
-                } else if (req.body['level'] == '300') {
-                    mailBody = 'You have been added as a organization admin. Go to your dashboard with this link ' + config.FrontendUrl + 'TeamAdmin';
-                } else if (req.body['level'] == '200') {
-                    mailBody = 'You have been added as a team admin. Go to your dashboard with this link ' + config.FrontendUrl + 'TeamAdmin/team/players';
-                }
-                updateCognitoUser(req.body, data[0].user_cognito_id)
-                    .then(result => {
-                        let isReturn = false;
-                        req.body['level'] = parseInt(req.body.level);
-                        if (req.body['level'] == 400) {
-                            InsertUserIntoSensor(data[0].user_cognito_id, req.body['sensor']).
-                                then(sensor_data => {
-
-                                    console.log('sensor_data', sensor_data);
-                                    return upDateuser(req.body, data[0].user_cognito_id);
-                                })
-                                .catch(err => {
-                                    res.send({
-                                        message: "faiure",
-                                        error: err
-                                    });
-                                    isReturn = false;
-                                })
-                        } else {
-                            return upDateuser(req.body, data[0].user_cognito_id);
-                        }
-                    })
-                    .then(result => {
-                        var params = {
-                            Destination: { /* required */
-                                ToAddresses: [
-                                    req.body.email,
-                                    /* more items */
-                                ]
-                            },
-                            Message: { /* required */
-                                Body: { /* required */
-                                    Text: {
-                                        Charset: "UTF-8",
-                                        Data: mailBody
-                                    }
-                                },
-                                Subject: {
-                                    Charset: 'UTF-8',
-                                    Data: 'Your level has been changed'
-                                }
-                            },
-                            Source: 'info@NSFCAREER.IO', /* required */
-                            ReplyToAddresses: [
-                                'info@NSFCAREER.IO',
-                                /* more items */
-                            ],
-                        };
-
-                        // Create the promise and SES service object
-                        var sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
-
-                        // Handle promise's fulfilled/rejected states
-                        sendPromise.then(
-                            function (data) {
-                                console.log(data.MessageId);
-                                res.send({
-                                    message: "Success",
-                                    data: data.MessageId
-                                });
-                            }).catch(
-                                function (err) {
-                                    console.error(err, err.stack);
-                                    res.send({
-                                        message: "faiure",
-                                        error: err
-                                    });
-                                });
+    .then(data=>{
+        if(data[0]){
+            console.log('data --------------------\n',data);
+            if(!req.body['sensor']){
+                req.body['sensor'] = ''
+            }
+            let mailBody = 'You have been added as a super admin. Go to your dashboard with this link '+config.FrontendUrl
+            if(req.body['level'] == '400'){
+                mailBody = 'You have been added as a sensor admin. Go to your dashboard with this link '+config.FrontendUrl+'OrganizationAdmin';
+            }else if(req.body['level'] == '300'){
+                mailBody = 'You have been added as a organization admin. Go to your dashboard with this link '+config.FrontendUrl+'TeamAdmin';
+            }else if(req.body['level'] == '200'){
+                mailBody = 'You have been added as a team admin. Go to your dashboard with this link '+config.FrontendUrl+'TeamAdmin/team/players';
+            }
+            updateCognitoUser(req.body,data[0].user_cognito_id)
+            .then(result=>{
+                let isReturn = false;
+                req.body['level'] = parseInt(req.body.level);
+                if(req.body['level'] == 400){
+                    InsertUserIntoSensor(data[0].user_cognito_id,req.body['sensor']).
+                    then(sensor_data => {
+                       
+                        console.log('sensor_data',sensor_data);
+                         return  upDateuser(req.body,data[0].user_cognito_id);
                     })
                     .catch(err => {
-                        console.log("err updateCognitoUser =============================== \n", err);
-
                         res.send({
                             message: "faiure",
                             error: err
                         });
+                        isReturn = false;
                     })
-            } else {
-                createInviteUserDbEntry(req.body, function (dberr, dbdata) {
-                    if (dberr) {
-                        console.log("DB ERRRRRR =============================== \n", dberr);
+                }else{
+                     return  upDateuser(req.body,data[0].user_cognito_id);
+                }
+            })
+            .then(result=>{
+                 var params = {
+                      Destination: { /* required */
+                        ToAddresses: [
+                          req.body.email,
+                          /* more items */
+                        ]
+                      },
+                      Message: { /* required */
+                        Body: { /* required */
+                          Text: {
+                           Charset: "UTF-8",
+                           Data: mailBody
+                          }
+                         },
+                         Subject: {
+                          Charset: 'UTF-8',
+                          Data: 'Your level has been changed'
+                         }
+                        },
+                      Source: 'info@NSFCAREER.IO', /* required */
+                      ReplyToAddresses: [
+                         'info@NSFCAREER.IO',
+                        /* more items */
+                      ],
+                    };
 
+                // Create the promise and SES service object
+                var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+                // Handle promise's fulfilled/rejected states
+                sendPromise.then(
+                  function(data) {
+                    console.log(data.MessageId);
+                    res.send({
+                        message: "Success",
+                        data: data.MessageId
+                    });
+                }).catch(
+                    function(err) {
+                    console.error(err, err.stack);
+                    res.send({
+                        message: "faiure",
+                        error: err
+                    });
+                });
+            })
+            .catch(err=>{
+                console.log("err updateCognitoUser =============================== \n", err);
+
+                    res.send({
+                        message: "faiure",
+                        error: err
+                    });
+            })
+        }else{
+            createInviteUserDbEntry(req.body, function (dberr, dbdata) {
+                if (dberr) {
+                    console.log("DB ERRRRRR =============================== \n", dberr);
+
+                    res.send({
+                        message: "faiure",
+                        error: dberr.code
+                    });
+                }
+                else {
+                    console.log('dbdata',dbdata)
+                    var params = {
+                      Destination: { /* required */
+                        ToAddresses: [
+                          dbdata.email,
+                          /* more items */
+                        ]
+                      },
+                      Message: { /* required */
+                        Body: { /* required */
+                          Text: {
+                           Charset: "UTF-8",
+                           Data: 'Signup by this url = '+config.FrontendUrl+'SignUp/'+dbdata.InviteToken
+                          }
+                         },
+                         Subject: {
+                          Charset: 'UTF-8',
+                          Data: 'Thank you for joining Nsfcareer'
+                         }
+                        },
+                      Source: 'info@NSFCAREER.IO', /* required */
+                      ReplyToAddresses: [
+                         'info@NSFCAREER.IO',
+                        /* more items */
+                      ],
+                    };
+
+                    // Create the promise and SES service object
+                    var sendPromise = new AWS.SES({apiVersion: '2010-12-01'}).sendEmail(params).promise();
+
+                    // Handle promise's fulfilled/rejected states
+                    sendPromise.then(
+                      function(data) {
+                        console.log(data.MessageId);
+                        res.send({
+                            message: "Success",
+                            data: data.MessageId
+                        });
+                      }).catch(
+                        function(err) {
+                        console.error(err, err.stack);
                         res.send({
                             message: "faiure",
-                            error: dberr.code
+                            error: err
                         });
-                    }
-                    else {
-                        console.log('dbdata', dbdata)
-                        var params = {
-                            Destination: { /* required */
-                                ToAddresses: [
-                                    dbdata.email,
-                                    /* more items */
-                                ]
-                            },
-                            Message: { /* required */
-                                Body: { /* required */
-                                    Text: {
-                                        Charset: "UTF-8",
-                                        Data: 'Signup by this url = ' + config.FrontendUrl + 'SignUp/' + dbdata.InviteToken
-                                    }
-                                },
-                                Subject: {
-                                    Charset: 'UTF-8',
-                                    Data: 'Thank you for joining Nsfcareer'
-                                }
-                            },
-                            Source: 'info@NSFCAREER.IO', /* required */
-                            ReplyToAddresses: [
-                                'info@NSFCAREER.IO',
-                                /* more items */
-                            ],
-                        };
-
-                        // Create the promise and SES service object
-                        var sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
-
-                        // Handle promise's fulfilled/rejected states
-                        sendPromise.then(
-                            function (data) {
-                                console.log(data.MessageId);
-                                res.send({
-                                    message: "Success",
-                                    data: data.MessageId
-                                });
-                            }).catch(
-                                function (err) {
-                                    console.error(err, err.stack);
-                                    res.send({
-                                        message: "faiure",
-                                        error: err
-                                    });
-                                });
-                    }
-                })
-            }
-        }).catch(err => {
-            console.log('err', err)
-        })
-
+                      });
+                }
+            })
+        }
+    }).catch(err=>{
+        console.log('err',err)
+    })
+    
 });
 
 //Delete organizations
 function DeleteOrganization(organization_id) {
-    console.log('organization_id', organization_id)
+    console.log('organization_id',organization_id)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: "organizations",
-            Key: {
-                "organization_id": organization_id
+            Key: { 
+                "organization_id" : organization_id
             }
         }
 
         docClient.delete(params, function (err, data) {
             if (err) {
-                console.log("error when deleting data\n", err);
+                console.log("error when deleting data\n",err);
                 reject(err);
 
             } else {
@@ -3350,16 +3347,16 @@ function DeleteOrganization(organization_id) {
     });
 }
 
-function getOrganizatonBynameSensor(organization, sensor) {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "organizations",
-            FilterExpression: "sensor = :sensor and organization = :organization ",
-            ExpressionAttributeValues: {
+function getOrganizatonBynameSensor(organization, sensor){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "organizations",
+                FilterExpression: "sensor = :sensor and organization = :organization ",
+                ExpressionAttributeValues: {
                 ":sensor": sensor,
                 ":organization": organization,
-            },
-        };
+                },
+            };
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -3374,16 +3371,16 @@ function getOrganizatonBynameSensor(organization, sensor) {
         });
     })
 }
-function getOrganizatonByTeam(organization, team_name) {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "organizations",
-            FilterExpression: "team_name = :team_name and organization = :organization ",
-            ExpressionAttributeValues: {
+function getOrganizatonByTeam(organization, team_name){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "organizations",
+                FilterExpression: "team_name = :team_name and organization = :organization ",
+                ExpressionAttributeValues: {
                 ":team_name": team_name,
                 ":organization": organization,
-            },
-        };
+                },
+            };
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -3400,113 +3397,113 @@ function getOrganizatonByTeam(organization, team_name) {
 }
 
 app.post(`${apiPrefix}deleteItem`, (req, res) => {
-    console.log(req.body)
+    console.log(req.body)  
     let type = req.body.type;
     let data = req.body.data;
-    if (type == 'team') {
-        console.log('data', data)
+    if(type == 'team'){
+        console.log('data',data)
         getOrganizatonBynameSensor(data.organization, data.brand)
-            .then(org => {
-                var orglen = org.length;
-                orglen = orglen - 1;
-                if (org) {
-                    org.forEach(function (record, index) {
-                        console.log('record', record.organization_id);
-                        console.log(index, orglen)
-                        DeleteOrganization(record.organization_id)
-                            .then(data => {
-                                console.log('res', data)
-                                if (index == orglen) {
-                                    res.send({
-                                        message: 'success',
-                                        status: 200
-                                    })
-                                }
-                            }).catch(err => {
-                                console.log('err', err)
-                                if (index == orglen) {
-                                    res.send({
-                                        message: 'failure',
-                                        status: 300,
-                                        err: err
-                                    })
-                                }
+        .then(org =>{
+            var orglen = org.length;
+            orglen = orglen-1;
+            if(org){
+                org.forEach(function (record, index) {
+                    console.log('record',record.organization_id);
+                    console.log(index, orglen)
+                    DeleteOrganization(record.organization_id)
+                    .then(data => {
+                        console.log('res',data)
+                        if(index == orglen){
+                            res.send({
+                                message: 'success',
+                                status: 200
                             })
+                        }
+                    }).catch(err => {
+                        console.log('err',err)
+                        if(index == orglen){
+                             res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
                     })
-                } else {
-                    res.send({
-                        message: 'failure',
-                        status: 300,
-                        err: err
-                    })
-                }
-            }).catch(err => {
-                console.log('err', err)
+                })
+            }else{
                 res.send({
                     message: 'failure',
                     status: 300,
                     err: err
                 })
+            }
+        }).catch(err => {
+            console.log('err',err)
+            res.send({
+                message: 'failure',
+                status: 300,
+                err: err
             })
-
-    } else if (type == 'orgTeam') {
+        })
+        
+    }else if(type == 'orgTeam'){
         getOrganizatonByTeam(data.organization, data.TeamName)
-            .then(org => {
-                var orglen = org.length;
-                orglen = orglen - 1;
-                if (org) {
-                    org.forEach(function (record, index) {
-                        console.log('record', record.organization_id);
-                        console.log(index, orglen)
-                        DeleteOrganization(record.organization_id)
-                            .then(data => {
-                                console.log('res', data)
-                                if (index == orglen) {
-                                    res.send({
-                                        message: 'success',
-                                        status: 200
-                                    })
-                                }
-                            }).catch(err => {
-                                console.log('err', err)
-                                if (index == orglen) {
-                                    res.send({
-                                        message: 'failure',
-                                        status: 300,
-                                        err: err
-                                    })
-                                }
+        .then(org =>{
+            var orglen = org.length;
+            orglen = orglen-1;
+            if(org){
+                org.forEach(function (record, index) {
+                    console.log('record',record.organization_id);
+                    console.log(index, orglen)
+                    DeleteOrganization(record.organization_id)
+                    .then(data => {
+                        console.log('res',data)
+                        if(index == orglen){
+                            res.send({
+                                message: 'success',
+                                status: 200
                             })
+                        }
+                    }).catch(err => {
+                        console.log('err',err)
+                        if(index == orglen){
+                             res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
                     })
-                } else {
-                    res.send({
-                        message: 'failure',
-                        status: 300,
-                        err: err
-                    })
-                }
-            }).catch(err => {
-                console.log('err', err)
+                })
+            }else{
                 res.send({
                     message: 'failure',
                     status: 300,
                     err: err
                 })
+            }
+        }).catch(err => {
+            console.log('err',err)
+            res.send({
+                message: 'failure',
+                status: 300,
+                err: err
             })
+        })
     }
 })
 
 //Rename organization
 
 
-function getOrgSensorData(organization, sensor) {
-    return new Promise((resolve, reject) => {
+function getOrgSensorData(organization, sensor){
+    return new Promise((resolve, reject) =>{
         let params = {
             TableName: "sensor_data",
             FilterExpression: "organization= :organization and sensor = :sensor",
             ExpressionAttributeValues: {
-                ":sensor": sensor,
-                ":organization": organization
+               ":sensor": sensor,
+               ":organization": organization
             },
         };
         var item = [];
@@ -3525,13 +3522,13 @@ function getOrgSensorData(organization, sensor) {
 }
 
 
-function renameOrganization(OrganizationName, organization_id) {
-    console.log('organization_id', organization_id)
+function renameOrganization(OrganizationName,organization_id) {
+    console.log('organization_id',organization_id)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: "organizations",
-            Key: {
-                "organization_id": organization_id
+            Key: { 
+                "organization_id" : organization_id
             },
             UpdateExpression: "set #organization = :organization",
             ExpressionAttributeNames: {
@@ -3544,7 +3541,7 @@ function renameOrganization(OrganizationName, organization_id) {
         }
         docClient.update(params, function (err, data) {
             if (err) {
-                console.log("error when updating data\n", err);
+                console.log("error when updating data\n",err);
                 reject(err);
 
             } else {
@@ -3553,14 +3550,14 @@ function renameOrganization(OrganizationName, organization_id) {
         });
     });
 }
-function renameSensorOrganization(OrganizationName, player_id, team) {
-    console.log('OrganizationName', OrganizationName)
+function renameSensorOrganization(OrganizationName,player_id, team) {
+    console.log('OrganizationName',OrganizationName)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: "sensor_data",
-            Key: {
+            Key: { 
                 "team": team,
-                "player_id": player_id
+                "player_id" : player_id
             },
             UpdateExpression: "set #organization = :organization",
             ExpressionAttributeNames: {
@@ -3573,7 +3570,7 @@ function renameSensorOrganization(OrganizationName, player_id, team) {
         }
         docClient.update(params, function (err, data) {
             if (err) {
-                console.log("error when updating sensor data\n", err);
+                console.log("error when updating sensor data\n",err);
                 reject(err);
 
             } else {
@@ -3584,63 +3581,63 @@ function renameSensorOrganization(OrganizationName, player_id, team) {
 }
 
 app.post(`${apiPrefix}renameOrganization`, (req, res) => {
-    console.log(req.body);
+    console.log(req.body) ;
     let organization = req.body.data.organization;
     let sensor = req.body.data.brand;
     let OrganizationName = req.body.OrganizationName;
-
+   
     renameOrganization(req.body.OrganizationName, req.body.organization_id)
-        .then(data => {
-            console.log('res', data)
-            getOrgSensorData(organization, sensor)
-                .then(sensor_data => {
-                    console.log('sensor_data', sensor_data);
-                    let sensorlen = sensor_data.length;
-                    if (sensorlen > 0) {
-                        sensorlen = sensorlen - 1;
-                        sensor_data.forEach(function (record, index) {
-                            // console.log('sensor',record);
-                            renameSensorOrganization(OrganizationName, record.player_id, record.team)
-                                .then(response => {
-                                    console.log('response', response)
-                                    if (index == sensorlen) {
-                                        res.send({
-                                            message: 'success',
-                                            status: 200,
-                                        })
-                                    }
-                                }).catch(err => {
-                                    if (index == sensorlen) {
-                                        res.send({
-                                            message: 'failure',
-                                            status: 300,
-                                            err: err
-                                        })
-                                    }
-                                })
-                        })
-                    } else {
-                        res.send({
-                            message: 'success',
-                            status: 200,
-                        })
-                    }
-                }).catch(err => {
-                    console.log("er", err)
+    .then(data => {
+        console.log('res',data)
+        getOrgSensorData(organization, sensor)
+        .then(sensor_data => {
+            console.log('sensor_data',sensor_data);
+            let sensorlen = sensor_data.length;
+            if(sensorlen > 0){
+                sensorlen = sensorlen-1;
+                sensor_data.forEach(function (record, index) {
+                    // console.log('sensor',record);
+                    renameSensorOrganization(OrganizationName, record.player_id, record.team)
+                    .then(response=>{
+                        console.log('response',response)
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'success',
+                                status: 200,
+                            })
+                        }
+                    }).catch(err=>{
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
                 })
+            }else{
+                res.send({
+                    message: 'success',
+                    status: 200,
+                })
+            }
         }).catch(err => {
-            console.log(err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
-            })
+            console.log("er",err)
         })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
 })
 
 //Add organization
 function addOrganization(OrganizationName, sensor) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) =>{
         var dbInsert = {};
         // adding key with name user_cognito_id
         // deleting the key from parameter from "user_name"
@@ -3648,7 +3645,7 @@ function addOrganization(OrganizationName, sensor) {
             TableName: "organizations",
             Item: {
                 organization: OrganizationName,
-                organization_id: 'org-' + Date.now(),
+                organization_id: 'org-'+Date.now(),
                 player_list: [],
                 sensor: sensor,
                 team_name: ' ',
@@ -3673,32 +3670,32 @@ function addOrganization(OrganizationName, sensor) {
 app.post(`${apiPrefix}addOrganization`, (req, res) => {
     console.log(req.body);
     addOrganization(req.body.OrganizationName, req.body.sensor)
-        .then(data => {
-            console.log('res', data)
-            res.send({
-                message: 'success',
-                status: 200
-            })
-        }).catch(err => {
-            console.log(err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
-            })
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
         })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
 })
 
 
 
 //Merge organization
 function MergeOrganization(OrganizationName, organization_id) {
-    console.log('user_name', OrganizationName, organization_id)
+    console.log('user_name',OrganizationName,organization_id)
     return new Promise((resolve, reject) => {
         var dbInsert = {
             TableName: "organizations",
-            Key: {
-                "organization_id": organization_id
+            Key: { 
+                "organization_id" : organization_id
             },
             UpdateExpression: "set #organization = :organization",
             ExpressionAttributeNames: {
@@ -3712,7 +3709,7 @@ function MergeOrganization(OrganizationName, organization_id) {
 
         docClient.update(dbInsert, function (err, data) {
             if (err) {
-                console.log("ERROR WHILE CREATING DATA", err);
+                console.log("ERROR WHILE CREATING DATA",err);
                 reject(err);
 
             } else {
@@ -3725,8 +3722,8 @@ function MergeOrganization(OrganizationName, organization_id) {
 /*============ Team edit funtions start here===================*/
 
 //Add organization
-function addorgTeam(TeamName, organization, sensor) {
-    return new Promise((resolve, reject) => {
+function addorgTeam(TeamName, organization,sensor) {
+    return new Promise((resolve, reject) =>{
         var dbInsert = {};
         // adding key with name user_cognito_id
         // deleting the key from parameter from "user_name"
@@ -3734,7 +3731,7 @@ function addorgTeam(TeamName, organization, sensor) {
             TableName: "organizations",
             Item: {
                 organization: organization,
-                organization_id: 'org-' + Date.now(),
+                organization_id: 'org-'+Date.now(),
                 player_list: [],
                 sensor: sensor,
                 team_name: TeamName,
@@ -3758,33 +3755,33 @@ function addorgTeam(TeamName, organization, sensor) {
 
 app.post(`${apiPrefix}addorgTeam`, (req, res) => {
     console.log(req.body);
-    addorgTeam(req.body.TeamName, req.body.organization, req.body.sensor)
-        .then(data => {
-            console.log('res', data)
-            res.send({
-                message: 'success',
-                status: 200
-            })
-        }).catch(err => {
-            console.log(err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
-            })
+    addorgTeam(req.body.TeamName, req.body.organization,req.body.sensor)
+    .then(data => {
+        console.log('res',data)
+        res.send({
+            message: 'success',
+            status: 200
         })
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
 });
 
-function getSernsorDataByTeam(team_name, organization) {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "sensor_data",
-            FilterExpression: "team = :team and organization = :organization ",
-            ExpressionAttributeValues: {
+function getSernsorDataByTeam(team_name, organization){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "sensor_data",
+                FilterExpression: "team = :team and organization = :organization ",
+                ExpressionAttributeValues: {
                 ":team": team_name,
                 ":organization": organization,
-            },
-        };
+                },
+            };
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -3800,13 +3797,13 @@ function getSernsorDataByTeam(team_name, organization) {
     })
 }
 
-function renameTeam(team_name, organization_id) {
-    console.log('organization_id', organization_id)
+function renameTeam(team_name,organization_id) {
+    console.log('organization_id',organization_id)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: "organizations",
-            Key: {
-                "organization_id": organization_id
+            Key: { 
+                "organization_id" : organization_id
             },
             UpdateExpression: "set #team_name = :team_name",
             ExpressionAttributeNames: {
@@ -3819,7 +3816,7 @@ function renameTeam(team_name, organization_id) {
         }
         docClient.update(params, function (err, data) {
             if (err) {
-                console.log("error when updating data\n", err);
+                console.log("error when updating data\n",err);
                 reject(err);
 
             } else {
@@ -3829,18 +3826,18 @@ function renameTeam(team_name, organization_id) {
     });
 }
 
-function getUserByTeam(team_name, organization) {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "users",
-            FilterExpression: "team = :team and organization = :organization ",
-            ExpressionAttributeValues: {
+function getUserByTeam(team_name, organization){
+    return new Promise((resolve, reject) =>{
+        var   params = {
+                TableName: "users",
+                FilterExpression: "team = :team and organization = :organization ",
+                ExpressionAttributeValues: {
                 ":team": team_name,
                 ":organization": organization,
-            },
-            ProjectionExpression: "user_cognito_id",
-            ScanIndexForward: false
-        };
+                },
+                ProjectionExpression: "user_cognito_id",
+                ScanIndexForward: false
+            };
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -3859,7 +3856,7 @@ function renameUsers(user_cognito_id, team_name) {
     return new Promise((resolve, reject) => {
         var params = {
             TableName: "users",
-            Key: {
+            Key: { 
                 "user_cognito_id": user_cognito_id
             },
             UpdateExpression: "set #team = :team",
@@ -3873,7 +3870,7 @@ function renameUsers(user_cognito_id, team_name) {
         }
         docClient.update(params, function (err, data) {
             if (err) {
-                console.log("error when updating sensor data\n", err);
+                console.log("error when updating sensor data\n",err);
                 reject(err);
 
             } else {
@@ -3914,90 +3911,90 @@ function renameUsers(user_cognito_id, team_name) {
 // }
 
 app.post(`${apiPrefix}renameTeam`, (req, res) => {
-    console.log('body', req.body);
+    console.log('body',req.body);
     let organization_id = req.body.organization_id;
-    let team_name = req.body.TeamName;
+    let team_name =  req.body.TeamName;
     let data = req.body.data;
-    renameTeam(team_name, organization_id)
-        .then(response => {
-            // return getSernsorDataByTeam(data.TeamName,data.organization);
-            return getUserByTeam(data.TeamName, data.organization)
-        })
-        .then(response => {
-            console.log('response', response);
-            let users_data = response;
-            if (users_data[0]) {
-                let userslen = users_data.length;
-                userslen = userslen - 1;
-                users_data.forEach(function (record, index) {
-                    renameUsers(record.user_cognito_id, team_name)
-                        .then(data => {
-                            console.log('res', data)
-                            if (index == userslen) {
-                                res.send({
-                                    message: 'success',
-                                    status: 200
-                                })
-                            }
-                        }).catch(err => {
-                            console.log('err', err)
-                            if (index == userslen) {
-                                res.send({
-                                    message: 'failure',
-                                    status: 300,
-                                    err: err
-                                })
-                            }
+    renameTeam(team_name,organization_id)
+    .then(response=>{
+        // return getSernsorDataByTeam(data.TeamName,data.organization);
+        return getUserByTeam(data.TeamName,data.organization)
+    })
+    .then(response=>{
+        console.log('response',response);
+        let users_data = response;
+        if(users_data[0]){
+            let userslen = users_data.length;
+            userslen = userslen-1;
+            users_data.forEach(function (record, index) {
+                renameUsers(record.user_cognito_id, team_name)
+                .then(data => {
+                    console.log('res',data)
+                    if(index == userslen){
+                        res.send({
+                            message: 'success',
+                            status: 200
                         })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    if(index == userslen){
+                         res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
                 })
-            } else {
-                res.send({
-                    message: 'success',
-                    status: 200
-                })
-            }
-            // let sensor_data = response;
-            // if(sensor_data){
-            //     let orglen = sensor_data.length;
-            //     orglen = orglen-1;
-            //     sensor_data.forEach(function (record, index) {
-            //         console.log('record',record.team);
-            //         console.log(index, orglen)
-            //         renameSernosrTeam(record.team, record.player_id, team_name)
-            //         .then(data => {
-            //             console.log('res',data)
-            //             if(index == orglen){
-            //                 res.send({
-            //                     message: 'success',
-            //                     status: 200
-            //                 })
-            //             }
-            //         }).catch(err => {
-            //             console.log('err',err)
-            //             if(index == orglen){
-            //                  res.send({
-            //                     message: 'failure',
-            //                     status: 300,
-            //                     err: err
-            //                 })
-            //             }
-            //         })
-            //     })
-            // }else{
-            //     res.send({
-            //         message: 'success',
-            //         status: 200
-            //     })
-            // }
-        })
-        .catch(err => {
-            console.log(err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
             })
+        }else{
+            res.send({
+                message: 'success',
+                status: 200
+            })
+        }
+        // let sensor_data = response;
+        // if(sensor_data){
+        //     let orglen = sensor_data.length;
+        //     orglen = orglen-1;
+        //     sensor_data.forEach(function (record, index) {
+        //         console.log('record',record.team);
+        //         console.log(index, orglen)
+        //         renameSernosrTeam(record.team, record.player_id, team_name)
+        //         .then(data => {
+        //             console.log('res',data)
+        //             if(index == orglen){
+        //                 res.send({
+        //                     message: 'success',
+        //                     status: 200
+        //                 })
+        //             }
+        //         }).catch(err => {
+        //             console.log('err',err)
+        //             if(index == orglen){
+        //                  res.send({
+        //                     message: 'failure',
+        //                     status: 300,
+        //                     err: err
+        //                 })
+        //             }
+        //         })
+        //     })
+        // }else{
+        //     res.send({
+        //         message: 'success',
+        //         status: 200
+        //     })
+        // }
+    })
+    .catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
         })
+    })
     // getSernsorDataByTeam(req.body.TeamName, req.body.organization)
     // .then(data=>{
     //     console.log('sernsor data -----------------\n',data)
@@ -4012,118 +4009,118 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
 });
 
 app.post(`${apiPrefix}MergeTeam`, (req, res) => {
-    console.log('body', req.body);
+    console.log('body',req.body);
     let data = req.body.data;
     let organization_id = data.organization_id;
-    let team_name = req.body.TeamName;
-
-    renameTeam(team_name, organization_id)
-        .then(response => {
-            // return getSernsorDataByTeam(data.TeamName,data.organization);
-            return getUserByTeam(data.TeamName, data.selectOrg)
-        })
-        .then(response => {
-            console.log('response', response);
-            let users_data = response;
-            if (users_data[0]) {
-                let userslen = users_data.length;
-                userslen = userslen - 1;
-                users_data.forEach(function (record, index) {
-                    renameUsers(record.user_cognito_id, team_name)
-                        .then(data => {
-                            console.log('res', data)
-                            if (index == userslen) {
-                                res.send({
-                                    message: 'success',
-                                    status: 200
-                                })
-                            }
-                        }).catch(err => {
-                            console.log('err', err)
-                            if (index == userslen) {
-                                res.send({
-                                    message: 'failure',
-                                    status: 300,
-                                    err: err
-                                })
-                            }
+    let team_name =  req.body.TeamName;
+    
+    renameTeam(team_name,organization_id)
+    .then(response=>{
+        // return getSernsorDataByTeam(data.TeamName,data.organization);
+        return getUserByTeam(data.TeamName,data.selectOrg)
+    })
+    .then(response=>{
+        console.log('response',response);
+        let users_data = response;
+        if(users_data[0]){
+            let userslen = users_data.length;
+            userslen = userslen-1;
+            users_data.forEach(function (record, index) {
+                renameUsers(record.user_cognito_id, team_name)
+                .then(data => {
+                    console.log('res',data)
+                    if(index == userslen){
+                        res.send({
+                            message: 'success',
+                            status: 200
                         })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    if(index == userslen){
+                         res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
                 })
-            } else {
-                res.send({
-                    message: 'success',
-                    status: 200
-                })
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
             })
+        }else{
+            res.send({
+                message: 'success',
+                status: 200
+            })
+        }
+    })
+    .catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
         })
+    })
 })
 /*============ Team edit funtions end here===================*/
 
 app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
-    console.log('MergeOrganization', req.body);
+    console.log('MergeOrganization',req.body);
     MergeOrganization(req.body.OrganizationName, req.body.organization_id)
-        .then(data => {
-            console.log('res', data)
-            let organization = req.body.data.selectOrg;
-            let sensor = req.body.data.brand;
-            let OrganizationName = req.body.OrganizationName;
-            getOrgSensorData(organization, sensor)
-                .then(sensor_data => {
-                    console.log('sensor_data', sensor_data);
-                    let sensorlen = sensor_data.length;
-                    if (sensorlen > 0) {
-                        sensorlen = sensorlen - 1;
-                        sensor_data.forEach(function (record, index) {
-                            // console.log('sensor',record);
-                            renameSensorOrganization(OrganizationName, record.player_id, record.team)
-                                .then(response => {
-                                    console.log('response', response)
-                                    if (index == sensorlen) {
-                                        res.send({
-                                            message: 'success',
-                                            status: 200,
-                                        })
-                                    }
-                                }).catch(err => {
-                                    if (index == sensorlen) {
-                                        res.send({
-                                            message: 'failure',
-                                            status: 300,
-                                            err: err
-                                        })
-                                    }
-                                })
-                        })
-                    } else {
-                        res.send({
-                            message: 'success',
-                            status: 200,
-                        })
-                    }
-                }).catch(err => {
-                    console.log("er", err)
+    .then(data => {
+        console.log('res',data)
+        let organization = req.body.data.selectOrg;
+        let sensor = req.body.data.brand;
+        let OrganizationName = req.body.OrganizationName;
+        getOrgSensorData(organization, sensor)
+        .then(sensor_data => {
+            console.log('sensor_data',sensor_data);
+            let sensorlen = sensor_data.length;
+            if(sensorlen > 0){
+                sensorlen = sensorlen-1;
+                sensor_data.forEach(function (record, index) {
+                    // console.log('sensor',record);
+                    renameSensorOrganization(OrganizationName, record.player_id, record.team)
+                    .then(response=>{
+                        console.log('response',response)
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'success',
+                                status: 200,
+                            })
+                        }
+                    }).catch(err=>{
+                        if(index == sensorlen){
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
+                        }
+                    })
                 })
+            }else{
+                res.send({
+                    message: 'success',
+                    status: 200,
+                })
+            }
         }).catch(err => {
-            console.log(err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
-            })
+            console.log("er",err)
         })
-
+    }).catch(err =>{
+        console.log(err)
+        res.send({
+            message: 'failure',
+            status: 300,
+            err: err
+        })
+    })
+    
 })
 
-function getUserDbDataByUserId(userID, type, email, cb) {
-    if (email) {
+function getUserDbDataByUserId(userID,type,email, cb) {
+    if(email){
         var params = {
             TableName: 'users',
             FilterExpression: "#email = :email",
@@ -4134,8 +4131,8 @@ function getUserDbDataByUserId(userID, type, email, cb) {
                 ":email": email,
             }
         };
-    } else {
-        if (type == "facebook") {
+    }else{
+        if(type == "facebook"){
             var params = {
                 TableName: 'users',
                 FilterExpression: "#userIDfacebook = :userIDfacebook",
@@ -4146,7 +4143,7 @@ function getUserDbDataByUserId(userID, type, email, cb) {
                     ":userIDfacebook": userID,
                 }
             };
-        } else {
+        }else{
             var params = {
                 TableName: 'users',
                 FilterExpression: "#userIDgoogle = :userIDgoogle",
@@ -4162,59 +4159,59 @@ function getUserDbDataByUserId(userID, type, email, cb) {
     let item = [];
     docClient.scan(params).eachPage((err, data, done) => {
         if (err) {
-            cb(err, "");
+           cb(err, "");
         }
         if (data == null) {
-
+           
             cb("", concatArrays(item));
         } else {
             item.push(data.Items);
         }
         done();
-    });
+    });    
 }
 
 //LoginWithoutEmail
 app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
-    console.log("LoginWithoutEmail In API Called!", req.body);
+    console.log("LoginWithoutEmail In API Called!",req.body);
     let userID = req.body.userID;
     let type = req.body.type;
-    if (req.body.email) {
+    if(req.body.email){
         req.body['email'] = req.body.email.toLowerCase();
     }
     let userData = '';
-    getUserDbDataByUserId(userID, type, req.body.email, function (err, data) {
-        if (err) {
-            console.log('err', err)
-        } else {
-            console.log('data', data);
-            if (data[0]) {
+    getUserDbDataByUserId(userID,type, req.body.email, function (err, data) {
+        if(err){
+            console.log('err',err) 
+        }else{
+            console.log('data',data);
+            if(data[0]){
                 userData = data[0];
-                if (type == "facebook") {
-                    if (!userData.userIDfacebook) {
+                if(type == "facebook"){
+                    if(!userData.userIDfacebook){
                         req.body['userIDfacebook'] = userID;
-                        upDateUserFBGlid(req.body, userData.user_cognito_id)
+                        upDateUserFBGlid(req.body,userData.user_cognito_id)
                     }
-                } else {
-                    if (!userData.userIDgoogle) {
+                }else{
+                    if(!userData.userIDgoogle){
                         req.body['userIDgoogle'] = userID;
-                        upDateUserFBGlid(req.body, userData.user_cognito_id)
+                        upDateUserFBGlid(req.body,userData.user_cognito_id)
                     }
                 }
 
                 getUser(data[0].email, function (err, data) {
                     if (err) {
-                        console.log('err0', err);
+                        console.log('err0',err);
 
                         res.send({
                             message: "failure",
                             error: 'Incorrect login credentials'
                         });
                     } else {
-                        console.log("USER DATA is =====================> \n", data);
+                        console.log("USER DATA is =====================> \n",data);
                         getListGroupForUser(data.Username, function (error, groupData) {
                             if (error) {
-                                console.log('error1', error)
+                                console.log('error1',error)
                                 res.send({
                                     message: "failure",
                                     error: 'Incorrect login credentials'
@@ -4243,7 +4240,7 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
                                     login(userData.email, userData.password_code, userType, function (err, result) {
 
                                         if (err) {
-                                            console.log('err2', err)
+                                            console.log('err2',err)
                                             res.cookie("token", "");
                                             res.send({
                                                 message: "failure",
@@ -4253,42 +4250,42 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
                                         else {
 
 
-                                            res.cookie("token", result.getIdToken().getJwtToken(), { maxAge: 604800000 });
+                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
 
-                                            getUserDbData(data.Username, function (err, user_details) {
-                                                if (err) {
-                                                    console.log('err3', err)
+                                            getUserDbData(data.Username, function(err, user_details){
+                                                if(err){
+                                                     console.log('err3',err)
                                                     res.send({
-                                                        message: "failure",
-                                                        error: err
+                                                        message : "failure",
+                                                        error : err
                                                     })
                                                 }
-                                                else {
+                                                else{
                                                     if (user_details.Item["level"] === 400) {
                                                         getUserSensor(data.Username)
                                                             .then(sensor_data => {
                                                                 user_details.Item["sensor"] = sensor_data[0]["sensor"];
                                                                 res.send({
-                                                                    message: "success",
-                                                                    user_details: user_details.Item,
+                                                                    message : "success",
+                                                                    user_details : user_details.Item,
                                                                     user_type: userType
                                                                 })
-
+                                                                
                                                             })
                                                             .catch(err => {
-                                                                console.log('err4', err)
+                                                                 console.log('err4',err)
                                                                 res.send({
-                                                                    message: "failure",
-                                                                    error: err
+                                                                    message : "failure",
+                                                                    error : err
                                                                 })
                                                             })
                                                     } else {
                                                         res.send({
-                                                            message: "success",
-                                                            user_details: user_details.Item,
+                                                            message : "success",
+                                                            user_details : user_details.Item,
                                                             user_type: userType
                                                         })
-                                                    }
+                                                    }  
                                                 }
                                             })
                                         }
@@ -4299,10 +4296,10 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
 
                     }
                 })
-            } else {
+            }else{
                 res.send({
-                    status: 'success',
-                    message: 'notExists'
+                    status:'success',
+                    message:'notExists'
                 });
             }
         }
@@ -4310,7 +4307,7 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
 })
 /*--------------Hidden login start here .....................*/
 app.post(`${apiPrefix}logInHidden`, (req, res) => {
-    console.log('re', req.body)
+    console.log('re',req.body)
     // Getting user data of that user
     let user_name = req.body.user_name;
     req.body['user_name'] = user_name.toLowerCase();
@@ -4318,7 +4315,7 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
     let data = '';
     getUser(req.body.user_name, function (err, data) {
         if (err) {
-            console.log('err0', err);
+            console.log('err0',err);
 
             res.send({
                 message: "failure",
@@ -4326,119 +4323,24 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
             });
         } else {
             data = data;
-            console.log("USER DATA is =====================> \n", data);
+            console.log("USER DATA is =====================> \n",data);
             getUserAlreadyExists(req.body['user_name'])
-                .then(userresponse => {
-                    console.log('userresponse', userresponse);
-                    if (userresponse[0]) {
-                        userData = userresponse[0];
-                        /* ======================
-        
-                            For new users
-                            
-                        ==========================*/
-                        if (userData.password) {
-                            // Now getting the list of Groups of user
-                            /*============== Match user password ===============*/
-                            if (userData.password == md5(req.body.password)) {
-                                getListGroupForUser(data.Username, function (error, groupData) {
-                                    if (error) {
-                                        console.log('error1', error)
-                                        res.send({
-                                            message: "failure",
-                                            error: 'Incorrect login credentials'
-                                        });
-                                    } else {
-                                        // Now checking is user is ADMIN or not
-
-                                        if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
-                                            // Sends the user to first login page
-                                            // respond with status of FORCE_CHANGE_PASSWORD
-                                            res.send({
-                                                message: "success",
-                                                status: "FORCE_CHANGE_PASSWORD"
-                                            })
-                                        } else {
-
-                                            // Now checking is user is ADMIN or not
-                                            var userType = "StandardUser";
-                                            groupData.forEach(element => {
-                                                if (element.GroupName == "Admin") {
-                                                    userType = "Admin";
-                                                }
-                                            });
-                                            // Here call the login function then
-                                            login(req.body.user_name, userData.password_code, userType, function (err, result) {
-
-                                                if (err) {
-                                                    console.log('err2', err)
-                                                    res.cookie("token", "");
-                                                    res.send({
-                                                        message: "failure",
-                                                        error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
-                                                    })
-                                                }
-                                                else {
-
-
-                                                    res.cookie("token", result.getIdToken().getJwtToken(), { maxAge: 604800000 });
-
-                                                    getUserDbData(data.Username, function (err, user_details) {
-                                                        if (err) {
-                                                            console.log('err3', err)
-                                                            res.send({
-                                                                message: "failure",
-                                                                error: err
-                                                            })
-                                                        }
-                                                        else {
-                                                            if (user_details.Item["level"] === 400) {
-                                                                getUserSensor(data.Username)
-                                                                    .then(sensor_data => {
-                                                                        user_details.Item["sensor"] = sensor_data[0]["sensor"];
-                                                                        res.send({
-                                                                            message: "success",
-                                                                            user_details: user_details.Item,
-                                                                            user_type: userType
-                                                                        })
-
-                                                                    })
-                                                                    .catch(err => {
-                                                                        console.log('err4', err)
-                                                                        res.send({
-                                                                            message: "failure",
-                                                                            error: err
-                                                                        })
-                                                                    })
-                                                            } else {
-                                                                res.send({
-                                                                    message: "success",
-                                                                    user_details: user_details.Item,
-                                                                    user_type: userType
-                                                                })
-                                                            }
-                                                        }
-                                                    })
-                                                }
-                                            })
-                                        }
-                                    }
-                                })
-                            } else {
-                                res.send({
-                                    message: "failure",
-                                    error: 'Incorrect login password'
-                                });
-                            }
-                        } else {
-                            /* ======================
-        
-                                For old users
-                            
-                            ==========================*/
+            .then(userresponse =>{
+                console.log('userresponse',userresponse);
+                if(userresponse[0]){
+                    userData = userresponse[0];
+                    /* ======================
+    
+                        For new users
+                        
+                    ==========================*/
+                    if(userData.password){
+                         // Now getting the list of Groups of user
+                         /*============== Match user password ===============*/
+                        if(userData.password == md5(req.body.password)){
                             getListGroupForUser(data.Username, function (error, groupData) {
                                 if (error) {
-                                    console.log('error1', error)
+                                    console.log('error1',error)
                                     res.send({
                                         message: "failure",
                                         error: 'Incorrect login credentials'
@@ -4463,10 +4365,10 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
                                             }
                                         });
                                         // Here call the login function then
-                                        login(req.body.user_name, req.body.password, userType, function (err, result) {
+                                        login(req.body.user_name, userData.password_code, userType, function (err, result) {
 
                                             if (err) {
-                                                console.log('err2', err)
+                                                console.log('err2',err)
                                                 res.cookie("token", "");
                                                 res.send({
                                                     message: "failure",
@@ -4476,42 +4378,42 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
                                             else {
 
 
-                                                res.cookie("token", result.getIdToken().getJwtToken(), { maxAge: 604800000 });
+                                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
 
-                                                getUserDbData(data.Username, function (err, user_details) {
-                                                    if (err) {
-                                                        console.log('err3', err)
+                                                getUserDbData(data.Username, function(err, user_details){
+                                                    if(err){
+                                                         console.log('err3',err)
                                                         res.send({
-                                                            message: "failure",
-                                                            error: err
+                                                            message : "failure",
+                                                            error : err
                                                         })
                                                     }
-                                                    else {
+                                                    else{
                                                         if (user_details.Item["level"] === 400) {
                                                             getUserSensor(data.Username)
                                                                 .then(sensor_data => {
                                                                     user_details.Item["sensor"] = sensor_data[0]["sensor"];
                                                                     res.send({
-                                                                        message: "success",
-                                                                        user_details: user_details.Item,
+                                                                        message : "success",
+                                                                        user_details : user_details.Item,
                                                                         user_type: userType
                                                                     })
-
+                                                                    
                                                                 })
                                                                 .catch(err => {
-                                                                    console.log('err4', err)
+                                                                     console.log('err4',err)
                                                                     res.send({
-                                                                        message: "failure",
-                                                                        error: err
+                                                                        message : "failure",
+                                                                        error : err
                                                                     })
                                                                 })
                                                         } else {
                                                             res.send({
-                                                                message: "success",
-                                                                user_details: user_details.Item,
+                                                                message : "success",
+                                                                user_details : user_details.Item,
                                                                 user_type: userType
                                                             })
-                                                        }
+                                                        }  
                                                     }
                                                 })
                                             }
@@ -4519,19 +4421,114 @@ app.post(`${apiPrefix}logInHidden`, (req, res) => {
                                     }
                                 }
                             })
+                        }else{
+                            res.send({
+                                message: "failure",
+                                error: 'Incorrect login password'
+                            });
                         }
-                    } else {
+                    }else{
+                        /* ======================
+    
+                            For old users
+                        
+                        ==========================*/
+                        getListGroupForUser(data.Username, function (error, groupData) {
+                            if (error) {
+                                console.log('error1',error)
+                                res.send({
+                                    message: "failure",
+                                    error: 'Incorrect login credentials'
+                                });
+                            } else {
+                                // Now checking is user is ADMIN or not
 
+                                if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                    // Sends the user to first login page
+                                    // respond with status of FORCE_CHANGE_PASSWORD
+                                    res.send({
+                                        message: "success",
+                                        status: "FORCE_CHANGE_PASSWORD"
+                                    })
+                                } else {
+
+                                    // Now checking is user is ADMIN or not
+                                    var userType = "StandardUser";
+                                    groupData.forEach(element => {
+                                        if (element.GroupName == "Admin") {
+                                            userType = "Admin";
+                                        }
+                                    });
+                                    // Here call the login function then
+                                    login(req.body.user_name, req.body.password, userType, function (err, result) {
+
+                                        if (err) {
+                                            console.log('err2',err)
+                                            res.cookie("token", "");
+                                            res.send({
+                                                message: "failure",
+                                                error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
+                                            })
+                                        }
+                                        else {
+
+
+                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                            getUserDbData(data.Username, function(err, user_details){
+                                                if(err){
+                                                     console.log('err3',err)
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                }
+                                                else{
+                                                    if (user_details.Item["level"] === 400) {
+                                                        getUserSensor(data.Username)
+                                                            .then(sensor_data => {
+                                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                res.send({
+                                                                    message : "success",
+                                                                    user_details : user_details.Item,
+                                                                    user_type: userType
+                                                                })
+                                                                
+                                                            })
+                                                            .catch(err => {
+                                                                 console.log('err4',err)
+                                                                res.send({
+                                                                    message : "failure",
+                                                                    error : err
+                                                                })
+                                                            })
+                                                    } else {
+                                                        res.send({
+                                                            message : "success",
+                                                            user_details : user_details.Item,
+                                                            user_type: userType
+                                                        })
+                                                    }  
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
                     }
-                }).catch(err => {
+                }else{
 
-                })
+                }
+            }).catch(err=>{
+
+            })
         }
     })
 })
 
 app.post(`${apiPrefix}logIn`, (req, res) => {
-    console.log('re', req.body)
+    console.log('re',req.body)
     // Getting user data of that user
     let user_name = req.body.user_name;
     req.body['user_name'] = user_name.toLowerCase();
@@ -4539,7 +4536,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
     let data = '';
     getUser(req.body.user_name, function (err, data) {
         if (err) {
-            console.log('err0', err);
+            console.log('err0',err);
 
             res.send({
                 message: "failure",
@@ -4547,119 +4544,24 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
             });
         } else {
             data = data;
-            console.log("USER DATA is =====================> \n", data);
+            console.log("USER DATA is =====================> \n",data);
             getUserAlreadyExists(req.body['user_name'])
-                .then(userresponse => {
-                    console.log('userresponse', userresponse);
-                    if (userresponse[0]) {
-                        userData = userresponse[0];
-                        /* ======================
-        
-                            For new users
-                            
-                        ==========================*/
-                        if (userData.password) {
-                            // Now getting the list of Groups of user
-                            /*============== Match user password ===============*/
-                            if (userData.password == md5(req.body.password)) {
-                                getListGroupForUser(data.Username, function (error, groupData) {
-                                    if (error) {
-                                        console.log('error1', error)
-                                        res.send({
-                                            message: "failure",
-                                            error: 'Incorrect login credentials'
-                                        });
-                                    } else {
-                                        // Now checking is user is ADMIN or not
-
-                                        if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
-                                            // Sends the user to first login page
-                                            // respond with status of FORCE_CHANGE_PASSWORD
-                                            res.send({
-                                                message: "success",
-                                                status: "FORCE_CHANGE_PASSWORD"
-                                            })
-                                        } else {
-
-                                            // Now checking is user is ADMIN or not
-                                            var userType = "StandardUser";
-                                            groupData.forEach(element => {
-                                                if (element.GroupName == "Admin") {
-                                                    userType = "Admin";
-                                                }
-                                            });
-                                            // Here call the login function then
-                                            login(req.body.user_name, userData.password_code, userType, function (err, result) {
-
-                                                if (err) {
-                                                    console.log('err2', err)
-                                                    res.cookie("token", "");
-                                                    res.send({
-                                                        message: "failure",
-                                                        error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
-                                                    })
-                                                }
-                                                else {
-
-
-                                                    res.cookie("token", result.getIdToken().getJwtToken(), { maxAge: 604800000 });
-
-                                                    getUserDbData(data.Username, function (err, user_details) {
-                                                        if (err) {
-                                                            console.log('err3', err)
-                                                            res.send({
-                                                                message: "failure",
-                                                                error: err
-                                                            })
-                                                        }
-                                                        else {
-                                                            if (user_details.Item["level"] === 400) {
-                                                                getUserSensor(data.Username)
-                                                                    .then(sensor_data => {
-                                                                        user_details.Item["sensor"] = sensor_data[0]["sensor"];
-                                                                        res.send({
-                                                                            message: "success",
-                                                                            user_details: user_details.Item,
-                                                                            user_type: userType
-                                                                        })
-
-                                                                    })
-                                                                    .catch(err => {
-                                                                        console.log('err4', err)
-                                                                        res.send({
-                                                                            message: "failure",
-                                                                            error: err
-                                                                        })
-                                                                    })
-                                                            } else {
-                                                                res.send({
-                                                                    message: "success",
-                                                                    user_details: user_details.Item,
-                                                                    user_type: userType
-                                                                })
-                                                            }
-                                                        }
-                                                    })
-                                                }
-                                            })
-                                        }
-                                    }
-                                })
-                            } else {
-                                res.send({
-                                    message: "failure",
-                                    error: 'Incorrect login password'
-                                });
-                            }
-                        } else {
-                            /* ======================
-        
-                                For old users
-                            
-                            ==========================*/
+            .then(userresponse =>{
+                console.log('userresponse',userresponse);
+                if(userresponse[0]){
+                    userData = userresponse[0];
+                    /* ======================
+    
+                        For new users
+                        
+                    ==========================*/
+                    if(userData.password){
+                         // Now getting the list of Groups of user
+                         /*============== Match user password ===============*/
+                        if(userData.password == md5(req.body.password)){
                             getListGroupForUser(data.Username, function (error, groupData) {
                                 if (error) {
-                                    console.log('error1', error)
+                                    console.log('error1',error)
                                     res.send({
                                         message: "failure",
                                         error: 'Incorrect login credentials'
@@ -4684,10 +4586,10 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                             }
                                         });
                                         // Here call the login function then
-                                        login(req.body.user_name, req.body.password, userType, function (err, result) {
+                                        login(req.body.user_name, userData.password_code, userType, function (err, result) {
 
                                             if (err) {
-                                                console.log('err2', err)
+                                                console.log('err2',err)
                                                 res.cookie("token", "");
                                                 res.send({
                                                     message: "failure",
@@ -4697,42 +4599,42 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                             else {
 
 
-                                                res.cookie("token", result.getIdToken().getJwtToken(), { maxAge: 604800000 });
+                                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
 
-                                                getUserDbData(data.Username, function (err, user_details) {
-                                                    if (err) {
-                                                        console.log('err3', err)
+                                                getUserDbData(data.Username, function(err, user_details){
+                                                    if(err){
+                                                         console.log('err3',err)
                                                         res.send({
-                                                            message: "failure",
-                                                            error: err
+                                                            message : "failure",
+                                                            error : err
                                                         })
                                                     }
-                                                    else {
+                                                    else{
                                                         if (user_details.Item["level"] === 400) {
                                                             getUserSensor(data.Username)
                                                                 .then(sensor_data => {
                                                                     user_details.Item["sensor"] = sensor_data[0]["sensor"];
                                                                     res.send({
-                                                                        message: "success",
-                                                                        user_details: user_details.Item,
+                                                                        message : "success",
+                                                                        user_details : user_details.Item,
                                                                         user_type: userType
                                                                     })
-
+                                                                    
                                                                 })
                                                                 .catch(err => {
-                                                                    console.log('err4', err)
+                                                                     console.log('err4',err)
                                                                     res.send({
-                                                                        message: "failure",
-                                                                        error: err
+                                                                        message : "failure",
+                                                                        error : err
                                                                     })
                                                                 })
                                                         } else {
                                                             res.send({
-                                                                message: "success",
-                                                                user_details: user_details.Item,
+                                                                message : "success",
+                                                                user_details : user_details.Item,
                                                                 user_type: userType
                                                             })
-                                                        }
+                                                        }  
                                                     }
                                                 })
                                             }
@@ -4740,13 +4642,108 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
                                     }
                                 }
                             })
+                        }else{
+                            res.send({
+                                message: "failure",
+                                error: 'Incorrect login password'
+                            });
                         }
-                    } else {
+                    }else{
+                        /* ======================
+    
+                            For old users
+                        
+                        ==========================*/
+                        getListGroupForUser(data.Username, function (error, groupData) {
+                            if (error) {
+                                console.log('error1',error)
+                                res.send({
+                                    message: "failure",
+                                    error: 'Incorrect login credentials'
+                                });
+                            } else {
+                                // Now checking is user is ADMIN or not
 
+                                if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                    // Sends the user to first login page
+                                    // respond with status of FORCE_CHANGE_PASSWORD
+                                    res.send({
+                                        message: "success",
+                                        status: "FORCE_CHANGE_PASSWORD"
+                                    })
+                                } else {
+
+                                    // Now checking is user is ADMIN or not
+                                    var userType = "StandardUser";
+                                    groupData.forEach(element => {
+                                        if (element.GroupName == "Admin") {
+                                            userType = "Admin";
+                                        }
+                                    });
+                                    // Here call the login function then
+                                    login(req.body.user_name, req.body.password, userType, function (err, result) {
+
+                                        if (err) {
+                                            console.log('err2',err)
+                                            res.cookie("token", "");
+                                            res.send({
+                                                message: "failure",
+                                                error: err == 'User is not confirmed.' ? 'your email is not verified, Check your mail to verify your account' : 'Incorrect login credentials'
+                                            })
+                                        }
+                                        else {
+
+
+                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+
+                                            getUserDbData(data.Username, function(err, user_details){
+                                                if(err){
+                                                     console.log('err3',err)
+                                                    res.send({
+                                                        message : "failure",
+                                                        error : err
+                                                    })
+                                                }
+                                                else{
+                                                    if (user_details.Item["level"] === 400) {
+                                                        getUserSensor(data.Username)
+                                                            .then(sensor_data => {
+                                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                res.send({
+                                                                    message : "success",
+                                                                    user_details : user_details.Item,
+                                                                    user_type: userType
+                                                                })
+                                                                
+                                                            })
+                                                            .catch(err => {
+                                                                 console.log('err4',err)
+                                                                res.send({
+                                                                    message : "failure",
+                                                                    error : err
+                                                                })
+                                                            })
+                                                    } else {
+                                                        res.send({
+                                                            message : "success",
+                                                            user_details : user_details.Item,
+                                                            user_type: userType
+                                                        })
+                                                    }  
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            }
+                        })
                     }
-                }).catch(err => {
+                }else{
 
-                })
+                }
+            }).catch(err=>{
+
+            })
         }
     })
 })
@@ -4754,7 +4751,7 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
 /* Forget password function start */
 
 app.post(`${apiPrefix}forgotPassword`, (req, res) => {
-    console.log("Log In API Called!", req.body);
+    console.log("Log In API Called!",req.body);
     getUser(req.body.user_name, function (err, data) {
         if (err) {
             console.log(err);
@@ -4765,38 +4762,38 @@ app.post(`${apiPrefix}forgotPassword`, (req, res) => {
             });
         } else {
             forgotPassword(req.body.user_name, function (err, data) {
-                console.log('res', err, data)
+                console.log('res',err,data)
                 if (err) {
                     res.send({
                         message: "failure",
                         error: err
                     });
-                } else {
+                }else{
                     res.send({
                         message: "success",
                         error: data
                     });
                 }
-            });
+           });
         }
     });
 });
 
 /* Forget password function end */
 
-app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req, res) => {
-    console.log('checking isAuthenticated=============\n', req.user_cognito_id)
-    if (req.user_cognito_id) {
+app.post(`${apiPrefix}isAuthenticated`, VerifyToken, (req,res) =>{
+    console.log('checking isAuthenticated=============\n',req.user_cognito_id)
+    if(req.user_cognito_id){
         res.send({
-            message: "success",
-            user_cognito_id: req.user_cognito_id
+            message : "success",
+            user_cognito_id : req.user_cognito_id
         })
     }
 })
 
 // Login first time with temporary password
 app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
-    console.log('logInFirstTime', req.body)
+    console.log('logInFirstTime',req.body)
     let user_name = req.body.user_name;
     req.body['user_name'] = user_name.toLowerCase();
     loginFirstTime(req.body, function (err, result) {
@@ -4837,39 +4834,39 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
                             //     message: "success",
                             //     user_type: userType
                             // })
-                            res.cookie("token", result.getIdToken().getJwtToken(), { maxAge: 604800000 });
-                            getUserDbData(data.Username, function (err, user_details) {
-                                if (err) {
+                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+                            getUserDbData(data.Username, function(err, user_details){
+                                if(err){
                                     res.send({
-                                        message: "failure",
-                                        error: err
+                                        message : "failure",
+                                        error : err
                                     })
                                 }
-                                else {
+                                else{
                                     if (user_details.Item["level"] === 400) {
                                         getUserSensor(data.Username)
                                             .then(sensor_data => {
                                                 user_details.Item["sensor"] = sensor_data[0]["sensor"];
                                                 res.send({
-                                                    message: "success",
-                                                    user_details: user_details.Item,
+                                                    message : "success",
+                                                    user_details : user_details.Item,
                                                     user_type: userType
                                                 })
-
+                                                
                                             })
                                             .catch(err => {
                                                 res.send({
-                                                    message: "failure",
-                                                    error: err
+                                                    message : "failure",
+                                                    error : err
                                                 })
                                             })
                                     } else {
                                         res.send({
-                                            message: "success",
-                                            user_details: user_details.Item,
+                                            message : "success",
+                                            user_details : user_details.Item,
                                             user_type: userType
                                         })
-                                    }
+                                    }  
                                 }
                             })
                         }
@@ -4877,10 +4874,10 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
 
                 }
             }
-            );
+        );
 
-        }
-    })
+    }
+})
 
 })
 
@@ -4903,12 +4900,12 @@ function getBrandOrganizationData(sensor, organization) {
                 TableName: "sensor_data",
                 FilterExpression: "organization = :organization",
                 ExpressionAttributeValues: {
-                    ":organization": organization
+                   ":organization": organization
                 },
                 ProjectionExpression: "sensor,image_id,player_id,computed_time"
             };
         }
-
+        
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -4961,9 +4958,9 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
                 orgList.forEach(function (org, index) {
                     let data = org;
                     let i = index;
-                    getBrandOrganizationData('', data.organization)
+                    getBrandOrganizationData('' , data.organization )
                         .then(simulation_records => {
-
+                            
                             org["simulation_count"] = Number(simulation_records.length).toString();
                             org["simulation_status"] = '';
                             org["computed_time"] = '';
@@ -4995,7 +4992,7 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
                                             })
                                         }
                                     }).catch(err => {
-                                        console.log('err', err);
+                                        console.log('err',err);
                                     })
                             } else {
                                 counter++;
@@ -5019,8 +5016,8 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
                 })
             }
         })
-        .catch(err => {
-            console.log('err', err)
+        .catch(err =>{
+            console.log('err',err)
         })
 })
 
@@ -5051,12 +5048,12 @@ function getOrganizationTeamData(obj) {
         if (obj.sensor) {
             params = {
                 TableName: "sensor_data",
-                KeyConditionExpression: "team = :team",
+                KeyConditionExpression:  "team = :team",
                 FilterExpression: "sensor = :sensor and organization = :organization",
                 ExpressionAttributeValues: {
-                    ":sensor": obj.sensor,
-                    ":organization": obj.organization,
-                    ":team": obj.team
+                   ":sensor": obj.sensor,
+                   ":organization": obj.organization,
+                   ":team": obj.team
                 },
                 ProjectionExpression: "sensor,image_id,computed_time,player_id",
                 ScanIndexForward: false
@@ -5064,17 +5061,17 @@ function getOrganizationTeamData(obj) {
         } else {
             params = {
                 TableName: "sensor_data",
-                KeyConditionExpression: "team = :team",
+                KeyConditionExpression:  "team = :team",
                 FilterExpression: "organization = :organization",
                 ExpressionAttributeValues: {
-                    ":organization": obj.organization,
-                    ":team": obj.team
+                   ":organization": obj.organization,
+                   ":team": obj.team
                 },
                 ProjectionExpression: "sensor,image_id,computed_time,player_id",
                 ScanIndexForward: false
             };
         }
-
+        
         var item = [];
         docClient.query(params).eachPage((err, data, done) => {
             if (err) {
@@ -5092,7 +5089,7 @@ function getOrganizationTeamData(obj) {
 
 app.post(`${apiPrefix}getTeamList`, (req, res) => {
     getTeamList()
-        .then(list => {
+        .then(list=>{
             // console.log('list',list)
             let uniqueList = [];
             var teamList = list.filter(function (team_name) {
@@ -5112,9 +5109,9 @@ app.post(`${apiPrefix}getTeamList`, (req, res) => {
                 teamList.forEach(function (team, index) {
                     let data = team;
                     let i = index;
-                    getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false, organization: data.organization, team: data.team_name })
+                    getOrganizationTeamData({ sensor: data.sensor ? data.sensor : false , organization: data.organization, team: data.team_name})
                         .then(simulation_records => {
-
+                            
                             team["simulation_count"] = Number(simulation_records.length).toString();
                             team["simulation_status"] = '';
                             team["computed_time"] = '';
@@ -5147,7 +5144,7 @@ app.post(`${apiPrefix}getTeamList`, (req, res) => {
                                         }
 
                                     }).catch(err => {
-                                        console.log('err', err);
+                                        console.log('err',err);
                                     })
                             } else {
                                 counter++;
@@ -5204,25 +5201,25 @@ function getTeamDataWithPlayerRecords(player_id, team, sensor, organization) {
         if (sensor) {
             params = {
                 TableName: "sensor_data",
-                KeyConditionExpression: "team = :team and begins_with(player_id,:player_id)",
+                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
                 FilterExpression: "sensor = :sensor and organization = :organization",
                 ExpressionAttributeValues: {
-                    ":sensor": sensor,
-                    ":organization": organization,
-                    ":team": team,
-                    ":player_id": player_id + '$',
+                ":sensor": sensor,
+                ":organization": organization,
+                ":team": team,
+                ":player_id": player_id + '$',
                 },
                 ScanIndexForward: false
             };
         } else {
             params = {
                 TableName: "sensor_data",
-                KeyConditionExpression: "team = :team and begins_with(player_id,:player_id)",
+                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
                 FilterExpression: "organization = :organization",
                 ExpressionAttributeValues: {
-                    ":organization": organization,
-                    ":team": team,
-                    ":player_id": player_id + '$',
+                ":organization": organization,
+                ":team": team,
+                ":player_id": player_id + '$',
                 },
                 ScanIndexForward: false
             };
@@ -5245,11 +5242,11 @@ function getTeamDataWithPlayerRecords(player_id, team, sensor, organization) {
 app.post(`${apiPrefix}getPlayerList`, (req, res) => {
     getPlayerList().then(players => {
         var player_list = [];
-        for (var i = 0; i < players.length; i++) {
-            if (players[i].player_list) {
+        for(var i =0; i < players.length; i++){
+            if(players[i].player_list){
                 var list = players[i].player_list;
-                for (var j = 0; j < list.length; j++) {
-                    player_list.push({ player_id: list[j], team: players[i].team_name, sensor: players[i].sensor, organization: players[i].organization })
+                for(var j = 0;j < list.length; j++){
+                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
                 }
             }
         }
@@ -5267,69 +5264,69 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
             player_list.forEach(function (player, index) {
                 let p = player;
                 let playerData = '';
-                if (player.player_id && player.player_id != 'undefined') {
+                if(player.player_id && player.player_id != 'undefined'){
                     getTeamDataWithPlayerRecords(player.player_id, player.team, player.sensor, player.organization)
-                        .then(player_data => {
-                            playerData = player_data;
-                            counter++;
-                            p_data.push({
-                                player_name: p,
-                                //vsimulation_image: image ? image : '',
-                                simulation_data: playerData,
-                                date_time: playerData[0].player_id.split('$')[1],
-                            });
+                    .then(player_data => {
+                        playerData = player_data;
+                        counter++;
+                        p_data.push({
+                            player_name: p,
+                            //vsimulation_image: image ? image : '',
+                            simulation_data: playerData,
+                            date_time: playerData[0].player_id.split('$')[1],
+                        });
+                       
+                         if (counter == player_listLn) {
+                            p_data.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            }); 
 
-                            if (counter == player_listLn) {
-                                p_data.sort(function (b, a) {
-                                    var keyA = a.date_time,
-                                        keyB = b.date_time;
-                                    if (keyA < keyB) return -1;
-                                    if (keyA > keyB) return 1;
-                                    return 0;
-                                });
-
-                                let k = 0;
-                                var p_datalen = p_data.length;
-                                p_data.forEach(function (record, index) {
-                                    getPlayerSimulationStatus(record.simulation_data[0].image_id)
-                                        .then(simulation => {
-                                            // console.log('simulation',simulation.status)
-                                            k++;
-                                            p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
-                                            p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-
-                                            if (k == p_datalen) {
-                                                res.send({
-                                                    message: "success",
-                                                    data: p_data
-                                                })
-                                            }
-                                        })
-                                        .catch(err => {
-                                            console.log(err);
-                                        })
-                                })
-                            }
-
-                            indx++;
-                        })
-                        .catch(err => {
-                            counter++;
-                            if (counter == player_listLn) {
-                                res.send({
-                                    message: "failure",
-                                    data: p_data
-                                })
-                            }
-                        })
+                            let k = 0;
+                            var p_datalen = p_data.length;
+                            p_data.forEach(function (record, index) {
+                                getPlayerSimulationStatus(record.simulation_data[0].image_id)
+                                    .then(simulation => {
+                                        // console.log('simulation',simulation.status)
+                                        k++;
+                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+                                        
+                                        if (k == p_datalen) {
+                                            res.send({
+                                                message: "success",
+                                                data: p_data
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
+                                    })
+                            })
+                        }
+                        
+                        indx++;
+                    })
+                    .catch(err => {
+                        counter++;
+                        if (counter == player_listLn) {
+                            res.send({
+                                message: "failure",
+                                data: p_data
+                            })
+                        }
+                    })
                 } else {
                     counter++;
                 }
             })
         }
 
-    }).catch(err => {
-        console.log('err', err)
+    }).catch(err =>{
+        console.log('err',err)
         res.send({
             message: "failure",
             error: err
@@ -5373,27 +5370,27 @@ const fetchSensor = (sensor) => {
     return new Promise(function (resolve, reject) {
         var params = {
             TableName: 'sensors',
-            Key: {
+             Key: {
                 "sensor": sensor
             }
-
+           
         };
         //   var items
         var items = [];
+        
+          docClient.get(params, function (err, data) {
+              if (err) {
+                  reject(err)
 
-        docClient.get(params, function (err, data) {
-            if (err) {
-                reject(err)
-
-            } else {
+              } else {
                 // console.log('cg data is ',data);
                 resolve(data.Item);
-            }
-        });
-    })
+              }
+          });
+      })
 }
-app.post(`${apiPrefix}fetchAdminStaffMembers`, (req, res) => {
-
+app.post(`${apiPrefix}fetchAdminStaffMembers`, (req,res) =>{ 
+     
     var params = {
         TableName: 'users',
         FilterExpression: "#level = :level",
@@ -5408,15 +5405,15 @@ app.post(`${apiPrefix}fetchAdminStaffMembers`, (req, res) => {
     docClient.scan(params).eachPage((err, data, done) => {
         if (err) {
             res.send({
-                message: "failure",
-                error: err,
-                data: []
-            })
+                message : "failure",
+                error : err,
+                data : []
+            }) 
         }
         if (data == null) {
             res.send({
-                message: "success",
-                data: concatArrays(item)
+                message : "success",
+                data : concatArrays(item)
             })
         } else {
             item.push(data.Items);
@@ -5424,8 +5421,8 @@ app.post(`${apiPrefix}fetchAdminStaffMembers`, (req, res) => {
         done();
     });
 });
-app.post(`${apiPrefix}fetchTeamStaffMembers`, (req, res) => {
-    console.log('fetchTeamStaffMembers', req.body)
+app.post(`${apiPrefix}fetchTeamStaffMembers`, (req,res) =>{ 
+ console.log('fetchTeamStaffMembers',req.body)
     var params = {
         TableName: 'users',
         FilterExpression: "#level = :level and #organization = :organization and #team =:team",
@@ -5444,15 +5441,15 @@ app.post(`${apiPrefix}fetchTeamStaffMembers`, (req, res) => {
     docClient.scan(params).eachPage((err, data, done) => {
         if (err) {
             res.send({
-                message: "failure",
-                error: err,
-                data: []
-            })
+                message : "failure",
+                error : err,
+                data : []
+            }) 
         }
         if (data == null) {
             res.send({
-                message: "success",
-                data: concatArrays(item)
+                message : "success",
+                data : concatArrays(item)
             })
         } else {
             item.push(data.Items);
@@ -5461,57 +5458,57 @@ app.post(`${apiPrefix}fetchTeamStaffMembers`, (req, res) => {
     });
 })
 
-app.post(`${apiPrefix}fetchStaffMembers`, (req, res) => {
-    fetchSensor(req.body.brand)
+app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{ 
+     fetchSensor(req.body.brand)
         .then(sensors => {
-            console.log('sensors', sensors.users);
+            console.log('sensors',sensors.users);
             var user_cognito_id = sensors.users;
             var cId_len = user_cognito_id.length;
-            var cId_len2 = cId_len - 1;
+            var cId_len2 = cId_len-1;
             var memebers = [];
             var f = 0;
 
             if (cId_len === 0) {
                 res.send({
-                    message: "success",
-                    data: memebers
+                    message : "success",
+                    data : memebers
                 })
             }
 
-            for (var i = 0; i < cId_len; i++) {
-                fetchStaffMembers(user_cognito_id[i], req.body.brand)
-                    .then(data => {
-                        memebers.push({ data });
-                        console.log(cId_len2, f)
-                        if (f == cId_len2) {
-                            res.send({
-                                message: "success",
-                                data: memebers
-                            })
-                        }
-                        f++;
-                    })
-                    .catch(err => {
+            for(var i = 0; i < cId_len; i++){
+                fetchStaffMembers(user_cognito_id[i],req.body.brand)
+                .then(data => {
+                    memebers.push({data});
+                    console.log(cId_len2,f)
+                    if(f == cId_len2){
                         res.send({
-                            message: "failure",
-                            error: err,
-                            data: []
+                            message : "success",
+                            data : memebers
                         })
-                    })
+                    }
+                    f++;
+                })
+                .catch(err => {
+                    res.send({
+                        message : "failure",
+                        error : err,
+                        data : []
+                    })  
+                })
             }
-        }).catch(err => {
+        }) .catch(err => {
             res.send({
-                message: "failure",
-                error: err,
-                data: []
-            })
+                message : "failure",
+                error : err,
+                data : []
+            })  
         });
     //
-
+  
 });
 
 function fetchOrgStaffMembers(organization) {
-    console.log('organization', organization)
+    console.log('organization',organization)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'users',
@@ -5539,31 +5536,31 @@ function fetchOrgStaffMembers(organization) {
         });
     });
 }
-app.post(`${apiPrefix}fetchOrgStaffMembers`, (req, res) => {
-    console.log('fetchOrgStaffMembers', req.body);
+app.post(`${apiPrefix}fetchOrgStaffMembers`, (req,res) =>{ 
+    console.log('fetchOrgStaffMembers',req.body);
     fetchOrgStaffMembers(req.body.organization).
-        then(data => {
-            console.log('staff', data);
-            res.send({
-                message: "success",
-                data: data
-            })
-        }).catch(err => {
-            console.log('er', err);
-            res.send({
-                message: "failure",
-                error: err,
-                data: []
-            })
+    then(data=>{
+        console.log('staff',data);
+        res.send({
+            message : "success",
+            data : data
         })
+    }).catch(err=>{
+        console.log('er',err);
+        res.send({
+            message : "failure",
+            error : err,
+            data : []
+        })  
+    })
 })
 
 //getting only user db details
 app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
     console.log(req.body);
-    if (req.body.user_cognito_id) {
-        req.user_cognito_id = req.body.user_cognito_id;
+    if(req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
     }
     getUserDbData(req.user_cognito_id, function (err, data) {
         if (err) {
@@ -5585,8 +5582,8 @@ app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
 app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
     // If request comes to get detail of specific player
     console.log(req.body);
-    if (req.body.InviteToken) {
-        req.InviteToken = req.body.InviteToken;
+    if(req.body.InviteToken){
+        req.InviteToken = req.body.InviteToken ;
     }
     getUserTokenDBDetails(req.InviteToken, function (err, data) {
         if (err) {
@@ -5606,12 +5603,12 @@ app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
 });
 
 app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
-    if (req.body.user_cognito_id) {
-        req.user_cognito_id = req.body.user_cognito_id;
+    if (req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
     }
-    if (req.user_cognito_id) {
+    if (req.user_cognito_id) { 
         let userData = {};
-        getAvatarInspectionFileSignedUrl(req.user_cognito_id + "/profile/avatar/brain.ply", function (err, brain_ply) {
+        getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/brain.ply", function (err, brain_ply) {
             if (err) {
                 userData["brain_ply"] = "";
                 res.send({
@@ -5621,7 +5618,7 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
             }
             else {
                 userData["brain_ply"] = brain_ply;
-                getAvatarInspectionFileSignedUrl(req.user_cognito_id + "/profile/avatar/skull.ply", function (err, skull_ply) {
+                getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/skull.ply", function (err, skull_ply) {
                     if (err) {
                         userData["skull_ply"] = "";
                         res.send({
@@ -5631,7 +5628,7 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
                     }
                     else {
                         userData["skull_ply"] = skull_ply;
-                        getAvatarInspectionFileSignedUrl(req.user_cognito_id + "/profile/avatar/model.ply", function (err, model_ply) {
+                        getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.ply", function (err, model_ply) {
                             if (err) {
                                 userData["model_ply"] = "";
                                 res.send({
@@ -5641,7 +5638,7 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
                             }
                             else {
                                 userData["model_ply"] = model_ply;
-                                getAvatarInspectionFileSignedUrl(req.user_cognito_id + "/profile/avatar/model.jpg", function (err, model_jpg) {
+                                getAvatarInspectionFileSignedUrl( req.user_cognito_id + "/profile/avatar/model.jpg", function (err, model_jpg) {
                                     if (err) {
                                         userData["model_jpg"] = "";
                                         res.send({
@@ -5663,20 +5660,20 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
                     }
                 })
             }
-        })
+        })    
     } else {
         res.send({
             message: "failure",
             error: 'User cognito id is required '
         })
     }
-})
+})    
 
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
     console.log(req.body);
-    if (req.body.user_cognito_id) {
-        req.user_cognito_id = req.body.user_cognito_id;
+    if(req.body.user_cognito_id){
+        req.user_cognito_id = req.body.user_cognito_id ;
     }
     getUserDbData(req.user_cognito_id, function (err, data) {
         if (err) {
@@ -5781,59 +5778,58 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                 userData["inp_file_url"] = url;
 
                                                 getVtkFileLink(req.user_cognito_id)
-                                                    .then(url => {
-                                                        userData["vtk_file_url"] = url;
+                                                .then(url => {
+                                                    userData["vtk_file_url"] = url;
 
-                                                        getSimulationFile(req.user_cognito_id, function (err, list) {
-                                                            userData["simulation_file_url"] = "";
-                                                            if (err) {
-                                                                console.log(err);
-                                                                res.send({
-                                                                    message: "failure",
-                                                                    data: userData
-                                                                })
+                                                    getSimulationFile(req.user_cognito_id,function(err,list){
+                                                        userData["simulation_file_url"] = "";
+                                                        if (err) {
+                                                            console.log(err);
+                                                            res.send({
+                                                                message: "failure",
+                                                                data: userData
+                                                            })
 
+                                                        }
+                                                        else {
+
+                                                            // Fetches the latest profile pic
+                                                            var latestModel = list.reduce(function (oldest, latest_model) {
+                                                                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                                            }, {});
+                                                            // Now get the signed URL link  from S3
+                                                            // if no S3 link is found then send empty data link
+                                                            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                                            // No file is uploaded
+                                                            var model_key
+                                                            if (list.length != 0) {
+                                                                model_key = latestModel.Key;
                                                             }
                                                             else {
-
-                                                                // Fetches the latest profile pic
-                                                                var latestModel = list.reduce(function (oldest, latest_model) {
-                                                                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-                                                                }, {});
-                                                                // Now get the signed URL link  from S3
-                                                                // if no S3 link is found then send empty data link
-                                                                // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-                                                                // No file is uploaded
-                                                                var model_key
-                                                                if (list.length != 0) {
-                                                                    model_key = latestModel.Key;
+                                                                model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
+                                                            }
+                                                            getFileSignedUrl(model_key, function (err, url) {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                    userData["simulation_file_url"] = "";
+                                                                    res.send({
+                                                                        message: "failure",
+                                                                        data: userData
+                                                                    })
                                                                 }
                                                                 else {
-                                                                    model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
-                                                                }
-                                                                getFileSignedUrl(model_key, function (err, url) {
-                                                                    if (err) {
-                                                                        console.log(err);
+                                                                    if (list.length == 0) {
                                                                         userData["simulation_file_url"] = "";
-                                                                        res.send({
-                                                                            message: "failure",
-                                                                            data: userData
-                                                                        })
                                                                     }
                                                                     else {
-                                                                        if (list.length == 0) {
-                                                                            userData["simulation_file_url"] = "";
-                                                                        }
-                                                                        else {
-                                                                            userData["simulation_file_url"] = url;
-                                                                        }
-                                                                        res.send({
-                                                                            message: "success",
-                                                                            data: userData
-                                                                        })
-
+                                                                        userData["simulation_file_url"] = url;
                                                                     }
-                                                                })
+                                                                    res.send({
+                                                                        message: "success",
+                                                                        data: userData
+                                                                    })
+
+                                                                }})
                                                             }
                                                         })
 
@@ -5842,414 +5838,414 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                                     .catch(err => {
                                                         res.send({
                                                             message: "failure",
-                                                            error: err
+                                                            error : err
                                                         })
                                                     })
 
 
-                                            })
+                                                })
                                                 .catch((err) => {
                                                     res.send({
                                                         message: "failure"
                                                     })
                                                 })
-                                        }
+                                            }
 
-                                    }, 'avatar')
+                                        }, 'avatar')
 
-                                }
+                                    }
 
-                            })
-                        }
-                    });
+                                })
+                            }
+                        });
 
 
-                }
-            })
-        }
-    })
-});
-
-app.post(`${apiPrefix}getInpFileLink`, (req, res) => {
-    getINPFile(req.body.user_cognito_id).then((url) => {
-        res.send({
-            message: "success",
-            inp_file_link: url
+                    }
+                })
+            }
         })
-    }).catch((err) => {
-        res.send({
-            message: "failure"
-        })
-    })
-})
-app.post(`${apiPrefix}getVtkFileLink`, (req, res) => {
-    getVtkFileLink(req.body.user_cognito_id).then((url) => {
-        res.send({
-            message: "success",
-            vtk_file_url: url
-        })
-    }).catch((err) => {
-        res.send({
-            message: "failure"
-        })
-    })
-})
-app.post(`${apiPrefix}getSimulationFileLink`, (req, res) => {
-    getSimulationFile(req.body.user_cognito_id, function (err, list) {
-        if (err) {
+    });
+
+    app.post(`${apiPrefix}getInpFileLink`, (req, res) => {
+        getINPFile(req.body.user_cognito_id).then((url) => {
             res.send({
-                message: "failure",
+                message: "success",
+                inp_file_link: url
             })
-        }
-        else {
-            // Fetches the latest profile pic
-            var latestModel = list.reduce(function (oldest, latest_model) {
-                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-            }, {});
-            var model_key = "";
-
-            if (list.length != 0) {
-                model_key = latestModel.Key;
+        }).catch((err) => {
+            res.send({
+                message: "failure"
+            })
+        })
+    })
+    app.post(`${apiPrefix}getVtkFileLink`, (req, res) => {
+        getVtkFileLink(req.body.user_cognito_id).then((url) => {
+            res.send({
+                message: "success",
+                vtk_file_url: url
+            })
+        }).catch((err) => {
+            res.send({
+                message: "failure"
+            })
+        })
+    })
+    app.post(`${apiPrefix}getSimulationFileLink`, (req, res) => {
+        getSimulationFile(req.body.user_cognito_id, function (err, list) {
+            if (err) {
+                res.send({
+                    message: "failure",
+                })
             }
             else {
-                model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
-            }
+                // Fetches the latest profile pic
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+                var model_key = "";
 
-            getFileSignedUrl(model_key, function (err, model_link) {
-                if (err) {
-                    console.log(err);
-                    res.send({
-                        message: "failure",
-                        simulation_file_url: ""
-                    })
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
                 }
                 else {
-                    res.send({
-                        message: "success",
-                        simulation_file_url: model_link
-                    })
-                }
-            })
-        }
-    })
-
-});
-
-app.post(`${apiPrefix}getModelFileLink`, (req, res) => {
-    console.log(req.body);
-    getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
-
-        if (err) {
-            console.log(err);
-            res.send({
-                message: "failure",
-            })
-        }
-        else {
-
-
-            // Fetches the latest profile pic
-            var latestModel = list.reduce(function (oldest, latest_model) {
-                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-            }, {});
-            var model_key = "";
-
-            if (list.length != 0) {
-                model_key = latestModel.Key;
-            }
-            else {
-                model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
-            }
-
-            getFileSignedUrl(model_key, function (err, model_link) {
-                if (err) {
-                    console.log(err);
-                    res.send({
-                        message: "failure",
-                        avatar_url: "",
-                    })
-                }
-                else {
-                    res.send({
-                        message: "success",
-                        avatar_url: model_link
-                    })
+                    model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
                 }
 
-            }, 'avatar')
-
-        }
-
-    })
-})
-
-app.post(`${apiPrefix}getProfilePicLink`, VerifyToken, (req, res) => {
-
-    getUploadedImageFileList(req.body.user_cognito_id, function (err, list) {
-        if (err) {
-            console.log(err);
-            res.send({
-                message: 'failure',
-                error: err
-            })
-        }
-        else {
-
-            // Now get the signed URL link  from S3
-            // if no S3 link is found then send empty data link
-            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-            // No file is uploaded
-
-            var latestProfilePic = list.reduce(function (oldest, profile_pic) {
-                return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
-            }, {});
-
-            var key
-            if (list.length != 0) {
-                key = latestProfilePic.Key;
-            }
-            else {
-                key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
-            }
-
-            getFileSignedUrl(key, function (err, url) {
-                if (err) {
-                    console.log(err);
-
-                    res.send({
-                        message: "success",
-                        profile_picture_url: ""
-                    })
-
-                }
-                else {
-                    var link = "";
-                    if (list.length == 0) {
-                        link = "";
+                getFileSignedUrl(model_key, function (err, model_link) {
+                    if (err) {
+                        console.log(err);
+                        res.send({
+                            message: "failure",
+                            simulation_file_url: ""
+                        })
                     }
                     else {
-                        link = url;
+                        res.send({
+                            message: "success",
+                            simulation_file_url: model_link
+                        })
                     }
-                    var profile_link = url;
-                    var model_link = "";
-                    // Getting Avatar URL
-                    getUploadedModelFileList(req.user_cognito_id, function (err, list) {
+                })
+            }
+        })
 
-                        if (err) {
-                            console.log(err);
-                            res.send({
-                                message: "failure",
-                                data: userData
-                            })
+    });
 
+    app.post(`${apiPrefix}getModelFileLink`, (req, res) => {
+        console.log(req.body);
+        getUploadedModelFileList(req.body.user_cognito_id, function (err, list) {
+
+            if (err) {
+                console.log(err);
+                res.send({
+                    message: "failure",
+                })
+            }
+            else {
+
+
+                // Fetches the latest profile pic
+                var latestModel = list.reduce(function (oldest, latest_model) {
+                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                }, {});
+                var model_key = "";
+
+                if (list.length != 0) {
+                    model_key = latestModel.Key;
+                }
+                else {
+                    model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(model_key, function (err, model_link) {
+                    if (err) {
+                        console.log(err);
+                        res.send({
+                            message: "failure",
+                            avatar_url: "",
+                        })
+                    }
+                    else {
+                        res.send({
+                            message: "success",
+                            avatar_url: model_link
+                        })
+                    }
+
+                }, 'avatar')
+
+            }
+
+        })
+    })
+
+    app.post(`${apiPrefix}getProfilePicLink`, VerifyToken, (req, res) => {
+
+        getUploadedImageFileList(req.body.user_cognito_id, function (err, list) {
+            if (err) {
+                console.log(err);
+                res.send({
+                    message: 'failure',
+                    error: err
+                })
+            }
+            else {
+
+                // Now get the signed URL link  from S3
+                // if no S3 link is found then send empty data link
+                // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                // No file is uploaded
+
+                var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                    return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                }, {});
+
+                var key
+                if (list.length != 0) {
+                    key = latestProfilePic.Key;
+                }
+                else {
+                    key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
+                }
+
+                getFileSignedUrl(key, function (err, url) {
+                    if (err) {
+                        console.log(err);
+
+                        res.send({
+                            message: "success",
+                            profile_picture_url: ""
+                        })
+
+                    }
+                    else {
+                        var link = "";
+                        if (list.length == 0) {
+                            link = "";
                         }
                         else {
+                            link = url;
+                        }
+                        var profile_link = url;
+                        var model_link = "";
+                        // Getting Avatar URL
+                        getUploadedModelFileList(req.user_cognito_id, function (err, list) {
 
+                            if (err) {
+                                console.log(err);
+                                res.send({
+                                    message: "failure",
+                                    data: userData
+                                })
 
-                            // Fetches the latest profile pic
-                            var latestModel = list.reduce(function (oldest, latest_model) {
-                                return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
-                            }, {});
-                            // Now get the signed URL link  from S3
-                            // if no S3 link is found then send empty data link
-                            // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-                            // No file is uploaded
-
-                            if (list.length != 0) {
-                                model_key = latestModel.Key;
                             }
                             else {
-                                model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
-                            }
 
-                            getFileSignedUrl(model_key, function (err, model_link) {
-                                if (err) {
-                                    console.log(err);
-                                    res.send({
-                                        message: "failure",
-                                        profile_picture_url: profile_link,
-                                    })
+
+                                // Fetches the latest profile pic
+                                var latestModel = list.reduce(function (oldest, latest_model) {
+                                    return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                }, {});
+                                // Now get the signed URL link  from S3
+                                // if no S3 link is found then send empty data link
+                                // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                // No file is uploaded
+
+                                if (list.length != 0) {
+                                    model_key = latestModel.Key;
                                 }
                                 else {
-                                    if (list.length == 0) {
-                                        model_link = "";
-                                    }
-                                    else {
-                                        model_link = url;
-                                    }
-                                    res.send({
-                                        message: "success",
-                                        profile_picture_url: profile_link,
-                                        avatar_url: model_link
-                                    })
+                                    model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
                                 }
 
-                            })
+                                getFileSignedUrl(model_key, function (err, model_link) {
+                                    if (err) {
+                                        console.log(err);
+                                        res.send({
+                                            message: "failure",
+                                            profile_picture_url: profile_link,
+                                        })
+                                    }
+                                    else {
+                                        if (list.length == 0) {
+                                            model_link = "";
+                                        }
+                                        else {
+                                            model_link = url;
+                                        }
+                                        res.send({
+                                            message: "success",
+                                            profile_picture_url: profile_link,
+                                            avatar_url: model_link
+                                        })
+                                    }
 
-                        }
+                                })
 
-                    })
+                            }
 
-                }
+                        })
 
-            })
-        }
-    });
+                    }
+
+                })
+            }
+        });
 
 
 
-})
+    })
 
-app.post(`${apiPrefix}listAllUsers`, (req, res) => {
-    fetchAllUsers({})
+    app.post(`${apiPrefix}listAllUsers`, (req, res) => {
+        fetchAllUsers({})
         .then(list => {
             res.send({
-                message: "success",
-                data: list
+                message : "success",
+                data : list
             })
         })
         .catch(err => {
             res.send({
-                message: "failure",
-                error: err
+                message : "failure",
+                error : err
             })
         })
-})
+    })
 
-app.post(`${apiPrefix}listUsers`, (req, res) => {
-    // var attributes = ["name", "phone_number", "email"];
-    // listAllUsers(attributes, function (err, data) {
-    //     if (err) {
-    //         res.send({
-    //             message: "failure",
-    //             error: err
-    //         })
-    //     }
-    //     else {
-    //         let users = utility.concatArrays(data);
-    //
-    //         let count = 0;
-    //         var tempArray = [];
-    //         for (let i = 0; i < users.length; i++) {
-    //
-    //             setTimeout(() => {
-    //                 getUser(users[i].Username, function (err, userData) {
-    //                     if (err) {
-    //                         console.log(err);
-    //
-    //                         res.send({
-    //                             message: "failed",
-    //                             error: err
-    //                         });
-    //                     } else {
-    //                         getUserDbData(users[i].Username, function (err, userDbData) {
-    //
-    //                             getListGroupForUser(users[i].Username, function (err, groupData) {
-    //
-    //                                 if (err) {
-    //                                     console.log("List group for user ", err);
-    //                                 }
-    //
-    //                                 count++;
-    //
-    //                                 // Now checking is user is ADMIN or not
-    //                                 var flag = false;
-    //                                 groupData.forEach(element => {
-    //                                     if (element.GroupName == "Admin") {
-    //                                         flag = true;
-    //                                     }
-    //                                 });
-    //                                 // var temp = {};
-    //                                 userDbData = userDbData.Item;
-    //                                 userDbData["Enabled"] = userData.Enabled;
-    //
-    //                                 if (flag) {
-    //                                     userDbData.user_type = "Admin"
-    //                                 }
-    //                                 else {
-    //                                     userDbData.user_type = "Standard"
-    //                                 }
-    //                                 tempArray.push(userDbData);
-    //                                 if (count == users.length) {
-    //                                     // console.log(data);
-    //
-    //                                     res.send(
-    //                                         {
-    //                                             message: "success",
-    //                                             data: tempArray
-    //                                         });
-    //                                     }
-    //
-    //                                 });
-    //
-    //                             })
-    //
-    //
-    //                         }
-    //                     });
-    //
-    //                 }, 20 * i);
-    //
-    //             }
-    //         }
-    //     })
-    fetchAllUsers({})
+    app.post(`${apiPrefix}listUsers`, (req, res) => {
+        // var attributes = ["name", "phone_number", "email"];
+        // listAllUsers(attributes, function (err, data) {
+        //     if (err) {
+        //         res.send({
+        //             message: "failure",
+        //             error: err
+        //         })
+        //     }
+        //     else {
+        //         let users = utility.concatArrays(data);
+        //
+        //         let count = 0;
+        //         var tempArray = [];
+        //         for (let i = 0; i < users.length; i++) {
+        //
+        //             setTimeout(() => {
+        //                 getUser(users[i].Username, function (err, userData) {
+        //                     if (err) {
+        //                         console.log(err);
+        //
+        //                         res.send({
+        //                             message: "failed",
+        //                             error: err
+        //                         });
+        //                     } else {
+        //                         getUserDbData(users[i].Username, function (err, userDbData) {
+        //
+        //                             getListGroupForUser(users[i].Username, function (err, groupData) {
+        //
+        //                                 if (err) {
+        //                                     console.log("List group for user ", err);
+        //                                 }
+        //
+        //                                 count++;
+        //
+        //                                 // Now checking is user is ADMIN or not
+        //                                 var flag = false;
+        //                                 groupData.forEach(element => {
+        //                                     if (element.GroupName == "Admin") {
+        //                                         flag = true;
+        //                                     }
+        //                                 });
+        //                                 // var temp = {};
+        //                                 userDbData = userDbData.Item;
+        //                                 userDbData["Enabled"] = userData.Enabled;
+        //
+        //                                 if (flag) {
+        //                                     userDbData.user_type = "Admin"
+        //                                 }
+        //                                 else {
+        //                                     userDbData.user_type = "Standard"
+        //                                 }
+        //                                 tempArray.push(userDbData);
+        //                                 if (count == users.length) {
+        //                                     // console.log(data);
+        //
+        //                                     res.send(
+        //                                         {
+        //                                             message: "success",
+        //                                             data: tempArray
+        //                                         });
+        //                                     }
+        //
+        //                                 });
+        //
+        //                             })
+        //
+        //
+        //                         }
+        //                     });
+        //
+        //                 }, 20 * i);
+        //
+        //             }
+        //         }
+        //     })
+        fetchAllUsers({})
         .then(list => {
             res.send({
-                message: "success",
-                data: list
+                message : "success",
+                data : list
             })
         })
         .catch(err => {
             res.send({
-                message: "failure",
-                error: err
+                message : "failure",
+                error : err
             })
         })
-})
+    })
 
-// API To upload profile pic to S310m
-app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
+    // API To upload profile pic to S310m
+    app.post(`${apiPrefix}uploadProfilePic`, VerifyToken, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
 
-// API To upload selfie pic to S310m
-app.post(`${apiPrefix}uploadProfileSelfie`, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
+    // API To upload selfie pic to S310m
+    app.post(`${apiPrefix}uploadProfileSelfie`, setConnectionTimeout('10m'), upload.single("profile_pic"), awsWorker.doUpload);
 
-app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
-    // Fetch user group data and check if he is Admin or not
-    getListGroupForUser(req.user_cognito_id, function (err, groupData) {
-        if (err) {
+    app.post(`${apiPrefix}verifyUser`, VerifyToken, (req, res) => {
+        // Fetch user group data and check if he is Admin or not
+        getListGroupForUser(req.user_cognito_id, function (err, groupData) {
+            if (err) {
 
-            res.send({
-                message: "failure",
-                error: err
-            });
-        } else {
-            // Now checking is user is ADMIN or not
-            var flag = false;
-            groupData.forEach(element => {
-                if (element.GroupName == "Admin") {
-                    flag = true;
-                }
-            });
-            res.send({
-                message: "success",
-                isAdmin: flag
-            })
+                res.send({
+                    message: "failure",
+                    error: err
+                });
+            } else {
+                // Now checking is user is ADMIN or not
+                var flag = false;
+                groupData.forEach(element => {
+                    if (element.GroupName == "Admin") {
+                        flag = true;
+                    }
+                });
+                res.send({
+                    message: "success",
+                    isAdmin: flag
+                })
+            }
+        });
+    })
+
+    // Create Avatar 3D
+    app.post(`${apiPrefix}createAvatar`, (req, res) => {
+        console.log("API CAlled createAvatar", req.body);
+
+        // Delete user previous Avatar Directory
+        deleteDirectory(path.join(
+            __dirname,
+            "./avatars/" + req.body.user
+        ), function () {
+            //console.log('Directory deleted');
         }
-    });
-})
-
-// Create Avatar 3D
-app.post(`${apiPrefix}createAvatar`, (req, res) => {
-    console.log("API CAlled createAvatar", req.body);
-
-    // Delete user previous Avatar Directory
-    deleteDirectory(path.join(
-        __dirname,
-        "./avatars/" + req.body.user
-    ), function () {
-        //console.log('Directory deleted');
-    }
     );
 
     const spawn = require("child_process").spawn;
@@ -6320,14 +6316,14 @@ var deleteDirectory = function (path, callback) {
             return;
         }
         var wait = files.length,
-            count = 0,
-            folderDone = function (err) {
-                count++;
-                // If we cleaned out all the files, continue
-                if (count >= wait || err) {
-                    fs.rmdir(path, callback);
-                }
-            };
+        count = 0,
+        folderDone = function (err) {
+            count++;
+            // If we cleaned out all the files, continue
+            if (count >= wait || err) {
+                fs.rmdir(path, callback);
+            }
+        };
         // Empty directory to bail early
         if (!wait) {
             folderDone();
@@ -6353,7 +6349,7 @@ var deleteDirectory = function (path, callback) {
     });
 };
 
-app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res) => {
+app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res)=> {
     request.post({ url: config.ComputeInstanceEndpoint + "getUpdatesAndNotifications", json: req.body }, function (err, httpResponse, body) {
 
         if (err) {
@@ -6368,80 +6364,80 @@ app.post(`${apiPrefix}getUpdatesAndNotifications`, (req, res) => {
 
 })
 
-function removes3Object(path) {
-    return new Promise((resolve, reject) => {
+function removes3Object(path){
+    return new Promise((resolve, reject) =>{
         var params = {
             Bucket: config_env.usersbucket,
             Key: path
         };
-        s3.deleteObject(params, function (err, data) {
+        s3.deleteObject(params, function(err, data) {
             if (err) {
                 // reject(err)
                 reject(err);
             }
-            else {
+            else{
                 resolve(data);
             }
         });
     })
 }
 
-app.post(`${apiPrefix}removeVideo`, (req, res) => {
-    console.log('req', req.body)
+app.post(`${apiPrefix}removeVideo`, (req, res)=> {
+    console.log('req',req.body)
     var image_id = req.body.image_id;
     var imageData = '';
     getSimulationImageRecord(image_id)
-        .then(image_data => {
-            console.log('image_data', image_data);
-            imageData = image_data;
-
-            if (imageData.impact_video_path && imageData.impact_video_path != 'null') {
-                removes3Object(imageData.impact_video_path)
-                    .then(response => {
-                        // console.log('res',res);
-                        InsertImpactVideoKey(image_id, false)
-                            .then(response => {
-                                res.send({
-                                    message: "success",
-                                    data: res
-                                });
-                            }).catch(err => {
-                                console.log('errdatabase', err)
-                                res.send({
-                                    message: "success",
-                                    data: err
-                                });
-                            })
-                    })
-                    .catch(err => {
-                        console.log('errremoves3Object', err)
-                        res.send({
-                            message: "failure",
-                            err: 'Somthing went wrong! Please try again.'
-                        });
-                    })
-            } else {
+    .then(image_data =>{
+        console.log('image_data',image_data);
+        imageData = image_data;
+       
+        if (imageData.impact_video_path && imageData.impact_video_path != 'null') {
+            removes3Object(imageData.impact_video_path)
+            .then(response =>{
+                // console.log('res',res);
+                InsertImpactVideoKey(image_id,false)
+                .then(response => {
+                    res.send({
+                        message: "success",
+                        data: res
+                    });
+                }) .catch(err =>{
+                    console.log('errdatabase',err)
+                    res.send({
+                        message: "success",
+                        data: err
+                    });
+                })
+            })
+            .catch(err =>{
+                console.log('errremoves3Object',err)
                 res.send({
                     message: "failure",
-                    err: 'Video not found.'
+                    err: 'Somthing went wrong! Please try again.'
                 });
-            }
-        }).catch(err => {
-            console.log('err', err)
-        })
+            })
+        }else{
+            res.send({
+                message: "failure",
+                err: 'Video not found.'
+            });
+        }
+    }).catch(err =>{
+        console.log('err',err)
+    })
 
 })
 // Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
-    console.log('file', req.body);
-    var file_name = Date.now();
-    var image_id = req.body.image_id;
-    var uploadParams = {
-        Bucket: config.usersbucket,
-        Key: '', // pass key
-        Body: null, // pass file body
-    };
-    getSimulationImageRecord(image_id)
+        console.log('file',req.body);
+        var file_name = Date.now();
+        var image_id = req.body.image_id;
+        var uploadParams = {
+            Bucket: config.usersbucket,
+            Key: '', // pass key
+            Body: null, // pass file body
+        };
+        getSimulationImageRecord(image_id)
         .then(data => {
             // File Extensions
             var file_extension = req.file.originalname.split(".");
@@ -6451,77 +6447,77 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
             d = d.toLocaleDateString('pt-PT');
             var date = d.replace("/", "-");
             date = date.replace("/", "-");
-            console.log('date', date);
+            console.log('date',date);
             // Setting Attributes for file upload on S3
-            uploadParams.Key = data['player_name'] + "/simulation/" + date + "/impact-video/" + image_id + "/" + file_name + "." + file_extension;
+            uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/" + file_name + "." + file_extension;
             // console.log('req.file.buffer', req.file.buffer)
             uploadParams.Body = req.file.buffer;
-
+           
             // console.log('uploadParams',uploadParams)
             s3.upload(uploadParams, (err, data) => {
                 if (err) {
-                    console.log('======errr \n', err)
+                    console.log('======errr \n',err)
                     res.send({
                         message: "failure",
                         data: err
                     });
-
-                } else {
-                    console.log('data', uploadParams.Key)
-                    InsertImpactVideoKey(req.body.image_id, uploadParams.Key).
-                        then(sensor_data => {
-                            const image_id = req.body.image_id;
-                            console.log('image_id', image_id)
-                            let imageData = '';
-                            getSimulationImageRecord(image_id)
-                                .then(image_data => {
-                                    // console.log('image_data',image_data)
-                                    imageData = image_data;
-                                    return verifyImageToken(imageData['token'], image_data);
+                   
+                }else{
+                    console.log('data',uploadParams.Key )
+                    InsertImpactVideoKey(req.body.image_id,uploadParams.Key ).
+                    then(sensor_data => {
+                        const  image_id  = req.body.image_id;
+                        console.log('image_id',image_id)
+                        let imageData = '';
+                        getSimulationImageRecord(image_id)
+                            .then(image_data => {
+                                // console.log('image_data',image_data)
+                                imageData = image_data;
+                                return verifyImageToken(imageData['token'], image_data);
+                            })
+                            .then(decoded_token => {
+                                // console.log('decoded_token',decoded_token)
+                                return getPlayerCgValues(imageData.player_name);
+                            })
+                            .then(cg_coordinates => {
+                                // Setting cg values
+                                // console.log("cg_coordinates",cg_coordinates)
+                                if(cg_coordinates) {
+                                  imageData["cg_coordinates"] = cg_coordinates;
+                                }
+                                return ImpactVideoUrl(imageData);
+                            })
+                            .then(movie_link => {
+                                // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                console.log('movie_link',movie_link);
+                                res.send({
+                                    message : "success",
+                                    impact_video_url : movie_link
                                 })
-                                .then(decoded_token => {
-                                    // console.log('decoded_token',decoded_token)
-                                    return getPlayerCgValues(imageData.player_name);
-                                })
-                                .then(cg_coordinates => {
-                                    // Setting cg values
-                                    // console.log("cg_coordinates",cg_coordinates)
-                                    if (cg_coordinates) {
-                                        imageData["cg_coordinates"] = cg_coordinates;
-                                    }
-                                    return ImpactVideoUrl(imageData);
-                                })
-                                .then(movie_link => {
-                                    // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
-                                    console.log('movie_link', movie_link);
-                                    res.send({
-                                        message: "success",
-                                        impact_video_url: movie_link
-                                    })
-
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                    // res.removeHeader('X-Frame-Options');
-                                    // if(err.message == 'The provided key element does not match the schema'){
+                                
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                // res.removeHeader('X-Frame-Options');
+                                // if(err.message == 'The provided key element does not match the schema'){
                                     res.send({
                                         message: "failure",
                                         data: err
                                     });
-                                    // }
-                                })
-                        })
-                        .catch(err => {
-                            console.log('err', err)
-                            res.send({
-                                message: "failure",
-                                data: err
-                            });
-                        })
+                                // }
+                            })
+                    })
+                    .catch(err => {
+                       console.log('err',err)
+                        res.send({
+                            message: "failure",
+                            data: err
+                        });
+                    })
                 }
             })
         }).catch(err => {
-            console.log('err', err)
+           console.log('err',err)
             res.send({
                 message: "failure",
                 data: err
@@ -6540,7 +6536,7 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
                 message: "failure",
                 error: err
             })
-        } else {
+        }else{
             var file_name = Date.now();
 
             var uploadParams = {
@@ -6564,24 +6560,24 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
                     status: "Invalid File type"
                 });
             }
-            else {
+            else{
                 // Uploading it on S3
-                req.io.sockets.emit('fileUploadLog', "Uploading Sensor Data ...")
+                req.io.sockets.emit('fileUploadLog', "Uploading Sensor Data ..." )
                 s3.upload(uploadParams, (err, data) => {
                     if (err) {
 
                         res.status(500).send({ message: 'failure' });
                     }
-                    else {
-                        req.io.sockets.emit('fileUploadLog', "Parsing Sensor Data ...")
-                        convertXLSXDataToJSON(req.file.buffer, function (items) {
+                    else{
+                        req.io.sockets.emit('fileUploadLog', "Parsing Sensor Data ..." )
+                        convertXLSXDataToJSON(req.file.buffer,function(items){
                             console.log(items)
                             // Store the Data in DynamoDB
                             // now broadcast the updated foo..
 
-                            req.io.sockets.emit('fileUploadLog', "Populating Data-Base with Sensor Data ...")
+                            req.io.sockets.emit('fileUploadLog', "Populating Data-Base with Sensor Data ..." )
                             // Appending organization in elements of array
-                            if (user.organization === undefined) {
+                            if(user.organization === undefined){
                                 user["organization"] = "PSU"
                             }
                             console.log(items);
@@ -6589,106 +6585,105 @@ app.post(`${apiPrefix}uploadSensorDataAndCompute`, VerifyToken, setConnectionTim
                                 return element.organization = user.organization;
                             });
 
-                            const new_items_array = _.map(items, o => _.extend({ organization: user.organization }, o));
+                            const new_items_array = _.map(items, o => _.extend({organization: user.organization}, o));
 
                             storeSensorData(new_items_array)
-                                .then(flag => {
+                            .then(flag => {
 
-                                    var players = items.map(function (player) {
-                                        return {
-                                            player_id: player.player_id.split("$")[0],
-                                            team: player.team,
-                                            organization: player.organization
-                                        }
-                                    });
-
+                                var players = items.map(function (player) {
+                                    return {    player_id : player.player_id.split("$")[0],
+                                    team : player.team,
+                                    organization : player.organization
+                                }
+                            });
 
 
-                                    var unique_players = _.uniq(players, 'player_id');
-                                    const result = [];
-                                    const map = new Map();
 
-                                    for (const item of players) {
-                                        if (!map.has(item.player_id)) {
-                                            map.set(item.player_id, true);    // set any value to Map
-                                            result.push(item);
-                                        }
-                                    }
-                                    if (result.length == 0) {
-                                        res.send({
-                                            message: "success"
+                            var unique_players = _.uniq(players, 'player_id');
+                            const result = [];
+                            const map = new Map();
+
+                            for (const item of players) {
+                                if(!map.has(item.player_id)){
+                                    map.set(item.player_id, true);    // set any value to Map
+                                    result.push(item);
+                                }
+                            }
+                            if(result.length == 0){
+                                res.send({
+                                    message : "success"
+                                })
+                            }
+                            else{
+                                // Run simulation here and send data
+                                // {
+                                //     "player_id" : "STRING",
+                                //     "team" : "STRING",
+                                //     "organization" : "STRING"
+                                // }
+                                var counter = 0 ;
+                                console.log("UNIQUE PLAYERS ++++++++++++++ ",result);
+
+                                for(var i =0 ; i< result.length ; i++){
+                                    var temp = result[i];
+
+                                    addPlayerToTeamInDDB(temp.organization, temp.team, temp.player_id)
+                                    .then(d => {
+                                        req.io.sockets.emit('fileUploadLog', `Running Simulation for ${temp.player_id} ...` )
+                                        request.post({ url: config.ComputeInstanceEndpoint + "generateSimulationForPlayer", json: temp }, function (err, httpResponse, body) {
+                                            counter++;
+                                            if (err) {
+                                                console.log(err);
+
+                                                res.send({
+                                                    message : "failure",
+                                                    error : err
+                                                })
+                                            }
+                                            else {
+
+                                                console.log(data);
+
+                                            }
+
+                                            if(counter == result.length){
+                                                res.send({
+                                                    message : "success"
+                                                })
+                                            }
                                         })
-                                    }
-                                    else {
-                                        // Run simulation here and send data
-                                        // {
-                                        //     "player_id" : "STRING",
-                                        //     "team" : "STRING",
-                                        //     "organization" : "STRING"
-                                        // }
-                                        var counter = 0;
-                                        console.log("UNIQUE PLAYERS ++++++++++++++ ", result);
-
-                                        for (var i = 0; i < result.length; i++) {
-                                            var temp = result[i];
-
-                                            addPlayerToTeamInDDB(temp.organization, temp.team, temp.player_id)
-                                                .then(d => {
-                                                    req.io.sockets.emit('fileUploadLog', `Running Simulation for ${temp.player_id} ...`)
-                                                    request.post({ url: config.ComputeInstanceEndpoint + "generateSimulationForPlayer", json: temp }, function (err, httpResponse, body) {
-                                                        counter++;
-                                                        if (err) {
-                                                            console.log(err);
-
-                                                            res.send({
-                                                                message: "failure",
-                                                                error: err
-                                                            })
-                                                        }
-                                                        else {
-
-                                                            console.log(data);
-
-                                                        }
-
-                                                        if (counter == result.length) {
-                                                            res.send({
-                                                                message: "success"
-                                                            })
-                                                        }
-                                                    })
-                                                })
-                                                .catch(err => {
-                                                    counter = result.length;
-                                                    res.send({
-                                                        message: "failure"
-                                                    })
-                                                })
-                                        }
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                    res.send({
-                                        message: 'failure',
-                                        error: err
                                     })
-                                })
+                                    .catch(err => {
+                                        counter = result.length ;
+                                        res.send({
+                                            message : "failure"
+                                        })
+                                    })
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.send({
+                                message : 'failure',
+                                error : err
+                            })
+                        })
 
 
-                        });
+                    });
 
 
-                    }
-                })
-            }
+                }
+            })
         }
-    })
+    }
+})
 
 })
 
-app.post(`${apiPrefix}getUserDetailsForIRB`, (req, res) => {
-    console.log("API HIT ", req.body, config.ComputeInstanceEndpoint + "getUserDetailsForIRB");
+app.post(`${apiPrefix}getUserDetailsForIRB`, (req,res) =>{
+    console.log("API HIT ", req.body, config.ComputeInstanceEndpoint + "getUserDetailsForIRB" );
     request.post({ url: config.ComputeInstanceEndpoint + "getUserDetailsForIRB", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
@@ -6700,71 +6695,71 @@ app.post(`${apiPrefix}getUserDetailsForIRB`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req, res) => {
-    console.log("API HIT ", req.body);
+app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
+    console.log("API HIT ", req.body );
     // =======================================
     // Check if IRB Is already done
     // if yes then send failure
     // else
     // 2. call API TO create IRB Details & Send
     // =======================================
-    getUserDbData(req.body.user_cognito_id, (err, data) => {
-        if (err) {
+    getUserDbData(req.body.user_cognito_id, (err,data)=>{
+        if(err){
             res.send({
-                message: "failure",
-                error: err
+                message : "failure",
+                error : err
             })
         }
-        else {
-            let user_data = data.Item;
-            if (user_data.isIRBComplete) {
+        else{
+            let user_data = data.Item ;
+            if(user_data.isIRBComplete){
                 res.send({
-                    message: "failure",
-                    error: {
-                        message: "IRB process is already completed."
+                    message : "failure",
+                    error : {
+                        message : "IRB process is already completed."
                     }
                 })
             }
-            else {
+            else{
                 // CHANGE it TO TRUE
-                user_data["isIRBComplete"] = true;
-                user_data["guardian_first_name"] = req.body.guardian_first_name;
-                user_data["guardian_last_name"] = req.body.guardian_last_name;
-                user_data["guardian_signature"] = req.body.guardian_signature;
+                user_data["isIRBComplete"] = true ;
+                user_data["guardian_first_name"] = req.body.guardian_first_name ;
+                user_data["guardian_last_name"] = req.body.guardian_last_name ;
+                user_data["guardian_signature"] = req.body.guardian_signature ;
 
                 // Store the code in DynamoDB
                 addRecordInUsersDDB(user_data)
-                    .then(value => {
+                .then(value => {
 
-                        // Call API To Make IRB Form
-                        request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
-                            if (err) {
-                                res.send({ message: 'failure', error: err });
-                            }
-                            else {
-                                console.log(httpResponse.body);
-                                enableUser(req.body.user_cognito_id, function (err, data) {
-                                    if (err) {
-                                        res.send({
-                                            message: "failure",
-                                            error: err
-                                        })
-                                    }
-                                    else {
-                                        res.send(httpResponse.body);
-                                    }
-                                })
+                    // Call API To Make IRB Form
+                    request.post({ url: config.ComputeInstanceEndpoint + "IRBFormGenerate", json: user_data }, function (err, httpResponse, body) {
+                        if (err) {
+                            res.send({ message: 'failure', error: err });
+                        }
+                        else {
+                            console.log(httpResponse.body);
+                            enableUser(req.body.user_cognito_id, function (err, data) {
+                                if (err) {
+                                    res.send({
+                                        message: "failure",
+                                        error: err
+                                    })
+                                }
+                                else {
+                                    res.send(httpResponse.body);
+                                }
+                            })
 
-                            }
-                        })
-
+                        }
                     })
-                    .catch(err => {
-                        res.send({
-                            message: "failure",
-                            error: err
-                        })
+
+                })
+                .catch(err => {
+                    res.send({
+                        message : "failure",
+                        error : err
                     })
+                })
 
 
             }
@@ -6784,17 +6779,17 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req, res) => {
 ============================= ==============================******/
 
 app.post(`${apiPrefix}merge-video`, (req, res) => {
-
+    
     res.send('<p>Merging</p>');
 
-
+        
 
 })
 
 
 /*=======================merge video end ======================*/
 
-app.post(`${apiPrefix}getSimulationStatusCount`, (req, res) => {
+app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getSimulationStatusCount", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
@@ -6806,7 +6801,7 @@ app.post(`${apiPrefix}getSimulationStatusCount`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getCumulativeAccelerationData`, (req, res) => {
+app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
@@ -6817,8 +6812,8 @@ app.post(`${apiPrefix}getCumulativeAccelerationData`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req, res) => {
-    console.log('getAllCumulativeAccelerationTimeRecords', req.body)
+app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('getAllCumulativeAccelerationTimeRecords',req.body)
     request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
@@ -6829,8 +6824,8 @@ app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
-    console.log('AllCumulativeAccelerationTimeRecords', req.body)
+app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('AllCumulativeAccelerationTimeRecords',req.body)
     request.post({ url: config.ComputeInstanceEndpoint + "AllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
@@ -6840,8 +6835,8 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
         }
     })
 })
-app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
-    console.log('getCumulativeAccelerationTimeRecords', req.body)
+app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
+    console.log('getCumulativeAccelerationTimeRecords',req.body)
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
@@ -6852,20 +6847,20 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getAllCumulativeAccelerationJsonData`, (req, res) => {
-
+app.post(`${apiPrefix}getAllCumulativeAccelerationJsonData`, (req,res) =>{
+    
     request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationJsonData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             res.send({ message: 'failure', error: err });
         }
         else {
-            console.log('getAllCumulativeAccelerationJsonData', httpResponse.body)
+            console.log('getAllCumulativeAccelerationJsonData',httpResponse.body)
             res.send(httpResponse.body);
         }
     })
 })
 
-app.post(`${apiPrefix}getCumulativeAccelerationTimeData`, (req, res) => {
+app.post(`${apiPrefix}getCumulativeAccelerationTimeData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6877,7 +6872,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeData`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getCumulativeEventPressureData`, (req, res) => {
+app.post(`${apiPrefix}getCumulativeEventPressureData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeEventPressureData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6889,7 +6884,7 @@ app.post(`${apiPrefix}getCumulativeEventPressureData`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getCumulativeEventLoadData`, (req, res) => {
+app.post(`${apiPrefix}getCumulativeEventLoadData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeEventLoadData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6900,7 +6895,7 @@ app.post(`${apiPrefix}getCumulativeEventLoadData`, (req, res) => {
         }
     })
 })
-app.post(`${apiPrefix}getHeadAccelerationEvents`, (req, res) => {
+app.post(`${apiPrefix}getHeadAccelerationEvents`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getHeadAccelerationEvents", json: req.body }, function (err, httpResponse, body) {
         if (err) {
             console.log(err);
@@ -6911,7 +6906,7 @@ app.post(`${apiPrefix}getHeadAccelerationEvents`, (req, res) => {
         }
     })
 })
-app.post(`${apiPrefix}getTeamAdminData`, (req, res) => {
+app.post(`${apiPrefix}getTeamAdminData`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getTeamAdminData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6922,7 +6917,7 @@ app.post(`${apiPrefix}getTeamAdminData`, (req, res) => {
         }
     })
 })
-app.post(`${apiPrefix}getImpactHistory`, (req, res) => {
+app.post(`${apiPrefix}getImpactHistory`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getImpactHistory", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6934,7 +6929,7 @@ app.post(`${apiPrefix}getImpactHistory`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getImpactSummary`, (req, res) => {
+app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getImpactSummary", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6946,7 +6941,7 @@ app.post(`${apiPrefix}getImpactSummary`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getPlayersData`, (req, res) => {
+app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
     console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "getPlayersDetails", json: req.body }, function (err, httpResponse, body) {
         if (err) {
@@ -6961,7 +6956,7 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
 })
 
 
-app.post(`${apiPrefix}getOrganizationAdminData`, (req, res) => {
+app.post(`${apiPrefix}getOrganizationAdminData`, (req,res) =>{
     console.log("REQUEST RECEIVED ");
     request.post({ url: config.ComputeInstanceEndpoint + "getOrganizationAdminData", json: req.body }, function (err, httpResponse, body) {
         if (err) {
@@ -6974,7 +6969,7 @@ app.post(`${apiPrefix}getOrganizationAdminData`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getAllRosters`, (req, res) => {
+app.post(`${apiPrefix}getAllRosters`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getAllRosters", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6986,7 +6981,7 @@ app.post(`${apiPrefix}getAllRosters`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}fetchAllTeamsInOrganization`, (req, res) => {
+app.post(`${apiPrefix}fetchAllTeamsInOrganization`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "fetchAllTeamsInOrganization", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -6998,7 +6993,7 @@ app.post(`${apiPrefix}fetchAllTeamsInOrganization`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}addTeam`, (req, res) => {
+app.post(`${apiPrefix}addTeam`, (req,res) =>{
     console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "addTeam", json: req.body }, function (err, httpResponse, body) {
         if (err) {
@@ -7012,7 +7007,7 @@ app.post(`${apiPrefix}addTeam`, (req, res) => {
 })
 
 
-app.post(`${apiPrefix}deleteTeam`, (req, res) => {
+app.post(`${apiPrefix}deleteTeam`, (req,res) =>{
     console.log(req.body);
     request.post({ url: config.ComputeInstanceEndpoint + "deleteTeam", json: req.body }, function (err, httpResponse, body) {
         if (err) {
@@ -7026,53 +7021,53 @@ app.post(`${apiPrefix}deleteTeam`, (req, res) => {
 })
 
 app.post(`${apiPrefix}uploadModelRealData`, setConnectionTimeout('10m'), uploadModelRealData.single('file'), (req, res) => {
-    convertDataToJSON(req.file.buffer, function (items) {
+    convertDataToJSON(req.file.buffer,function(items){
         //console.log(items);
         return res.status(200).send(items);
     });
 
 })
 
-function hadleAuthanticat(user_name, password) {
+function hadleAuthanticat(user_name,password){
     return new Promise((resolve, reject) => {
         // var password = password;
         getUserAlreadyExists(user_name)
-            .then(userresponse => {
-                console.log('userresponse', userresponse);
-                if (userresponse[0]) {
-                    userData = userresponse[0];
-                    /* ======================
-    
-                        For new users
-                        
-                    ==========================*/
-                    if (userData.password) {
-                        // Now getting the list of Groups of user
-                        /*============== Match user password ===============*/
-                        if (userData.password === md5(password)) {
-                            resolve({
-                                message: 'success',
-                                password: userData.password_code
-                            })
-                        } else {
-                            resolve({
-                                message: 'faiure',
-                                error: 'Login password dose not match.'
-                            })
-                        }
-                    } else {
-                        resolve({
+        .then(userresponse =>{
+            console.log('userresponse',userresponse);
+            if(userresponse[0]){
+                userData = userresponse[0];
+                /* ======================
+
+                    For new users
+                    
+                ==========================*/
+                if(userData.password){
+                     // Now getting the list of Groups of user
+                     /*============== Match user password ===============*/
+                    if(userData.password === md5(password)){
+                       resolve({
                             message: 'success',
-                            password: password
+                            password: userData.password_code
+                       })
+                    }else{
+                        resolve({
+                            message: 'faiure',
+                            error: 'Login password dose not match.'
                         })
                     }
-                } else {
+                }else{
                     resolve({
-                        message: 'faiure',
-                        error: 'User not found.'
+                        message: 'success',
+                        password: password
                     })
                 }
-            })
+            }else{
+                resolve({
+                    message: 'faiure',
+                    error: 'User not found.'
+                })
+            }
+        })
     })
 }
 
@@ -7080,79 +7075,79 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
     // TODO : Start receiving user type or remove user type from this function
     var user_type = "standard";
     hadleAuthanticat(req.body.user_name, req.body.password)
-        .then(response => {
-            if (response.message == 'failure') {
-                res.send({
-                    message: "failure",
-                    error: response.error
-                })
-            } else {
-                login(req.body.user_name, response.password, user_type, (err, data) => {
-                    if (err) {
-                        res.send({
-                            message: "failure",
-                            error: err
-                        })
-                    }
-                    else {
-                        getUser(req.body.user_name, function (err, data) {
-                            if (err) {
-                                console.log(err);
-
-                                res.send({
-                                    message: "failure",
-                                    error: err
-                                });
-                            } else {
-                                getUserDbData(data.Username, function (err, user_details) {
-                                    if (err) {
-                                        res.send({
-                                            message: "failure",
-                                            error: err
-                                        })
-                                    } else {
-                                        if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
-                                            // console.log(user_details.Item);
-                                            req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-                                            req.body["sensor_brand"] = user_details.Item["sensor"];
-                                            req.body["level"] = user_details.Item["level"];
-                                            if (user_details.Item["level"] === 300) {
-                                                req.body["organization"] = user_details.Item["organization"];
-                                            }
-                                            request.post({
-                                                url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
-                                                json: req.body
-                                            }, function (err, httpResponse, body) {
-                                                if (err) {
-                                                    res.send({
-                                                        message: "failure",
-                                                        error: err
-                                                    })
-                                                }
-                                                else {
-                                                    res.send(httpResponse.body);
-                                                }
-                                            })
-                                        } else {
-                                            res.send({
-                                                message: "failure",
-                                                error: 'User is not sensor company.'
-                                            })
-                                        }
-                                    }
-                                })
-                            }
-                        })
-                    }
-                })
-            }
-        }).catch(err => {
+    .then(response =>{
+        if(response.message == 'failure'){
             res.send({
                 message: "failure",
-                error: 'Internal server error.'
+                error: response.error
             })
-        })
+        }else{
+            login(req.body.user_name, response.password, user_type, (err, data) => {
+                if (err) {
+                    res.send({
+                        message: "failure",
+                        error: err
+                    })
+                }
+                else {
+                    getUser(req.body.user_name, function (err, data) {
+                        if (err) {
+                            console.log(err);
 
+                            res.send({
+                                message: "failure",
+                                error: err
+                            });
+                        } else {
+                            getUserDbData(data.Username, function (err, user_details) {
+                                if (err) {
+                                    res.send({
+                                        message: "failure",
+                                        error: err
+                                    })
+                                }else {
+                                    if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
+                                        // console.log(user_details.Item);
+                                        req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                        req.body["sensor_brand"] = user_details.Item["sensor"];
+                                        req.body["level"] = user_details.Item["level"];
+                                        if (user_details.Item["level"] === 300) {
+                                            req.body["organization"] = user_details.Item["organization"];
+                                        }
+                                        request.post({
+                                            url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                            json: req.body
+                                        }, function (err, httpResponse, body) {
+                                            if (err) {
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err
+                                                })
+                                            }
+                                            else {
+                                                res.send(httpResponse.body);
+                                            }
+                                        })
+                                    } else {
+                                        res.send({
+                                            message: "failure",
+                                            error: 'User is not sensor company.'
+                                        })
+                                    }
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    }).catch(err=>{
+        res.send({
+            message: "failure",
+            error: 'Internal server error.'
+        })
+    })
+    
 })
 
 // app.post(`${apiPrefix}api/upload/sensor`, (req, res) => {
@@ -7162,7 +7157,7 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
 //     if (req.body.selfie) {
 //         selfie = fs.readFileSync(req.body.selfie, {encoding: 'base64'});
 //     }
-
+   
 //     var user_type = "standard";
 //     login(req.body.user, req.body.password, user_type, (err, data) => {
 //         if (err) {
@@ -7246,7 +7241,7 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
 // })
 
 // Run simulation using cURL command
-app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{ name: "filename", maxCount: 1 }, { name: "selfie", maxCount: 1 }]), (req, res) => {
+app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxCount: 1}, {name: "selfie", maxCount: 1}]),  (req, res) => {
 
     let data_filename = null;
     let base64File = null;
@@ -7263,7 +7258,7 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{ name: "filename", max
         base64Selfie = selfie_data.toString('base64');
         selfie = req.files.selfie[0].originalname;
     }
-
+     
     // res.send('<!DOCTYPE html>\
     //     <html>\
     //       <body>\
@@ -7281,105 +7276,105 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{ name: "filename", max
     // });
     var user_type = "standard";
     hadleAuthanticat(req.body.user, req.body.password)
-        .then(response => {
-            console.log('response===================\n', response)
-            if (response.message == 'failure') {
+    .then(response =>{
+        console.log('response===================\n',response)
+        if(response.message == 'failure'){
+            res.send({
+                message: "failure",
+                error: response.error
+            })
+        }else{
+            login(req.body.user, response.password, user_type, (err, data) => {
+            if (err) {
                 res.send({
                     message: "failure",
-                    error: response.error
+                    error: err
                 })
-            } else {
-                login(req.body.user, response.password, user_type, (err, data) => {
+            }
+            else {
+                getUser(req.body.user, function (err, data) {
                     if (err) {
+                        console.log(err);
+
                         res.send({
                             message: "failure",
                             error: err
-                        })
-                    }
-                    else {
-                        getUser(req.body.user, function (err, data) {
+                        });
+                    } else {
+                        getUserDbData(data.Username, function (err, user_details) {
+                            console.log('user_details =====================\n',user_details)
                             if (err) {
-                                console.log(err);
-
                                 res.send({
                                     message: "failure",
                                     error: err
-                                });
-                            } else {
-                                getUserDbData(data.Username, function (err, user_details) {
-                                    console.log('user_details =====================\n', user_details)
-                                    if (err) {
-                                        res.send({
-                                            message: "failure",
-                                            error: err
-                                        })
+                                })
+                            }
+                            else {
+                                if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
+                                    // console.log(user_details.Item);
+                                    req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                                    req.body["sensor_brand"] = user_details.Item["sensor"];
+                                    req.body["level"] = user_details.Item["level"];
+                                    if (user_details.Item["level"] === 300) {
+                                        req.body["organization"] = user_details.Item["organization"];
                                     }
-                                    else {
-                                        if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
-                                            // console.log(user_details.Item);
-                                            req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-                                            req.body["sensor_brand"] = user_details.Item["sensor"];
-                                            req.body["level"] = user_details.Item["level"];
-                                            if (user_details.Item["level"] === 300) {
-                                                req.body["organization"] = user_details.Item["organization"];
-                                            }
-                                            req.body["upload_file"] = base64File;
-                                            req.body["data_filename"] = data_filename;
-                                            req.body["selfie"] = base64Selfie;
-                                            req.body["filename"] = selfie;
-                                            request.post({
-                                                url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
-                                                json: req.body
-                                            }, function (err, httpResponse, body) {
-                                                if (err) {
-                                                    res.send({
-                                                        message: "failure",
-                                                        error: err
-                                                    })
-                                                }
-                                                else {
-                                                    if (httpResponse.body.image_url) {
-                                                        let body = '<!DOCTYPE html>\
-                                                    <html>\
-                                                    <body>';
-                                                        let counter = 0;
-                                                        httpResponse.body.image_url.forEach((url, m) => {
-                                                            counter++;
-                                                            body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
-                                                            if (counter == httpResponse.body.image_url.length) {
-                                                                body += '</body>\
-                                                                </html>';
-                                                                res.send(body);
-                                                            }
-                                                        })
-                                                    } else {
-                                                        res.send(httpResponse.body);
-                                                    }
-                                                }
-                                            })
-                                        } else {
+                                    req.body["upload_file"] = base64File;
+                                    req.body["data_filename"] = data_filename;
+                                    req.body["selfie"] = base64Selfie;
+                                    req.body["filename"] = selfie; 
+                                    request.post({
+                                        url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                                        json: req.body
+                                    }, function (err, httpResponse, body) {
+                                        if (err) {
                                             res.send({
                                                 message: "failure",
-                                                error: 'User is not sensor company.'
+                                                error: err
                                             })
                                         }
-                                    }
-                                })
+                                        else {
+                                            if (httpResponse.body.image_url) {
+                                                let body = '<!DOCTYPE html>\
+                                                    <html>\
+                                                    <body>';
+                                                let counter = 0;                                                
+                                                httpResponse.body.image_url.forEach((url, m) => {
+                                                    counter++;
+                                                    body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
+                                                    if (counter == httpResponse.body.image_url.length) {
+                                                        body += '</body>\
+                                                                </html>';
+                                                        res.send(body);
+                                                    }
+                                                })
+                                            } else {
+                                                res.send(httpResponse.body);
+                                            }
+                                        }
+                                    })
+                                } else {
+                                    res.send({
+                                        message: "failure",
+                                        error: 'User is not sensor company.'
+                                    })
+                                }
                             }
                         })
                     }
                 })
-            }
-        }).catch(err => {
-            console.log('err==============\n', err)
-            res.send({
-                message: "failure",
-                error: 'Internal server error.'
+                }
             })
+        }
+    }).catch(err=>{
+        console.log('err==============\n',err)
+        res.send({
+            message: "failure",
+            error: 'Internal server error.'
         })
+    })
 })
 
-app.post(`${apiPrefix}getAllSensorBrands`, (req, res) => {
+app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getAllSensorBrands", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -7391,7 +7386,7 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req, res) => {
+app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getAllOrganizationsOfSensorBrand", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -7403,7 +7398,7 @@ app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req, res) => {
     })
 })
 
-app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req, res) => {
+app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getAllteamsOfOrganizationOfSensorBrand", json: req.body }, function (err, httpResponse, body) {
         if (err) {
 
@@ -7425,8 +7420,8 @@ app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
         })
         .catch(err => {
             res.send({
-                message: "failure",
-                error: err
+                message : "failure",
+                error : err
             })
         })
 });
@@ -7442,13 +7437,13 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
             let csdm_max = {};
             let masXsr_15_max = {};
 
-            if (data.length === 0) {
+            if (data.length === 0){
                 brainRegions['principal-max-strain'] = {};
                 brainRegions['principal-min-strain'] = {};
                 brainRegions['axonal-strain-max'] = {};
                 brainRegions['csdm-max'] = {};
                 brainRegions['masXsr-15-max'] = {};
-
+                
                 res.send({
                     message: "success",
                     brainRegions: brainRegions
@@ -7549,10 +7544,10 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
         })
         .catch(err => {
             res.send({
-                message: "failure",
-                error: err
+                message : "failure",
+                error : err
             })
-        })
+        }) 
 });
 
 
@@ -7588,27 +7583,27 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
                 if (simulationData.root_path && simulationData.root_path != 'null') {
                     let summary_path = simulationData.root_path + simulationData.image_id + '_output.json';
                     summary_path = summary_path.replace(/'/g, "");
-                    console.log('summary_path', summary_path)
+                    console.log('summary_path',summary_path)
                     return getFileFromS3(summary_path, simulationData.bucket_name);
                 }
             }
         })
         .then(json_output_file => {
-            if (json_output_file) {
+            if (json_output_file){
                 jsonOutputFile = JSON.parse(json_output_file.Body.toString('utf-8'));
             }
 
             res.send({
                 message: "success",
-                data: { simulationImage: simulationImage, jsonOutputFile: jsonOutputFile },
+                data: {simulationImage: simulationImage, jsonOutputFile: jsonOutputFile},
             })
-        })
+        }) 
         .catch(err => {
             res.send({
-                message: "failure",
-                error: err
+                message : "failure",
+                error : err
             })
-        })
+        })  
 })
 
 function getTeamSpheres(obj) {
@@ -7620,9 +7615,9 @@ function getTeamSpheres(obj) {
                 TableName: "sensor_data",
                 FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
                 ExpressionAttributeValues: {
-                    ":sensor": obj.brand,
-                    ":organization": obj.organization,
-                    ":team": obj.team,
+                   ":sensor": obj.brand,
+                   ":organization": obj.organization,
+                   ":team": obj.team,
                 }
             };
         } else {
@@ -7630,12 +7625,12 @@ function getTeamSpheres(obj) {
                 TableName: "sensor_data",
                 FilterExpression: "organization = :organization and team = :team",
                 ExpressionAttributeValues: {
-                    ":organization": obj.organization,
-                    ":team": obj.team,
+                   ":organization": obj.organization,
+                   ":team": obj.team,
                 }
             };
         }
-
+        
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -7680,7 +7675,7 @@ function updateUserStatus(obj) {
                 ReturnValues: "UPDATED_NEW",
             };
         }
-
+        
         docClient.update(userParams, (err, data) => {
             if (err) {
                 reject(err);
