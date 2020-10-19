@@ -201,10 +201,9 @@ class Profile extends React.Component {
             user_id = this.state.user.user_cognito_id ;
         }
 
-        user_id = this.state.user.account_id ? this.state.user.account_id : user_id
-
         data.append('profile_pic', profile_pic);
         data.append('user_cognito_id', user_id);
+        data.append('account_id', this.state.user.account_id ? this.state.user.account_id : user_id);
 
         // console.log("THIS IS FORM DATA ",data);
         // console.log("VALUE TO BE PRINTED ",user_id);
