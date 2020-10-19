@@ -2968,7 +2968,8 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                                 res.send({
                                                     message: "success",
                                                     message_details : req.body['isSocialAccount'] == 'yes' ? 'Your account created successfully. Please log In' : "Successfully created account ! Check your mail to verify your account.",
-                                                    user_cognito_id: user_cognito_id
+                                                    user_cognito_id: user_cognito_id,
+                                                    account_id: req.body["account_id"],
                                                 })
 
                                             }
@@ -7111,7 +7112,7 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
                                         req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                         req.body["sensor_brand"] = user_details.Item["sensor"];
                                         req.body["level"] = user_details.Item["level"];
-                                        if (user_details.Item["level"] === 300) {
+                                        if (user_details.Item["level"] === 300 && !req.body["organization"]) {
                                             req.body["organization"] = user_details.Item["organization"];
                                         }
                                         request.post({
@@ -7315,7 +7316,7 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
                                     req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                     req.body["sensor_brand"] = user_details.Item["sensor"];
                                     req.body["level"] = user_details.Item["level"];
-                                    if (user_details.Item["level"] === 300) {
+                                    if (user_details.Item["level"] === 300 && !req.body["organization"]) {
                                         req.body["organization"] = user_details.Item["organization"];
                                     }
                                     req.body["upload_file"] = base64File;
