@@ -201,6 +201,8 @@ class Profile extends React.Component {
             user_id = this.state.user.user_cognito_id ;
         }
 
+        user_id = this.state.user.account_id ? this.state.user.account_id : user_id
+
         data.append('profile_pic', profile_pic);
         data.append('user_cognito_id', user_id);
 

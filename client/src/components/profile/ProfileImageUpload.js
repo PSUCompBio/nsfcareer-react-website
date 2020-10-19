@@ -75,11 +75,11 @@ class ProfileImageUpload extends React.Component {
       var user_id = '';
      
       if(this.state.userData){
-        user_id = this.state.userData.user_cognito_id ;
+        user_id = this.state.userData.account_id ;
       }else{
         this.setState({Redirect: true})
       }
-      console.log(this.state.userData.user_cognito_id)
+      console.log(this.state.userData.account_id)
       data.append('profile_pic', profile_pic);
       data.append('user_cognito_id', user_id);
       uploadProfileSelfie(data)
