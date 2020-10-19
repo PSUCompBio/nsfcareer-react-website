@@ -230,6 +230,11 @@ class Profile extends React.Component {
             console.log(response);
 
             if (response.data.message === 'success') {
+                let timestamp = Date.now();
+
+                let date = new Date(parseInt(timestamp));
+
+                this.setState({user: {is_selfie_image_uploaded: true},selfie_latest_upload_details: {0: [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]}})
                 // Fetch only image url again
                 getProfilePicLink(
                     JSON.stringify({ user_cognito_id: user_id })
@@ -889,7 +894,11 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                             <Col sm={4}>
+                                            {this.state.user.email ? 
                                                 <button className="btn btn-success btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Verified</button>
+                                                :
+                                                 <button className="btn btn-warning btn-sm" onClick={e =>e.preventDefault()} style={{'float':'left'}}><i class="fa fa-check"  aria-hidden="true"></i> Not Verified</button>
+                                            }
                                             </Col>
 
 

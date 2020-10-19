@@ -15,6 +15,9 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import GoogleLogin from 'react-google-login';
 import axios from 'axios';
 
+let search = window.location.search;
+let params = new URLSearchParams(search);
+
 class LoginComponentHidden extends React.Component {
   constructor(props) {
     super(props);
@@ -365,6 +368,22 @@ class LoginComponentHidden extends React.Component {
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
                     </div>
+                    {params.get('error') ? (
+                      <div
+                        className="alert alert-info api-response-alert"
+                        role="alert"
+                      >
+                        <strong >Failed! </strong> {params.get('error')}
+                      </div> 
+                    ) : null}
+                    {params.get('success') ? (
+                      <div
+                        className="alert alert-info api-response-alert-success"
+                        role="alert"
+                      >
+                        <strong >Success! </strong> Your account has been verified successfully.
+                      </div> 
+                    ) : null}
                     {this.state.IRBProcessMessage.length > 0 ? (
                       <div
                         className="alert alert-info api-response-alert-success"

@@ -529,7 +529,9 @@
       width: 70%;
       margin: auto;
   }
-
+  .upload-image-top-text{
+    padding: 12px!important
+  }
 }
 
 @media screen and (max-width: 414px) {

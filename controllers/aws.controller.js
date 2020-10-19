@@ -107,11 +107,31 @@ exports.doUpload = (req, res) => {
 
                                 }
                             })
+                        var dbInsert = {
+                            TableName: "users",
+                            Key: {
+                                "user_cognito_id": req.user_cognito_id
+                            },
+                            UpdateExpression: "set #is_selfie_image_uploaded = :is_selfie_image_uploaded",
+                            ExpressionAttributeNames: {
+                                "#is_selfie_image_uploaded": "is_selfie_image_uploaded"
+                            },
+                            ExpressionAttributeValues: {
+                                ":is_selfie_image_uploaded": true
+                            },
+                            ReturnValues: "UPDATED_NEW"
+                        }
 
-                        res.send({
-                            message : "success"
-                        })
-
+                        docClient.update(dbInsert, function (err, data) {
+                            if (err) {
+                                console.log("ERROR WHILE CREATING DATA", err);
+                               
+                            } else {
+                                res.send({
+                                    message : "success"
+                                })
+                            }
+                        });
                     }
 
                 })

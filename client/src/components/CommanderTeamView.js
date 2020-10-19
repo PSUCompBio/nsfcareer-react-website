@@ -920,7 +920,7 @@ class CommanderTeamView extends React.Component {
                                                                 </>
                                                             : 
                                                                 <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
-                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'float': 'right','margin-top':'10%'}}></i>
+                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number.substr(-8) + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'float': 'right','margin-top':'10%'}}></i>
                                                                 </span>
                                                             }
                                                             

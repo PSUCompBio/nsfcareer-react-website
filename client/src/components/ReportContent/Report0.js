@@ -6,7 +6,10 @@ import header1 from './header1.png';
 import footer1 from '../footer1.jpg';
 import header2 from '../header2.jpg';
 import footer2 from '../footer2.jpg';
-import trangle from './trangle.png'
+import trangle from './trangle.png';
+import trangle_green from './trangle_green.png';
+import trangle_orange from './trangle_orange.png';
+import trangle_red from './trangle_red.png';
 import arrow_left from './arrow_left.png'
 import arrow_right from './arrow_right.png'
 
@@ -447,6 +450,7 @@ class Report extends React.Component {
 
     render() {
         var csdm;
+        var mps;
         if(this.state.jsonData){
             if(this.state.jsonData['CSDM-15']){
                 var num = this.state.jsonData['CSDM-15'].value;
@@ -455,6 +459,10 @@ class Report extends React.Component {
                 }else{
                     csdm = num.toFixed(2) ;
                 }
+            }
+            if(this.state.jsonData['MPS-95']){
+                var num = this.state.jsonData['MPS-95'].value;
+                mps = num.toFixed(2) ;
             }
         }
         return (
@@ -508,6 +516,8 @@ class Report extends React.Component {
                                 <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
                             </View>
+                            {this.state.metric.csdm_15 == 'on'? 
+                                <>
                                     <View style={styles.col12}>
                                         <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                         <View style={styles.rowHead2}>
@@ -606,6 +616,181 @@ class Report extends React.Component {
                                             <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                         </View>
                                     </View>
+                                </>
+                                :
+                                null
+                            }
+                            {this.state.metric.csdm_15 != 'on' && this.state.metric.mps_95 == 'on' ? 
+                                <>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                        <View style={styles.rowHead2}>
+                                             <View style={styles.tableRowCenter}>
+                                                <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS</Text>
+                                                <Text style={styles.tableColLeft4}>95</Text>
+                                            </View>
+                                            <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHead2subHead}>
+                                            <Text  style={styles.rowHead2Text2subHead}>
+                                                Maximum MPS
+                                            </Text>
+                                            <Text style={styles.tableColLeft4_2}>95</Text>
+                                            <Text  style={styles.rowHead2Text2subHead_2}>
+                                                in Each Brain Region
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
+                                        <Text style={styles.tableColRight2}>0-7.5</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>7.5-15</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>15-25</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>25-30</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>30-50</Text>
+                                        <Text style={styles.tableColRight3}>NOTES</Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Frontal Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Parietal Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Occipital Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Temporal Lobe</Text>
+                                         {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                        </View>
+                                         {/*=== 7.5 - 15 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 15 - 25 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 25 - 30 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        {/*=== 30 - 50 ===*/}
+                                        <View style={styles.tableColRight2_2}>
+                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Cerebellum</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <View style={styles.tableColRight2_2}>
+                                            
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                    </View>
+                                    <View style={styles.taxture1_div}>
+                                        {mps < 15 && <Image  style={styles.trangle} src={taxture1} alt="trangle"/>}
+                                    </View>
+                                {/*=============== page 1 footer sections start ===============*/}
+                                    <View style={styles.tableRow}>
+                                       
+                                        <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
+                                    </View>
+                                   
+                                    <View style={styles.tableRow}>
+                                        <View style={styles.p1_footer_arrow_right}>
+                                            <Image  style={styles.arrow_right} src={arrow_right} alt="arrow_right"/>
+                                        </View>
+                                        <Text style={styles.P1_footer_t}>SIGNIFICANT</Text>
+                                        <Text style={styles.P1_footer_t2}>1,2,3</Text>
+                                        <View style={styles.p1_footer_arrow_left}>
+                                            <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
+                                        </View>
+                                    </View>
+                                </>
+                                : null
+                            }
                                 {/*=============== page 1 footer sections end ===============*/}
                         </View>
 
@@ -623,6 +808,177 @@ class Report extends React.Component {
                         </Page>
                         <Page object-fit="fill" size="A4">
                             <View>
+                                  {this.state.metric.csdm_15 == 'on' && this.state.metric.mps_95 == 'on' ? 
+                                    <>
+                                        <View style={styles.col12}>
+                                            <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                            <View style={styles.rowHead2}>
+                                                 <View style={styles.tableRowCenter}>
+                                                    <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS</Text>
+                                                    <Text style={styles.tableColLeft4}>95</Text>
+                                                </View>
+                                                <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.col12}>
+                                            <View style={styles.rowHead2subHead}>
+                                                <Text  style={styles.rowHead2Text2subHead}>
+                                                    Maximum MPS
+                                                </Text>
+                                                <Text style={styles.tableColLeft4_2}>95</Text>
+                                                <Text  style={styles.rowHead2Text2subHead_2}>
+                                                    in Each Brain Region
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
+                                            <Text style={styles.tableColRight2}>0-7.5</Text>
+                                            <Text style={styles.hLine}></Text>
+                                            <Text style={styles.tableColRight2}>7.5-15</Text>
+                                            <Text style={styles.hLine}></Text>
+                                            <Text style={styles.tableColRight2}>15-25</Text>
+                                            <Text style={styles.hLine}></Text>
+                                            <Text style={styles.tableColRight2}>25-30</Text>
+                                            <Text style={styles.hLine}></Text>
+                                            <Text style={styles.tableColRight2}>30-50</Text>
+                                            <Text style={styles.tableColRight3}>NOTES</Text>
+                                        </View>
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableTd1}>Frontal Lobe</Text>
+                                            {/*=== 0-7.5 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                            </View>
+                                             {/*=== 7.5 - 15 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 15 - 25 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 25 - 30 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 30 - 50 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            <Text style={styles.tableColRight2_2}></Text>
+                                        </View>
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableTd1}>Parietal Lobe</Text>
+                                            {/*=== 0-7.5 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                            </View>
+                                             {/*=== 7.5 - 15 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 15 - 25 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 25 - 30 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 30 - 50 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            <Text style={styles.tableColRight2_2}></Text>
+                                        </View>
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableTd1}>Occipital Lobe</Text>
+                                            {/*=== 0-7.5 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                            </View>
+                                             {/*=== 7.5 - 15 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 15 - 25 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 25 - 30 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 30 - 50 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            <Text style={styles.tableColRight2_2}></Text>
+                                        </View>
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableTd1}>Temporal Lobe</Text>
+                                             {/*=== 0-7.5 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
+                                            </View>
+                                             {/*=== 7.5 - 15 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 15 - 25 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 25 - 30 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            {/*=== 30 - 50 ===*/}
+                                            <View style={styles.tableColRight2_2}>
+                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            </View>
+                                            <Text style={styles.tableColRight2_2}></Text>
+                                        </View>
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableTd1}>Cerebellum</Text>
+                                            <View style={styles.tableColRight2_2}>
+                                                
+                                            </View>
+                                            <Text style={styles.tableColRight2_2}></Text>
+                                        </View>
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                            <View style={styles.tableColRight2_2}>
+                                                
+                                            </View>
+                                            <Text style={styles.tableColRight2_2}></Text>
+                                        </View>
+                                        <View style={styles.col12}>
+                                            <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                        </View>
+                                        <View style={styles.taxture1_div}>
+                                            {/*mps < 15 && <Image  style={styles.trangle} src={taxture1} alt="trangle"/>*/}
+                                        </View>
+                                    {/*=============== page 1 footer sections start ===============*/}
+                                        <View style={styles.tableRow}>
+                                           
+                                            <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
+                                        </View>
+                                       
+                                        <View style={styles.tableRow}>
+                                            <View style={styles.p1_footer_arrow_right}>
+                                                <Image  style={styles.arrow_right} src={arrow_right} alt="arrow_right"/>
+                                            </View>
+                                            <Text style={styles.P1_footer_t}>SIGNIFICANT</Text>
+                                            <Text style={styles.P1_footer_t2}>1,2,3</Text>
+                                            <View style={styles.p1_footer_arrow_left}>
+                                                <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
+                                            </View>
+                                        </View>
+                                    </>
+                                    : null
+                                }
                                 <View style= {styles.tableRowHead}>
 
                                     <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
