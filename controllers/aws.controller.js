@@ -63,7 +63,7 @@ exports.doUpload = (req, res) => {
     var file_name = Date.now();
 
     // Setting Attributes for file upload on S3
-    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + file_extension;
+    params.Key = req.body.account_id + "/profile/image/" + file_name + "." + file_extension;
 
     params.Body = req.file.buffer;
     if (req.body.file_error) {
@@ -95,7 +95,7 @@ exports.doUpload = (req, res) => {
                     } else {
                         // Calling Compute Instance API
                         console.log("Request made is , \n" , { image_url : url , user_cognito_id: req.body.account_id } );
-                            request.post({ url: config.ComputeInstanceEndpoint + "computeImageData", json: { image_url : url , user_cognito_id: req.user_cognito_id } }, function (err, httpResponse, body) {
+                            request.post({ url: config.ComputeInstanceEndpoint + "computeImageData", json: { image_url : url , user_cognito_id: req.body.account_id } }, function (err, httpResponse, body) {
                                 if (err) {
                                     console.log("ERROR in Generating INP File");
                                     // res.send({ message: 'failure', error: err });
