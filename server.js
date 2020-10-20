@@ -2043,6 +2043,8 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     const { image_id } = req.params;
     let imageData = '';
     var movie_link_url = '';
+    var motion_movie_link_url = '';
+
     getSimulationImageRecord(image_id)
         .then(image_data => {
             imageData = image_data;
@@ -2060,7 +2062,12 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         .then(movie_link => {
             console.log('movie_link',movie_link);
             movie_link_url = movie_link;
-           
+            imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '_mps.mp4';
+            
+            return getPresignedMovieUrl(imageData);
+        }).then(motion_link_url => {
+            motion_movie_link_url =   motion_link_url;
+
             return ImpactVideoUrl(imageData);
             
         }) 
@@ -2070,6 +2077,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
                 message : "success",
                 movie_link : movie_link_url,
                 impact_video_url: impact_video_url,
+                motion_link_url: motion_movie_link_url,
                 video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
                 video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
 
@@ -5685,7 +5693,9 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
         else {
             userData = data.Item;
-            getUploadedImageFileList(req.user_cognito_id, function (err, list) {
+            req.user_cognito_id = userData.account_id ? userData.account_id :  req.user_cognito_id
+            console.log('userData ------------------------\n',userData)
+            getUploadedImageFileList(userData.account_id ? userData.account_id :  req.user_cognito_id, function (err, list) {
                 if (err) {
                     console.log(err);
 

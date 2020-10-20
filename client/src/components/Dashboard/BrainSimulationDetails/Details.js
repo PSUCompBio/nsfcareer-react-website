@@ -784,6 +784,15 @@ class Details extends React.Component {
                             </div>
                           </div>
                         </div>
+                      
+                        <div className="motion-movie">
+                          <div style={{'width': '100%','display': 'flow-root'}}>
+                            <p  className="video-lebel">Motion Video</p>
+                          </div>
+                        {this.state.motion_link_url && 
+                          <video src={this.state.motion_link_url} style={{'width':'50%','height':'284px'}}  controls></video>
+                        }
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -844,6 +853,7 @@ class Details extends React.Component {
                     this.setState({
                         movie_link:response.data.movie_link,
                         impact_video_url: response.data.impact_video_url,
+                        motion_link_url: response.data.motion_link_url,
                         video_lock_time: response.data.video_lock_time, 
                         video_lock_time_2: response.data.video_lock_time_2, 
                         

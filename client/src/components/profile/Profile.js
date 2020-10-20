@@ -101,7 +101,8 @@ class Profile extends React.Component {
             isDeskTop: false,
             isCamera: false,
             password: '',
-            confirm_password: ''
+            confirm_password: '',
+            uploaded:''
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -222,7 +223,8 @@ class Profile extends React.Component {
             selfie_latest_url_details : '',
             simulation_file_url_details : '',
             avatar_zip_file_url_details : '',
-            vtk_file_url_details : ''
+            vtk_file_url_details : '',
+
         }
         uploadProfilePic(data)
         .then((response) => {
@@ -233,7 +235,7 @@ class Profile extends React.Component {
 
                 let date = new Date(parseInt(timestamp));
 
-                this.setState({user: {is_selfie_image_uploaded: true},selfie_latest_upload_details: {0: [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]}})
+                this.setState({uploaded: true, uploaded_time : [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]})
                 // Fetch only image url again
                 getProfilePicLink(
                     JSON.stringify({ user_cognito_id: user_id })
@@ -1315,7 +1317,7 @@ class Profile extends React.Component {
                                             <Col md={4}>
 
                                                 <p ref="p1">
-                                                    {this.state.user.is_selfie_image_uploaded ? (
+                                                    {this.state.user.is_selfie_image_uploaded || this.state.uploaded ? (
                                                         <span>
                                                             <img src="/img/icon/check.svg" alt="" />
                                                         </span>
@@ -1367,9 +1369,9 @@ class Profile extends React.Component {
                                                     <div>
                                                         <button className = {`load-time-btn mt-1 mb-4`}>
                                                             <p>
-                                                                Last Updated : {this.state.selfie_latest_upload_details[0]}
+                                                                Last Updated : {this.state.uploaded_time ? this.state.uploaded_time[0] : this.state.selfie_latest_upload_details[0]}
                                                             </p>
-                                                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.selfie_latest_upload_details[1]}
+                                                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.uploaded_time ? this.state.uploaded_time[1] : this.state.selfie_latest_upload_details[1]}
                                                             </p>
 
                                                         </button>
@@ -1669,7 +1671,7 @@ class Profile extends React.Component {
                                         // store.dispatch(userDetails(response.data))
                                         console.log('RESPONSE DATA IS -------------------\n', response.data);
                                         this.setState({
-                                            user: response.data.data
+                                            user: response.data.data,
                                         })
                                         let inp_latest_url_details = ""
                                         let selfie_latest_url_details = ""
@@ -1746,7 +1748,7 @@ class Profile extends React.Component {
                                             }
                                             this.props.isDarkModeSet(this.state.isDarkMode);
                                         }
-                                        return getAvatarInspection({ user_cognito_id: this.state.profile_to_view })
+                                        return getAvatarInspection({ user_cognito_id:  this.state.user.account_id ? this.state.user.account_id : this.state.profile_to_view })
                                     })
                                     .then(result => {
                                         console.log('getAvatarInspection ----------------------\n',result)
