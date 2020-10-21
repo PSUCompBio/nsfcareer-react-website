@@ -325,6 +325,7 @@ class ExportPlayerReport extends React.Component {
 
 	showAllSpheres = () => {
 		const me = this;
+		console.log('all_spheres_json',all_spheres_json)
 		all_spheres_json.forEach(function (object, index) {
 			var i = parseInt(index + 1);
 			me.generateSphere(object.x, object.y, object.z, "pointer" + i);
@@ -904,7 +905,7 @@ class ExportPlayerReport extends React.Component {
 	showUpdatedRegion = () => {
 
 		const { brainStrainActive } = this.state;
-
+		console.log('brainRegions',this.props.brainRegions)
 		frontal_lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
 		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
 		occipital_lobe_json = this.props.brainRegions[brainStrainActive].occipital || []

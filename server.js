@@ -5693,9 +5693,10 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
         else {
             userData = data.Item;
+            console.log('userData -----------------------\n',userData)
             req.user_cognito_id = userData.account_id ? userData.account_id :  req.user_cognito_id
             console.log('userData ------------------------\n',userData)
-            getUploadedImageFileList(userData.account_id ? userData.account_id :  req.user_cognito_id, function (err, list) {
+            getUploadedImageFileList(req.user_cognito_id, function (err, list) {
                 if (err) {
                     console.log(err);
 

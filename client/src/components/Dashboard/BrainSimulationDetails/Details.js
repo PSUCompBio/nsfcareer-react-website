@@ -110,6 +110,7 @@ class Details extends React.Component {
       isTimeUpdating_2: false,
       image_id: this.props.match.params.image_id,
       player_id: this.props.match.params.player_id,
+      cognito_user_id: this.props.match.params.cognito_user_id,
       simulation_data: '',
       simulationData: '',
       lock_video_3: false,
@@ -617,15 +618,26 @@ class Details extends React.Component {
               <div className="row">
                 
                 <div className="col-md-12 col-lg-12">
-                  {/*<div className="backbutton">
+                  {<div className="backbutton">
                     <Link 
                       to={{
                         pathname: '/TeamAdmin/user/dashboard/',
-                       state: this.props.location.state.state
+                        state: {
+                          user_cognito_id: this.state.userDetails.user_cognito_id,
+                          cognito_user_id: this.state.cognito_user_id,
+                          player_name: this.state.player_id.split('$')[0],
+                          isRedirectedFromAdminPanel: false,
+                          team: {
+                              brand: '',
+                              team_name: this.state.team_name,
+                              organization: this.state.organization,
+                              staff: ""
+                          }
+                      }
                     }}
                     >&lt; Back To Player
                     </Link>
-                  </div>*/}
+                  </div>}
                   <h1 className="top-heading__login brain-simlation-details-title" >Brain Simulation Details</h1>
                   {/* this.state.simulation_log_path && <p className="top-heading__login brain-simlation-details-title" ><a href={this.state.simulation_log_path} target="_blank">Simulation Log File</a></p>*/}
                   <div style={{'text-align':'center','width':'100%'}}>
@@ -634,7 +646,8 @@ class Details extends React.Component {
                     to={{
                       pathname: '/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog',
                       state: {
-                        image_id: this.state.image_id
+                        image_id: this.state.image_id,
+                        return_url: this.props.location.pathname + this.props.location.search
                       }
                     }}>
                    
@@ -784,19 +797,26 @@ class Details extends React.Component {
                             </div>
                           </div>
                         </div>
-                      
-                        <div className="motion-movie">
-                          <div style={{'width': '100%','display': 'flow-root'}}>
-                            <p  className="video-lebel">Motion Video</p>
-                          </div>
-                        {this.state.motion_link_url && 
-                          <video src={this.state.motion_link_url} style={{'width':'50%','height':'284px'}}  controls></video>
-                        }
-                        </div>
                       </div>
                     </div>
                   </div>
                 {/*Movie section start*/}
+
+                {/*========== Brain Response Prediction section ==========*/}
+                  <div className="col-md-12 col-lg-12 brain-simlation-details-movie">
+                    <h4 className="brain-simlation-details-subtitle">Brain Response Prediction</h4>
+                    <div className="col-md-12">
+                      <div className="movie">
+                          <div style={{'width': '100%','display': 'flow-root'}}>
+                            <p  className="video-lebel">Motion Video</p>
+                          </div>
+                          {this.state.motion_link_url && 
+                            <video src={this.state.motion_link_url} style={{'width':'50%','height':'284px'}}  controls></video>
+                          }
+                      </div>
+                    </div>
+                  </div>
+                {/*========== Brain Response Prediction section end ==========*/}
 
                 {/*Injury metrics section start */}
                 <div className="col-md-12 col-lg-12 brain-simlation-details-metrics">
@@ -838,12 +858,14 @@ class Details extends React.Component {
     console.log('this.props.match.params.player_id',params.get('org'))
     let organization = params.get('org');
     let team = params.get('t');
+    this.setState({team_name: team, organization: organization})
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
         
           if (value.data.message === 'success') {
             getUserDBDetails()
               .then((response) => {
+                  console.log('response.data.data',response.data.data)
                   this.setState({
                       user: true,
                       userDetails: response.data.data,
