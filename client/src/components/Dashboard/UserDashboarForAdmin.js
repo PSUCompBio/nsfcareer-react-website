@@ -282,6 +282,7 @@ class UserDashboarForAdmin extends React.Component {
             {this.state.cumulativeAccelerationTimeAllRecords.map(function (item, index) {  
               let impact_time = '';
               let time = '';
+              let impact_id = item.sensor_data.player_id.split('$')[0];
               let cls = item.status === 'pending' ? 'card-orange' : '';
               if (item.status === 'completed' ) {
 
@@ -313,10 +314,18 @@ class UserDashboarForAdmin extends React.Component {
                 time = split.slice(0, split.length - 1).join(":");
               }
 
+              if (item.sensor_data['impact_id']) {
+                impact_id = item.sensor_data['impact_id'];
+              } 
+              
+              if (item.sensor_data.player['impact-id']) {
+                impact_id = item.sensor_data.player['impact-id'];
+              } 
+
               return <Card >
                 <Card.Header className={cls}>
                   <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
-                    <span className="title-left" >ID: #{item.sensor_data && item.sensor_data['impact_id'] ? item.sensor_data['impact_id'] : item.sensor_data.player_id.split('$')[0]}</span>
+                    <span className="title-left" >ID: #{ impact_id }</span>
                     <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(impact_time) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(time)  : 'Unkown Date and Time'}`}</span>
                     <span className="title-right" id={item.sensor_data && 'col_icon'+item.sensor_data.player_id.split('$')[1]}>></span>
                   </Accordion>
