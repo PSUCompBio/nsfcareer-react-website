@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom'
 import ExportPlayerReport from './Charts/ExportPlayerReport';
 import Footer from './Footer';
-import Spinner from './Spinner/Spinner';
-
+import Spinners from './Spinner/Spinner';
+import {Spinner } from 'react-bootstrap';
 import {
     isAuthenticated,
-    getTeamSpheres
+    getTeamSpheres,
+    getFilterdTeamSpheres
   } from './../apis';
 
 // let brainRegions = {};
@@ -27,6 +28,8 @@ class TeamStats extends React.Component {
             isLoading: true,
             brainRegions: {},
             insult: 'principal-max-strain',
+            filter: 'less',
+            gs: 10,
         };
         this.child = React.createRef();
     }
@@ -52,7 +55,7 @@ class TeamStats extends React.Component {
                                 isLoading: false,
                                 isCheckingAuth: false
                             });
-                          });   
+                        });   
                 } else {
                     this.setState({ isAuthenticated: false, isCheckingAuth: false });
                 }
@@ -65,14 +68,34 @@ class TeamStats extends React.Component {
 
     handleChange = (e) => {
         this.setState({ [e.target.name] : e.target.value });
-        this.child.current.handleBrainStrain(e.target.value);
+        if(e.target.name == 'principal-max-strain'){
+            this.child.current.handleBrainStrain(e.target.value);
+        }
     };
-
+    handleRunReport =(e)=>{
+        e.preventDefault();
+        console.log(this.state.filter, this.state.gs);
+        this.setState({isfetching: true})
+        getFilterdTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name,filter: this.state.filter, gs: this.state.gs})
+        .then(response=>{
+            console.log('response',response.data);
+            this.setState({
+                brainRegions: ''
+            })
+            setTimeout(()=>{
+                this.setState({
+                    brainRegions: response.data.data,
+                    isfetching: false
+                });
+            },200)
+           
+        })
+    }
     render() {
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
            return <Redirect to="/Login" />;
         }
-        if (this.state.isLoading) return <Spinner />;
+        if (this.state.isLoading) return <Spinners />;
        return (
             <React.Fragment>
                  
@@ -101,38 +124,48 @@ class TeamStats extends React.Component {
                                 <option value="axonal-strain-max">Axonal Strain 15</option>
                                 <option value="masXsr-15-max">MASxSR 15</option>
                             </select>
-                            <select style={{marginLeft: '20px'}} >
-                                <option>Less or Equal to</option>
-                                <option>Greater or Equal to</option>
+                            <select style={{marginLeft: '20px'}} name="filter" onChange={this.handleChange}>
+                                <option value='less'>Less or Equal to</option>
+                                <option value='greater'>Greater or Equal to</option>
                             </select>
-                            <select style={{marginLeft: '20px'}}>
-                                <option>10 Gs</option>
-                                <option>20 Gs</option>
-                                <option>30 Gs</option>
-                                <option>40 Gs</option>
-                                <option>50 Gs</option>
-                                <option>60 Gs</option>
-                                <option>70 Gs</option>
-                                <option>80 Gs</option>
-                                <option>90 Gs</option>
-                                <option>100 Gs</option>
-                                <option>110 Gs</option>
-                                <option>120 Gs</option>
-                                <option>130 Gs</option>
-                                <option>140 Gs</option>
-                                <option>150 Gs</option>
+                            <select style={{marginLeft: '20px'}} name="gs" onChange={this.handleChange}>
+                                <option value='10'>10 Gs</option>
+                                <option value='20'>20 Gs</option>
+                                <option value='30'>30 Gs</option>
+                                <option value='40'>40 Gs</option>
+                                <option value='50'>50 Gs</option>
+                                <option value='60'>60 Gs</option>
+                                <option value='70'>70 Gs</option>
+                                <option value='80'>80 Gs</option>
+                                <option value='90'>90 Gs</option>
+                                <option value='100'>100 Gs</option>
+                                <option value='110'>110 Gs</option>
+                                <option value='120'>120 Gs</option>
+                                <option value='130'>130 Gs</option>
+                                <option value='140'>140 Gs</option>
+                                <option value='140'>150 Gs</option>
                             </select>
                         </div>
                         <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>
-                            <button style={{padding: '5px 15px 5px 15px', background : '#007bff', fontWeight: '800'}}>Run Report</button>
+                            <button style={{padding: '5px 15px 5px 15px', background : '#007bff', fontWeight: '800'}} onClick={this.handleRunReport}>Run Report</button>
                         </div>
                         <div className="row">
                             <div className="col-md-12 col-lg-12">
-                                <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />
+                                <>
+                                    {this.state.isfetching &&
+                                        <div  className="col-md-12 glow-spinner">
+                                            <div className="spinner-center">
+                                                <Spinner animation="grow" variant="primary" />
+                                            </div>
+                                        </div>
+                                    }
+                                 {this.state.brainRegions && <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />}
+                                </>
                             </div>
                         </div>
                     </div>
                 </div>
+                
                 <Footer />
             </React.Fragment>
         );

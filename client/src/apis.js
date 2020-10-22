@@ -910,6 +910,18 @@ export const getTeamSpheres = (request) =>{
   })
 }
 
+export const getFilterdTeamSpheres = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getFilterdTeamSpheres`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getPlayerList = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getPlayerList/`,request, {withCredentials: true})

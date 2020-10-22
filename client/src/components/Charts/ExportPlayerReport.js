@@ -325,7 +325,6 @@ class ExportPlayerReport extends React.Component {
 
 	showAllSpheres = () => {
 		const me = this;
-		console.log('all_spheres_json',all_spheres_json)
 		all_spheres_json.forEach(function (object, index) {
 			var i = parseInt(index + 1);
 			me.generateSphere(object.x, object.y, object.z, "pointer" + i);
