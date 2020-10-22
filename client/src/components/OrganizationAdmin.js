@@ -554,7 +554,6 @@ class OrganizationAdmin extends React.Component {
                         <td>{organization.organization}</td>
                         <td>{organization.sensor ? organization.sensor : 'NA'}</td>
                         <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
-                        <td>{organization.team_name ? organization.team_name : 'NA'}</td> 
                     </tr>;
                 }
             }, this)
@@ -794,7 +793,6 @@ class OrganizationAdmin extends React.Component {
                                                             <th scope="col">Organization</th>
                                                             <th scope="col">Sensor</th>
                                                             <th scope="col">Simulations</th>
-                                                            <th scope="col">Team Name</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">

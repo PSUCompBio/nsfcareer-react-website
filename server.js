@@ -5693,7 +5693,6 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
         else {
             userData = data.Item;
-            console.log('userData ------------------------\n',userData)
             getUploadedImageFileList(req.user_cognito_id, function (err, list) {
                 if (err) {
                     console.log(err);
@@ -7560,7 +7559,185 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
         }) 
 });
 
+app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
+    let filter = req.body.filter;
+    let gs = parseInt(req.body.gs);
+    console.log(gs)
+    getTeamSpheres(req.body)
+        .then(data => {
 
+            let brainRegions = {};
+            let principal_max_strain = {};
+            let principal_min_strain = {};
+            let axonal_strain_max = {};
+            let csdm_max = {};
+            let masXsr_15_max = {};
+
+            if (data.length === 0){
+                brainRegions['principal-max-strain'] = {};
+                brainRegions['principal-min-strain'] = {};
+                brainRegions['axonal-strain-max'] = {};
+                brainRegions['csdm-max'] = {};
+                brainRegions['masXsr-15-max'] = {};
+                
+                res.send({
+                    message: "success",
+                    brainRegions: brainRegions
+                })
+            }
+
+            let players = [];
+            const processData = data.map(acc_data => {
+                return new Promise((resolve, reject) => {
+                    let player_id = acc_data.player_id.split('$')[0];
+                    if (!players.includes(player_id)) {
+                        players.push(player_id);
+                        getPlayerSimulationStatus(acc_data.image_id)
+                            .then(imageData => {
+                                if (imageData.player_name && imageData.player_name != 'null') {
+                                    console.log(imageData.player_name + '/simulation/summary.json');
+                                    let file_path = imageData.player_name + '/simulation/summary.json';
+                                    return getFileFromS3(file_path, imageData.bucket_name);
+                                }
+                            })
+                            .then(output_file => {
+                                console.log(players)
+                                if (output_file) {
+                                    outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                    if (outputFile.Insults) {
+                                        outputFile.Insults.forEach(function (summary_data, index) {
+                                            console.log('max-linear-acc-g -------------------------\n',summary_data['max-linear-acc-g'])
+                                            if(filter == 'less'){
+                                                if(summary_data['max-linear-acc-g'] <= gs){
+                                                    if (summary_data['principal-max-strain']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['principal-max-strain'].location[0];
+                                                        coordinate.y = summary_data['principal-max-strain'].location[1];
+                                                        coordinate.z = summary_data['principal-max-strain'].location[2];
+                                                        region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                                        principal_max_strain[region] = principal_max_strain[region] || [];
+                                                        principal_max_strain[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['principal-min-strain']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['principal-min-strain'].location[0];
+                                                        coordinate.y = summary_data['principal-min-strain'].location[1];
+                                                        coordinate.z = summary_data['principal-min-strain'].location[2];
+                                                        region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                                                        principal_min_strain[region] = principal_min_strain[region] || [];
+                                                        principal_min_strain[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['axonal-strain-max']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['axonal-strain-max'].location[0];
+                                                        coordinate.y = summary_data['axonal-strain-max'].location[1];
+                                                        coordinate.z = summary_data['axonal-strain-max'].location[2];
+                                                        region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                                                        axonal_strain_max[region] = axonal_strain_max[region] || [];
+                                                        axonal_strain_max[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['csdm-max']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['csdm-max'].location[0];
+                                                        coordinate.y = summary_data['csdm-max'].location[1];
+                                                        coordinate.z = summary_data['csdm-max'].location[2];
+                                                        region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                                                        csdm_max[region] = csdm_max[region] || [];
+                                                        csdm_max[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['masXsr-15-max']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['masXsr-15-max'].location[0];
+                                                        coordinate.y = summary_data['masXsr-15-max'].location[1];
+                                                        coordinate.z = summary_data['masXsr-15-max'].location[2];
+                                                        region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                                                        masXsr_15_max[region] = masXsr_15_max[region] || [];
+                                                        masXsr_15_max[region].push(coordinate);
+                                                    }
+                                                }
+                                            }else{
+                                                if(summary_data['max-linear-acc-g'] >= gs){
+                                                    if (summary_data['principal-max-strain']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['principal-max-strain'].location[0];
+                                                        coordinate.y = summary_data['principal-max-strain'].location[1];
+                                                        coordinate.z = summary_data['principal-max-strain'].location[2];
+                                                        region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                                        principal_max_strain[region] = principal_max_strain[region] || [];
+                                                        principal_max_strain[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['principal-min-strain']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['principal-min-strain'].location[0];
+                                                        coordinate.y = summary_data['principal-min-strain'].location[1];
+                                                        coordinate.z = summary_data['principal-min-strain'].location[2];
+                                                        region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                                                        principal_min_strain[region] = principal_min_strain[region] || [];
+                                                        principal_min_strain[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['axonal-strain-max']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['axonal-strain-max'].location[0];
+                                                        coordinate.y = summary_data['axonal-strain-max'].location[1];
+                                                        coordinate.z = summary_data['axonal-strain-max'].location[2];
+                                                        region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                                                        axonal_strain_max[region] = axonal_strain_max[region] || [];
+                                                        axonal_strain_max[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['csdm-max']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['csdm-max'].location[0];
+                                                        coordinate.y = summary_data['csdm-max'].location[1];
+                                                        coordinate.z = summary_data['csdm-max'].location[2];
+                                                        region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                                                        csdm_max[region] = csdm_max[region] || [];
+                                                        csdm_max[region].push(coordinate);
+                                                    }
+                                                    if (summary_data['masXsr-15-max']) {
+                                                        let coordinate = {};
+                                                        coordinate.x = summary_data['masXsr-15-max'].location[0];
+                                                        coordinate.y = summary_data['masXsr-15-max'].location[1];
+                                                        coordinate.z = summary_data['masXsr-15-max'].location[2];
+                                                        region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                                                        masXsr_15_max[region] = masXsr_15_max[region] || [];
+                                                        masXsr_15_max[region].push(coordinate);
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+                                resolve(null);
+                            })
+                            .catch(err => {
+                                reject(err);
+                            })
+                    } else {
+                        resolve(null);
+                    }
+                })
+            })
+
+            Promise.all(processData).then(resolveData => {
+                console.log('All executed');
+                brainRegions['principal-max-strain'] = principal_max_strain;
+                brainRegions['principal-min-strain'] = principal_min_strain;
+                brainRegions['axonal-strain-max'] = axonal_strain_max;
+                brainRegions['csdm-max'] = csdm_max;
+                brainRegions['masXsr-15-max'] = masXsr_15_max;
+                res.send({
+                    message: "success",
+                    data: brainRegions
+                });
+            });
+        })
+        .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }) 
+});
 
 app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
     let jsonOutputFile = '';

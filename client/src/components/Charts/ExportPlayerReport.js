@@ -904,7 +904,7 @@ class ExportPlayerReport extends React.Component {
 	showUpdatedRegion = () => {
 
 		const { brainStrainActive } = this.state;
-
+		console.log('brainRegions',this.props.brainRegions)
 		frontal_lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
 		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
 		occipital_lobe_json = this.props.brainRegions[brainStrainActive].occipital || []

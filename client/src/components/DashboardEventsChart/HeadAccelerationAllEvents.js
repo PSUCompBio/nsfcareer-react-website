@@ -253,7 +253,7 @@ class HeadAccelerationAllEvents extends React.Component {
 
                                      : 
                                     <Link  to={{
-                                            pathname: '/Details/'+this.props.data.sensor_data.image_id+'/'+this.props.player_id+'?org='+this.props.organization+'&t='+this.props.team,
+                                            pathname: '/Details/'+this.props.data.sensor_data.image_id+'/'+this.props.player_id+'/'+this.props.state.cognito_user_id+'?org='+this.props.organization+'&t='+this.props.team,
                                             
                                            state:{
                                             state: this.props.state,

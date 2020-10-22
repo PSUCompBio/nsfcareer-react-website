@@ -95,14 +95,31 @@ class AdminDashboard extends React.Component {
 
     handleButtonChanges =(e)=>{
         console.log(e.target.name);
+        var the = this;
         if(e.target.name == 'organization'){
-            this.setState({      
-                isSensor: false,
-                isOrganization: true,
-                isTeams: false,
-                isFetching: false,
-                isPlayers: false
-            })
+            if(this.state.OrganizationList == ''){
+                the.setState({isFetching: true});
+                getOrganizationList({type:'organizations'}).then(organizations =>{
+                    console.log('organizations',organizations);
+                    this.setState({
+                        OrganizationList: organizations.data.data,
+                        totalOrganization: organizations.data.data.length,
+                        isSensor: false,
+                        isOrganization: true,
+                        isTeams: false,
+                        isFetching: false,
+                        isPlayers: false
+                    })
+                })
+            }else{
+                this.setState({      
+                    isSensor: false,
+                    isOrganization: true,
+                    isTeams: false,
+                    isFetching: false,
+                    isPlayers: false
+                });
+            }
         }else if(e.target.name == 'sensor_companies'){
             this.setState({
                 isFetching: false,
@@ -112,16 +129,38 @@ class AdminDashboard extends React.Component {
                 isPlayers: false
             })
         }else if(e.target.name == 'teams'){
-           
-            this.setState({
-                isFetching: false,
-                isSensor: false,
-                isTeams: true,
-                isOrganization: false,
-                isPlayers: false
-            })
+            if(this.state.teamList == ''){
+                the.setState({isFetching: true});
+                getTeamList({type:"team"}).then(teams =>{
+                    console.log('teams',teams)
+                    this.setState({
+                        teamList: teams.data.data,
+                        totalTeam: teams.data.data.length,
+                        isFetching: false,
+                        isSensor: false,
+                        isTeams: true,
+                        isOrganization: false,
+                        isPlayers: false
+                    })
+                }).catch(err=>{
+                    console.log('err',err)
+                    this.setState({
+                        isFetching: false,
+                        isAuthenticated: false, 
+                        isCheckingAuth: false
+                    })
+                });
+            }else{
+                this.setState({
+                    isFetching: false,
+                    isSensor: false,
+                    isTeams: true,
+                    isOrganization: false,
+                    isPlayers: false
+                })
+            }
         }else if(e.target.name == 'individuals'){
-            var the = this;
+            
             setTimeout(function(){ 
                 the.hadnlesearch();
             }, 2000);
@@ -495,36 +534,6 @@ class AdminDashboard extends React.Component {
                                 totalBrand: brands.data.data.length,
                                 sensorBrandList: brands.data.data,
                             }));
-                             getOrganizationList({type:'organizations'}).then(organizations =>{
-                                console.log('organizations',organizations);
-                                this.setState({
-                                    OrganizationList: organizations.data.data,
-                                    totalOrganization: organizations.data.data.length,
-                                    isFetching: false,
-                                })
-                                getTeamList({type:"team"}).then(teams =>{
-                                    console.log('teams',teams)
-                                    this.setState({
-                                        teamList: teams.data.data,
-                                        totalTeam: teams.data.data.length,
-                                        isFetching: false,
-                                    })
-                                }).catch(err=>{
-                                    console.log('err',err)
-                                    this.setState({
-                                        isFetching: false,
-                                        isAuthenticated: false, 
-                                        isCheckingAuth: false
-                                    })
-                                })
-                            }).catch(err=>{
-                                console.log('err',err)
-                                this.setState({
-                                    isFetching: false,
-                                    isAuthenticated: false, 
-                                    isCheckingAuth: false
-                                })
-                            })
                             return fetchAdminStaffMembers({});
                         }).then(staff=>{
                             console.log('staff',staff);
@@ -532,6 +541,9 @@ class AdminDashboard extends React.Component {
                             if(response.message == 'success'){
                                 this.setState(prevState => ({
                                     staffList: response.data,
+                                     isAuthenticated: true, 
+                                     isCheckingAuth: true,
+                                     isFetching: false
                                 }));
                             }
                         })

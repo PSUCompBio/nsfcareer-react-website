@@ -401,7 +401,7 @@ class Routing extends React.Component {
         />
         <Route
             exact
-            path="/Details/:image_id/:player_id"
+            path="/Details/:image_id/:player_id/:cognito_user_id"
             render={(props) => <Details {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
          <Route
