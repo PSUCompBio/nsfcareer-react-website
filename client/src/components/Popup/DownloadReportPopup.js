@@ -103,6 +103,16 @@ class DownloadReportPopup extends React.Component {
                 null
               */}
                {this.state.ischecked && <DownloadReportCSDM15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/> }
+              {!this.state.ischecked ? (
+                      <div className="d-flex justify-content-center center-spinner">
+                        <div
+                          className="spinner-border text-primary"
+                          role="status"
+                        >
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      </div>
+                    ) : null}
               {/*this.state.csdm_15 || !this.state.masxsr_15 && !this.state.axonal_15 && !this.state.mps_95 && !this.state.csdm_15?
                 <DownloadReportCSDM15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/>
                 :

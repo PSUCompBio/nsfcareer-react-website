@@ -24,9 +24,9 @@ jwt = require('jsonwebtoken'),
 _array = require('lodash/array');
 var md5 = require('md5');
 global.fetch = require('node-fetch');
-
+const https = require('https');
 var _ = require('lodash');
-
+const { exec } = require('child_process')
 var nodemailer = require('nodemailer');
 // var transporter = nodemailer.createTransport({
 //   host: 'email.us-west-2.amazonaws.com',
@@ -6786,12 +6786,106 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
 
 
 ============================= ==============================******/
+var dir = 'public';
+var subDirectory = 'public/uploads'
+
+if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+
+    fs.mkdirSync(subDirectory)
+
+}
+
+
+var outputFilePath = Date.now() + 'output.mp4';
+var listFilePath = 'public/uploads/' + Date.now() + 'list.txt'
+
 
 app.post(`${apiPrefix}merge-video`, (req, res) => {
-    
-    res.send('<p>Merging</p>');
+    console.log(req.body);
+    let list = ""
+    for(var i = 0; i < 2; i++){
+        if(i == 0){
+            var name = Date.now();
+            var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+            list += `file ${name}_movie.mp4`
+            list += "\r\n"
+            https.get(req.body.movie_link , function(response ,error) { 
 
+                const file = fs.createWriteStream(file_store_path);
+                response.pipe(file);
+            });
+        }else{
+            https.get(req.body.impact_video_url , function(response ,error) {
+                var name = Date.now();
+                var file_store_path =  'public/uploads/'+ name + '_movie.mp4';
+                const file = fs.createWriteStream(file_store_path);
+                list += `file ${name}_movie.mp4`
+                list += "\r\n"
+                response.pipe(file);
+                writeTextfile(list);
+            }); 
+        }
+        const writeTextfile = (list)=>{
+            console.log('list',list);
+            var writeStream = fs.createWriteStream(listFilePath)
+            writeStream.write(list)
+            writeStream.end()
+             exec(`ffmpeg -safe 0 -f concat -i ${listFilePath} -c copy ${outputFilePath}`, (error, stdout, stderr) => {
+              
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                else{
+                    console.log("videos are successfully merged")
+                res.download(outputFilePath,(err) => {
+                    if(err) throw err
+
+                    // req.files.forEach(file => {
+                    //     fs.unlinkSync(file.path)                    
+                    // });
+
+                    // fs.unlinkSync(listFilePath)
+                    // fs.unlinkSync(outputFilePath)
+
+                  
+
+                })
+            }
+                
+            })
+        }
+    }
+    
+    // const request = https.get("https://nsfcareer-users-data.s3-accelerate.amazonaws.com/35317-Prevent-Biometrics/simulation/07-22-2019/qIYe2mOoS/movie/qIYe2mOoS.mp4?AWSAccessKeyId=AKIA5UBJSELBEIFVBRCC&Expires=1603439485&Signature=%2FhX5ww3Eie9BH18D4jlW53hnRY0%3D", function(response ,error) {
         
+    //     response.pipe(file);
+    // })
+     /*exec(`ffmpeg -safe 0 -f concat -i ${listFilePath} -c copy ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            else{
+                console.log("videos are successfully merged")
+            res.download(outputFilePath,(err) => {
+                if(err) throw err
+
+                // req.files.forEach(file => {
+                //     fs.unlinkSync(file.path)                    
+                // });
+
+                // fs.unlinkSync(listFilePath)
+                // fs.unlinkSync(outputFilePath)
+
+              
+
+            })
+        }
+            
+        })*/
 
 })
 

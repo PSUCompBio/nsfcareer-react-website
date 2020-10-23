@@ -44,7 +44,8 @@ import {
   removeVideo,
   setVideoTime,
   getCumulativeAccelerationTimeRecords,
-  getSimulationDetail
+  getSimulationDetail,
+  mergeVideos
 } from '../../../apis';
 import axios from 'axios';
 
@@ -537,6 +538,19 @@ class Details extends React.Component {
   handleChangeRange_3=(event)=>{
     this.setState({video_time_3: event.target.value});
   }
+
+  /*================================
+     download combined videos
+  =================================*/
+
+  handleExportVideo =()=>{
+    console.log('wer')
+    mergeVideos({movie_link: this.state.movie_link, impact_video_url: this.state.impact_video_url})
+    .then(res=>{
+      console.log('res',res)
+    })
+  }
+
   render() {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
@@ -793,7 +807,7 @@ class Details extends React.Component {
                               <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b}  className="control-2 control_loop_video"/>
                             </div>
                             <div className="col-sm-6" style={{'float':'left'}}>
-                              <button><img src={icon_download_white} className="Combined-video-icon" />Export Combined Video</button>
+                              <button onClick={this.handleExportVideo} disabled={!this.state.movie_link || !this.state.impact_video_url ? true : false} style={!this.state.movie_link || !this.state.impact_video_url ? {'background': '#b7cce2'} : {'background': '#4472c4'}}><img src={icon_download_white} className="Combined-video-icon"  />Export Combined Video</button>
                             </div>
                           </div>
                         </div>
