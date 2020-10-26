@@ -545,9 +545,20 @@ class Details extends React.Component {
 
   handleExportVideo =()=>{
     console.log('wer')
+    this.setState({exporting: true})
     mergeVideos({movie_link: this.state.movie_link, impact_video_url: this.state.impact_video_url})
     .then(res=>{
-      console.log('res',res)
+        var a = document.createElement('a');
+        a.href = '/'+res.data.file_path;
+        a.download = 'kinematics_'+this.state.player_id;
+
+        a.click();
+        this.setState({exporting: false})
+        // if(res.data.message == 'success'){
+        //   var url= '/'+res.data.file_path;    
+        //   window.open(url, 'Download');  
+        // }
+
     })
   }
 
@@ -807,7 +818,17 @@ class Details extends React.Component {
                               <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b}  className="control-2 control_loop_video"/>
                             </div>
                             <div className="col-sm-6" style={{'float':'left'}}>
-                              <button onClick={this.handleExportVideo} disabled={!this.state.movie_link || !this.state.impact_video_url ? true : false} style={!this.state.movie_link || !this.state.impact_video_url ? {'background': '#b7cce2'} : {'background': '#4472c4'}}><img src={icon_download_white} className="Combined-video-icon"  />Export Combined Video</button>
+                              <button onClick={this.handleExportVideo} disabled={!this.state.movie_link || !this.state.impact_video_url ? true : false} style={!this.state.movie_link || !this.state.impact_video_url ? {'background': '#b7cce2'} : {'background': '#4472c4'}}>
+                                {this.state.exporting ? 
+                                  <>
+                                    Rendering <i className="fa fa-spinner fa-spin" style={{"font-size":"24px"}}></i> 
+                                  </>
+                                 : 
+                                 <>
+                                  <img src={icon_download_white} className="Combined-video-icon"  />
+                                  Export Combined Video
+                                  </>
+                                }</button>
                             </div>
                           </div>
                         </div>
