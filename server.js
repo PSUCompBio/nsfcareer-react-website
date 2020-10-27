@@ -28,6 +28,7 @@ const https = require('https');
 var _ = require('lodash');
 const { exec } = require('child_process')
 var nodemailer = require('nodemailer');
+app.use(express.static(path.resolve('./public')));
 // var transporter = nodemailer.createTransport({
 //   host: 'email.us-west-2.amazonaws.com',
 //   port: 465,
@@ -6789,17 +6790,44 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
 
 
 ============================= ==============================******/
-var dir = 'client/public/merge_videos';
 
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
+
+/* ====================== 
+ *remove yesterday videos folders...
+*/
+
+function removeYesterdayFolder(){
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    let yesterday = d.getDate()+'-'+d.getMonth()+'-'+d.getFullYear();
+    var dir = './client/public/merge_videos/'+yesterday;
+    console.log('yesterday -------\n',yesterday)
+    if (fs.existsSync(dir)){
+        fs.unlink(dir,function(err){
+        if(err) return console.log(err);
+            console.log('file deleted successfully');
+        });   
+    }
 }
-
 
 app.post(`${apiPrefix}merge-video`, (req, res) => {
     console.log(req.body);
-    var file_path = 'merge_videos/'+Date.now() + 'output.mp4';
-    var outputFilePath = 'client/public/'+file_path;
+    removeYesterdayFolder(); // Remove yesterday directory ...
+    /*
+        Creating directory
+    */
+    // var d = new Date();
+    // let datetoday = d.getDate()+'-'+d.getMonth()+'-'+d.getFullYear();
+    // var dir = '/public/uploads/'+datetoday;
+
+    // if (!fs.existsSync(dir)){
+    //     fs.mkdirSync(dir);
+    // }
+
+    //** 
+    //files name ..........
+    var file_path = '/uploads/'+Date.now() + 'output.mp4';
+    var outputFilePath = '/public/'+file_path;
     var listFilePath = 'public/uploads/' + Date.now() + 'list.txt'
     let list = []
 
@@ -6832,9 +6860,11 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
                 }); 
             })
         });
-       
-           
-        
+    /**
+    *
+        Creating video frame.
+        ** Exicuting ffmpeg cmd...
+    */
     const writeTextfile = (list)=>{
         console.log('list',list);
         exec(`ffmpeg -i ${list[0]} -i ${list[1]}  -filter_complex  "[0:v]pad=iw*2:ih[int]; [int][1:v]overlay=W/2:0[vid]" -map "[vid]" -c:v libx264 -crf 23  ${outputFilePath}`, (error, stdout, stderr) => {

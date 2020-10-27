@@ -62,6 +62,10 @@ import ScrollToTop from 'react-scroll-up';
 import $ from 'jquery';
 
 import { getStatusOfDarkmode } from '../../../reducer';
+
+/**
+  Define global variables.
+*/
 let lock_time = 0;
 let lock_percent = 0;
 let called = false;
@@ -69,6 +73,7 @@ let lock_time_2 = 0;
 let lock_percent_2 = 0;
 let called_2 = false;
 let called_3 = false;
+let state_updated = false;
 class Details extends React.Component {
   constructor(props) {
     super(props);
@@ -551,14 +556,8 @@ class Details extends React.Component {
         var a = document.createElement('a');
         a.href = '/'+res.data.file_path;
         a.download = 'kinematics_'+this.state.player_id;
-
         a.click();
-        this.setState({exporting: false})
-        // if(res.data.message == 'success'){
-        //   var url= '/'+res.data.file_path;    
-        //   window.open(url, 'Download');  
-        // }
-
+        this.setState({exporting: false});
     })
   }
 
@@ -880,12 +879,16 @@ class Details extends React.Component {
       </React.Fragment>
     );
   }
+  
   getSimlationImage =()=>{
     getSimulationDetail({image_id: this.state.image_id})
     .then(response => {
-        this.setState({
-            simulationData: response.data.data,
-        });
+        if(!state_updated){
+          this.setState({
+              simulationData: response.data.data,
+          });
+          state_updated = true;
+        }
     })
   }
   componentDidMount() {
