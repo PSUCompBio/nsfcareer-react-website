@@ -115,7 +115,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                             <p
                                 ref="h1"
                                 className="player-dashboard-sub-head"
-                            >Name : {this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name}</p>
+                            >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : ''}</p>
                             <p
                                 ref="h1"
                                 className="player-dashboard-sub-head"

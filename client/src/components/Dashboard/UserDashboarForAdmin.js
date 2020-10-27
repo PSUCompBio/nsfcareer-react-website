@@ -393,7 +393,7 @@ class UserDashboarForAdmin extends React.Component {
                 isLoading: false,
               });
 
-              if (!this.props.location.state.isRedirectedFromAdminPanel) {
+      
                 getUserDetails({ user_cognito_id: this.props.location.state.user_cognito_id })
                   .then(response => {
                     delete response.data.data.is_selfie_image_uploaded;
@@ -415,13 +415,7 @@ class UserDashboarForAdmin extends React.Component {
                       isCheckingAuth: false
                     });
                   })
-              }
-              else {
-                 this.setState({
-                  user: response.data.data,
-                 
-                });
-              }
+             
             })
 
             .catch((error) => {
