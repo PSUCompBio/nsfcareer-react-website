@@ -38,7 +38,6 @@ var nodemailer = require('nodemailer');
 //   }
 // });
 
-
 // ================================================
 //          SOCKET <DOT> IO CONFIGURATION
 // ================================================
@@ -5693,6 +5692,10 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
         else {
             userData = data.Item;
+            if (userData.account_id) {
+                req.user_cognito_id = userData.account_id;
+            }
+            
             getUploadedImageFileList(req.user_cognito_id, function (err, list) {
                 if (err) {
                     console.log(err);
