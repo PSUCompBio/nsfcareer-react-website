@@ -805,7 +805,7 @@ export const confirmGuardianIRBConsent = (request) =>{
 
 export const getVtkFileLink = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/getVtkFileLink`, request,{withCredentials: true})
+      axios.post(`/getVtkFileLink`, JSON.parse(request),{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

@@ -238,7 +238,7 @@ class Profile extends React.Component {
                 this.setState({uploaded: true, uploaded_time : [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]})
                 // Fetch only image url again
                 getProfilePicLink(
-                    JSON.stringify({ user_cognito_id: user_id })
+                    JSON.stringify({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : user_id })
                 )
                 .then((res) => {
                     console.log(res.data);
@@ -357,7 +357,7 @@ class Profile extends React.Component {
             // If Selfie is uploaded
             var user_data = response.data.data;
             getProfilePicLink(
-                JSON.stringify({ user_cognito_id: user_id })
+                JSON.stringify({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : user_id })
             )
             .then(res => {
                 profile_data.profile_picture_url = res.data.profile_picture_url ;
@@ -398,7 +398,7 @@ class Profile extends React.Component {
 
                 getModelLink(
                     JSON.stringify({
-                        user_cognito_id: user_id
+                        user_cognito_id: this.state.user.account_id ? this.state.user.account_id : user_id
                     })
                 )
                 .then((response) => {
@@ -420,7 +420,7 @@ class Profile extends React.Component {
                         //     return { user: prevState };
                         // });
                         getVtkFileLink(JSON.stringify({
-                            user_cognito_id : user_id
+                            user_cognito_id : this.state.user.account_id ? this.state.user.account_id : user_id
                         }))
                         .then(response => {
                             if(response.data.message == "success"){
