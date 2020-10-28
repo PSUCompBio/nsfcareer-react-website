@@ -131,6 +131,16 @@ const styles = StyleSheet.create({
         flexDirection : 'column',
         textAlign : 'right',
     },
+    rowHead2Text2subHead_center:{
+        marginTop: '7px',
+        color:'#686868',
+        fontSize: 15,
+        display : 'inline-block',
+        width : '100%',
+        textAlign: 'center',
+        float : 'left',
+        flexDirection : 'column',
+    },
     rowHead2Text2subHead_2:{
         marginTop: '7px',
         color:'#686868',
@@ -454,11 +464,7 @@ class Report extends React.Component {
         if(this.state.jsonData){
             if(this.state.jsonData['CSDM-15']){
                 var num = this.state.jsonData['CSDM-15'].value;
-                if(num < 1){
-                    csdm = this.state.jsonData['CSDM-15'].value;
-                }else{
-                    csdm = num.toFixed(2) ;
-                }
+                csdm = num.toFixed(2) ;
             }
             if(this.state.jsonData['MPS-95']){
                 var num = this.state.jsonData['MPS-95'].value;
@@ -626,21 +632,21 @@ class Report extends React.Component {
                                         <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                         <View style={styles.rowHead2}>
                                              <View style={styles.tableRowCenter}>
-                                                <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS</Text>
-                                                <Text style={styles.tableColLeft4}>95</Text>
+                                                <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
+                                                <Text style={styles.tableColLeft4}></Text>
                                             </View>
-                                            <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                            <Text  style={styles.rowHead2Text2}>(Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. this reports the volume of tissue above 15% strain.)</Text>
                                         </View>
                                     </View>
                                     <View style={styles.col12}>
                                         <View style={styles.rowHead2subHead}>
-                                            <Text  style={styles.rowHead2Text2subHead}>
-                                                Maximum MPS
+                                            <Text  style={styles.rowHead2Text2subHead_center}>
+                                               Maximum Principal Strain
                                             </Text>
-                                            <Text style={styles.tableColLeft4_2}>95</Text>
+                                            {/*<Text style={styles.tableColLeft4_2}></Text>
                                             <Text  style={styles.rowHead2Text2subHead_2}>
-                                                in Each Brain Region
-                                            </Text>
+                                               
+                                            </Text>*/}
                                         </View>
                                     </View>
                                     <View style={styles.tableRow}>
@@ -769,9 +775,9 @@ class Report extends React.Component {
                                     <View style={styles.col12}>
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
-                                    <View style={styles.taxture1_div}>
+                                    {/*<View style={styles.taxture1_div}>
                                         {mps < 15 && <Image  style={styles.trangle} src={taxture1} alt="trangle"/>}
-                                    </View>
+                                    </View>*/}
                                 {/*=============== page 1 footer sections start ===============*/}
                                     <View style={styles.tableRow}>
                                        
@@ -814,21 +820,21 @@ class Report extends React.Component {
                                             <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                             <View style={styles.rowHead2}>
                                                  <View style={styles.tableRowCenter}>
-                                                    <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS</Text>
+                                                    <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                                     <Text style={styles.tableColLeft4}>95</Text>
                                                 </View>
-                                                <Text  style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
+                                                <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. this reports the volume of tissue above 15% strain.)</Text>
                                             </View>
                                         </View>
                                         <View style={styles.col12}>
                                             <View style={styles.rowHead2subHead}>
-                                                <Text  style={styles.rowHead2Text2subHead}>
-                                                    Maximum MPS
+                                                <Text  style={styles.rowHead2Text2subHead_center}>
+                                                    Maximum Principal Strain
                                                 </Text>
-                                                <Text style={styles.tableColLeft4_2}>95</Text>
+                                                {/*<Text style={styles.tableColLeft4_2}></Text>
                                                 <Text  style={styles.rowHead2Text2subHead_2}>
-                                                    in Each Brain Region
-                                                </Text>
+                                                   
+                                                </Text>*/}
                                             </View>
                                         </View>
                                         <View style={styles.tableRow}>

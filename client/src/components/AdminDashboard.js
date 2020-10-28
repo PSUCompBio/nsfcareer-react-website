@@ -15,7 +15,8 @@ import {
     deleteItem,
     renameOrganization,
     addOrganization,
-    MergeOrganization
+    MergeOrganization,
+    getAllSensorBrandsList,
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -527,25 +528,30 @@ class AdminDashboard extends React.Component {
                         this.setState({
                             isAdmin: true
                         });
-                        getAllSensorBrands()
+                        getAllSensorBrandsList()
                         .then(brands => {
-                            console.log('brands',brands)
                             this.setState(prevState => ({
                                 totalBrand: brands.data.data.length,
                                 sensorBrandList: brands.data.data,
+                                isAuthenticated: true, 
+                                isCheckingAuth: true,
+                                isFetching: false
                             }));
                             return fetchAdminStaffMembers({});
                         }).then(staff=>{
-                            console.log('staff',staff);
                             var response = staff.data;
                             if(response.message == 'success'){
                                 this.setState(prevState => ({
                                     staffList: response.data,
-                                     isAuthenticated: true, 
-                                     isCheckingAuth: true,
-                                     isFetching: false
+                                    
                                 }));
                             }
+                            return getAllSensorBrands();
+                        }).then(brandList =>{
+                            this.setState(prevState => ({
+                                totalBrand: brandList.data.data.length,
+                                sensorBrandList: brandList.data.data,
+                            }));
                         })
                         .catch(err => {
                             alert(err);
@@ -624,7 +630,11 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -973,7 +983,7 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{sensor.sensor}</td>
-                        <td>{sensor.simulation_count}</td>
+                        <td>{sensor.simulation_count || sensor.simulation_count == '0'? sensor.simulation_count : 'Loading...'}</td>
                        
                     </tr>;
                 }
