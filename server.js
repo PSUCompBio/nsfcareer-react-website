@@ -1888,6 +1888,31 @@ function timeConversion(duration) {
     return portions.join(' ');
 }
 
+//============================================
+//      GetAllsensorbrand functions
+//============================================
+
+
+function getAllSensorBrands() {
+    return new Promise((resolve, reject) => {
+        const params = {
+            TableName: "sensors"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
 // ============================================
 //     				ROUTES
 // ============================================
@@ -4196,115 +4221,122 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
             console.log('data',data);
             if(data[0]){
                 userData = data[0];
-                if(type == "facebook"){
-                    if(!userData.userIDfacebook){
-                        req.body['userIDfacebook'] = userID;
-                        upDateUserFBGlid(req.body,userData.user_cognito_id)
-                    }
+                if(!userData.password){
+                    res.send({
+                        message: "failure",
+                        error: 'You are a user who had an existing account before the new sign in options for using Facebook and Google authentication was added.\n \n If you would like to use this feature, please contact the support team at support@nsfcareer.io'
+                    });
                 }else{
-                    if(!userData.userIDgoogle){
-                        req.body['userIDgoogle'] = userID;
-                        upDateUserFBGlid(req.body,userData.user_cognito_id)
+                    if(type == "facebook"){
+                        if(!userData.userIDfacebook){
+                            req.body['userIDfacebook'] = userID;
+                            upDateUserFBGlid(req.body,userData.user_cognito_id)
+                        }
+                    }else{
+                        if(!userData.userIDgoogle){
+                            req.body['userIDgoogle'] = userID;
+                            upDateUserFBGlid(req.body,userData.user_cognito_id)
+                        }
                     }
-                }
 
-                getUser(data[0].email, function (err, data) {
-                    if (err) {
-                        console.log('err0',err);
+                    getUser(data[0].email, function (err, data) {
+                        if (err) {
+                            console.log('err0',err);
 
-                        res.send({
-                            message: "failure",
-                            error: 'Incorrect login credentials'
-                        });
-                    } else {
-                        console.log("USER DATA is =====================> \n",data);
-                        getListGroupForUser(data.Username, function (error, groupData) {
-                            if (error) {
-                                console.log('error1',error)
-                                res.send({
-                                    message: "failure",
-                                    error: 'Incorrect login credentials'
-                                });
-                            } else {
-                                // Now checking is user is ADMIN or not
-
-                                if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
-                                    // Sends the user to first login page
-                                    // respond with status of FORCE_CHANGE_PASSWORD
+                            res.send({
+                                message: "failure",
+                                error: 'Incorrect login credentials'
+                            });
+                        } else {
+                            console.log("USER DATA is =====================> \n",data);
+                            getListGroupForUser(data.Username, function (error, groupData) {
+                                if (error) {
+                                    console.log('error1',error)
                                     res.send({
-                                        message: "success",
-                                        status: "FORCE_CHANGE_PASSWORD",
-                                        user_name: userData.email
-                                    })
-                                } else {
-
-                                    // Now checking is user is ADMIN or not
-                                    var userType = "StandardUser";
-                                    groupData.forEach(element => {
-                                        if (element.GroupName == "Admin") {
-                                            userType = "Admin";
-                                        }
+                                        message: "failure",
+                                        error: 'Incorrect login credentials'
                                     });
-                                    // Here call the login function then
-                                    login(userData.email, userData.password_code, userType, function (err, result) {
+                                } else {
+                                    // Now checking is user is ADMIN or not
 
-                                        if (err) {
-                                            console.log('err2',err)
-                                            res.cookie("token", "");
-                                            res.send({
-                                                message: "failure",
-                                                error: err
-                                            })
-                                        }
-                                        else {
+                                    if (data.UserStatus == "FORCE_CHANGE_PASSWORD") {
+                                        // Sends the user to first login page
+                                        // respond with status of FORCE_CHANGE_PASSWORD
+                                        res.send({
+                                            message: "success",
+                                            status: "FORCE_CHANGE_PASSWORD",
+                                            user_name: userData.email
+                                        })
+                                    } else {
+
+                                        // Now checking is user is ADMIN or not
+                                        var userType = "StandardUser";
+                                        groupData.forEach(element => {
+                                            if (element.GroupName == "Admin") {
+                                                userType = "Admin";
+                                            }
+                                        });
+                                        // Here call the login function then
+                                        login(userData.email, userData.password_code, userType, function (err, result) {
+
+                                            if (err) {
+                                                console.log('err2',err)
+                                                res.cookie("token", "");
+                                                res.send({
+                                                    message: "failure",
+                                                    error: err
+                                                })
+                                            }
+                                            else {
 
 
-                                            res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
+                                                res.cookie("token", result.getIdToken().getJwtToken(),{ maxAge: 604800000 }); 
 
-                                            getUserDbData(data.Username, function(err, user_details){
-                                                if(err){
-                                                     console.log('err3',err)
-                                                    res.send({
-                                                        message : "failure",
-                                                        error : err
-                                                    })
-                                                }
-                                                else{
-                                                    if (user_details.Item["level"] === 400) {
-                                                        getUserSensor(data.Username)
-                                                            .then(sensor_data => {
-                                                                user_details.Item["sensor"] = sensor_data[0]["sensor"];
-                                                                res.send({
-                                                                    message : "success",
-                                                                    user_details : user_details.Item,
-                                                                    user_type: userType
-                                                                })
-                                                                
-                                                            })
-                                                            .catch(err => {
-                                                                 console.log('err4',err)
-                                                                res.send({
-                                                                    message : "failure",
-                                                                    error : err
-                                                                })
-                                                            })
-                                                    } else {
+                                                getUserDbData(data.Username, function(err, user_details){
+                                                    if(err){
+                                                         console.log('err3',err)
                                                         res.send({
-                                                            message : "success",
-                                                            user_details : user_details.Item,
-                                                            user_type: userType
+                                                            message : "failure",
+                                                            error : err
                                                         })
-                                                    }  
-                                                }
-                                            })
-                                        }
-                                    })
+                                                    }
+                                                    else{
+                                                        if (user_details.Item["level"] === 400) {
+                                                            getUserSensor(data.Username)
+                                                                .then(sensor_data => {
+                                                                    user_details.Item["sensor"] = sensor_data[0]["sensor"];
+                                                                    res.send({
+                                                                        message : "success",
+                                                                        user_details : user_details.Item,
+                                                                        user_type: userType
+                                                                    })
+                                                                    
+                                                                })
+                                                                .catch(err => {
+                                                                     console.log('err4',err)
+                                                                    res.send({
+                                                                        message : "failure",
+                                                                        error : err
+                                                                    })
+                                                                })
+                                                        } else {
+                                                            res.send({
+                                                                message : "success",
+                                                                user_details : user_details.Item,
+                                                                user_type: userType
+                                                            })
+                                                        }  
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
                                 }
-                            }
-                        })
+                            })
 
-                    }
-                })
+                        }
+                    });
+                }
             }else{
                 res.send({
                     status:'success',
@@ -6826,7 +6858,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
     //** 
     //files name ..........
-    var file_path = '/uploads/'+Date.now() + 'output.mp4';
+    var file_path = 'uploads/'+Date.now() + 'output.mp4';
     var outputFilePath = '/public/'+file_path;
     var listFilePath = 'public/uploads/' + Date.now() + 'list.txt'
     let list = []
@@ -7514,6 +7546,24 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
     })
 })
 
+app.post(`${apiPrefix}getAllSensorBrandsList`, (req,res) =>{
+    getAllSensorBrands()
+    .then(list => {
+        var brandList = list.filter(function (brand) {
+            return (!("brandList" in brand));
+        });
+        res.send({
+            message: "success",
+            data: brandList
+        })
+    }).catch(err => {
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+})
+
 app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
     request.post({ url: config.ComputeInstanceEndpoint + "getAllSensorBrands", json: req.body }, function (err, httpResponse, body) {
         if (err) {
@@ -7523,6 +7573,56 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
         else {
             res.send(httpResponse.body);
         }
+    })
+})
+
+function getAllOrganizationsOfSensorBrand(obj) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "organizations",
+            FilterExpression: "sensor = :sensor",
+            ExpressionAttributeValues: {
+               ":sensor": obj.brand
+            },
+            ProjectionExpression: "organization, sensor, organization_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+
+app.post(`${apiPrefix}getAllOrganizationsOfSensorBrandList`, (req,res) =>{
+    getAllOrganizationsOfSensorBrand(req.body)
+    .then(list => {
+        // console.log(list);
+        let uniqueList = [];
+        var orgList = list.filter(function (organization) {
+            if (uniqueList.indexOf(organization.organization) === -1) {
+                uniqueList.push(organization.organization);
+                return organization;
+            }
+        });
+        res.send({
+            message: "success",
+            data: orgList
+        })
+    })                                           
+    .catch(err => {
+        res.send({
+            message: "failure",
+            error: err
+        })
     })
 })
 
@@ -7536,6 +7636,70 @@ app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req,res) =>{
             res.send(httpResponse.body);
         }
     })
+})
+
+function getAllTeamsOfOrganizationsOfSensorBrand(obj) {
+    return new Promise((resolve, reject) => {
+        let params;
+        if (obj.brand) {
+            params = {
+                TableName: "organizations",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                   ":sensor": obj.brand,
+                   ":organization": obj.organization
+                },
+                ProjectionExpression: "sensor, organization, team_name, organization_id"
+            };
+        } else {
+            params = {
+                TableName: "organizations",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                   ":organization": obj.organization
+                },
+                ProjectionExpression: "sensor, organization, team_name, organization_id"
+            };
+        }
+        
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req,res) =>{
+    getAllTeamsOfOrganizationsOfSensorBrand(req.body)
+    .then(list => {
+        let uniqueList = [];
+        var teamList = list.filter(function (team_name) {
+            if (uniqueList.indexOf(team_name.team_name) === -1) {
+                uniqueList.push(team_name.team_name);
+                return team_name;
+            }
+        });
+        res.send({
+            message: "success",
+            data: teamList
+        })
+    })
+    .catch(err => {              
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+                  
+    
 })
 
 app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{

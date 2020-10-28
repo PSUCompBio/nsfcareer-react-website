@@ -10,6 +10,7 @@ import {
     getUserDetails,
     getUserDBDetails,
     getAllteamsOfOrganizationOfSensorBrand,
+    getAllteamsOfOrganizationOfSensorBrandList,
     fetchStaffMembers,
     fetchOrgStaffMembers,
     addorgTeam,
@@ -149,30 +150,36 @@ class TeamnAdmin extends React.Component {
                                         isCheckingAuth: false
                                     });
                                     if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300) {
-                                        getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                                        getAllteamsOfOrganizationOfSensorBrandList({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
                                             .then(teams => {
                                                 console.log('teams',teams)
                                                 this.setState(prevState => ({
                                                     totalTeam: teams.data.data.length,
-                                                    sensorOrgTeamList: teams.data.data
+                                                    sensorOrgTeamList: teams.data.data,
+                                                    isFetching: false
                                                 }));
 
                                                 return fetchOrgStaffMembers({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
                                             })
                                             .then(response => {
-                                                console.log('fetchOrgStaffMembers',response)
-                                                // for (var i = 0; i < response.data.data.length; i++) {
-                                                    this.setState(prevState => ({
-                                                        staffList: response.data.data,
-                                                        isFetching: false
-                                                    }));
-                                                // }
+                                                this.setState(prevState => ({
+                                                    staffList: response.data.data,
+                                                }));
                                             })
                                             .catch(err => {
-                                                alert(err);
                                                 this.setState(prevState => ({
                                                     isFetching: false
                                                 }));
+                                            });
+                                            getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                                            .then(teamList=>{
+                                                this.setState(prevState => ({
+                                                    totalTeam: teamList.data.data.length,
+                                                    sensorOrgTeamList: teamList.data.data
+                                                }));
+                                            }).catch(err => {
+                                                console.log(err);
+                                                this.setState({ isAuthenticated: false, isCheckingAuth: false});
                                             })
                                     }
                                 })
@@ -500,7 +507,11 @@ class TeamnAdmin extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -596,7 +607,7 @@ class TeamnAdmin extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{team.team_name ? team.team_name : 'NA'}</td> 
-                        <td>{team.simulation_count ? team.simulation_count : '0'}</td>
+                        <td>{team.simulation_count || team.simulation_count == '0' ? team.simulation_count : 'Loading...'}</td>
                         <td>{team.organization}</td>
                     </tr>;
                 }

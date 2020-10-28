@@ -839,6 +839,18 @@ export const getAllSensorBrands = (request) =>{
   })
 }
 
+export const getAllSensorBrandsList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllSensorBrandsList`, {},{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getAllOrganizationsOfSensorBrand = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllOrganizationsOfSensorBrand`, request,{withCredentials: true})
@@ -851,9 +863,31 @@ export const getAllOrganizationsOfSensorBrand = (request) =>{
   })
 }
 
+export const getAllOrganizationsOfSensorBrandList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllOrganizationsOfSensorBrandList`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const getAllteamsOfOrganizationOfSensorBrand = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllteamsOfOrganizationOfSensorBrand`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+export const getAllteamsOfOrganizationOfSensorBrandList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllteamsOfOrganizationOfSensorBrandList`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
