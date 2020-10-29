@@ -10,7 +10,9 @@ import {
     getAllSensorBrands,
     fetchAdminStaffMembers,
     getOrganizationList,
+    getOrganizationNameList,
     getTeamList,
+    getTeamNameList,
     getPlayerList,
     deleteItem,
     renameOrganization,
@@ -100,7 +102,7 @@ class AdminDashboard extends React.Component {
         if(e.target.name == 'organization'){
             if(this.state.OrganizationList == ''){
                 the.setState({isFetching: true});
-                getOrganizationList({type:'organizations'}).then(organizations =>{
+                getOrganizationNameList({type:'organizations'}).then(organizations =>{
                     console.log('organizations',organizations);
                     this.setState({
                         OrganizationList: organizations.data.data,
@@ -110,6 +112,12 @@ class AdminDashboard extends React.Component {
                         isTeams: false,
                         isFetching: false,
                         isPlayers: false
+                    })
+                })
+                getOrganizationList({type:'organizations'}).then(organizations =>{
+                    this.setState({
+                        OrganizationList: organizations.data.data,
+                        totalOrganization: organizations.data.data.length,
                     })
                 })
             }else{
@@ -132,7 +140,7 @@ class AdminDashboard extends React.Component {
         }else if(e.target.name == 'teams'){
             if(this.state.teamList == ''){
                 the.setState({isFetching: true});
-                getTeamList({type:"team"}).then(teams =>{
+                getTeamNameList({type:"team"}).then(teams =>{
                     console.log('teams',teams)
                     this.setState({
                         teamList: teams.data.data,
@@ -149,6 +157,12 @@ class AdminDashboard extends React.Component {
                         isFetching: false,
                         isAuthenticated: false, 
                         isCheckingAuth: false
+                    })
+                });
+                getTeamList({type:"team"}).then(teams =>{
+                    this.setState({
+                        teamList: teams.data.data,
+                        totalTeam: teams.data.data.length,
                     })
                 });
             }else{
@@ -169,6 +183,7 @@ class AdminDashboard extends React.Component {
                 the.setState({isFetching: true});
                 getPlayerList({type: 'playersList'})
                 .then(players => {
+                    console.log('players ==============\n',players)
                     this.setState({
                         playerList:players.data.data,
                         isSensor: false,
@@ -197,6 +212,7 @@ class AdminDashboard extends React.Component {
             }
         }
     }
+
     /*===================================
     
         Organization edit funtion start here
@@ -697,7 +713,11 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation ? noOfSimulation : '0'}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -793,7 +813,11 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation ? noOfSimulation : '0'}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -1027,7 +1051,7 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{organization.organization}</td>
-                        <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
+                        <td>{organization.simulation_count || organization.simulation_count == '0' ? organization.simulation_count : 'Loading...'}</td>
                     </tr>;
                 }
             }, this)
@@ -1073,7 +1097,7 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{team.team_name ? team.team_name : 'NA'}</td> 
-                        <td>{team.simulation_count ? team.simulation_count : '0'}</td>
+                        <td>{team.simulation_count || team.simulation_count == '0'? team.simulation_count : 'Loading...'}</td>
                         <td>{team.organization}</td>
                     </tr>;
                 }

@@ -67,6 +67,7 @@ class TeamStats extends React.Component {
     }
 
     handleChange = (e) => {
+        console.log('wrk')
         this.setState({ [e.target.name] : e.target.value });
         if(e.target.name == 'principal-max-strain'){
             this.child.current.handleBrainStrain(e.target.value);
@@ -74,7 +75,6 @@ class TeamStats extends React.Component {
     };
     handleRunReport =(e)=>{
         e.preventDefault();
-        console.log(this.state.filter, this.state.gs);
         this.setState({isfetching: true})
         getFilterdTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name,filter: this.state.filter, gs: this.state.gs})
         .then(response=>{

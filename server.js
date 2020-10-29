@@ -5062,6 +5062,28 @@ app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
         })
 })
 
+app.post(`${apiPrefix}getOrganizationNameList`, (req, res) => {
+    getOrganizationList()
+    .then(list => {
+        let uniqueList = [];
+        var orgList = list.filter(function (organization) {
+            if (uniqueList.indexOf(organization.organization) === -1) {
+                uniqueList.push(organization.organization);
+                return organization;
+            }
+        });
+        res.send({
+            message: "success",
+            data: orgList
+        })
+    }).catch(err => {                  
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+})
+
 function getTeamList() {
     return new Promise((resolve, reject) => {
         var params = {
@@ -5216,6 +5238,27 @@ app.post(`${apiPrefix}getTeamList`, (req, res) => {
         })
 });
 
+app.post(`${apiPrefix}getTeamNameList`, (req, res) => {
+    getTeamList()
+    .then(list=>{
+        // console.log('list',list)
+        let uniqueList = [];
+        var teamList = list.filter(function (team_name) {
+            return (!("teamList" in team_name));
+        });
+        res.send({
+            message: "success",
+            data: teamList
+        })
+    }) .catch(err => {                  
+        res.send({
+            message: "failure",
+            error: err
+        })        
+    })
+
+})
+
 function getPlayerList() {
     return new Promise((resolve, reject) => {
         var params = {
@@ -5250,6 +5293,13 @@ function getTeamDataWithPlayerRecords(player_id, team, sensor, organization) {
                 ":team": team,
                 ":player_id": player_id + '$',
                 },
+                ExpressionAttributeNames : {
+                    '#time': 'time',
+                    '#date': 'date',
+                    '#Impact_date': 'impact-date',
+                    '#Impact_time': 'impact-time'
+                },
+                ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
                 ScanIndexForward: false
             };
         } else {
@@ -5262,6 +5312,13 @@ function getTeamDataWithPlayerRecords(player_id, team, sensor, organization) {
                 ":team": team,
                 ":player_id": player_id + '$',
                 },
+                ExpressionAttributeNames : {
+                    '#time': 'time',
+                    '#date': 'date',
+                    '#Impact_date': 'impact-date',
+                    '#Impact_time': 'impact-time'
+                },
+                ProjectionExpression: " #time,#date,#Impact_date,#Impact_time,image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
                 ScanIndexForward: false
             };
         }
@@ -5352,6 +5409,7 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                         indx++;
                     })
                     .catch(err => {
+                        console.log('err =============\n',err)
                         counter++;
                         if (counter == player_listLn) {
                             res.send({
@@ -5374,6 +5432,8 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
         })
     })
 })
+
+
 
 app.post(`${apiPrefix}enableUser`, (req, res) => {
     enableUser(req.body.user_name, function (err, data) {
@@ -7733,7 +7793,7 @@ app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
 app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
     getTeamSpheres(req.body)
         .then(data => {
-
+            console.log('getTeamSpheres ============================\n',data)
             let brainRegions = {};
             let principal_max_strain = {};
             let principal_min_strain = {};
@@ -7769,7 +7829,6 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                 }
                             })
                             .then(output_file => {
-                                console.log(players)
                                 if (output_file) {
                                     outputFile = JSON.parse(output_file.Body.toString('utf-8'));
                                     if (outputFile.Insults) {
@@ -8100,7 +8159,15 @@ function getTeamSpheres(obj) {
                    ":sensor": obj.brand,
                    ":organization": obj.organization,
                    ":team": obj.team,
-                }
+                },
+                ExpressionAttributeNames : {
+                    '#time': 'time',
+                    '#date': 'date',
+                    '#Impact_date': 'impact-date',
+                    '#Impact_time': 'impact-time'
+                },
+                ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
+                
             };
         } else {
             params = {
@@ -8109,7 +8176,15 @@ function getTeamSpheres(obj) {
                 ExpressionAttributeValues: {
                    ":organization": obj.organization,
                    ":team": obj.team,
-                }
+                },
+                ExpressionAttributeNames : {
+                    '#time': 'time',
+                    '#date': 'date',
+                    '#Impact_date': 'impact-date',
+                    '#Impact_time': 'impact-time'
+                },
+                ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
+                
             };
         }
         

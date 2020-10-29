@@ -932,9 +932,33 @@ export const getOrganizationList = (request) =>{
       });
   })
 }
+
+export const getOrganizationNameList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getOrganizationNameList/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const getTeamList = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getTeamList/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getTeamNameList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamNameList/`,request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

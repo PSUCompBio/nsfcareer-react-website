@@ -16,8 +16,6 @@ import {
     uploadSensorDataAndCompute,
     getTeamAdminData,
     fetchTeamStaffMembers,
-    // getImpactHistory,
-    // getImpactSummary,
     getPlayersData,
     getSimulationStatusCount,
     updateUserStatus,
@@ -228,68 +226,73 @@ class CommanderTeamView extends React.Component {
                                             organization: this.props.location.state.team.organization,
                                             team_name: this.props.location.state.team.team_name
                                         })
-                                            .then(response => {
-                                                console.log('getPlayersData ----------------------\n',response);
-                                                for (var i = 0; i < response.data.data.length; i++) {
-                                                    this.setState(prevState => ({
-                                                        users: [...prevState.users, response.data.data[i]]
-                                                    }));
-                                                }
-                                                 if(response.data.data.length > 4){
-                                                    this.setState({isMobile: false});
-                                                } 
-                                                for (var i = 0; i < response.data.requested_players.length; i++) {
-                                                    this.setState(prevState => ({
-                                                        requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
-                                                    }));
-                                                } 
-                                                return getSimulationStatusCount({
-						                            brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                                    user_cognito_id: this.props.location.state.team.user_cognito_id,
-                                                    organization: this.props.location.state.team.organization,
-                                                    team: this.props.location.state.team.team_name
-                                                })
-                                            })
-                                            .then(response => {
-                        
-                                                this.setState({
-                                                    simulations_completed: response.data.data.completed,
-                                                    simulation_failed: response.data.data.failed,
-                                                    simulations_pending: response.data.data.pending
-                                                });
-                        
-                                                return getTeamAdminData(JSON.stringify({}));
-                                            })
-                                            .then((response) => {
-                        
-                                                this.setState({
-                                                    adminData: { ...this.state.adminData, ...response.data.data },
+                                        .then(response => {
+                                            console.log('getPlayersData ----------------------\n',response);
+                                            for (var i = 0; i < response.data.data.length; i++) {
+                                                this.setState(prevState => ({
+                                                    users: [...prevState.users, response.data.data[i]],
                                                     isLoaded: true
-                                                });
-                        
-                                                if (getStatusOfDarkmode().status === true) {
-                                                    this.refs.rosterContainer.style.background = '#171b25';
-                                                    for (let i = 1; i <= 7; i++) {
-                                                        this.refs['card' + i].style.background = '#232838';
-                                                        if ('card' + i === 'card5' || 'card' + i === 'card7') {
-                                                            this.refs['card' + i].style.border = '1px solid #e8e8e8';
-                                                        }
+                                                }));
+                                            }
+                                            if(response.data.data.length > 4){
+                                                this.setState({isMobile: false});
+                                            } 
+                                            for (var i = 0; i < response.data.requested_players.length; i++) {
+                                                this.setState(prevState => ({
+                                                    requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
+                                                    isLoaded: true
+                                                }));
+                                            } 
+                                           
+                                        })
+                                        getSimulationStatusCount({
+                                            brand: user_level === 300 ? '' : this.props.location.state.team.brand,
+                                            user_cognito_id: this.props.location.state.team.user_cognito_id,
+                                            organization: this.props.location.state.team.organization,
+                                            team: this.props.location.state.team.team_name
+                                        }).then(response => {
+                    
+                                            this.setState({
+                                                simulations_completed: response.data.data.completed,
+                                                simulation_failed: response.data.data.failed,
+                                                simulations_pending: response.data.data.pending
+                                            });
+                                        })
+                                        getTeamAdminData(JSON.stringify({}))
+                                        .then((response) => {
+                    
+                                            this.setState({
+                                                adminData: { ...this.state.adminData, ...response.data.data },
+                                            });
+                    
+                                            if (getStatusOfDarkmode().status === true) {
+                                                this.refs.rosterContainer.style.background = '#171b25';
+                                                for (let i = 1; i <= 7; i++) {
+                                                    this.refs['card' + i].style.background = '#232838';
+                                                    if ('card' + i === 'card5' || 'card' + i === 'card7') {
+                                                        this.refs['card' + i].style.border = '1px solid #e8e8e8';
                                                     }
                                                 }
-                                            })
-                                            .catch((err) => {
-                                                console.log(err);
-                                            });
+                                            }
+                                        })
+                                        .catch((err) => {
+                                            console.log(err);
+                                        });
                                     } else {
 
                                     }
-                                    return fetchTeamStaffMembers({
-                                        sensor: this.props.location.state.team.brand,
-                                        organization: this.props.location.state.team.organization,
-                                        team_name: this.props.location.state.team.team_name
+                                   
+                                }).catch((error) => {
+                                    this.setState({
+                                        userDetails: {},
+                                        isCheckingAuth: false
                                     });
+                                });
+                                fetchTeamStaffMembers({
+                                    sensor: this.props.location.state.team.brand,
+                                    organization: this.props.location.state.team.organization,
+                                    team_name: this.props.location.state.team.team_name
                                 }).then(staff=>{
-                                    console.log('staff',staff);
                                     var response = staff.data;
                                     if(response.message == 'success'){
                                         this.setState(prevState => ({
@@ -503,7 +506,6 @@ class CommanderTeamView extends React.Component {
     }
 
     militaryVersionOrNormal = () => {
-        console.log('users',this.state.users)
         let me = this;
         return (
             <div
@@ -891,7 +893,6 @@ class CommanderTeamView extends React.Component {
                                                     var diff =(currentStamp - simulationTimestamp) / 1000;
                                                     diff /= 60;
                                                     let minutes =  Math.abs(Math.round(diff));
-                                                    console.log('minutes', minutes);
                                                     minutes = minutes - computed_time;
                                                     if (minutes <= 10) {
                                                         cls = 'completedSimulation player-data-table-row';
