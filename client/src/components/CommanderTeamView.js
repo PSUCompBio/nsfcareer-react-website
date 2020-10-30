@@ -931,9 +931,9 @@ class CommanderTeamView extends React.Component {
                                                         }
                                                         <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
-                                                             {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                             {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
-                                                             {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : player.simulation_data[0]['time'] ? this.tConvert(time) : 'Unkown Time' } </td>
+                                                             {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : player.simulation_data[0]['time'] ? this.tConvert(time) : 'Unknown Time' } </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
                                                                                 <td>

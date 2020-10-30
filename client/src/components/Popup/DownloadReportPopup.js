@@ -74,7 +74,7 @@ class DownloadReportPopup extends React.Component {
               <tbody>
                 <tr>
                   <td><input name="mps_95" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>MPS95</td>
+                  <td>MPS-15</td>
                 </tr>
                 <tr>
                   <td><input name="csdm_15" type="checkbox" onChange={this.handleChange} /></td>

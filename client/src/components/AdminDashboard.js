@@ -1311,9 +1311,9 @@ class AdminDashboard extends React.Component {
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                                     <td>{player.simulation_data.length}</td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
@@ -1423,9 +1423,9 @@ class AdminDashboard extends React.Component {
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                                     <td>{player.simulation_data.length}</td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
