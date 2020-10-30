@@ -798,13 +798,13 @@ class Profile extends React.Component {
                     style={{
                         marginTop : "10%"
                     }}
-                    className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2">
+                    className="container pl-5 pr-5 profile-mt animated1 zoomIn1 mb-5 pb-2">
                     <div
                         style={{
                             alignContent: "center",
                             textAlign : "center"
                         }}
-                        className={`section-title animated zoomIn profile-section-title`}>
+                        className={`section-title animated1 zoomIn1 profile-section-title`}>
                         <h1 ref="h1" className="font-weight-bold">
                             Profile Page
                         </h1>
