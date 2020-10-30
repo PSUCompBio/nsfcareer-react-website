@@ -6892,7 +6892,7 @@ function removeYesterdayFolder(){
     var d = new Date();
     d.setDate(d.getDate() - 1);
     let yesterday = d.getDate()+'-'+d.getMonth()+'-'+d.getFullYear();
-    var dir = './client/public/merge_videos/'+yesterday;
+    var dir = 'public/uploads/'+yesterday;
     console.log('yesterday -------\n',yesterday)
     if (fs.existsSync(dir)){
         fs.unlink(dir,function(err){
@@ -6908,19 +6908,18 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
     /*
         Creating directory
     */
-    // var d = new Date();
-    // let datetoday = d.getDate()+'-'+d.getMonth()+'-'+d.getFullYear();
-    // var dir = '/public/uploads/'+datetoday;
+    var d = new Date();
+    let datetoday = d.getDate()+'-'+d.getMonth()+'-'+d.getFullYear();
+    var dir = 'public/uploads/'+datetoday;
 
-    // if (!fs.existsSync(dir)){
-    //     fs.mkdirSync(dir);
-    // }
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
 
     //** 
     //files name ..........
-    var file_path = 'uploads/'+Date.now() + 'output.mp4';
-    var outputFilePath = '/public/'+file_path;
-    var listFilePath = 'public/uploads/' + Date.now() + 'list.txt'
+    var file_path = 'public/uploads/'+datetoday+'/'+Date.now() + 'output.mp4';
+    var outputFilePath = file_path;
     let list = []
 
         //uploading files.             
@@ -6978,7 +6977,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
                 });
                 res.send({
                     message:'success',
-                    file_path: file_path,
+                    file_path: 'http://localhost:3001/'+file_path,
                 });
                 
             }

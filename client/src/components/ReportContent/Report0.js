@@ -17,399 +17,9 @@ import ClinicalReportHeader from './Clinical-Report-Header.png';
 import taxture1  from './taxture1.jpg'
 // import logo 
 // Create styles
-const styles = StyleSheet.create({
-    page: {
-        flexDirection: 'row',
-        backgroundColor: 'white'
-    },
-    section: {
-        margin: 10,
-        padding: 10,
-        flexGrow: 1
-    },
-    view: {
-        width: '100%',
-        height: '100%',
-        padding: 0,
-        backgroundColor: 'white',
-    },
-    col12: {
-        width: '100%',
-        paddingLeft : '5%',
-        paddingRight : '5%',
-    },
-    Image: {
-        objectFit: 'cover'
-    },
-    tableRow: {
-        flex: 1,
-        marginLeft : '5%',
-        flexDirection : 'row',
-        marginBottom : '6px'
-    },
-    tableRowCenter: {
-        flex: 1,
-        marginLeft : '5%',
-        flexDirection : 'row',
-        marginBottom : '6px'
-    },
-    rowHeadBorder:{
-        width:'100%',
-        backgroundColor:'#4472C4',
-        marginTop: '10px',
-        height: '3px',
-        textAlign: 'center'
-    },
-    tableFootBorder:{
-        width:'100%',
-        backgroundColor:'grey',
-        marginTop: '10px',
-        height: '2px',
-        textAlign: 'center'
-    },
-    rowHead2:{
-        width:'100%',
-        backgroundColor:'#DAE3F3',
-        borderTop:'1px solid',
-        marginTop: '0px',
-        padding: '10px',
-        textAlign: 'center'
-    },
-    rowHead2subHead:{
-        flex:1,
-        width:'100%',
-        borderTop:'1px solid',
-        marginTop: '0px',
-        padding: '10px',
-        flexDirection:'row'
-    },
-    rowHead2Text:{
-        marginTop: '5px',
-        color:'#686868',
-        fontSize: 16,
-        display: 'inline-block'
-    },
-    rowHead2_2Text:{
-        marginTop: '5px',
-        color:'#686868',
-        fontSize: 16,
-        flex: 1,
-        display: 'inline-block',
-        flexDirection : 'column',
+console.log('innerWidth ------------------------\n',window.innerWidth )
+let innerWidth = window.innerWidth;
 
-    },
-    rowHead2TextSub: {
-        marginTop: '22px',
-        marginRight: '75px',
-        position: 'absolute',
-         color:'#686868',
-        fontSize: 12,
-        textAlign: 'right',
-        display: 'inline-block'
-    },
-    rowHead2Text2Sub:{
-        marginTop: '40px',
-        marginRight: '65px',
-        position: 'absolute',
-         color:'#686868',
-        fontSize: 9,
-        textAlign: 'right',
-        display: 'inline-block' 
-    },
-    rowHead2Text2:{
-        marginTop: '7px',
-        color:'#686868',
-        fontSize: 9
-    },
-    rowHead2Text2subHead:{
-        marginTop: '7px',
-        color:'#686868',
-        fontSize: 15,
-        display : 'inline-block',
-        width : '50%',
-        float : 'left',
-        flexDirection : 'column',
-        textAlign : 'right',
-    },
-    rowHead2Text2subHead_center:{
-        marginTop: '7px',
-        color:'#686868',
-        fontSize: 15,
-        display : 'inline-block',
-        width : '100%',
-        textAlign: 'center',
-        float : 'left',
-        flexDirection : 'column',
-    },
-    rowHead2Text2subHead_2:{
-        marginTop: '7px',
-        color:'#686868',
-        fontSize: 15,
-        display : 'inline-block',
-        width : '40%',
-        float : 'left',
-        flexDirection : 'column',
-        textAlign : 'left',
-    },
-    tableHead:{
-        flex: 1,
-        flexDirection : 'row',
-        marginTop : '0',
-        textAlign:'center',
-        position:'absolute',
-    },
-    logo: {
-        textAlign:'center',
-        width: '100%',
-    },
-    trangle: {
-        textAlign:'center',
-        width: '25%',
-        marginLeft: '30%'
-    },
-    tableRowHeadtitle: {
-        flex: 1,
-        width : '100%',
-        flexDirection : 'row',
-        marginTop : '75px',
-        textAlign: 'center',
-    },
-    title:{
-        fontSize:25,
-        display : 'inline-block',
-        color: 'white'
-    },
-    tableRowHead: {
-        flex: 1,
-        marginLeft : '5%',
-        flexDirection : 'row',
-        marginTop : '6px'
-    },
-    tableColLeft: {
-        borderStyle: "solid",
-        borderWidth: 0,
-        borderLeftWidth: 0,
-        borderTopWidth: 0,
-        display : 'inline-block',
-        width : '60%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 10,
-        textAlign : 'left'
-    },
-    tableColRight: {
-        borderStyle: "solid",
-        borderWidth: 0,
-        borderLeftWidth: 0,
-        borderTopWidth: 0,
-        display : 'inline-block',
-        width : 'auto',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 10,
-        marginRight : '3%',
-        textAlign : 'left'
-    },
-    tableColRightHead: {
-        borderStyle: "solid",
-        borderWidth: 0,
-        borderLeftWidth: 0,
-        borderTopWidth: 0,
-        display : 'inline-block',
-        float : 'right',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 10,
-        marginLeft : 'auto'
-    },
-    column1:{
-        width:'25%',
-        marginTop: '25px',
-        fontSize: 10,
-        color : 'grey',
-        borderBottom: 1,
-        borderBottomColor: 'grey',
-        display:'inline-block',
-        float:'left'
-
-    },
-    column2:{
-        width:'10%',
-        marginTop: '25px',
-        fontSize: 10,
-        color : 'grey',
-        borderBottom: 1,
-        borderBottomColor: 'grey',
-        display:'inline-block',
-        float:'left'
-    },
-     tableColRight4: {
-        display : 'inline-block',
-        width : '75%',
-        float : 'left',
-        flexDirection : 'column',
-        color : '#686868',
-        fontSize : 16,
-        textAlign : 'right',
-        marginTop: '5px'
-    },
-    tableColLeft4: {
-        display : 'inline-block',
-        width : '20%',
-        float : 'left',
-        flexDirection : 'column',
-        color : '#686868',
-        fontSize : 10,
-        textAlign : 'left',
-        marginTop: '13px'
-    },
-    tableColLeft4_2: {
-        display : 'inline-block',
-        width : '3%',
-        float : 'left',
-        flexDirection : 'column',
-        color : '#686868',
-        fontSize : 10,
-        textAlign : 'left',
-        marginTop: '13px'
-    },
-     tableColLeft2: {
-        borderBottom: 1,
-        borderBottomColor: 'grey',
-        display : 'inline-block',
-        width : '20%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 12,
-        textAlign : 'left',
-        marginRight: '15px',
-        marginTop: '25px'
-    },
-    tableTd1: {
-        display : 'inline-block',
-        width : '20%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 12,
-        textAlign : 'left',
-        marginRight: '15px',
-        marginTop: '6px'
-    },
-    tableColRight2: {
-        borderBottom: 1,
-        borderBottomColor: 'grey',
-        display : 'inline-block',
-        width : '10%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 12,
-        marginTop: '25px',
-        textAlign : 'center'
-    },
-    tableColRight2_2: {
-        display : 'inline-block',
-        width : '10%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 12,
-        marginTop: '4px',
-        textAlign : 'center'
-    },
-    tableColRight3: {
-        borderBottom: 1,
-        borderBottomColor: 'grey',
-        display : 'inline-block',
-        width : '19%',
-        float : 'right',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 12,
-        marginLeft: '10px',
-        marginTop: '25px',
-        textAlign : 'center'
-    },
-    footer_ST_1:{
-        display : 'inline-block',
-        width : '30%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'black',
-        fontSize : 12,
-        marginTop: '8px',
-        marginLeft: '38%',
-        textAlign : 'center'
-    },
-    hLine : {
-        width : '1.5px',
-        float : 'left',
-        flexDirection : 'column',
-        backgroundColor: 'grey',
-        height: '11px',
-        marginTop: '25px'
-    },
-    taxture1_div:{
-        width: '79%',
-        marginLeft: '22%',
-        position: 'absolute',
-        marginTop: '63%'
-    },
-    taxture1: {
-        width: '100%',
-        textAlign:'center'
-    },
-    p1_footer_arrow_right: {
-        display : 'inline-block',
-        width : '8%',
-        float : 'left',
-        flexDirection : 'column',
-        marginTop: '4px',
-        textAlign : 'right',
-        marginLeft:'42%'
-    },
-    arrow_right: {
-        width: '80%',
-    },
-    P1_footer_t:{
-        display : 'inline-block',
-        width : '14%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'black',
-        fontSize : 12,
-        marginTop: '2px',
-        marginLeft: '5px',
-        textAlign : 'center'
-    },
-    P1_footer_t2:{
-        display : 'inline-block',
-        width : '4%',
-        float : 'left',
-        flexDirection : 'column',
-        color : 'grey',
-        fontSize : 8,
-        marginTop: '1px',
-        marginLeft: '0px',
-        textAlign : 'left'
-    },
-    p1_footer_arrow_left: {
-        display : 'inline-block',
-        width : '8%',
-        float : 'left',
-        flexDirection : 'column',
-        marginTop: '4px',
-        textAlign : 'left',
-        marginLeft:'0%'
-    },
-    arrow_left: {
-        width: '80%',
-    },
-});
 
 class Report extends React.Component {
     constructor(props) {
@@ -448,29 +58,468 @@ class Report extends React.Component {
         {
             dd='0'+dd;
         }
-
         if(mm<10)
         {
             mm='0'+mm;
         }
         return today = mm+'/'+dd+'/'+yyyy;
-
     }
-
+    getTrangle =(strain_Val)=>{
+        if(strain_Val <= 15){
+            return trangle_green;
+        }else if(strain_Val > 15 && strain_Val <= 25){
+            return trangle_orange;
+        }else if(strain_Val > 25){
+            return trangle_red;
+        }
+    }
 
     render() {
         var csdm;
         var mps;
+        let ScaleWidth = 295;
+        let mpstrangleScale = "0px";
+        let csdmtrangleScale = "0px";
+
+        let mpsTrangle = trangle_green;
+        let csdmTrangle = trangle_green;
         if(this.state.jsonData){
             if(this.state.jsonData['CSDM-15']){
                 var num = this.state.jsonData['CSDM-15'].value;
                 csdm = num.toFixed(2) ;
+                let csdm_val = csdm;
+                var left = csdm_val * ScaleWidth / 38;
+                //**Round up the value....
+                csdmtrangleScale = ''+left.toFixed(0)+'px';
+                csdmTrangle = this.getTrangle(csdm);
             }
-            if(this.state.jsonData['MPS-95']){
-                var num = this.state.jsonData['MPS-95'].value;
+            if(this.state.jsonData['CSDM-15']){
+                var num = this.state.jsonData['CSDM-15'].value;
                 mps = num.toFixed(2) ;
+                let mps_val = mps;
+                var left = mps_val * ScaleWidth / 38;
+                //**Round up the value....
+                mpstrangleScale = ''+left.toFixed(0)+'px';
+                mpsTrangle = this.getTrangle(mps);
             }
         }
+        const styles = StyleSheet.create({
+            page: {
+                flexDirection: 'row',
+                backgroundColor: 'white'
+            },
+            section: {
+                margin: 10,
+                padding: 10,
+                flexGrow: 1
+            },
+            view: {
+                width: '100%',
+                height: '100%',
+                padding: 0,
+                backgroundColor: 'white',
+            },
+            col12: {
+                width: '100%',
+                paddingLeft : '5%',
+                paddingRight : '5%',
+            },
+            Image: {
+                objectFit: 'cover'
+            },
+            tableRow: {
+                flex: 1,
+                marginLeft : '5%',
+                flexDirection : 'row',
+                marginBottom : '6px'
+            },
+            tableRowCenter: {
+                flex: 1,
+                marginLeft : '5%',
+                flexDirection : 'row',
+                marginBottom : '6px'
+            },
+            rowHeadBorder:{
+                width:'100%',
+                backgroundColor:'#4472C4',
+                marginTop: '10px',
+                height: '3px',
+                textAlign: 'center'
+            },
+            tableFootBorder:{
+                width:'100%',
+                backgroundColor:'grey',
+                marginTop: '10px',
+                height: '2px',
+                textAlign: 'center'
+            },
+            rowHead2:{
+                width:'100%',
+                backgroundColor:'#DAE3F3',
+                borderTop:'1px solid',
+                marginTop: '0px',
+                padding: '10px',
+                textAlign: 'center'
+            },
+            rowHead2subHead:{
+                flex:1,
+                width:'100%',
+                borderTop:'1px solid',
+                marginTop: '0px',
+                padding: '10px',
+                flexDirection:'row'
+            },
+            rowHead2Text:{
+                marginTop: '5px',
+                color:'#686868',
+                fontSize: 16,
+                display: 'inline-block'
+            },
+            rowHead2_2Text:{
+                marginTop: '5px',
+                color:'#686868',
+                fontSize: 16,
+                flex: 1,
+                display: 'inline-block',
+                flexDirection : 'column',
+
+            },
+            rowHead2TextSub: {
+                marginTop: '22px',
+                marginRight: '75px',
+                position: 'absolute',
+                 color:'#686868',
+                fontSize: 12,
+                textAlign: 'right',
+                display: 'inline-block'
+            },
+            rowHead2Text2Sub:{
+                marginTop: '40px',
+                marginRight: '65px',
+                position: 'absolute',
+                 color:'#686868',
+                fontSize: 9,
+                textAlign: 'right',
+                display: 'inline-block' 
+            },
+            rowHead2Text2:{
+                marginTop: '7px',
+                color:'#686868',
+                fontSize: 9
+            },
+            rowHead2Text2subHead:{
+                marginTop: '7px',
+                color:'#686868',
+                fontSize: 15,
+                display : 'inline-block',
+                width : '50%',
+                float : 'left',
+                flexDirection : 'column',
+                textAlign : 'right',
+            },
+            rowHead2Text2subHead_center:{
+                marginTop: '7px',
+                color:'#686868',
+                fontSize: 15,
+                display : 'inline-block',
+                width : '100%',
+                textAlign: 'center',
+                float : 'left',
+                flexDirection : 'column',
+            },
+            rowHead2Text2subHead_2:{
+                marginTop: '7px',
+                color:'#686868',
+                fontSize: 15,
+                display : 'inline-block',
+                width : '40%',
+                float : 'left',
+                flexDirection : 'column',
+                textAlign : 'left',
+            },
+            tableHead:{
+                flex: 1,
+                flexDirection : 'row',
+                marginTop : '0',
+                textAlign:'center',
+                position:'absolute',
+            },
+            logo: {
+                textAlign:'center',
+                width: '100%',
+            },
+            trangle: {
+                textAlign:'center',
+                width: '25%',
+                marginLeft: '30%'
+            },
+            trangle_scale : {
+                width: '100%',
+            },
+            point_scale: {
+                width: '14px',
+                marginLeft: mpstrangleScale
+            },
+             tableColRight_scale:{
+                display : 'inline-block',
+                width : '309px',
+                marginLeft: '7px',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 12,
+                marginTop: '5px',
+            },
+            tableRowHeadtitle: {
+                flex: 1,
+                width : '100%',
+                flexDirection : 'row',
+                marginTop : '75px',
+                textAlign: 'center',
+            },
+            title:{
+                fontSize:25,
+                display : 'inline-block',
+                color: 'white'
+            },
+            tableRowHead: {
+                flex: 1,
+                marginLeft : '5%',
+                flexDirection : 'row',
+                marginTop : '6px'
+            },
+            tableColLeft: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '60%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 10,
+                textAlign : 'left'
+            },
+            tableColRight: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : 'auto',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 10,
+                marginRight : '3%',
+                textAlign : 'left'
+            },
+            tableColRightHead: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                float : 'right',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 10,
+                marginLeft : 'auto'
+            },
+            column1:{
+                width:'25%',
+                marginTop: '25px',
+                fontSize: 10,
+                color : 'grey',
+                borderBottom: 1,
+                borderBottomColor: 'grey',
+                display:'inline-block',
+                float:'left'
+
+            },
+            column2:{
+                width:'10%',
+                marginTop: '25px',
+                fontSize: 10,
+                color : 'grey',
+                borderBottom: 1,
+                borderBottomColor: 'grey',
+                display:'inline-block',
+                float:'left'
+            },
+             tableColRight4: {
+                display : 'inline-block',
+                width : '75%',
+                float : 'left',
+                flexDirection : 'column',
+                color : '#686868',
+                fontSize : 16,
+                textAlign : 'right',
+                marginTop: '5px'
+            },
+            tableColLeft4: {
+                display : 'inline-block',
+                width : '20%',
+                float : 'left',
+                flexDirection : 'column',
+                color : '#686868',
+                fontSize : 10,
+                textAlign : 'left',
+                marginTop: '13px'
+            },
+            tableColLeft4_2: {
+                display : 'inline-block',
+                width : '3%',
+                float : 'left',
+                flexDirection : 'column',
+                color : '#686868',
+                fontSize : 10,
+                textAlign : 'left',
+                marginTop: '13px'
+            },
+             tableColLeft2: {
+                borderBottom: 1,
+                borderBottomColor: 'grey',
+                display : 'inline-block',
+                width : '20%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                textAlign : 'left',
+                marginRight: '15px',
+                marginTop: '25px'
+            },
+            tableTd1: {
+                display : 'inline-block',
+                width : '20%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                textAlign : 'left',
+                marginRight: '0px',
+                marginTop: '6px'
+            },
+            tableColRight2: {
+                borderBottom: 1,
+                borderBottomColor: 'grey',
+                display : 'inline-block',
+                width : '10%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                marginTop: '25px',
+                textAlign : 'center'
+            },
+            tableColRight2_2: {
+                display : 'inline-block',
+                width : '10%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                marginTop: '4px',
+                marginLeft:'15px',
+                textAlign : 'center'
+            },
+           
+            tableColRight3: {
+                borderBottom: 1,
+                borderBottomColor: 'grey',
+                display : 'inline-block',
+                width : '19%',
+                float : 'right',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                marginLeft: '10px',
+                marginTop: '25px',
+                textAlign : 'center'
+            },
+            footer_ST_1:{
+                display : 'inline-block',
+                width : '30%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'black',
+                fontSize : 12,
+                marginTop: '8px',
+                marginLeft: '38%',
+                textAlign : 'center'
+            },
+            hLine : {
+                width : '2px',
+                float : 'left',
+                flexDirection : 'column',
+                backgroundColor: 'grey',
+                height: '11px',
+                marginTop: '25px'
+            },
+            taxture1_div:{
+                width: '79%',
+                marginLeft: '22%',
+                position: 'absolute',
+                marginTop: '63%'
+            },
+            taxture1: {
+                width: '100%',
+                textAlign:'center'
+            },
+            p1_footer_arrow_right: {
+                display : 'inline-block',
+                width : '8%',
+                float : 'left',
+                flexDirection : 'column',
+                marginTop: '4px',
+                textAlign : 'right',
+                marginLeft:'42%'
+            },
+            arrow_right: {
+                width: '80%',
+            },
+            P1_footer_t:{
+                display : 'inline-block',
+                width : '14%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'black',
+                fontSize : 12,
+                marginTop: '2px',
+                marginLeft: '5px',
+                textAlign : 'center'
+            },
+            P1_footer_t2:{
+                display : 'inline-block',
+                width : '4%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 8,
+                marginTop: '1px',
+                marginLeft: '0px',
+                textAlign : 'left'
+            },
+            p1_footer_arrow_left: {
+                display : 'inline-block',
+                width : '8%',
+                float : 'left',
+                flexDirection : 'column',
+                marginTop: '4px',
+                textAlign : 'left',
+                marginLeft:'0%'
+            },
+            arrow_left: {
+                width: '80%',
+            },
+        });
+        const styleCsdm = StyleSheet.create({
+            point_scale: {
+                width: '14px',
+                marginLeft: csdmtrangleScale
+            }
+        })
         return (
             <Document>
                 <Page object-fit="fill" size="A4">
@@ -560,29 +609,37 @@ class Report extends React.Component {
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Frontal Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Occipital Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            <Image  style={styles.trangle} src={trangle} alt="trangle"/>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
@@ -603,9 +660,9 @@ class Report extends React.Component {
                                     <View style={styles.col12}>
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
-                                    <View style={styles.taxture1_div}>
+                                    {/*<View style={styles.taxture1_div}>
                                         <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
-                                    </View>
+                                    </View>*/}
                                 {/*=============== page 1 footer sections start ===============*/}
                                     <View style={styles.tableRow}>
                                        
@@ -665,96 +722,40 @@ class Report extends React.Component {
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Frontal Lobe</Text>
                                         {/*=== 0-7.5 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                        </View>
-                                         {/*=== 7.5 - 15 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 15 - 25 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 25 - 30 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 30 - 50 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                        {/*=== 0-7.5 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                        </View>
-                                         {/*=== 7.5 - 15 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 15 - 25 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 25 - 30 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 30 - 50 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                         {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Occipital Lobe</Text>
-                                        {/*=== 0-7.5 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                        </View>
-                                         {/*=== 7.5 - 15 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 15 - 25 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 25 - 30 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 30 - 50 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                         {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                         {/*=== 0-7.5 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                        </View>
-                                         {/*=== 7.5 - 15 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 15 - 25 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 25 - 30 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                        </View>
-                                        {/*=== 30 - 50 ===*/}
-                                        <View style={styles.tableColRight2_2}>
-                                            {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                        {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
@@ -821,7 +822,7 @@ class Report extends React.Component {
                                             <View style={styles.rowHead2}>
                                                  <View style={styles.tableRowCenter}>
                                                     <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
-                                                    <Text style={styles.tableColLeft4}>95</Text>
+                                                    {/*<Text style={styles.tableColLeft4}>95</Text>*/}
                                                 </View>
                                                 <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. this reports the volume of tissue above 15% strain.)</Text>
                                             </View>
@@ -852,97 +853,41 @@ class Report extends React.Component {
                                         </View>
                                         <View style={styles.tableRow}>
                                             <Text style={styles.tableTd1}>Frontal Lobe</Text>
-                                            {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                            </View>
-                                             {/*=== 7.5 - 15 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 15 - 25 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 25 - 30 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 30 - 50 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                             {/*=== 0-7.5 ===*/}
+                                            <View style={styles.tableColRight_scale}>
+                                                <View style={styles.point_scale}>
+                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                </View>
                                             </View>
                                             <Text style={styles.tableColRight2_2}></Text>
                                         </View>
                                         <View style={styles.tableRow}>
                                             <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                            {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                            </View>
-                                             {/*=== 7.5 - 15 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 15 - 25 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 25 - 30 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 30 - 50 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                             {/*=== 0-7.5 ===*/}
+                                            <View style={styles.tableColRight_scale}>
+                                                <View style={styles.point_scale}>
+                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                </View>
                                             </View>
                                             <Text style={styles.tableColRight2_2}></Text>
                                         </View>
                                         <View style={styles.tableRow}>
                                             <Text style={styles.tableTd1}>Occipital Lobe</Text>
                                             {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                            </View>
-                                             {/*=== 7.5 - 15 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 15 - 25 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 25 - 30 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 30 - 50 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            <View style={styles.tableColRight_scale}>
+                                                <View style={styles.point_scale}>
+                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                </View>
                                             </View>
                                             <Text style={styles.tableColRight2_2}></Text>
                                         </View>
                                         <View style={styles.tableRow}>
                                             <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                             {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps <= 7.5 && <Image  style={styles.trangle} src={trangle_green} alt="trangle"/>}
-                                            </View>
-                                             {/*=== 7.5 - 15 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 7.5 &&  mps <= 15   ? <Image  style={styles.trangle} src={trangle_green} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 15 - 25 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 15 && mps <= 25 ? <Image  style={styles.trangle} src={trangle_orange} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 25 - 30 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 25 && mps <= 30 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
-                                            </View>
-                                            {/*=== 30 - 50 ===*/}
-                                            <View style={styles.tableColRight2_2}>
-                                                {mps > 30 && mps <= 50 ? <Image  style={styles.trangle} src={trangle_red} alt="trangle"/> : null}
+                                            {/*=== 0-7.5 ===*/}
+                                            <View style={styles.tableColRight_scale}>
+                                                <View style={styles.point_scale}>
+                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                </View>
                                             </View>
                                             <Text style={styles.tableColRight2_2}></Text>
                                         </View>

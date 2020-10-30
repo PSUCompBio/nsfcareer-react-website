@@ -553,10 +553,12 @@ class Details extends React.Component {
     this.setState({exporting: true})
     mergeVideos({movie_link: this.state.movie_link, impact_video_url: this.state.impact_video_url})
     .then(res=>{
+      if(res.data.message === 'success'){
         var a = document.createElement('a');
         a.href = '/'+res.data.file_path;
         a.download = 'kinematics_'+this.state.player_id;
         a.click();
+      }
         this.setState({exporting: false});
     })
   }
