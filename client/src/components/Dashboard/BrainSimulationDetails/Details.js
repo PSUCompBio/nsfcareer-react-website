@@ -555,7 +555,7 @@ class Details extends React.Component {
     .then(res=>{
       if(res.data.message === 'success'){
         var a = document.createElement('a');
-        a.href = '/'+res.data.file_path;
+        a.href = res.data.file_path;
         a.download = 'kinematics_'+this.state.player_id;
         a.click();
       }

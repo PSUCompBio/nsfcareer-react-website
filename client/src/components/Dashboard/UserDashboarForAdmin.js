@@ -325,7 +325,7 @@ class UserDashboarForAdmin extends React.Component {
               return <Card >
                 <Card.Header className={cls}>
                   <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
-                    <span className="title-left" >ID: #{ impact_id }</span>
+                    <span className="title-left" >Impact ID: #{ impact_id }</span>
                     <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(impact_time) : item.sensor_data['date'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(time)  : 'Unknown Date and Time'}`}</span>
                     <span className="title-right" id={item.sensor_data && 'col_icon'+item.sensor_data.player_id.split('$')[1]}>></span>
                   </Accordion>

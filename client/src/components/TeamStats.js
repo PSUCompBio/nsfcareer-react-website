@@ -99,7 +99,7 @@ class TeamStats extends React.Component {
        return (
             <React.Fragment>
                  
-                <div className="container dashboard UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
+                <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
                     <div className="container">
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>Team Stats</h1>
                         <div className="backbutton11" style={{position : 'relative'}}>
@@ -120,30 +120,34 @@ class TeamStats extends React.Component {
                             <select style={{marginLeft: '20px'}} onChange={this.handleChange} name={this.state.insult}>
                                 <option value="principal-max-strain">Max Principal Strain</option>
                                 <option value="principal-min-strain">Min Principal Strain</option>
+                                <option value="resultant-linear-acceleration">Resultant Linear Acceleration</option>
+                                <option value="resultant-Angular-acceleration">Resultant Angular Acceleration</option>
+
                                 <option value="csdm-max">CSDM 15</option>
                                 <option value="axonal-strain-max">Axonal Strain 15</option>
                                 <option value="masXsr-15-max">MASxSR 15</option>
                             </select>
                             <select style={{marginLeft: '20px'}} name="filter" onChange={this.handleChange}>
-                                <option value='less'>Less or Equal to</option>
                                 <option value='greater'>Greater or Equal to</option>
+                                <option value='less'>Less or Equal to</option>
                             </select>
                             <select style={{marginLeft: '20px'}} name="gs" onChange={this.handleChange}>
-                                <option value='10'>10 Gs</option>
-                                <option value='20'>20 Gs</option>
-                                <option value='30'>30 Gs</option>
-                                <option value='40'>40 Gs</option>
-                                <option value='50'>50 Gs</option>
-                                <option value='60'>60 Gs</option>
-                                <option value='70'>70 Gs</option>
-                                <option value='80'>80 Gs</option>
-                                <option value='90'>90 Gs</option>
-                                <option value='100'>100 Gs</option>
-                                <option value='110'>110 Gs</option>
-                                <option value='120'>120 Gs</option>
-                                <option value='130'>130 Gs</option>
-                                <option value='140'>140 Gs</option>
-                                <option value='140'>150 Gs</option>
+                                <option value='5'>5%</option>
+                                <option value='10'>10%</option>
+                                <option value='20'>20%</option>
+                                <option value='30'>30%</option>
+                                <option value='40'>40%</option>
+                                <option value='50'>50%</option>
+                                <option value='60'>60%</option>
+                                <option value='70'>70%</option>
+                                <option value='80'>80%</option>
+                                <option value='90'>90%</option>
+                                <option value='100'>100%</option>
+                                <option value='110'>110%</option>
+                                <option value='120'>120%</option>
+                                <option value='130'>130%</option>
+                                <option value='140'>140%</option>
+                                <option value='140'>150%</option>
                             </select>
                         </div>
                         <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>

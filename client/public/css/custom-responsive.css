@@ -1,9 +1,28 @@
 
+}
+}
 @media (min-width: 1200px){
   .container_1200{
     max-width: 1210px!important;
   }
+  .teamstats_header{
+    margin-top: 8%!important;
+  }
 }
+@media (min-width: 1600px){
+  .teamstats_header{
+    margin-top: 6%!important;
+  }
+}
+@media (max-width: 1560px){
+  .teamstats_header{
+    margin-top: 7%!important;
+  }
+}
+@media (max-width: 1330px){
+  .teamstats_header{
+    margin-top: 8%!important;
+  
 
 @media screen and (max-width: 1024px) {
   /* Navigation text css  */
@@ -59,6 +78,9 @@
   }
   .player__video_2, .player__video{
     height: 224px!important;
+  }
+  .teamstats_header{
+    margin-top: 5rem!important;
   }
 }
 /* Responsive layout  */
@@ -350,7 +372,7 @@
     font-size: 16px;
   }
   .UserDashboarForAdmin-page-navigation {
-    margin-top: 4rem !important;
+    margin-top: 5rem !important;
   }
   /* Navigation text end  */
 

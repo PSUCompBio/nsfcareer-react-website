@@ -511,8 +511,11 @@ class LoginComponentHidden extends React.Component {
                       <div
                         className="alert alert-info api-response-alert"
                         role="alert"
+
                       >
-                        <strong >Failed! </strong> {this.state.loginError}.
+                      <>
+                        <strong >Failed! </strong><p dangerouslySetInnerHTML={{__html: this.state.loginError}} style={{'display': 'inline-flex'}}></p>.
+                      </>
                       </div>
                     ) : null}
                     </div>

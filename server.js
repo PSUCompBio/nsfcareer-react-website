@@ -4224,7 +4224,7 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
                 if(!userData.password){
                     res.send({
                         message: "failure",
-                        error: 'You are a user who had an existing account before the new sign in options for using Facebook and Google authentication was added.\n \n If you would like to use this feature, please contact the support team at support@nsfcareer.io'
+                        error: 'You are a user who had an existing account before the new sign in options for using Facebook and Google authentication were added.\n \n If you would like to use this feature, please contact the support team at <a href="mailto:support@nsfcareer.io" style={{"color":"white"}}>support@nsfcareer.io</a>'
                     });
                 }else{
                     if(type == "facebook"){
@@ -6890,12 +6890,12 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
 
 function removeYesterdayFolder(){
     var d = new Date();
-    d.setDate(d.getDate() - 1);
-    let yesterday = d.getDate()+'-'+d.getMonth()+'-'+d.getFullYear();
+    d.setMonth(d.getMonth() - 1);
+    let yesterday = d.getMonth()+'-'+d.getFullYear();
     var dir = 'public/uploads/'+yesterday;
     console.log('yesterday -------\n',yesterday)
     if (fs.existsSync(dir)){
-        fs.unlink(dir,function(err){
+        fs.unlinkSync(dir,function(err){
         if(err) return console.log(err);
             console.log('file deleted successfully');
         });   
@@ -6909,7 +6909,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
         Creating directory
     */
     var d = new Date();
-    let datetoday = d.getDate()+'-'+d.getMonth()+'-'+d.getFullYear();
+    let datetoday = d.getMonth()+'-'+d.getFullYear();
     var dir = 'public/uploads/'+datetoday;
 
     if (!fs.existsSync(dir)){
@@ -6918,8 +6918,8 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
     //** 
     //files name ..........
-    var file_path = 'public/uploads/'+datetoday+'/'+Date.now() + 'output.mp4';
-    var outputFilePath = file_path;
+    var file_path = '/uploads/'+datetoday+'/'+Date.now() + 'output.mp4';
+    var outputFilePath = 'public'+file_path;
     let list = []
 
         //uploading files.             
@@ -6977,7 +6977,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
                 });
                 res.send({
                     message:'success',
-                    file_path: 'http://localhost:3001/'+file_path,
+                    file_path: file_path,
                 });
                 
             }
@@ -7959,7 +7959,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                     outputFile = JSON.parse(output_file.Body.toString('utf-8'));
                                     if (outputFile.Insults) {
                                         outputFile.Insults.forEach(function (summary_data, index) {
-                                            console.log('max-linear-acc-g -------------------------\n',summary_data['max-linear-acc-g'])
+                                            console.log('max-linear-acc-g -------------------------\n',summary_data)
                                             if(filter == 'less'){
                                                 if(summary_data['max-linear-acc-g'] <= gs){
                                                     if (summary_data['principal-max-strain']) {
