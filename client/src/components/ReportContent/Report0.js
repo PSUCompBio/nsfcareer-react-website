@@ -149,7 +149,7 @@ class Report extends React.Component {
             tableFootBorder:{
                 width:'100%',
                 backgroundColor:'grey',
-                marginTop: '10px',
+                marginTop: '14px',
                 height: '2px',
                 textAlign: 'center'
             },
@@ -250,11 +250,12 @@ class Report extends React.Component {
             },
             trangle: {
                 textAlign:'center',
-                width: '25%',
-                marginLeft: '30%'
+                width: '22%',
+                marginLeft: '31%'
             },
             trangle_scale : {
                 width: '100%',
+                zIndex: 4
             },
             point_scale: {
                 width: '14px',
@@ -463,6 +464,18 @@ class Report extends React.Component {
                 position: 'absolute',
                 marginTop: '63%'
             },
+            taxture2_div:{
+                width: '79%',
+                marginLeft: '22%',
+                position: 'absolute',
+                marginTop: '384px'
+            },
+            taxture3_div:{
+                width: '79%',
+                marginLeft: '22%',
+                position: 'absolute',
+                marginTop: '172px'
+            },
             taxture1: {
                 width: '100%',
                 textAlign:'center'
@@ -645,24 +658,28 @@ class Report extends React.Component {
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            
+                                         <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.col12}>
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
-                                    {/*<View style={styles.taxture1_div}>
-                                        <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
-                                    </View>*/}
+                                    <View style={styles.taxture1_div}>
+                                        <Image  style={styles.trangle} src={taxture1} alt="region"/>
+                                    </View>
                                 {/*=============== page 1 footer sections start ===============*/}
                                     <View style={styles.tableRow}>
                                        
@@ -692,7 +709,7 @@ class Report extends React.Component {
                                                 <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                                 <Text style={styles.tableColLeft4}></Text>
                                             </View>
-                                            <Text  style={styles.rowHead2Text2}>(Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. this reports the volume of tissue above 15% strain.)</Text>
+                                            <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.</Text>
                                         </View>
                                     </View>
                                     <View style={styles.col12}>
@@ -761,24 +778,28 @@ class Report extends React.Component {
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
                                         <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
-                                        <View style={styles.tableColRight2_2}>
-                                            
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.col12}>
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
-                                    {/*<View style={styles.taxture1_div}>
-                                        {mps < 15 && <Image  style={styles.trangle} src={taxture1} alt="trangle"/>}
-                                    </View>*/}
+                                    <View style={styles.taxture2_div}>
+                                        <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
+                                    </View>
                                 {/*=============== page 1 footer sections start ===============*/}
                                     <View style={styles.tableRow}>
                                        
@@ -824,7 +845,7 @@ class Report extends React.Component {
                                                     <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                                     {/*<Text style={styles.tableColLeft4}>95</Text>*/}
                                                 </View>
-                                                <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. this reports the volume of tissue above 15% strain.)</Text>
+                                                <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.</Text>
                                             </View>
                                         </View>
                                         <View style={styles.col12}>
@@ -893,23 +914,27 @@ class Report extends React.Component {
                                         </View>
                                         <View style={styles.tableRow}>
                                             <Text style={styles.tableTd1}>Cerebellum</Text>
-                                            <View style={styles.tableColRight2_2}>
-                                                
+                                            <View style={styles.tableColRight_scale}>
+                                                <View style={styles.point_scale}>
+                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                </View>
                                             </View>
                                             <Text style={styles.tableColRight2_2}></Text>
                                         </View>
                                         <View style={styles.tableRow}>
                                             <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
-                                            <View style={styles.tableColRight2_2}>
-                                                
+                                            <View style={styles.tableColRight_scale}>
+                                                <View style={styles.point_scale}>
+                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                </View>
                                             </View>
                                             <Text style={styles.tableColRight2_2}></Text>
                                         </View>
                                         <View style={styles.col12}>
                                             <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                         </View>
-                                        <View style={styles.taxture1_div}>
-                                            {/*mps < 15 && <Image  style={styles.trangle} src={taxture1} alt="trangle"/>*/}
+                                        <View style={styles.taxture3_div}>
+                                            <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
                                         </View>
                                     {/*=============== page 1 footer sections start ===============*/}
                                         <View style={styles.tableRow}>
@@ -963,47 +988,6 @@ class Report extends React.Component {
                                         </View>
                                     </View>
                                 </View>
-
-                                {/*<View style={{
-                                    width : '100%',
-                                    height: '18%',
-                                    padding : 0,
-                                    backgroundColor : 'white',
-                                    marginBottom : 0
-                                    }}>
-
-                                    <Image style={styles.image}  src={header2} alt="images" />
-                                    </View>
-
-
-                                    <View style= {{
-                                    marginBottom : '12px'
-                                    }}>
-                                    <View style={styles.tableRow}>
-
-                                    <Text style={styles.tableColLeft}> DOB: 14/82/1264 </Text>
-
-
-                                    <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
-
-                                    </View>
-                                    <View style={styles.tableRow}>
-
-                                    <Text style={styles.tableColLeft}> Patient ID : 1452462 </Text>
-
-                                    <Text style={styles.tableColRight}> Organization : York Technical High School </Text>
-
-                                    </View>
-                                    </View>
-                                    <View style={{
-                                    width : '100%',
-                                    padding : 0,
-                                    backgroundColor : 'white'
-                                    }}>
-                                    <Image style={styles.image}  src={footer2} alt="images" />
-                                    </View>
-                                    */}
-
                                 </Page>
                             </Document>
                         );

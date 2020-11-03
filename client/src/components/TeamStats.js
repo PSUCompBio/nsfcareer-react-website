@@ -28,8 +28,9 @@ class TeamStats extends React.Component {
             isLoading: true,
             brainRegions: {},
             insult: 'principal-max-strain',
-            filter: 'less',
-            gs: 10,
+            filter: 'greater',
+            gs: 0,
+            'principal-max-strain': 'principal-max-strain'
         };
         this.child = React.createRef();
     }
@@ -69,14 +70,14 @@ class TeamStats extends React.Component {
     handleChange = (e) => {
         console.log('wrk')
         this.setState({ [e.target.name] : e.target.value });
-        if(e.target.name == 'principal-max-strain'){
+        if(e.target.name == 'principal-max-strain' && e.target.value != 'resultant-linear-acceleration' && e.target.value != 'resultant-Angular-acceleration'){
             this.child.current.handleBrainStrain(e.target.value);
         }
     };
     handleRunReport =(e)=>{
         e.preventDefault();
         this.setState({isfetching: true})
-        getFilterdTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name,filter: this.state.filter, gs: this.state.gs})
+        getFilterdTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name,filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain']})
         .then(response=>{
             console.log('response',response.data);
             this.setState({
@@ -132,6 +133,7 @@ class TeamStats extends React.Component {
                                 <option value='less'>Less or Equal to</option>
                             </select>
                             <select style={{marginLeft: '20px'}} name="gs" onChange={this.handleChange}>
+                                <option value='0'>0%</option>
                                 <option value='5'>5%</option>
                                 <option value='10'>10%</option>
                                 <option value='20'>20%</option>

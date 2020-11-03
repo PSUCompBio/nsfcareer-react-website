@@ -144,6 +144,7 @@ class ExportPlayerReport extends React.Component {
 
 	componentDidMount() {
 		// Scrolling the screen to top
+		console.log('ExportPlayerReport')
 		window.scrollTo(0, 0);
 
 		this.init();
@@ -1094,9 +1095,9 @@ class ExportPlayerReport extends React.Component {
 					<span
 						style={{
 							transform:
-								window.innerWidth < window.innerHeight
-									? "rotate(-50deg)"
-									: "initial"
+							window.innerWidth < window.innerHeight
+							? "rotate(-50deg)"
+							: "initial"
 						}}
 					>
 						{window.innerWidth < window.innerHeight
