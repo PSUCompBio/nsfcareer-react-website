@@ -92,6 +92,72 @@ class TeamStats extends React.Component {
            
         })
     }
+    selectOption=()=>{
+        console.log('principal-max-strain')
+        if(this.state['principal-max-strain'] == 'resultant-linear-acceleration'){
+            return  (
+            <>
+                <option value='0'>0g</option>
+                <option value='5'>5g</option>
+                <option value='10'>10g</option>
+                <option value='20'>20g</option>
+                <option value='30'>30g</option>
+                <option value='40'>40g</option>
+                <option value='50'>50g</option>
+                <option value='60'>60g</option>
+                <option value='70'>70g</option>
+                <option value='80'>80g</option>
+                <option value='90'>90g</option>
+                <option value='100'>100g</option>
+                <option value='110'>110g</option>
+                <option value='120'>120g</option>
+                <option value='130'>130g</option>
+                <option value='140'>140g</option>
+                <option value='140'>150g</option> 
+            </>
+
+            )
+        }else if(this.state['principal-max-strain'] == 'resultant-Angular-acceleration'){
+            return  (
+            <>
+                <option value='0'>0 rad/s^2</option>
+                <option value='500'>500 rad/s^2</option>
+                <option value='1000'>1000 rad/s^2</option>
+                <option value='2000'>2000 rad/s^2</option>
+                <option value='3000'>3000 rad/s^2</option>
+                <option value='4000'>4000 rad/s^2</option>
+                <option value='5000'>5000 rad/s^2</option>
+                <option value='6000'>6000 rad/s^2</option>
+                <option value='7000'>7000 rad/s^2</option>
+            </>
+
+            )
+        }else{
+            return  (
+            <>
+                <option value='0'>0%</option>
+                <option value='5'>5%</option>
+                <option value='10'>10%</option>
+                <option value='20'>20%</option>
+                <option value='30'>30%</option>
+                <option value='40'>40%</option>
+                <option value='50'>50%</option>
+                <option value='60'>60%</option>
+                <option value='70'>70%</option>
+                <option value='80'>80%</option>
+                <option value='90'>90%</option>
+                <option value='100'>100%</option>
+                <option value='110'>110%</option>
+                <option value='120'>120%</option>
+                <option value='130'>130%</option>
+                <option value='140'>140%</option>
+                <option value='140'>150%</option> 
+            </>
+
+            )
+        }
+        
+    }
     render() {
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
            return <Redirect to="/Login" />;
@@ -133,23 +199,8 @@ class TeamStats extends React.Component {
                                 <option value='less'>Less or Equal to</option>
                             </select>
                             <select style={{marginLeft: '20px'}} name="gs" onChange={this.handleChange}>
-                                <option value='0'>0%</option>
-                                <option value='5'>5%</option>
-                                <option value='10'>10%</option>
-                                <option value='20'>20%</option>
-                                <option value='30'>30%</option>
-                                <option value='40'>40%</option>
-                                <option value='50'>50%</option>
-                                <option value='60'>60%</option>
-                                <option value='70'>70%</option>
-                                <option value='80'>80%</option>
-                                <option value='90'>90%</option>
-                                <option value='100'>100%</option>
-                                <option value='110'>110%</option>
-                                <option value='120'>120%</option>
-                                <option value='130'>130%</option>
-                                <option value='140'>140%</option>
-                                <option value='140'>150%</option>
+                                {this.selectOption()}
+                                
                             </select>
                         </div>
                         <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>

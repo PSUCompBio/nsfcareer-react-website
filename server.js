@@ -145,7 +145,64 @@ const {
         getCumulativeAccelerationRecords,
         addPlayer,
         getUserDetailByPlayerId,
-        getAllTeamsOfOrganizationsOfSensorBrand
+        getAllTeamsOfOrganizationsOfSensorBrand,
+        getSimulationImageRecord,
+        createUserDbEntry,
+        getPlayersListFromTeamsDB,
+        createInviteUserDbEntry,
+        addRecordInUsersDDB,
+        getVerificationStatus,
+        addUserDetailsToDb,
+        getUserDbData,
+        getUserTokenDBDetails,
+        getUserSensor,
+        getOrganizationList,
+        InsertUserIntoSensor,
+        InsertImpactVideoKey,
+        storeSensorData,
+        fetchNumbers,
+        fetchStaffMembers,
+        fetchAllUsers,
+        putNumbers,
+        addPlayerToTeamInDDB,
+        getAllSensorBrands,
+        setVideoTime,
+        getOrgUniqueList,
+        getOrgUniqueTeams,
+        upDateUserFBGlid,
+        upDateuserPassword,
+        getUserAlreadyExists,
+        upDateuser,
+        DeleteOrganization,
+        getOrganizatonBynameSensor,
+        getOrganizatonByTeam,
+        getOrgSensorData,
+        renameOrganization,
+        renameSensorOrganization,
+        addOrganization,
+        MergeOrganization,
+        addorgTeam,
+        getSernsorDataByTeam,
+        renameTeam,
+        getUserByTeam,
+        renameUsers,
+        getUserDbDataByUserId,
+        getBrandOrganizationData,
+        getPlayerSimulationStatus,
+        getTeamList,
+        getOrganizationTeamData,
+        getPlayerList,
+        getTeamDataWithPlayerRecords,
+        fetchSensor,
+        fetchOrgStaffMembers,
+        getHeadAccelerationEvents,
+        getPlayersListFromTeamsDB_2,
+        getTeamDataWithPlayerRecords_2,
+        getBrandOrganizationData2,
+        getAllOrganizationsOfSensorBrand,
+        getTeamSpheres,
+        updateUserStatus,
+        getTeamDataWithPlayerRecords_3
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -332,25 +389,7 @@ function listAllUsers(user_attributes, cb) {
     });
 }
 
-function getSimulationImageRecord(image_id){
-    return new Promise((resolve, reject) =>{
-        var db_table = {
-            TableName: 'simulation_images',
-            Key: {
-                "image_id": image_id
-            }
-        };
-        docClient.get(db_table, function (err, data) {
-            if (err) {
 
-                reject(err)
-
-            } else {
-                resolve(data.Item)
-            }
-        });
-    })
-}
 
 function verifyImageToken(token, item){
     console.log(token, item);
@@ -556,206 +595,6 @@ function forgotPassword(user_name, cb) {
 }
 
 
-function createUserDbEntry(event, callback) {
-    
-    if (event.organization && event.team) {
-        addPlayerToTeamOfOrganization(event.organization, event.team, event.user_name)
-        .then(result => {
-            var dbInsert = {};
-            // adding key with name user_cognito_id
-            // deleting the key from parameter from "user_name"
-            event["user_cognito_id"] = event.user_name;
-            // event["sensor"] = 'Blackbox Biometrics';
-            // event["organization"] = 'Army Research Laboratory';
-            delete event.user_name;
-            dbInsert = {
-                TableName: "users",
-                Item: event
-            }
-
-
-            docClient.put(dbInsert, function (dbErr, dbData) {
-                if (dbErr) {
-                    callback(dbErr, null);
-                    console.log(dbErr);
-                }
-                else {
-                    console.log(dbData);
-                    callback(null, event);
-                }
-            });
-        })
-    } else {
-        var dbInsert = {};
-        // adding key with name user_cognito_id
-        // deleting the key from parameter from "user_name"
-        event["user_cognito_id"] = event.user_name;
-        // event["sensor"] = 'Blackbox Biometrics';
-        // event["organization"] = 'Army Research Laboratory';
-        delete event.user_name;
-        dbInsert = {
-            TableName: "users",
-            Item: event
-        }
-
-
-        docClient.put(dbInsert, function (dbErr, dbData) {
-            if (dbErr) {
-                callback(dbErr, null);
-                console.log(dbErr);
-            }
-            else {
-                console.log(dbData);
-                callback(null, event);
-            }
-        });
-    }
-}
-
-function addPlayerToTeamOfOrganization(org, team, player_id) {
-    return new Promise((resolve, reject) => {
-        const params = {
-            TableName: "organizations",
-            FilterExpression: "organization = :organization and team_name = :team",
-            ExpressionAttributeValues: {
-                ":organization": org,
-                ":team": team,
-            }
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-           
-            if (data == null) {
-                const scanData = concatArrays(item);
-                if (scanData.length > 0) {
-                    // If Player does not exists in Team
-                    if (scanData[0].requested_player_list) {
-                        if (scanData[0].requested_player_list.indexOf(player_id) <= -1) {
-                            const dbUpdate = {
-                                TableName: "organizations",
-                                Key: {
-                                    organization_id: scanData[0].organization_id
-                                },
-                                UpdateExpression: "set #list = list_append(#list, :newItem)",
-                                ExpressionAttributeNames: {
-                                    "#list": "requested_player_list",
-                                },
-                                ExpressionAttributeValues: {
-                                    ":newItem": [player_id],
-                                },
-                                ReturnValues: "UPDATED_NEW",
-                            };
-    
-                            docClient.update(dbUpdate, function (err, data) {
-                                if (err) {
-                                    reject(err);
-                                } else {
-                                    resolve(data);
-                                }
-                            });
-                        } else {
-                            console.log("PLAYER ALREADY EXISTS IN TEAM");
-                            resolve("PLAYER ALREADY EXISTS IN TEAM");
-                        }
-                    } else {
-                        const dbUpdate = {
-                            TableName: "organizations",
-                            Item: {
-                                organization_id: scanData[0].organization_id,
-                                organization: org,
-                                team_name: team,
-                                requested_player_list: [player_id]
-                            },
-                        };
-                        docClient.put(dbUpdate, function (err, data) {
-                            if (err) {
-                                console.log(err);
-                                reject(err);
-                            } else {
-                                resolve(data);
-                            }
-                        });
-                    }
-                } else {
-                    const dbInsert = {
-                        TableName: "organizations",
-                        Item: {
-                            organization_id: 'org-' + Date.now(),
-                            organization: org,
-                            team_name: team,
-                            requested_player_list: [player_id]
-                        },
-                    };
-                    docClient.put(dbInsert, function (err, data) {
-                        if (err) {
-                            console.log(err);
-                            reject(err);
-                        } else {
-                            resolve(data);
-                        }
-                    });
-                }
-                //resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        }); 
-    });
-}
-
-function createInviteUserDbEntry(event, callback) {
-    var dbInsert = {};
-    // adding key with name user_cognito_id
-    // deleting the key from parameter from "user_name"
-    // event["sensor"] = 'Blackbox Biometrics';
-    delete event.user_name;
-    dbInsert = {
-        TableName: "InviteUsers",
-        Item: event
-    }
-
-
-    docClient.put(dbInsert, function (dbErr, dbData) {
-        if (dbErr) {
-            callback(dbErr, null);
-            console.log(dbErr);
-        }
-        else {
-            console.log(dbData);
-            callback(null, event);
-        }
-    });
-}
-
-function addRecordInUsersDDB(event) {
-    return new Promise((resolve, reject) =>{
-        var dbInsert = {};
-        // adding key with name user_cognito_id
-        // deleting the key from parameter from "user_name"
-        dbInsert = {
-            TableName: "users",
-            Item: event
-        }
-
-
-        docClient.put(dbInsert, function (dbErr, dbData) {
-            if (dbErr) {
-                reject(dbErr)
-                console.log(dbErr);
-            }
-            else {
-                console.log(dbData);
-                resolve(dbData);
-            }
-        });
-    })
-}
-
-
 function getUploadedImageFileList(user_name, cb) {
     const s3Params = {
         Bucket: BUCKET_NAME,
@@ -841,27 +680,7 @@ function getSimulationFilesOfPlayer(path, cb) {
     });
 }
 
-function getPlayersListFromTeamsDB(obj){
-    return new Promise((resolve, reject)=>{
-        var db_table = {
-            TableName: 'teams',
-            Key: {
-                "organization": obj.organization,
-                "team_name" : obj.team_name
-            }
-        };
-        docClient.get(db_table, function (err, data) {
-            if (err) {
 
-                reject(err)
-
-            } else {
-
-                resolve(data.Item)
-            }
-        });
-    })
-}
 
 app.post(`${apiPrefix}checkIfPlayerExists`, (req,res) =>{
     console.log("Checking player",req.body);
@@ -1096,82 +915,6 @@ function loginFirstTime(user, cb) {
 }
 
 
-// Function to get Verification Status of the User
-function getVerificationStatus(user_name, cb) {
-    var db_table = {
-        TableName: 'users',
-        Key: {
-            "user_name": user_name
-        }
-    };
-    docClient.get(db_table, function (err, data) {
-        if (err) {
-
-            cb(err, "");
-
-        } else {
-
-            cb("", data);
-        }
-    });
-}
-
-
-function addUserDetailsToDb(user_details, cb) {
-    var dbInsert = {
-        TableName: "users",
-        Item: user_details
-    };
-    docClient.put(dbInsert, function (err, data) {
-        if (err) {
-
-            cb(err, "");
-
-        } else {
-
-            cb("", data);
-        }
-    });
-}
-
-
-
-function getUserDbData(user_name, cb) {
-    var db_table = {
-        TableName: 'users',
-        Key: {
-            "user_cognito_id": user_name
-        }
-    };
-    docClient.get(db_table, function (err, data) {
-        if (err) {
-
-            cb(err, "");
-
-        } else {
-
-            cb("", data);
-        }
-    });
-}
-function getUserTokenDBDetails(user_name, cb) {
-    var db_table = {
-        TableName: 'InviteUsers',
-        Key: {
-            "InviteToken": user_name
-        }
-    };
-    docClient.get(db_table, function (err, data) {
-        if (err) {
-
-            cb(err, "");
-
-        } else {
-
-            cb("", data);
-        }
-    });
-}
 function getAge(dob) {
     let currentDate = new Date();
     let birthDate = new Date(dob);
@@ -1182,111 +925,6 @@ function getAge(dob) {
     }
     return age;
 }
-
-function getUserSensor(user_name) {
-    console.log('user_name',user_name)
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'sensors',
-            FilterExpression: "contains(#users, :user_cognito_id)",
-            ExpressionAttributeNames: {
-                "#users": "users",
-            },
-            ExpressionAttributeValues: {
-                ":user_cognito_id": user_name,
-            }
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-function getOrganizationList() {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'organizations',
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-
-function InsertUserIntoSensor(user_name,sensor) {
-    console.log('user_name',user_name,sensor)
-    return new Promise((resolve, reject) => {
-        var dbInsert = {
-            TableName: "sensors",
-            Key: { 
-                "sensor" : sensor
-            },
-            UpdateExpression: "set #users = list_append(#users, :user_cognito_id)",
-            ExpressionAttributeNames: {
-                "#users": "users"
-            },
-            ExpressionAttributeValues: {
-                ":user_cognito_id": [user_name]
-            },
-            ReturnValues: "UPDATED_NEW"
-        }
-
-        docClient.update(dbInsert, function (err, data) {
-            if (err) {
-                console.log("ERROR WHILE CREATING DATA",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-
-function InsertImpactVideoKey(video_id,impact_video_path) {
-    console.log('user_name',video_id,impact_video_path)
-    return new Promise((resolve, reject) => {
-       var userParams = {
-            TableName: "simulation_images",
-            Key: {
-                image_id: video_id,
-            },
-            UpdateExpression:
-                "set impact_video_path = :impact_video_path",
-            ExpressionAttributeValues: {
-                ":impact_video_path": impact_video_path,
-            },
-            ReturnValues: "UPDATED_NEW",
-        };
-        docClient.update(userParams, function (err, data) {
-            if (err) {
-                console.log("ERROR WHILE CREATING DATA",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-
 function adminUpdateUser(User, cb) {
 
     var params = {
@@ -1506,133 +1144,6 @@ function convertDataToJSON(buf,cb){
 
 }
 
-function storeSensorData(sensor_data_array){
-    return new Promise((resolve, reject) =>{
-        var counter = 0 ;
-        if(sensor_data_array.length == 0 ){
-            resolve(true);
-        }
-        for(var i = 0 ; i < sensor_data_array.length ; i++){
-            // TODO STORE SENSOR DATA
-            let param = {
-                TableName: "sensor_data",
-                Item: sensor_data_array[i]
-            };
-            docClient.put(param, function (err, data) {
-                counter++;
-                if (err) {
-                    console.log(err);
-                    reject(err)
-                }
-                if(counter == sensor_data_array.length){
-                    resolve(true);
-                }
-            })
-        }
-    })
-}
-
-
-
-// Function to fetch all the items of the table 'numbers' from DynamoDB
-const fetchNumbers = () => {
-    return new Promise(function (resolve, reject) {
-        var params = {
-            TableName: 'numbers'
-        };
-        //   var items
-        var items = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(utility.concatArrays(items));
-            } else {
-                items.push(data.Items);
-            }
-            done();
-        });
-    })
-}
-
-const fetchStaffMembers = (user_cognito_id,brand) => {
-    return new Promise(function (resolve, reject) {
-        var params = {
-            TableName: 'users',
-             Key: {
-                "user_cognito_id": user_cognito_id,
-            }
-           
-        };
-        //   var items
-        var items = [];
-        
-          docClient.get(params, function (err, data) {
-              if (err) {
-                  reject(err)
-
-              } else {
-                // console.log('cg data is ',data);
-                resolve(data.Item);
-              }
-          });
-      })
-        // docClient.get(params).eachPage((err, data, done) => {
-        //     console.log('data',data)
-        //     if (err) {
-        //         reject(err);
-        //     }
-        //     if (data != null) {
-        //         console.log('items',data)
-        //         resolve(utility.concatArrays(data));
-        //     } else {
-        //         // items.push(data.Items);
-        //     }
-        //     done();
-        // });
-   
-}
-
-const fetchAllUsers = () => {
-    return new Promise(function (resolve, reject) {
-        var params = {
-            TableName: 'users'
-        };
-        //   var items
-        var items = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(utility.concatArrays(items));
-            } else {
-                items.push(data.Items);
-            }
-            done();
-        });
-    })
-}
-
-const putNumbers = (numbersData) => {
-    return new Promise(function (resolve, reject) {
-        let param = {
-            TableName: "numbers",
-            Item: numbersData
-        };
-        docClient.put(param, function (err, data) {
-            if (err) {
-                console.log("ERROR IN TABLE_UPDATE=======\n", err);
-                reject(err)
-            }
-            else {
-                resolve(data)
-            }
-        })
-    })
-}
-
 function concatArrays(arrays) {
     return [].concat.apply([], arrays);
 }
@@ -1714,104 +1225,6 @@ function getVtkFileLink(user_id) {
 
     })
 }
-
-function addPlayerToTeamInDDB(org, team, player_id) {
-    return new Promise((resolve, reject)=>{
-        // if flag is true it means data array is to be created
-        let params = {
-            TableName: "teams",
-            Key: {
-                "organization": org,
-                "team_name" : team
-            }
-        };
-        docClient.get(params, function (err, data) {
-            if (err) {
-                reject(err);
-            }
-            else {
-                if (Object.keys(data).length == 0 && data.constructor === Object) {
-                    var dbInsert = {
-                        TableName: "teams",
-                        Item: { organization : org,
-                            team_name : team,
-                            player_list : [player_id] }
-                        };
-                        docClient.put(dbInsert, function (err, data) {
-                            if (err) {
-                                console.log(err);
-                                reject(err);
-
-                            } else {
-                                resolve(data)
-                            }
-                        });
-                    }
-                    else {
-                        // If Player does not exists in Team
-                        if(data.Item.player_list.indexOf(player_id) <= -1){
-                            var dbInsert = {
-                                TableName: "teams",
-                                Key: { "organization" : org,
-                                "team_name" : team
-                            },
-                            UpdateExpression: "set #list = list_append(#list, :newItem)",
-                            ExpressionAttributeNames: {
-                                "#list": "player_list"
-                            },
-                            ExpressionAttributeValues: {
-                                ":newItem": [player_id]
-                            },
-                            ReturnValues: "UPDATED_NEW"
-                        }
-
-                        docClient.update(dbInsert, function (err, data) {
-                            if (err) {
-                                console.log("ERROR WHILE CREATING DATA",err);
-                                reject(err);
-
-                            } else {
-                                resolve(data)
-                            }
-                        });
-                    }
-                    else{
-                        resolve("PLAYER ALREADY EXISTS IN TEAM");
-                    }
-
-                }
-            }
-        });
-
-
-    })
-}
-
-function getPlayerCgValues(player_id) {
-  return new Promise((resolve, reject) =>{
-      var db_table = {
-          TableName: 'users',
-          Key: {
-              "user_cognito_id": player_id
-          },
-          ProjectionExpression: "cg_coordinates"
-      };
-      docClient.get(db_table, function (err, data) {
-          if (err) {
-              reject(err)
-
-          } else {
-               console.log('cg data is ',data);
-              if(JSON.stringify(data).length==2) {
-                resolve([]);
-              } else {
-                resolve(data.Item.cg_coordinates);
-              }
-          }
-      });
-  })
-}
-
 
 function getPresignedMovieUrl(image_details) {
   return new Promise((resolve, reject) => {
@@ -1909,38 +1322,12 @@ function timeConversion(duration) {
     return portions.join(' ');
 }
 
-//============================================
-//      GetAllsensorbrand functions
-//============================================
 
-
-function getAllSensorBrands() {
-    return new Promise((resolve, reject) => {
-        const params = {
-            TableName: "sensors"
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
 
 // ============================================
 //     				ROUTES
 // ============================================
 
-// app.get(`${apiPrefix}`, (req, res) => {
-//     res.send("NSFCareeIO");
-// })
 
 app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
     const { image_id, token } = req.params;
@@ -2074,14 +1461,37 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
 });
 
 app.get(`${apiPrefix}getBrainSimulationLogFile/:image_id`, (req, res) => {
-    request.post({ url: config.ComputeInstanceEndpoint + "getBrainSimulationLogFile", json: req.params }, function (err, httpResponse, body) {
-        if (err) {
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    const { image_id } = req.body
+    getPlayerSimulationFile(req.body)
+        .then(imageData => {
+            // console.log('image_data',imageData)
+            if (imageData.log_path && imageData.log_path != 'null') {
+                let key = imageData.log_path;
+                key = key.replace(/'/g, "");
+                return getFileFromS3(key, imageData.bucket_name);
+            } else {
+                if (imageData.root_path && imageData.root_path != 'null') {
+                    let log_path = imageData.root_path + 'logs/femtech_' + imageData.image_id + '.log';
+                    return getFileFromS3(log_path, imageData.bucket_name);
+                }
+            }
+        }) .then(log_s3 => {
+            let log = '';
+            if (log_s3) {
+                log = Buffer.from(log_s3.Body).toString('utf8');
+                // console.log('body',body)
+            }
+            res.send({
+                message: "success",
+                data: log,
+            })
+        }).catch(err =>{
+            res.send({
+                message: "failure",
+                data: '',
+                error: err
+            })
+        })
 })
 
 //Getting brain simulation details page video
@@ -2164,47 +1574,7 @@ app.post(`${apiPrefix}setVideoTime`, (req, res) => {
     })
 });
 
-function setVideoTime(image_id,video_lock_time,type) {
-    console.log('user_name',image_id,video_lock_time)
-    return new Promise((resolve, reject) => {
-        if(type == 'setVideoTime'){
-            var userParams = {
-                TableName: "simulation_images",
-                Key: {
-                    image_id: image_id,
-                },
-                UpdateExpression:
-                    "set video_lock_time = :video_lock_time",
-                ExpressionAttributeValues: {
-                    ":video_lock_time": video_lock_time,
-                },
-                ReturnValues: "UPDATED_NEW",
-            };
-        }else{
-            var userParams = {
-                TableName: "simulation_images",
-                Key: {
-                    image_id: image_id,
-                },
-                UpdateExpression:
-                    "set video_lock_time_2 = :video_lock_time_2",
-                ExpressionAttributeValues: {
-                    ":video_lock_time_2": video_lock_time,
-                },
-                ReturnValues: "UPDATED_NEW",
-            };
-        }
-        docClient.update(userParams, function (err, data) {
-            if (err) {
-                console.log("ERROR WHILE CREATING DATA",err);
-                reject(err);
 
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
 
 app.get(`${apiPrefix}userEmailVerification`, (req, res) => {
     console.log(req.query.code);
@@ -2283,13 +1653,10 @@ app.post(`${apiPrefix}reSendVerficationEmail`, (req, res) => {
 
 ====================== =======================================*/
 
-
-
 /*+++++++++++++++++ Set video lock time funtion end here ++++++++++++++++ */
 app.get('/*', function(req, res) {
     res.sendFile(path.join(__dirname,'client', 'build', 'index.html'));
 });
-
 
 app.post(`${apiPrefix}getNumbers`, (req, res) => {
     console.log("API CAlled");
@@ -2325,35 +1692,6 @@ app.post(`${apiPrefix}putNumbers`, (req, res) => {
     })
 });
 
-/*++++++++++++++++ Geting org unique list ++++++++++++++++++++++*/
-function getOrgUniqueList() {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'users',
-            FilterExpression: "#level = :level",
-            ExpressionAttributeValues: {
-                ":level": 300,
-            },
-            ExpressionAttributeNames: {
-                "#level": "level",
-            },
-            ProjectionExpression: "organization"
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-
 app.post(`${apiPrefix}getOrgUniqueList`, (req, res) => {
     console.log('get org list')
     getOrgUniqueList()
@@ -2381,33 +1719,6 @@ app.post(`${apiPrefix}getOrgUniqueList`, (req, res) => {
         })
     })
 })
-
-/*++++++++++++ Getting Organization teams +++++++++++++++++*/
-
-function getOrgUniqueTeams(organization) {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'organizations',
-            FilterExpression: "organization = :organization",
-            ExpressionAttributeValues: {
-            ":organization": organization
-            },
-            ProjectionExpression: "team_name"
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
 
 app.post(`${apiPrefix}getOrgUniqueTeams`, (req, res) => {
     console.log('org name', req.body);
@@ -3042,133 +2353,6 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     })
 });
 
-function upDateUserFBGlid(body,user_cognito_id) {
-    // body...
-    console.log('body',body)
-    return new Promise((resolve, reject) => {
-        if(body.userIDfacebook){
-            var update_details = {
-                TableName : 'users',
-                Key : {
-                    "user_cognito_id": user_cognito_id
-                },
-                UpdateExpression : "set userIDfacebook = :userIDfacebook",
-                ExpressionAttributeValues : {
-                    ":userIDfacebook" : body.userIDfacebook,
-                },
-                ReturnValues: "UPDATED_NEW"
-            };
-        }else{
-            var update_details = {
-                TableName : 'users',
-                Key : {
-                    "user_cognito_id": user_cognito_id
-                },
-                UpdateExpression : "set userIDgoogle = :userIDgoogle",
-                ExpressionAttributeValues : {
-                    ":userIDgoogle" : body.userIDgoogle,
-                },
-                ReturnValues: "UPDATED_NEW"
-            }; 
-        }
-
-        docClient.update(update_details, function(err, data){
-            if(err) {
-               reject(err);
-            } else {
-                resolve(data);
-            }
-        })
-    })
-}
-function upDateuserPassword(body,user_cognito_id) {
-    // body...
-    return new Promise((resolve, reject) => {
-         let update_details = {
-            TableName : 'users',
-            Key : {
-                "user_cognito_id": user_cognito_id
-            },
-            UpdateExpression : "set password = :password",
-            ExpressionAttributeValues : {
-                ":password" : body.password,
-            },
-            ReturnValues: "UPDATED_NEW"
-        };
-
-        docClient.update(update_details, function(err, data){
-            if(err) {
-               reject(err);
-            } else {
-                resolve(data);
-            }
-        })
-    })
-}
-
-function getUserAlreadyExists(email) {
-    console.log('mail',email)
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'users',
-            FilterExpression: "#email = :email",
-            ExpressionAttributeNames: {
-                "#email": "email",
-            },
-            ExpressionAttributeValues: {
-                ":email": email,
-            }
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-
-
-
-function upDateuser(body,user_cognito_id) {
-    // body...
-    return new Promise((resolve, reject) => {
-         let update_details = {
-            TableName : 'users',
-            Key : {
-                "user_cognito_id": user_cognito_id
-            },
-            UpdateExpression : "set first_name = :first_name, last_name = :last_name, #level = :level, organization= :organization, sensor = :sensor, team = :team",
-             ExpressionAttributeNames: {
-                "#level": "level",
-            },
-            ExpressionAttributeValues : {
-                ":first_name" : body.first_name,
-                ":last_name" : body.last_name,
-                ":level" : body.level,
-                ":organization": body.organization,
-                ":sensor" : body.sensor,
-                ":team" : body.team
-            },
-            ReturnValues: "UPDATED_NEW"
-        };
-
-        docClient.update(update_details, function(err, data){
-            if(err) {
-               reject(err);
-            } else {
-                resolve(data);
-            }
-        })
-    })
-}
-
 function updateCognitoUser(body, user_cognito_id) {
     return new Promise((resolve, reject) => {
         var params = {
@@ -3215,7 +2399,6 @@ app.post(`${apiPrefix}setUserPassword`, (req, res) => {
 })
 
 /*=========== Set user default login password end =============*/
-
 
 app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     console.log("InviteUsers Called!",req.body);
@@ -3379,78 +2562,6 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     
 });
 
-//Delete organizations
-function DeleteOrganization(organization_id) {
-    console.log('organization_id',organization_id)
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "organizations",
-            Key: { 
-                "organization_id" : organization_id
-            }
-        }
-
-        docClient.delete(params, function (err, data) {
-            if (err) {
-                console.log("error when deleting data\n",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-
-function getOrganizatonBynameSensor(organization, sensor){
-    return new Promise((resolve, reject) =>{
-        var   params = {
-                TableName: "organizations",
-                FilterExpression: "sensor = :sensor and organization = :organization ",
-                ExpressionAttributeValues: {
-                ":sensor": sensor,
-                ":organization": organization,
-                },
-            };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    })
-}
-function getOrganizatonByTeam(organization, team_name){
-    return new Promise((resolve, reject) =>{
-        var   params = {
-                TableName: "organizations",
-                FilterExpression: "team_name = :team_name and organization = :organization ",
-                ExpressionAttributeValues: {
-                ":team_name": team_name,
-                ":organization": organization,
-                },
-            };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    })
-}
-
 app.post(`${apiPrefix}deleteItem`, (req, res) => {
     console.log(req.body)  
     let type = req.body.type;
@@ -3549,92 +2660,6 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
 })
 
 //Rename organization
-
-
-function getOrgSensorData(organization, sensor){
-    return new Promise((resolve, reject) =>{
-        let params = {
-            TableName: "sensor_data",
-            FilterExpression: "organization= :organization and sensor = :sensor",
-            ExpressionAttributeValues: {
-               ":sensor": sensor,
-               ":organization": organization
-            },
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    })
-}
-
-
-function renameOrganization(OrganizationName,organization_id) {
-    console.log('organization_id',organization_id)
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "organizations",
-            Key: { 
-                "organization_id" : organization_id
-            },
-            UpdateExpression: "set #organization = :organization",
-            ExpressionAttributeNames: {
-                "#organization": "organization"
-            },
-            ExpressionAttributeValues: {
-                ":organization": OrganizationName
-            },
-            ReturnValues: "UPDATED_NEW"
-        }
-        docClient.update(params, function (err, data) {
-            if (err) {
-                console.log("error when updating data\n",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-function renameSensorOrganization(OrganizationName,player_id, team) {
-    console.log('OrganizationName',OrganizationName)
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "sensor_data",
-            Key: { 
-                "team": team,
-                "player_id" : player_id
-            },
-            UpdateExpression: "set #organization = :organization",
-            ExpressionAttributeNames: {
-                "#organization": "organization"
-            },
-            ExpressionAttributeValues: {
-                ":organization": OrganizationName
-            },
-            ReturnValues: "UPDATED_NEW"
-        }
-        docClient.update(params, function (err, data) {
-            if (err) {
-                console.log("error when updating sensor data\n",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-
 app.post(`${apiPrefix}renameOrganization`, (req, res) => {
     console.log(req.body) ;
     let organization = req.body.data.organization;
@@ -3690,38 +2715,6 @@ app.post(`${apiPrefix}renameOrganization`, (req, res) => {
     })
 })
 
-//Add organization
-function addOrganization(OrganizationName, sensor) {
-    return new Promise((resolve, reject) =>{
-        var dbInsert = {};
-        // adding key with name user_cognito_id
-        // deleting the key from parameter from "user_name"
-        dbInsert = {
-            TableName: "organizations",
-            Item: {
-                organization: OrganizationName,
-                organization_id: 'org-'+Date.now(),
-                player_list: [],
-                sensor: sensor,
-                team_name: ' ',
-                user_cognito_id: ' '
-            }
-        }
-
-
-        docClient.put(dbInsert, function (dbErr, dbData) {
-            if (dbErr) {
-                reject(dbErr)
-                console.log(dbErr);
-            }
-            else {
-                console.log(dbData);
-                resolve(dbData);
-            }
-        });
-    })
-}
-
 app.post(`${apiPrefix}addOrganization`, (req, res) => {
     console.log(req.body);
     addOrganization(req.body.OrganizationName, req.body.sensor)
@@ -3741,73 +2734,7 @@ app.post(`${apiPrefix}addOrganization`, (req, res) => {
     })
 })
 
-
-
-//Merge organization
-function MergeOrganization(OrganizationName, organization_id) {
-    console.log('user_name',OrganizationName,organization_id)
-    return new Promise((resolve, reject) => {
-        var dbInsert = {
-            TableName: "organizations",
-            Key: { 
-                "organization_id" : organization_id
-            },
-            UpdateExpression: "set #organization = :organization",
-            ExpressionAttributeNames: {
-                "#organization": "organization"
-            },
-            ExpressionAttributeValues: {
-                ":organization": OrganizationName
-            },
-            ReturnValues: "UPDATED_NEW"
-        }
-
-        docClient.update(dbInsert, function (err, data) {
-            if (err) {
-                console.log("ERROR WHILE CREATING DATA",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-
 /*============ Team edit funtions start here===================*/
-
-//Add organization
-function addorgTeam(TeamName, organization,sensor) {
-    return new Promise((resolve, reject) =>{
-        var dbInsert = {};
-        // adding key with name user_cognito_id
-        // deleting the key from parameter from "user_name"
-        dbInsert = {
-            TableName: "organizations",
-            Item: {
-                organization: organization,
-                organization_id: 'org-'+Date.now(),
-                player_list: [],
-                sensor: sensor,
-                team_name: TeamName,
-                user_cognito_id: ' '
-            }
-        }
-
-
-        docClient.put(dbInsert, function (dbErr, dbData) {
-            if (dbErr) {
-                reject(dbErr)
-                console.log(dbErr);
-            }
-            else {
-                console.log(dbData);
-                resolve(dbData);
-            }
-        });
-    })
-}
-
 app.post(`${apiPrefix}addorgTeam`, (req, res) => {
     console.log(req.body);
     addorgTeam(req.body.TeamName, req.body.organization,req.body.sensor)
@@ -3826,144 +2753,6 @@ app.post(`${apiPrefix}addorgTeam`, (req, res) => {
         })
     })
 });
-
-function getSernsorDataByTeam(team_name, organization){
-    return new Promise((resolve, reject) =>{
-        var   params = {
-                TableName: "sensor_data",
-                FilterExpression: "team = :team and organization = :organization ",
-                ExpressionAttributeValues: {
-                ":team": team_name,
-                ":organization": organization,
-                },
-            };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    })
-}
-
-function renameTeam(team_name,organization_id) {
-    console.log('organization_id',organization_id)
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "organizations",
-            Key: { 
-                "organization_id" : organization_id
-            },
-            UpdateExpression: "set #team_name = :team_name",
-            ExpressionAttributeNames: {
-                "#team_name": "team_name"
-            },
-            ExpressionAttributeValues: {
-                ":team_name": team_name
-            },
-            ReturnValues: "UPDATED_NEW"
-        }
-        docClient.update(params, function (err, data) {
-            if (err) {
-                console.log("error when updating data\n",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-
-function getUserByTeam(team_name, organization){
-    return new Promise((resolve, reject) =>{
-        var   params = {
-                TableName: "users",
-                FilterExpression: "team = :team and organization = :organization ",
-                ExpressionAttributeValues: {
-                ":team": team_name,
-                ":organization": organization,
-                },
-                ProjectionExpression: "user_cognito_id",
-                ScanIndexForward: false
-            };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    })
-}
-function renameUsers(user_cognito_id, team_name) {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: "users",
-            Key: { 
-                "user_cognito_id": user_cognito_id
-            },
-            UpdateExpression: "set #team = :team",
-            ExpressionAttributeNames: {
-                "#team": "team"
-            },
-            ExpressionAttributeValues: {
-                ":team": team_name
-            },
-            ReturnValues: "UPDATED_NEW"
-        }
-        docClient.update(params, function (err, data) {
-            if (err) {
-                console.log("error when updating sensor data\n",err);
-                reject(err);
-
-            } else {
-                resolve(data)
-            }
-        });
-    });
-}
-
-// function renameSernosrTeam(team,player_id, team_name) {
-//     console.log('player_id',player_id)
-//     return new Promise((resolve, reject) => {
-//         var params = {
-//             TableName: "sensor_data",
-//             Key: { 
-//                 "team": team,
-//                 "player_id" : player_id
-//             },
-//             UpdateExpression: "set #team = :team",
-//             ExpressionAttributeNames: {
-//                 "#team": "team"
-//             },
-//             ExpressionAttributeValues: {
-//                 ":team": team_name
-//             },
-//             ReturnValues: "UPDATED_NEW"
-//         }
-//         docClient.update(params, function (err, data) {
-//             if (err) {
-//                 console.log("error when updating sensor data\n",err);
-//                 reject(err);
-
-//             } else {
-//                 resolve(data)
-//             }
-//         });
-//     });
-// }
 
 app.post(`${apiPrefix}renameTeam`, (req, res) => {
     console.log('body',req.body);
@@ -4174,58 +2963,6 @@ app.post(`${apiPrefix}MergeOrganization`, (req, res) => {
     
 })
 
-function getUserDbDataByUserId(userID,type,email, cb) {
-    if(email){
-        var params = {
-            TableName: 'users',
-            FilterExpression: "#email = :email",
-            ExpressionAttributeNames: {
-                "#email": "email",
-            },
-            ExpressionAttributeValues: {
-                ":email": email,
-            }
-        };
-    }else{
-        if(type == "facebook"){
-            var params = {
-                TableName: 'users',
-                FilterExpression: "#userIDfacebook = :userIDfacebook",
-                ExpressionAttributeNames: {
-                    "#userIDfacebook": "userIDfacebook",
-                },
-                ExpressionAttributeValues: {
-                    ":userIDfacebook": userID,
-                }
-            };
-        }else{
-            var params = {
-                TableName: 'users',
-                FilterExpression: "#userIDgoogle = :userIDgoogle",
-                ExpressionAttributeNames: {
-                    "#userIDgoogle": "userIDgoogle",
-                },
-                ExpressionAttributeValues: {
-                    ":userIDgoogle": userID,
-                }
-            };
-        }
-    }
-    let item = [];
-    docClient.scan(params).eachPage((err, data, done) => {
-        if (err) {
-           cb(err, "");
-        }
-        if (data == null) {
-           
-            cb("", concatArrays(item));
-        } else {
-            item.push(data.Items);
-        }
-        done();
-    });    
-}
-
 //LoginWithoutEmail
 app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
     console.log("LoginWithoutEmail In API Called!",req.body);
@@ -4245,7 +2982,7 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
                 if(!userData.password){
                     res.send({
                         message: "failure",
-                        error: 'You are a user who had an existing account before the new sign in options for using Facebook and Google authentication were added.\n \n If you would like to use this feature, please contact the support team at <a href="mailto:support@nsfcareer.io" style={{"color":"white"}}>support@nsfcareer.io</a>'
+                        error: 'You are a user who had an existing account before the new sign in options for using Facebook and Google authentication were added.\n \n If you would like to use this feature, please contact the support team at <a href="mailto:support@nsfcareer.io" style="color:white;text-decoration: underline;">support@nsfcareer.io</a>'
                     });
                 }else{
                     if(type == "facebook"){
@@ -4811,7 +3548,6 @@ app.post(`${apiPrefix}logIn`, (req, res) => {
 })
 
 /* Forget password function start */
-
 app.post(`${apiPrefix}forgotPassword`, (req, res) => {
     console.log("Log In API Called!",req.body);
     getUser(req.body.user_name, function (err, data) {
@@ -4943,62 +3679,6 @@ app.post(`${apiPrefix}logInFirstTime`, (req, res) => {
 
 })
 
-function getBrandOrganizationData(sensor, organization) {
-    return new Promise((resolve, reject) => {
-        let params;
-
-        if (sensor !== '') {
-            params = {
-                TableName: "sensor_data",
-                FilterExpression: "sensor = :sensor and organization = :organization",
-                ExpressionAttributeValues: {
-                    ":sensor": sensor,
-                    ":organization": organization
-                },
-                ProjectionExpression: "sensor,image_id,player_id,computed_time"
-            };
-        } else {
-            params = {
-                TableName: "sensor_data",
-                FilterExpression: "organization = :organization",
-                ExpressionAttributeValues: {
-                   ":organization": organization
-                },
-                ProjectionExpression: "sensor,image_id,player_id,computed_time"
-            };
-        }
-        
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-function getPlayerSimulationStatus(image_id) {
-    return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "simulation_images",
-            Key: {
-                image_id: image_id,
-            },
-        };
-        docClient.get(params, function (err, data) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data.Item);
-            }
-        });
-    });
-}
 app.post(`${apiPrefix}getOrganizationList`, (req, res) => {
     getOrganizationList()
         .then(list => {
@@ -5104,72 +3784,6 @@ app.post(`${apiPrefix}getOrganizationNameList`, (req, res) => {
         })
     })
 })
-
-function getTeamList() {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'organizations',
-            ProjectionExpression: "sensor, organization, team_name"
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-
-function getOrganizationTeamData(obj) {
-    return new Promise((resolve, reject) => {
-        let params;
-        if (obj.sensor) {
-            params = {
-                TableName: "sensor_data",
-                KeyConditionExpression:  "team = :team",
-                FilterExpression: "sensor = :sensor and organization = :organization",
-                ExpressionAttributeValues: {
-                   ":sensor": obj.sensor,
-                   ":organization": obj.organization,
-                   ":team": obj.team
-                },
-                ProjectionExpression: "sensor,image_id,computed_time,player_id",
-                ScanIndexForward: false
-            };
-        } else {
-            params = {
-                TableName: "sensor_data",
-                KeyConditionExpression:  "team = :team",
-                FilterExpression: "organization = :organization",
-                ExpressionAttributeValues: {
-                   ":organization": obj.organization,
-                   ":team": obj.team
-                },
-                ProjectionExpression: "sensor,image_id,computed_time,player_id",
-                ScanIndexForward: false
-            };
-        }
-        
-        var item = [];
-        docClient.query(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
 
 app.post(`${apiPrefix}getTeamList`, (req, res) => {
     getTeamList()
@@ -5280,83 +3894,6 @@ app.post(`${apiPrefix}getTeamNameList`, (req, res) => {
 
 })
 
-function getPlayerList() {
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'organizations',
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-function getTeamDataWithPlayerRecords(player_id, team, sensor, organization) {
-    return new Promise((resolve, reject) => {
-        let params;
-
-        if (sensor) {
-            params = {
-                TableName: "sensor_data",
-                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
-                FilterExpression: "sensor = :sensor and organization = :organization",
-                ExpressionAttributeValues: {
-                ":sensor": sensor,
-                ":organization": organization,
-                ":team": team,
-                ":player_id": player_id + '$',
-                },
-                ExpressionAttributeNames : {
-                    '#time': 'time',
-                    '#date': 'date',
-                    '#Impact_date': 'impact-date',
-                    '#Impact_time': 'impact-time'
-                },
-                ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
-                ScanIndexForward: false
-            };
-        } else {
-            params = {
-                TableName: "sensor_data",
-                KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
-                FilterExpression: "organization = :organization",
-                ExpressionAttributeValues: {
-                ":organization": organization,
-                ":team": team,
-                ":player_id": player_id + '$',
-                },
-                ExpressionAttributeNames : {
-                    '#time': 'time',
-                    '#date': 'date',
-                    '#Impact_date': 'impact-date',
-                    '#Impact_time': 'impact-time'
-                },
-                ProjectionExpression: " #time,#date,#Impact_date,#Impact_time,image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
-                ScanIndexForward: false
-            };
-        }
-        var item = [];
-        docClient.query(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
 
 app.post(`${apiPrefix}getPlayerList`, (req, res) => {
     getPlayerList().then(players => {
@@ -5384,7 +3921,7 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                 let p = player;
                 let playerData = '';
                 if(player.player_id && player.player_id != 'undefined'){
-                    getTeamDataWithPlayerRecords(player.player_id, player.team, player.sensor, player.organization)
+                    getTeamDataWithPlayerRecords_3(player.player_id, player.team, player.sensor, player.organization)
                     .then(player_data => {
                         playerData = player_data;
                         counter++;
@@ -5488,29 +4025,7 @@ app.post(`${apiPrefix}disableUser`, (req, res) => {
     })
 })
 
-const fetchSensor = (sensor) => {
-    return new Promise(function (resolve, reject) {
-        var params = {
-            TableName: 'sensors',
-             Key: {
-                "sensor": sensor
-            }
-           
-        };
-        //   var items
-        var items = [];
-        
-          docClient.get(params, function (err, data) {
-              if (err) {
-                  reject(err)
 
-              } else {
-                // console.log('cg data is ',data);
-                resolve(data.Item);
-              }
-          });
-      })
-}
 app.post(`${apiPrefix}fetchAdminStaffMembers`, (req,res) =>{ 
      
     var params = {
@@ -5628,54 +4143,6 @@ app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{
     //
   
 });
-
-function fetchOrgStaffMembers(organization) {
-    console.log('organization',organization)
-    return new Promise((resolve, reject) => {
-        var params = {
-            TableName: 'users',
-            FilterExpression: "#organization = :organization and #level = :level",
-            ExpressionAttributeNames: {
-                "#organization": "organization",
-                "#level": "level",
-            },
-            ExpressionAttributeValues: {
-                ":organization": organization,
-                ":level": 300
-            }
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-app.post(`${apiPrefix}fetchOrgStaffMembers`, (req,res) =>{ 
-    console.log('fetchOrgStaffMembers',req.body);
-    fetchOrgStaffMembers(req.body.organization).
-    then(data=>{
-        console.log('staff',data);
-        res.send({
-            message : "success",
-            data : data
-        })
-    }).catch(err=>{
-        console.log('er',err);
-        res.send({
-            message : "failure",
-            error : err,
-            data : []
-        })  
-    })
-})
 
 //getting only user db details
 app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
@@ -6892,8 +5359,6 @@ app.post(`${apiPrefix}confirmGuardianIRBConsent`, (req,res) =>{
         }
     })
 
-
-
 })
 
 /****** ===============================================
@@ -7831,92 +6296,42 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeData`, (req,res) =>{
                 })
             })
 })
+function getCumulativeEventPressureData() {
+    var myObject = {
+        message: "success",
+        data: {
+            pressure: [241, 292, 125, 106, 282, 171, 58, 37, 219, 263],
+            time_label: [0, 5, 10, 15, 20, 25, 30, 35, 40, 45],
+            timestamp: Number(Date.now()).toString()
+        }
+    }
+    return myObject;
+}
+function getCumulativeEventLoadData() {
+    var myObject = {
+        message: "success",
+        data: {
+            load: [{ dataset: [198, 69, 109, 139, 73] }
+                , { dataset: [28, 113, 31, 10, 148] }
+                , { dataset: [28, 2, 1, 10, 148] }
+                , { dataset: [182, 3, 16, 97, 240] }
+            ],
 
+            time_label: ["W1", "W2", "W3", "W4", "W5"],
+            timestamp: Number(Date.now()).toString()
+        }
+    }
+    return myObject;
+}
 app.post(`${apiPrefix}getCumulativeEventPressureData`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeEventPressureData", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    res.send(getCumulativeEventPressureData());
 })
 
 app.post(`${apiPrefix}getCumulativeEventLoadData`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeEventLoadData", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    res.send(getCumulativeEventLoadData());
 })
 
-function getHeadAccelerationEvents(obj) {
-    return new Promise((resolve, reject) => {
-        let params = {
-            TableName: 'sensor_data',
-            KeyConditionExpression: "team = :team and begins_with(player_id, :player_id)",
-            ExpressionAttributeValues: {
-                ":team": obj.team,
-                ":player_id": obj.player_id
-            }
-        };
-        var item = [];
-        docClient.query(params).eachPage((err, data, done) => {
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            if (data == null) {
-                let records = concatArrays(item);
-                let date = records.map(function (record) {
-                    return record.date;
-                });
-                // Now we will store no of impacts corresponding to date
-                var date_map = new Map();
-                for (var i = 0; i < date.length; i++) {
-                    // check if key in map exists (Player id)
-                    // if it doesn't exists then add the array element
-                    // else update value of alert and impacts in existsing key in map
-                    if (date_map.has(date[i])) {
 
-                        let tempObject = date_map.get(date[i]);
-                        tempObject += 1;
-                        date_map.set(date[i], tempObject);
-                    }
-                    else {
-
-                        date_map.set(date[i], 0);
-                    }
-                }
-                console.log("DATE MAP", date_map.keys());
-                console.log(Array.from(date_map.values()));
-                resolve({
-                    no_of_impacts: Array.from(date_map.values()),
-                    dates: Array.from(date_map.keys()),
-                    timestamp: Number(Date.now()).toString()
-                });
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    })
-    // var myObject = {
-    //     message : "success",
-    //     data : {
-    //         pressure : [176, 267, 187, 201, 180, 4, 230, 258, 14, 21, 89, 23, 119, 113, 28, 49],
-    //         time_label : [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75],
-    //         timestamp : Number(Date.now()).toString()
-    //     }
-    // }
-    // return myObject;
-}
 app.post(`${apiPrefix}getHeadAccelerationEvents`, (req,res) =>{
     getHeadAccelerationEvents(req.body)
     .then(data => {
@@ -7934,79 +6349,266 @@ app.post(`${apiPrefix}getHeadAccelerationEvents`, (req,res) =>{
     })
 })
 app.post(`${apiPrefix}getTeamAdminData`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getTeamAdminData", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+   res.send(getTeamAdminData());
 })
 app.post(`${apiPrefix}getImpactHistory`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getImpactHistory", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    res.send(getImpactHistory());
 })
 
 app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getImpactSummary", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    res.send(getImpactSummary());
 })
+
 
 app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
-    console.log(req.body);
-    request.post({ url: config.ComputeInstanceEndpoint + "getPlayersDetails", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
+    getPlayersListFromTeamsDB_2(req.body)
+        .then(data => {
+            let player_list = [];
+            let requested_player_list = [];
+            data.forEach(function (u) {
+                if (u.player_list) {
+                    if (req.body.brand && u.sensor === req.body.brand) {
+                        player_list = player_list.concat(u.player_list);
+                    }
+                    if (!req.body.brand) {
+                        player_list = player_list.concat(u.player_list);
+                    }
+                    
+                }
+                if (u.requested_player_list) {
+                    requested_player_list = requested_player_list.concat(u.requested_player_list);
+                }
+            }) 
+            // console.log('player_list', player_list);
+            // console.log('requested_player_list', requested_player_list);
+            // let player_list = data[0].player_list ? data[0].player_list : [];
+            if (player_list.length == 0) {
+                let requested_players = []
+                if (requested_player_list.length > 0) {
+                    let p_cnt = 0;
+                    requested_player_list.forEach(function (p_record) {
+                        console.log('p_record',p_record)
+                        getUserDetails(p_record)
+                            .then (user_detail => {
+                                p_cnt++; 
+                                requested_players.push(user_detail.Item);
 
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            console.log(httpResponse.body);
-            res.send(httpResponse.body);
-        }
-    })
+                                if (p_cnt === requested_player_list.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: [],
+                                        requested_players: requested_players
+                                    })
+                                }
+                            })
+                    })         
+                } else {
+                    res.send({
+                        message: "success",
+                        data: [],
+                        requested_players: []
+                    })
+                }
+            }
+            else {
+                var counter = 0;
+                var p_data = [];
+                player_list.forEach(function (player, index) {
+                    let p = player;
+                    let i = index;
+                    let playerData = '';
+                    getTeamDataWithPlayerRecords_2({ player_id: p, team: req.body.team_name, sensor: req.body.brand, organization: req.body.organization })
+                        .then(player_data => {
+                            playerData = player_data;
+                            counter++;
+                            p_data.push({
+                                date_time: playerData[0].player_id.split('$')[1],
+                                simulation_data: playerData,
+                            });
+                            if (counter == player_list.length) {
+                                p_data.sort(function (b, a) {
+                                    var keyA = a.date_time,
+                                        keyB = b.date_time;
+                                    if (keyA < keyB) return -1;
+                                    if (keyA > keyB) return 1;
+                                    return 0;
+                                });
+
+                                let k = 0;
+                                p_data.forEach(function (record, index) {
+                                    getPlayerSimulationFile(record.simulation_data[0])
+                                        .then(simulation => {
+                                            p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                            p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+
+                                            getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
+                                                .then (u_detail => {
+                                                    p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
+                                                    k++;
+                                                    if (k == p_data.length) {
+                                                        let requested_players = []
+                                                        if (requested_player_list.length > 0) {
+                                                            let p_cnt = 0;
+                                                            requested_player_list.forEach(function (p_record) {
+                                                                console.log('p_record--------------------\n',p_record)
+                                                                getUserDetails(p_record)
+                                                                    .then (user_detail => {
+
+                                                                        p_cnt++; 
+                                                                        requested_players.push(user_detail.Item);
+    
+                                                                        if (p_cnt === requested_player_list.length) {
+                                                                            res.send({
+                                                                                message: "success",
+                                                                                data: p_data,
+                                                                                requested_players: requested_players
+                                                                            })
+                                                                        }
+                                                                    })
+                                                            })         
+                                                        } else {
+                                                            res.send({
+                                                                message: "success",
+                                                                data: p_data,
+                                                                requested_players: requested_players
+                                                            })
+                                                        }
+                                                    }
+
+                                                })
+                                        })
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            counter++;
+                            if (counter == player_list.length) {
+                                res.send({
+                                    message: "failure",
+                                    data: p_data,
+                                    requested_players: [],
+                                    error:err
+                                })
+                            }
+                        })
+                })
+            }
+        })
+        .catch(err => {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        });
 })
 
-
 app.post(`${apiPrefix}getOrganizationAdminData`, (req,res) =>{
-    console.log("REQUEST RECEIVED ");
-    request.post({ url: config.ComputeInstanceEndpoint + "getOrganizationAdminData", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    res.send(getOrganizationAdminData());
 })
 
 app.post(`${apiPrefix}getAllRosters`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getAllRosters", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    res.send(getAllRosters());
 })
+
+function getAllRosters() {
+    var myObject = {
+        message: "success",
+        data: {
+            rosters: ["Roster 1", "Roster 2", "Roster 3", "Roster 4"]
+        }
+    }
+    return myObject;
+}
+
+function getOrganizationAdminData() {
+    var myObject = {
+        message: "success",
+        data: {
+            organization: "York tech Football",
+            sports_type: "football",
+            roster_count: 3,
+            impacts: 4,
+            avg_load: 6,
+            alerts: 8,
+            highest_load: 0.046,
+            most_impacts: 7
+        }
+    }
+    return myObject;
+}
+
+function getPlayersData() {
+    var myObject = {
+        message: "success",
+        data: [
+            {
+                player_name: "Player 1",
+                sport: "Football",
+                position: "RB",
+                alerts: 2,
+                impacts: 4,
+                load: 0.34
+            },
+            {
+                player_name: "Player 1",
+                sport: "Football",
+                position: "RB",
+                alerts: 2,
+                impacts: 4,
+                load: 0.32
+            },
+            {
+                player_name: "Player 2",
+                sport: "Football",
+                position: "FA",
+                alerts: 2,
+                impacts: 8,
+                load: 0.31
+            }
+        ]
+    }
+    return myObject;
+}
+
+function getTeamAdminData() {
+    var myObject = {
+        message: "success",
+        data: {
+            organization: "York tech Football",
+            sports_type: "football",
+            roster_count: 3,
+            impacts: 4,
+            avg_load: 6,
+            alerts: 8,
+            highest_load: 0.046,
+            most_impacts: 7
+        }
+    }
+    return myObject;
+}
+function getImpactHistory() {
+    var myObject =
+    {
+        message: "success",
+        data: {
+            pressure: [0.2, 0.5, 1.0, 0.5, 0.2, 0.5, 0.1],
+            force: ["20-29g", "30-39g", "40-49g", "50-59g", "60-69g", "70-79g", "80-89g"]
+        }
+    }
+    return myObject;
+}
+
+function getImpactSummary() {
+    var myObject =
+    {
+        message: "success",
+        data: {
+            pressure: [0, 0, 0.1, 0.5, 0.2],
+            force: ["20-29g", "30-39g", "40-49g", "50-59g", "60-69g"]
+        }
+    }
+    return myObject;
+}
 
 app.post(`${apiPrefix}fetchAllTeamsInOrganization`, (req,res) =>{
     fetchAllTeamsInOrganization(req.body.organization)
@@ -8233,97 +6835,6 @@ app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req
     })
     
 })
-
-// app.post(`${apiPrefix}api/upload/sensor`, (req, res) => {
-//     let upload_file = fs.readFileSync(req.body.filename, {encoding: 'base64'});
-
-//     let selfie = false;
-//     if (req.body.selfie) {
-//         selfie = fs.readFileSync(req.body.selfie, {encoding: 'base64'});
-//     }
-   
-//     var user_type = "standard";
-//     login(req.body.user, req.body.password, user_type, (err, data) => {
-//         if (err) {
-//             res.send({
-//                 message: "failure",
-//                 error: err
-//             })
-//         }
-//         else {
-//             getUser(req.body.user, function (err, data) {
-//                 if (err) {
-//                     console.log(err);
-
-//                     res.send({
-//                         message: "failure",
-//                         error: err
-//                     });
-//                 } else {
-//                     getUserDbData(data.Username, function (err, user_details) {
-//                         if (err) {
-//                             res.send({
-//                                 message: "failure",
-//                                 error: err
-//                             })
-//                         }
-//                         else {
-//                             if (user_details.Item["level"] === 400) {
-//                                 // console.log(user_details.Item);
-//                                 req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
-//                                 req.body["sensor_brand"] = user_details.Item["sensor"];
-//                                 req.body["upload_file"] = upload_file;
-
-//                                 let filename =  req.body.filename.split("/");
-//                                 filename = filename[filename.length-1];
-
-//                                 req.body["data_filename"] = filename;
-//                                 req.body["selfie"] = selfie;
-//                                 req.body["filename"] = req.body.selfie; 
-//                                 request.post({
-//                                     url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
-//                                     json: req.body
-//                                 }, function (err, httpResponse, body) {
-//                                     if (err) {
-//                                         res.send({
-//                                             message: "failure",
-//                                             error: err
-//                                         })
-//                                     }
-//                                     else {
-//                                         if (httpResponse.body.image_url) {
-//                                             let body = '<!DOCTYPE html>\
-//                                                 <html>\
-//                                                 <body>';
-//                                             let counter = 0;                                                
-//                                             httpResponse.body.image_url.forEach((url, m) => {
-//                                                 counter++;
-//                                                 body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
-//                                                 if (counter == httpResponse.body.image_url.length) {
-//                                                     body += '</body>\
-//                                                             </html>';
-//                                                     res.send(body);
-//                                                 }
-//                                             })
-//                                         } else {
-//                                             res.send(httpResponse.body);
-//                                         }
-//                                     }
-//                                 })
-//                             } else {
-//                                 res.send({
-//                                     message: "failure",
-//                                     error: 'User is not sensor company.'
-//                                 })
-//                             }
-//                         }
-//                     })
-//                 }
-//             })
-//         }
-//     })
-// })
-
 // Run simulation using cURL command
 app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxCount: 1}, {name: "selfie", maxCount: 1}]),  (req, res) => {
 
@@ -8342,22 +6853,6 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
         base64Selfie = selfie_data.toString('base64');
         selfie = req.files.selfie[0].originalname;
     }
-     
-    // res.send('<!DOCTYPE html>\
-    //     <html>\
-    //       <body>\
-    //         <iframe src="http://nsfcareer.io/simulation/results/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZV9pZCI6IktydkE3aGNCMiIsImlhdCI6MTU5NjEwMTg5OH0.BdtxPuz1O_dR-ZOxysjWNl018jcBk2OcKE1f9gWolY4/KrvA7hcB2" width="100%" height="500px"></iframe>\
-    //         <iframe src="http://nsfcareer.io/getSimulationMovie/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbWFnZV9pZCI6IktydkE3aGNCMiIsImlhdCI6MTU5NjEwMTg5OH0.BdtxPuz1O_dR-ZOxysjWNl018jcBk2OcKE1f9gWolY4/KrvA7hcB2" width="100%" height="500px"></iframe>\
-    //       </body>\
-    //     </html>'
-    // )
-    // res.send({
-    //     data : req.body,
-    //     data_filename: data_filename,
-    //     upload_file : base64File,
-    //     filename: selfie,
-    //     selfie : base64Selfie
-    // });
     var user_type = "standard";
     hadleAuthanticat(req.body.user, req.body.password)
     .then(response =>{
@@ -8562,32 +7057,6 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
     })
 })
 
-function getAllOrganizationsOfSensorBrand(obj) {
-    return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "organizations",
-            FilterExpression: "sensor = :sensor",
-            ExpressionAttributeValues: {
-               ":sensor": obj.brand
-            },
-            ProjectionExpression: "organization, sensor, organization_id"
-        };
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-
-
 app.post(`${apiPrefix}getAllOrganizationsOfSensorBrandList`, (req,res) =>{
     getAllOrganizationsOfSensorBrand(req.body)
     .then(list => {
@@ -8613,18 +7082,86 @@ app.post(`${apiPrefix}getAllOrganizationsOfSensorBrandList`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getAllOrganizationsOfSensorBrand", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
+    getAllOrganizationsOfSensorBrand(req.body)
+        .then(list => {
+            // console.log(list);
+            let uniqueList = [];
+            var orgList = list.filter(function (organization) {
+                if (uniqueList.indexOf(organization.organization) === -1) {
+                    uniqueList.push(organization.organization);
+                    return organization;
+                }
+            });
 
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+            let counter = 0;
+            if (orgList.length == 0) {
+                res.send({
+                    message: "success",
+                    data: []
+                })
+            } else {
+                orgList.forEach(function (org, index) {
+                    let data = org;
+                    let i = index;
+                    getBrandOrganizationData2({ sensor: data.sensor, organization: data.organization })
+                        .then(simulation_records => {
+                            
+                            org["simulation_count"] = Number(simulation_records.length).toString();
+                            org["simulation_status"] = '';
+                            org["computed_time"] = '';
+                            org["simulation_timestamp"] = '';
+
+                            simulation_records.forEach(function (simulation_record, index) {
+                                simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            })
+
+                            simulation_records.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+                            
+                            if (simulation_records.length > 0) {
+                                getPlayerSimulationStatus(simulation_records[0].image_id)
+                                    .then(simulation => {
+                                        org["simulation_status"] = simulation ? simulation.status : '';
+                                        org["computed_time"] = simulation ? simulation.computed_time : '';
+                                        org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                        counter++;
+                                        if (counter == orgList.length) {
+                                            res.send({
+                                                message: "success",
+                                                data: orgList
+                                            })
+                                        }
+                                    }).catch(err => {
+                                        console.log('err',err);
+                                    })
+                            } else {
+                                counter++;
+                                if (counter == orgList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: orgList
+                                    })
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            counter++
+                            if (counter == orgList.length) {
+                                res.send({
+                                    message: "failure",
+                                    error: err
+                                })
+                            }
+                        })
+                })
+            }
+        })
 })
-
-
 
 app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req,res) =>{
     getAllTeamsOfOrganizationsOfSensorBrand(req.body)
@@ -8647,8 +7184,7 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req,res) =>{
             error: err
         })
     })
-                  
-    
+                
 })
 
 app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
@@ -8763,6 +7299,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
             let axonal_strain_max = {};
             let csdm_max = {};
             let masXsr_15_max = {};
+            let MPS_95 = {};
+
 
             if (data.length === 0){
                 brainRegions['principal-max-strain'] = {};
@@ -8770,6 +7308,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 brainRegions['axonal-strain-max'] = {};
                 brainRegions['csdm-max'] = {};
                 brainRegions['masXsr-15-max'] = {};
+                brainRegions['MPS-95'] = {};
+
                 
                 res.send({
                     message: "success",
@@ -8841,6 +7381,45 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                 masXsr_15_max[region] = masXsr_15_max[region] || [];
                                                 masXsr_15_max[region].push(coordinate);
                                             }
+                                            /*if (summary_data['MPS-95']) {
+                                               
+                                                if(summary_data['MPS-95']['frontal']){
+                                                    var coordinate = {};
+                                                    summary_data['MPS-95']['frontal'].forEach(function (data, index) {
+                                                        
+                                                        coordinate.x = data[0];
+                                                        coordinate.y = data[1];
+                                                        coordinate.z = data[2];
+                                                        region = 'frontal';
+                                                        MPS_95[region] = MPS_95[region] || [];
+                                                        MPS_95[region].push(coordinate);
+                                                    })
+                                                }
+                                                if(summary_data['MPS-95']['parietal']){
+                                                    var coordinate = {};
+                                                    summary_data['MPS-95']['parietal'].forEach(function (data, index) {
+                                                        
+                                                        coordinate.x = data[0];
+                                                        coordinate.y = data[1];
+                                                        coordinate.z = data[2];
+                                                        region = 'parietal';
+                                                        MPS_95[region] = MPS_95[region] || [];
+                                                        MPS_95[region].push(coordinate);
+                                                    })
+                                                }
+                                                if(summary_data['MPS-95']['msc']){
+                                                    var coordinate = {};
+                                                    summary_data['MPS-95']['msc'].forEach(function (data, index) {
+                                                        
+                                                        coordinate.x = data[0];
+                                                        coordinate.y = data[1];
+                                                        coordinate.z = data[2];
+                                                        region = 'msc';
+                                                        MPS_95[region] = MPS_95[region] || [];
+                                                        MPS_95[region].push(coordinate);
+                                                    })
+                                                }
+                                            }*/
                                         })
                                     }
                                 }
@@ -8862,6 +7441,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 brainRegions['axonal-strain-max'] = axonal_strain_max;
                 brainRegions['csdm-max'] = csdm_max;
                 brainRegions['masXsr-15-max'] = masXsr_15_max;
+                brainRegions['MPS-95'] = MPS_95;
+
                 res.send({
                     message: "success",
                     data: brainRegions
@@ -9694,101 +8275,7 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
         })  
 })
 
-function getTeamSpheres(obj) {
-    return new Promise((resolve, reject) => {
-        let params;
 
-        if (obj.brand) {
-            params = {
-                TableName: "sensor_data",
-                FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
-                ExpressionAttributeValues: {
-                   ":sensor": obj.brand,
-                   ":organization": obj.organization,
-                   ":team": obj.team,
-                },
-                ExpressionAttributeNames : {
-                    '#time': 'time',
-                    '#date': 'date',
-                    '#Impact_date': 'impact-date',
-                    '#Impact_time': 'impact-time'
-                },
-                ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
-                
-            };
-        } else {
-            params = {
-                TableName: "sensor_data",
-                FilterExpression: "organization = :organization and team = :team",
-                ExpressionAttributeValues: {
-                   ":organization": obj.organization,
-                   ":team": obj.team,
-                },
-                ExpressionAttributeNames : {
-                    '#time': 'time',
-                    '#date': 'date',
-                    '#Impact_date': 'impact-date',
-                    '#Impact_time': 'impact-time'
-                },
-                ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
-                
-            };
-        }
-        
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
-
-function updateUserStatus(obj) {
-    return new Promise((resolve, reject) => {
-        if (obj.type && obj.type === 'uodate_sensor_id') {
-            var userParams = {
-                TableName: "users",
-                Key: {
-                    user_cognito_id: obj.user_cognito_id,
-                },
-                UpdateExpression:
-                    "set sensor_id_number = :sensor_id_number",
-                ExpressionAttributeValues: {
-                    ":sensor_id_number": obj.sensor_id_number,
-                },
-                ReturnValues: "UPDATED_NEW",
-            };
-        } else {
-            var userParams = {
-                TableName: "users",
-                Key: {
-                    user_cognito_id: obj.user_cognito_id,
-                },
-                UpdateExpression:
-                    "set player_status = :player_status",
-                ExpressionAttributeValues: {
-                    ":player_status": obj.status,
-                },
-                ReturnValues: "UPDATED_NEW",
-            };
-        }
-        
-        docClient.update(userParams, (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-}
 
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {

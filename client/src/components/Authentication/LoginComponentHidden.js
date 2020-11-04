@@ -514,7 +514,7 @@ class LoginComponentHidden extends React.Component {
 
                       >
                       <>
-                        <strong >Failed! </strong><p dangerouslySetInnerHTML={{__html: this.state.loginError}} style={{'display': 'inline-flex'}}></p>.
+                        <strong >Failed! </strong><p dangerouslySetInnerHTML={{__html: this.state.loginError}} style={{'display': 'contents'}}></p>.
                       </>
                       </div>
                     ) : null}
