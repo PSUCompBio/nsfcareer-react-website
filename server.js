@@ -125,7 +125,28 @@ var cognito = {
     ClientId: config_env.ClientId
 }
 console.log(cognito);
-
+const {
+        getUserDetails,
+        getUserDetailBySensorId,
+        getUserByPlayerId,
+        updateSimulationFileStatusInDB,
+        addTeam,
+        deleteTeam,
+        fetchAllTeamsInOrganization,
+        deleteTeamFromOrganizationList,
+        addTeamToOrganizationList,
+        getCumulativeAccelerationData,
+        getTeamData,
+        getCompletedJobs,
+        updateJobComputedTime,
+        getBrandData,
+        getPlayerSimulationFile,
+        removeRequestedPlayerFromOrganizationTeam,
+        getCumulativeAccelerationRecords,
+        addPlayer,
+        getUserDetailByPlayerId,
+        getAllTeamsOfOrganizationsOfSensorBrand
+    } = require('./controllers/query');
 
 // Multer Configuration
 
@@ -7020,87 +7041,795 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
 /*=======================merge video end ======================*/
 
+
+/*
+================================================
+                 API'S START
+================================================
+
+*/
 app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getSimulationStatusCount", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            console.log(httpResponse.body);
-            res.send(httpResponse.body);
-        }
-    })
+    console.log(req.body);
+
+    let completed = 0;
+    let failed = 0;
+    let pending = 0;
+
+    getTeamData(req.body)
+        .then(sensor_data => {
+            let k = 0
+            if (sensor_data.length > 0) {
+                sensor_data.forEach(function (record, index) {
+                    getPlayerSimulationFile(record)
+                        .then(simulation => {
+                            k++;
+                            if (simulation.status === 'pending') {
+                                pending++;
+                            } else if (simulation.status === 'completed') {
+                                completed++;
+                            } else {
+                                failed++;
+                            }
+
+                            if (k == sensor_data.length) {
+                                res.send({
+                                    message: "success",
+                                    data: {
+                                        completed: completed,
+                                        failed: failed,
+                                        pending: pending
+                                    }
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            res.send({
+                                message: "failure",
+                                error: err,
+                                data: {
+                                    completed: 0,
+                                    failed: 0,
+                                    pending: 0
+                                }
+                            })
+                        })
+                })
+            } else {
+                res.send({
+                    message: "success",
+                    data: {
+                        completed: 0,
+                        failed: 0,
+                        pending: 0
+                    }
+                })
+            }
+            
+        })
+        .catch(err => {
+            res.send({
+                message: "failure",
+                error: err,
+                data: {
+                    completed: 0,
+                    failed: 0,
+                    pending: 0
+                }
+            })
+        })
 })
 
 app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationData", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    getCumulativeAccelerationData(req.body)
+        .then(data => {
+            res.send({
+                message: "success",
+                data: data[0],
+                simulationCount: data.length
+            })
+        })
+        .catch(err => {
+            res.send({
+                message: "failure",
+                data: {},
+                simulationCount:0,
+                error: err
+            })
+        })
 })
 
 app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req,res) =>{
-    console.log('getAllCumulativeAccelerationTimeRecords',req.body)
-    request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    getCumulativeAccelerationData(req.body)
+        .then(data => {
+            let acceleration_data_list = [];
+            // let frontal_Lobe = [];
+            let brainRegions = {};
+            let principal_max_strain = {};
+            let principal_min_strain = {};
+            let axonal_strain_max = {};
+            let csdm_max = {};
+            let masXsr_15_max = {};
+            let cnt = 1;
+
+            if (data.length === 0){
+                brainRegions['principal-max-strain'] = {};
+                brainRegions['principal-min-strain'] = {};
+                brainRegions['axonal-strain-max'] = {};
+                brainRegions['csdm-max'] = {};
+                brainRegions['masXsr-15-max'] = {};
+                
+                res.send({
+                    message: "success",
+                    data: acceleration_data_list,
+                    // frontal_Lobe: frontal_Lobe,
+                    brainRegions: brainRegions
+                })
+            }
+
+            data.forEach(function (acc_data, acc_index) {
+                let accData = acc_data;
+                let imageData = '';
+                let outputFile = '';
+                let jsonOutputFile = '';
+                let simulationImage = '';
+                getPlayerSimulationFile(acc_data)
+                .then(image_data => {
+                    imageData = image_data;
+                    // console.log(acc_index, imageData.player_name);
+                    if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
+                        console.log('summary json url ----------------------------\n', imageData.player_name + '/simulation/summary.json');
+                        let file_path = imageData.player_name + '/simulation/summary.json';
+                        return getFileFromS3(file_path, imageData.bucket_name);
+                        }
+                })
+               .then(output_file => {
+                    if (output_file)
+                        outputFile = output_file;
+                    // if (imageData.path && imageData.path != 'null') {
+                    //     return getFileFromS3(imageData.path, imageData.bucket_name);
+                    // } else {
+                    //     if (imageData.root_path && imageData.root_path != 'null') {
+                    //         let image_path = imageData.root_path + imageData.image_id + '.png';
+                    //         return getFileFromS3(image_path, imageData.bucket_name);
+                    //     }
+                    // }
+                })
+                .then(image_s3 => {
+                    // if (image_s3) {
+                    //     return getImageFromS3Buffer(image_s3);
+                    // }
+                })
+                .then(image => {
+                    simulationImage = image;
+
+                    // if (imageData.ouput_file_path && imageData.ouput_file_path != 'null') {
+                    //     let file_path = imageData.ouput_file_path;
+                    //     file_path = file_path.replace(/'/g, "");
+                    //     return getFileFromS3(file_path, imageData.bucket_name);
+                    // } else {
+                    //     if (imageData.root_path && imageData.root_path != 'null') {
+                    //         let summary_path = imageData.root_path + imageData.image_id + '_output.json';
+                    //         summary_path = summary_path.replace(/'/g, "");
+                    //         console.log('summary_path',summary_path)
+                    //         return getFileFromS3(summary_path, imageData.bucket_name);
+                    //     }
+                    // }
+                }).then(json_output_file => {
+                    if (json_output_file){
+                        jsonOutputFile = JSON.parse(json_output_file.Body.toString('utf-8'));
+                    }
+                    // X- Axis Linear Acceleration
+                    let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
+                    // X- Axis Angular Acceleration
+                    let angular_acceleration = accData['impact-date'] ? accData.simulation['angular-acceleration'] : accData['angular-acceleration'];
+                    // Y Axis timestamp
+                    let time = accData['impact-date'] ? accData.simulation['linear-acceleration']['xt'] : accData['linear-acceleration']['xt'];
+                    time = time ? time : [];
+                    
+                    // console.log(time);
+                    time.forEach((t, i) => {
+                        var _temp_time = parseFloat(t).toFixed(1);
+                        time[i] = _temp_time;
+                    })
+
+                    acceleration_data_list.push({
+                        linear_acceleration: linear_acceleration,
+                        angular_acceleration: angular_acceleration,
+                        time: time,
+                        simulation_image: simulationImage ? simulationImage : '',
+                        jsonOutputFile: jsonOutputFile ? jsonOutputFile : '',
+                        //simulation_output_data: outputFile ? JSON.parse(outputFile.Body.toString('utf-8')) : '',
+                        timestamp: accData.date,
+                        record_time: accData.time,
+                        sensor_data: accData,
+                        date_time: accData.player_id.split('$')[1]
+                    })
+
+                    if (acc_index === 0 && outputFile) {
+                        outputFile = JSON.parse(outputFile.Body.toString('utf-8'));
+                        if (outputFile.Insults) {
+                            outputFile.Insults.forEach(function (summary_data, index) {
+                                if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-max-strain'].location[0];
+                                    coordinate.y = summary_data['principal-max-strain'].location[1];
+                                    coordinate.z = summary_data['principal-max-strain'].location[2];
+                                    region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                    principal_max_strain[region] = principal_max_strain[region] || [];
+                                    principal_max_strain[region].push(coordinate);
+                                }
+                                if (summary_data['principal-min-strain'] && summary_data['principal-min-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-min-strain'].location[0];
+                                    coordinate.y = summary_data['principal-min-strain'].location[1];
+                                    coordinate.z = summary_data['principal-min-strain'].location[2];
+                                    region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                                    principal_min_strain[region] = principal_min_strain[region] || [];
+                                    principal_min_strain[region].push(coordinate);
+                                }
+                                if (summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['axonal-strain-max'].location[0];
+                                    coordinate.y = summary_data['axonal-strain-max'].location[1];
+                                    coordinate.z = summary_data['axonal-strain-max'].location[2];
+                                    region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                                    axonal_strain_max[region] = axonal_strain_max[region] || [];
+                                    axonal_strain_max[region].push(coordinate);
+                                }
+                                if (summary_data['csdm-max'] && summary_data['csdm-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['csdm-max'].location[0];
+                                    coordinate.y = summary_data['csdm-max'].location[1];
+                                    coordinate.z = summary_data['csdm-max'].location[2];
+                                    region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                                    csdm_max[region] = csdm_max[region] || [];
+                                    csdm_max[region].push(coordinate);
+                                }
+                                if (summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['masXsr-15-max'].location[0];
+                                    coordinate.y = summary_data['masXsr-15-max'].location[1];
+                                    coordinate.z = summary_data['masXsr-15-max'].location[2];
+                                    region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                                    masXsr_15_max[region] = masXsr_15_max[region] || [];
+                                    masXsr_15_max[region].push(coordinate);
+                                }
+                            })
+                        }
+                    }
+
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+
+                    // console.log('brainRegions', JSON.stringify(brainRegions));
+
+                    if (data.length === cnt) {
+                        acceleration_data_list.sort(function(b, a) {
+                            var keyA = a.date_time,
+                            keyB = b.date_time;
+                            if (keyA < keyB) return -1;
+                            if (keyA > keyB) return 1;
+                            return 0;
+                        });
+                        res.send({
+                            message: "success",
+                            data: acceleration_data_list,
+                            // frontal_Lobe: frontal_Lobe,
+                            brainRegions: brainRegions
+                        })
+                    }
+
+                    cnt++;
+                })
+            })
+           
+        })
+        .catch(err => {
+            var acceleration_data_list = [];
+            acceleration_data_list.push({
+                linear_acceleration: [],
+                angular_acceleration: [],
+                time: '',
+                simulation_image: '',
+                timestamp: '',
+                record_time: '',
+                sensor_data: ''
+            })
+            let brainRegions = {};
+            brainRegions['principal-max-strain'] = {};
+            brainRegions['principal-min-strain'] = {};
+            brainRegions['axonal-strain-max'] = {};
+            brainRegions['csdm-max'] = {};
+            brainRegions['masXsr-15-max'] = {};
+
+            res.send({
+                message: "failure",
+                data: acceleration_data_list,
+                brainRegions: brainRegions,
+                error: err
+            })
+        })
 })
 
 app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
-    console.log('AllCumulativeAccelerationTimeRecords',req.body)
-    request.post({ url: config.ComputeInstanceEndpoint + "AllCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+   getCumulativeAccelerationData(req.body)
+        .then(data => {
+            let acceleration_data_list = [];
+            // let frontal_Lobe = [];
+            let brainRegions = {};
+            let principal_max_strain = {};
+            let principal_min_strain = {};
+            let axonal_strain_max = {};
+            let csdm_max = {};
+            let masXsr_15_max = {};
+            let cnt = 1;
+
+            if (data.length === 0){
+                brainRegions['principal-max-strain'] = {};
+                brainRegions['principal-min-strain'] = {};
+                brainRegions['axonal-strain-max'] = {};
+                brainRegions['csdm-max'] = {};
+                brainRegions['masXsr-15-max'] = {};
+                
+                res.send({
+                    message: "success",
+                    data: acceleration_data_list,
+                    // frontal_Lobe: frontal_Lobe,
+                    brainRegions: brainRegions
+                })
+            }
+            let index_file = 0;
+            let file_count = 0;
+            data.forEach(function (acc_data, acc_index) {
+                let accData = acc_data;
+                let imageData = '';
+                let outputFile = '';
+                let jsonOutputFile = '';
+                let simulationImage = '';
+                getPlayerSimulationFile(acc_data)
+                .then(image_data => {
+                    imageData = image_data;
+                    console.log('summary json url ----------------------------\n', imageData.player_name + '/simulation/summary.json');
+                    if (imageData.player_name && imageData.player_name != 'null') {
+                        if(file_count < 1){
+                            file_count++;
+                             index_file = acc_index;
+                            console.log(imageData.player_name + '/simulation/summary.json');
+                            let file_path = imageData.player_name + '/simulation/summary.json';
+                            return getFileFromS3(file_path, imageData.bucket_name);
+                        }
+                    }
+                })
+               .then(output_file => {
+                    if (output_file) outputFile = output_file;
+                    acceleration_data_list.push({
+                        sensor_data: accData,   
+                        status: imageData ? imageData.status : '',
+                        computed_time : imageData ? imageData.computed_time : '',
+                        date_time: accData.player_id.split('$')[1]
+                    })
+
+                    if (acc_index === index_file && outputFile) {
+                        outputFile = JSON.parse(outputFile.Body.toString('utf-8'));
+                        if (outputFile.Insults) {
+                            outputFile.Insults.forEach(function (summary_data, index) {
+                                if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-max-strain'].location[0];
+                                    coordinate.y = summary_data['principal-max-strain'].location[1];
+                                    coordinate.z = summary_data['principal-max-strain'].location[2];
+                                    region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                    principal_max_strain[region] = principal_max_strain[region] || [];
+                                    principal_max_strain[region].push(coordinate);
+                                }
+                                if (summary_data['principal-min-strain'] && summary_data['principal-min-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-min-strain'].location[0];
+                                    coordinate.y = summary_data['principal-min-strain'].location[1];
+                                    coordinate.z = summary_data['principal-min-strain'].location[2];
+                                    region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                                    principal_min_strain[region] = principal_min_strain[region] || [];
+                                    principal_min_strain[region].push(coordinate);
+                                }
+                                if (summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['axonal-strain-max'].location[0];
+                                    coordinate.y = summary_data['axonal-strain-max'].location[1];
+                                    coordinate.z = summary_data['axonal-strain-max'].location[2];
+                                    region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                                    axonal_strain_max[region] = axonal_strain_max[region] || [];
+                                    axonal_strain_max[region].push(coordinate);
+                                }
+                                if (summary_data['csdm-max'] && summary_data['csdm-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['csdm-max'].location[0];
+                                    coordinate.y = summary_data['csdm-max'].location[1];
+                                    coordinate.z = summary_data['csdm-max'].location[2];
+                                    region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                                    csdm_max[region] = csdm_max[region] || [];
+                                    csdm_max[region].push(coordinate);
+                                }
+                                if (summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['masXsr-15-max'].location[0];
+                                    coordinate.y = summary_data['masXsr-15-max'].location[1];
+                                    coordinate.z = summary_data['masXsr-15-max'].location[2];
+                                    region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                                    masXsr_15_max[region] = masXsr_15_max[region] || [];
+                                    masXsr_15_max[region].push(coordinate);
+                                }
+                            })
+                        }
+                    }
+
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    // console.log('brainRegions', JSON.stringify(brainRegions));
+
+                    if (data.length === cnt) {
+                        acceleration_data_list.sort(function(b, a) {
+                            var keyA = a.date_time,
+                            keyB = b.date_time;
+                            if (keyA < keyB) return -1;
+                            if (keyA > keyB) return 1;
+                            return 0;
+                        });
+                        res.send({
+                            message: "success",
+                            data: acceleration_data_list,
+                            // frontal_Lobe: frontal_Lobe,
+                            brainRegions: brainRegions
+                        })
+                    }
+
+                    cnt++;
+                })
+                .catch(err => {
+                    let brainRegions = {};
+                    brainRegions['principal-max-strain'] = {};
+                    brainRegions['principal-min-strain'] = {};
+                    brainRegions['axonal-strain-max'] = {};
+                    brainRegions['csdm-max'] = {};
+                    brainRegions['masXsr-15-max'] = {};
+                    var acceleration_data_list = [];
+                    // acceleration_data_list.push({
+                    //     sensor_data: ''
+                    // })
+                    res.send({
+                        message: "failure",
+                        data: acceleration_data_list,
+                        brainRegions: brainRegions,
+                        error: err
+                    })
+                })
+            })
+           
+        })
+        .catch(err => {
+            let brainRegions = {};
+            brainRegions['principal-max-strain'] = {};
+            brainRegions['principal-min-strain'] = {};
+            brainRegions['axonal-strain-max'] = {};
+            brainRegions['csdm-max'] = {};
+            brainRegions['masXsr-15-max'] = {};
+            var acceleration_data_list = [];
+            // acceleration_data_list.push({
+            //     sensor_data: ''
+            // })
+            res.send({
+                message: "failure",
+                data: acceleration_data_list,
+                brainRegions: brainRegions,
+                error: err
+            })
+        })
 })
 app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
-    console.log('getCumulativeAccelerationTimeRecords',req.body)
-    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeRecords", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+   getCumulativeAccelerationRecords(req.body)
+        .then(data => {
+            let acceleration_data_list = [];
+            // let frontal_Lobe = [];
+            let brainRegions = {};
+            let principal_max_strain = {};
+            let principal_min_strain = {};
+            let axonal_strain_max = {};
+            let csdm_max = {};
+            let masXsr_15_max = {};
+            let cnt = 1;
+
+            if (data.length === 0){
+                brainRegions['principal-max-strain'] = {};
+                brainRegions['principal-min-strain'] = {};
+                brainRegions['axonal-strain-max'] = {};
+                brainRegions['csdm-max'] = {};
+                brainRegions['masXsr-15-max'] = {};
+                
+                res.send({
+                    message: "success",
+                    data: acceleration_data_list,
+                    // frontal_Lobe: frontal_Lobe,
+                    brainRegions: brainRegions
+                })
+            }
+
+            data.forEach(function (acc_data, acc_index) {
+                let accData = acc_data;
+                let imageData = '';
+                let outputFile = '';
+                let jsonOutputFile = '';
+                let simulationImage = '';
+                getPlayerSimulationFile(acc_data)
+                .then(image_data => {
+                    imageData = image_data;
+                    console.log(acc_index, imageData.player_name);
+                    if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
+                        console.log(imageData.player_name + '/simulation/summary.json');
+                        let file_path = imageData.player_name + '/simulation/summary.json';
+                        return getFileFromS3(file_path, imageData.bucket_name);
+                    }
+                })
+               .then(output_file => {
+                    if (output_file)
+                        outputFile = output_file;
+                    // if (imageData.path && imageData.path != 'null') {
+                    //     return getFileFromS3(imageData.path, imageData.bucket_name);
+                    // } else {
+                    //     if (imageData.root_path && imageData.root_path != 'null') {
+                    //         let image_path = imageData.root_path + imageData.image_id + '.png';
+                    //         return getFileFromS3(image_path, imageData.bucket_name);
+                    //     }
+                    // }
+                })
+                .then(image_s3 => {
+                    // if (image_s3) {
+                    //     return getImageFromS3Buffer(image_s3);
+                    // }
+                })
+                .then(image => {
+                    simulationImage = image;
+
+                    // if (imageData.ouput_file_path && imageData.ouput_file_path != 'null') {
+                    //     let file_path = imageData.ouput_file_path;
+                    //     file_path = file_path.replace(/'/g, "");
+                    //     return getFileFromS3(file_path, imageData.bucket_name);
+                    // } else {
+                    //     if (imageData.root_path && imageData.root_path != 'null') {
+                    //         let summary_path = imageData.root_path + imageData.image_id + '_output.json';
+                    //         summary_path = summary_path.replace(/'/g, "");
+                    //         console.log('summary_path',summary_path)
+                    //         return getFileFromS3(summary_path, imageData.bucket_name);
+                    //     }
+                    // }
+                }).then(json_output_file => {
+                    if (json_output_file){
+                        jsonOutputFile = JSON.parse(json_output_file.Body.toString('utf-8'));
+                    }
+                    // X- Axis Linear Acceleration
+                    let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
+                    // X- Axis Angular Acceleration
+                    let angular_acceleration = accData['impact-date'] ? accData.simulation['angular-acceleration'] : accData['angular-acceleration'];
+                    // Y Axis timestamp
+                    let time = accData['impact-date'] ? accData.simulation['linear-acceleration']['xt'] : accData['linear-acceleration']['xt'];
+                    time = time ? time : [];
+                    
+                    // console.log(time);
+                    time.forEach((t, i) => {
+                        var _temp_time = parseFloat(t).toFixed(1);
+                        time[i] = _temp_time;
+                    })
+
+                    acceleration_data_list.push({
+                        linear_acceleration: linear_acceleration,
+                        angular_acceleration: angular_acceleration,
+                        time: time,
+                        simulation_image: simulationImage ? simulationImage : '',
+                        jsonOutputFile: jsonOutputFile ? jsonOutputFile : '',
+                        //simulation_output_data: outputFile ? JSON.parse(outputFile.Body.toString('utf-8')) : '',
+                        timestamp: accData.date,
+                        record_time: accData.time,
+                        sensor_data: accData,
+                        date_time: accData.player_id.split('$')[1]
+                    })
+
+                    if (acc_index === 0 && outputFile) {
+                        outputFile = JSON.parse(outputFile.Body.toString('utf-8'));
+                        if (outputFile.Insults) {
+                            outputFile.Insults.forEach(function (summary_data, index) {
+                                if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-max-strain'].location[0];
+                                    coordinate.y = summary_data['principal-max-strain'].location[1];
+                                    coordinate.z = summary_data['principal-max-strain'].location[2];
+                                    region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                    principal_max_strain[region] = principal_max_strain[region] || [];
+                                    principal_max_strain[region].push(coordinate);
+                                }
+                                if (summary_data['principal-min-strain']  && summary_data['principal-min-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-min-strain'].location[0];
+                                    coordinate.y = summary_data['principal-min-strain'].location[1];
+                                    coordinate.z = summary_data['principal-min-strain'].location[2];
+                                    region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                                    principal_min_strain[region] = principal_min_strain[region] || [];
+                                    principal_min_strain[region].push(coordinate);
+                                }
+                                if (summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['axonal-strain-max'].location[0];
+                                    coordinate.y = summary_data['axonal-strain-max'].location[1];
+                                    coordinate.z = summary_data['axonal-strain-max'].location[2];
+                                    region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                                    axonal_strain_max[region] = axonal_strain_max[region] || [];
+                                    axonal_strain_max[region].push(coordinate);
+                                }
+                                if (summary_data['csdm-max'] && summary_data['csdm-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['csdm-max'].location[0];
+                                    coordinate.y = summary_data['csdm-max'].location[1];
+                                    coordinate.z = summary_data['csdm-max'].location[2];
+                                    region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                                    csdm_max[region] = csdm_max[region] || [];
+                                    csdm_max[region].push(coordinate);
+                                }
+                                if (summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['masXsr-15-max'].location[0];
+                                    coordinate.y = summary_data['masXsr-15-max'].location[1];
+                                    coordinate.z = summary_data['masXsr-15-max'].location[2];
+                                    region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                                    masXsr_15_max[region] = masXsr_15_max[region] || [];
+                                    masXsr_15_max[region].push(coordinate);
+                                }
+                            })
+                        }
+                    }
+
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+
+                    // console.log('brainRegions', JSON.stringify(brainRegions));
+
+                    if (data.length === cnt) {
+                        acceleration_data_list.sort(function(b, a) {
+                            var keyA = a.date_time,
+                            keyB = b.date_time;
+                            if (keyA < keyB) return -1;
+                            if (keyA > keyB) return 1;
+                            return 0;
+                        });
+                        res.send({
+                            message: "success",
+                            data: acceleration_data_list,
+                            // frontal_Lobe: frontal_Lobe,
+                            brainRegions: brainRegions
+                        })
+                    }
+
+                    cnt++;
+                })
+            })
+           
+        })
+        .catch(err => {
+            var acceleration_data_list = [];
+            acceleration_data_list.push({
+                linear_acceleration: [],
+                angular_acceleration: [],
+                time: '',
+                simulation_image: '',
+                timestamp: '',
+                record_time: '',
+                sensor_data: ''
+            })
+            let brainRegions = {};
+            brainRegions['principal-max-strain'] = {};
+            brainRegions['principal-min-strain'] = {};
+            brainRegions['axonal-strain-max'] = {};
+            brainRegions['csdm-max'] = {};
+            brainRegions['masXsr-15-max'] = {};
+
+            res.send({
+                message: "failure",
+                data: acceleration_data_list,
+                brainRegions: brainRegions,
+                error: err
+            })
+        })
 })
 
 app.post(`${apiPrefix}getAllCumulativeAccelerationJsonData`, (req,res) =>{
-    
-    request.post({ url: config.ComputeInstanceEndpoint + "getAllCumulativeAccelerationJsonData", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            console.log('getAllCumulativeAccelerationJsonData',httpResponse.body)
-            res.send(httpResponse.body);
-        }
-    })
+    getCumulativeAccelerationData(req.body)
+        .then(data => {
+            data.forEach(function (acc_data) {
+                let accData = acc_data;
+                let imageData = '';
+                let outputFile = '';
+                getPlayerSimulationFile(acc_data)
+                .then(file_data => {
+                    // console.log('image_data',image_data)
+                    imageData = file_data;
+                    
+                    if (imageData.ouput_file_path && imageData.ouput_file_path != 'null') {
+                        let file_path = image_data.ouput_file_path;
+                        file_path = file_path.replace(/'/g, "");
+                        return getFileFromS3(file_path, imageData.bucket_name);
+                    } else {
+                        if (imageData.root_path && imageData.root_path != 'null') {
+                            let summary_path = imageData.root_path + imageData.image_id + '_ouput.json';
+                            return getFileFromS3(summary_path, imageData.bucket_name);
+                        }
+                    }
+                }).then(output_file => {
+                    outputFile = output_file;
+                    if (output_file)
+                        outputFile = JSON.parse(outputFile.Body.toString('utf-8'));
+                    console.log('outputFile',outputFile)
+                    // if (imageData.path && imageData.path != 'null')
+                    //     return getFileFromS3(imageData.path, imageData.bucket_name);
+                    res.send({
+                        message: "success",
+                        data: {
+                            'JsonFile':outputFile
+                        }
+                    })
+                })
+                // .catch(err => {
+                //     res.send({
+                //         message: "failure",
+                //         error: err
+                //     })
+                // })
+            })
+
+            
+        }).catch(err => {
+         
+            res.send({
+                message: "failure",
+                error: err
+            })
+        })
 })
 
 app.post(`${apiPrefix}getCumulativeAccelerationTimeData`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getCumulativeAccelerationTimeData", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
+    getCumulativeAccelerationData(req.body)
+            .then(data => {
+                let linear_accelerations = data.map(function (impact_data) {
+                    return impact_data.linear_acceleration_pla
+                });
 
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+                // X- Axis Linear Acceleration
+                let max_linear_acceleration = Math.max(...linear_accelerations);
+                // Y Axis timestamp
+                let time = [0, 20, 40];
+
+                res.send({
+                    message: "success",
+                    data: {
+                        linear_accelerations: [0, max_linear_acceleration, 0],
+                        time: time
+                    }
+                })
+            })
+            .catch(err => {
+                res.send({
+                    message: "failure",
+                    data: {
+                        linear_accelerations: [],
+                        time: []
+                    },
+                    error: err
+                })
+            })
 })
 
 app.post(`${apiPrefix}getCumulativeEventPressureData`, (req,res) =>{
@@ -7126,15 +7855,82 @@ app.post(`${apiPrefix}getCumulativeEventLoadData`, (req,res) =>{
         }
     })
 })
+
+function getHeadAccelerationEvents(obj) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: 'sensor_data',
+            KeyConditionExpression: "team = :team and begins_with(player_id, :player_id)",
+            ExpressionAttributeValues: {
+                ":team": obj.team,
+                ":player_id": obj.player_id
+            }
+        };
+        var item = [];
+        docClient.query(params).eachPage((err, data, done) => {
+            if (err) {
+                console.log(err);
+                reject(err);
+            }
+            if (data == null) {
+                let records = concatArrays(item);
+                let date = records.map(function (record) {
+                    return record.date;
+                });
+                // Now we will store no of impacts corresponding to date
+                var date_map = new Map();
+                for (var i = 0; i < date.length; i++) {
+                    // check if key in map exists (Player id)
+                    // if it doesn't exists then add the array element
+                    // else update value of alert and impacts in existsing key in map
+                    if (date_map.has(date[i])) {
+
+                        let tempObject = date_map.get(date[i]);
+                        tempObject += 1;
+                        date_map.set(date[i], tempObject);
+                    }
+                    else {
+
+                        date_map.set(date[i], 0);
+                    }
+                }
+                console.log("DATE MAP", date_map.keys());
+                console.log(Array.from(date_map.values()));
+                resolve({
+                    no_of_impacts: Array.from(date_map.values()),
+                    dates: Array.from(date_map.keys()),
+                    timestamp: Number(Date.now()).toString()
+                });
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+    // var myObject = {
+    //     message : "success",
+    //     data : {
+    //         pressure : [176, 267, 187, 201, 180, 4, 230, 258, 14, 21, 89, 23, 119, 113, 28, 49],
+    //         time_label : [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75],
+    //         timestamp : Number(Date.now()).toString()
+    //     }
+    // }
+    // return myObject;
+}
 app.post(`${apiPrefix}getHeadAccelerationEvents`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getHeadAccelerationEvents", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            console.log(err);
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
+    getHeadAccelerationEvents(req.body)
+    .then(data => {
+        res.send({
+            message: "success",
+            data: data
+        })
+    })
+    .catch(err => {
+        console.log("========================>,ERRROR ,", err);
+        res.send({
+            message: "failure",
+            error: err
+        });
     })
 })
 app.post(`${apiPrefix}getTeamAdminData`, (req,res) =>{
@@ -7213,41 +8009,91 @@ app.post(`${apiPrefix}getAllRosters`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}fetchAllTeamsInOrganization`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "fetchAllTeamsInOrganization", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
+    fetchAllTeamsInOrganization(req.body.organization)
+        .then(list => {
+            var teamList = list.filter(function (team) {
 
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+                return (!("team_list" in team));
+            });
+            let counter = 1;
+            if (teamList.length == 0) {
+                res.send({
+                    message: "success",
+                    data: []
+                })
+            }
+            else {
+                teamList.forEach(function (team, index) {
+                    let data = team;
+                    let i = index;
+                    getTeamData({ team: data.team_name })
+                        .then(simulation_records => {
+                            counter++;
+                            team["simulation_count"] = Number(simulation_records.length).toString();
+
+                            if (counter == teamList.length) {
+                                res.send({
+                                    message: "success",
+                                    data: teamList
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            counter++
+                            if (counter == teamList.length) {
+                                res.send({
+                                    message: "failure",
+                                    error: err
+                                })
+                            }
+                        })
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.send({
+                message: "failure",
+                error: err
+            })
+        })
 })
 
 app.post(`${apiPrefix}addTeam`, (req,res) =>{
-    console.log(req.body);
-    request.post({ url: config.ComputeInstanceEndpoint + "addTeam", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-            console.log(err);
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+    addTeam(req.body)
+        .then(data => {
+            // Adding user to organization
+            return new addTeamToOrganizationList(req.body.organization, req.body.team_name)
+        })
+        .then(d => {
+            res.send({
+                message: "success"
+            })
+        })
+        .catch(err => {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        })
 })
 
 
 app.post(`${apiPrefix}deleteTeam`, (req,res) =>{
-    console.log(req.body);
-    request.post({ url: config.ComputeInstanceEndpoint + "deleteTeam", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
-
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
+    deleteTeam(req.body)
+    .then(d => {
+        return new deleteTeamFromOrganizationList(req.body.organization, req.body.team_name)
+    })
+    .then(d => {
+        res.send({
+            message: "success"
+        })
+    })
+    .catch(err => {
+        res.send({
+            message: "failure",
+            error: err
+        })
     })
 })
 
@@ -7258,6 +8104,13 @@ app.post(`${apiPrefix}uploadModelRealData`, setConnectionTimeout('10m'), uploadM
     });
 
 })
+
+/*
+================================================
+                 API'S END
+================================================
+
+*/
 
 function hadleAuthanticat(user_name,password){
     return new Promise((resolve, reject) => {
@@ -7624,14 +8477,88 @@ app.post(`${apiPrefix}getAllSensorBrandsList`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getAllSensorBrands", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
+    getAllSensorBrands()
+    .then(list => {
+        var brandList = list.filter(function (brand) {
+            return (!("brandList" in brand));
+        });
 
-            res.send({ message: 'failure', error: err });
+        let counter = 0;
+        if (brandList.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        } else {
+
+            brandList.forEach(function (brand, index) {
+                let data = brand;
+                let i = index;
+                getBrandData({ sensor: data.sensor })
+                    .then(simulation_records => {
+                        
+                        brand["simulation_count"] = Number(simulation_records.length).toString();
+                        brand["simulation_status"] = '';
+                        brand["computed_time"] = '';
+                        brand["simulation_timestamp"] = '';
+
+                        simulation_records.forEach(function (simulation_record, index) {
+                            simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                        })
+
+                        simulation_records.sort(function (b, a) {
+                            var keyA = a.date_time,
+                                keyB = b.date_time;
+                            if (keyA < keyB) return -1;
+                            if (keyA > keyB) return 1;
+                            return 0;
+                        });
+                                                        
+                        if (simulation_records.length > 0) {
+                            getPlayerSimulationStatus(simulation_records[0].image_id)
+                                .then(simulation => {
+                                    // console.log('simulaimagimage_ide_idtion', simulation_records[0].image_id );
+                                    // console.log('simulation', simulation );
+                                    brand["simulation_status"] = simulation ? simulation.status : '';
+                                    brand["computed_time"] = simulation ? simulation.computed_time : '';
+                                    brand["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                    counter++;
+                                    if (counter == brandList.length) {
+                                        res.send({
+                                            message: "success",
+                                            data: brandList
+                                        })
+                                    }
+                                }).catch(err => {
+                                    console.log('err', err);
+                                })
+                        } else {
+                            counter++;
+                            if (counter == brandList.length) {
+                                res.send({
+                                    message: "success",
+                                    data: brandList
+                                })
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        counter++
+                        if (counter == brandList.length) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                    })
+            })
         }
-        else {
-            res.send(httpResponse.body);
-        }
+    })
+    .catch(err => {
+        res.send({
+            message: "failure",
+            error: err
+        })
     })
 })
 
@@ -7697,44 +8624,7 @@ app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req,res) =>{
     })
 })
 
-function getAllTeamsOfOrganizationsOfSensorBrand(obj) {
-    return new Promise((resolve, reject) => {
-        let params;
-        if (obj.brand) {
-            params = {
-                TableName: "organizations",
-                FilterExpression: "sensor = :sensor and organization = :organization",
-                ExpressionAttributeValues: {
-                   ":sensor": obj.brand,
-                   ":organization": obj.organization
-                },
-                ProjectionExpression: "sensor, organization, team_name, organization_id"
-            };
-        } else {
-            params = {
-                TableName: "organizations",
-                FilterExpression: "organization = :organization",
-                ExpressionAttributeValues: {
-                   ":organization": obj.organization
-                },
-                ProjectionExpression: "sensor, organization, team_name, organization_id"
-            };
-        }
-        
-        var item = [];
-        docClient.scan(params).eachPage((err, data, done) => {
-            if (err) {
-                reject(err);
-            }
-            if (data == null) {
-                resolve(concatArrays(item));
-            } else {
-                item.push(data.Items);
-            }
-            done();
-        });
-    });
-}
+
 
 app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req,res) =>{
     getAllTeamsOfOrganizationsOfSensorBrand(req.body)
@@ -7762,15 +8652,89 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req,res) =>{
 })
 
 app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
-    request.post({ url: config.ComputeInstanceEndpoint + "getAllteamsOfOrganizationOfSensorBrand", json: req.body }, function (err, httpResponse, body) {
-        if (err) {
+    getAllTeamsOfOrganizationsOfSensorBrand(req.body)
+        .then(list => {
+            // console.log(list);
+            // let uniqueList = [];
+            // var teamList = list.filter(function (team_name) {
+            //     return (!("teamList" in team_name));
+            // });
+            let uniqueList = [];
+            var teamList = list.filter(function (team_name) {
+                if (uniqueList.indexOf(team_name.team_name) === -1) {
+                    uniqueList.push(team_name.team_name);
+                    return team_name;
+                }
+            });
+            
+            let counter = 0;
+            if (teamList.length == 0) {
+                res.send({
+                    message: "success",
+                    data: []
+                })
+            } else {
+                teamList.forEach(function (team, index) {
+                    let data = team;
+                    let i = index;
+                    getOrganizationTeamData({ sensor: data.sensor && req.body.brand ? data.sensor : false, organization: data.organization, team: data.team_name })
+                        .then(simulation_records => {
+                            
+                            team["simulation_count"] = Number(simulation_records.length).toString();
+                            team["simulation_status"] = '';
+                            team["computed_time"] = '';
+                            team["simulation_timestamp"] = '';
 
-            res.send({ message: 'failure', error: err });
-        }
-        else {
-            res.send(httpResponse.body);
-        }
-    })
+                            simulation_records.forEach(function (simulation_record, index) {
+                                simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            })
+
+                            simulation_records.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+                            
+                            if (simulation_records.length > 0) {
+                                getPlayerSimulationStatus(simulation_records[0].image_id)
+                                    .then(simulation => {
+                                        team["simulation_status"] = simulation ? simulation.status : '';
+                                        team["computed_time"] = simulation ? simulation.computed_time : '';
+                                        team["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                        counter++;
+                                        if (counter == teamList.length) {
+                                            res.send({
+                                                message: "success",
+                                                data: teamList
+                                            })
+                                        }
+                                    }).catch(err => {
+                                        console.log('err',err);
+                                    })
+                            } else {
+                                counter++;
+                                if (counter == teamList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: teamList
+                                    })
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            counter++
+                            if (counter == teamList.length) {
+                                res.send({
+                                    message: "failure",
+                                    error: err
+                                })
+                            }
+                        })
+                })
+            }
+        })
 })
 
 app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
