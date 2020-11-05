@@ -1,6 +1,4 @@
 
-}
-}
 @media (min-width: 1200px){
   .container_1200{
     max-width: 1210px!important;
@@ -23,7 +21,7 @@
   .teamstats_header{
     margin-top: 8%!important;
   
-
+}
 @media screen and (max-width: 1024px) {
   /* Navigation text css  */
   .team-admin-page-navigation {
