@@ -202,7 +202,8 @@ const {
         getAllOrganizationsOfSensorBrand,
         getTeamSpheres,
         updateUserStatus,
-        getTeamDataWithPlayerRecords_3
+        getTeamDataWithPlayerRecords_3,
+        getPlayerCgValues
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -5064,7 +5065,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
                         let imageData = '';
                         getSimulationImageRecord(image_id)
                             .then(image_data => {
-                                // console.log('image_data',image_data)
+                                console.log('image_data -----------------------------------\n',image_data)
                                 imageData = image_data;
                                 return verifyImageToken(imageData['token'], image_data);
                             })

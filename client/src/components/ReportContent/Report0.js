@@ -14,7 +14,8 @@ import arrow_left from './arrow_left.png'
 import arrow_right from './arrow_right.png'
 
 import ClinicalReportHeader from './Clinical-Report-Header.png';
-import taxture1  from './taxture1.jpg'
+import taxture1  from './taxture1.png';
+import branImages_1 from './branImages_1.png'
 // import logo 
 // Create styles
 console.log('innerWidth ------------------------\n',window.innerWidth )
@@ -34,10 +35,28 @@ class Report extends React.Component {
                 metric: ''
             }
         }else if(this.props.data){
+            var sensor_data = this.props.data.sensor_data ? this.props.data.sensor_data : '';
+            var impact_time = '';
+            var  time = '';
+            if (sensor_data && sensor_data['impact-time']) {
+                let split = sensor_data['impact-time'].split(":");
+                impact_time = split.slice(0, split.length - 1).join(":");
+            }
+
+            if (sensor_data && sensor_data['time']) {
+
+                let split = sensor_data['time'].toString();
+                console.log(split)
+                split = split.replace(".", ":");
+                split = split.split(":");
+                time = split.slice(0, split.length - 1).join(":");
+            }
             this.state = {
                 jsonData : this.props.jsonfile,
                 data: this.props.data.sensor_data.player ? this.props.data.sensor_data.player : '',
                 metric: this.props.Metric,
+                impact_time: impact_time ? this.tConvert(impact_time) : this.tConvert(time) ,
+                impact_date : sensor_data['impact-date'] ? this.getDate(sensor_data['impact-date'].replace(/:|-/g, "/")) : sensor_data['date'] ? this.getDate(sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
             }
         }else{
             this.state = {
@@ -47,7 +66,22 @@ class Report extends React.Component {
             } 
         }
     }
-
+    tConvert = (time) => {
+        console.log(time)
+        if(time == 0){
+          return 'Unknown Time'
+        }else{
+           // Check correct time format and split into components
+          time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+        
+          if (time.length > 1) { // If time format correct
+            time = time.slice (1);  // Remove full string match value
+            time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+            time[0] = +time[0] % 12 || 12; // Adjust hours
+          }
+          return time.join (''); // return adjusted time or original string
+        }
+      }
     getDateInFormat(){
         var today = new Date();
         var dd = today.getDate();
@@ -63,6 +97,20 @@ class Report extends React.Component {
             mm='0'+mm;
         }
         return today = mm+'/'+dd+'/'+yyyy;
+    }
+
+    getDate = (timestamp) => {
+
+      const plus0 = num => `0${num.toString()}`.slice(-2)
+    
+      const d = new Date(timestamp)
+    
+      const year = d.getFullYear()
+      const monthTmp = d.getMonth() + 1
+      const month = plus0(monthTmp)
+      const date = plus0(d.getDate())
+      
+      return `${month}/${date}/${year}`
     }
     getTrangle =(strain_Val)=>{
         if(strain_Val <= 15){
@@ -294,7 +342,7 @@ class Report extends React.Component {
                 borderLeftWidth: 0,
                 borderTopWidth: 0,
                 display : 'inline-block',
-                width : '60%',
+                width : '30%',
                 float : 'left',
                 flexDirection : 'column',
                 color : 'grey',
@@ -462,13 +510,13 @@ class Report extends React.Component {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '63%'
+                marginTop: '66%'
             },
             taxture2_div:{
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '384px'
+                marginTop: '400px'
             },
             taxture3_div:{
                 width: '79%',
@@ -526,6 +574,15 @@ class Report extends React.Component {
             arrow_left: {
                 width: '80%',
             },
+            bottomView: {
+              width: '100%',
+              height: 50,
+              justifyContent: 'center',
+              alignItems: 'center',
+              color : 'grey',
+              position: 'absolute', //Here is the trick
+              marginTop : '780',
+            }
         });
         const styleCsdm = StyleSheet.create({
             point_scale: {
@@ -555,8 +612,11 @@ class Report extends React.Component {
                                 <Text style={styles.title}>Prediction Overview</Text>
                             </View>
                             <View style= {styles.tableRowHead}>
-                                <Text style={styles.tableColLeft}> Date : {this.getDateInFormat()} </Text>
+                                <Text style={styles.tableColLeft}>Report Date : </Text>
                                 <Text style={styles.tableColRightHead}>{'                   PAGE 1 of 2'} </Text>
+                            </View>
+                            <View style= {styles.tableRowHead}>
+                                <Text style={styles.tableColLeft}>{this.getDateInFormat()} </Text>
                             </View>
                             <Text style={{
                                     margin : 'auto',
@@ -574,12 +634,15 @@ class Report extends React.Component {
 
 
                                 <Text style={styles.tableColLeft}> DOB : {"N/A"} </Text>
+                                <Text style={styles.tableColLeft}> Impact Date : {this.state.impact_date} </Text>
+
                                 <Text style={styles.tableColRight}> Referring physician : Unknown </Text>
 
                             </View>
                             <View style={styles.tableRow}>
 
                                 <Text style={styles.tableColLeft}> Sex : {"N/A"} </Text>
+                                <Text style={styles.tableColLeft}> Impact Time : {this.state.impact_time} </Text>
 
                                 <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
 
@@ -816,10 +879,21 @@ class Report extends React.Component {
                                             <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                         </View>
                                     </View>
+                                    <View style={styles.tableRow}>                          
+                                        <Image  style={styles.trangle_scale} src={branImages_1} alt="trangle"/>
+                                    </View>
                                 </>
                                 : null
                             }
                                 {/*=============== page 1 footer sections end ===============*/}
+
+
+                            {/*====================Footer heading ==============================*/}
+                            <View style={styles.bottomView}>
+                                <Text>NOT FOR CLINICAL USE</Text>
+                            </View>
+                            {/*====================Footer heading end ==============================*/}
+
                         </View>
 
                         {/* <View style={{
@@ -952,41 +1026,53 @@ class Report extends React.Component {
                                                 <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                             </View>
                                         </View>
+                                        <View style={styles.tableRow}>                          
+                                            <Image  style={styles.trangle_scale} src={branImages_1} alt="trangle"/>
+                                        </View>
+                                        {/*====================Footer heading ==============================*/}
+                                        <View style={styles.bottomView}>
+                                            <Text>NOT FOR CLINICAL USE</Text>
+                                        </View>
+                                        {/*====================Footer heading end ==============================*/}
                                     </>
-                                    : null
+                                    : 
+
+                                    <>
+                                        <View style= {styles.tableRowHead}>
+
+                                            <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
+                                        </View>
+                                        <Text style = {{
+                                                fontSize : 15,
+                                                textAlign : 'center',
+                                                color : "#0E263D",
+                                                marginTop : '2%',
+                                                marginBottom : '2%'
+                                            }}>NSFCAREER OVERVIEW</Text>
+                                            <View style= {{
+
+                                                }}>
+
+
+                                                <View style={styles.tableRow}>
+
+
+
+                                                    <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
+                                                    <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
+
+                                                </View>
+                                                <View style={styles.tableRow}>
+
+                                                    <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
+
+                                                    <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
+
+                                                </View>
+                                            </View>
+                                        
+                                    </>
                                 }
-                                <View style= {styles.tableRowHead}>
-
-                                    <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
-                                </View>
-                                <Text style = {{
-                                        fontSize : 15,
-                                        textAlign : 'center',
-                                        color : "#0E263D",
-                                        marginTop : '2%',
-                                        marginBottom : '2%'
-                                    }}>NSFCAREER OVERVIEW</Text>
-                                    <View style= {{
-
-                                        }}>
-
-
-                                        <View style={styles.tableRow}>
-
-
-
-                                            <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
-                                            <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
-
-                                        </View>
-                                        <View style={styles.tableRow}>
-
-                                            <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
-
-                                            <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
-
-                                        </View>
-                                    </View>
                                 </View>
                                 </Page>
                             </Document>

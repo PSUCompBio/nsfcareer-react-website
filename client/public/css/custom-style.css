@@ -1410,3 +1410,25 @@ button.btn.button-yes {
 .dashboard  .Cumulative-Overview-player-dash{
       padding-bottom: 4rem !important;
 }
+.input-range__label-container{
+  display: none!important;
+}
+.input-range__track--background{
+  height: 9px!important;
+  background: #686868d1!important;
+}
+.input-range__track{
+  border-radius: inherit!important;
+}
+.input-range__track--active{
+  background: #4ca2ff!important;
+    height: 9px!important;
+}
+.input-range__slider{
+      border-radius: inherit!important;
+    background: #4ca2ff!important;
+    height: 27px!important;
+    width: 11px!important;
+    margin-top: -18px!important;
+    border: none!important;
+}

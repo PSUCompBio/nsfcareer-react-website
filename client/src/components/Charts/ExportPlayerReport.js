@@ -1,6 +1,7 @@
 import React from 'react';
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { useLocation } from 'react-router-dom'
 import brain from './Cumulative/brain1.glb';
 import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
@@ -83,6 +84,7 @@ class ExportPlayerReport extends React.Component {
 
 	constructor(props) {
 		super(props);
+  		console.log(window.location.pathname);
 		this.state = {
 			isLoading: true,
 			brainStrainActive: 'principal-max-strain',
@@ -126,7 +128,8 @@ class ExportPlayerReport extends React.Component {
 					shortenName: "Frontal"
 				}
 			],
-			actionButtonPositions: []
+			actionButtonPositions: [],
+			pathname: window.location.pathname
 		};
 
 		this.plugins = [
@@ -906,7 +909,7 @@ class ExportPlayerReport extends React.Component {
 	showUpdatedRegion = () => {
 
 		const { brainStrainActive } = this.state;
-		console.log('brainRegions',this.props.brainRegions)
+		console.log('brainRegions',this.props)
 		frontal_lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
 		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
 		occipital_lobe_json = this.props.brainRegions[brainStrainActive].occipital || []
@@ -1132,7 +1135,7 @@ class ExportPlayerReport extends React.Component {
 								<button onClick={() => this.handleBrainStrain('principal-min-strain')} className={this.state.brainStrainActive === 'principal-min-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Min Principal Strain</button>
 								<button onClick={() => this.handleBrainStrain('csdm-max')} className={this.state.brainStrainActive === 'csdm-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM<sub>15</sub></button>
 								<button onClick={() => this.handleBrainStrain('axonal-strain-max')} className={this.state.brainStrainActive === 'axonal-strain-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Axonal Strain<sub>15</sub></button>
-								{this.props.match.path != "/TeamStats" && 
+								{this.state.pathname != "/TeamStats" && 
 									<>
 										<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
 										<button onClick={() => this.handleBrainStrain('MPS-95')} className={this.state.brainStrainActive === 'MPS-95' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MPS-95</button>

@@ -8,7 +8,8 @@ import { svgToInline } from '../../../config/InlineSvgFromImg';
 import HeadLinearAccelerationAllEvents from '../../DashboardEventsChart/HeadLinearAccelerationAllEvents';
 import HeadAngularAccelerationAllEvents from '../../DashboardEventsChart/HeadAngularAccelerationAllEvents';
 import Dropzone from 'react-dropzone';
-
+import InputRange from 'react-input-range';
+import 'react-input-range/lib/css/index.css';
 import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
 import simulationLoading from '../../simulationLoading.png';
@@ -122,7 +123,8 @@ class Details extends React.Component {
       lock_video_3: false,
       isCommonControl: false,
       controlPlayVideo: false,
-      isRepeatVideo: false
+      isRepeatVideo: false,
+      value: { min: 0, max: 100 },
     };
   }
  
@@ -242,13 +244,13 @@ class Details extends React.Component {
     const lockButton = document.querySelector('.lock_video');
     
     let the = this;
-    video.onplay = ('play', function(e){
+    // video.onplay = ('play', function(e){
       
-      if(the.state.video_lock_time){
-        video.pause();
-        video.currentTime = the.state.video_lock_time;
-      }
-    })
+    //   if(the.state.video_lock_time){
+    //     video.pause();
+    //     video.currentTime = the.state.video_lock_time;
+    //   }
+    // })
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
@@ -299,13 +301,13 @@ class Details extends React.Component {
 
 
     let the = this;
-    video.onplay = ('play', function(e){
-      console.log('play');
-      if(the.state.video_lock_time_2){
-        video.pause();
-        video.currentTime = the.state.video_lock_time_2;
-      }
-    })
+    // video.onplay = ('play', function(e){
+    //   console.log('play');
+    //   if(the.state.video_lock_time_2){
+    //     video.pause();
+    //     video.currentTime = the.state.video_lock_time_2;
+    //   }
+    // })
 
     let controls = {
       //Updating scroller to video time
@@ -418,7 +420,7 @@ class Details extends React.Component {
       const lockButton = document.querySelector('.lock_video_3');
       let video_duration_1 = video_1.duration;
       let video_duration_2 = video_2.duration;
-
+      console.log('videos \n',video_1,video_2)
       let controls = {
        
         scrub: (e) =>{
@@ -436,7 +438,7 @@ class Details extends React.Component {
           if(video_duration_2 >= scrubTime) video_2.currentTime = scrubTime;
           // lock_time = video_1.currentTime;
           // lock_time_2 = video_2.currentTime;
-           console.log(video_duration_1 , scrubTime);
+           console.log(video_duration_1 , video_duration_2);
           // const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
           // if(scrubTime && !the.state.video_lock_time_2){
           //   video.currentTime = scrubTime;
@@ -507,7 +509,10 @@ class Details extends React.Component {
          $('.progress__filled_2').val(lock_percent_2);
          $('.progress__filled').val(lock_percent);
       }
-      this.vidocontrol3();
+      
+      setTimeout(()=>{this.vidocontrol3()},3000);
+      setTimeout(()=>{this.vidocontrol2()},1000);
+        
     }).catch(err=>{
       console.log('err',err)
     })
@@ -528,7 +533,8 @@ class Details extends React.Component {
          $('.progress__filled').val(lock_percent);
          $('.progress__filled_2').val(lock_percent_2);
       }
-      this.vidocontrol3();
+      setTimeout(()=>{this.vidocontrol3()},3000);
+      setTimeout(()=>{this.vidocontrol()},1000);
     }).catch(err=>{
       console.log('err',err)
     })
@@ -562,7 +568,10 @@ class Details extends React.Component {
         this.setState({exporting: false});
     })
   }
-
+  setRangeValue =(value) =>{
+    console.log('value',value)
+    this.setState({value})
+  }
   render() {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
@@ -591,7 +600,7 @@ class Details extends React.Component {
       called_2 = true
     }
     if(!called_3){
-      setTimeout(()=>{the.vidocontrol3()},2000);
+      setTimeout(()=>{the.vidocontrol3()},3000);
       called_3= true
     }
     return (
@@ -794,6 +803,12 @@ class Details extends React.Component {
                           <div>
                             <img src={this.state.video_lock_time? lock : unlock} className="unlock-img lock_video" onClick={this.handlelock_video}/>
                             <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
+                            {/*<InputRange
+                                maxValue={100}
+                                minValue={0}
+                                value={this.state.value}
+                                onChange={value => this.setRangeValue(value)} 
+                              />*/}
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           <div>
