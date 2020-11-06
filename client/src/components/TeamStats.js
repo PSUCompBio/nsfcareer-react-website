@@ -216,7 +216,7 @@ class TeamStats extends React.Component {
                                             </div>
                                         </div>
                                     }
-                                 {this.state.brainRegions && <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />}
+                                 this.state.brainRegions && <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />
                                 </>
                             </div>
                         </div>

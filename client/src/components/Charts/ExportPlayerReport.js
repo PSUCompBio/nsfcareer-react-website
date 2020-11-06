@@ -151,7 +151,7 @@ class ExportPlayerReport extends React.Component {
 
 		window.addEventListener("resize", this.onWindowResize, false);
 		window.addEventListener("mousemove", this.onMouseMove, false);
-		// window.addEventListener("mouseout", this.onMouseOut, false);
+		window.addEventListener("mouseout", this.onMouseOut, false);
 		window.addEventListener("mouseleave", this.onMouseLeave, false);
 		window.addEventListener("touchstart", this.onTouchStart, false);
 		window.addEventListener("touchmove", this.onTouchMove, false);
@@ -326,7 +326,7 @@ class ExportPlayerReport extends React.Component {
 
 	showAllSpheres = () => {
 		const me = this;
-		console.log('showAllSpheres------------------------\n',all_spheres_json)
+		// console.log('showAllSpheres------------------------\n',all_spheres_json)
 		all_spheres_json.forEach(function (object, index) {
 			var i = parseInt(index + 1);
 			me.generateSphere(object.x, object.y, object.z, "pointer" + i);
@@ -1132,9 +1132,15 @@ class ExportPlayerReport extends React.Component {
 								<button onClick={() => this.handleBrainStrain('principal-min-strain')} className={this.state.brainStrainActive === 'principal-min-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Min Principal Strain</button>
 								<button onClick={() => this.handleBrainStrain('csdm-max')} className={this.state.brainStrainActive === 'csdm-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM<sub>15</sub></button>
 								<button onClick={() => this.handleBrainStrain('axonal-strain-max')} className={this.state.brainStrainActive === 'axonal-strain-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Axonal Strain<sub>15</sub></button>
-								<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
-								{/*<button onClick={() => this.handleBrainStrain('MPS-95')} className={this.state.brainStrainActive === 'MPS-95' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MPS-95</button>*/}
-
+								{this.props.match.path != "/TeamStats" && 
+									<>
+										<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
+										<button onClick={() => this.handleBrainStrain('MPS-95')} className={this.state.brainStrainActive === 'MPS-95' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MPS-95</button>
+										<button onClick={() => this.handleBrainStrain('CSDM-5')} className={this.state.brainStrainActive === 'CSDM-5' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-5</button>
+										<button onClick={() => this.handleBrainStrain('CSDM-10')} className={this.state.brainStrainActive === 'CSDM-10' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-10</button>
+										<button onClick={() => this.handleBrainStrain('CSDM-15')} className={this.state.brainStrainActive === 'CSDM-15' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-15</button>
+									</>
+								}
 							</div>
 						</div>
 
