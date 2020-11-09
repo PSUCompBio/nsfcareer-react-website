@@ -141,6 +141,7 @@ class CommanderTeamView extends React.Component {
                                     });
                                 })
                                 .catch(err => {
+
                                     this.setState({ isUploading: false, fileUploadError: response.data.error, uploadMessageLog: '' });
                                 })
                         })
@@ -243,21 +244,22 @@ class CommanderTeamView extends React.Component {
                                                     isLoaded: true
                                                 }));
                                             } 
+                                            return getSimulationStatusCount({
+                                                brand: user_level === 300 ? '' : this.props.location.state.team.brand,
+                                                user_cognito_id: this.props.location.state.team.user_cognito_id,
+                                                organization: this.props.location.state.team.organization,
+                                                team: this.props.location.state.team.team_name
+                                            })
                                            
-                                        })
-                                        getSimulationStatusCount({
-                                            brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                            user_cognito_id: this.props.location.state.team.user_cognito_id,
-                                            organization: this.props.location.state.team.organization,
-                                            team: this.props.location.state.team.team_name
                                         }).then(response => {
-                    
                                             this.setState({
                                                 simulations_completed: response.data.data.completed,
                                                 simulation_failed: response.data.data.failed,
-                                                simulations_pending: response.data.data.pending
+                                                simulations_pending: response.data.data.pending,
+                                                isLoaded: true
                                             });
                                         })
+                                       
                                         getTeamAdminData(JSON.stringify({}))
                                         .then((response) => {
                     
@@ -283,6 +285,7 @@ class CommanderTeamView extends React.Component {
                                     }
                                    
                                 }).catch((error) => {
+                                    console.log('============= errteam ', error)
                                     this.setState({
                                         userDetails: {},
                                         isCheckingAuth: false
@@ -974,6 +977,7 @@ class CommanderTeamView extends React.Component {
                                                     </tr>;
                                                 }
                                             }, this)}
+                                            {this.state.users.length <= 0 && <td colspan="10" style={{'textAlign':'center'}}>There is no data for this team yet.</td>}
                                             {this.state.requestedUsers.map(function (r_player, r_index) {
                                                 if(r_player){
                                                     let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'

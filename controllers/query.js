@@ -1986,8 +1986,7 @@ function getPlayerCgValues(player_id) {
       });
   })
 }
-function setVideoTime(image_id,video_lock_time,type) {
-    console.log('user_name',image_id,video_lock_time)
+function setVideoTime(image_id,left_lock_time,right_lock_time,type) {
     return new Promise((resolve, reject) => {
         if(type == 'setVideoTime'){
             var userParams = {
@@ -1996,9 +1995,11 @@ function setVideoTime(image_id,video_lock_time,type) {
                     image_id: image_id,
                 },
                 UpdateExpression:
-                    "set video_lock_time = :video_lock_time",
+                    "set left_lock_time = :left_lock_time, right_lock_time = :right_lock_time",
                 ExpressionAttributeValues: {
-                    ":video_lock_time": video_lock_time,
+                    ":left_lock_time": left_lock_time,
+                    ":right_lock_time": right_lock_time,
+
                 },
                 ReturnValues: "UPDATED_NEW",
             };
@@ -2009,9 +2010,11 @@ function setVideoTime(image_id,video_lock_time,type) {
                     image_id: image_id,
                 },
                 UpdateExpression:
-                    "set video_lock_time_2 = :video_lock_time_2",
+                    "set left_lock_time = :left_lock_time, right_lock_time = :right_lock_time",
                 ExpressionAttributeValues: {
-                    ":video_lock_time_2": video_lock_time,
+                    ":left_lock_time": left_lock_time,
+                    ":right_lock_time": right_lock_time,
+                    
                 },
                 ReturnValues: "UPDATED_NEW",
             };
