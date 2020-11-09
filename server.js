@@ -1536,6 +1536,9 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
                 impact_video_url: impact_video_url,
                 motion_link_url: motion_movie_link_url,
                 video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
+                left_lock_time: imageData.left_lock_time ? imageData.left_lock_time : '',
+                right_lock_time: imageData.right_lock_time ? imageData.right_lock_time : '',
+                
                 video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
 
             })
@@ -1559,7 +1562,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
 /*+++++++++++++++++ Set video lock time funtion start here ++++++++++++++++ */
 app.post(`${apiPrefix}setVideoTime`, (req, res) => {
     console.log(req.body);
-    setVideoTime(req.body.image_id, req.body.video_lock_time,req.body.type)
+    setVideoTime(req.body.image_id, req.body.left_lock_time,req.body.right_lock_time,req.body.type)
     .then(data=>{
         res.send({
             message:'success',

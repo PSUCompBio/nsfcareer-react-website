@@ -68,6 +68,9 @@ import { getStatusOfDarkmode } from '../../../reducer';
   Define global variables.
 */
 let lock_time = 0;
+let left_lock_time = 0;
+let right_lock_time = 0;
+
 let lock_percent = 0;
 let called = false;
 let lock_time_2 = 0;
@@ -75,6 +78,8 @@ let lock_percent_2 = 0;
 let called_2 = false;
 let called_3 = false;
 let state_updated = false;
+let min = 0;
+let max = 100;
 class Details extends React.Component {
   constructor(props) {
     super(props);
@@ -113,6 +118,8 @@ class Details extends React.Component {
       video_time_3: 0,
       video_lock_time: false,
       video_lock_time_2:false,
+      left_lock_time: 0,
+      right_lock_time: 0,
       isTimeUpdating: false,
       isTimeUpdating_2: false,
       image_id: this.props.match.params.image_id,
@@ -191,7 +198,7 @@ class Details extends React.Component {
   }
 
   upload =(file)=>{
-     const data = new FormData() 
+    const data = new FormData() 
     data.append('file',file);
     data.append('image_id',this.state.image_id );
     this.setState({isLoading:true,IsAcceleration:true})
@@ -235,61 +242,135 @@ class Details extends React.Component {
   gotoTop = () => {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
-
+  setRangeValue =(value) =>{
+    console.log('value',value)
+    this.setState({value})
+  }
   vidocontrol =()=>{
     const player = document.querySelector('.player');
     const video = player.querySelector('.viewer');
     
-    const progressBar = document.querySelector('.progress__filled');
+    // const progressBar = document.querySelector('.progress__filled');
     const lockButton = document.querySelector('.lock_video');
+
+    const progressBar_2 = document.querySelector('.input-range');
     
+    var isupdateMax =  false;
+    right_lock_time = video.duration;
+
     let the = this;
-    // video.onplay = ('play', function(e){
+    video.onplay = ('play', function(e){
       
-    //   if(the.state.video_lock_time){
-    //     video.pause();
-    //     video.currentTime = the.state.video_lock_time;
-    //   }
-    // })
+      // if(the.state.video_lock_time){
+        video.play();
+        // video.currentTime = the.state.video_lock_time;
+      // }
+    })
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
         const percent = (video.currentTime / video.duration) * 100;
-        $('.progress__filled').val(percent);
+        // $('.progress__filled').val(percent);
         lock_percent = percent;
         lock_time = video.currentTime;
-        the.setState({video_time: percent});
-      },
-      scrub: (e) =>{
-        const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
-        if(scrubTime && !the.state.video_lock_time){
-          video.currentTime = scrubTime;
+        if(isupdateMax){
+          
+          max = percent.toFixed(0);
+          if(max > the.state.value['min'] && lock_percent > 1 && !the.state.right_lock_time){
+            the.setState({video_time: percent,value:{ max: percent.toFixed(0), min: the.state.value['min'] }});
+            right_lock_time = video.currentTime;
+          }else{
+            console.log('update max')
+            // max = percent.toFixed(0);
+            video.pause();
+            video.currentTime = left_lock_time;
+            isupdateMax = false;
+          }
+        }else if(!isupdateMax){
+          console.log('update min',the.state.value['max'], min)
+          if(min < the.state.value['max']){
+          // video.play();
+
+            the.setState({video_time: percent,value:{ min: percent.toFixed(0), max: the.state.value['max'] }});
+            min = percent.toFixed(0);
+            left_lock_time = video.currentTime;
+          }else{
+            console.log('else')
+            min = percent.toFixed(0);
+            video.pause();
+            video.currentTime = the.state.left_lock_time || 0;
+          }
+        }else{
+          video.pause();
         }
       },
+      // scrub: (e) =>{
+      //   const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+      //   console.log('progressBar',e.offsetX , progressBar.offsetWidth)
+      //   if(scrubTime && !the.state.video_lock_time){
+      //     video.currentTime = scrubTime;
+      //   }
+      // },
+      scrub2: (e) =>{
+       
+        if(min != the.state.value['min']){
+           console.log(the.state.value, min);
+          min = the.state.value['min'];
+          var off_X = progressBar_2.offsetWidth * the.state.value['min'] / 100;
+          console.log('min',off_X , progressBar_2.offsetWidth)
+
+          const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
+
+          if(scrubTime && !the.state.video_lock_time){
+            video.currentTime = scrubTime;
+          }
+          isupdateMax = false;
+        }else if(max != the.state.value['max']){
+          max = the.state.value['max'];
+           console.log(the.state.value, max);
+          
+          var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
+          console.log('max',off_X, progressBar_2.offsetWidth)
+          const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
+
+          if(scrubTime && !the.state.video_lock_time){
+            video.currentTime = scrubTime;
+          }
+          isupdateMax = true;
+        }
+        
+      },
       lockVideo:()=>{
-        console.log('clicked');
         lock_time = video.currentTime;
         const percent2 = (video.currentTime / video.duration) * 100;
         lock_percent = percent2;
-        setTimeout(()=>{$('.progress__filled').val(percent2)},1000);
-        
       },
-      setvideoTime:(time)=>{
-        console.log('time',time)
-        video.currentTime = time
+      setvideoTime:()=>{
+        video.currentTime = the.state.left_lock_time || 0; 
+        if(the.state.right_lock_time > 0){
+          const percent2 = (the.state.right_lock_time / video.duration) * 100;
+          console.log('percent2',percent2)
+          the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: percent2 ? percent2.toFixed(0) : 100 }});
+        }else{
+          the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: 100 }})
+        }
       }
     }
-    if(video && this.state.video_lock_time){
-      controls.setvideoTime(this.state.video_lock_time);
-    }
-
+    
+    //Set video locked time 
+    setTimeout(()=>{
+      controls.setvideoTime();
+    },2000)
+    
     video.addEventListener('timeupdate', controls.handleProgress);
-    progressBar.addEventListener('click', controls.scrub);
+    // progressBar.addEventListener('click', controls.scrub);
+    progressBar_2.addEventListener('click', (e) => controls.scrub2(e));
+
     lockButton.addEventListener('click', controls.lockVideo);
     let mousedown = false;
-    progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
-    progressBar.addEventListener('mousedown', () => mousedown = true);
-    progressBar.addEventListener('mouseup', () => mousedown = false);
+    progressBar_2.addEventListener('mousemove', (e) => mousedown && controls.scrub2(e));
+    progressBar_2.addEventListener('mousedown', () => mousedown = true);
+    progressBar_2.addEventListener('mouseup', () => mousedown = false);
   }
 
   vidocontrol2 =()=>{
@@ -458,15 +539,25 @@ class Details extends React.Component {
   /*====================================
     Video controls of both movies end
   ========================================*/
-  handlelock_video =()=>{
-    console.log('lock_time',lock_time)
-    if(this.state.video_lock_time){
-      this.setState({video_lock_time: 0});
-      this.setVideoTime(0);
+  handlelock_video =(type)=>{
+    console.log('type',type)
+    if(type == 'left')
+    {
+      if(this.state.left_lock_time){
+        this.setState({left_lock_time: 0});
+        this.setVideoTime(0, right_lock_time);
+      }else{
+        this.setVideoTime(left_lock_time , right_lock_time);
+      }
     }else{
-      this.setState({video_lock_time: lock_time});
-      this.setVideoTime(lock_time);
+      if(this.state.right_lock_time){
+        this.setState({right_lock_time: false});
+        this.setVideoTime(left_lock_time, 0);
+      }else{
+        this.setVideoTime(left_lock_time , right_lock_time);
+      }
     }
+    
     
   }
   handlelock_video_2=()=>{
@@ -502,12 +593,12 @@ class Details extends React.Component {
       if(response.data.message == 'success'){
         this.setState({isTimeUpdating_2: false});
         $('.progress__filled_2').val(lock_percent_2);
-        $('.progress__filled').val(lock_percent);
+        // $('.progress__filled').val(lock_percent);
          console.log(lock_percent_2,lock_percent)
       }else{
         this.setState({isTimeUpdating_2: false});
          $('.progress__filled_2').val(lock_percent_2);
-         $('.progress__filled').val(lock_percent);
+         // $('.progress__filled').val(lock_percent);
       }
       
       setTimeout(()=>{this.vidocontrol3()},3000);
@@ -518,19 +609,17 @@ class Details extends React.Component {
     })
   }
   //Setting video lockTime
-  setVideoTime =(time)=>{
+  setVideoTime =(left_lock_time , right_lock_time)=>{
     this.setState({isTimeUpdating: true})
-    setVideoTime({image_id:this.state.image_id,video_lock_time:time,type: 'setVideoTime'})
+    setVideoTime({image_id:this.state.image_id,left_lock_time:left_lock_time,right_lock_time: right_lock_time,type: 'setVideoTime'})
     .then((response) => {
       console.log(response)
       if(response.data.message == 'success'){
-        this.setState({isTimeUpdating: false});
-        $('.progress__filled').val(lock_percent);
-        console.log(lock_percent_2,lock_percent)
+        this.setState({isTimeUpdating: false,left_lock_time: left_lock_time, right_lock_time: right_lock_time});
         $('.progress__filled_2').val(lock_percent_2);
       }else{
         this.setState({isTimeUpdating: false});
-         $('.progress__filled').val(lock_percent);
+         // $('.progress__filled').val(lock_percent);
          $('.progress__filled_2').val(lock_percent_2);
       }
       setTimeout(()=>{this.vidocontrol3()},3000);
@@ -541,7 +630,15 @@ class Details extends React.Component {
   }
 
   handleChangeRange =(event)=>{
-    this.setState({video_time: event.target.value});
+    if(min != this.state.value['min']){
+      if(!this.state.left_lock_time){
+        this.setState({video_time: event.target.value});
+      }
+    }else{
+      if(!this.state.right_lock_time){
+        this.setState({video_time: event.target.value});
+      }
+    }
   }
   handleChangeRange_2=(event)=>{
     this.setState({video_time_2: event.target.value});
@@ -568,10 +665,7 @@ class Details extends React.Component {
         this.setState({exporting: false});
     })
   }
-  setRangeValue =(value) =>{
-    console.log('value',value)
-    this.setState({value})
-  }
+
   render() {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
@@ -801,14 +895,23 @@ class Details extends React.Component {
                           {this.state.isTimeUpdating ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
                           </div>
                           <div>
-                            <img src={this.state.video_lock_time? lock : unlock} className="unlock-img lock_video" onClick={this.handlelock_video}/>
-                            <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
-                            {/*<InputRange
-                                maxValue={100}
-                                minValue={0}
-                                value={this.state.value}
-                                onChange={value => this.setRangeValue(value)} 
-                              />*/}
+                            <div className="col-sm-12 no-padding">
+                              <div className="col-sm-1 no-padding" style={{'float':'left'}}>
+                                <img src={this.state.left_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() => this.handlelock_video('left')}/>
+                              </div>
+                              {/*<input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>*/}
+                              <div className="col-sm-10 no-padding" style={{'float':'left'}}>
+                                <InputRange
+                                  maxValue={100}
+                                  minValue={0}
+                                  value={this.state.value}
+                                  onChange={value => this.setRangeValue(value)} 
+                                />
+                              </div>
+                              <div className="col-sm-1 no-padding" style={{'float':'left'}}>
+                                <img src={this.state.right_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() =>  this.handlelock_video('right')}/>
+                              </div>
+                            </div>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           <div>
@@ -931,7 +1034,8 @@ class Details extends React.Component {
                         movie_link:response.data.movie_link,
                         impact_video_url: response.data.impact_video_url,
                         motion_link_url: response.data.motion_link_url,
-                        video_lock_time: response.data.video_lock_time, 
+                        left_lock_time: response.data.left_lock_time, 
+                        right_lock_time: response.data.right_lock_time, 
                         video_lock_time_2: response.data.video_lock_time_2, 
                         
                     });

@@ -1432,3 +1432,10 @@ button.btn.button-yes {
     margin-top: -18px!important;
     border: none!important;
 }
+.no-padding{
+  padding: 0px!important;
+}
+.unlock-img-2{
+  width: 48%;
+  margin-top: -18px;
+}
