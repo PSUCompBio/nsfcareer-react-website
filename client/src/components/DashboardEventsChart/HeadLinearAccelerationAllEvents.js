@@ -41,7 +41,6 @@ const options = {
 class HeadLinearAccelerationAllEvents extends React.Component {
     constructor(props) {
         super(props);
-        console.log('data',this.props.data)
         this.state = {
             data: {
                 labels: this.props.data.time,
@@ -92,7 +91,6 @@ class HeadLinearAccelerationAllEvents extends React.Component {
 
     static getDerivedStateFromProps (props, state) {
         let temp_data = state.data;
-        console.log(props.linearUnit)
         if (props.linearUnit === 'ms') {
             options.scales.yAxes[0].scaleLabel.labelString = 'Linear Acceleration (m/s2)';
             temp_data.datasets[0].data = props.data.linear_acceleration['xv'] ? props.data.linear_acceleration['xv'] : [];
