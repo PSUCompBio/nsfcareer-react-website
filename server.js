@@ -2986,7 +2986,7 @@ app.post(`${apiPrefix}LoginWithoutEmail`, (req, res) => {
                 if(!userData.password){
                     res.send({
                         message: "failure",
-                        error: 'You are a user who had an existing account before the new sign in options for using Facebook and Google authentication were added.\n \n If you would like to use this feature, please contact the support team at <a href="mailto:support@nsfcareer.io" style="color:white;text-decoration: underline;">support@nsfcareer.io</a>'
+                        error: 'You are a user who had an existing account before the new sign in options for using Facebook and Google authentication were added.\n \n If you would like to use this feature, please contact the support team at <a href="mailto:support@nsfcareer.io?bcc=reuben.kraft@gmail.com" style="color:white;text-decoration: underline;">support@nsfcareer.io</a>'
                     });
                 }else{
                     if(type == "facebook"){

@@ -84,8 +84,6 @@ class Details extends React.Component {
   constructor(props) {
     super(props);
     this.onDrop = (files) => {
-      console.log('files',files);
-      console.log(files.length)
       if(files.length > 1){
         alert('You can upload only one file');
       }else{
@@ -93,8 +91,6 @@ class Details extends React.Component {
         this.upload(files[0]);
       }
     };
-    // console.log('User Dashboard For Admin Is ',this.props);
-    console.log("USER DASHBOARD PROPS", this.props)
     this.state = {
       isAuthenticated: false,
       user: null,
@@ -132,11 +128,11 @@ class Details extends React.Component {
       controlPlayVideo: false,
       isRepeatVideo: false,
       value: { min: 0, max: 100 },
+      SidelineVidoeCT: ''
     };
   }
  
   getUploadFileExtension3(url){
-    console.log()
     if(new RegExp(".mp4").test(url)){
         return ".mp4";
     }
@@ -167,19 +163,16 @@ class Details extends React.Component {
   }
 
   uploadFile = (event) =>{
-    console.log('files', event.target.files[0]);
     this.setState({impact_video_url: ''});
     this.upload(event.target.files[0]);
   }
   handalRemoveVideo = () =>{
-    console.log('remove')
      this.setState({
       label_remove_video: 'Removing...',
       isLoading: false
     })
     removeVideo({'image_id':this.state.image_id})
     .then(res => {
-      console.log(res)
       if(res.data.message == 'success'){
         this.setState({
           label_remove_video: 'Removed'
@@ -221,9 +214,7 @@ class Details extends React.Component {
     }
     axios.post(`/uploadSidelineImpactVideo`, data,options,{withCredentials: true})
     .then(function (res) {
-      console.log('res',res);
       if(res.data.message == 'success'){
-      console.log('impact_video_url',res.data.impact_video_url)
         the.setState({uploadPercentage:100});
         setTimeout(function(){
           the.setState({impact_video_url: res.data.impact_video_url});
@@ -243,14 +234,23 @@ class Details extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
   setRangeValue =(value) =>{
-    console.log('value',value)
-    this.setState({value})
+    if(min != value.min && !this.state.left_lock_time){
+      // console.log('max',max)
+      this.setState({value :  {min:   value.min , max: max } })
+    } 
+    if(max != value.max && !this.state.right_lock_time){
+      this.setState({value :  {min:   min , max: value.max } })
+    }
+  }
+
+  handleChangeRange =(event)=>{
+    this.setState({video_time: event.target.value});
   }
   vidocontrol =()=>{
     const player = document.querySelector('.player');
     const video = player.querySelector('.viewer');
     
-    // const progressBar = document.querySelector('.progress__filled');
+    const progressBar = document.querySelector('.progress__filled');
     const lockButton = document.querySelector('.lock_video');
 
     const progressBar_2 = document.querySelector('.input-range');
@@ -260,57 +260,92 @@ class Details extends React.Component {
 
     let the = this;
     video.onplay = ('play', function(e){
-      
-      // if(the.state.video_lock_time){
-        video.play();
-        // video.currentTime = the.state.video_lock_time;
-      // }
-    })
+      video.play();
+    });
+    let len = 0;
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
-        const percent = (video.currentTime / video.duration) * 100;
-        // $('.progress__filled').val(percent);
+        const percent = (video.currentTime / video.duration) * 100
         lock_percent = percent;
         lock_time = video.currentTime;
+
+        /*============== If Video max value updateing======================*/
         if(isupdateMax){
-          
           max = percent.toFixed(0);
+
+          //*---------Set max slider position greater then min slider-----------*
           if(max > the.state.value['min'] && lock_percent > 1 && !the.state.right_lock_time){
             the.setState({video_time: percent,value:{ max: percent.toFixed(0), min: the.state.value['min'] }});
             right_lock_time = video.currentTime;
           }else{
-            console.log('update max')
-            // max = percent.toFixed(0);
             video.pause();
             video.currentTime = left_lock_time;
             isupdateMax = false;
           }
-        }else if(!isupdateMax){
-          console.log('update min',the.state.value['max'], min)
+        }
+        /*================If slider min value updating======================*/
+        else if(!isupdateMax){
+          
           if(min < the.state.value['max']){
           // video.play();
+            //--------Set min slider position if video is unlock.----------
+            if(len != 0 && !the.state.left_lock_time){
+              the.setState({video_time: percent,value:{ min: percent.toFixed(0), max: the.state.value['max'] }});
+              min = percent.toFixed(0);
+              left_lock_time = video.currentTime;
 
-            the.setState({video_time: percent,value:{ min: percent.toFixed(0), max: the.state.value['max'] }});
-            min = percent.toFixed(0);
-            left_lock_time = video.currentTime;
+            }
+            //-----set min slider position if video is locked --------
+            else if(len == 0){
+              the.setState({video_time: percent,value:{ min: percent.toFixed(0), max: the.state.value['max'] }});
+              min = percent.toFixed(0);
+              left_lock_time = video.currentTime;
+            }
+            //-----------Set green slider position if video is locked -------------
+            else{
+              if(percent > the.state.value['min'] && percent <  the.state.value['max']){
+                the.setState({video_time: percent})
+              }else{
+                video.pause();
+                video.currentTime = the.state.left_lock_time || 0;
+                the.setState({video_time: percent})
+
+              }
+            }
           }else{
-            console.log('else')
             min = percent.toFixed(0);
             video.pause();
             video.currentTime = the.state.left_lock_time || 0;
           }
+          len++;
         }else{
           video.pause();
         }
       },
-      // scrub: (e) =>{
-      //   const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
-      //   console.log('progressBar',e.offsetX , progressBar.offsetWidth)
-      //   if(scrubTime && !the.state.video_lock_time){
-      //     video.currentTime = scrubTime;
-      //   }
-      // },
+      scrub: (e) =>{
+        const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+        var time = scrubTime;
+        var whereYouAt = time;
+        var minutes = Math.floor(whereYouAt / 60);   
+        var seconds = Math.floor(whereYouAt - minutes * 60)
+        var x = minutes < 10 ? "0" + minutes : minutes;
+        var y = seconds < 10 ? "0" + seconds : seconds;
+        var val = e.target.value - 4;
+        var val2 = parseInt(e.target.value) + 1;
+
+          console.log( val2 , the.state.value['min'])
+
+        if(scrubTime && val  < the.state.value['max'] &&  val2 > the.state.value['min'] ){
+          the.setState({SidelineVidoeCT : x+':'+y+' m.'})
+          video.currentTime = scrubTime;
+        }else{
+          the.setState({video_time:  the.state.value['min']});          
+        }
+        setTimeout(()=>{
+          the.setState({SidelineVidoeCT : ''})
+        },1000)
+      },
       scrub2: (e) =>{
        
         if(min != the.state.value['min']){
@@ -327,7 +362,7 @@ class Details extends React.Component {
           isupdateMax = false;
         }else if(max != the.state.value['max']){
           max = the.state.value['max'];
-           console.log(the.state.value, max);
+           console.log('max',the.state.value, max);
           
           var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
           console.log('max',off_X, progressBar_2.offsetWidth)
@@ -349,21 +384,31 @@ class Details extends React.Component {
         video.currentTime = the.state.left_lock_time || 0; 
         if(the.state.right_lock_time > 0){
           const percent2 = (the.state.right_lock_time / video.duration) * 100;
-          console.log('percent2',percent2)
+          max = percent2;
+          // console.log('percent2',percent2)
+          $('.input-range__slider').eq(1).css({'pointer-events': 'none'});
           the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: percent2 ? percent2.toFixed(0) : 100 }});
         }else{
-          the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: 100 }})
+          the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: 100 }});
+          if(the.state.left_lock_time){
+            $('.input-range__slider').eq(0).css({'pointer-events': 'none'});
+          }else{
+            $('.input-range__slider').eq(0).css({'pointer-events': 'inherit'});
+          }
+          $('.input-range__slider').eq(1).css({'pointer-events': 'inherit'});
         }
       }
     }
     
     //Set video locked time 
-    setTimeout(()=>{
-      controls.setvideoTime();
-    },2000)
+    // setTimeout(()=>{
+    //   controls.setvideoTime();
+    // },2000)
     
     video.addEventListener('timeupdate', controls.handleProgress);
-    // progressBar.addEventListener('click', controls.scrub);
+    video.addEventListener('loadeddata', controls.setvideoTime);
+
+    progressBar.addEventListener('click', controls.scrub);
     progressBar_2.addEventListener('click', (e) => controls.scrub2(e));
 
     lockButton.addEventListener('click', controls.lockVideo);
@@ -371,6 +416,12 @@ class Details extends React.Component {
     progressBar_2.addEventListener('mousemove', (e) => mousedown && controls.scrub2(e));
     progressBar_2.addEventListener('mousedown', () => mousedown = true);
     progressBar_2.addEventListener('mouseup', () => mousedown = false);
+
+    //... for green slider events 
+    let mousedown2 = false;
+    progressBar.addEventListener('mousemove', (e) => mousedown2 && controls.scrub(e));
+    progressBar.addEventListener('mousedown', () => mousedown2 = true);
+    progressBar.addEventListener('mouseup', () => mousedown2 = false);
   }
 
   vidocontrol2 =()=>{
@@ -382,14 +433,6 @@ class Details extends React.Component {
 
 
     let the = this;
-    // video.onplay = ('play', function(e){
-    //   console.log('play');
-    //   if(the.state.video_lock_time_2){
-    //     video.pause();
-    //     video.currentTime = the.state.video_lock_time_2;
-    //   }
-    // })
-
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
@@ -545,16 +588,16 @@ class Details extends React.Component {
     {
       if(this.state.left_lock_time){
         this.setState({left_lock_time: 0});
-        this.setVideoTime(0, right_lock_time);
+        this.setVideoTime(0, this.state.right_lock_time);
       }else{
-        this.setVideoTime(left_lock_time , right_lock_time);
+        this.setVideoTime(left_lock_time , this.state.right_lock_time);
       }
     }else{
       if(this.state.right_lock_time){
         this.setState({right_lock_time: false});
-        this.setVideoTime(left_lock_time, 0);
+        this.setVideoTime(this.state.left_lock_time, 0);
       }else{
-        this.setVideoTime(left_lock_time , right_lock_time);
+        this.setVideoTime(this.state.left_lock_time , right_lock_time);
       }
     }
     
@@ -629,17 +672,7 @@ class Details extends React.Component {
     })
   }
 
-  handleChangeRange =(event)=>{
-    if(min != this.state.value['min']){
-      if(!this.state.left_lock_time){
-        this.setState({video_time: event.target.value});
-      }
-    }else{
-      if(!this.state.right_lock_time){
-        this.setState({video_time: event.target.value});
-      }
-    }
-  }
+
   handleChangeRange_2=(event)=>{
     this.setState({video_time_2: event.target.value});
   }
@@ -675,10 +708,6 @@ class Details extends React.Component {
     }
     if (!this.state.isLoaded) return <Spinner />;
 
- // MyDropzone() {
- //  const onDrop = useCallback(acceptedFiles => {
- //   console.log('uploading');
- //  }, [])
   const files = this.state.files.map(file => (
       <span key={file.name}>
         {file.name} - {file.size} bytes
@@ -884,12 +913,13 @@ class Details extends React.Component {
                             : 
                               <div className="player">
                                 <video src={this.state.impact_video_url} style={{'width':'100%','height':'284px'}} className="player__video viewer" controls loop={this.state.isRepeatVideo ? true : false}></video>
-                                <div>
-                                  <p  className="video-lebel">Sideline Video</p>
-                                </div>
+                                {this.state.SidelineVidoeCT && <div id="custom-message">{this.state.SidelineVidoeCT}</div>}
                               </div>
                              
                           }
+                           <div>
+                                  <p  className="video-lebel">Sideline Video</p>
+                                </div>
 
                           <div>
                           {this.state.isTimeUpdating ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
@@ -904,6 +934,7 @@ class Details extends React.Component {
                                 <InputRange
                                   maxValue={100}
                                   minValue={0}
+                                  step={0.05}
                                   value={this.state.value}
                                   onChange={value => this.setRangeValue(value)} 
                                 />
@@ -915,20 +946,19 @@ class Details extends React.Component {
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           <div>
-                            <img src={unlock} className="unlock-img"/>
-                            <input type="range" min="1" value max="100" className="MyrangeSlider2" id="MyrangeSlider2" />
+                            <div className="col-sm-1 no-padding" style={{'float':'left'}}>
+                              <img src={unlock} className="unlock-img-2"/>
+                            </div>
+                            <div className="col-sm-10 no-padding" style={{'float':'left'}}>
+                              <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider2 progress__filled" id="MyrangeSlider2" />
+                            </div>
+                            <div className="col-sm-1 no-padding" style={{'float':'left'}}>
+
+                            </div>
                             <p style={{'font-weight':'600'}}>Adjust the frame rate</p>
                           </div>
                         </div>
-                        {this.state.isCommonControl && 
-                          <div className="" style={{'padding': '0px 14px'}}>
-                            <div>
-                              {/*<img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>*/}
-                              <input type="range"  min="1" max="100" value={this.state.video_time_3}  onChange={this.handleChangeRange_3} className="MyrangeSlider3 progress__filled_3" id="MyrangeSlider3" />
-                              <p style={{'font-weight':'600'}}>Drag slider to advance both movies. The start time for each video can be adjust and locked above.</p>
-                            </div>
-                          </div>
-                        }
+                        
                         <div className="col-md-12">
                           <div className="video-controlls">
                             <div className="col-sm-6" style={{'float':'left'}}>
@@ -951,6 +981,15 @@ class Details extends React.Component {
                             </div>
                           </div>
                         </div>
+                        {this.state.isCommonControl && 
+                          <div className="" style={{'padding': '0px 14px'}}>
+                            <div className="bottom-large-slider">
+                              {/*<img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>*/}
+                              <input type="range"  min="1" max="100" value={this.state.video_time_3}  onChange={this.handleChangeRange_3} className="MyrangeSlider3 progress__filled_3" id="MyrangeSlider3" />
+                              <p style={{'font-weight':'600'}}>Drag slider to advance both movies. The start time for each video can be adjust and locked above.</p>
+                            </div>
+                          </div>
+                        }
                       </div>
                     </div>
                   </div>
