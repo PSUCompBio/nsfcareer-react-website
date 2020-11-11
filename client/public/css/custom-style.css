@@ -1399,7 +1399,7 @@ button.btn.button-yes {
     width: 100%;
     height: 100%;
     background: #ccc6;
-    z-index: 50;
+    z-index: 2;
 }
 .glow-spinner .spinner-center{
       position: fixed;
@@ -1459,4 +1459,7 @@ button.btn.button-yes {
   margin-top: 22px;
     display: inline-block;
     width: 100%;
+}
+.team-state-3dmodel{
+  height: 444px
 }

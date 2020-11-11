@@ -206,10 +206,10 @@ class TeamStats extends React.Component {
                         <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>
                             <button style={{padding: '5px 15px 5px 15px', background : '#007bff', fontWeight: '800'}} onClick={this.handleRunReport}>Run Report</button>
                         </div>
-                        <div className="row">
+                        <div className="row team-state-3dmodel">
                             <div className="col-md-12 col-lg-12">
                                 <>
-                                    {this.state.isfetching &&
+                                    {this.state.isfetching && 
                                         <div  className="col-md-12 glow-spinner">
                                             <div className="spinner-center">
                                                 <Spinner animation="grow" variant="primary" />

@@ -80,6 +80,10 @@
   .teamstats_header{
     margin-top: 5rem!important;
   }
+
+  .team-state-3dmodel {
+      height: 500px;
+  }
 }
 /* Responsive layout  */
 @media (min-width: 992px){
@@ -224,6 +228,9 @@
   }
   .player__video_2, .player__video {
       height: 160px!important;
+  }
+  .team-state-3dmodel {
+      height: 800px;
   }
 }
 @media (max-width: 767px) {
@@ -551,6 +558,9 @@
   }
   .upload-image-top-text{
     padding: 12px!important
+  }
+  .team-state-3dmodel {
+      height: 736px;
   }
 }
 

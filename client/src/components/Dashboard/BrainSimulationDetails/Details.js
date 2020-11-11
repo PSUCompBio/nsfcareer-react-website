@@ -337,7 +337,11 @@ class Details extends React.Component {
           console.log( val2 , the.state.value['min'])
 
         if(scrubTime && val  < the.state.value['max'] &&  val2 > the.state.value['min'] ){
-          the.setState({SidelineVidoeCT : x+':'+y+' m.'})
+          if(minutes > 0 ){
+            the.setState({SidelineVidoeCT : x+':'+y+' min.'});
+          }else{
+            the.setState({SidelineVidoeCT : x+':'+y+' sec.'});
+          }
           video.currentTime = scrubTime;
         }else{
           the.setState({video_time:  the.state.value['min']});          
