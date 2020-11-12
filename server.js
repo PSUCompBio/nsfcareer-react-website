@@ -7993,23 +7993,23 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                         pushdata(summary_data);
                                                     }  
                                                 }else if(type == 'principal-max-strain'){
-                                                    if(summary_data['principal-max-strain'].value <= gs){
+                                                    if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'principal-min-strain'){
-                                                    if(summary_data['principal-min-strain'].value <= gs){
+                                                    if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'csdm-max'){
-                                                    if(summary_data['csdm-max'].value <= gs){
+                                                    if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'axonal-strain-max'){
-                                                    if(summary_data['axonal-strain-max'].value <= gs){
+                                                    if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'masXsr-15-max'){
-                                                    if(summary_data['masXsr-15-max'].value <= gs){
+                                                    if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }
@@ -8025,23 +8025,23 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                         pushdata(summary_data);
                                                     }
                                                 }else if(type == 'principal-max-strain'){
-                                                    if(summary_data['principal-max-strain'].value >= gs){
+                                                    if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'principal-min-strain'){
-                                                    if(summary_data['principal-min-strain'].value >= gs){
+                                                    if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'csdm-max'){
-                                                    if(summary_data['csdm-max'].value >= gs){
+                                                    if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'axonal-strain-max'){
-                                                    if(summary_data['axonal-strain-max'].value >= gs){
+                                                    if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }else if(type == 'masXsr-15-max'){
-                                                    if(summary_data['masXsr-15-max'].value >= gs){
+                                                    if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }

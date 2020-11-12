@@ -70,7 +70,7 @@ class TeamStats extends React.Component {
     handleChange = (e) => {
         console.log('wrk')
         this.setState({ [e.target.name] : e.target.value });
-        if(e.target.name == 'principal-max-strain' && e.target.value != 'resultant-linear-acceleration' && e.target.value != 'resultant-Angular-acceleration'){
+        if(e.target.name == 'principal-max-strain' && e.target.value != 'resultant-linear-acceleration' && e.target.value != 'resultant-Angular-acceleration' && this.state.brainRegions){
             this.child.current.handleBrainStrain(e.target.value);
         }
     };
@@ -89,6 +89,11 @@ class TeamStats extends React.Component {
                     isfetching: false
                 });
             },200)
+             setTimeout(()=>{
+                if(this.state['principal-max-strain'] != 'resultant-linear-acceleration' && this.state['principal-max-strain'] != 'resultant-Angular-acceleration' && this.state.brainRegions){
+                    this.child.current.handleBrainStrain(this.state['principal-max-strain']);
+                }
+            },500)
            
         })
     }
