@@ -6799,16 +6799,16 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                     }
                     
                 }
+                console.log('0------------\n',u.requested_player_list)
                 if (u.requested_player_list) {
                     requested_player_list = requested_player_list.concat(u.requested_player_list);
                 }
             }) 
-            // console.log('player_list', player_list);
-            // console.log('requested_player_list', requested_player_list);
+            console.log('requested_player_list', requested_player_list);
             // let player_list = data[0].player_list ? data[0].player_list : [];
             if (player_list.length == 0) {
                 let requested_players = []
-                if (requested_player_list.length > 0) {
+                if (requested_player_list && requested_player_list.length > 0) {
                     let p_cnt = 0;
                     requested_player_list.forEach(function (p_record) {
                         console.log('p_record',p_record)
@@ -6837,11 +6837,14 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
             else {
                 var counter = 0;
                 var p_data = [];
+                var player_listLen = player_list.length;
                 player_list.forEach(function (player, index) {
-                    let p = player;
-                    let i = index;
-                    let playerData = '';
-                    getTeamDataWithPlayerRecords_2({ player_id: p, team: req.body.team_name, sensor: req.body.brand, organization: req.body.organization })
+                    if(player != 'undefined'){
+                        console.log('player_list', player);
+                        let p = player;
+                        let i = index;
+                        let playerData = '';
+                        getTeamDataWithPlayerRecords_2({ player_id: p, team: req.body.team_name, sensor: req.body.brand, organization: req.body.organization })
                         .then(player_data => {
                             playerData = player_data;
                             counter++;
@@ -6849,7 +6852,8 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                 date_time: playerData[0].player_id.split('$')[1],
                                 simulation_data: playerData,
                             });
-                            if (counter == player_list.length) {
+                            console.log('p_data length', player_listLen, counter)
+                            if (counter == player_listLen) {
                                 p_data.sort(function (b, a) {
                                     var keyA = a.date_time,
                                         keyB = b.date_time;
@@ -6869,6 +6873,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                                 .then (u_detail => {
                                                     p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
                                                     k++;
+                                                    console.log('k == p_data.length  --------------\n',)
                                                     if (k == p_data.length) {
                                                         let requested_players = []
                                                         if (requested_player_list.length > 0) {
@@ -6915,6 +6920,9 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                 })
                             }
                         })
+                    }else{
+                        player_listLen--;
+                    }
                 })
             }
         })

@@ -1138,7 +1138,7 @@ class ExportPlayerReport extends React.Component {
 								{this.state.pathname != "/TeamStats" && 
 									<>
 										<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
-										<button onClick={() => this.handleBrainStrain('MPS-95')} className={this.state.brainStrainActive === 'MPS-95' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MPS-95</button>
+										{/*<button onClick={() => this.handleBrainStrain('MPS-95')} className={this.state.brainStrainActive === 'MPS-95' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MPS-95</button>*/}
 										<button onClick={() => this.handleBrainStrain('CSDM-5')} className={this.state.brainStrainActive === 'CSDM-5' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-5</button>
 										<button onClick={() => this.handleBrainStrain('CSDM-10')} className={this.state.brainStrainActive === 'CSDM-10' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-10</button>
 										<button onClick={() => this.handleBrainStrain('CSDM-15')} className={this.state.brainStrainActive === 'CSDM-15' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-15</button>
