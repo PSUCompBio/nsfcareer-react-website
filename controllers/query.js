@@ -1419,7 +1419,7 @@ function getAllTeamsOfOrganizationsOfSensorBrand(obj) {
                    ":sensor": obj.brand,
                    ":organization": obj.organization
                 },
-                ProjectionExpression: "sensor, organization, team_name, organization_id"
+                ProjectionExpression: "sensor, organization, team_name, organization_id,user_cognito_id"
             };
         } else {
             params = {
@@ -1428,7 +1428,7 @@ function getAllTeamsOfOrganizationsOfSensorBrand(obj) {
                 ExpressionAttributeValues: {
                    ":organization": obj.organization
                 },
-                ProjectionExpression: "sensor, organization, team_name, organization_id"
+                ProjectionExpression: "sensor, organization, team_name, organization_id, user_cognito_id"
             };
         }
         

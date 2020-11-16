@@ -176,7 +176,7 @@ class TeamStats extends React.Component {
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>Team Stats</h1>
                         <div className="backbutton11" style={{position : 'relative'}}>
                             <Link to={{
-                                    pathname: '/TeamAdmin/team/players',
+                                    pathname: '/TeamAdmin/team/players/list',
                                     state: {
                                         team: {
                                             brand: this.props.location.state.team.brand,
@@ -217,6 +217,7 @@ class TeamStats extends React.Component {
                                     {this.state.isfetching && 
                                         <div  className="col-md-12 glow-spinner">
                                             <div className="spinner-center">
+                                                <p>Gathering the data...</p>
                                                 <Spinner animation="grow" variant="primary" />
                                             </div>
                                         </div>

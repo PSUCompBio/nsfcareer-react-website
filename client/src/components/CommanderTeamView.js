@@ -542,7 +542,7 @@ class CommanderTeamView extends React.Component {
                         : null}
                          {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
                                 <Link style={{ fontWeight: "400" }} to={{
-                                pathname: '/TeamAdmin',
+                                pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
                                 state: {
                                     brand: {
                                         brand: this.props.location.state.team.brand,
@@ -1121,7 +1121,7 @@ class CommanderTeamView extends React.Component {
 
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/dashboard',
+                pathname: '/TeamAdmin/user/impact/dashboard',
                 state: {
                     user_cognito_id: this.props.location.state.team.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,

@@ -1463,3 +1463,8 @@ button.btn.button-yes {
 .team-state-3dmodel{
   height: 444px
 }
+
+.player__video, .player__video_2 {
+  border: 1px solid;
+  border-radius: 3px;
+}

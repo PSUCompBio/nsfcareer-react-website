@@ -3924,16 +3924,18 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
             player_list.forEach(function (player, index) {
                 let p = player;
                 let playerData = '';
+                
                 if(player.player_id && player.player_id != 'undefined'){
                     getTeamDataWithPlayerRecords_3(player.player_id, player.team, player.sensor, player.organization)
                     .then(player_data => {
+
                         playerData = player_data;
                         counter++;
                         p_data.push({
                             player_name: p,
                             //vsimulation_image: image ? image : '',
                             simulation_data: playerData,
-                            date_time: playerData[0].player_id.split('$')[1],
+                            date_time: playerData[0] ? playerData[0].player_id.split('$')[1]: '',
                         });
                        
                          if (counter == player_listLn) {
@@ -3948,23 +3950,27 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                             let k = 0;
                             var p_datalen = p_data.length;
                             p_data.forEach(function (record, index) {
-                                getPlayerSimulationStatus(record.simulation_data[0].image_id)
-                                    .then(simulation => {
-                                        // console.log('simulation',simulation.status)
-                                        k++;
-                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
-                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-                                        
-                                        if (k == p_datalen) {
-                                            res.send({
-                                                message: "success",
-                                                data: p_data
-                                            })
-                                        }
-                                    })
-                                    .catch(err => {
-                                        console.log(err);
-                                    })
+                                if(record.simulation_data[0]){
+                                    getPlayerSimulationStatus(record.simulation_data[0].image_id)
+                                        .then(simulation => {
+                                            // console.log('simulation',simulation.status)
+                                            k++;
+                                            p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                            p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+                                            
+                                            if (k == p_datalen) {
+                                                res.send({
+                                                    message: "success",
+                                                    data: p_data
+                                                })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                        })
+                                }else{
+                                    p_datalen--;
+                                }
                             })
                         }
                         
@@ -4098,6 +4104,27 @@ app.post(`${apiPrefix}fetchTeamStaffMembers`, (req,res) =>{
         done();
     });
 })
+
+
+app.post(`${apiPrefix}fetchOrgStaffMembers`, (req,res) =>{ 
+    console.log('fetchOrgStaffMembers',req.body);
+    fetchOrgStaffMembers(req.body.organization).
+    then(data=>{
+        console.log('staff',data);
+        res.send({
+            message : "success",
+            data : data
+        })
+    }).catch(err=>{
+        console.log('er',err);
+        res.send({
+            message : "failure",
+            error : err,
+            data : []
+        })  
+    })
+})
+
 
 app.post(`${apiPrefix}fetchStaffMembers`, (req,res) =>{ 
      fetchSensor(req.body.brand)

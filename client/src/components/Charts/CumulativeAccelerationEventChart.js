@@ -72,7 +72,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                         <div className="col-md-12">
                             <p ref="h1" className="penstate">
                                 <Link style={{ fontWeight: "400" }} to={{
-                                    pathname: "/TeamAdmin",
+                                    pathname: "/TeamAdmin/"+this.props.data.organization+"/"+this.props.data.brand,
                                     state: {
                                         brand: {
                                             brand: this.props.data.brand,
@@ -82,8 +82,8 @@ class CumulativeAccelerationEventChart extends React.Component {
                                     }
                                 }}>{this.props.data.organization}
                                 </Link> >
-                  <Link style={{ fontWeight: "400" }} to={{
-                                    pathname: "/TeamAdmin/team/players",
+                                <Link style={{ fontWeight: "400" }} to={{
+                                    pathname: "/TeamAdmin/team/players/list",
                                     state: {
                                         team: {
                                             brand: this.props.data.brand,
@@ -94,7 +94,8 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         }
                                     }
                                 }}>{this.props.data.team}
-                                </Link> > {(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name}
+                                </Link> > 
+                                {(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name}
                             </p>
                         </div>
                     </div>

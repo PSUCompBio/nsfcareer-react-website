@@ -37,8 +37,9 @@ import {
 } from 'reactstrap';
 
 class TeamnAdmin extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        console.log('teampros', this.props)
         this.state = {
             isAuthenticated: false,
             isCheckingAuth: true,
@@ -71,6 +72,9 @@ class TeamnAdmin extends React.Component {
             isAddOrganization: false,
             mergeData: '',
             isMerge: false,
+            user_cognito_id: '',
+            brand: this.props.match.params.brand,
+            organization: this.props.match.params.org
         };
     }
     toggleTab = (value) => {
@@ -135,10 +139,10 @@ class TeamnAdmin extends React.Component {
             this.setState({view: view})
         }
         window.scrollTo(0, 0)
-        if (this.props.location.state) {
-            console.log('this.props.location.state', this.props.location.state);
+        // if (this.state.organization) {
+            console.log('this.props.location.state', this.props);
             //if (this.props.location.state.brand.user_cognito_id && this.props.location.state.brand.brand && this.props.location.state.brand.organization) {
-            if (this.props.location.state.brand.organization) {
+            if (this.state.organization) {
                 isAuthenticated(JSON.stringify({}))
                     .then((value) => {
                         if (value.data.message === 'success') {
@@ -150,16 +154,17 @@ class TeamnAdmin extends React.Component {
                                         isCheckingAuth: false
                                     });
                                     if (response.data.data.level === 1000 || response.data.data.level === 400 || response.data.data.level === 300) {
-                                        getAllteamsOfOrganizationOfSensorBrandList({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                                        getAllteamsOfOrganizationOfSensorBrandList({ brand: this.state.brand, organization: this.state.organization })
                                             .then(teams => {
                                                 console.log('teams',teams)
                                                 this.setState(prevState => ({
                                                     totalTeam: teams.data.data.length,
                                                     sensorOrgTeamList: teams.data.data,
-                                                    isFetching: false
+                                                    isFetching: false,
+                                                    user_cognito_id: teams.data.data[0].user_cognito_id
                                                 }));
 
-                                                return fetchOrgStaffMembers({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                                                return fetchOrgStaffMembers({  brand: this.state.brand, organization: this.state.organization})
                                             })
                                             .then(response => {
                                                 this.setState(prevState => ({
@@ -171,7 +176,7 @@ class TeamnAdmin extends React.Component {
                                                     isFetching: false
                                                 }));
                                             });
-                                            getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                                            getAllteamsOfOrganizationOfSensorBrand({  brand: this.state.brand, organization: this.state.organization })
                                             .then(teamList=>{
                                                 this.setState(prevState => ({
                                                     totalTeam: teamList.data.data.length,
@@ -203,7 +208,7 @@ class TeamnAdmin extends React.Component {
                     isFetching: false
                 }));
             }
-        }
+        // }
 
         this.checkIfDarkModeActive();
         if (getStatusOfDarkmode().status) {
@@ -254,7 +259,7 @@ class TeamnAdmin extends React.Component {
             this.setState({renameData: {TeamName : data.TeamName, organization_id: data.data.organization_id,data:data.data}, isRename: true})
         }
         if(data.data.type == "addTeam"){
-            this.setState({addTeamData: {TeamName : data.TeamName, sensor: this.props.location.state.brand.brand,organization:this.props.location.state.brand.organization  }, isAddOrganization: true})
+            this.setState({addTeamData: {TeamName : data.TeamName, sensor: this.state.brand,organization:this.state.organization  }, isAddOrganization: true})
         }
         if(data.data.type == "mergeTeam"){
             this.setState({mergeData: {TeamName : data.TeamName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
@@ -377,7 +382,7 @@ class TeamnAdmin extends React.Component {
             .then(response =>{
                  console.log('response',response)
                 if(response.data.message == "success"){
-                    getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+                    getAllteamsOfOrganizationOfSensorBrand({ brand: this.state.brand, organization: this.state.organization })
                     .then(teams => {
                         console.log('teams',teams)                              
                         $('.isEdit').css({'display':'none'});
@@ -430,7 +435,7 @@ class TeamnAdmin extends React.Component {
                 })
             })
         }else{
-            getAllteamsOfOrganizationOfSensorBrand({ user_cognito_id: this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand, organization: this.props.location.state.brand.organization })
+            getAllteamsOfOrganizationOfSensorBrand({  brand: this.state.brand, organization: this.state.organization })
             .then(teams => {
                 console.log('teams',teams)                              
                 $('.isEdit').css({'display':'none'});
@@ -483,7 +488,7 @@ class TeamnAdmin extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players',
+                            pathname: '/TeamAdmin/team/players/list',
                             state: {
                                 team: {
                                     brand: brand,
@@ -550,7 +555,7 @@ class TeamnAdmin extends React.Component {
                     'h' + inc++
                 ],
                 //this.props.location.state.brand.brand, 
-                this.state.userDetails.level === 1000 ? this.props.location.state.brand.brand : this.state.sensorOrgTeamList[i].sensor,
+                this.state.userDetails.level === 1000 ? this.state.brand : this.state.sensorOrgTeamList[i].sensor,
                 this.state.sensorOrgTeamList[i].organization,
                 this.state.sensorOrgTeamList[i].team_name,
                 this.state.userDetails.user_cognito_id,
@@ -591,7 +596,7 @@ class TeamnAdmin extends React.Component {
                     }
                     return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players',
+                            pathname: '/TeamAdmin/team/players/list',
                             state: {
                                 team: {
                                     brand: team.sensor,
@@ -656,8 +661,8 @@ class TeamnAdmin extends React.Component {
                                     pathname: '/AdminDashboard',
                                     state: {
                                         brand: {
-                                            brand: this.props.location.state.brand.brand,
-                                            user_cognito_id: this.props.location.state.brand.user_cognito_id
+                                            brand: this.state.brand,
+                                            user_cognito_id: this.state.user_cognito_id
                                         }
                                     }
                                 }} >{'Admin > ' }</Link>
@@ -668,14 +673,14 @@ class TeamnAdmin extends React.Component {
                                     pathname: '/OrganizationAdmin',
                                     state: {
                                         brand: {
-                                            brand: this.props.location.state.brand.brand,
-                                            user_cognito_id: this.props.location.state.brand.user_cognito_id
+                                            brand: this.state.brand,
+                                            user_cognito_id: this.state.user_cognito_id
                                         }
                                     }
-                                }} >{this.props.location.state.brand.brand + ' > ' }</Link>
+                                }} >{this.state.brand + ' > ' }</Link>
                                        
                             }      
-                        {this.props.location.state.brand.organization}
+                        {this.state.organization}
 
                         </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
@@ -733,7 +738,13 @@ class TeamnAdmin extends React.Component {
                                                         lavelFor: '300',
                                                         data:{
                                                             type: 'OrgAdmin',
-                                                            data: this.props.location.state,
+                                                            data: {
+                                                                brand:{
+                                                                    brand: this.state.brand,
+                                                                    organization: this.state.organization,
+                                                                    user_cognito_id: this.state.user_cognito_id
+                                                                }
+                                                            },
                                                         }                                        
                                                     }
                                                 }} >
@@ -864,13 +875,9 @@ class TeamnAdmin extends React.Component {
 
     render() {
 
-        if (!this.props.location.state) {
+        if (!this.props.match.params.org) {
             return <Redirect to="/Dashboard" />;
-        } else {
-            if (!this.props.location.state.brand.user_cognito_id && !this.props.location.state.brand.brand && !this.props.location.state.brand.organization) {
-                return <Redirect to="/Dashboard" />;
-            }
-        }
+        } 
 
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
             return <Redirect to="/Login" />;

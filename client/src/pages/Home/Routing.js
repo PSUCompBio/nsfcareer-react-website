@@ -263,7 +263,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/TeamAdmin/user/dashboard"
+          path="/TeamAdmin/user/impact/dashboard/"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
@@ -316,12 +316,12 @@ class Routing extends React.Component {
         />
         <Route
             exact
-            path="/TeamAdmin"
+            path="/TeamAdmin/:org/:brand"
             render={(props) => <TeamAdmin {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact
-            path="/TeamAdmin/team/players"
+            path="/TeamAdmin/team/players/list"
             render={(props) => <TeamPlayers {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route

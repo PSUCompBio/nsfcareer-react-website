@@ -246,6 +246,20 @@ class Details extends React.Component {
   handleChangeRange =(event)=>{
     this.setState({video_time: event.target.value});
   }
+
+  getVideoTime=(time)=>{
+    var whereYouAt = time;
+    var minutes = Math.floor(whereYouAt / 60);   
+    var seconds = Math.floor(whereYouAt - minutes * 60)
+    var x = minutes < 10 ? "0" + minutes : minutes;
+    var y = seconds < 10 ? "0" + seconds : seconds;
+    if(minutes > 0 ){
+      return x+':'+y+' min.';
+    }else{
+      return x+':'+y+' sec.';
+    }
+  }
+
   vidocontrol =()=>{
     const player = document.querySelector('.player');
     const video = player.querySelector('.viewer');
@@ -266,7 +280,8 @@ class Details extends React.Component {
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
-        const percent = (video.currentTime / video.duration) * 100
+        const percent = (video.currentTime / video.duration) * 100;
+        
         lock_percent = percent;
         lock_time = video.currentTime;
 
@@ -326,22 +341,14 @@ class Details extends React.Component {
       scrub: (e) =>{
         const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
         var time = scrubTime;
-        var whereYouAt = time;
-        var minutes = Math.floor(whereYouAt / 60);   
-        var seconds = Math.floor(whereYouAt - minutes * 60)
-        var x = minutes < 10 ? "0" + minutes : minutes;
-        var y = seconds < 10 ? "0" + seconds : seconds;
+        
         var val = e.target.value - 4;
         var val2 = parseInt(e.target.value) + 1;
 
           console.log( val2 , the.state.value['min'])
 
         if(scrubTime && val  < the.state.value['max'] &&  val2 > the.state.value['min'] ){
-          if(minutes > 0 ){
-            the.setState({SidelineVidoeCT : x+':'+y+' min.'});
-          }else{
-            the.setState({SidelineVidoeCT : x+':'+y+' sec.'});
-          }
+          the.setState({SidelineVidoeCT : the.getVideoTime(time)});
           video.currentTime = scrubTime;
         }else{
           the.setState({video_time:  the.state.value['min']});          
@@ -386,6 +393,7 @@ class Details extends React.Component {
       },
       setvideoTime:()=>{
         video.currentTime = the.state.left_lock_time || 0; 
+        the.setState({lengthofSidelineVideo: the.getVideoTime(video.duration)})
         if(the.state.right_lock_time > 0){
           const percent2 = (the.state.right_lock_time / video.duration) * 100;
           max = percent2;
@@ -401,6 +409,10 @@ class Details extends React.Component {
           }
           $('.input-range__slider').eq(1).css({'pointer-events': 'inherit'});
         }
+
+        //Get video frames
+        var frameRate = Math.floor(video.duration*29.7);
+        the.setState({framesofSidelineVideo: frameRate})
       }
     }
     
@@ -412,7 +424,7 @@ class Details extends React.Component {
     video.addEventListener('timeupdate', controls.handleProgress);
     video.addEventListener('loadeddata', controls.setvideoTime);
 
-    progressBar.addEventListener('click', controls.scrub);
+    // progressBar.addEventListener('click', controls.scrub);
     progressBar_2.addEventListener('click', (e) => controls.scrub2(e));
 
     lockButton.addEventListener('click', controls.lockVideo);
@@ -423,9 +435,9 @@ class Details extends React.Component {
 
     //... for green slider events 
     let mousedown2 = false;
-    progressBar.addEventListener('mousemove', (e) => mousedown2 && controls.scrub(e));
-    progressBar.addEventListener('mousedown', () => mousedown2 = true);
-    progressBar.addEventListener('mouseup', () => mousedown2 = false);
+    // progressBar.addEventListener('mousemove', (e) => mousedown2 && controls.scrub(e));
+    // progressBar.addEventListener('mousedown', () => mousedown2 = true);
+    // progressBar.addEventListener('mouseup', () => mousedown2 = false);
   }
 
   vidocontrol2 =()=>{
@@ -442,6 +454,7 @@ class Details extends React.Component {
       handleProgress:  ()=> {
         const percent = (video.currentTime / video.duration) * 100;
         $('.progress__filled_2').val(percent);
+       
         lock_percent_2 = percent;
         lock_time_2 = video.currentTime;
         the.setState({video_time_2: percent});
@@ -463,6 +476,12 @@ class Details extends React.Component {
       setvideoTime:(time)=>{
         console.log('time',time)
         video.currentTime = time
+
+      },
+      Onload:()=>{
+        var frameRate = Math.floor(video.duration*29.7);
+        the.setState({framesofSimulationVideo: frameRate})
+        the.setState({lengthofSimulationVideo: the.getVideoTime(video.duration)})
       }
     }
     if(video && this.state.video_lock_time_2){
@@ -470,7 +489,7 @@ class Details extends React.Component {
     }
     //controls ....
     
-
+    video.addEventListener('loadeddata', controls.Onload);
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
     lockButton.addEventListener('click', controls.lockVideo);
@@ -783,7 +802,7 @@ class Details extends React.Component {
                   {<div className="backbutton">
                     <Link 
                       to={{
-                        pathname: '/TeamAdmin/user/dashboard/',
+                        pathname: '/TeamAdmin/user/impact/dashboard/',
                         state: {
                           user_cognito_id: this.state.userDetails.user_cognito_id,
                           cognito_user_id: this.state.cognito_user_id,
@@ -848,16 +867,9 @@ class Details extends React.Component {
                     <h4 className="brain-simlation-details-subtitle">Video Verification of Skull Kinematics</h4>
                     <div className="col-md-12">
                       <div className="movie">
-                        <div className="Replace-video Replace-video-desktop">
-                          <div>
-                            {this.state.impact_video_url &&
-                              <React.Fragment>
-                                <label for="uploadFile"><img src={upload} />  Replace Video</label>
-                                <input type="file" id="uploadFile" onChange={this.uploadFile} />
-                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                              </React.Fragment>
-                            }
-                          </div>
+                        <div className="col-sm-12" >
+                          <div className="col-md-6" style={{'float':'left'}}><p class="video-lebel">Simulation Video</p></div>
+                          <div className="col-md-6" style={{'float':'left'}}><p class="video-lebel">Sideline Video</p></div>
                         </div>
                         <div className="col-md-6" style={{'float':'left'}}>
                           <div className="Simulationvideo">
@@ -867,16 +879,23 @@ class Details extends React.Component {
                             {this.state.movie_link &&
                               <video src={this.state.movie_link} style={{'width':'100%','height':'284px'}} className="player__video_2 viewer_2" controls loop={this.state.isRepeatVideo ? true : false}></video>
                             }
-                           
+                            
                           </div>
-                          <div>
-                            <p className="video-lebel">Simulation Video</p>
-                          </div>
+                           <div className="Replace-video Replace-video-desktop">
+                              <div style={{width:'100%','opacity': '0','pointer-events': 'none'}}>
+                                    <label><img src={upload} />  Replace Video</label>
+                              </div>
+                            </div>
                           <div>
                             {this.state.isTimeUpdating_2 ?<div> <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> </div>: ''}
                             <img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2}/>
                             <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                          </div>
+                          
+                          <div className="col-md-12">
+                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Length of video = {this.state.lengthofSimulationVideo}</div>
+                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSimulationVideo}</div>
                           </div>
                         </div>
                         <div className="Replace-video Replace-video-mobile">
@@ -921,9 +940,19 @@ class Details extends React.Component {
                               </div>
                              
                           }
-                           <div>
-                                  <p  className="video-lebel">Sideline Video</p>
-                                </div>
+                          <div>
+                            <div className="Replace-video Replace-video-desktop">
+                              <div style={{width:'100%'}}>
+                                {this.state.impact_video_url &&
+                                  <React.Fragment>
+                                    <label for="uploadFile"><img src={upload} />  Replace Video</label>
+                                    <input type="file" id="uploadFile" onChange={this.uploadFile} />
+                                     <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
+                                  </React.Fragment>
+                                }
+                              </div>
+                            </div>
+                          </div>
 
                           <div>
                           {this.state.isTimeUpdating ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
@@ -949,7 +978,7 @@ class Details extends React.Component {
                             </div>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
-                          <div>
+                          {/*<div>
                             <div className="col-sm-1 no-padding" style={{'float':'left'}}>
                               <img src={unlock} className="unlock-img-2"/>
                             </div>
@@ -960,6 +989,10 @@ class Details extends React.Component {
 
                             </div>
                             <p style={{'font-weight':'600'}}>Adjust the frame rate</p>
+                          </div>*/}
+                          <div className="col-md-12">
+                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Length of video = {this.state.lengthofSidelineVideo}</div>
+                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSidelineVideo}</div>
                           </div>
                         </div>
                         

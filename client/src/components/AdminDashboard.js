@@ -690,7 +690,7 @@ class AdminDashboard extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization+'/'+brand,
                             state: {
                                 brand: {
                                     brand: brand,
@@ -789,7 +789,7 @@ class AdminDashboard extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players',
+                            pathname: '/TeamAdmin/team/players/list',
                             state: {
                                 team: {
                                     brand: brand,
@@ -1038,7 +1038,7 @@ class AdminDashboard extends React.Component {
 
                     return <tr className={cls}  key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization.organization+'/'+organization.sensor,
                             state: {
                                 brand: {
                                     brand: organization.sensor,
@@ -1081,7 +1081,7 @@ class AdminDashboard extends React.Component {
                     }
                     return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players',
+                            pathname: '/TeamAdmin/team/players/list',
                             state: {
                                 team: {
                                     brand: team.sensor,
@@ -1554,7 +1554,7 @@ class AdminDashboard extends React.Component {
         
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/dashboard',
+                pathname: '/TeamAdmin/user/impact/dashboard',
                 state: {
                     user_cognito_id: this.state.userDetails.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,

@@ -473,7 +473,7 @@ class OrganizationAdmin extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization+'/'+brand,
                             state: {
                                 brand: {
                                     brand: brand,
