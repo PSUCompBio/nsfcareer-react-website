@@ -203,7 +203,10 @@ const {
         getTeamSpheres,
         updateUserStatus,
         getTeamDataWithPlayerRecords_3,
-        getPlayerCgValues
+        getPlayerCgValues,
+        getBrandDataByorg,
+        deleteSensorData,
+        deleteSimulation_imagesData
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -2566,100 +2569,316 @@ app.post(`${apiPrefix}InviteUsers`, (req, res) => {
     
 });
 
+function emptyBucket(obj,callback){
+  var params = {
+    Bucket: obj.bucket_name,
+    Prefix: obj.root_path
+  };
+
+  s3.listObjects(params, function(err, data) {
+    if (err) return callback(err);
+
+    if (data.Contents.length == 0) callback();
+
+    params = {Bucket: obj.bucket_name};
+    params.Delete = {Objects:[]};
+
+    data.Contents.forEach(function(content) {
+      params.Delete.Objects.push({Key: content.Key});
+    });
+    console.log('params -----------\n',params)
+    s3.deleteObjects(params, function(err, data) {
+      if (err) return callback(err);
+      if(data.Contents){
+        emptyBucket(obj.bucket_name,callback);
+        }
+      else{
+        callback();
+      } 
+    });
+  });
+}
+
 app.post(`${apiPrefix}deleteItem`, (req, res) => {
-    console.log(req.body)  
     let type = req.body.type;
     let data = req.body.data;
     if(type == 'team'){
-        console.log('data',data)
-        getOrganizatonBynameSensor(data.organization, data.brand)
-        .then(org =>{
-            var orglen = org.length;
-            orglen = orglen-1;
-            if(org){
-                org.forEach(function (record, index) {
-                    console.log('record',record.organization_id);
-                    console.log(index, orglen)
-                    DeleteOrganization(record.organization_id)
-                    .then(data => {
-                        console.log('res',data)
-                        if(index == orglen){
-                            res.send({
-                                message: 'success',
-                                status: 200
+        
+        getBrandDataByorg(data.brand, data.organization)
+        .then (result => {
+            let sensorlen = result.length;
+            let count1 = 0; 
+            let count3 = 0;
+            if(sensorlen > 0){
+
+                /*========== Delete data from sensor data table ==============*/
+                result.forEach(async function (record, index) {
+                    count1++;
+                    if( record.team && record.player_id){
+                        deleteSensorData(record.team, record.player_id)
+                        .then(deldata => {
+                            console.log('deldata',deldata)
+                        })
+                    }
+                    /*=-==========Get simulation data and root path of folder ==========*/
+                    getPlayerSimulationFile({image_id: record.image_id})
+                    .then(image_Data =>{
+                        count3++;
+                        console.log('image_Data root_path',image_Data.root_path)
+                        //*** delete simulation file from s3
+                        if(image_Data.root_path && image_Data.root_path != 'undefined'){
+                            emptyBucket({bucket_name: image_Data.bucket_name,root_path: image_Data.root_path},function (err, data) {
+                                console.log('data',data)
                             })
                         }
-                    }).catch(err => {
-                        console.log('err',err)
-                        if(index == orglen){
-                             res.send({
-                                message: 'failure',
-                                status: 300,
-                                err: err
+
+                        //**Deleting data of simulation data table
+                        if(count3 == sensorlen){
+                            let count2 = 0;
+                            result.forEach(async function (record, index) {
+                                count2++;
+                                deleteSimulation_imagesData(record.image_id)
+                                .then(deldata => {
+                                    console.log('deldata',deldata)
+                                })
                             })
+                            if(count2 == sensorlen){
+                                //** Delete data from organization table...
+                                getOrganizatonBynameSensor(data.organization, data.brand)
+                                .then(org =>{
+                                    var orglen = org.length;
+                                    orglen = orglen-1;
+                                    if(org){
+                                        org.forEach(function (record, index) {
+                                            console.log('record',record.organization_id);
+                                            console.log(index, orglen)
+                                            DeleteOrganization(record.organization_id)
+                                            .then(data => {
+                                                console.log('res',data)
+                                                if(index == orglen){
+                                                    res.send({
+                                                        message: 'success',
+                                                        status: 200
+                                                    })
+                                                }
+                                            }).catch(err => {
+                                                console.log('err',err)
+                                                if(index == orglen){
+                                                     res.send({
+                                                        message: 'failure',
+                                                        status: 300,
+                                                        err: err
+                                                    })
+                                                }
+                                            })
+                                        })
+                                    }else{
+                                        res.send({
+                                            message: 'failure',
+                                            status: 300,
+                                            err: err
+                                        })
+                                    }
+                                }).catch(err => {
+                                    console.log('err',err)
+                                    res.send({
+                                        message: 'failure',
+                                        status: 300,
+                                        err: err
+                                    })
+                                })
+                            }
+                    
                         }
                     })
+                    //**Delete simulation data from simulation_image db...
+                   
                 })
             }else{
-                res.send({
-                    message: 'failure',
-                    status: 300,
-                    err: err
+                getOrganizatonBynameSensor(data.organization, data.brand)
+                .then(org =>{
+                    var orglen = org.length;
+                    orglen = orglen-1;
+                    if(org){
+                        org.forEach(function (record, index) {
+                            console.log('record',record.organization_id);
+                            console.log(index, orglen)
+                            DeleteOrganization(record.organization_id)
+                            .then(data => {
+                                console.log('res',data)
+                                if(index == orglen){
+                                    res.send({
+                                        message: 'success',
+                                        status: 200
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log('err',err)
+                                if(index == orglen){
+                                     res.send({
+                                        message: 'failure',
+                                        status: 300,
+                                        err: err
+                                    })
+                                }
+                            })
+                        })
+                    }else{
+                        res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    res.send({
+                        message: 'failure',
+                        status: 300,
+                        err: err
+                    })
                 })
             }
-        }).catch(err => {
-            console.log('err',err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
-            })
         })
         
+        
     }else if(type == 'orgTeam'){
-        getOrganizatonByTeam(data.organization, data.TeamName)
-        .then(org =>{
-            var orglen = org.length;
-            orglen = orglen-1;
-            if(org){
-                org.forEach(function (record, index) {
-                    console.log('record',record.organization_id);
-                    console.log(index, orglen)
-                    DeleteOrganization(record.organization_id)
-                    .then(data => {
-                        console.log('res',data)
-                        if(index == orglen){
-                            res.send({
-                                message: 'success',
-                                status: 200
+        getOrganizationTeamData({sensor: data.brand,organization: data.organization,team: data.TeamName})
+        .then (result => {
+            console.log('result ----------------',result)
+            let sensorlen = result.length;
+            let count1 = 0; 
+            let count3 = 0;
+            if(sensorlen > 0){
+                result.forEach(async function (record, index) {
+
+                    count1++;
+                    /*========== Delete data from sensor data table ==============*/
+                    if( record.team && record.player_id){
+                        deleteSensorData(record.team, record.player_id)
+                        .then(deldata => {
+                            console.log('deldata',deldata)
+                        }).catch(err=>{
+
+                        })
+                    }
+
+                    /*=========== Get simulation data and root path of folder ==========*/
+                    getPlayerSimulationFile({image_id: record.image_id})
+                    .then(image_Data =>{
+                        count3++;
+                        console.log('image_Data root_path',image_Data.root_path)
+                        //*** delete simulation file from s3
+                        if(image_Data.root_path && image_Data.root_path != 'undefined'){
+                            emptyBucket({bucket_name: image_Data.bucket_name,root_path: image_Data.root_path},function (err, data) {
+                                console.log('data',data)
                             })
                         }
-                    }).catch(err => {
-                        console.log('err',err)
-                        if(index == orglen){
-                             res.send({
-                                message: 'failure',
-                                status: 300,
-                                err: err
+
+                        //** Delete data from simulation images table...
+                        if(count3 == sensorlen){
+                            let count2 = 0;
+                            result.forEach(async function (record, index) {
+                                count2++;
+                                deleteSimulation_imagesData(record.image_id)
+                                .then(deldata => {
+                                    console.log('deldata',deldata)
+                                })
                             })
+                            if(count2 == sensorlen){
+                                getOrganizatonByTeam(data.organization, data.TeamName)
+                                .then(org =>{
+                                    var orglen = org.length;
+                                    orglen = orglen-1;
+                                    if(org){
+                                        org.forEach(function (record, index) {
+                                            console.log(index, orglen)
+                                            DeleteOrganization(record.organization_id)
+                                            .then(data => {
+                                                console.log('res',data)
+                                                if(index == orglen){
+                                                    res.send({
+                                                        message: 'success',
+                                                        status: 200
+                                                    })
+                                                }
+                                            }).catch(err => {
+                                                console.log('err',err)
+                                                if(index == orglen){
+                                                     res.send({
+                                                        message: 'failure',
+                                                        status: 300,
+                                                        err: err
+                                                    })
+                                                }
+                                            })
+                                        })
+                                    }else{
+                                        res.send({
+                                            message: 'failure',
+                                            status: 300,
+                                            err: err
+                                        })
+                                    }
+                                }).catch(err => {
+                                    console.log('err',err)
+                                    res.send({
+                                        message: 'failure',
+                                        status: 300,
+                                        err: err
+                                    })
+                                })
+                            }
                         }
-                    })
+                    });
                 })
             }else{
-                res.send({
-                    message: 'failure',
-                    status: 300,
-                    err: err
+                 getOrganizatonByTeam(data.organization, data.TeamName)
+                .then(org =>{
+                    var orglen = org.length;
+                    orglen = orglen-1;
+                    if(org){
+                        org.forEach(function (record, index) {
+                            console.log('record',record.organization_id);
+                            console.log(index, orglen)
+                            DeleteOrganization(record.organization_id)
+                            .then(data => {
+                                console.log('res',data)
+                                if(index == orglen){
+                                    res.send({
+                                        message: 'success',
+                                        status: 200
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log('err',err)
+                                if(index == orglen){
+                                     res.send({
+                                        message: 'failure',
+                                        status: 300,
+                                        err: err
+                                    })
+                                }
+                            })
+                        })
+                    }else{
+                        res.send({
+                            message: 'failure',
+                            status: 300,
+                            err: err
+                        })
+                    }
+                }).catch(err => {
+                    console.log('err',err)
+                    res.send({
+                        message: 'failure',
+                        status: 300,
+                        err: err
+                    })
                 })
             }
-        }).catch(err => {
-            console.log('err',err)
-            res.send({
-                message: 'failure',
-                status: 300,
-                err: err
-            })
         })
+       
     }
 })
 

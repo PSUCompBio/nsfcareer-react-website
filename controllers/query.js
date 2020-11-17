@@ -1344,6 +1344,32 @@ function getBrandData(obj) {
     });
 }
 
+function getBrandDataByorg(brand,organization) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            FilterExpression: "sensor = :sensor and organization = :organization",
+            ExpressionAttributeValues: {
+               ":sensor": brand,
+               ":organization": organization
+            },
+            ProjectionExpression: "sensor,player_id,computed_time,image_id,team"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
 function getAllOrganizationsOfSensorBrand(obj) {
     return new Promise((resolve, reject) => {
         let params = {
@@ -1460,7 +1486,7 @@ function getOrganizationTeamData(obj) {
                    ":organization": obj.organization,
                    ":team": obj.team
                 },
-                ProjectionExpression: "sensor,image_id,computed_time,player_id",
+                ProjectionExpression: "sensor,player_id,computed_time,image_id,team",
                 ScanIndexForward: false
             };
         } else {
@@ -2971,6 +2997,8 @@ function getTeamSpheres(obj) {
     });
 }
 
+
+
 function updateUserStatus(obj) {
     return new Promise((resolve, reject) => {
         if (obj.type && obj.type === 'uodate_sensor_id') {
@@ -3002,6 +3030,43 @@ function updateUserStatus(obj) {
         }
         
         docClient.update(userParams, (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
+
+function deleteSensorData(team, player_id){
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_data",
+            Key: {
+                team: team,
+                player_id: player_id,
+            },
+        };
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
+
+function deleteSimulation_imagesData(image_id){
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "simulation_images",
+            Key: {
+                image_id: image_id,
+            },
+        };
+        docClient.delete(params, function (err, data) {
             if (err) {
                 reject(err);
             } else {
@@ -3101,5 +3166,8 @@ module.exports = {
     getAllOrganizationsOfSensorBrand,
     getTeamSpheres,
     updateUserStatus,
-    getTeamDataWithPlayerRecords_3
+    getTeamDataWithPlayerRecords_3,
+    getBrandDataByorg,
+    deleteSensorData,
+    deleteSimulation_imagesData
 };
