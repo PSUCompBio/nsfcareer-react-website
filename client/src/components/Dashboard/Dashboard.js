@@ -38,7 +38,7 @@ class Dashboard extends React.Component {
         }} />;
       } else if (this.state.userDetails.level === 300) {
         return <Redirect to={{
-          pathname: '/TeamAdmin',
+          pathname: '/TeamAdmin/'+this.state.userDetails.organization+'/'+this.state.userDetails.sensor,
           state: {
             brand: {
               brand: this.state.userDetails.sensor,
@@ -49,7 +49,7 @@ class Dashboard extends React.Component {
         }} />;
       } else if (this.state.userDetails.level === 200) {
         return <Redirect to={{
-          pathname: '/TeamAdmin/team/players',
+          pathname: '/TeamAdmin/team/players/list',
           state: {
             team: {
               brand: this.state.userDetails.sensor,
@@ -61,7 +61,7 @@ class Dashboard extends React.Component {
         }} />;
       } else {
         return <Redirect to={{
-          pathname: '/TeamAdmin/user/dashboard',
+          pathname: '/TeamAdmin/user/impact/dashboard',
           state: {
             team: {
               organization: this.state.userDetails.organization,
