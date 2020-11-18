@@ -15,16 +15,21 @@ import arrow_right from './arrow_right.png'
 
 import ClinicalReportHeader from './Clinical-Report-Header.png';
 import taxture1  from './taxture1.png';
-import branImages_1 from './branImages_1.png'
+import branImages_1 from './branImages_1.png';
+import brainimage_2 from './brainimage_2.png';
+import PageFooter_3 from './3rdPageFooter.jpg';
+import page_3 from './sub_component/page_3';
+import styleOfpage3 from './sub_component/styleOfpage3.json'
 // import logo 
 // Create styles
-console.log('innerWidth ------------------------\n',window.innerWidth )
+
 let innerWidth = window.innerWidth;
 
 
 class Report extends React.Component {
     constructor(props) {
         super(props);
+        console.log('innerWidth ------------------------\n',styleOfpage3 )
         console.log('Rports props are csdm-15', this.props);
         console.log('metric ', this.props.Metric);
 
@@ -589,64 +594,135 @@ class Report extends React.Component {
                 width: '14px',
                 marginLeft: csdmtrangleScale
             }
+        });
+
+        const stylepage3 = StyleSheet.create({
+            HeaderHeading: {
+                width: '100%',
+                textAlign: 'center',
+                color: "#2F5597",
+                marginTop: '40px',
+                marginBottom: '40px'
+
+            },
+            col12:{
+                width:'100%',
+                display: 'inline-block',
+                flexDirection : 'column',
+            },
+            col6:{
+                width:'50%',
+                float: 'left',
+                display: 'inline-block',
+                
+            },
+            col6Left:{
+                width:'49%',
+                float: 'right',
+                display: 'inline-block',
+            },
+            blueLine:{
+                width: '100%',
+                height: '1px',
+                backgroundColor: '#2F5597',
+                marginTop: '20px',
+                marginBottom: '15px'
+            },
+            tableRow: {
+                flex: 1,
+                flexDirection : 'row',
+            },
+            tableColLeft: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '50%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                textAlign : 'left'
+            },
+            tableColRight: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '50%',
+                float : 'right',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                textAlign : 'right'
+            },
+            brainimage_2:{
+                width: '100%',
+                marginTop: '20px',
+            },
+            FooterImg: {
+                width: '100%',
+                marginTop: '30px',
+            },
+            styleOfpage3: {
+                width: '50%'
+            },
+            FooterSection:{
+                width: '100%',
+                display : 'inline-block',
+                flexDirection : 'column',
+                float:'left',
+                textAlign: 'center'
+            }
         })
         return (
             <Document>
+
+                {/*==========================
+                            PAGE 1
+                =======================*/}
                 <Page object-fit="fill" size="A4">
-                    {/*<View style={{
-                        width : '100%',
-                        height: '18%',
-                        padding : 0,
-                        backgroundColor : 'white',
-                        marginBottom : 0
+                    <View style= {{
                         }}>
-                        <Image style={styles.image}  src={header1} alt="images" />
+                        <View style= {styles.tableHead}>
+                            <Image  style={styles.logo} src={ClinicalReportHeader} alt="head"/>
                         </View>
-                        */}
-                        <View style= {{
+                        <View style= {styles.tableRowHeadtitle}>
+                            <Text style={styles.title}>Prediction Overview</Text>
+                        </View>
+                        <View style= {styles.tableRowHead}>
+                            <Text style={styles.tableColLeft}>Report Date : </Text>
+                            <Text style={styles.tableColRightHead}>{'                   PAGE 1 of 2'} </Text>
+                        </View>
+                        <View style= {styles.tableRowHead}>
+                            <Text style={styles.tableColLeft}><Text style={{color:'#2d549a'}}>{this.getDateInFormat()} </Text></Text>
+                        </View>
+                        <Text style={{
+                                margin : 'auto',
+                                alignItems : 'center',
+                                marginTop : '3%',
+                                color : 'blue',
+                                marginBottom : '2%',
+                                fontSize : 26,
                             }}>
-                            <View style= {styles.tableHead}>
-                                <Image  style={styles.logo} src={ClinicalReportHeader} alt="head"/>
-                            </View>
-                            <View style= {styles.tableRowHeadtitle}>
-                                <Text style={styles.title}>Prediction Overview</Text>
-                            </View>
-                            <View style= {styles.tableRowHead}>
-                                <Text style={styles.tableColLeft}>Report Date : </Text>
-                                <Text style={styles.tableColRightHead}>{'                   PAGE 1 of 2'} </Text>
-                            </View>
-                            <View style= {styles.tableRowHead}>
-                                <Text style={styles.tableColLeft}>{this.getDateInFormat()} </Text>
-                            </View>
-                            <Text style={{
-                                    margin : 'auto',
-                                    alignItems : 'center',
-                                    marginTop : '3%',
-                                    color : 'blue',
-                                    marginBottom : '2%',
-                                    fontSize : 26,
-                                }}>
-                                {this.state.data['first-name'] +' '+this.state.data['last-name']}
-                            </Text>
+                            {this.state.data['first-name'] +' '+this.state.data['last-name']}
+                        </Text>
 
-                            <View style={styles.tableRow}>
+                        <View style={styles.tableRow}>
+                            <Text style={styles.tableColLeft}> DOB : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
+                            <Text style={styles.tableColLeft}> Impact Date : <Text style={{color:'#2d549a'}}>{this.state.impact_date}</Text> </Text>
+                        </View>
+                        <View style={styles.tableRow}>
 
+                            <Text style={styles.tableColLeft}> Sex : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
+                            <Text style={styles.tableColLeft}> Impact Time : <Text style={{color:'#2d549a'}}> {this.state.impact_time} </Text> </Text>
+                            <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{"N/A" } </Text></Text>
 
+                        </View>
 
-                                <Text style={styles.tableColLeft}> DOB : {"N/A"} </Text>
-                                <Text style={styles.tableColLeft}> Impact Date : {this.state.impact_date} </Text>
-
-                                <Text style={styles.tableColRight}> Referring physician : Unknown </Text>
-
-                            </View>
-                            <View style={styles.tableRow}>
-
-                                <Text style={styles.tableColLeft}> Sex : {"N/A"} </Text>
-                                <Text style={styles.tableColLeft}> Impact Time : {this.state.impact_time} </Text>
-
-                                <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
-
-                            </View>
+                        {/*============= For CSDM 15 data ====================*/}
                             {this.state.metric.csdm_15 == 'on'? 
                                 <>
                                     <View style={styles.col12}>
@@ -763,6 +839,13 @@ class Report extends React.Component {
                                 :
                                 null
                             }
+                        {/*=========================
+                            For CSDM 15 data end 
+                        ============================*/}
+
+
+                        {/*============= For mps 15 data ====================*/}
+
                             {this.state.metric.csdm_15 != 'on' && this.state.metric.mps_95 == 'on' ? 
                                 <>
                                     <View style={styles.col12}>
@@ -885,208 +968,248 @@ class Report extends React.Component {
                                 </>
                                 : null
                             }
-                                {/*=============== page 1 footer sections end ===============*/}
+                        
+                        {/*==========================
+
+                            For mps 15 data end
+
+                         =======================*/}
+                        {/*=============== page 1 footer sections end ===============*/}
 
 
-                            {/*====================Footer heading ==============================*/}
-                            <View style={styles.bottomView}>
-                                <Text>NOT FOR CLINICAL USE</Text>
-                            </View>
-                            {/*====================Footer heading end ==============================*/}
+                        {/*====================Footer heading ==============================*/}
+                        <View style={styles.bottomView}>
+                            <Text>NOT FOR CLINICAL USE</Text>
+                        </View>
+                        {/*====================Footer heading end ==============================*/}
 
+                    </View>
+                </Page>
+
+                {/*==========================
+                            PAGE 2
+                =======================*/}
+                {this.state.metric.csdm_15 == 'on' && this.state.metric.mps_95 == 'on' ? 
+                    <Page object-fit="fill" size="A4">
+                        <View>
+                            
+                                <>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                        <View style={styles.rowHead2}>
+                                             <View style={styles.tableRowCenter}>
+                                                <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
+                                                {/*<Text style={styles.tableColLeft4}>95</Text>*/}
+                                            </View>
+                                            <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.rowHead2subHead}>
+                                            <Text  style={styles.rowHead2Text2subHead_center}>
+                                                Maximum Principal Strain
+                                            </Text>
+                                            {/*<Text style={styles.tableColLeft4_2}></Text>
+                                            <Text  style={styles.rowHead2Text2subHead_2}>
+                                               
+                                            </Text>*/}
+                                        </View>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
+                                        <Text style={styles.tableColRight2}>0-7.5</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>7.5-15</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>15-25</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>25-30</Text>
+                                        <Text style={styles.hLine}></Text>
+                                        <Text style={styles.tableColRight2}>30-50</Text>
+                                        <Text style={styles.tableColRight3}>NOTES</Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Frontal Lobe</Text>
+                                         {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Parietal Lobe</Text>
+                                         {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Occipital Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Temporal Lobe</Text>
+                                        {/*=== 0-7.5 ===*/}
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Cerebellum</Text>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.col12}>
+                                        <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
+                                    </View>
+                                    <View style={styles.taxture3_div}>
+                                        <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
+                                    </View>
+                                {/*=============== page 1 footer sections start ===============*/}
+                                    <View style={styles.tableRow}>
+                                       
+                                        <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
+                                    </View>
+                                   
+                                    <View style={styles.tableRow}>
+                                        <View style={styles.p1_footer_arrow_right}>
+                                            <Image  style={styles.arrow_right} src={arrow_right} alt="arrow_right"/>
+                                        </View>
+                                        <Text style={styles.P1_footer_t}>SIGNIFICANT</Text>
+                                        <Text style={styles.P1_footer_t2}>1,2,3</Text>
+                                        <View style={styles.p1_footer_arrow_left}>
+                                            <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
+                                        </View>
+                                    </View>
+                                    <View style={styles.tableRow}>                          
+                                        <Image  style={styles.trangle_scale} src={branImages_1} alt="trangle"/>
+                                    </View>
+                                    {/*====================Footer heading ==============================*/}
+                                    <View style={styles.bottomView}>
+                                        <Text>NOT FOR CLINICAL USE</Text>
+                                    </View>
+                                    {/*====================Footer heading end ==============================*/}
+                                </>
+                                 
+
+                                {/*<>
+                                    <View style= {styles.tableRowHead}>
+
+                                        <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
+                                    </View>
+                                    <Text style = {{
+                                        fontSize : 15,
+                                        textAlign : 'center',
+                                        color : "#0E263D",
+                                        marginTop : '2%',
+                                        marginBottom : '2%'
+                                    }}>NSFCAREER OVERVIEW</Text>
+                                    <View >
+                                        <View style={styles.tableRow}>
+                                            <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
+                                            <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
+
+                                        </View>
+                                        <View style={styles.tableRow}>
+
+                                            <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
+
+                                            <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
+
+                                        </View>
+                                    </View>    
+                                </>*/}
+                        </View>
+                    </Page>
+                    : null
+                }
+                {/*==========================
+                            PAGE 3
+                =======================*/}
+
+                <Page object-fit="fill" size="A4">
+                    <View style={styles.col12}>
+
+                        {/*=========== Header section start here ============*/}
+                        <Text style={stylepage3.HeaderHeading}>NSFCAREER MASxSR OVERVIEW</Text>
+
+                        <View style={stylepage3.tableRow}>
+                            <Text style={stylepage3.tableColLeft}> DATE : {this.getDateInFormat()}</Text>
+                            <Text style={stylepage3.tableColRight}> PAGE : {this.state.metric.csdm_15 == 'on' && this.state.metric.mps_95 == 'on' ?  '3 of 3' : '2 of 2'}</Text>
+                        </View>
+                        {/*========== Land scape blue line =============*/}
+                        <View style={stylepage3.blueLine}></View>
+
+                        {/*=========== Customer details ===============*/}
+                        <View style={stylepage3.col12}>
+                            <Text 
+                                style={{
+                                    width: '100%',
+                                    textAlign: 'center',
+                                    color: '#2F5597',
+                                    fontSize : 25,
+                                    fontWeight: 800,
+                                    marginBottom: '15px',
+                                }}
+                            >
+                                {this.state.data['first-name'] +' '+this.state.data['last-name']}
+                            </Text>
                         </View>
 
-                        {/* <View style={{
-                            width : '100%',
-                            padding : 0,
-                            backgroundColor : 'white',
-                            marginBottom : '10'
-                            }}>
-                            <Image style={styles.image}  src={footer1} alt="images" />
-                            </View>
-                            */}
+                         <View style={stylepage3.tableRow}>
 
+                            <Text style={stylepage3.tableColLeft}> DOB : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
+                            <Text style={stylepage3.tableColRight}>Referring physician : <Text style={{color:'#2d549a'}}>Unknown</Text> </Text>
+                        </View>
+                         <View style={stylepage3.tableRow}>
 
-                        </Page>
-                        <Page object-fit="fill" size="A4">
-                            <View>
-                                  {this.state.metric.csdm_15 == 'on' && this.state.metric.mps_95 == 'on' ? 
-                                    <>
-                                        <View style={styles.col12}>
-                                            <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
-                                            <View style={styles.rowHead2}>
-                                                 <View style={styles.tableRowCenter}>
-                                                    <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
-                                                    {/*<Text style={styles.tableColLeft4}>95</Text>*/}
-                                                </View>
-                                                <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.</Text>
-                                            </View>
-                                        </View>
-                                        <View style={styles.col12}>
-                                            <View style={styles.rowHead2subHead}>
-                                                <Text  style={styles.rowHead2Text2subHead_center}>
-                                                    Maximum Principal Strain
-                                                </Text>
-                                                {/*<Text style={styles.tableColLeft4_2}></Text>
-                                                <Text  style={styles.rowHead2Text2subHead_2}>
-                                                   
-                                                </Text>*/}
-                                            </View>
-                                        </View>
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableColLeft2}>BRAIN REGIONS</Text>
-                                            <Text style={styles.tableColRight2}>0-7.5</Text>
-                                            <Text style={styles.hLine}></Text>
-                                            <Text style={styles.tableColRight2}>7.5-15</Text>
-                                            <Text style={styles.hLine}></Text>
-                                            <Text style={styles.tableColRight2}>15-25</Text>
-                                            <Text style={styles.hLine}></Text>
-                                            <Text style={styles.tableColRight2}>25-30</Text>
-                                            <Text style={styles.hLine}></Text>
-                                            <Text style={styles.tableColRight2}>30-50</Text>
-                                            <Text style={styles.tableColRight3}>NOTES</Text>
-                                        </View>
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableTd1}>Frontal Lobe</Text>
-                                             {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight_scale}>
-                                                <View style={styles.point_scale}>
-                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
-                                                </View>
-                                            </View>
-                                            <Text style={styles.tableColRight2_2}></Text>
-                                        </View>
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                             {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight_scale}>
-                                                <View style={styles.point_scale}>
-                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
-                                                </View>
-                                            </View>
-                                            <Text style={styles.tableColRight2_2}></Text>
-                                        </View>
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableTd1}>Occipital Lobe</Text>
-                                            {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight_scale}>
-                                                <View style={styles.point_scale}>
-                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
-                                                </View>
-                                            </View>
-                                            <Text style={styles.tableColRight2_2}></Text>
-                                        </View>
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                            {/*=== 0-7.5 ===*/}
-                                            <View style={styles.tableColRight_scale}>
-                                                <View style={styles.point_scale}>
-                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
-                                                </View>
-                                            </View>
-                                            <Text style={styles.tableColRight2_2}></Text>
-                                        </View>
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableTd1}>Cerebellum</Text>
-                                            <View style={styles.tableColRight_scale}>
-                                                <View style={styles.point_scale}>
-                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
-                                                </View>
-                                            </View>
-                                            <Text style={styles.tableColRight2_2}></Text>
-                                        </View>
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
-                                            <View style={styles.tableColRight_scale}>
-                                                <View style={styles.point_scale}>
-                                                    <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
-                                                </View>
-                                            </View>
-                                            <Text style={styles.tableColRight2_2}></Text>
-                                        </View>
-                                        <View style={styles.col12}>
-                                            <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
-                                        </View>
-                                        <View style={styles.taxture3_div}>
-                                            <Image  style={styles.trangle} src={taxture1} alt="trangle"/>
-                                        </View>
-                                    {/*=============== page 1 footer sections start ===============*/}
-                                        <View style={styles.tableRow}>
-                                           
-                                            <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
-                                        </View>
-                                       
-                                        <View style={styles.tableRow}>
-                                            <View style={styles.p1_footer_arrow_right}>
-                                                <Image  style={styles.arrow_right} src={arrow_right} alt="arrow_right"/>
-                                            </View>
-                                            <Text style={styles.P1_footer_t}>SIGNIFICANT</Text>
-                                            <Text style={styles.P1_footer_t2}>1,2,3</Text>
-                                            <View style={styles.p1_footer_arrow_left}>
-                                                <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
-                                            </View>
-                                        </View>
-                                        <View style={styles.tableRow}>                          
-                                            <Image  style={styles.trangle_scale} src={branImages_1} alt="trangle"/>
-                                        </View>
-                                        {/*====================Footer heading ==============================*/}
-                                        <View style={styles.bottomView}>
-                                            <Text>NOT FOR CLINICAL USE</Text>
-                                        </View>
-                                        {/*====================Footer heading end ==============================*/}
-                                    </>
-                                    : 
+                            <Text style={stylepage3.tableColLeft}> Patient ID : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
+                            <Text style={stylepage3.tableColRight}>Organization : <Text style={{color:'#2d549a'}}>{this.props.data.sensor_data ? this.props.data.sensor_data.organization : 'Unknown'}</Text> </Text>
+                        </View>
+                        <View style={stylepage3.blueLine}></View>
 
-                                    <>
-                                        <View style= {styles.tableRowHead}>
+                        {/*=========== Header section end ============*/}
 
-                                            <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
-                                        </View>
-                                        <Text style = {{
-                                                fontSize : 15,
-                                                textAlign : 'center',
-                                                color : "#0E263D",
-                                                marginTop : '2%',
-                                                marginBottom : '2%'
-                                            }}>NSFCAREER OVERVIEW</Text>
-                                            <View style= {{
+                        {/*============== Body section start ==================*/}
+                        <View style={stylepage3.tableRow}>                          
+                            <Image  style={stylepage3.brainimage_2} src={brainimage_2} alt="trangle"/>
+                        </View>
+                        <View style={stylepage3.FooterSection}> 
+                            <Image  style={stylepage3.FooterImg} src={PageFooter_3} alt="trangle"/>
+                        </View>
+                    </View>
+                </Page>
+            </Document>
+        );
 
-                                                }}>
+    }
 
-
-                                                <View style={styles.tableRow}>
-
-
-
-                                                    <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
-                                                    <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
-
-                                                </View>
-                                                <View style={styles.tableRow}>
-
-                                                    <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
-
-                                                    <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
-
-                                                </View>
-                                            </View>
-                                        
-                                    </>
-                                }
-                                </View>
-                                </Page>
-                            </Document>
-                        );
-
-                    }
-
-                }
-
-
-
-
-
-
-
-
-                export default Report;
+}
+export default Report;
