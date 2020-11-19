@@ -7597,11 +7597,15 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
                                                 let counter = 0;                                                
                                                 httpResponse.body.image_url.forEach((url, m) => {
                                                     counter++;
-                                                    body += '<iframe src="' + url + '" width="100%" height="500px"></iframe>';
+                                                    body += '<iframe src=\'' + url + '\' width=\'100%\' height=\'500px\'></iframe>';
                                                     if (counter == httpResponse.body.image_url.length) {
                                                         body += '</body>\
                                                                 </html>';
-                                                        res.send(body);
+                                                        //res.send(body);
+                                                        res.send({
+                                                            message: "success",
+                                                            data: body
+                                                        })
                                                     }
                                                 })
                                             } else {
