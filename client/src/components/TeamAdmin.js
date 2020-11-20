@@ -488,7 +488,7 @@ class TeamnAdmin extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players/list',
+                            pathname: '/TeamAdmin/team/players/'+organization+'/'+team+'?brand='+brand,
                             state: {
                                 team: {
                                     brand: brand,
@@ -596,7 +596,7 @@ class TeamnAdmin extends React.Component {
                     }
                     return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players/list',
+                            pathname: '/TeamAdmin/team/players/'+team.organization+'/'+team.team_name+'?brand='+team.sensor,
                             state: {
                                 team: {
                                     brand: team.sensor,

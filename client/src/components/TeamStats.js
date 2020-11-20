@@ -176,7 +176,7 @@ class TeamStats extends React.Component {
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>Team Stats</h1>
                         <div className="backbutton11" style={{position : 'relative'}}>
                             <Link to={{
-                                    pathname: '/TeamAdmin/team/players/list',
+                                    pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
                                     state: {
                                         team: {
                                             brand: this.props.location.state.team.brand,

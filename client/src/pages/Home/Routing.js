@@ -321,7 +321,7 @@ class Routing extends React.Component {
         />
         <Route
             exact
-            path="/TeamAdmin/team/players/list"
+            path="/TeamAdmin/team/players/:org/:team"
             render={(props) => <TeamPlayers {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route

@@ -49,7 +49,7 @@ class Dashboard extends React.Component {
         }} />;
       } else if (this.state.userDetails.level === 200) {
         return <Redirect to={{
-          pathname: '/TeamAdmin/team/players/list',
+          pathname: '/TeamAdmin/team/players/'+this.state.userDetails.organization+'/'+this.state.userDetails.team+'?brand='+this.state.userDetails.sensor,
           state: {
             team: {
               brand: this.state.userDetails.sensor,

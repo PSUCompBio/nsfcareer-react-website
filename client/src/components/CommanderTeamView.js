@@ -74,6 +74,8 @@ class CommanderTeamView extends React.Component {
             checked: true,
             isSensorIdUpdating: false,
             isMobile: true,
+            organization:this.props.match.params.org,
+            team:this.props.match.params.team ? this.props.match.params.team.split('?')[0] : ''
         };
     }
     activateTab = (value) => {
@@ -110,40 +112,40 @@ class CommanderTeamView extends React.Component {
             .then((response) => {
                 if (response.data.message === "success") {
                     getPlayersData({
-			            brand: this.props.location.state.team.brand,
-                        user_cognito_id: this.props.location.state.team.user_cognito_id,
-                        organization: this.props.location.state.team.organization,
-                        team_name: this.props.location.state.team.team_name
+			            brand: this.state.brand,
+                        user_cognito_id: this.state.user_cognito_id,
+                        organization: this.state.organization,
+                        team_name: this.state.team
                     })
-                        .then(response => {
+                    .then(response => {
 
-                            this.setState({ users: [] });
+                        this.setState({ users: [] });
 
-                            for (var i = 0; i < response.data.data.length; i++) {
-                                this.setState(prevState => ({
-                                    users: [...prevState.users, response.data.data[i]]
-                                }));
-                            }
-                            getSimulationStatusCount({
-				                brand: this.props.location.state.team.brand,
-                                user_cognito_id: this.props.location.state.team.user_cognito_id,
-                                organization: this.props.location.state.team.organization,
-                                team: this.props.location.state.team.team_name
+                        for (var i = 0; i < response.data.data.length; i++) {
+                            this.setState(prevState => ({
+                                users: [...prevState.users, response.data.data[i]]
+                            }));
+                        }
+                        getSimulationStatusCount({
+			                brand: this.state.brand,
+                            user_cognito_id: this.state.user_cognito_id,
+                            organization: this.state.organization,
+                            team: this.state.team
+                        })
+                            .then(response => {
+                                this.setState({
+                                    simulations_completed: response.data.data.completed,
+                                    simulation_failed: response.data.data.failed,
+                                    simulations_pending: response.data.data.pending,
+                                    isUploading: false,
+                                    isFileUploaded: true,
+                                    uploadMessageLog: ''
+                                });
                             })
-                                .then(response => {
-                                    this.setState({
-                                        simulations_completed: response.data.data.completed,
-                                        simulation_failed: response.data.data.failed,
-                                        simulations_pending: response.data.data.pending,
-                                        isUploading: false,
-                                        isFileUploaded: true,
-                                        uploadMessageLog: ''
-                                    });
-                                })
-                                .catch(err => {
+                            .catch(err => {
 
-                                    this.setState({ isUploading: false, fileUploadError: response.data.error, uploadMessageLog: '' });
-                                })
+                                this.setState({ isUploading: false, fileUploadError: response.data.error, uploadMessageLog: '' });
+                            })
                         })
                         .catch(err => {
                             this.setState({ isUploading: false, fileUploadError: response.data.error, uploadMessageLog: '' });
@@ -196,9 +198,12 @@ class CommanderTeamView extends React.Component {
         socket.off('fileUploadLog');
     }
     componentDidMount() {
-        // Scrolling winddow to top when user clicks on about us page
-        window.scrollTo(0, 0)
-
+    
+        const params = new URLSearchParams(window.location.search)
+        let brand = false;
+        if(params.get('brand')){
+            brand = params.get('brand');
+        }
         // Socket
         const socket = socketIOClient();
         socket.on("fileUploadLog", data => {
@@ -207,24 +212,27 @@ class CommanderTeamView extends React.Component {
             })
         });
 
-        if (this.props.location.state) {
-            if (this.props.location.state.team.user_cognito_id && this.props.location.state.team.organization && this.props.location.state.team.team_name) {
+        if (this.props.match.params.team) {
+            if (this.state.organization && this.state.team) {
                 isAuthenticated(JSON.stringify({}))
                     .then((value) => {
                         if (value.data.message === 'success') {
                             getUserDBDetails()
                                 .then((response) => {
+                                    console.log('userDetails',response.data.data)
                                     this.setState({
                                         userDetails: response.data.data,
+                                        user_cognito_id: response.data.data.user_cognito_id,
                                         isAuthenticated: true,
-                                        isCheckingAuth: false
+                                        isCheckingAuth: false,
+                                        brand: brand,
                                     });
                                     let user_level = response.data.data.level;
                                     if (user_level === 1000 || user_level === 400 || user_level === 300 || user_level === 200) {
                                         getPlayersData({
-					                        brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                            organization: this.props.location.state.team.organization,
-                                            team_name: this.props.location.state.team.team_name
+					                        brand: user_level === 300 ? '' : brand,
+                                            organization: this.state.organization,
+                                            team_name: this.state.team
                                         })
                                         .then(response => {
                                             console.log('getPlayersData ----------------------\n',response);
@@ -244,9 +252,9 @@ class CommanderTeamView extends React.Component {
                                                 }));
                                             } 
                                             return getSimulationStatusCount({
-                                                brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                                organization: this.props.location.state.team.organization,
-                                                team: this.props.location.state.team.team_name
+                                                brand: user_level === 300 ? '' : brand,
+                                                organization: this.state.organization,
+                                                team_name: this.state.team
                                             })
                                            
                                         }).then(response => {
@@ -290,9 +298,9 @@ class CommanderTeamView extends React.Component {
                                     });
                                 });
                                 fetchTeamStaffMembers({
-                                    sensor: this.props.location.state.team.brand,
-                                    organization: this.props.location.state.team.organization,
-                                    team_name: this.props.location.state.team.team_name
+                                    sensor: brand,
+                                    organization: this.state.organization,
+                                    team_name: this.state.team
                                 }).then(staff=>{
                                     var response = staff.data;
                                     if(response.message == 'success'){
@@ -521,36 +529,36 @@ class CommanderTeamView extends React.Component {
                                 pathname: '/AdminDashboard',
                                 state: {
                                     brand: {
-                                        brand: this.props.location.state.team.brand,
-                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                        brand: this.state.brand,
+                                        user_cognito_id: this.state.user_cognito_id
                                     }
                                 }
                             }} >{'Admin > '}</Link>
                         : null}
-                        {this.props.location.state.team.brand && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
+                        {this.state.brand && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
                             <Link style={{ fontWeight: "400" }} to={{
                                 pathname: '/OrganizationAdmin',
                                 state: {
                                     brand: {
-                                        brand: this.props.location.state.team.brand,
-                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                        brand: this.state.brand,
+                                        user_cognito_id: this.state.user_cognito_id
                                     }
                                 }
-                            }} >{this.props.location.state.team.brand + ' > '}</Link>
+                            }} >{this.state.brand + ' > '}</Link>
                         : null}
                          {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
                                 <Link style={{ fontWeight: "400" }} to={{
-                                pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
+                                pathname: '/TeamAdmin/'+this.state.organization+'/'+this.state.brand,
                                 state: {
                                     brand: {
-                                        brand: this.props.location.state.team.brand,
-                                        organization: this.props.location.state.team.organization,
-                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                        brand: this.state.brand,
+                                        organization: this.state.organization,
+                                        user_cognito_id: this.state.user_cognito_id
                                     }
                                 }
-                            }}>{this.props.location.state.team.organization + ' > ' }</Link>
+                            }}>{this.state.organization + ' > ' }</Link>
                         : null}
-                                 {this.props.location.state.team.team_name}
+                                 {this.state.team}
                         </p>
                     </div>
 
@@ -1091,10 +1099,10 @@ class CommanderTeamView extends React.Component {
 
     render() {
 
-        if (!this.props.location.state) {
+        if (!this.props.match.params.team) {
             return <Redirect to="/Dashboard" />;
         } else {
-            if (!this.props.location.state.team.user_cognito_id && !this.props.location.state.team.organization && !this.props.location.state.team.team_name) {
+            if (!this.state.user_cognito_id && !this.state.organization && !this.state.team) {
                 return <Redirect to="/Dashboard" />;
             }
         }
@@ -1121,15 +1129,15 @@ class CommanderTeamView extends React.Component {
             return <Redirect push to={{
                 pathname: '/TeamAdmin/user/impact/dashboard',
                 state: {
-                    user_cognito_id: this.props.location.state.team.user_cognito_id,
+                    user_cognito_id: this.state.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,
                     player_name: this.state.player_name,
                     isRedirectedFromAdminPanel: true,
                     team: {
-                        brand: this.props.location.state.team.brand,
-                        team_name: this.props.location.state.team.team_name,
-                        organization: this.props.location.state.team.organization,
-                        staff: this.props.location.state.team.staff
+                        brand: this.state.brand,
+                        team_name: this.state.team,
+                        organization: this.state.organization,
+                        staff: []
                     }
                 }
             }} />
@@ -1139,12 +1147,12 @@ class CommanderTeamView extends React.Component {
             return <Redirect push to={{
                 pathname: '/TeamStats',
                 state: {
-                    user_cognito_id: this.props.location.state.team.user_cognito_id,
+                    user_cognito_id: this.state.user_cognito_id,
                     team: {
-                        brand: this.props.location.state.team.brand,
-                        team_name: this.props.location.state.team.team_name,
-                        organization: this.props.location.state.team.organization,
-                        staff: this.props.location.state.team.staff
+                        brand: this.state.brand,
+                        team_name: this.state.team,
+                        organization: this.state.organization,
+                        staff: []
                     }
                 }
             }} />

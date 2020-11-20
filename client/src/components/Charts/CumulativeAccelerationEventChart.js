@@ -83,7 +83,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                 }}>{this.props.data.organization}
                                 </Link> >
                                 <Link style={{ fontWeight: "400" }} to={{
-                                    pathname: "/TeamAdmin/team/players/list",
+                                    pathname: '/TeamAdmin/team/players/'+this.props.data.organization+'/'+this.props.data.team+'?brand='+this.props.data.brand,
                                     state: {
                                         team: {
                                             brand: this.props.data.brand,
