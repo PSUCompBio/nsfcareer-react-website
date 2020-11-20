@@ -137,11 +137,11 @@ class HeadAccelerationAllEvents extends React.Component {
 
     componentDidMount() {
         getSimulationDetail({image_id: this.props.data.sensor_data.image_id})
-            .then(response => {
-                this.setState({
-                    simulationData: response.data.data,
-                });
-            })
+        .then(response => {
+            this.setState({
+                simulationData: response.data.data,
+            });
+        })
     }
 
     static getDerivedStateFromProps (props, state) {
@@ -201,7 +201,7 @@ class HeadAccelerationAllEvents extends React.Component {
     }
     
     render() {
-            console.log(isPageloaded,"propsData 1\n", this.props);
+            console.log(isPageloaded,"propsData 1\n", this.props.status);
             if (this.props.data.sensor_data['impact-time']) {
                 let split = this.props.data.sensor_data['impact-time'].split(":");
                 this.props.data.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
@@ -246,7 +246,7 @@ class HeadAccelerationAllEvents extends React.Component {
                                         </div>
                                     */}
                                    
-                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading} alt="" />
+                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status != 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
                                      {
                                     !this.props.data.sensor_data ?
                                        null

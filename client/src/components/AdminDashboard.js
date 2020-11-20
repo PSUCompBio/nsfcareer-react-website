@@ -615,7 +615,7 @@ class AdminDashboard extends React.Component {
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time;
-            if (minutes <= 10) {
+            if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
@@ -675,7 +675,7 @@ class AdminDashboard extends React.Component {
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time;
-            if (minutes <= 10) {
+            if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
@@ -779,7 +779,7 @@ class AdminDashboard extends React.Component {
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time;
-            if (minutes <= 10) {
+            if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
@@ -988,7 +988,7 @@ class AdminDashboard extends React.Component {
                         let minutes =  Math.abs(Math.round(diff));
                         console.log('minutes', minutes);
                         minutes = minutes - computed_time;
-                        if (minutes <= 10) {
+                        if (minutes <= 30) {
                             cls = 'completedSimulation tech-football m-3';
                         }
                     }
@@ -1031,7 +1031,7 @@ class AdminDashboard extends React.Component {
                         let minutes =  Math.abs(Math.round(diff));
                         console.log('minutes', minutes);
                         minutes = minutes - computed_time;
-                        if (minutes <= 10) {
+                        if (minutes <= 30) {
                             cls = 'completedSimulation tech-football m-3';
                         }
                     }
@@ -1075,7 +1075,7 @@ class AdminDashboard extends React.Component {
                         let minutes =  Math.abs(Math.round(diff));
                         console.log('minutes', minutes);
                         minutes = minutes - computed_time;
-                        if (minutes <= 10) {
+                        if (minutes <= 30) {
                             cls = 'completedSimulation tech-football m-3';
                         }
                     }
@@ -1293,7 +1293,7 @@ class AdminDashboard extends React.Component {
                                                                   let minutes =  Math.abs(Math.round(diff));
                                                                   console.log('minutes', minutes);
                                                                   minutes = minutes - computed_time;
-                                                                  if (minutes <= 10) {
+                                                                  if (minutes <= 30) {
                                                                       cls = 'completedSimulation player-data-table-row';
                                                                   }
                                                                 }
@@ -1405,7 +1405,7 @@ class AdminDashboard extends React.Component {
                                                                   let minutes =  Math.abs(Math.round(diff));
                                                                   console.log('minutes', minutes);
                                                                   minutes = minutes - computed_time;
-                                                                  if (minutes <= 10) {
+                                                                  if (minutes <= 30) {
                                                                       cls = 'completedSimulation player-data-table-row';
                                                                   }
                                                                 }

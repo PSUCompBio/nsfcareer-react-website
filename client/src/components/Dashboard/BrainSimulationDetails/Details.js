@@ -128,7 +128,8 @@ class Details extends React.Component {
       controlPlayVideo: false,
       isRepeatVideo: false,
       value: { min: 0, max: 100 },
-      SidelineVidoeCT: ''
+      SidelineVidoeCT: '',
+      simulationStatus: 'pending'
     };
   }
  
@@ -873,11 +874,13 @@ class Details extends React.Component {
                         </div>
                         <div className="col-md-6" style={{'float':'left'}}>
                           <div className="Simulationvideo">
-                            {!this.state.movie_link &&
+                            {!this.state.movie_link || this.state.simulationStatus == 'pending' ? 
                               <img src={videoSimulationLoading} style={{'width':'50%'}} />
+                              : null
                             }
-                            {this.state.movie_link &&
+                            {this.state.movie_link && this.state.simulationStatus != 'pending' ?
                               <video src={this.state.movie_link} style={{'width':'100%','height':'284px'}} className="player__video_2 viewer_2" controls loop={this.state.isRepeatVideo ? true : false}></video>
+                              : null
                             }
                             
                           </div>
@@ -1040,8 +1043,13 @@ class Details extends React.Component {
                           <div style={{'width': '100%','display': 'flow-root'}}>
                             <p  className="video-lebel">Motion Video</p>
                           </div>
-                          {this.state.motion_link_url && 
+                          {!this.state.motion_link_url || this.state.simulationStatus == 'pending' ? 
+                              <img src={videoSimulationLoading} style={{'width':'50%'}} />
+                              : null
+                          }
+                          {this.state.motion_link_url && this.state.simulationStatus != 'pending' ? 
                             <video src={this.state.motion_link_url} style={{'width':'50%','height':'284px'}}  controls></video>
+                            : null
                           }
                       </div>
                     </div>
@@ -1060,7 +1068,7 @@ class Details extends React.Component {
                             <button className="btn gray">MASxSR<sub>15</sub></button>
                           </div>
                           <div className="col-md-12">
-                            <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading} alt="" />
+                            <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.simulationStatus != 'pending' ?  'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
                             
                           </div>
                       </div>
@@ -1113,7 +1121,7 @@ class Details extends React.Component {
                         left_lock_time: response.data.left_lock_time, 
                         right_lock_time: response.data.right_lock_time, 
                         video_lock_time_2: response.data.video_lock_time_2, 
-                        
+                        simulationStatus: response.data.status,
                     });
                     this.getSimlationImage();
                     getCumulativeAccelerationTimeRecords({  organization: organization, player_id: this.state.player_id, team: team })

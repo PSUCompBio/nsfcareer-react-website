@@ -223,7 +223,6 @@ class CommanderTeamView extends React.Component {
                                     if (user_level === 1000 || user_level === 400 || user_level === 300 || user_level === 200) {
                                         getPlayersData({
 					                        brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                            user_cognito_id: this.props.location.state.team.user_cognito_id,
                                             organization: this.props.location.state.team.organization,
                                             team_name: this.props.location.state.team.team_name
                                         })
@@ -246,7 +245,6 @@ class CommanderTeamView extends React.Component {
                                             } 
                                             return getSimulationStatusCount({
                                                 brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                                user_cognito_id: this.props.location.state.team.user_cognito_id,
                                                 organization: this.props.location.state.team.organization,
                                                 team: this.props.location.state.team.team_name
                                             })
@@ -897,7 +895,7 @@ class CommanderTeamView extends React.Component {
                                                     diff /= 60;
                                                     let minutes =  Math.abs(Math.round(diff));
                                                     minutes = minutes - computed_time;
-                                                    if (minutes <= 10) {
+                                                    if (minutes <= 30) {
                                                         cls = 'completedSimulation player-data-table-row';
                                                     }
                                                   }

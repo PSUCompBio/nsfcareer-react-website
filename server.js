@@ -124,7 +124,6 @@ var cognito = {
     apiVersion: config_env.apiVersion,
     ClientId: config_env.ClientId
 }
-console.log(cognito);
 const {
         getUserDetails,
         getUserDetailBySensorId,
@@ -1504,10 +1503,12 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     let imageData = '';
     var movie_link_url = '';
     var motion_movie_link_url = '';
+    let status = 'pending';
 
     getSimulationImageRecord(image_id)
         .then(image_data => {
             imageData = image_data;
+            status = image_data.status;
             return verifyImageToken(imageData['token'], image_data);
         })
         .then(decoded_token => {
@@ -1541,7 +1542,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
                 video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
                 left_lock_time: imageData.left_lock_time ? imageData.left_lock_time : '',
                 right_lock_time: imageData.right_lock_time ? imageData.right_lock_time : '',
-                
+                status: status,
                 video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
 
             })

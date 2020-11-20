@@ -297,7 +297,7 @@ class UserDashboarForAdmin extends React.Component {
                 let minutes =  Math.abs(Math.round(diff));
                 console.log('minutes', minutes);
                 minutes = minutes - computed_time;
-                if (minutes <= 10) {
+                if (minutes <= 30) {
                     cls = 'card-green';
                 }
               }
@@ -337,7 +337,7 @@ class UserDashboarForAdmin extends React.Component {
                     {this.state.cumulativeAccelerationTimeAlldata ? 
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
                           if(items.sensor_data.player_id == item.sensor_data.player_id){
-                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state} organization ={the.props.location.state.team.organization}  player_id={item.sensor_data.player_id} team={the.props.location.state.team.team_name}/>
+                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state} organization ={the.props.location.state.team.organization}  player_id={item.sensor_data.player_id} team={the.props.location.state.team.team_name} status={item.status}/>
                           }
                         })
                       : 
