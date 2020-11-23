@@ -132,10 +132,7 @@ class BrainSimulationLog extends React.Component {
               <div className="row">
                 <div className="backbutton">
                   <Link 
-                    to={{
-                      pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',
-                     state: this.props.location.state
-                  }}
+                    to={this.props.location.state.return_url}
                   >&lt; Back To Details
                   </Link>
                 </div>

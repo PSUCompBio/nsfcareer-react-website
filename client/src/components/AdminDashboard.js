@@ -10,12 +10,15 @@ import {
     getAllSensorBrands,
     fetchAdminStaffMembers,
     getOrganizationList,
+    getOrganizationNameList,
     getTeamList,
+    getTeamNameList,
     getPlayerList,
     deleteItem,
     renameOrganization,
     addOrganization,
-    MergeOrganization
+    MergeOrganization,
+    getAllSensorBrandsList,
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -95,14 +98,37 @@ class AdminDashboard extends React.Component {
 
     handleButtonChanges =(e)=>{
         console.log(e.target.name);
+        var the = this;
         if(e.target.name == 'organization'){
-            this.setState({      
-                isSensor: false,
-                isOrganization: true,
-                isTeams: false,
-                isFetching: false,
-                isPlayers: false
-            })
+            if(this.state.OrganizationList == ''){
+                the.setState({isFetching: true});
+                getOrganizationNameList({type:'organizations'}).then(organizations =>{
+                    console.log('organizations',organizations);
+                    this.setState({
+                        OrganizationList: organizations.data.data,
+                        totalOrganization: organizations.data.data.length,
+                        isSensor: false,
+                        isOrganization: true,
+                        isTeams: false,
+                        isFetching: false,
+                        isPlayers: false
+                    })
+                })
+                getOrganizationList({type:'organizations'}).then(organizations =>{
+                    this.setState({
+                        OrganizationList: organizations.data.data,
+                        totalOrganization: organizations.data.data.length,
+                    })
+                })
+            }else{
+                this.setState({      
+                    isSensor: false,
+                    isOrganization: true,
+                    isTeams: false,
+                    isFetching: false,
+                    isPlayers: false
+                });
+            }
         }else if(e.target.name == 'sensor_companies'){
             this.setState({
                 isFetching: false,
@@ -112,16 +138,44 @@ class AdminDashboard extends React.Component {
                 isPlayers: false
             })
         }else if(e.target.name == 'teams'){
-           
-            this.setState({
-                isFetching: false,
-                isSensor: false,
-                isTeams: true,
-                isOrganization: false,
-                isPlayers: false
-            })
+            if(this.state.teamList == ''){
+                the.setState({isFetching: true});
+                getTeamNameList({type:"team"}).then(teams =>{
+                    console.log('teams',teams)
+                    this.setState({
+                        teamList: teams.data.data,
+                        totalTeam: teams.data.data.length,
+                        isFetching: false,
+                        isSensor: false,
+                        isTeams: true,
+                        isOrganization: false,
+                        isPlayers: false
+                    })
+                }).catch(err=>{
+                    console.log('err',err)
+                    this.setState({
+                        isFetching: false,
+                        isAuthenticated: false, 
+                        isCheckingAuth: false
+                    })
+                });
+                getTeamList({type:"team"}).then(teams =>{
+                    this.setState({
+                        teamList: teams.data.data,
+                        totalTeam: teams.data.data.length,
+                    })
+                });
+            }else{
+                this.setState({
+                    isFetching: false,
+                    isSensor: false,
+                    isTeams: true,
+                    isOrganization: false,
+                    isPlayers: false
+                })
+            }
         }else if(e.target.name == 'individuals'){
-            var the = this;
+            
             setTimeout(function(){ 
                 the.hadnlesearch();
             }, 2000);
@@ -129,6 +183,7 @@ class AdminDashboard extends React.Component {
                 the.setState({isFetching: true});
                 getPlayerList({type: 'playersList'})
                 .then(players => {
+                    console.log('players ==============\n',players)
                     this.setState({
                         playerList:players.data.data,
                         isSensor: false,
@@ -157,6 +212,7 @@ class AdminDashboard extends React.Component {
             }
         }
     }
+
     /*===================================
     
         Organization edit funtion start here
@@ -488,52 +544,30 @@ class AdminDashboard extends React.Component {
                         this.setState({
                             isAdmin: true
                         });
-                        getAllSensorBrands()
+                        getAllSensorBrandsList()
                         .then(brands => {
-                            console.log('brands',brands)
                             this.setState(prevState => ({
                                 totalBrand: brands.data.data.length,
                                 sensorBrandList: brands.data.data,
+                                isAuthenticated: true, 
+                                isCheckingAuth: true,
+                                isFetching: false
                             }));
-                             getOrganizationList({type:'organizations'}).then(organizations =>{
-                                console.log('organizations',organizations);
-                                this.setState({
-                                    OrganizationList: organizations.data.data,
-                                    totalOrganization: organizations.data.data.length,
-                                    isFetching: false,
-                                })
-                                getTeamList({type:"team"}).then(teams =>{
-                                    console.log('teams',teams)
-                                    this.setState({
-                                        teamList: teams.data.data,
-                                        totalTeam: teams.data.data.length,
-                                        isFetching: false,
-                                    })
-                                }).catch(err=>{
-                                    console.log('err',err)
-                                    this.setState({
-                                        isFetching: false,
-                                        isAuthenticated: false, 
-                                        isCheckingAuth: false
-                                    })
-                                })
-                            }).catch(err=>{
-                                console.log('err',err)
-                                this.setState({
-                                    isFetching: false,
-                                    isAuthenticated: false, 
-                                    isCheckingAuth: false
-                                })
-                            })
                             return fetchAdminStaffMembers({});
                         }).then(staff=>{
-                            console.log('staff',staff);
                             var response = staff.data;
                             if(response.message == 'success'){
                                 this.setState(prevState => ({
                                     staffList: response.data,
+                                    
                                 }));
                             }
+                            return getAllSensorBrands();
+                        }).then(brandList =>{
+                            this.setState(prevState => ({
+                                totalBrand: brandList.data.data.length,
+                                sensorBrandList: brandList.data.data,
+                            }));
                         })
                         .catch(err => {
                             alert(err);
@@ -581,7 +615,7 @@ class AdminDashboard extends React.Component {
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time;
-            if (minutes <= 10) {
+            if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
@@ -612,7 +646,11 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -637,7 +675,7 @@ class AdminDashboard extends React.Component {
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time;
-            if (minutes <= 10) {
+            if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
@@ -652,7 +690,7 @@ class AdminDashboard extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization+'/'+brand,
                             state: {
                                 brand: {
                                     brand: brand,
@@ -675,7 +713,11 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation ? noOfSimulation : '0'}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -737,7 +779,7 @@ class AdminDashboard extends React.Component {
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time;
-            if (minutes <= 10) {
+            if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
@@ -747,7 +789,7 @@ class AdminDashboard extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players',
+                            pathname: '/TeamAdmin/team/players/'+organization+'/'+team+'?brand='+brand,
                             state: {
                                 team: {
                                     brand: brand,
@@ -771,7 +813,11 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation ? noOfSimulation : '0'}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -942,7 +988,7 @@ class AdminDashboard extends React.Component {
                         let minutes =  Math.abs(Math.round(diff));
                         console.log('minutes', minutes);
                         minutes = minutes - computed_time;
-                        if (minutes <= 10) {
+                        if (minutes <= 30) {
                             cls = 'completedSimulation tech-football m-3';
                         }
                     }
@@ -961,7 +1007,7 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{sensor.sensor}</td>
-                        <td>{sensor.simulation_count}</td>
+                        <td>{sensor.simulation_count || sensor.simulation_count == '0'? sensor.simulation_count : 'Loading...'}</td>
                        
                     </tr>;
                 }
@@ -985,14 +1031,14 @@ class AdminDashboard extends React.Component {
                         let minutes =  Math.abs(Math.round(diff));
                         console.log('minutes', minutes);
                         minutes = minutes - computed_time;
-                        if (minutes <= 10) {
+                        if (minutes <= 30) {
                             cls = 'completedSimulation tech-football m-3';
                         }
                     }
 
                     return <tr className={cls}  key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization.organization+'/'+organization.sensor,
                             state: {
                                 brand: {
                                     brand: organization.sensor,
@@ -1005,7 +1051,7 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{organization.organization}</td>
-                        <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
+                        <td>{organization.simulation_count || organization.simulation_count == '0' ? organization.simulation_count : 'Loading...'}</td>
                     </tr>;
                 }
             }, this)
@@ -1029,13 +1075,13 @@ class AdminDashboard extends React.Component {
                         let minutes =  Math.abs(Math.round(diff));
                         console.log('minutes', minutes);
                         minutes = minutes - computed_time;
-                        if (minutes <= 10) {
+                        if (minutes <= 30) {
                             cls = 'completedSimulation tech-football m-3';
                         }
                     }
                     return <tr className={cls} key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players',
+                            pathname: '/TeamAdmin/team/players/'+team.organization+'/'+team.team_name+'?brand='+team.sensor,
                             state: {
                                 team: {
                                     brand: team.sensor,
@@ -1051,7 +1097,7 @@ class AdminDashboard extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{team.team_name ? team.team_name : 'NA'}</td> 
-                        <td>{team.simulation_count ? team.simulation_count : '0'}</td>
+                        <td>{team.simulation_count || team.simulation_count == '0'? team.simulation_count : 'Loading...'}</td>
                         <td>{team.organization}</td>
                     </tr>;
                 }
@@ -1247,7 +1293,7 @@ class AdminDashboard extends React.Component {
                                                                   let minutes =  Math.abs(Math.round(diff));
                                                                   console.log('minutes', minutes);
                                                                   minutes = minutes - computed_time;
-                                                                  if (minutes <= 10) {
+                                                                  if (minutes <= 30) {
                                                                       cls = 'completedSimulation player-data-table-row';
                                                                   }
                                                                 }
@@ -1265,9 +1311,9 @@ class AdminDashboard extends React.Component {
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                                     <td>{player.simulation_data.length}</td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
@@ -1359,7 +1405,7 @@ class AdminDashboard extends React.Component {
                                                                   let minutes =  Math.abs(Math.round(diff));
                                                                   console.log('minutes', minutes);
                                                                   minutes = minutes - computed_time;
-                                                                  if (minutes <= 10) {
+                                                                  if (minutes <= 30) {
                                                                       cls = 'completedSimulation player-data-table-row';
                                                                   }
                                                                 }
@@ -1377,9 +1423,9 @@ class AdminDashboard extends React.Component {
                                                                     <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                                     <td>{player.simulation_data.length}</td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
                                                                     <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
+                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time' } </td>
                                                                     {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                                     {/*<td>0</td>
                                                                                             <td>
@@ -1508,7 +1554,7 @@ class AdminDashboard extends React.Component {
         
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/dashboard',
+                pathname: '/TeamAdmin/user/impact/dashboard',
                 state: {
                     user_cognito_id: this.state.userDetails.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,

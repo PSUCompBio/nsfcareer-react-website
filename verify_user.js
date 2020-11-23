@@ -40,8 +40,8 @@ function VerifyToken(req, res, next) {
 
         // get the kid from the headers prior to verification
         var header = jose.util.base64url.decode(sections[0]);
-
-        header = JSON.parse(header);
+                header = JSON.parse(header);
+            console.log('header -----------------------------\n',header.kid)
 
         var kid = header.kid;
         // download the public keys

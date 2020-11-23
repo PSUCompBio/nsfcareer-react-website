@@ -29,6 +29,8 @@ import { Form,Button, Collapse,Accordion, Card } from 'react-bootstrap';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 
+
+
 import Spinner from '../Spinner/Spinner';
 
 import ScrollToTop from 'react-scroll-up';
@@ -124,7 +126,7 @@ class UserDashboarForAdmin extends React.Component {
       this.setState({open: e});
       getCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: e, team: this.props.location.state.team.team_name })
       .then(res=>{
-        console.log('res',res);
+        console.log('res'+this.props.location.state.user_cognito_id,res);
         this.setState({
            cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
            loading: false,
@@ -154,7 +156,11 @@ class UserDashboarForAdmin extends React.Component {
   }
 
   tConvert = (time) => {
-      // Check correct time format and split into components
+    console.log(time)
+    if(time == 0){
+      return 'Unknown Time'
+    }else{
+       // Check correct time format and split into components
       time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
     
       if (time.length > 1) { // If time format correct
@@ -163,6 +169,7 @@ class UserDashboarForAdmin extends React.Component {
         time[0] = +time[0] % 12 || 12; // Adjust hours
       }
       return time.join (''); // return adjusted time or original string
+    }
   }
 
   render() {
@@ -218,7 +225,7 @@ class UserDashboarForAdmin extends React.Component {
         </div>
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
-        {this.state.jsonData[0].sensor_data.player && 
+        {this.state.jsonData &&  
           <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
         }
           <p
@@ -233,7 +240,7 @@ class UserDashboarForAdmin extends React.Component {
           <div className="row" >
              <div className="col-md-12 player-dash-chart-setting">
               <div className="col-md-12">
-                <h1 className="">Settings</h1>
+                <h1 className=" ">Settings</h1>
               </div>
               <div className="col-md-12" >
                     <div className="col-md-12" style={{'float':'left'}}>
@@ -249,7 +256,7 @@ class UserDashboarForAdmin extends React.Component {
                     </div>
                     <div className="col-md-12" style={{'float':'left'}}>
                       <div className="col-md-4" style={{'float':'left'}}>
-                        <h4>Injury Metric: </h4>
+                        <h4>Strain Metric: </h4>
                       </div>
                       <div className="col-md-8"  style={{'float':'left'}}>
                         <div className="injury_matrix_section">
@@ -263,7 +270,8 @@ class UserDashboarForAdmin extends React.Component {
             </div>
         </div>
         }
-          { this.state.cumulativeAccelerationTimeAllRecords.length === 0 &&
+          { this.state.cumulativeAccelerationTimeAllRecords.length > 0 && this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data ?
+            null :
             <div className="row" style={{border: '1px solid #000', marginBottom: '20px'}}>
               <div className="col-md-12" style={{textAlign: 'center', display: 'block', marginTop: '50px', marginBottom: '100px'}}>
                     <span>No impacts have been recorded yet.</span>
@@ -273,12 +281,54 @@ class UserDashboarForAdmin extends React.Component {
         {/*------------- Collapse chart start here -----------*/}
         <div className="charts-container">
           <Accordion className="player-collapes-div">
-            {this.state.cumulativeAccelerationTimeAllRecords[0].sensor_data.player && this.state.cumulativeAccelerationTimeAllRecords.map((item, index) => ( 
-              <Card >
-                <Card.Header>
+            {this.state.cumulativeAccelerationTimeAllRecords.map(function (item, index) {  
+              let impact_time = '';
+              let time = '';
+              let impact_id = item.sensor_data.player_id.split('$')[0];
+              let cls = item.status === 'pending' ? 'card-orange' : '';
+              if (item.status === 'completed' ) {
+
+                let computed_time = item.computed_time ? parseFloat(item.computed_time) / (1000 * 60) : 0;
+
+                let currentStamp = new Date().getTime();
+                let simulationTimestamp = parseFloat(item.sensor_data.player_id.split('$')[1]);
+                var diff =(currentStamp - simulationTimestamp) / 1000;
+                diff /= 60;
+                let minutes =  Math.abs(Math.round(diff));
+                console.log('minutes', minutes);
+                minutes = minutes - computed_time;
+                if (minutes <= 30) {
+                    cls = 'card-green';
+                }
+              }
+
+              if (item.sensor_data['impact-time']) {
+                let split = item.sensor_data['impact-time'].split(":");
+                impact_time = split.slice(0, split.length - 1).join(":");
+              }
+
+              if (item.sensor_data['time']) {
+
+                let split = item.sensor_data['time'].toString();
+                console.log(split)
+                split = split.replace(".", ":");
+                split = split.split(":");
+                time = split.slice(0, split.length - 1).join(":");
+              }
+
+              if (item.sensor_data['impact_id']) {
+                impact_id = item.sensor_data['impact_id'];
+              } 
+              
+              if (item.sensor_data.player['impact-id']) {
+                impact_id = item.sensor_data.player['impact-id'];
+              } 
+
+              return <Card >
+                <Card.Header className={cls}>
                   <Accordion as={Button} variant="link" onClick={()=>this.handleCollapse(item.sensor_data.player_id, )} eventKey={item.sensor_data.player_id} >
-                    <span className="title-left" >ID: #{item.sensor_data && item.sensor_data.player_id.split('$')[1]}</span>
-                    <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(item.sensor_data['impact-time']) : item.sensor_data['date'] && item.sensor_data['time'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(item.sensor_data['time'])  : 'Unkown Date and Time'}`}</span>
+                    <span className="title-left" >Event ID: #{ impact_id }</span>
+                    <span className="title-left">{`${item.sensor_data &&  item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(impact_time) : item.sensor_data['date'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(time)  : 'Unknown Date and Time'}`}</span>
                     <span className="title-right" id={item.sensor_data && 'col_icon'+item.sensor_data.player_id.split('$')[1]}>></span>
                   </Accordion>
                 </Card.Header>
@@ -287,7 +337,7 @@ class UserDashboarForAdmin extends React.Component {
                     {this.state.cumulativeAccelerationTimeAlldata ? 
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
                           if(items.sensor_data.player_id == item.sensor_data.player_id){
-                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state}/>
+                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state} organization ={the.props.location.state.team.organization}  player_id={item.sensor_data.player_id} team={the.props.location.state.team.team_name} status={item.status}/>
                           }
                         })
                       : 
@@ -299,8 +349,7 @@ class UserDashboarForAdmin extends React.Component {
                   </Card.Body>
                 </Accordion.Collapse>
               </Card>
-            ))
-            }
+           }, this)}
           </Accordion>
         </div>
         {/*------------- Collapse chart end here -----------*/}
@@ -346,8 +395,8 @@ class UserDashboarForAdmin extends React.Component {
                 isLoading: false,
               });
 
-              if (!this.props.location.state.isRedirectedFromAdminPanel) {
-                getUserDetails({ user_cognito_id: this.props.location.state.cognito_user_id })
+      
+                getUserDetails({ user_cognito_id: this.props.location.state.user_cognito_id })
                   .then(response => {
                     delete response.data.data.is_selfie_image_uploaded;
                     delete response.data.data.is_selfie_simulation_file_uploaded;
@@ -368,13 +417,7 @@ class UserDashboarForAdmin extends React.Component {
                       isCheckingAuth: false
                     });
                   })
-              }
-              else {
-                 this.setState({
-                  user: response.data.data,
-                 
-                });
-              }
+             
             })
 
             .catch((error) => {

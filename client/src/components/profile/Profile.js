@@ -21,7 +21,8 @@ import {
     VerifyNumber,
     getAllSensorBrands,
     getAvatarInspection,
-    updateUserMouthguardDetails
+    updateUserMouthguardDetails,
+    setUserPassword
 } from '../../apis';
 import Select from 'react-select';
 
@@ -99,6 +100,9 @@ class Profile extends React.Component {
             isDisplay2: { display: 'none' },
             isDeskTop: false,
             isCamera: false,
+            password: '',
+            confirm_password: '',
+            uploaded:''
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -200,6 +204,7 @@ class Profile extends React.Component {
 
         data.append('profile_pic', profile_pic);
         data.append('user_cognito_id', user_id);
+        data.append('account_id', this.state.user.account_id ? this.state.user.account_id : user_id);
 
         // console.log("THIS IS FORM DATA ",data);
         // console.log("VALUE TO BE PRINTED ",user_id);
@@ -218,16 +223,22 @@ class Profile extends React.Component {
             selfie_latest_url_details : '',
             simulation_file_url_details : '',
             avatar_zip_file_url_details : '',
-            vtk_file_url_details : ''
+            vtk_file_url_details : '',
+
         }
         uploadProfilePic(data)
         .then((response) => {
             console.log(response);
 
             if (response.data.message === 'success') {
+                let timestamp = Date.now();
+
+                let date = new Date(parseInt(timestamp));
+
+                this.setState({uploaded: true, uploaded_time : [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]})
                 // Fetch only image url again
                 getProfilePicLink(
-                    JSON.stringify({ user_cognito_id: user_id })
+                    JSON.stringify({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : user_id })
                 )
                 .then((res) => {
                     console.log(res.data);
@@ -346,7 +357,7 @@ class Profile extends React.Component {
             // If Selfie is uploaded
             var user_data = response.data.data;
             getProfilePicLink(
-                JSON.stringify({ user_cognito_id: user_id })
+                JSON.stringify({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : user_id })
             )
             .then(res => {
                 profile_data.profile_picture_url = res.data.profile_picture_url ;
@@ -387,7 +398,7 @@ class Profile extends React.Component {
 
                 getModelLink(
                     JSON.stringify({
-                        user_cognito_id: user_id
+                        user_cognito_id: this.state.user.account_id ? this.state.user.account_id : user_id
                     })
                 )
                 .then((response) => {
@@ -409,7 +420,7 @@ class Profile extends React.Component {
                         //     return { user: prevState };
                         // });
                         getVtkFileLink(JSON.stringify({
-                            user_cognito_id : user_id
+                            user_cognito_id : this.state.user.account_id ? this.state.user.account_id : user_id
                         }))
                         .then(response => {
                             if(response.data.message == "success"){
@@ -660,7 +671,68 @@ class Profile extends React.Component {
             console.log(err);
         });
     }
+    handleSetPassword=(e)=>{
+        console.log('e',e.target.value);
+        this.setState({[e.target.name] : e.target.value});
+        if(e.target.name == 'password'){
+            if(e.target.value.length < 8){
+                this.setState({lenerr: true,setpassword2: false})
+            }else{
+                this.setState({lenerr: false, setpassword1: true,setpassword2: false})
+            }
+        }else{
+            if(e.target.value != this.state.password){
+                this.setState({errmatch: true})
+            }else{
+                this.setState({errmatch: false,setpassword2: true});
+            }
+        }
+    }
+    setPassword =(e)=>{
+        e.preventDefault();
+        if(this.state.setpassword1 && this.state.setpassword2){
+            console.log(this.state.confirm_password);
+            if(this.state.profile_to_view){
+                var user_id = this.state.profile_to_view ;
+            }
+            else{
+                var user_id = this.state.user.user_cognito_id ;
+            }
+            this.setState({isLoading3: true})
+            setUserPassword({password: this.state.confirm_password, user_cognito_id: user_id})
+            .then(res=>{
+                console.log(res)
+                if(res.data.message == "Success"){
+                    this.setState({
+                       isLoading3: false,
+                       message3: true,
+                       isLoginError3:false
+                    });
+                    var the = this;
+                    setTimeout(()=>{
+                        the.setState({
+                            passwordupdated: true
+                        })
+                    },2000)
+                }else{
+                     this.setState({
+                       isLoading3: false,
+                       message3: false,
+                       isLoginError3:true
+                    })
+                }
+            }).catch(err=>{
+                console.log(err)
+                this.setState({
+                   isLoading3: false,
+                   message3: false,
+                   isLoginError3:true
+                })
+            })
+        }else{
 
+        }
+    }
     showModal = () => {
 
         if (this.state.isDisplay.display === 'none') {
@@ -706,7 +778,7 @@ class Profile extends React.Component {
       }
 
     showProfile = () => {
-        console.log('sensor', this.state.sensor)
+        console.log('this.state.user.first_name', this.state.user)
         // this.setState({phone_number: this.state.user.phone_number})
         options = this.state.sensors.map(function(sensors,index){
           return {value:sensors.sensor,label:sensors.sensor }
@@ -726,13 +798,13 @@ class Profile extends React.Component {
                     style={{
                         marginTop : "10%"
                     }}
-                    className="container pl-5 pr-5 profile-mt animated zoomIn mb-5 pb-2">
+                    className="container pl-5 pr-5 profile-mt animated1 zoomIn1 mb-5 pb-2">
                     <div
                         style={{
                             alignContent: "center",
                             textAlign : "center"
                         }}
-                        className={`section-title animated zoomIn profile-section-title`}>
+                        className={`section-title animated1 zoomIn1 profile-section-title`}>
                         <h1 ref="h1" className="font-weight-bold">
                             Profile Page
                         </h1>
@@ -764,6 +836,19 @@ class Profile extends React.Component {
                                 </p>
 
                                 <Form className="mt-2" onSubmit = {this.handleSubmit} >
+                                <FormGroup row>
+                                        <Label for="exampleEmail" sm={2}>Account Id</Label>
+
+                                        <Col sm={6}>
+                                            <Row>
+                                                <Col md={6} sm={12}>
+                                                    <div class="input-group">
+                                                        <Input className="profile-input" readOnly="reaonly" type="text" name="account_id" id="account_id" value={this.state.user.account_id} placeholder="Account Id" />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </FormGroup>
                                     <FormGroup row>
                                         <Label for="exampleEmail" sm={2}>Name</Label>
 
@@ -797,10 +882,8 @@ class Profile extends React.Component {
                                                         </div>
                                                     </Col>
                                                 </Row>
-                                            </Col>
-
-
-                                        </FormGroup>
+                                        </Col>
+                                    </FormGroup>
 
                                         <FormGroup row>
                                             <Label for="exampleEmail" sm={2}>Email</Label>
@@ -812,7 +895,11 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                             <Col sm={4}>
+                                            {this.state.user.email ? 
                                                 <button className="btn btn-success btn-sm"><i class="fa fa-check" aria-hidden="true"></i> Verified</button>
+                                                :
+                                                 <button className="btn btn-warning btn-sm" onClick={e =>e.preventDefault()} style={{'float':'left'}}><i class="fa fa-check"  aria-hidden="true"></i> Not Verified</button>
+                                            }
                                             </Col>
 
 
@@ -873,7 +960,7 @@ class Profile extends React.Component {
                                                                     {this.state.slectedCountryName}
                                                                 </span>
                                                                 <Input
-                                                                    className="profile-input phone-number-input-box" type="text" name="phone_number" onChange={this.Change} id="exampleEmail" defaultValue={this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length)} placeholder="Your 10 Digit Mobile number" />
+                                                                    className="profile-input phone-number-input-box" type="text" name="phone_number" onChange={this.Change} id="exampleEmail" defaultValue={this.state.user.phone_number ? this.state.user.phone_number.substring(this.state.user.phone_number.length - 10 , this.state.user.phone_number.length) : ''} placeholder="Your 10 Digit Mobile number" />
                                                                 <span class="input-group-addon profile-edit-icon"
                                                                     >
                                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -1058,6 +1145,76 @@ class Profile extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+                                {/*============set password content ===================*/}
+                                {!this.state.user.password && this.state.user.password_code && !this.state.passwordupdated ? 
+                                    <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
+                                        <div ref="lightDark" style={{ border: "2px solid rgb(15, 129, 220)", borderRadius: "1.8rem" }} className="row profile-container">
+                                            <div className="col-md-10 ml-4 mt-2 pt-2">
+                                                <p className="player-dashboard-sub-head">
+                                                    Set your normal login password.
+                                                </p>
+                                                <Form className="mt-2" onSubmit = {this.setPassword} >
+                                                    
+                                                        <FormGroup row>
+                                                            <Label for="exampleEmail" sm={2}>Password</Label>
+                                                            <Col sm={6}>
+                                                                <div class="input-group">
+                                                                    <Input className="profile-input" type="password" name="password"  id="password" onChange={this.handleSetPassword} placeholder="************" required/>
+                                                                    {this.state.lenerr ? (
+                                                                        <p style={{'color':'red'}}>Password lenght must be minimum 8 characters.</p>
+                                                                    ) : null}
+                                                                </div>
+                                                            </Col>
+                                                        </FormGroup>
+                                                        
+                                                        <FormGroup row>
+                                                            <Label for="exampleEmail" sm={2}>Confirm Password</Label>
+                                                            <Col sm={6}>
+                                                                <div class="input-group">
+                                                                    <Input className="profile-input" type="password" name="confirm_password"   id="confirm_password" onChange={this.handleSetPassword} placeholder="************" required/>
+                                                                </div>
+                                                                {this.state.errmatch ? (
+                                                                    <p style={{'color':'red'}}>Password did not match.</p>
+                                                                ) : null}
+                                                            </Col>
+                                                        </FormGroup>
+                                                        <div className="text-center" style={{'margin-bottom': '14px'}}>
+                                                            <Button color="primary"> Save </Button>
+                                                        </div>
+                                                        {this.state.isLoading3 ? (
+                                                            <div className="d-flex justify-content-center center-spinner">
+                                                                <div
+                                                                    className="spinner-border text-primary"
+                                                                    role="status"
+                                                                    >
+                                                                    <span  className="sr-only">Loading...</span>
+                                                                </div>
+                                                            </div>
+                                                        ) : null}
+                                                        {this.state.message3 ? (
+                                                            <div
+                                                                className="alert alert-success"
+                                                                style={{'margin-top': '8px'}}
+                                                                role="alert">
+                                                                <strong > Password has been set successfully.</strong>
+                                                            </div>
+                                                        ) : null}
+                                                        {this.state.isLoginError3 ? (
+                                                            <div
+                                                                className="alert alert-info api-response-alert"
+                                                                role="alert"
+                                                                >
+                                                                <strong >Failed to update! </strong>
+                                                                </div>
+                                                        ) : null}
+                                                </Form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    : null
+                                }
+
+                            {/*============ Mouthguard of Sensor Information ===================*/}
                                 <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
                                     <div ref="lightDark" style={{ border: "2px solid rgb(15, 129, 220)", borderRadius: "1.8rem" }} className="row profile-container">
                                         <div className="col-md-10 ml-4 mt-2 pt-2">
@@ -1124,6 +1281,7 @@ class Profile extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+                                
                                 <div className="container pl-5 pr-5 zoomIn mb-5 pb-2">
                                     <div
                                         style={{
@@ -1159,7 +1317,7 @@ class Profile extends React.Component {
                                             <Col md={4}>
 
                                                 <p ref="p1">
-                                                    {this.state.user.is_selfie_image_uploaded ? (
+                                                    {this.state.user.is_selfie_image_uploaded || this.state.uploaded ? (
                                                         <span>
                                                             <img src="/img/icon/check.svg" alt="" />
                                                         </span>
@@ -1211,9 +1369,9 @@ class Profile extends React.Component {
                                                     <div>
                                                         <button className = {`load-time-btn mt-1 mb-4`}>
                                                             <p>
-                                                                Last Updated : {this.state.selfie_latest_upload_details[0]}
+                                                                Last Updated : {this.state.uploaded_time ? this.state.uploaded_time[0] : this.state.selfie_latest_upload_details[0]}
                                                             </p>
-                                                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.selfie_latest_upload_details[1]}
+                                                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{this.state.uploaded_time ? this.state.uploaded_time[1] : this.state.selfie_latest_upload_details[1]}
                                                             </p>
 
                                                         </button>
@@ -1511,7 +1669,10 @@ class Profile extends React.Component {
                                     getUserDetails({user_cognito_id : this.state.profile_to_view})
                                     .then((response) => {
                                         // store.dispatch(userDetails(response.data))
-                                        console.log('RESPONSE DATA IS ', response.data);
+                                        console.log('RESPONSE DATA IS -------------------\n', response.data);
+                                        this.setState({
+                                            user: response.data.data,
+                                        })
                                         let inp_latest_url_details = ""
                                         let selfie_latest_url_details = ""
                                         let simulation_file_url_details = ""
@@ -1553,7 +1714,6 @@ class Profile extends React.Component {
                                             vtk_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
                                         }
                                         this.setState({
-                                            user: { ...this.state.user, ...response.data.data },
                                             phone_number: response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length),
                                             number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                                             selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
@@ -1588,9 +1748,11 @@ class Profile extends React.Component {
                                             }
                                             this.props.isDarkModeSet(this.state.isDarkMode);
                                         }
-                                        return getAvatarInspection({ user_cognito_id: this.state.profile_to_view })
+                                        // return getAvatarInspection({ user_cognito_id: this.state.user.selfie_location && this.state.user.selfie_location === 'old' ? this.state.profile_to_view : this.state.user.account_id})
+                                        return getAvatarInspection({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : this.state.profile_to_view})
                                     })
                                     .then(result => {
+                                        console.log('getAvatarInspection ----------------------\n',result)
                                         let inspection_data = '';
                                         if (result.data.data.model_jpg && result.data.data.model_ply && result.data.data.brain_ply && result.data.data.skull_ply) {
                                             inspection_data = result.data.data;
@@ -1604,10 +1766,12 @@ class Profile extends React.Component {
                                         
                                     })
                                     .catch((error) => {
+                                        console.log('getAvatarInspection error----------------------\n',error)
                                         this.setState({
-                                            user: {},
-                                            isLoading: false,
-                                            isCheckingAuth: false
+                                           isLoading: false,
+                                            isAuthenticated: true,
+                                            isCheckingAuth: false,
+                                            inspection_data: ''
                                         });
                                     });
                                 } else {

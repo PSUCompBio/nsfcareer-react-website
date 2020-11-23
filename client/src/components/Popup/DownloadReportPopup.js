@@ -6,6 +6,12 @@ import Spinner from './../Spinner/Spinner';
 import share_icon from '../icons/share_icon.png';
 import Report from '../ReportContent/Report0';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
+import $ from 'jquery';
+import DownloadReportMPS95 from './DownloadReportButtons/DownloadReportMPS95';
+import DownloadReportCSDM15 from './DownloadReportButtons/DownloadReportCSDM15';
+import DownloadReportAxonalStrain15 from './DownloadReportButtons/DownloadReportAxonalStrain15';
+import DownloadReportMASxSR15 from './DownloadReportButtons/DownloadReportMASxSR15';
+
 var USER_TYPES = [];
 
 class DownloadReportPopup extends React.Component {
@@ -15,7 +21,8 @@ class DownloadReportPopup extends React.Component {
       mps_95:'',
       csdm_15:'',
       axonal_15: '',
-      masxsr_15: ''
+      masxsr_15: '',
+      ischecked: true
     };
 
   }
@@ -23,11 +30,30 @@ class DownloadReportPopup extends React.Component {
   scrollToTop(){
   }
   componentWillUnmount() {
-      
   }
   handleChange =(e)=>{
     console.log(e.target.name,!this.state[e.target.name] ? e.target.value :'' );
+    this.setState({ischecked: false})
+    // this.setState({
+    //   mps_95:'',
+    //   csdm_15:'',
+    //   axonal_15: '',
+    //   masxsr_15: '',
+    //   ischecked: false
+    // });
+    // $('input:checkbox').prop('checked', false).removeAttr('checked');
+    // $('input:checkbox[name="'+e.target.name+'"]').prop('checked', true);
+    // if(e.target.name == 'csdm_15'){
+    //   this.setState({
+    //     ischecked: true
+    //   });
+    // }
+    let the = this;
+    setTimeout(()=>{
+      the.setState({ischecked: true});
+    },1000)
     this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
+
   }
   render() {
     console.log("propsData 2", this.props.jsonData);
@@ -42,31 +68,63 @@ class DownloadReportPopup extends React.Component {
             alt=""
           />
           <div className="popu-body">
-            <h2>Select Injury Metric</h2>
+            <h2>Select Strain Metric</h2>
             <p>Select all that apply</p>
             <table>
               <tbody>
                 <tr>
                   <td><input name="mps_95" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>MPS95</td>
+                  <td>MPS-15</td>
                 </tr>
                 <tr>
-                  <td><input name="csdm_15" type="checkbox" onChange={this.handleChange}/></td>
+                  <td><input name="csdm_15" type="checkbox" onChange={this.handleChange} /></td>
                   <td>CSDM<sub>15</sub></td>
                 </tr>
                 <tr>
-                  <td><input name="axonal_15" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>Axonal Strain<sub>15</sub></td>
+                  <td><input name="axonal_15" type="checkbox" onChange={this.handleChange} disabled/></td>
+                  <td style={{'color': '#b3b3b3'}}>Axonal Strain<sub>15</sub></td>
                 </tr>
                 <tr>
-                  <td><input name="masxsr_15" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>MASxSR<sub>15</sub></td>
+                  <td><input name="masxsr_15" type="checkbox" onChange={this.handleChange} disabled/></td>
+                  <td style={{'color': '#b3b3b3'}}>MASxSR<sub>15</sub></td>
                 </tr>
               </tbody>
             </table>
             <div className="report-download-buttons">
               <button><img src={share_icon} style={{width:'24px'}}/>  Share</button><br/>
-              {this.state.csdm_15 ?
+              {/*this.state.mps_95 ?
+                <DownloadReportMPS95 Report={this.props.Report} fileName={this.props.fileName}  Metric={this.state} jsonfile={this.props.jsonData}/>
+                :
+                null
+              */}
+              {/*this.state.axonal_15 ?
+                <DownloadReportAxonalStrain15 Report={this.props.Report} fileName={this.props.fileName}  Metric={this.state} jsonfile={this.props.jsonData}/>
+                :
+                null
+              */}
+               {this.state.ischecked && <DownloadReportCSDM15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/> }
+              {!this.state.ischecked ? (
+                      <div className="d-flex justify-content-center center-spinner">
+                        <div
+                          className="spinner-border text-primary"
+                          role="status"
+                        >
+                          <span className="sr-only">Loading...</span>
+                        </div>
+                      </div>
+                    ) : null}
+              {/*this.state.csdm_15 || !this.state.masxsr_15 && !this.state.axonal_15 && !this.state.mps_95 && !this.state.csdm_15?
+                <DownloadReportCSDM15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/>
+                :
+                null
+              */}
+              {/*this.state.masxsr_15 ?
+                <DownloadReportMASxSR15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/>
+                :
+                null
+              */}
+
+              {/*this.state.csdm_15 ?
                 <PDFDownloadLink document={<Report {...this.props.Report} Metric={this.state} jsonfile={this.props.jsonData}/>} className="export-cumulative-player" fileName={this.props.fileName} style={{
                         color: 'white'
                     }}>
@@ -79,7 +137,7 @@ class DownloadReportPopup extends React.Component {
                      <button>  Download</button>
                     {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                     </PDFDownloadLink>
-              }
+              */}
               
               
             </div>

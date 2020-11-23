@@ -10,6 +10,9 @@ import { getStatusOfDarkmode } from '../../reducer';
 import { setIsSignedInSucceeded, userDetails } from '../../Actions';
 import DarkMode from '../DarkMode';
 
+let search = window.location.search;
+let params = new URLSearchParams(search);
+
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +36,8 @@ class Login extends React.Component {
     }
     console.log("JSON.STRINGIFY(THIS.STATE)", this.state);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    
   }
 
   isAdminType = (userType) => {
@@ -255,6 +260,22 @@ class Login extends React.Component {
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
                     </div>
+                    {params.get('error') ? (
+                      <div
+                        className="alert alert-info api-response-alert"
+                        role="alert"
+                      >
+                        <strong >Failed! </strong> {params.get('error')}
+                      </div> 
+                    ) : null}
+                    {params.get('success') ? (
+                      <div
+                        className="alert alert-info api-response-alert-success"
+                        role="alert"
+                      >
+                        <strong >Success! </strong> Your account has been verified successfully.
+                      </div> 
+                    ) : null}
                     {this.state.IRBProcessMessage.length > 0 ? (
                       <div
                         className="alert alert-info api-response-alert-success"
@@ -268,7 +289,7 @@ class Login extends React.Component {
                         className="alert alert-info api-response-alert"
                         role="alert"
                       >
-                        <strong > Success !</strong> {this.state.message}.
+                        <strong > Success !</strong> {this.state.message}
                       </div>
                     ) : null}
                     <form onSubmit={this.handleSubmit} ref="signInForm">
@@ -339,6 +360,25 @@ class Login extends React.Component {
                         LOG IN
                       </button>
                     </form>
+                    {/* ============ re-send email verication button ===========*/}
+                      {params.get('error') == 'Invalid verification code provided, please try again.' || params.get('error') == 'Invalid code provided, please request a code again.' ? 
+                        <Link to="/re-sendEmailVerifation">
+
+                          <button
+                            type="submit"
+                            style={{
+                                  'text-decoration': 'underline',
+                                  'color': '#0f81dc'
+                            }}
+                            className="btn btn-warning bg-warning log-in-btn btn-block mt-2"
+                          >
+                            get new verification link
+                          </button>
+                        </Link>
+                        : null
+                      }
+                    {/* ============ re-send email verication button end ===========*/}
+
                     {this.state.isLoading ? (
                       <div className="d-flex justify-content-center center-spinner">
                         <div

@@ -33,6 +33,7 @@ import Developer from '../Developer/DeveloperPage';
 import Dash from '../Dash/DashPage';
 import Report from '../../components/ReportContent/Report0';
 import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
+import Details from '../../components/Dashboard/BrainSimulationDetails/Details';
 import InviteUsers from '../../components/InviteUsers';
 import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
 import ProfileImageUpload from '../../components/profile/ProfileImageUpload';
@@ -42,6 +43,8 @@ import ModelValidationDisplacementResponse from '../../components/ModelValidatio
 import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
 import LoginComponentHidden  from '../../components/Authentication/LoginComponentHidden';
 import Hardy_et_al from '../../components/ModelValidation/Hardy_et_al';
+import sendEmailVerifation from '../../components/Authentication/pages/sendEmailVerifation';
+
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -186,7 +189,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/Login"
+          path="/Login-hidden"
           render={(props) =>
             <Login
               {...this.props}
@@ -200,7 +203,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/Login-hidden"
+          path="/Login"
           render={(props) =>
             <LoginComponentHidden
               {...this.props}
@@ -260,7 +263,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/TeamAdmin/user/dashboard"
+          path="/TeamAdmin/user/impact/dashboard/"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
@@ -313,12 +316,12 @@ class Routing extends React.Component {
         />
         <Route
             exact
-            path="/TeamAdmin"
+            path="/TeamAdmin/:org/:brand"
             render={(props) => <TeamAdmin {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact
-            path="/TeamAdmin/team/players"
+            path="/TeamAdmin/team/players/:org/:team"
             render={(props) => <TeamPlayers {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
@@ -390,6 +393,21 @@ class Routing extends React.Component {
             exact
             path="/Hardy-et-al"
             render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/Hardy-et-al/:cases"
+            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/Details/:image_id/:player_id/:cognito_user_id"
+            render={(props) => <Details {...props} isDarkModeSet={this.checkDarkMode} /> }
+        />
+         <Route
+            
+            path="/re-sendEmailVerifation"
+             component = {sendEmailVerifation}
         />
       </React.Fragment>
     );

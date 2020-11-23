@@ -39,6 +39,7 @@ class Nav extends React.Component {
       isLoading: '',
       isDisplay2: { display: 'none' },
       isDeskTop: false,
+      baseUrl: window.location.origin.toString(),
     };
     console.log("STATE VALUES , ", this.state.user_details);
     this.handleClick = this.handleClick.bind(this);
@@ -100,6 +101,7 @@ class Nav extends React.Component {
 
         data.append('profile_pic', profile_pic);
         data.append('user_cognito_id', user_id);
+        data.append('account_id', this.state.user_details.account_id ? this.state.user_details.account_id : user_id);
 
         // console.log("THIS IS FORM DATA ",data);
         // console.log("VALUE TO BE PRINTED ",user_id);
@@ -643,7 +645,7 @@ getUploadFileExtension(url){
 
 
         <Link className="navbar-brand" to={'/Home'}>
-          <img className="logo-mobile" src="img/icon/logo.png" alt="" />
+          <img className="logo-mobile" src={this.state.baseUrl+"/img/icon/logo.png"} alt="" />
         </Link>
         <button
           onClick={this.handleClick}

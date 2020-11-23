@@ -63,7 +63,7 @@ exports.doUpload = (req, res) => {
     var file_name = Date.now();
 
     // Setting Attributes for file upload on S3
-    params.Key = req.user_cognito_id + "/profile/image/" + file_name + "." + file_extension;
+    params.Key = req.body.account_id + "/profile/image/" + file_name + "." + file_extension;
 
     params.Body = req.file.buffer;
     if (req.body.file_error) {
@@ -94,8 +94,8 @@ exports.doUpload = (req, res) => {
                         res.send({ message: 'failure' });
                     } else {
                         // Calling Compute Instance API
-                        console.log("Request made is , \n" , { image_url : url , user_cognito_id: req.user_cognito_id } );
-                            request.post({ url: config.ComputeInstanceEndpoint + "computeImageData", json: { image_url : url , user_cognito_id: req.user_cognito_id } }, function (err, httpResponse, body) {
+                        console.log("Request made is , \n" , { image_url : url , user_cognito_id: req.body.account_id } );
+                            request.post({ url: config.ComputeInstanceEndpoint + "computeImageData", json: { image_url : url , user_cognito_id: req.body.account_id } }, function (err, httpResponse, body) {
                                 if (err) {
                                     console.log("ERROR in Generating INP File");
                                     // res.send({ message: 'failure', error: err });
@@ -107,11 +107,31 @@ exports.doUpload = (req, res) => {
 
                                 }
                             })
+                        var dbInsert = {
+                            TableName: "users",
+                            Key: {
+                                "user_cognito_id": req.user_cognito_id
+                            },
+                            UpdateExpression: "set #is_selfie_image_uploaded = :is_selfie_image_uploaded",
+                            ExpressionAttributeNames: {
+                                "#is_selfie_image_uploaded": "is_selfie_image_uploaded"
+                            },
+                            ExpressionAttributeValues: {
+                                ":is_selfie_image_uploaded": true
+                            },
+                            ReturnValues: "UPDATED_NEW"
+                        }
 
-                        res.send({
-                            message : "success"
-                        })
-
+                        docClient.update(dbInsert, function (err, data) {
+                            if (err) {
+                                console.log("ERROR WHILE CREATING DATA", err);
+                               
+                            } else {
+                                res.send({
+                                    message : "success"
+                                })
+                            }
+                        });
                     }
 
                 })

@@ -111,13 +111,20 @@ class SignUpComponent extends React.Component {
             state : {}
         });
       }
+      console.log('data',data)
       $('#first_name').val(data.first_name);
       $('#last_name').val(data.last_name);
       $('#user_name').val(data.email);
-      $('#userID').val(data.userID);
+      if(data.type == 'google'){
+        $('#userIDgoogle').val(data.userID);
+        $('#userIDfacebook').val('');
+      }else{
+        $('#userIDgoogle').val('');
+        $('#userIDfacebook').val(data.userID);
+      }
       $('#password').closest('.input-group').css({'display':'none'})
       $('#password').attr('type','hidden');
-      $('#password').val(data.userID);
+      $('#password').val('');
       this.setState({
         signupOrElse: { email: 'XYZ@something.com', sex: 'Select your sex' },
         isDirectSingUp: true
@@ -458,7 +465,8 @@ class SignUpComponent extends React.Component {
             required
           />
         </div>
-        <input type="hidden" name="userID" id="userID"/>
+        <input type="hidden" name="userIDfacebook" id="userIDfacebook"/>
+        <input type="hidden" name="userIDgoogle" id="userIDgoogle"/>
         <div className="form-row">
           <div className="input-group mb-5">
             <div className="input-group-prepend">

@@ -82,6 +82,7 @@ class ProfileImageUpload extends React.Component {
       console.log(this.state.userData.user_cognito_id)
       data.append('profile_pic', profile_pic);
       data.append('user_cognito_id', user_id);
+      data.append('account_id', this.state.userData.account_id ? this.state.userData.account_id : user_id);
       uploadProfileSelfie(data)
       .then((response) => {
           console.log(response);
@@ -166,13 +167,13 @@ class ProfileImageUpload extends React.Component {
         <div className="container-fluid pl-0 pr-0 overflow-hidden bottom-margin">
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <div className="col-md-6 col-lg-6 offset-md-3 mb-5">
-              <div className="text-center">
+              <div className="upload-image-top-text text-center">
                 <p style={{  fontSize: "34px",
                   fontWeight: "900"}} className="top-heading__login animated fadeInUp">
                  Thanks for registering!
                 </p>
                 <p className="h4 p_h4" style={{'padding': '13px 0px'}}>
-                  We create custom computer models if each person.
+                  We create custom computer models of each person.
                 </p>
                 <p className="h4 p_h4">
                   To do this we need a profile picture. You can skip this step, you just will not have a custom model of your head.

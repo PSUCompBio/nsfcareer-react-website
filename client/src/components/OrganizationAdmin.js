@@ -17,7 +17,8 @@ import {
     deleteItem,
     renameOrganization,
     addOrganization,
-    MergeOrganization
+    MergeOrganization,
+    getAllOrganizationsOfSensorBrandList
 } from '../apis';
 import { 
     UncontrolledAlert
@@ -394,31 +395,30 @@ class OrganizationAdmin extends React.Component {
                                         isCheckingAuth: false
                                     });
                                     if (response.data.data.level === 1000 || response.data.data.level === 400) {
+                                        getAllOrganizationsOfSensorBrandList({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+                                        .then(orgs => {
+                                            this.setState(prevState => ({
+                                                totalOrganization: orgs.data.data.length,
+                                                sensorOrgList: orgs.data.data,
+                                                isFetching: false
+                                            }));
+                                            return fetchStaffMembers({user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand})
+                                        })
+                                        .then(response => {
+                                            this.setState(prevState => ({
+                                                staffList: [...prevState.staffList, response.data.data],
+                                            }));
+                                        })
+                                        .catch(err => {
+                                            alert(err);
+                                        })
                                         getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
-                                            .then(orgs => {
-                                                console.log('orgs',orgs)
-                                                this.setState(prevState => ({
-                                                    totalOrganization: orgs.data.data.length,
-                                                    sensorOrgList: orgs.data.data
-                                                }));
-                                                console.log('user_cognito_id',this.props.location.state.brand.user_cognito_id,this.props.location.state.brand.brand)
-                                                return fetchStaffMembers({user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand})
-                                            })
-                                            .then(response => {
-                                                console.log('fetchStaffMembers',response)
-                                                // for(var i = 0 ; i < response.data.data.length ; i++){
-                                                    this.setState(prevState => ({
-                                                        staffList: [...prevState.staffList, response.data.data]
-                                                    }));
-                                                // }
-                                                console.log(this.state.staffList)
-                                                this.setState(prevState => ({
-                                                    isFetching: false
-                                                }));
-                                            })
-                                            .catch(err => {
-                                                alert(err);
-                                            })
+                                        .then(orgList =>{
+                                            this.setState(prevState => ({
+                                                totalOrganization: orgList.data.data.length,
+                                                sensorOrgList: orgList.data.data
+                                            }));
+                                        })
                                     }
                                 })
                                 .catch((error) => {
@@ -458,7 +458,7 @@ class OrganizationAdmin extends React.Component {
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time;
-            if (minutes <= 10) {
+            if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
@@ -473,7 +473,7 @@ class OrganizationAdmin extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization+'/'+brand,
                             state: {
                                 brand: {
                                     brand: brand,
@@ -496,7 +496,11 @@ class OrganizationAdmin extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                <p style={{ fontSize: "50px" }}>{noOfSimulation}</p>
+                                {noOfSimulation || noOfSimulation == '0' ? 
+                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
+                                 : 
+                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -532,7 +536,7 @@ class OrganizationAdmin extends React.Component {
                         let minutes =  Math.abs(Math.round(diff));
                         console.log('minutes', minutes);
                         minutes = minutes - computed_time;
-                        if (minutes <= 10) {
+                        if (minutes <= 30) {
                             cls = 'completedSimulation tech-football m-3';
                         }
                     }
@@ -553,8 +557,7 @@ class OrganizationAdmin extends React.Component {
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{organization.organization}</td>
                         <td>{organization.sensor ? organization.sensor : 'NA'}</td>
-                        <td>{organization.simulation_count ? organization.simulation_count : '0'}</td>
-                        <td>{organization.team_name ? organization.team_name : 'NA'}</td> 
+                        <td>{organization.simulation_count || organization.simulation_count == '0' ? organization.simulation_count : 'Loading...'}</td>
                     </tr>;
                 }
             }, this)
@@ -794,7 +797,6 @@ class OrganizationAdmin extends React.Component {
                                                             <th scope="col">Organization</th>
                                                             <th scope="col">Sensor</th>
                                                             <th scope="col">Simulations</th>
-                                                            <th scope="col">Team Name</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">

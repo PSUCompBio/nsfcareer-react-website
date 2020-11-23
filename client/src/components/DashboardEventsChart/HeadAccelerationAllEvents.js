@@ -137,11 +137,11 @@ class HeadAccelerationAllEvents extends React.Component {
 
     componentDidMount() {
         getSimulationDetail({image_id: this.props.data.sensor_data.image_id})
-            .then(response => {
-                this.setState({
-                    simulationData: response.data.data,
-                });
-            })
+        .then(response => {
+            this.setState({
+                simulationData: response.data.data,
+            });
+        })
     }
 
     static getDerivedStateFromProps (props, state) {
@@ -201,7 +201,7 @@ class HeadAccelerationAllEvents extends React.Component {
     }
     
     render() {
-            console.log(isPageloaded,"propsData 1\n", this.props);
+            console.log(isPageloaded,"propsData 1\n", this.props.status);
             if (this.props.data.sensor_data['impact-time']) {
                 let split = this.props.data.sensor_data['impact-time'].split(":");
                 this.props.data.sensor_data['impact-time'] = split.slice(0, split.length - 1).join(":");
@@ -246,24 +246,24 @@ class HeadAccelerationAllEvents extends React.Component {
                                         </div>
                                     */}
                                    
-                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading} alt="" />
+                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status != 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
                                      {
                                     !this.props.data.sensor_data ?
                                        null
 
                                      : 
                                     <Link  to={{
-                                            pathname: '/TeamAdmin/user/dashboard/brainsimulationDetails',
+                                            pathname: '/Details/'+this.props.data.sensor_data.image_id+'/'+this.props.player_id+'/'+this.props.state.cognito_user_id+'?org='+this.props.organization+'&t='+this.props.team,
                                             
                                            state:{
                                             state: this.props.state,
                                             data:this.props.data,
-					    simulationImage: this.state.simulationData.simulationImage,
+					                           simulationImage: this.state.simulationData.simulationImage,
                                            } 
 
-                                        }} ><button className="btn btn-primary ">View Details</button></Link>
+                                        }} target="_blank"><button className="btn btn-primary ">View Details</button></Link>
                                     }
-                                    <button className="btn btn-primary " style={{'margin-top': '5px'}} onClick={this.downloadReport}>Export Impact Report
+                                    <button className="btn btn-primary " style={{'margin-top': '5px'}} onClick={this.downloadReport}>Export Report
                                     {/*<PDFDownloadLink document={<Report jsonData={this.state.simulationData.jsonOutputFile} {...this.props} />} className="export-cumulative-player" fileName={fileName} style={{
                                         color: 'white'
                                     }}>

@@ -16,8 +16,6 @@ import {
     uploadSensorDataAndCompute,
     getTeamAdminData,
     fetchTeamStaffMembers,
-    // getImpactHistory,
-    // getImpactSummary,
     getPlayersData,
     getSimulationStatusCount,
     updateUserStatus,
@@ -76,6 +74,8 @@ class CommanderTeamView extends React.Component {
             checked: true,
             isSensorIdUpdating: false,
             isMobile: true,
+            organization:this.props.match.params.org,
+            team:this.props.match.params.team ? this.props.match.params.team.split('?')[0] : ''
         };
     }
     activateTab = (value) => {
@@ -112,39 +112,40 @@ class CommanderTeamView extends React.Component {
             .then((response) => {
                 if (response.data.message === "success") {
                     getPlayersData({
-			            brand: this.props.location.state.team.brand,
-                        user_cognito_id: this.props.location.state.team.user_cognito_id,
-                        organization: this.props.location.state.team.organization,
-                        team_name: this.props.location.state.team.team_name
+			            brand: this.state.brand,
+                        user_cognito_id: this.state.user_cognito_id,
+                        organization: this.state.organization,
+                        team_name: this.state.team
                     })
-                        .then(response => {
+                    .then(response => {
 
-                            this.setState({ users: [] });
+                        this.setState({ users: [] });
 
-                            for (var i = 0; i < response.data.data.length; i++) {
-                                this.setState(prevState => ({
-                                    users: [...prevState.users, response.data.data[i]]
-                                }));
-                            }
-                            getSimulationStatusCount({
-				                brand: this.props.location.state.team.brand,
-                                user_cognito_id: this.props.location.state.team.user_cognito_id,
-                                organization: this.props.location.state.team.organization,
-                                team: this.props.location.state.team.team_name
+                        for (var i = 0; i < response.data.data.length; i++) {
+                            this.setState(prevState => ({
+                                users: [...prevState.users, response.data.data[i]]
+                            }));
+                        }
+                        getSimulationStatusCount({
+			                brand: this.state.brand,
+                            user_cognito_id: this.state.user_cognito_id,
+                            organization: this.state.organization,
+                            team: this.state.team
+                        })
+                            .then(response => {
+                                this.setState({
+                                    simulations_completed: response.data.data.completed,
+                                    simulation_failed: response.data.data.failed,
+                                    simulations_pending: response.data.data.pending,
+                                    isUploading: false,
+                                    isFileUploaded: true,
+                                    uploadMessageLog: ''
+                                });
                             })
-                                .then(response => {
-                                    this.setState({
-                                        simulations_completed: response.data.data.completed,
-                                        simulation_failed: response.data.data.failed,
-                                        simulations_pending: response.data.data.pending,
-                                        isUploading: false,
-                                        isFileUploaded: true,
-                                        uploadMessageLog: ''
-                                    });
-                                })
-                                .catch(err => {
-                                    this.setState({ isUploading: false, fileUploadError: response.data.error, uploadMessageLog: '' });
-                                })
+                            .catch(err => {
+
+                                this.setState({ isUploading: false, fileUploadError: response.data.error, uploadMessageLog: '' });
+                            })
                         })
                         .catch(err => {
                             this.setState({ isUploading: false, fileUploadError: response.data.error, uploadMessageLog: '' });
@@ -197,9 +198,12 @@ class CommanderTeamView extends React.Component {
         socket.off('fileUploadLog');
     }
     componentDidMount() {
-        // Scrolling winddow to top when user clicks on about us page
-        window.scrollTo(0, 0)
-
+    
+        const params = new URLSearchParams(window.location.search)
+        let brand = false;
+        if(params.get('brand')){
+            brand = params.get('brand');
+        }
         // Socket
         const socket = socketIOClient();
         socket.on("fileUploadLog", data => {
@@ -208,88 +212,96 @@ class CommanderTeamView extends React.Component {
             })
         });
 
-        if (this.props.location.state) {
-            if (this.props.location.state.team.user_cognito_id && this.props.location.state.team.organization && this.props.location.state.team.team_name) {
+        if (this.props.match.params.team) {
+            if (this.state.organization && this.state.team) {
                 isAuthenticated(JSON.stringify({}))
                     .then((value) => {
                         if (value.data.message === 'success') {
                             getUserDBDetails()
                                 .then((response) => {
+                                    console.log('userDetails',response.data.data)
                                     this.setState({
                                         userDetails: response.data.data,
+                                        user_cognito_id: response.data.data.user_cognito_id,
                                         isAuthenticated: true,
-                                        isCheckingAuth: false
+                                        isCheckingAuth: false,
+                                        brand: brand,
                                     });
                                     let user_level = response.data.data.level;
                                     if (user_level === 1000 || user_level === 400 || user_level === 300 || user_level === 200) {
                                         getPlayersData({
-					                        brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                            user_cognito_id: this.props.location.state.team.user_cognito_id,
-                                            organization: this.props.location.state.team.organization,
-                                            team_name: this.props.location.state.team.team_name
+					                        brand: user_level === 300 ? '' : brand,
+                                            organization: this.state.organization,
+                                            team_name: this.state.team
                                         })
-                                            .then(response => {
-                                                console.log(response);
-                                                for (var i = 0; i < response.data.data.length; i++) {
-                                                    this.setState(prevState => ({
-                                                        users: [...prevState.users, response.data.data[i]]
-                                                    }));
-                                                }
-                                                 if(response.data.data.length > 4){
-                                                    this.setState({isMobile: false});
-                                                } 
-                                                for (var i = 0; i < response.data.requested_players.length; i++) {
-                                                    this.setState(prevState => ({
-                                                        requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
-                                                    }));
-                                                } 
-                                                return getSimulationStatusCount({
-						                            brand: user_level === 300 ? '' : this.props.location.state.team.brand,
-                                                    user_cognito_id: this.props.location.state.team.user_cognito_id,
-                                                    organization: this.props.location.state.team.organization,
-                                                    team: this.props.location.state.team.team_name
-                                                })
-                                            })
-                                            .then(response => {
-                        
-                                                this.setState({
-                                                    simulations_completed: response.data.data.completed,
-                                                    simulation_failed: response.data.data.failed,
-                                                    simulations_pending: response.data.data.pending
-                                                });
-                        
-                                                return getTeamAdminData(JSON.stringify({}));
-                                            })
-                                            .then((response) => {
-                        
-                                                this.setState({
-                                                    adminData: { ...this.state.adminData, ...response.data.data },
+                                        .then(response => {
+                                            console.log('getPlayersData ----------------------\n',response);
+                                            for (var i = 0; i < response.data.data.length; i++) {
+                                                this.setState(prevState => ({
+                                                    users: [...prevState.users, response.data.data[i]],
                                                     isLoaded: true
-                                                });
-                        
-                                                if (getStatusOfDarkmode().status === true) {
-                                                    this.refs.rosterContainer.style.background = '#171b25';
-                                                    for (let i = 1; i <= 7; i++) {
-                                                        this.refs['card' + i].style.background = '#232838';
-                                                        if ('card' + i === 'card5' || 'card' + i === 'card7') {
-                                                            this.refs['card' + i].style.border = '1px solid #e8e8e8';
-                                                        }
+                                                }));
+                                            }
+                                            if(response.data.data.length > 4){
+                                                this.setState({isMobile: false});
+                                            } 
+                                            for (var i = 0; i < response.data.requested_players.length; i++) {
+                                                this.setState(prevState => ({
+                                                    requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
+                                                    isLoaded: true
+                                                }));
+                                            } 
+                                            return getSimulationStatusCount({
+                                                brand: user_level === 300 ? '' : brand,
+                                                organization: this.state.organization,
+                                                team_name: this.state.team
+                                            })
+                                           
+                                        }).then(response => {
+                                            this.setState({
+                                                simulations_completed: response.data.data.completed,
+                                                simulation_failed: response.data.data.failed,
+                                                simulations_pending: response.data.data.pending,
+                                                isLoaded: true
+                                            });
+                                        })
+                                       
+                                        getTeamAdminData(JSON.stringify({}))
+                                        .then((response) => {
+                    
+                                            this.setState({
+                                                adminData: { ...this.state.adminData, ...response.data.data },
+                                            });
+                    
+                                            if (getStatusOfDarkmode().status === true) {
+                                                this.refs.rosterContainer.style.background = '#171b25';
+                                                for (let i = 1; i <= 7; i++) {
+                                                    this.refs['card' + i].style.background = '#232838';
+                                                    if ('card' + i === 'card5' || 'card' + i === 'card7') {
+                                                        this.refs['card' + i].style.border = '1px solid #e8e8e8';
                                                     }
                                                 }
-                                            })
-                                            .catch((err) => {
-                                                console.log(err);
-                                            });
+                                            }
+                                        })
+                                        .catch((err) => {
+                                            console.log(err);
+                                        });
                                     } else {
 
                                     }
-                                    return fetchTeamStaffMembers({
-                                        sensor: this.props.location.state.team.brand,
-                                        organization: this.props.location.state.team.organization,
-                                        team_name: this.props.location.state.team.team_name
+                                   
+                                }).catch((error) => {
+                                    console.log('============= errteam ', error)
+                                    this.setState({
+                                        userDetails: {},
+                                        isCheckingAuth: false
                                     });
+                                });
+                                fetchTeamStaffMembers({
+                                    sensor: brand,
+                                    organization: this.state.organization,
+                                    team_name: this.state.team
                                 }).then(staff=>{
-                                    console.log('staff',staff);
                                     var response = staff.data;
                                     if(response.message == 'success'){
                                         this.setState(prevState => ({
@@ -358,7 +370,7 @@ class CommanderTeamView extends React.Component {
         updateUserStatus({user_cognito_id: id, status: status})
             .then(data => {
                 let requestedUsers = this.state.requestedUsers.map(function (r_player) {
-                    if (r_player.user_cognito_id === id) {
+                    if (r_player && r_player.user_cognito_id === id) {
                         r_player.player_status = status;
                     }
                     return r_player
@@ -441,7 +453,7 @@ class CommanderTeamView extends React.Component {
             })
 
             let requestedUsers = this.state.requestedUsers.map(function (r_player) {
-                if (r_player.user_cognito_id === editableId) {
+                if (r_player && r_player.user_cognito_id === editableId) {
                     r_player.sensor_id_number = sensor_id;
                 }
                 return r_player
@@ -503,7 +515,6 @@ class CommanderTeamView extends React.Component {
     }
 
     militaryVersionOrNormal = () => {
-        console.log('users',this.state.users)
         let me = this;
         return (
             <div
@@ -518,36 +529,36 @@ class CommanderTeamView extends React.Component {
                                 pathname: '/AdminDashboard',
                                 state: {
                                     brand: {
-                                        brand: this.props.location.state.team.brand,
-                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                        brand: this.state.brand,
+                                        user_cognito_id: this.state.user_cognito_id
                                     }
                                 }
                             }} >{'Admin > '}</Link>
                         : null}
-                        {this.props.location.state.team.brand && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
+                        {this.state.brand && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
                             <Link style={{ fontWeight: "400" }} to={{
                                 pathname: '/OrganizationAdmin',
                                 state: {
                                     brand: {
-                                        brand: this.props.location.state.team.brand,
-                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                        brand: this.state.brand,
+                                        user_cognito_id: this.state.user_cognito_id
                                     }
                                 }
-                            }} >{this.props.location.state.team.brand + ' > '}</Link>
+                            }} >{this.state.brand + ' > '}</Link>
                         : null}
                          {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
                                 <Link style={{ fontWeight: "400" }} to={{
-                                pathname: '/TeamAdmin',
+                                pathname: '/TeamAdmin/'+this.state.organization+'/'+this.state.brand,
                                 state: {
                                     brand: {
-                                        brand: this.props.location.state.team.brand,
-                                        organization: this.props.location.state.team.organization,
-                                        user_cognito_id: this.props.location.state.team.user_cognito_id
+                                        brand: this.state.brand,
+                                        organization: this.state.organization,
+                                        user_cognito_id: this.state.user_cognito_id
                                     }
                                 }
-                            }}>{this.props.location.state.team.organization + ' > ' }</Link>
+                            }}>{this.state.organization + ' > ' }</Link>
                         : null}
-                                 {this.props.location.state.team.team_name}
+                                 {this.state.team}
                         </p>
                     </div>
 
@@ -865,18 +876,21 @@ class CommanderTeamView extends React.Component {
                                       <tbody className="player-table">
                                             {this.state.users.map(function (player, index) {
                                                 if (player.simulation_data.length > 0) {
+                                                    let impact_time = '';
+                                                    let time = '';
                                                   let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
                                                   let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
 
                                                   if (player.simulation_data[0]['impact-time']) {
                                                     let split = player.simulation_data[0]['impact-time'].split(":");
-                                                    player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                    impact_time = split.slice(0, split.length - 1).join(":");
                                                   }
 
                                                   if (player.simulation_data[0]['time']) {
                                                     let split = player.simulation_data[0]['time'].toString();
+                                                    split = split.replace(".", ":");
                                                     split = split.split(":");
-                                                    player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                    time = split.slice(0, split.length - 1).join(":");
                                                   }
 
                                                   if (player.simulation_data[0].simulation_status === 'completed' ) {
@@ -888,9 +902,8 @@ class CommanderTeamView extends React.Component {
                                                     var diff =(currentStamp - simulationTimestamp) / 1000;
                                                     diff /= 60;
                                                     let minutes =  Math.abs(Math.round(diff));
-                                                    console.log('minutes', minutes);
                                                     minutes = minutes - computed_time;
-                                                    if (minutes <= 10) {
+                                                    if (minutes <= 30) {
                                                         cls = 'completedSimulation player-data-table-row';
                                                     }
                                                   }
@@ -917,7 +930,7 @@ class CommanderTeamView extends React.Component {
                                                                 </>
                                                             : 
                                                                 <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
-                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'float': 'right','margin-top':'10%'}}></i>
+                                                                    { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number.substr(-8) + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{'color': '#0e7dd59e', 'float': 'right','margin-top':'10%'}}></i>
                                                                 </span>
                                                             }
                                                             
@@ -927,9 +940,9 @@ class CommanderTeamView extends React.Component {
                                                         }
                                                         <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
-                                                             {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unkown Date' } </td>
+                                                             {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
-                                                             {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unkown Time' } </td>
+                                                             {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : player.simulation_data[0]['time'] ? this.tConvert(time) : 'Unknown Time' } </td>
                                                         {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
                                                         {/*<td>0</td>
                                                                                 <td>
@@ -970,6 +983,7 @@ class CommanderTeamView extends React.Component {
                                                     </tr>;
                                                 }
                                             }, this)}
+                                            {this.state.users.length <= 0 && <td colspan="10" style={{'textAlign':'center'}}>There is no data for this team yet.</td>}
                                             {this.state.requestedUsers.map(function (r_player, r_index) {
                                                 if(r_player){
                                                     let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
@@ -1085,10 +1099,10 @@ class CommanderTeamView extends React.Component {
 
     render() {
 
-        if (!this.props.location.state) {
+        if (!this.props.match.params.team) {
             return <Redirect to="/Dashboard" />;
         } else {
-            if (!this.props.location.state.team.user_cognito_id && !this.props.location.state.team.organization && !this.props.location.state.team.team_name) {
+            if (!this.state.user_cognito_id && !this.state.organization && !this.state.team) {
                 return <Redirect to="/Dashboard" />;
             }
         }
@@ -1113,17 +1127,17 @@ class CommanderTeamView extends React.Component {
 
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/dashboard',
+                pathname: '/TeamAdmin/user/impact/dashboard',
                 state: {
-                    user_cognito_id: this.props.location.state.team.user_cognito_id,
+                    user_cognito_id: this.state.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,
                     player_name: this.state.player_name,
                     isRedirectedFromAdminPanel: true,
                     team: {
-                        brand: this.props.location.state.team.brand,
-                        team_name: this.props.location.state.team.team_name,
-                        organization: this.props.location.state.team.organization,
-                        staff: this.props.location.state.team.staff
+                        brand: this.state.brand,
+                        team_name: this.state.team,
+                        organization: this.state.organization,
+                        staff: []
                     }
                 }
             }} />
@@ -1133,12 +1147,12 @@ class CommanderTeamView extends React.Component {
             return <Redirect push to={{
                 pathname: '/TeamStats',
                 state: {
-                    user_cognito_id: this.props.location.state.team.user_cognito_id,
+                    user_cognito_id: this.state.user_cognito_id,
                     team: {
-                        brand: this.props.location.state.team.brand,
-                        team_name: this.props.location.state.team.team_name,
-                        organization: this.props.location.state.team.organization,
-                        staff: this.props.location.state.team.staff
+                        brand: this.state.brand,
+                        team_name: this.state.team,
+                        organization: this.state.organization,
+                        staff: []
                     }
                 }
             }} />

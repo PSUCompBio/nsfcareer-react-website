@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import Footer from '../Footer';
 import { formDataToJson } from '../../utilities/utility';
-import { logIn, logInFirstTime, checkIfPlayerExists, loginWithoutEmail } from '../../apis';
+import { logInHidden, logInFirstTime, checkIfPlayerExists, loginWithoutEmail } from '../../apis';
 import { connect } from 'react-redux';
 import store from '../../Store';
 import '../../mixed_style.css';
@@ -14,6 +14,9 @@ import google_icon from './google_icon.png';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
 import axios from 'axios';
+
+let search = window.location.search;
+let params = new URLSearchParams(search);
 
 class LoginComponentHidden extends React.Component {
   constructor(props) {
@@ -110,7 +113,7 @@ class LoginComponentHidden extends React.Component {
         });
     } else {
       var u_details = '';
-      logIn(formJsonData)
+      logInHidden(formJsonData)
         .then((response) => {
           console.log('Login ', response);
           if (response.data.message === 'success') {
@@ -176,25 +179,27 @@ class LoginComponentHidden extends React.Component {
   responseFacebook=(response)=> {
     console.log('fb rs',response);
     if(response.email){
-       var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name}
+       var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name,email: response.email,type:'facebook'}
       this.setState({
         signupData:{
           userID: response.userID,
           first_name: response.first_name,
           last_name: response.last_name,
-          email: response.email
+          email: response.email,
+          type:'facebook'
         }
       })
       this.LoginWithoutEmail(formJsonData);
     }else{
       console.log(response.first_name,response.userID);
-      var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name}
+      var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name,email: '',type:'facebook'}
       this.setState({
         signupData:{
           userID: response.userID,
           first_name: response.first_name,
           last_name: response.last_name,
-          email: ''
+          email: '',
+          type:'facebook'
         }
       })
       if(response.status != "unknown"){
@@ -206,13 +211,14 @@ class LoginComponentHidden extends React.Component {
   responseGoogle = (response) => {
     console.log(response);
     if(response.profileObj){
-      var formJsonData = {userID : response.profileObj.googleId,first_name: response.profileObj.familyName,last_name: response.profileObj.givenName}
+      var formJsonData = {userID : response.profileObj.googleId,first_name: response.profileObj.familyName,last_name: response.profileObj.givenName,email: response.profileObj.email,type:'google'}
       this.setState({
         signupData:{
           userID: response.profileObj.googleId,
           first_name: response.profileObj.familyName,
           last_name: response.profileObj.givenName,
-          email: response.profileObj.email
+          email: response.profileObj.email,
+          type:'google'
         }
       })
       this.LoginWithoutEmail(formJsonData);
@@ -362,6 +368,22 @@ class LoginComponentHidden extends React.Component {
                     <div ref="brainIcon" className="text-center brain-icon">
                       <img src="img/icon/brain.png" alt="" />
                     </div>
+                    {params.get('error') ? (
+                      <div
+                        className="alert alert-info api-response-alert"
+                        role="alert"
+                      >
+                        <strong >Failed! </strong> {params.get('error')}
+                      </div> 
+                    ) : null}
+                    {params.get('success') ? (
+                      <div
+                        className="alert alert-info api-response-alert-success"
+                        role="alert"
+                      >
+                        <strong >Success! </strong> Your account has been verified successfully.
+                      </div> 
+                    ) : null}
                     {this.state.IRBProcessMessage.length > 0 ? (
                       <div
                         className="alert alert-info api-response-alert-success"
@@ -489,8 +511,11 @@ class LoginComponentHidden extends React.Component {
                       <div
                         className="alert alert-info api-response-alert"
                         role="alert"
+
                       >
-                        <strong >Failed! </strong> {this.state.loginError}.
+                      <>
+                        <strong >Failed! </strong><p dangerouslySetInnerHTML={{__html: this.state.loginError}} style={{'display': 'contents'}}></p>.
+                      </>
                       </div>
                     ) : null}
                     </div>

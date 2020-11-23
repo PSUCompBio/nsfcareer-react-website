@@ -176,16 +176,15 @@ class BrainSimulationDetails extends React.Component {
         if(percent < 70){
           this.setState({uploadPercentage:percent})
         }else{
-          
           setInterval(function(){
-             if(the.state.uploadPercentage < 99){
-                the.setState({uploadPercentage: the.state.uploadPercentage + 1});
-              }
+            if(the.state.uploadPercentage < 99){
+              the.setState({uploadPercentage: the.state.uploadPercentage + 1});
+            }
           }, 2000)
         }
       }
     }
-     axios.post(`/uploadSidelineImpactVideo`, data,options,{withCredentials: true})
+    axios.post(`/uploadSidelineImpactVideo`, data,options,{withCredentials: true})
     .then(function (res) {
       console.log('res',res);
       if(res.data.message == 'success'){
@@ -503,7 +502,7 @@ class BrainSimulationDetails extends React.Component {
                     <h4 className="brain-simlation-details-subtitle">Video Verification of Skull Kinematics</h4>
                     <div className="col-md-12">
                       <div className="movie">
-                        <div className="Replace-video">
+                        <div className="Replace-video Replace-video-desktop">
                           <div>
                             {this.state.impact_video_url &&
                               <React.Fragment>
@@ -524,10 +523,21 @@ class BrainSimulationDetails extends React.Component {
                             }
                           </div>
                           <div>
-                            {this.state.isTimeUpdating_2 ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
+                            {this.state.isTimeUpdating_2 ?<div> <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> </div>: ''}
                             <img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2}/>
                             <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" />
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                          </div>
+                        </div>
+                        <div className="Replace-video Replace-video-mobile">
+                          <div>
+                            {this.state.impact_video_url &&
+                              <React.Fragment>
+                                <label for="uploadFile"><img src={upload} />  Replace Video</label>
+                                <input type="file" id="uploadFile" onChange={this.uploadFile} />
+                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
+                              </React.Fragment>
+                            }
                           </div>
                         </div>
                         <div className="col-md-6" style={{'float':'left'}}>
