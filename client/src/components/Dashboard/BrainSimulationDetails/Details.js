@@ -65,7 +65,7 @@ import $ from 'jquery';
 import { getStatusOfDarkmode } from '../../../reducer';
 
 /**
-  Define global variables.
+*  Define global variables.
 */
 let lock_time = 0;
 let left_lock_time = 0;
@@ -278,6 +278,14 @@ class Details extends React.Component {
       video.play();
     });
     let len = 0;
+    const setVideoFrameRate = (leftTime, rightTime) =>{
+      console.log(leftTime, rightTime);
+      var total_video_duration = rightTime - leftTime;
+      var frameRate = Math.floor(total_video_duration*29.7);
+      total_video_duration = the.getVideoTime(total_video_duration);
+      the.setState({framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration})
+
+    }
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
@@ -294,6 +302,8 @@ class Details extends React.Component {
           if(max > the.state.value['min'] && lock_percent > 1 && !the.state.right_lock_time){
             the.setState({video_time: percent,value:{ max: percent.toFixed(0), min: the.state.value['min'] }});
             right_lock_time = video.currentTime;
+            //Update fram rate and video lenght...
+            setVideoFrameRate(left_lock_time,right_lock_time);
           }else{
             video.pause();
             video.currentTime = left_lock_time;
@@ -311,6 +321,8 @@ class Details extends React.Component {
               min = percent.toFixed(0);
               left_lock_time = video.currentTime;
 
+              //Update fram rate and video lenght...
+              setVideoFrameRate(left_lock_time,the.state.right_lock_time ? the.state.right_lock_time : right_lock_time);
             }
             //-----set min slider position if video is locked --------
             else if(len == 0){
@@ -340,33 +352,31 @@ class Details extends React.Component {
         }
       },
       scrub: (e) =>{
-        const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
-        var time = scrubTime;
+        // const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
+        // var time = scrubTime;
         
-        var val = e.target.value - 4;
-        var val2 = parseInt(e.target.value) + 1;
+        // var val = e.target.value - 4;
+        // var val2 = parseInt(e.target.value) + 1;
 
-          console.log( val2 , the.state.value['min'])
+        //   console.log( val2 , the.state.value['min'])
 
-        if(scrubTime && val  < the.state.value['max'] &&  val2 > the.state.value['min'] ){
-          the.setState({SidelineVidoeCT : the.getVideoTime(time)});
-          video.currentTime = scrubTime;
-        }else{
-          the.setState({video_time:  the.state.value['min']});          
-        }
-        setTimeout(()=>{
-          the.setState({SidelineVidoeCT : ''})
-        },1000)
+        // if(scrubTime && val  < the.state.value['max'] &&  val2 > the.state.value['min'] ){
+        //   the.setState({SidelineVidoeCT : the.getVideoTime(time)});
+        //   video.currentTime = scrubTime;
+        // }else{
+        //   the.setState({video_time:  the.state.value['min']});          
+        // }
+        // setTimeout(()=>{
+        //   the.setState({SidelineVidoeCT : ''})
+        // },1000)
       },
       scrub2: (e) =>{
-       
         if(min != the.state.value['min']){
-           console.log(the.state.value, min);
+
           min = the.state.value['min'];
           var off_X = progressBar_2.offsetWidth * the.state.value['min'] / 100;
-          console.log('min',off_X , progressBar_2.offsetWidth)
-
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
+          console.log('updating min', scrubTime);
 
           if(scrubTime && !the.state.video_lock_time){
             video.currentTime = scrubTime;
@@ -374,11 +384,9 @@ class Details extends React.Component {
           isupdateMax = false;
         }else if(max != the.state.value['max']){
           max = the.state.value['max'];
-           console.log('max',the.state.value, max);
-          
           var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
-          console.log('max',off_X, progressBar_2.offsetWidth)
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
+          console.log('updating max', scrubTime);
 
           if(scrubTime && !the.state.video_lock_time){
             video.currentTime = scrubTime;
@@ -394,17 +402,33 @@ class Details extends React.Component {
       },
       setvideoTime:()=>{
         video.currentTime = the.state.left_lock_time || 0; 
-        the.setState({lengthofSidelineVideo: the.getVideoTime(video.duration)})
+        let total_video_duration = 0;
+        let frameRate = 0;
         if(the.state.right_lock_time > 0){
           const percent2 = (the.state.right_lock_time / video.duration) * 100;
           max = percent2;
-          // console.log('percent2',percent2)
           $('.input-range__slider').eq(1).css({'pointer-events': 'none'});
           the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: percent2 ? percent2.toFixed(0) : 100 }});
+
+          /*
+          * Set Cropped video duration and fram rate...
+          */
+          total_video_duration = the.state.left_lock_time ? the.state.right_lock_time - the.state.left_lock_time : the.state.right_lock_time;
+          frameRate = Math.floor(total_video_duration*29.7);
+          total_video_duration =  the.getVideoTime(total_video_duration);
         }else{
+          frameRate = Math.floor(video.duration*29.7);
+          total_video_duration = the.getVideoTime( video.duration);
+          right_lock_time = video.duration;
           the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: 100 }});
           if(the.state.left_lock_time){
             $('.input-range__slider').eq(0).css({'pointer-events': 'none'});
+            /*
+            * Set Cropped video duration fram rate...
+            */
+            total_video_duration = video.duration - the.state.left_lock_time ;
+            frameRate = Math.floor(total_video_duration*29.7);
+            total_video_duration = the.getVideoTime(total_video_duration);
           }else{
             $('.input-range__slider').eq(0).css({'pointer-events': 'inherit'});
           }
@@ -412,18 +436,15 @@ class Details extends React.Component {
         }
 
         //Get video frames
-        var frameRate = Math.floor(video.duration*29.7);
-        the.setState({framesofSidelineVideo: frameRate})
+        
+        the.setState({framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration})
       }
     }
     
-    //Set video locked time 
-    // setTimeout(()=>{
-    //   controls.setvideoTime();
-    // },2000)
-    
     video.addEventListener('timeupdate', controls.handleProgress);
-    video.addEventListener('loadeddata', controls.setvideoTime);
+    video.addEventListener('loadeddata',()=> {setTimeout(()=>{
+      controls.setvideoTime();
+    },1000)} );
 
     // progressBar.addEventListener('click', controls.scrub);
     progressBar_2.addEventListener('click', (e) => controls.scrub2(e));
@@ -436,9 +457,6 @@ class Details extends React.Component {
 
     //... for green slider events 
     let mousedown2 = false;
-    // progressBar.addEventListener('mousemove', (e) => mousedown2 && controls.scrub(e));
-    // progressBar.addEventListener('mousedown', () => mousedown2 = true);
-    // progressBar.addEventListener('mouseup', () => mousedown2 = false);
   }
 
   vidocontrol2 =()=>{
@@ -459,6 +477,7 @@ class Details extends React.Component {
         lock_percent_2 = percent;
         lock_time_2 = video.currentTime;
         the.setState({video_time_2: percent});
+
       },
       scrub: (e) =>{
         const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
@@ -480,9 +499,11 @@ class Details extends React.Component {
 
       },
       Onload:()=>{
-        var frameRate = Math.floor(video.duration*29.7);
-        the.setState({framesofSimulationVideo: frameRate})
-        the.setState({lengthofSimulationVideo: the.getVideoTime(video.duration)})
+        setTimeout(()=>{
+          var frameRate = Math.floor(video.duration*29.7);
+          the.setState({framesofSimulationVideo: frameRate})
+          the.setState({lengthofSimulationVideo: the.getVideoTime(video.duration)})
+        },1000)
       }
     }
     if(video && this.state.video_lock_time_2){
