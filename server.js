@@ -7086,7 +7086,8 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                 var p_data = [];
                 var player_listLen = player_list.length;
                 player_list.forEach(function (player, index) {
-                    if(player != 'undefined'){
+                    console.log('player',player)
+                    if(player && player != 'undefined'){
                         console.log('player_list', player);
                         let p = player;
                         let i = index;
@@ -7095,12 +7096,14 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                         .then(player_data => {
                             playerData = player_data;
                             counter++;
-                            p_data.push({
-                                date_time: playerData[0].player_id.split('$')[1],
-                                simulation_data: playerData,
-                            });
+                            if(playerData[0]){
+                                p_data.push({
+                                    date_time: playerData[0].player_id.split('$')[1],
+                                    simulation_data: playerData,
+                                });
+                            }
                             console.log('p_data length', player_listLen, counter)
-                            if (counter == player_listLen) {
+                            if (counter >= player_listLen) {
                                 p_data.sort(function (b, a) {
                                     var keyA = a.date_time,
                                         keyB = b.date_time;
@@ -7120,7 +7123,6 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                                 .then (u_detail => {
                                                     p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
                                                     k++;
-                                                    console.log('k == p_data.length  --------------\n',)
                                                     if (k == p_data.length) {
                                                         let requested_players = []
                                                         if (requested_player_list.length > 0) {
@@ -7157,6 +7159,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                             }
                         })
                         .catch(err => {
+                            console.log('err ------------------\n',err)
                             counter++;
                             if (counter == player_list.length) {
                                 res.send({
