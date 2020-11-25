@@ -65,6 +65,8 @@ class UserDashboarForAdmin extends React.Component {
       open: false,
       loading: false,
       loaded_data: [],
+      cognito_user_id: this.props.match.params.cognito_user_id,
+      player_name:this.props.match.params.player_name ? this.props.match.params.player_name.split('?')[0] : '' 
     };
   }
 
@@ -124,9 +126,9 @@ class UserDashboarForAdmin extends React.Component {
     if(this.state.loaded_data.indexOf(e) == -1){
       this.setState({loaded_data : this.state.loaded_data.concat(e)});
       this.setState({open: e});
-      getCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: e, team: this.props.location.state.team.team_name })
+      getCumulativeAccelerationTimeRecords({ brand: this.state.brand, user_cognito_id: this.state.user_cognito_id, organization: this.state.organization, player_id: e, team: this.state.team })
       .then(res=>{
-        console.log('res'+this.props.location.state.user_cognito_id,res);
+        console.log('res'+this.state.user_cognito_id,res);
         this.setState({
            cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
            loading: false,
@@ -174,6 +176,9 @@ class UserDashboarForAdmin extends React.Component {
 
   render() {
     const isLoaded = this.state.user;
+    if(!this.state.player_name || !this.state.cognito_user_id){
+      return <Redirect to="/Login" />;
+    }
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
       return <Redirect to="/Login" />;
     }
@@ -226,7 +231,7 @@ class UserDashboarForAdmin extends React.Component {
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
         {this.state.jsonData &&  
-          <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.props.location.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
+          <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
         }
           <p
             ref="h1"
@@ -337,7 +342,7 @@ class UserDashboarForAdmin extends React.Component {
                     {this.state.cumulativeAccelerationTimeAlldata ? 
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
                           if(items.sensor_data.player_id == item.sensor_data.player_id){
-                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.props.location.state} organization ={the.props.location.state.team.organization}  player_id={item.sensor_data.player_id} team={the.props.location.state.team.team_name} status={item.status}/>
+                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.state.state} organization ={the.state.organization}  player_id={item.sensor_data.player_id} team={the.state.team} status={item.status}/>
                           }
                         })
                       : 
@@ -375,73 +380,110 @@ class UserDashboarForAdmin extends React.Component {
     );
   }
   componentDidMount() {
-    isAuthenticated(JSON.stringify({}))
-      .then((value) => {
-        if (value.data.message === 'success') {
-          getCumulativeAccelerationData({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
-            .then(response => {
-              this.setState({
-                cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: this.props.location.state.team.brand, team: this.props.location.state.team.team_name, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, staff: this.props.location.state.team.staff, player_id: this.props.location.state.player_name, simulationCount: response.data.simulationCount}
-              });
-              return AllCumulativeAccelerationTimeRecords({ brand: this.props.location.state.team.brand, user_cognito_id: this.props.location.state.user_cognito_id, organization: this.props.location.state.team.organization, player_id: this.props.location.state.player_name, team: this.props.location.state.team.team_name })
-            })
-
-            .then(response => {
-              console.log('cumulativeAccelerationTimeAllRecords',response)
-              this.setState({
-                cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
-		            brainRegions: response.data.brainRegions,
-                jsonData: response.data.data,
-                isLoading: false,
-              });
-
-      
-                getUserDetails({ user_cognito_id: this.props.location.state.user_cognito_id })
-                  .then(response => {
-                    delete response.data.data.is_selfie_image_uploaded;
-                    delete response.data.data.is_selfie_simulation_file_uploaded;
-                    delete response.data.data.is_selfie_model_uploaded;
-                    delete response.data.data.profile_picture_url
-                    delete response.data.data.simulation_file_url
-                    this.setState({
-                      user: response.data.data,
-                      isAuthenticated: true,
-                      isCheckingAuth: false,
-                      isLoading: false,
-                    });
-                  })
-                  .catch(err => {
-                    this.setState({
-                      user: {},
-                      isLoading: false,
-                      isCheckingAuth: false
-                    });
-                  })
-             
-            })
-
-            .catch((error) => {
-
-              console.log(error);
-
-              this.setState({
-                user: {},
-                isLoading: false,
-                isCheckingAuth: false
-              });
-            });
-
-        } else {
-          this.setState({ isAuthenticated: false, isCheckingAuth: false });
-        }
-      })
-      .catch((err) => {
-        this.setState({ isAuthenticated: false, isCheckingAuth: false });
-      })
-    if (getStatusOfDarkmode().status) {
-      document.getElementsByTagName('body')[0].style.background = '#171b25';
+    const params = new URLSearchParams(window.location.search)
+    let team = '';
+    let organization = '';
+    let user_cognito_id = '';
+    let localstorage = localStorage.getItem('state');
+    let brand = '';
+    localstorage = JSON.parse(localstorage);
+    
+    if(params.get('team') && params.get('org')){
+        team = params.get('team');
+        organization = params.get('org');
+        brand = params.get('brand');
+        user_cognito_id = localstorage.userInfo['user_cognito_id'];
     }
+    console.log('localstorage',user_cognito_id, organization, team)
+    if(user_cognito_id && team && organization){
+      let state = {
+        cognito_user_id: this.state.cognito_user_id,
+        player_name:this.state.player_name,
+        team: {
+          brand: '',
+          organization: organization,
+          staff: [],
+          team_name:team,
+        },
+        user_cognito_id: user_cognito_id
+      }
+      isAuthenticated(JSON.stringify({}))
+        .then((value) => {
+          if (value.data.message === 'success') {
+            getCumulativeAccelerationData({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
+              .then(response => {
+                this.setState({
+                  state: state,
+                  team: team,
+                  organization: organization,
+                  user_cognito_id: user_cognito_id,
+                  cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: brand, team: team, user_cognito_id: user_cognito_id, organization: organization, staff: [], player_id: this.state.player_name, simulationCount: response.data.simulationCount}
+                });
+                return AllCumulativeAccelerationTimeRecords({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
+              })
 
+              .then(response => {
+                console.log('cumulativeAccelerationTimeAllRecords',response)
+                this.setState({
+                  cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
+  		            brainRegions: response.data.brainRegions,
+                  jsonData: response.data.data,
+                  isLoading: false,
+                });
+
+        
+                  getUserDetails({ user_cognito_id: user_cognito_id })
+                    .then(response => {
+                      delete response.data.data.is_selfie_image_uploaded;
+                      delete response.data.data.is_selfie_simulation_file_uploaded;
+                      delete response.data.data.is_selfie_model_uploaded;
+                      delete response.data.data.profile_picture_url
+                      delete response.data.data.simulation_file_url
+                      this.setState({
+                        user: response.data.data,
+                        isAuthenticated: true,
+                        isCheckingAuth: false,
+                        isLoading: false,
+                      });
+                    })
+                    .catch(err => {
+                      this.setState({
+                        user: {},
+                        isLoading: false,
+                        isCheckingAuth: false
+                      });
+                    })
+               
+              })
+
+              .catch((error) => {
+
+                console.log(error);
+
+                this.setState({
+                  user: {},
+                  isLoading: false,
+                  isCheckingAuth: false
+                });
+              });
+
+          } else {
+            this.setState({ isAuthenticated: false, isCheckingAuth: false });
+          }
+        })
+        .catch((err) => {
+          this.setState({ isAuthenticated: false, isCheckingAuth: false });
+        })
+      if (getStatusOfDarkmode().status) {
+        document.getElementsByTagName('body')[0].style.background = '#171b25';
+      }
+    }else{
+      this.setState({
+        user: {},
+        isLoading: false,
+        isCheckingAuth: false
+      });
+    }
   }
 }
 

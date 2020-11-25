@@ -563,27 +563,6 @@ function getTeamDataWithPlayerRecords_3(player_id, team, sensor, organization) {
     });
 }
 function getTeamData(obj) {
-    // return new Promise((resolve, reject) => {
-    //     let params = {
-    //         TableName: "sensor_data",
-    //         KeyConditionExpression: "team = :team",
-    //         ExpressionAttributeValues: {
-    //             ":team": obj.team,
-    //         },
-    //     };
-    //     var item = [];
-    //     docClient.query(params).eachPage((err, data, done) => {
-    //         if (err) {
-    //             reject(err);
-    //         }
-    //         if (data == null) {
-    //             resolve(concatArrays(item));
-    //         } else {
-    //             item.push(data.Items);
-    //         }
-    //         done();
-    //     });
-    // });
 
     return new Promise((resolve, reject) => {
         let params;

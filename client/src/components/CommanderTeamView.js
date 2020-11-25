@@ -200,7 +200,7 @@ class CommanderTeamView extends React.Component {
     componentDidMount() {
     
         const params = new URLSearchParams(window.location.search)
-        let brand = false;
+        let brand = '';
         if(params.get('brand')){
             brand = params.get('brand');
         }
@@ -254,10 +254,11 @@ class CommanderTeamView extends React.Component {
                                             return getSimulationStatusCount({
                                                 brand: user_level === 300 ? '' : brand,
                                                 organization: this.state.organization,
-                                                team_name: this.state.team
+                                                team: this.state.team
                                             })
                                            
                                         }).then(response => {
+                                            console.log('getSimulationStatusCount', response);
                                             this.setState({
                                                 simulations_completed: response.data.data.completed,
                                                 simulation_failed: response.data.data.failed,
@@ -1127,7 +1128,7 @@ class CommanderTeamView extends React.Component {
 
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/impact/dashboard',
+                pathname: '/TeamAdmin/user/dashboard/'+ this.state.cognito_user_id+'/'+this.state.player_name+'?team='+this.state.team+'&org='+this.state.organization+'&brand='+this.state.brand,
                 state: {
                     user_cognito_id: this.state.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,

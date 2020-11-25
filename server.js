@@ -5765,7 +5765,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
 */
 app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
-    console.log(req.body);
+    console.log('getSimulationStatusCount',req.body);
 
     let completed = 0;
     let failed = 0;

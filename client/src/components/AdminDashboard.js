@@ -1554,7 +1554,7 @@ class AdminDashboard extends React.Component {
         
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/impact/dashboard',
+                pathname: '/TeamAdmin/user/dashboard/'+ this.state.cognito_user_id+'/'+this.state.player_name.player_id+'?team='+this.state.player_name.team+'&org='+this.state.player_name.organization+'&brand='+this.state.player_name.sensor,
                 state: {
                     user_cognito_id: this.state.userDetails.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,

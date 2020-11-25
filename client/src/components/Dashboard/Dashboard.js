@@ -61,7 +61,7 @@ class Dashboard extends React.Component {
         }} />;
       } else {
         return <Redirect to={{
-          pathname: '/TeamAdmin/user/impact/dashboard',
+          pathname: '/TeamAdmin/user/dashboard/'+ this.state.userDetails.user_cognito_id+'/'+this.state.userDetails.sensor_id_number+'?team='+this.state.userDetails.team+'&org='+this.state.userDetails.organization+'&brand=',
           state: {
             team: {
               organization: this.state.userDetails.organization,
@@ -83,13 +83,13 @@ class Dashboard extends React.Component {
         .then((value) => {
           if (value.data.message === 'success') {
               this.setState({
-		  userDetails: JSON.parse(localStorage.getItem("state")).userInfo,
-		  isLoading: false,
-                  isAuthenticated: true,
-                  isCheckingAuth: false,
-                  isLoaded: true
-	      });
-
+  		          userDetails: JSON.parse(localStorage.getItem("state")).userInfo,
+  	            isLoading: false,
+                isAuthenticated: true,
+                isCheckingAuth: false,
+                isLoaded: true
+	            });
+              console.log('userDetails    ---------------\n',JSON.parse(localStorage.getItem("state")).userInfo)
           } else {
             this.setState({ isAuthenticated: false, isCheckingAuth: false, isLoaded: true });
           }

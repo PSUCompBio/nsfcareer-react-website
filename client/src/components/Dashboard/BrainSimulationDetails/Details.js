@@ -824,7 +824,7 @@ class Details extends React.Component {
                   {<div className="backbutton">
                     <Link 
                       to={{
-                        pathname: '/TeamAdmin/user/impact/dashboard/',
+                        pathname: '/TeamAdmin/user/dashboard/'+ this.state.cognito_user_id+'/'+this.state.player_id.split('$')[0]+'?team='+this.state.team_name+'&org='+this.state.organization+'&brand=',
                         state: {
                           user_cognito_id: this.state.userDetails.user_cognito_id,
                           cognito_user_id: this.state.cognito_user_id,
