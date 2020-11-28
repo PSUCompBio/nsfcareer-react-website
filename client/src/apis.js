@@ -109,6 +109,18 @@ export const mergeVideos = (request) =>{
   })
 }
 
+export const trimVideo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/trimVideo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const setUserPassword = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/setUserPassword`, request,{withCredentials: true})

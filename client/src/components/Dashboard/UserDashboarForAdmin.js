@@ -64,6 +64,7 @@ class UserDashboarForAdmin extends React.Component {
       jsonData: '',
       open: false,
       loading: false,
+      isLoading: true,
       loaded_data: [],
       cognito_user_id: this.props.match.params.cognito_user_id,
       player_name:this.props.match.params.player_name ? this.props.match.params.player_name.split('?')[0] : '' 
@@ -175,7 +176,6 @@ class UserDashboarForAdmin extends React.Component {
   }
 
   render() {
-    const isLoaded = this.state.user;
     if(!this.state.player_name || !this.state.cognito_user_id){
       return <Redirect to="/Login" />;
     }
@@ -183,7 +183,7 @@ class UserDashboarForAdmin extends React.Component {
       return <Redirect to="/Login" />;
     }
     var the = this;
-    if (!isLoaded) return <Spinner />;
+    if (this.state.isLoading) return <Spinner />;
     return (
 
       <React.Fragment>
@@ -410,6 +410,35 @@ class UserDashboarForAdmin extends React.Component {
       isAuthenticated(JSON.stringify({}))
         .then((value) => {
           if (value.data.message === 'success') {
+
+            /*
+            * Getting user details...
+            */
+            getUserDetails({ user_cognito_id: user_cognito_id })
+            .then(response => {
+              delete response.data.data.is_selfie_image_uploaded;
+              delete response.data.data.is_selfie_simulation_file_uploaded;
+              delete response.data.data.is_selfie_model_uploaded;
+              delete response.data.data.profile_picture_url
+              delete response.data.data.simulation_file_url
+              this.setState({
+                user: response.data.data,
+                isAuthenticated: true,
+                isCheckingAuth: false,
+              });
+            })
+            .catch(err => {
+              this.setState({
+                user: {},
+                isCheckingAuth: false,
+                isCheckingAuth: false
+              });
+            })
+            /*-- end --*/
+
+            /*
+            * getting Acceleration data...
+            */
             getCumulativeAccelerationData({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
               .then(response => {
                 this.setState({
@@ -430,31 +459,8 @@ class UserDashboarForAdmin extends React.Component {
                   jsonData: response.data.data,
                   isLoading: false,
                 });
-
-        
-                  getUserDetails({ user_cognito_id: user_cognito_id })
-                    .then(response => {
-                      delete response.data.data.is_selfie_image_uploaded;
-                      delete response.data.data.is_selfie_simulation_file_uploaded;
-                      delete response.data.data.is_selfie_model_uploaded;
-                      delete response.data.data.profile_picture_url
-                      delete response.data.data.simulation_file_url
-                      this.setState({
-                        user: response.data.data,
-                        isAuthenticated: true,
-                        isCheckingAuth: false,
-                        isLoading: false,
-                      });
-                    })
-                    .catch(err => {
-                      this.setState({
-                        user: {},
-                        isLoading: false,
-                        isCheckingAuth: false
-                      });
-                    })
-               
               })
+
 
               .catch((error) => {
 
@@ -467,13 +473,14 @@ class UserDashboarForAdmin extends React.Component {
                 });
               });
 
-          } else {
-            this.setState({ isAuthenticated: false, isCheckingAuth: false });
-          }
-        })
-        .catch((err) => {
-          this.setState({ isAuthenticated: false, isCheckingAuth: false });
-        })
+              } else {
+                this.setState({ isAuthenticated: false, isCheckingAuth: false });
+              }
+            })
+            .catch((err) => {
+              this.setState({ isAuthenticated: false, isCheckingAuth: false });
+            })
+          /*-- end --*/
       if (getStatusOfDarkmode().status) {
         document.getElementsByTagName('body')[0].style.background = '#171b25';
       }

@@ -2691,6 +2691,8 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                             }
                     
                         }
+                    }).catch(err=>{
+                        count3++;
                     })
                     //**Delete simulation data from simulation_image db...
                    
@@ -5631,12 +5633,12 @@ function removeYesterdayFolder(){
     let yesterday = d.getMonth()+'-'+d.getFullYear();
     var dir = 'public/uploads/'+yesterday;
     console.log('yesterday -------\n',yesterday)
-    if (fs.existsSync(dir)){
-        fs.unlinkSync(dir,function(err){
-        if(err) return console.log(err);
-            console.log('file deleted successfully');
-        });   
-    }
+    // if (fs.existsSync(dir)){
+    //     fs.unlinkSync(dir,function(err){
+    //     if(err) return console.log(err);
+    //         console.log('file deleted successfully');
+    //     });   
+    // }
 }
 
 app.post(`${apiPrefix}merge-video`, (req, res) => {
@@ -5754,8 +5756,195 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
 })
 
+app.post(`${apiPrefix}merge-video`, (req, res) => {
+    console.log(req.body);
+    removeYesterdayFolder(); // Remove yesterday directory ...
+    /*
+        Creating directory
+    */
+    var d = new Date();
+    let datetoday = d.getMonth()+'-'+d.getFullYear();
+    var dir = 'public/uploads/'+datetoday;
 
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+
+    //** 
+    //files name ..........
+    var file_path = '/uploads/'+datetoday+'/'+Date.now() + 'output.mp4';
+    var outputFilePath = 'public'+file_path;
+    let list = []
+
+        //uploading files.             
+        var name = Date.now();
+        var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+        list.push(`public/uploads/${name}_movie.mp4`);
+        https.get(req.body.movie_link , function(response ,error) { 
+
+            const file = fs.createWriteStream(file_store_path);
+            response.pipe(file);
+            file.on('finish',() => {
+
+                // ===================
+                // uploading file 2
+                //====================
+                https.get(req.body.impact_video_url , function(response ,error) {
+                    var name = Date.now();
+                    var file_store_path =  'public/uploads/'+ name + '_movie.mp4';
+                    const file = fs.createWriteStream(file_store_path);
+                    list.push(`public/uploads/${name}_movie.mp4`);
+                    response.pipe(file);
+                    file.on('finish',() => {
+                        console.log('finished -------------------------');
+                        setTimeout(()=>{
+                            writeTextfile(list);
+                        },6000)
+                    })
+                    
+                }); 
+            })
+        });
+    /**
+    *
+        Creating video frame.
+        ** Exicuting ffmpeg cmd...
+    */
+    const writeTextfile = (list)=>{
+        console.log('list',list);
+        exec(`ffmpeg -i ${list[0]} -i ${list[1]}  -filter_complex  "[0:v]pad=iw*2:ih[int]; [int][1:v]overlay=W/2:0[vid]" -map "[vid]" -c:v libx264 -crf 23  ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message: 'faiure',
+                    error: error.message
+                });
+            }
+            else{
+                console.log("videos are successfully merged");
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message:'success',
+                    file_path: file_path,
+                });
+                
+            }
+            
+        })
+    }
+    
+    
+    // const request = https.get("https://nsfcareer-users-data.s3-accelerate.amazonaws.com/35317-Prevent-Biometrics/simulation/07-22-2019/qIYe2mOoS/movie/qIYe2mOoS.mp4?AWSAccessKeyId=AKIA5UBJSELBEIFVBRCC&Expires=1603439485&Signature=%2FhX5ww3Eie9BH18D4jlW53hnRY0%3D", function(response ,error) {
+        
+    //     response.pipe(file);
+    // })
+     /*exec(`ffmpeg -safe 0 -f concat -i ${listFilePath} -c copy ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            else{
+                console.log("videos are successfully merged")
+            res.download(outputFilePath,(err) => {
+                if(err) throw err
+
+                // req.files.forEach(file => {
+                //     fs.unlinkSync(file.path)                    
+                // });
+
+                // fs.unlinkSync(listFilePath)
+                // fs.unlinkSync(outputFilePath)
+
+              
+
+            })
+        }
+            
+        })*/
+
+})
 /*=======================merge video end ======================*/
+
+/*=======================================
+    Trim uploaded video function start
+=========================================*/
+
+app.post(`${apiPrefix}trimVideo`, (req, res) => {
+    console.log(req.body);
+    /*
+    *    Creating directory...
+    */
+    var d = new Date();
+    let datetoday = d.getMonth()+'-'+d.getFullYear();
+    var dir = 'public/uploads/'+datetoday;
+
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+
+    //** 
+    //files name ..........
+    var file_path = '/uploads/'+datetoday+'/'+Date.now() + '_trim.mp4';
+    var outputFilePath = 'public'+file_path;
+    let list = []
+
+    
+
+    //uploading files.             
+    var name = Date.now();
+    var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+    list.push(`public/uploads/${name}_movie.mp4`);
+    https.get(req.body.impact_video_url , function(response ,error) { 
+        const file = fs.createWriteStream(file_store_path);
+        response.pipe(file);
+        file.on('finish',() => {
+        console.log('finished -------------------------');
+        setTimeout(()=>{
+                writeTextfile(list);
+            },6000)
+        })
+                
+         
+        
+    });
+
+    const writeTextfile = (list)=>{
+        console.log('list',list);
+        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime}  -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message: 'faiure',
+                    error: error.message
+                });
+            }
+            else{
+                console.log("videos are successfully merged");
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message:'success',
+                    file_path: file_path,
+                });
+                
+            }
+            
+        })
+    }
+})
+/*-- trim function end --*/
 
 
 /*
@@ -6127,7 +6316,6 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                 getPlayerSimulationFile(acc_data)
                 .then(image_data => {
                     imageData = image_data;
-                    console.log('summary json url ----------------------------\n', imageData.player_name + '/simulation/summary.json');
                     if (imageData.player_name && imageData.player_name != 'null') {
                         if(file_count < 1){
                             file_count++;
@@ -6205,8 +6393,12 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         masXsr_15_max[region].push(coordinate);
                                     }
                                 }
+
+                                /*
+                                * Commented mps 95 data ----------------
+                                */
                                 //-- For mps 95--
-                                if (summary_data['MPS-95']) {    
+                                /*if (summary_data['MPS-95']) {    
                                     if(summary_data['MPS-95']['stem']){
                                         let newCordinates = summary_data['MPS-95']['stem'].map(function (data, index) {
                                             return {x:data[0],y:data[1],z:data[2]};
@@ -6277,7 +6469,10 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                             MPS_95[region].push(summary_data);
                                         })
                                     }
-                                }
+                                }*/
+
+                                // mps 95 data end
+
 
                                 //-- For CSDM-5--
                                 if (summary_data['CSDM-5']) {   

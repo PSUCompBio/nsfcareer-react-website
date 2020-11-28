@@ -3,13 +3,22 @@ import WebFont from 'webfontloader';
 import { InView } from 'react-intersection-observer';
 import screenWidth from '../../../utilities/ScreenWidth'
 import { Link } from 'react-router-dom';
+import {
+    isAuthenticated,
+} from '../../../apis';
 WebFont.load({
   google: {
     families: ['Roboto', 'sans-serif']
   }
 });
 class Banner extends React.Component {
-
+  constructor(props) {
+    super(props);
+    this.state ={
+        isAuthenticated: false,
+        isCheckingAuth: false,
+    }
+  }
   isBrowser() {
     if(this.props.screenWidth >= screenWidth[4].screen1024) return true;
     else {
@@ -22,6 +31,18 @@ class Banner extends React.Component {
     else {
       return '';
     }
+  }
+  componentDidMount() {
+    isAuthenticated(JSON.stringify({}))
+    .then((value) => {
+        if (value.data.message === 'success') {
+          this.setState({ isAuthenticated: true, isCheckingAuth: false });
+        }else{
+          this.setState({ isAuthenticated: false, isCheckingAuth: false });
+        }
+      }).catch((err) => {
+        this.setState({ isAuthenticated: false, isCheckingAuth: false });
+    })
   }
 
   render() {
@@ -71,11 +92,20 @@ class Banner extends React.Component {
                           <div style={{display: "grid",
                                         justifyContent: "center"}}
                                 className="banner-sign-in-button">
-                              <Link to="/Login">
-                                <button  className = "signIn-btn btn-lg" >
-                                 SIGN IN
-                                </button>
-                              </Link>
+                              {!this.state.isAuthenticated ? 
+                                 <Link to="/Login">
+                                  <button  className = "signIn-btn btn-lg" >
+                                   SIGN IN
+                                  </button>
+                                </Link>
+                                :
+                                 <Link to="/Dashboard">
+                                  <button  className = "signIn-btn btn-lg" >
+                                   GO TO DASHBOARD
+                                  </button>
+                                </Link>
+                              }
+                             
                           </div>
                           <div
                             className={`underlined-text support-text-mt ${

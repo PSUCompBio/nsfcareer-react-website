@@ -466,13 +466,13 @@ input#MyrangeSlider3:focus {
 }
 .Replace-video div label {
   background: #4472c4;
-  color: white;
-  padding: 4px 18px;
-  margin-bottom: 0px !important;
-  margin-top: 5px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin: 5px;
+    color: white;
+    padding: 4px 18px;
+    margin-bottom: 9px !important;
+    margin-top: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 3px;
 }
 .Replace-video div label img {
   width: 28px;

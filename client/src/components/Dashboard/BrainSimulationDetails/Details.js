@@ -18,6 +18,8 @@ import unlock from './unlock.png';
 import lock from './lock.png';
 import upload from './upload.png';
 import remove from './remove.png';
+import trim_icon from './trim_icon.png';
+import reset_icon from './reset_icon.png';
 
 import pause_b from '../../icons/pause_b.png';
 import pause_bl from '../../icons/pause_bl.png';
@@ -26,6 +28,7 @@ import video_loop_bl from '../../icons/video_loop_bl.png';
 import video_pause_b from '../../icons/video_pause_b.png';
 import video_play_bl from '../../icons/video_play_bl.png';
 import icon_download_white from '../../icons/icon_download_white.png';
+
 
 
 import uploadicon from './upload-icon.png'
@@ -46,7 +49,8 @@ import {
   setVideoTime,
   getCumulativeAccelerationTimeRecords,
   getSimulationDetail,
-  mergeVideos
+  mergeVideos,
+  trimVideo
 } from '../../../apis';
 import axios from 'axios';
 
@@ -108,7 +112,7 @@ class Details extends React.Component {
       simulation_log:'',
       uploadPercentage: 0,
       IsAcceleration: false,
-      label_remove_video: 'Remove Video',
+      label_remove_video: 'Remove',
       video_time: 0,
       video_time_2: 0,
       video_time_3: 0,
@@ -648,6 +652,8 @@ class Details extends React.Component {
     
     
   }
+
+
   handlelock_video_2=()=>{
     console.log('lock_time',lock_time_2)
     if(this.state.video_lock_time_2){
@@ -672,6 +678,39 @@ class Details extends React.Component {
     }
    
   }
+
+  /*
+  * Video trim function start...
+  */
+
+  getVideoTime2=(time)=>{
+    var whereYouAt = time;
+    var minutes = Math.floor(whereYouAt / 60);   
+    var seconds = Math.floor(whereYouAt - minutes * 60)
+    var milseconds = Math.floor(whereYouAt - seconds * 60)
+
+    var x = minutes < 10 ? "0" + minutes : minutes;
+    var y = seconds < 10 ? "0" + seconds : seconds;
+    var z = milseconds < 10 ? "0" + milseconds : milseconds;
+
+    if(minutes > 0 ){
+      return x+':'+y+':'+z;
+    }else{
+      return x+':'+y+':'+z;
+    }
+  }
+
+  trimVideo=()=>{
+    console.log('triming',left_lock_time,right_lock_time);
+    trimVideo({impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time})
+    .then(response=>{
+      console.log('response trim video ---\n',response)
+    }).catch(err=>{
+      console.log('triming err -------\n',err)
+    })
+
+  }
+
   //Setting video lockTime
   setVideoTime_2 =(time)=>{
     this.setState({isTimeUpdating_2: true})
@@ -907,7 +946,7 @@ class Details extends React.Component {
                           </div>
                            <div className="Replace-video Replace-video-desktop">
                               <div style={{width:'100%','opacity': '0','pointer-events': 'none'}}>
-                                    <label><img src={upload} />  Replace Video</label>
+                                    <label><img src={upload} />  Replace</label>
                               </div>
                             </div>
                           <div>
@@ -926,7 +965,7 @@ class Details extends React.Component {
                           <div>
                             {this.state.impact_video_url &&
                               <React.Fragment>
-                                <label for="uploadFile"><img src={upload} />  Replace Video</label>
+                                <label for="uploadFile"><img src={upload} />  Replace</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                  <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
                               </React.Fragment>
@@ -969,9 +1008,12 @@ class Details extends React.Component {
                               <div style={{width:'100%'}}>
                                 {this.state.impact_video_url &&
                                   <React.Fragment>
-                                    <label for="uploadFile"><img src={upload} />  Replace Video</label>
+                                    <label for="uploadFile"><img src={upload} />  Replace</label>
                                     <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                      <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
+                                    <label  onClick={this.trimVideo}><img src={trim_icon} />  Trim</label>
+                                    <label ><img src={reset_icon} />  Reset</label>
+
                                   </React.Fragment>
                                 }
                               </div>
@@ -991,7 +1033,7 @@ class Details extends React.Component {
                                 <InputRange
                                   maxValue={100}
                                   minValue={0}
-                                  step={0.05}
+                                  step={0.01}
                                   value={this.state.value}
                                   onChange={value => this.setRangeValue(value)} 
                                 />
