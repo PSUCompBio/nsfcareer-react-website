@@ -7,7 +7,8 @@ import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './dash.css';
 
-import summary from "./summary-1.json";
+import summary from "./summary_york_tech_35204.json";
+// import summary from "./summary-1.json";
 import StrainMetric from './selector'
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
@@ -198,7 +199,7 @@ class DashPage extends React.Component {
 				afterDraw: (chart) => {
 					if (this.state.loadedActionButtons) return;
 
-					setTimeout(() => this.afterDrawChart(chart), 100);
+					setTimeout(() => this.afterDrawChart(chart), 1000);
 				}
 			}
 		];
@@ -820,8 +821,8 @@ class DashPage extends React.Component {
 
 		renderer = new THREE.WebGLRenderer({
 			canvas: canvas,
-			antialias: true,
 			preserveDrawingBuffer: true,
+			antialias: true,
 			alpha: true
 		});
 
@@ -1424,23 +1425,23 @@ class DashPage extends React.Component {
 			<React.Fragment>
 				<div
 					className="row text-center"
-					style={{ marginTop: '150px', marginBottom: '10px', marginLeft: '20px', marginRight: '20px' }}
+					style={{ marginTop: '150px', marginBottom: '10px' }}
 				>
 					<div className="col-md-1"></div>
-					<div className="col-md-4 d-flex align-items-center " ref={(ref) => (this.threeCanvasContainer = ref)} >
-						{/* {this.state.isLoading ? (
+					<div className="col-md-4 d-flex align-items-center "  >
+						{this.state.isLoading ? (
 							<div className="model_loader d-flex justify-content-center center-spinner">
 								<div className="spinner-border text-primary" role="status">
 									<span className="sr-only">Loading...</span>
 								</div>
 							</div>
-						) : null} */}
-						{/* <div
+						) : null}
+						<div
 							style={{ width: "100%", height: "100%", display: "block" }}
 							ref={(ref) => (this.threeCanvasContainer = ref)}
-						> */}
-						<canvas id="c" style={{ width: "100%", height: "100%" }}></canvas>
-						{/* </div> */}
+						>
+							<canvas id="c" style={{ width: "100%", height: "100%" }}></canvas>
+						</div>
 					</div>
 					<div className="col-md-1 interSect"></div>
 					<div id="barChart" className="col-md-5" ref={(ref) => (this.chartContainer = ref)}>
@@ -1448,7 +1449,7 @@ class DashPage extends React.Component {
 						<div className="action-btn-container">
 							{actionButtons}
 						</div>
-						<h4 className="chartXlabel">Major Functional Brain Regions</h4>
+						<h3 className="chartXlabel">Major Functional Brain Regions</h3>
 
 					</div>
 				</div>
