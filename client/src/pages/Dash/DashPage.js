@@ -199,7 +199,7 @@ class DashPage extends React.Component {
 				afterDraw: (chart) => {
 					if (this.state.loadedActionButtons) return;
 
-					setTimeout(() => this.afterDrawChart(chart), 1000);
+					setTimeout(() => this.afterDrawChart(chart), 2000);
 				}
 			}
 		];
