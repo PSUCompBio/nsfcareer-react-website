@@ -1326,6 +1326,10 @@ class DashPage extends React.Component {
 				all_spheres_json = [];
 				all_spheres_json = [...minimumPS];
 				break;
+			case "csdm":
+				all_spheres_json = [[], [], [], [], [], [], []];
+
+				break;
 		}
 	}
 	render() {
