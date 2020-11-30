@@ -38,10 +38,10 @@ class Dashboard extends React.Component {
         }} />;
       } else if (this.state.userDetails.level === 300) {
         return <Redirect to={{
-          pathname: '/TeamAdmin/'+this.state.userDetails.organization+'/'+this.state.userDetails.sensor,
+          pathname: '/TeamAdmin/'+this.state.userDetails.organization,
           state: {
             brand: {
-              brand: this.state.userDetails.sensor,
+              brand: null,
               organization: this.state.userDetails.organization,
               user_cognito_id: this.state.userDetails.user_cognito_id
             }
