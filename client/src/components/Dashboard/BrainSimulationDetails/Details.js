@@ -108,6 +108,7 @@ class Details extends React.Component {
       isLoading: false,
       status: '',
       impact_video_url: '',
+      trim_video_url: '',
       simulation_log_path: '',
       simulation_log:'',
       uploadPercentage: 0,
@@ -405,6 +406,7 @@ class Details extends React.Component {
         lock_percent = percent2;
       },
       setvideoTime:()=>{
+        console.log('setting lock time')
         video.currentTime = the.state.left_lock_time || 0; 
         let total_video_duration = 0;
         let frameRate = 0;
@@ -448,7 +450,7 @@ class Details extends React.Component {
     video.addEventListener('timeupdate', controls.handleProgress);
     video.addEventListener('loadeddata',()=> {setTimeout(()=>{
       controls.setvideoTime();
-    },1000)} );
+    },2000)} );
 
     // progressBar.addEventListener('click', controls.scrub);
     progressBar_2.addEventListener('click', (e) => controls.scrub2(e));
@@ -702,9 +704,14 @@ class Details extends React.Component {
 
   trimVideo=()=>{
     console.log('triming',left_lock_time,right_lock_time);
-    trimVideo({impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time})
+    trimVideo({image_id:this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time})
     .then(response=>{
-      console.log('response trim video ---\n',response)
+      console.log('response trim video ---\n',response);
+      if(response.data.message == "success"){
+        this.setState({
+          trim_video_url: response.data.trim_video_path,
+        })
+      }
     }).catch(err=>{
       console.log('triming err -------\n',err)
     })
@@ -963,11 +970,11 @@ class Details extends React.Component {
                         </div>
                         <div className="Replace-video Replace-video-mobile">
                           <div>
-                            {this.state.impact_video_url &&
+                            {this.state.impact_video_url  && 
                               <React.Fragment>
                                 <label for="uploadFile"><img src={upload} />  Replace</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
-                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
+                                <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
                               </React.Fragment>
                             }
                           </div>
@@ -998,7 +1005,9 @@ class Details extends React.Component {
                             </Dropzone>)
                             : 
                               <div className="player">
-                                <video src={this.state.impact_video_url} style={{'width':'100%','height':'284px'}} className="player__video viewer" controls loop={this.state.isRepeatVideo ? true : false}></video>
+                               
+                                  <video src={this.state.impact_video_url} style={{'width':'100%','height':'284px'}} className="player__video viewer" controls loop={this.state.isRepeatVideo ? true : false}></video>
+                              
                                 {this.state.SidelineVidoeCT && <div id="custom-message">{this.state.SidelineVidoeCT}</div>}
                               </div>
                              
@@ -1011,8 +1020,8 @@ class Details extends React.Component {
                                     <label for="uploadFile"><img src={upload} />  Replace</label>
                                     <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                      <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                                    <label  onClick={this.trimVideo}><img src={trim_icon} />  Trim</label>
-                                    <label ><img src={reset_icon} />  Reset</label>
+                                    {/*<label  onClick={this.trimVideo}><img src={trim_icon} />  Trim</label>
+                                                                        <label ><img src={reset_icon} />  Reset</label>*/}
 
                                   </React.Fragment>
                                 }
@@ -1184,6 +1193,7 @@ class Details extends React.Component {
                         left_lock_time: response.data.left_lock_time, 
                         right_lock_time: response.data.right_lock_time, 
                         video_lock_time_2: response.data.video_lock_time_2, 
+                        trim_video_url: response.data.trim_video_url,
                         simulationStatus: response.data.status,
                     });
                     this.getSimlationImage();

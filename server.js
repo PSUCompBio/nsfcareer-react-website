@@ -205,7 +205,8 @@ const {
         getPlayerCgValues,
         getBrandDataByorg,
         deleteSensorData,
-        deleteSimulation_imagesData
+        deleteSimulation_imagesData,
+        InsertTrimVideoKey
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -1299,6 +1300,30 @@ function ImpactVideoUrl(image_details) {
   })
 }
 
+function trimVideoUrl(image_details) {
+  return new Promise((resolve, reject) => {
+    const { trim_video_path } = image_details;
+    console.log('trim_video_path',trim_video_path)
+    if(trim_video_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: trim_video_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
+}   
+
+
 // Miliseconds to Human readable 
 function timeConversion(duration) {
     const portions = [];
@@ -1503,64 +1528,73 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     let imageData = '';
     var movie_link_url = '';
     var motion_movie_link_url = '';
+    var trim_video_url = '';
+
     let status = 'pending';
 
     getSimulationImageRecord(image_id)
-        .then(image_data => {
-            imageData = image_data;
-            status = image_data.status;
-            return verifyImageToken(imageData['token'], image_data);
-        })
-        .then(decoded_token => {
-            return getPlayerCgValues(imageData.player_name);
-        })
-        .then(cg_coordinates => {
-            if (!imageData.movie_path) {
-                imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
-            } 
-            return getPresignedMovieUrl(imageData);
-        })
-        .then(movie_link => {
-            console.log('movie_link',movie_link);
-            movie_link_url = movie_link;
-            imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '_mps.mp4';
-            
-            return getPresignedMovieUrl(imageData);
-        }).then(motion_link_url => {
-            motion_movie_link_url =   motion_link_url;
+    .then(image_data => {
+        imageData = image_data;
+        status = image_data.status;
+        return verifyImageToken(imageData['token'], image_data);
+    })
+    .then(decoded_token => {
+        return getPlayerCgValues(imageData.player_name);
+    })
+    .then(cg_coordinates => {
+        if (!imageData.movie_path) {
+            imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
+        } 
+        return getPresignedMovieUrl(imageData);
+    })
+    .then(movie_link => {
+        console.log('movie_link',movie_link);
+        movie_link_url = movie_link;
+        imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '_mps.mp4';
+        return getPresignedMovieUrl(imageData);
+    })
+    .then(motion_link_url => {
+        motion_movie_link_url =   motion_link_url;
+        return trimVideoUrl(imageData);
+        
+    }) 
+    .then(trim_video_url => {
+        if(trim_video_url){
+            trim_video_url =   trim_video_url;
+        }
+        return ImpactVideoUrl(imageData);
+        
+    }) 
+    .then(impact_video_url => {
+        console.log('movie_link_url',movie_link_url)
+        res.send({
+            message : "success",
+            movie_link : movie_link_url,
+            trim_video_url: trim_video_url,
+            impact_video_url: impact_video_url,
+            motion_link_url: motion_movie_link_url,
+            video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
+            left_lock_time: imageData.left_lock_time ? imageData.left_lock_time : '',
+            right_lock_time: imageData.right_lock_time ? imageData.right_lock_time : '',
+            status: status,
+            video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
 
-            return ImpactVideoUrl(imageData);
-            
-        }) 
-        .then(impact_video_url => {
-            console.log('movie_link_url',movie_link_url)
+        })
+    })
+    .catch(err => {
+        console.log(err);
+        if("authorized" in err){
             res.send({
-                message : "success",
-                movie_link : movie_link_url,
-                impact_video_url: impact_video_url,
-                motion_link_url: motion_movie_link_url,
-                video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
-                left_lock_time: imageData.left_lock_time ? imageData.left_lock_time : '',
-                right_lock_time: imageData.right_lock_time ? imageData.right_lock_time : '',
-                status: status,
-                video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
-
+                message : "failure",
+                error : "You are not authorized to access this resource."
             })
-        })
-        .catch(err => {
-            console.log(err);
-            if("authorized" in err){
-                res.send({
-                    message : "failure",
-                    error : "You are not authorized to access this resource."
-                })
-            }
-            else{
-                res.send({
-                    message : "Simulation is in process"
-                })
-            }
-        })
+        }
+        else{
+            res.send({
+                message : "Simulation is in process"
+            })
+        }
+    })
 });
 
 /*+++++++++++++++++ Set video lock time funtion start here ++++++++++++++++ */
@@ -5878,6 +5912,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
 app.post(`${apiPrefix}trimVideo`, (req, res) => {
     console.log(req.body);
+    let image_id = req.body.image_id;
     /*
     *    Creating directory...
     */
@@ -5931,19 +5966,125 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
             }
             else{
                 console.log("videos are successfully merged");
+                /*-- Delete all generated files --*/
                 list.forEach(file => {
                     fs.unlinkSync(file)                    
                 });
-                res.send({
-                    message:'success',
-                    file_path: file_path,
-                });
+                var readableStream = fs.createReadStream(outputFilePath);
+                readableStream.on('data', function(chunk) {
                 
+                    var uploadParams = {
+                        Bucket: config.usersbucket,
+                        Key: '', // pass key
+                        Body: null, // pass file body
+                    };
+                    getSimulationImageRecord(image_id)
+                    .then(data => {
+                        // File Extensions
+                        let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
+                        var d = new Date();
+                        console.log(d.toLocaleDateString('pt-PT'));
+                        d = d.toLocaleDateString('pt-PT');
+                        var date = d.replace("/", "-");
+                        date = date.replace("/", "-");
+                        console.log('date',date);
+                        // Setting Attributes for file upload on S3
+                        uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
+                        // console.log('req.file.buffer', req.file.buffer)
+                        uploadParams.Body = chunk;
+                        
+                        s3.upload(uploadParams, (err, data) => {
+                            if (err) {
+                                console.log('======errr \n',err)
+                                res.send({
+                                    message: "failure",
+                                    data: err
+                                });
+                               
+                            }else{
+                                /*-- Unlink trimed video from directory --*/
+                                fs.unlinkSync(outputFilePath)
+
+                                /*
+                                * Insert s3 video path in simulation_image table...
+                                */
+                                InsertTrimVideoKey(req.body.image_id,uploadParams.Key).
+                                then(sensor_data => {
+                                    const  image_id  = req.body.image_id;
+                                    let imageData = '';
+
+                                    /*
+                                    * Getting image simulation image record from simulation_image table...
+                                    */
+                                    getSimulationImageRecord(image_id)
+                                    .then(image_data => {
+                                        console.log('image_data -----------------------------------\n',image_data)
+                                        imageData = image_data;
+                                        return verifyImageToken(imageData['token'], image_data);
+                                    })
+                                    .then(decoded_token => {
+                                        // console.log('decoded_token',decoded_token)
+                                        return getPlayerCgValues(imageData.player_name);
+                                    })
+                                    .then(cg_coordinates => {
+                                        // Setting cg values
+                                        // console.log("cg_coordinates",cg_coordinates)
+                                        if(cg_coordinates) {
+                                          imageData["cg_coordinates"] = cg_coordinates;
+                                        }
+                                        return trimVideoUrl(imageData);
+                                    })
+                                    .then(movie_link => {
+                                        // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                        console.log('movie_link',movie_link);
+                                        res.send({
+                                            message : "success",
+                                            trim_video_path : movie_link
+                                        })
+                                        
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
+                                        // res.removeHeader('X-Frame-Options');
+                                        // if(err.message == 'The provided key element does not match the schema'){
+                                            res.send({
+                                                message: "failure",
+                                                data: err
+                                            });
+                                        // }
+                                    })
+                                })
+                                .catch(err => {
+                                   console.log('err',err)
+                                    res.send({
+                                        message: "failure",
+                                        data: err
+                                    });
+                                })
+                            }
+                        })
+                    }).catch(err => {
+                       console.log('err',err)
+                        res.send({
+                            message: "failure",
+                            data: err
+                        });
+                    })
+            
+                });
             }
             
         })
     }
 })
+// var file_name = Date.now();
+//         var image_id = req.body.image_id;
+//         var uploadParams = {
+//             Bucket: config.usersbucket,
+//             Key: '', // pass key
+//             Body: null, // pass file body
+//         };
+//        
 /*-- trim function end --*/
 
 

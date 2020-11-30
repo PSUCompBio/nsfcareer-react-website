@@ -1856,6 +1856,33 @@ function InsertImpactVideoKey(video_id,impact_video_path) {
     });
 }
 
+function InsertTrimVideoKey(video_id,trim_video_path) {
+    console.log('user_name',video_id,trim_video_path)
+    return new Promise((resolve, reject) => {
+       var userParams = {
+            TableName: "simulation_images",
+            Key: {
+                image_id: video_id,
+            },
+            UpdateExpression:
+                "set trim_video_path = :trim_video_path",
+            ExpressionAttributeValues: {
+                ":trim_video_path": trim_video_path,
+            },
+            ReturnValues: "UPDATED_NEW",
+        };
+        docClient.update(userParams, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
 function storeSensorData(sensor_data_array){
     return new Promise((resolve, reject) =>{
         var counter = 0 ;
@@ -3148,5 +3175,6 @@ module.exports = {
     getTeamDataWithPlayerRecords_3,
     getBrandDataByorg,
     deleteSensorData,
-    deleteSimulation_imagesData
+    deleteSimulation_imagesData,
+    InsertTrimVideoKey
 };
