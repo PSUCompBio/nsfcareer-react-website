@@ -1,14 +1,14 @@
 import React from 'react';
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import brain from './brain1.glb';
+
 //import Footer from '../../components/Footer';
 import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './dash.css';
 
 import summary from "./summary_york_tech_35204.json";
-// import summary from "./summary-1.json";
+
 import StrainMetric from './selector'
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
@@ -16,37 +16,85 @@ styleLink.href =
 	"https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
 document.head.appendChild(styleLink);
 const insults = summary.Insults;
-let stem_json = [];
-let pariental_lobe_json = [];
-let frontal_lobe_json = [];
-let cerebellum_lobe_json = [];
-let middle_part_of_the_brain_json = [];
-let occipital_lobe_json = [];
-let temporal_lobe_json = [];
 
-let middle_part_of_the_brain_min_json = []
+
+let minimumPS = [[], [], [], [], [], [], []];
+let maximumPS = [[], [], [], [], [], [], []];
+let csdm_15 = [[], [], [], [], [], [], []];
+
 let previousClicked = null;
-
-// let frontal_lobe_json = [{ x: 0.00205875, y: -0.413274, z: -0.0556418 }];
-// let cerebellum_lobe_json = [{ x: 0.00679913, y: -0.313188, z: 0.0161927 }];
-// let middle_part_of_the_brain_json = [
-// 	{ x: 0.00227188, y: -0.407034, z: -0.0116845 }
-// ];
-// let occipital_lobe_json = [{ x: 0.0114976, y: -0.368995, z: 0.04 }];
-// let pariental_lobe_json = [{ x: 0.0057455, y: -0.413943, z: 0.0061665 }];
-// let temporal_lobe_json = [{ x: 0.0261539, y: -0.338157, z: -0.0565029 }];
 
 insults.forEach((insult) => {
 	if (insult["principal-max-strain"]) {
 		switch (insult["principal-max-strain"]["brain-region"]) {
 			case "msc":
-				middle_part_of_the_brain_json = [
+				maximumPS[6] = [
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
 						z: insult["principal-max-strain"]["location"][2]
 					},
-					...middle_part_of_the_brain_json
+					...maximumPS[6]
+				];
+				break;
+			case "stem":
+				maximumPS[5] = [
+					{
+						x: insult["principal-max-strain"]["location"][0],
+						y: insult["principal-max-strain"]["location"][1],
+						z: insult["principal-max-strain"]["location"][2]
+					},
+					...maximumPS[5]
+				];
+				break;
+			case "cerebellum":
+				maximumPS[4] = [
+					{
+						x: insult["principal-max-strain"]["location"][0],
+						y: insult["principal-max-strain"]["location"][1],
+						z: insult["principal-max-strain"]["location"][2]
+					},
+					...maximumPS[4]
+				];
+				break;
+			case "temporal":
+				maximumPS[3] = [
+					{
+						x: insult["principal-max-strain"]["location"][0],
+						y: insult["principal-max-strain"]["location"][1],
+						z: insult["principal-max-strain"]["location"][2]
+					},
+					...maximumPS[3]
+				];
+				break;
+			case "occipital":
+				maximumPS[2] = [
+					{
+						x: insult["principal-max-strain"]["location"][0],
+						y: insult["principal-max-strain"]["location"][1],
+						z: insult["principal-max-strain"]["location"][2]
+					},
+					...maximumPS[2]
+				];
+				break;
+			case "parietal":
+				maximumPS[1] = [
+					{
+						x: insult["principal-max-strain"]["location"][0],
+						y: insult["principal-max-strain"]["location"][1],
+						z: insult["principal-max-strain"]["location"][2]
+					},
+					...maximumPS[1]
+				];
+				break;
+			case "frontal":
+				maximumPS[0] = [
+					{
+						x: insult["principal-max-strain"]["location"][0],
+						y: insult["principal-max-strain"]["location"][1],
+						z: insult["principal-max-strain"]["location"][2]
+					},
+					...maximumPS[0]
 				];
 				break;
 			default:
@@ -56,13 +104,73 @@ insults.forEach((insult) => {
 	if (insult["principal-min-strain"]) {
 		switch (insult["principal-min-strain"]["brain-region"]) {
 			case "msc":
-				middle_part_of_the_brain_min_json = [
+				minimumPS[6] = [
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
 						z: insult["principal-min-strain"]["location"][2]
 					},
-					...middle_part_of_the_brain_min_json
+					...minimumPS[6]
+				];
+				break;
+			case "stem":
+				minimumPS[5] = [
+					{
+						x: insult["principal-min-strain"]["location"][0],
+						y: insult["principal-min-strain"]["location"][1],
+						z: insult["principal-min-strain"]["location"][2]
+					},
+					...minimumPS[5]
+				];
+				break;
+			case "cerebellum":
+				minimumPS[4] = [
+					{
+						x: insult["principal-min-strain"]["location"][0],
+						y: insult["principal-min-strain"]["location"][1],
+						z: insult["principal-min-strain"]["location"][2]
+					},
+					...minimumPS[4]
+				];
+				break;
+			case "temporal":
+				minimumPS[3] = [
+					{
+						x: insult["principal-min-strain"]["location"][0],
+						y: insult["principal-min-strain"]["location"][1],
+						z: insult["principal-min-strain"]["location"][2]
+					},
+					...minimumPS[3]
+				];
+				break;
+			case "occipital":
+				minimumPS[2] = [
+					{
+						x: insult["principal-min-strain"]["location"][0],
+						y: insult["principal-min-strain"]["location"][1],
+						z: insult["principal-min-strain"]["location"][2]
+					},
+					...minimumPS[2]
+				];
+				break;
+			case "parietal":
+				minimumPS[1] = [
+					{
+						x: insult["principal-min-strain"]["location"][0],
+						y: insult["principal-min-strain"]["location"][1],
+						z: insult["principal-min-strain"]["location"][2]
+					},
+					...minimumPS[1]
+				];
+				break;
+			case "frontal":
+				minimumPS[0] = [
+					{
+						x: insult["principal-min-strain"]["location"][0],
+						y: insult["principal-min-strain"]["location"][1],
+						z: insult["principal-min-strain"]["location"][2]
+					},
+					...minimumPS[0]
 				];
 				break;
 			default:
@@ -70,16 +178,13 @@ insults.forEach((insult) => {
 		}
 	}
 
+
 });
 
+
 let all_spheres_json = [];
-all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
-all_spheres_json = all_spheres_json.concat(occipital_lobe_json);
-all_spheres_json = all_spheres_json.concat(temporal_lobe_json);
-all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
-all_spheres_json = all_spheres_json.concat(pariental_lobe_json);
-all_spheres_json = all_spheres_json.concat(middle_part_of_the_brain_json);
-all_spheres_json = all_spheres_json.concat(stem_json);
+
+all_spheres_json = [...maximumPS];
 
 
 let camera, scene, renderer, canvas, raycaster, root, sphereContainer, labelSize = 10, isClicked = false;
@@ -90,8 +195,6 @@ const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
 const highlightColor = 0xadab24;
 const highlightEmissiveIntensity = 0.6;
-let isMax = null
-
 const amount = 2;
 const space = 10;
 const near = 0.1;
@@ -220,6 +323,7 @@ class DashPage extends React.Component {
 		window.addEventListener("touchend", this.onTouchEnd, false);
 
 		this.startAnimationLoop();
+
 	}
 
 	componentDidUpdate() {
@@ -411,43 +515,43 @@ class DashPage extends React.Component {
 		// Add new spheres
 		switch (type) {
 			case "Frontal_Lobe_node_Frontal_Lobe":
-				frontal_lobe_json.forEach(function (object, index) {
+				all_spheres_json[0].forEach(function (object, index) {
 					var i = parseInt(index + 1);
 					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 				});
 				break;
 			case "node_Mesh_16":
-				occipital_lobe_json.forEach(function (object, index) {
+				all_spheres_json[2].forEach(function (object, index) {
 					var i = parseInt(index + 1);
 					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 				});
 				break;
 			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
-				pariental_lobe_json.forEach(function (object, index) {
+				all_spheres_json[1].forEach(function (object, index) {
 					var i = parseInt(index + 1);
 					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 				});
 				break;
 			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
-				stem_json.forEach(function (object, index) {
+				all_spheres_json[5].forEach(function (object, index) {
 					var i = parseInt(index + 1);
 					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 				});
 				break;
 			case "Temporal_Lobe_node_Temporal_Lobe":
-				temporal_lobe_json.forEach(function (object, index) {
+				all_spheres_json[3].forEach(function (object, index) {
 					var i = parseInt(index + 1);
 					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 				});
 				break;
 			case "Cerebellum_node_Cerebellum":
-				cerebellum_lobe_json.forEach(function (object, index) {
+				all_spheres_json[4].forEach(function (object, index) {
 					var i = parseInt(index + 1);
 					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 				});
 				break;
 			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
-				middle_part_of_the_brain_json.forEach(function (object, index) {
+				all_spheres_json[6].forEach(function (object, index) {
 					var i = parseInt(index + 1);
 					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 				});
@@ -459,10 +563,15 @@ class DashPage extends React.Component {
 
 	showAllSpheres = () => {
 		const me = this;
-		all_spheres_json.forEach(function (object, index) {
-			var i = parseInt(index + 1);
-			me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+		all_spheres_json.forEach((ele) => {
+			ele.forEach(function (object, index) {
+				var i = parseInt(index + 1);
+				me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+			})
 		});
+
+
+
 	};
 
 	generateSphere = (x, y, z, sphereName) => {
@@ -747,6 +856,7 @@ class DashPage extends React.Component {
 
 	pick = (normalizedPosition, pickingScene, pickingCamera) => {
 		// cast a ray through the frustum
+		if (isClicked) return;
 		raycaster.setFromCamera(normalizedPosition, pickingCamera);
 		// get the list of objects the ray intersected
 		const intersectedObjects = raycaster.intersectObjects(
@@ -760,7 +870,6 @@ class DashPage extends React.Component {
 
 			if (prevPickedObject && prevPickedObject.name === pickedObject.name)
 				return;
-
 			this.unHighlightPickedObject();
 			prevPickedObject = pickedObject;
 			this.highlightPickedObject();
@@ -892,15 +1001,12 @@ class DashPage extends React.Component {
 
 	downImage = () => {
 
-		let dataURL = canvas.toDataURL("image/png");
-		console.log("canvas", canvas)
+
 		var c = document.createElement('canvas');
 		c.width = 400;
 		c.height = 300;
-
 		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 400, 300);
 		let dc = c.toDataURL();
-
 		var link = document.createElement("a");
 		link.download = "demo.png";
 		link.href = c.toDataURL();
@@ -913,7 +1019,6 @@ class DashPage extends React.Component {
 	lightSetup = () => {
 		const hemLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 1);
 		scene.add(hemLight);
-
 		const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 		dirLight.position.set(10, 20, 10);
 		scene.add(dirLight);
@@ -948,6 +1053,7 @@ class DashPage extends React.Component {
 		const gltfLoader = new GLTFLoader();
 		gltfLoader.load(
 			"https://assets.codepen.io/3194077/cloud-viz-brain-Aug-15-2020-V1-Optimized.glb",
+
 			(gltf) => {
 				root = gltf.scene;
 
@@ -992,9 +1098,7 @@ class DashPage extends React.Component {
 				brainModel.rotation.x = Math.PI / 2;
 				brainModel.rotation.y = Math.PI;
 				brainModel.rotation.z = Math.PI;
-
 				scene.add(brainModel);
-
 				this.setState({
 					isLoading: false
 				});
@@ -1052,21 +1156,6 @@ class DashPage extends React.Component {
 		pickPosition.x = -100000;
 		pickPosition.y = -100000;
 	};
-	// show maximum principal 
-	showMaxPS = (type) => {
-		isMax = true;
-		this.removeSpheres()
-
-		this.createLobeSheres(type);
-
-	}
-	showMinPS = (type) => {
-		isMax = false;
-		console.log(isMax)
-		this.createLobeSheres(type);
-
-	}
-
 
 	// Add cursor or not
 	cursorAdd = (flag) => {
@@ -1133,6 +1222,7 @@ class DashPage extends React.Component {
 	}
 
 	onMouseHover = (event, type) => {
+		if (isClicked) return;
 		if (event !== "") event.preventDefault();
 
 		this.setState({
@@ -1228,10 +1318,13 @@ class DashPage extends React.Component {
 	strainMetric = (e, v) => {
 		switch (v.value) {
 			case "max-ps":
-				this.showMaxPS("Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex");
+
+				all_spheres_json = [];
+				all_spheres_json = [...maximumPS]
 				break;
 			case "min-ps":
-				this.showMinPS("Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex")
+				all_spheres_json = [];
+				all_spheres_json = [...minimumPS];
 				break;
 		}
 	}
@@ -1249,13 +1342,13 @@ class DashPage extends React.Component {
 					hoverBackgroundColor: "rgba(255,255,102)",
 					hoverBorderColor: "rgba(255,255,102)",
 					data: [
-						parseFloat(frontal_lobe_json.length),
-						parseFloat(pariental_lobe_json.length),
-						parseFloat(occipital_lobe_json.length),
-						parseFloat(temporal_lobe_json.length),
-						parseFloat(cerebellum_lobe_json.length),
-						parseFloat(stem_json.length),
-						parseFloat(middle_part_of_the_brain_json.length)
+						parseFloat(all_spheres_json[0].length),
+						parseFloat(all_spheres_json[1].length),
+						parseFloat(all_spheres_json[2].length),
+						parseFloat(all_spheres_json[3].length),
+						parseFloat(all_spheres_json[4].length),
+						parseFloat(all_spheres_json[5].length),
+						parseFloat(all_spheres_json[6].length)
 					]
 				}
 			]
@@ -1277,24 +1370,24 @@ class DashPage extends React.Component {
 					formatter: function (value, context) {
 						switch (context.dataIndex) {
 							case 0:
-								return frontal_lobe_json.length;
+								return all_spheres_json[0].length;
 								break;
 							case 1:
-								return pariental_lobe_json.length;
+								return all_spheres_json[1].length;
 								break;
 							case 2:
-								return occipital_lobe_json.length;
+								return all_spheres_json[2].length;
 								break;
 							case 3:
-								return temporal_lobe_json.length;
+								return all_spheres_json[3].length;
 								break;
 							case 4:
-								return cerebellum_lobe_json.length;
+								return all_spheres_json[4].length;
 								break;
 							case 5:
-								return stem_json.length;
+								return all_spheres_json[5].length;
 							case 6:
-								return middle_part_of_the_brain_json.length;
+								return all_spheres_json[6].length;
 								break;
 							default:
 								break;
