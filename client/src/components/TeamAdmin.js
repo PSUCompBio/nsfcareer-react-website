@@ -73,7 +73,7 @@ class TeamnAdmin extends React.Component {
             mergeData: '',
             isMerge: false,
             user_cognito_id: '',
-            brand: this.props.match.params.brand,
+            brand: this.props.match.params.brand && this.props.match.params.brand != 'undefined' ? this.props.match.params.brand : '',
             organization: this.props.match.params.org
         };
     }

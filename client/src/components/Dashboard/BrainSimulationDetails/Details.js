@@ -50,7 +50,8 @@ import {
   getCumulativeAccelerationTimeRecords,
   getSimulationDetail,
   mergeVideos,
-  trimVideo
+  trimVideo,
+  resetToOriginal
 } from '../../../apis';
 import axios from 'axios';
 
@@ -134,7 +135,11 @@ class Details extends React.Component {
       isRepeatVideo: false,
       value: { min: 0, max: 100 },
       SidelineVidoeCT: '',
-      simulationStatus: 'pending'
+      simulationStatus: 'pending',
+      label_resetVideo: 'Reset',
+      label_TrimVideo: 'Trim',
+
+      isTriming: false,
     };
   }
  
@@ -181,7 +186,10 @@ class Details extends React.Component {
     .then(res => {
       if(res.data.message == 'success'){
         this.setState({
-          label_remove_video: 'Removed'
+          label_remove_video: 'Removed',
+          left_lock_time: 0,
+          right_lock_time: 0,
+          trim_video_url: '',
         })
         var the = this;
         setTimeout(function(){
@@ -223,7 +231,7 @@ class Details extends React.Component {
       if(res.data.message == 'success'){
         the.setState({uploadPercentage:100});
         setTimeout(function(){
-          the.setState({impact_video_url: res.data.impact_video_url});
+          the.setState({impact_video_url: res.data.impact_video_url, left_lock_time: 0,right_lock_time: 0, trim_video_url: ''});
         },2000);
         setTimeout(()=>{the.vidocontrol3()},4000);
         setTimeout(()=>{the.vidocontrol()},2000);
@@ -703,20 +711,69 @@ class Details extends React.Component {
   }
 
   trimVideo=()=>{
-    console.log('triming',left_lock_time,right_lock_time);
+    this.setState({isTriming: true})
     trimVideo({image_id:this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time})
     .then(response=>{
       console.log('response trim video ---\n',response);
       if(response.data.message == "success"){
         this.setState({
           trim_video_url: response.data.trim_video_path,
+          left_lock_time: 0,
+          right_lock_time: 0,
+          isTriming: false,
+          label_TrimVideo:'Success'
+        })
+      }else{
+        this.setState({
+          isTriming: false,
+          label_TrimVideo: 'Failed'
         })
       }
     }).catch(err=>{
       console.log('triming err -------\n',err)
+      this.setState({
+        label_TrimVideo: 'Failed',
+        isTriming: false
+      })
+
     })
+    setTimeout(()=>{
+      this.setState({
+        label_TrimVideo: 'Trim',
+      })
+    },2000)
 
   }
+
+  /*
+  * Reset trim video to original...
+  */
+  resetToOriginal=()=>{
+    this.setState({
+      label_resetVideo: 'Reseting...'
+    })
+    resetToOriginal({image_id:this.state.image_id})
+    .then(res=>{
+      this.setState({
+        label_resetVideo: 'Success',
+        trim_video_url: '',
+        left_lock_time: 0,
+        right_lock_time: 0,
+      })
+      console.log('res',res);
+    }).catch(err=> {
+      console.log('err',err)
+      this.setState({
+        label_resetVideo: 'Failed',
+      })
+    })
+    setTimeout(()=>{
+      this.setState({
+        label_resetVideo: 'Trim',
+      })
+    },2000)
+  } 
+
 
   //Setting video lockTime
   setVideoTime_2 =(time)=>{
@@ -778,7 +835,7 @@ class Details extends React.Component {
   handleExportVideo =()=>{
     console.log('wer')
     this.setState({exporting: true})
-    mergeVideos({movie_link: this.state.movie_link, impact_video_url: this.state.impact_video_url})
+    mergeVideos({movie_link: this.state.movie_link, impact_video_url: this.state.trim_video_url ? this.state.trim_video_url :  this.state.impact_video_url})
     .then(res=>{
       if(res.data.message === 'success'){
         var a = document.createElement('a');
@@ -975,6 +1032,8 @@ class Details extends React.Component {
                                 <label for="uploadFile"><img src={upload} />  Replace</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
+                                <label  onClick={this.trimVideo} onClick={this.trimVideo} style={this.state.left_lock_time && this.state.right_lock_time ? {'background': '#4472c4'} : {'background': '#4472c4a3','pointer-events': 'none'}} ><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
+                                <label onClick={this.resetToOriginal} ><img src={reset_icon} />  {this.state.label_resetVideo}</label>
                               </React.Fragment>
                             }
                           </div>
@@ -1005,9 +1064,12 @@ class Details extends React.Component {
                             </Dropzone>)
                             : 
                               <div className="player">
-                               
+                                {this.state.trim_video_url ?
+                                  <video src={this.state.trim_video_url} style={{'width':'100%','height':'284px'}} className="player__video viewer" controls loop={this.state.isRepeatVideo ? true : false}></video>
+                                
+                                :
                                   <video src={this.state.impact_video_url} style={{'width':'100%','height':'284px'}} className="player__video viewer" controls loop={this.state.isRepeatVideo ? true : false}></video>
-                              
+                                }
                                 {this.state.SidelineVidoeCT && <div id="custom-message">{this.state.SidelineVidoeCT}</div>}
                               </div>
                              
@@ -1019,9 +1081,9 @@ class Details extends React.Component {
                                   <React.Fragment>
                                     <label for="uploadFile"><img src={upload} />  Replace</label>
                                     <input type="file" id="uploadFile" onChange={this.uploadFile} />
-                                     <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                                    {/*<label  onClick={this.trimVideo}><img src={trim_icon} />  Trim</label>
-                                                                        <label ><img src={reset_icon} />  Reset</label>*/}
+                                    <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
+                                    <label  onClick={this.trimVideo} style={this.state.left_lock_time && this.state.right_lock_time ? {'background': '#4472c4'} : {'background': '#4472c4a3','pointer-events': 'none'}}> {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} />  {this.state.label_TrimVideo}</>} </label>
+                                    <label onClick={this.resetToOriginal}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
 
                                   </React.Fragment>
                                 }

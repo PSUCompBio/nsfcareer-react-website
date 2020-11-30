@@ -230,7 +230,7 @@ class UserDashboarForAdmin extends React.Component {
         </div>
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
-        {this.state.jsonData &&  
+        {this.state.jsonData &&  this.state.user && 
           <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
         }
           <p
@@ -411,7 +411,7 @@ class UserDashboarForAdmin extends React.Component {
         .then((value) => {
           if (value.data.message === 'success') {
 
-            /*
+            /**
             * Getting user details...
             */
             getUserDetails({ user_cognito_id: user_cognito_id })

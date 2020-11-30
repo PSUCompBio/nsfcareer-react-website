@@ -206,7 +206,8 @@ const {
         getBrandDataByorg,
         deleteSensorData,
         deleteSimulation_imagesData,
-        InsertTrimVideoKey
+        InsertTrimVideoKey,
+        updateTrimVideoKey
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -1303,7 +1304,7 @@ function ImpactVideoUrl(image_details) {
 function trimVideoUrl(image_details) {
   return new Promise((resolve, reject) => {
     const { trim_video_path } = image_details;
-    console.log('trim_video_path',trim_video_path)
+    console.log('trim_video_path------------------------\n',trim_video_path)
     if(trim_video_path) {
       var params = {
           Bucket: BUCKET_NAME,
@@ -1558,15 +1559,14 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         return trimVideoUrl(imageData);
         
     }) 
-    .then(trim_video_url => {
-        if(trim_video_url){
-            trim_video_url =   trim_video_url;
-        }
+    .then(trim_video => {
+        console.log('trim_video_url ------------------------\n',trim_video)
+        trim_video_url =   trim_video;
         return ImpactVideoUrl(imageData);
         
     }) 
     .then(impact_video_url => {
-        console.log('movie_link_url',movie_link_url)
+        console.log('trim_video_url -------------\n',trim_video_url)
         res.send({
             message : "success",
             movie_link : movie_link_url,
@@ -4560,43 +4560,44 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
         else {
             userData = data.Item;
-            if (userData.account_id) {
-                req.user_cognito_id = userData.account_id;
-            }
-            
-            getUploadedImageFileList(req.user_cognito_id, function (err, list) {
-                if (err) {
-                    console.log(err);
-
+            if(userData){
+                if (userData && userData.account_id) {
+                    req.user_cognito_id = userData.account_id;
                 }
-                else {
-                    // Fetches the latest profile pic
-                    var latestProfilePic = list.reduce(function (oldest, profile_pic) {
-                        return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
-                    }, {});
-                    // Now get the signed URL link  from S3
-                    // if no S3 link is found then send empty data link
-                    // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-                    // No file is uploaded
-                    var key
-                    if (list.length != 0) {
-                        key = latestProfilePic.Key;
+                
+                getUploadedImageFileList(req.user_cognito_id, function (err, list) {
+                    if (err) {
+                        console.log(err);
+
                     }
                     else {
-                        key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
-                    }
-
-                    getFileSignedUrl(key, function (err, url) {
-                        if (err) {
-                            console.log(err);
-                            userData["profile_picture_url"] = "";
-                            userData["avatar_url"] = "";
-                            res.send({
-                                message: "success",
-                                data: userData
-                            })
+                        // Fetches the latest profile pic
+                        var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                            return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                        }, {});
+                        // Now get the signed URL link  from S3
+                        // if no S3 link is found then send empty data link
+                        // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                        // No file is uploaded
+                        var key
+                        if (list.length != 0) {
+                            key = latestProfilePic.Key;
                         }
                         else {
+                            key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
+                        }
+
+                        getFileSignedUrl(key, function (err, url) {
+                            if (err) {
+                                console.log(err);
+                                userData["profile_picture_url"] = "";
+                                userData["avatar_url"] = "";
+                                res.send({
+                                    message: "success",
+                                    data: userData
+                                })
+                            }
+                            else {
                             if (list.length == 0) {
                                 userData["profile_picture_url"] = "";
                             }
@@ -4738,11 +4739,16 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                 })
                             }
                         });
-
-
                     }
                 })
+            }else{
+                res.send({
+                    message: "failure",
+                    data: {}
+                })
             }
+
+        }
         })
     });
 
@@ -5302,11 +5308,78 @@ app.post(`${apiPrefix}removeVideo`, (req, res)=> {
                 err: 'Video not found.'
             });
         }
+
+        /**
+        * Removing trim video form s3 if exists...
+        */
+        if (imageData.trim_video_path && imageData.trim_video_path != 'null') {
+            removes3Object(imageData.trim_video_path)
+            .then(response =>{
+                console.log('trim video removed ===============')
+            })
+        }
+
     }).catch(err =>{
         console.log('err',err)
     })
 
 })
+
+app.post(`${apiPrefix}resetToOriginal`, (req, res)=> {
+    console.log('req',req.body)
+    var image_id = req.body.image_id;
+    var imageData = '';
+    getSimulationImageRecord(image_id)
+    .then(image_data =>{
+        console.log('image_data',image_data);
+        imageData = image_data;
+       
+        if (imageData.trim_video_path && imageData.trim_video_path != 'null') {
+            removes3Object(imageData.trim_video_path)
+            .then(response =>{
+                // console.log('res',res);
+                updateTrimVideoKey(image_id,false)
+                .then(response => {
+                    res.send({
+                        message: "success",
+                        data: res
+                    });
+                }) .catch(err =>{
+                    console.log('errdatabase',err)
+                    res.send({
+                        message: "success",
+                        data: err
+                    });
+                })
+            })
+            .catch(err =>{
+                console.log('errremoves3Object',err)
+                res.send({
+                    message: "failure",
+                    err: 'Somthing went wrong! Please try again.'
+                });
+            })
+        }else{
+            updateTrimVideoKey(image_id,false)
+            .then(response => {
+                res.send({
+                    message: "success",
+                    data: res
+                });
+            }) .catch(err =>{
+                console.log('errdatabase',err)
+                res.send({
+                    message: "success",
+                    data: err
+                });
+            })
+        }
+    }).catch(err =>{
+        console.log('err',err)
+    })
+
+})
+
 // Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
         console.log('file',req.body);
@@ -5319,6 +5392,17 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
         };
         getSimulationImageRecord(image_id)
         .then(data => {
+
+            /**
+            * Removing trim video form s3 if exists...
+            */
+            if (data.trim_video_path && data.trim_video_path != 'null') {
+                removes3Object(imageData.trim_video_path)
+                .then(response =>{
+                    console.log('trim video removed ===============')
+                })
+            }
+
             // File Extensions
             var file_extension = req.file.originalname.split(".");
             file_extension = file_extension[file_extension.length - 1];
@@ -5970,9 +6054,14 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                 list.forEach(file => {
                     fs.unlinkSync(file)                    
                 });
+                var bufs = [];
                 var readableStream = fs.createReadStream(outputFilePath);
                 readableStream.on('data', function(chunk) {
-                
+                    bufs.push(chunk); 
+                });
+                readableStream.on('end', function(){
+                    var buf = Buffer.concat(bufs);
+                    console.log('stream end', buf)
                     var uploadParams = {
                         Bucket: config.usersbucket,
                         Key: '', // pass key
@@ -5980,6 +6069,16 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                     };
                     getSimulationImageRecord(image_id)
                     .then(data => {
+
+                        /*
+                        * Remove trim video from s3 if already exists before trim...
+                        */
+                        removes3Object(data.trim_video_path)
+                        .then(response =>{
+                            console.log('Trim video removed successfully =================================')
+                        })
+                        /*--end--*/
+
                         // File Extensions
                         let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
                         var d = new Date();
@@ -5991,7 +6090,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                         // Setting Attributes for file upload on S3
                         uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
                         // console.log('req.file.buffer', req.file.buffer)
-                        uploadParams.Body = chunk;
+                        uploadParams.Body = buf;
                         
                         s3.upload(uploadParams, (err, data) => {
                             if (err) {
@@ -6070,8 +6169,8 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                             data: err
                         });
                     })
-            
-                });
+
+                })
             }
             
         })
@@ -6610,7 +6709,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                             MPS_95[region].push(summary_data);
                                         })
                                     }
-                                }*/
+                                }
 
                                 // mps 95 data end
 
@@ -6835,6 +6934,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         })
                                     }
                                 }
+                                */
                             })
                         }
                     }

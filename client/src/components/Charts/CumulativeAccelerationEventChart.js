@@ -4,6 +4,9 @@ import { Link, Redirect, withRouter } from 'react-router-dom';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import Report from '../ReportContent/Report0';
 import ExportPlayerReport from './ExportPlayerReport';
+import {
+  getUserDetails,
+} from '../../apis';
 
 const options = {
     scales: {
@@ -47,12 +50,49 @@ class CumulativeAccelerationEventChart extends React.Component {
             },
             is_selfie_image_uploaded: props.is_selfie_image_uploaded,
             imageUrl: props.imageUrl,
-            isReport: false
+            isReport: false,
+            player_name:this.props.match.params.player_name ? this.props.match.params.player_name.split('?')[0] : '',
+            account_id: '',
+            simulation_id: '',
+            isLoading: true
+
         };
+        this.getPlayerUserDetails();
+    }
+    getPlayerUserDetails=()=>{
+        let brand = '';
+        const params = new URLSearchParams(window.location.search)
+        if(params.get('brand')){
+            brand = params.get('brand');
+        }
+        let congito_id = this.state.player_name+'-'+brand
+        console.log('user cognito id --------------\n',congito_id )
+        getUserDetails({ user_cognito_id: congito_id })
+        .then(response => {
+          console.log('user details =================================\n',response)
+
+          if(response.data.message == "success"){
+            this.setState({
+                account_id: response.data.data.account_id,
+                simulation_id: response.data.data.sensor_id_number,
+                isLoading: false
+            })
+          }else{
+            this.setState({
+                isLoading: false
+            })
+          }
+        }).catch(err=>{
+            console.log('err ',err)
+            this.setState({
+                isLoading: false
+            })
+        })
     }
 
     render() {
         console.log('this.state.data',this.props.data)
+        
         var fileName = '';
         if(this.props.data.player_id && this.props.data.player_id.length > 0 && this.props.user.length > 0){
        
@@ -112,18 +152,34 @@ class CumulativeAccelerationEventChart extends React.Component {
                     className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1 player-dashboard-user-datials-header"
                    >
                     <div className="row">
-                        <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                            <p
-                                ref="h1"
-                                className="player-dashboard-sub-head"
-                            >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : ''}</p>
-                            <p
-                                ref="h1"
-                                className="player-dashboard-sub-head"
-                            >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
-                            Number of Simulations : {this.props.data.simulationCount ? this.props.data.simulationCount : ''}
-                            </p>
-                        </div>
+                       
+                            {this.state.isLoading ? 
+                                <span style={{'width': '100%','text-align':'center','padding':'54px'}}>
+                                    <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>
+                                </span>
+                                :
+                                <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                    <>
+                                        <p
+                                            ref="h1"
+                                            className="player-dashboard-sub-head"
+                                        >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : ''}</p>
+                                        <p ref="h1" className="player-dashboard-sub-head">
+                                            Account ID: {this.state.account_id}
+                                        </p>
+                                        <p ref="h1" className="player-dashboard-sub-head">
+                                            Simulation ID: {this.state.simulation_id}
+                                        </p>
+                                        <p
+                                            ref="h1"
+                                            className="player-dashboard-sub-head"
+                                        >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
+                                        Number of Simulations : {this.props.data.simulationCount ? this.props.data.simulationCount : ''}
+                                        </p>
+                                    </>
+                                </div>
+                            }
+                        
                         {
                             !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
                                 <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">

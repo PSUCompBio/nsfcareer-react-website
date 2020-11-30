@@ -312,6 +312,18 @@ export const removeVideo = (request) =>{
   })
 }
 
+export const resetToOriginal = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/resetToOriginal`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 
 export const getUserDetails = (request) =>{
   return new Promise((resolve,reject)=>{
