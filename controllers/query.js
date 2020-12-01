@@ -332,7 +332,7 @@ function getCumulativeAccelerationData(obj) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (obj.brand) {
+        if (obj.brand && obj.brand != 'null') {
             params = {
                 TableName: "sensor_data",
                 KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
@@ -402,7 +402,7 @@ function getCumulativeAccelerationRecords(obj) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (obj.brand) {
+        if (obj.brand && obj.brand != 'null') {
             params = {
                 TableName: "sensor_data",
                 KeyConditionExpression:  "team = :team and player_id= :player_id",
@@ -450,7 +450,7 @@ function getTeamDataWithPlayerRecords(obj) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (obj.sensor) {
+        if (obj.sensor && obj.sensor != 'null') {
             params = {
                 TableName: "sensor_data",
                 KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
@@ -508,7 +508,7 @@ function getTeamDataWithPlayerRecords_3(player_id, team, sensor, organization) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (sensor) {
+        if (sensor && sensor != 'null') {
             params = {
                 TableName: "sensor_data",
                 KeyConditionExpression:  "team = :team and begins_with(player_id,:player_id)",
@@ -567,7 +567,7 @@ function getTeamData(obj) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (obj.brand) {
+        if (obj.brand && obj.brand != 'null') {
             params = {
                 TableName: "sensor_data",
                 KeyConditionExpression:  "team = :team",
@@ -1918,31 +1918,32 @@ function updateTrimVideoKey(video_id,trim_video_path) {
 }
 
 
-function storeSensorData(sensor_data_array){
-    return new Promise((resolve, reject) =>{
-        var counter = 0 ;
-        if(sensor_data_array.length == 0 ){
-            resolve(true);
-        }
-        for(var i = 0 ; i < sensor_data_array.length ; i++){
-            // TODO STORE SENSOR DATA
-            let param = {
-                TableName: "sensor_data",
-                Item: sensor_data_array[i]
-            };
-            docClient.put(param, function (err, data) {
-                counter++;
-                if (err) {
-                    console.log(err);
-                    reject(err)
-                }
-                if(counter == sensor_data_array.length){
-                    resolve(true);
-                }
-            })
-        }
-    })
-}
+// function storeSensorData(sensor_data_array){
+//     return new Promise((resolve, reject) =>{
+//         var counter = 0 ;
+//         if(sensor_data_array.length == 0 ){
+//             resolve(true);
+//         }
+//         for(var i = 0 ; i < sensor_data_array.length ; i++){
+//             // TODO STORE SENSOR DATA
+//             let param = {
+//                 TableName: "sensor_data",
+//                 Item: sensor_data_array[i]
+//             };
+//             docClient.put(param, function (err, data) {
+//                 counter++;
+//                 if (err) {
+//                     console.log(err);
+//                     reject(err)
+//                 }
+//                 if(counter == sensor_data_array.length){
+//                     resolve(true);
+//                 }
+//             })
+//         }
+//     })
+// }
+
 // Function to fetch all the items of the table 'numbers' from DynamoDB
 const fetchNumbers = () => {
     return new Promise(function (resolve, reject) {

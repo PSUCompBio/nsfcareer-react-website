@@ -6208,9 +6208,9 @@ app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
                     getPlayerSimulationFile(record)
                         .then(simulation => {
                             k++;
-                            if (simulation.status === 'pending') {
+                            if (simulation && simulation.status === 'pending') {
                                 pending++;
-                            } else if (simulation.status === 'completed') {
+                            } else if (simulation && simulation.status === 'completed') {
                                 completed++;
                             } else {
                                 failed++;
