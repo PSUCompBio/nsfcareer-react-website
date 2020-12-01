@@ -690,7 +690,7 @@ class AdminDashboard extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/'+organization+'/'+brand,
+                            pathname: brand && brand != undefined ? '/TeamAdmin/'+organization+'/' + brand : '/TeamAdmin/'+organization,
                             state: {
                                 brand: {
                                     brand: brand,
@@ -1038,7 +1038,7 @@ class AdminDashboard extends React.Component {
 
                     return <tr className={cls}  key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/'+organization.organization+'/'+organization.sensor,
+                            pathname: organization.sensor && organization.sensor != undefined ? '/TeamAdmin/'+organization.organization+'/'+organization.sensor : '/TeamAdmin/'+organization.organization,
                             state: {
                                 brand: {
                                     brand: organization.sensor,

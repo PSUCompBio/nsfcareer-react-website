@@ -547,9 +547,21 @@ class CommanderTeamView extends React.Component {
                                 }
                             }} >{this.state.brand + ' > '}</Link>
                         : null}
-                         {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
+                         {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
                                 <Link style={{ fontWeight: "400" }} to={{
                                 pathname: '/TeamAdmin/'+this.state.organization+'/'+this.state.brand,
+                                state: {
+                                    brand: {
+                                        brand: this.state.brand,
+                                        organization: this.state.organization,
+                                        user_cognito_id: this.state.user_cognito_id
+                                    }
+                                }
+                            }}>{this.state.organization + ' > ' }</Link>
+                        : null}
+                        {this.state.userDetails.level === 300 ?
+                                <Link style={{ fontWeight: "400" }} to={{
+                                pathname: '/TeamAdmin/'+this.state.organization,
                                 state: {
                                     brand: {
                                         brand: this.state.brand,

@@ -112,7 +112,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                         <div className="col-md-12">
                             <p ref="h1" className="penstate">
                                 <Link style={{ fontWeight: "400" }} to={{
-                                    pathname: "/TeamAdmin/"+this.props.data.organization+"/"+this.props.data.brand,
+                                    pathname: this.props.data.brand && this.props.data.brand != 'null' ? "/TeamAdmin/"+this.props.data.organization+"/"+this.props.data.brand : "/TeamAdmin/"+this.props.data.organization,
                                     state: {
                                         brand: {
                                             brand: this.props.data.brand,
@@ -163,7 +163,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         <p
                                             ref="h1"
                                             className="player-dashboard-sub-head"
-                                        >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : ''}</p>
+                                        >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : 'Hidden for IRB purposes'}</p>
                                         <p ref="h1" className="player-dashboard-sub-head">
                                             Account ID: {this.state.account_id}
                                         </p>
