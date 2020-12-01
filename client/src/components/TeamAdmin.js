@@ -32,6 +32,8 @@ import pencil from './icons/pencil.png';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
 import plus from './icons/plus.png'
+import team_state_icon from './team_state_icon.svg'
+
 import { 
     UncontrolledAlert
 } from 'reactstrap';
@@ -74,7 +76,8 @@ class TeamnAdmin extends React.Component {
             isMerge: false,
             user_cognito_id: '',
             brand: this.props.match.params.brand && this.props.match.params.brand != 'undefined' ? this.props.match.params.brand : '',
-            organization: this.props.match.params.org
+            organization: this.props.match.params.org,
+            team_name: []
         };
     }
     toggleTab = (value) => {
@@ -460,6 +463,8 @@ class TeamnAdmin extends React.Component {
 
     }
     smallCards = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key,organization_id) => {
+        
+       
         // console.log(reference);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status == 'completed') {
@@ -696,10 +701,11 @@ class TeamnAdmin extends React.Component {
                                         </div>
                                     </h1>
                                 </div>
-                                 <div className="col-md-12 Admintitle" >
-                                    <div className="col-md-2 org-edit-button" >
+                                 <div className="col-md-12 Admintitle team-edit-button" >
+                                    <div className="col-md-12 org-edit-button " >
                                         <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button>
-                                       
+                                        <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                        
                                     </div>
                                 </div>
                                 <div
@@ -873,6 +879,15 @@ class TeamnAdmin extends React.Component {
         return 'military-dark-mode';
     };
 
+    /**
+    /*  Handle team state page...
+    */
+    teamStats = () => {
+        this.setState({
+            teamStats: true
+        })
+    }
+
     render() {
 
         if (!this.props.match.params.org) {
@@ -892,6 +907,26 @@ class TeamnAdmin extends React.Component {
         if (this.state.isFetching) {
             return <Spinner />;
         }
+        if (this.state.teamStats) {
+            var team_name = [];
+            for (let i = 0; i < this.state.totalTeam; i++) {
+                team_name.push(this.state.sensorOrgTeamList[i].team_name);
+            }
+            return <Redirect push to={{
+                pathname: '/TeamStats',
+                state: {
+                    user_cognito_id: this.state.user_cognito_id,
+                    for: 'Teams',
+                    team: {
+                        brand: this.state.brand,
+                        team_name: team_name,
+                        organization: this.state.organization,
+                        staff: []
+                    }
+                }
+            }} />
+        }
+
 
         return (
             <React.Fragment>

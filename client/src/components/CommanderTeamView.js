@@ -1145,13 +1145,16 @@ class CommanderTeamView extends React.Component {
         }
 
         if (this.state.teamStats) {
+            var team_name = [];
+            team_name[0] = this.state.team;
             return <Redirect push to={{
                 pathname: '/TeamStats',
                 state: {
                     user_cognito_id: this.state.user_cognito_id,
+                    for: 'Players',
                     team: {
                         brand: this.state.brand,
-                        team_name: this.state.team,
+                        team_name: team_name,
                         organization: this.state.organization,
                         staff: []
                     }

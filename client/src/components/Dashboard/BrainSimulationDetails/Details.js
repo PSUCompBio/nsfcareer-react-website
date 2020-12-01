@@ -525,7 +525,9 @@ class Details extends React.Component {
     }
     //controls ....
     
-    video.addEventListener('loadeddata', controls.Onload);
+    video.addEventListener('loadeddata', ()=> {setTimeout(()=>{
+      controls.Onload();
+    },2000)} );
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
     lockButton.addEventListener('click', controls.lockVideo);
@@ -1032,7 +1034,7 @@ class Details extends React.Component {
                                 <label for="uploadFile"><img src={upload} />  Replace</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                                <label  onClick={this.trimVideo} onClick={this.trimVideo} style={this.state.left_lock_time && this.state.right_lock_time ? {'background': '#4472c4'} : {'background': '#4472c4a3','pointer-events': 'none'}} ><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
+                                <label  onClick={this.trimVideo} onClick={this.trimVideo} ><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
                                 <label onClick={this.resetToOriginal} ><img src={reset_icon} />  {this.state.label_resetVideo}</label>
                               </React.Fragment>
                             }
@@ -1082,7 +1084,7 @@ class Details extends React.Component {
                                     <label for="uploadFile"><img src={upload} />  Replace</label>
                                     <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                     <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                                    <label  onClick={this.trimVideo} style={this.state.left_lock_time && this.state.right_lock_time ? {'background': '#4472c4'} : {'background': '#4472c4a3','pointer-events': 'none'}}> {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} />  {this.state.label_TrimVideo}</>} </label>
+                                    <label  onClick={this.trimVideo} > {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} />  {this.state.label_TrimVideo}</>} </label>
                                     <label onClick={this.resetToOriginal}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
 
                                   </React.Fragment>

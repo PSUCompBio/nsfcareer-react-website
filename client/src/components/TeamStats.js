@@ -36,47 +36,51 @@ class TeamStats extends React.Component {
     }
    
     componentDidMount() {
+        console.log('req----', this.props)
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0);
         isAuthenticated(JSON.stringify({}))
-            .then((value) => {
-                if (value.data.message === 'success') {
-                    getTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name })
-                        .then(response => {
-                            console.log('response',response.data);
-                            this.setState({
-                                isAuthenticated: true,
-                                isLoading: false,
-                                isCheckingAuth: false,
-                                brainRegions: response.data.data
-                            });
-                        })
-                        .catch((error) => {
-                            this.setState({
-                                isLoading: false,
-                                isCheckingAuth: false
-                            });
-                        });   
-                } else {
-                    this.setState({ isAuthenticated: false, isCheckingAuth: false });
-                }
-            })
-            .catch((err) => {
+        .then((value) => {
+            if (value.data.message === 'success') {
+                getTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name })
+                    .then(response => {
+                        console.log('response',response.data);
+                        this.setState({
+                            isAuthenticated: true,
+                            isLoading: false,
+                            isCheckingAuth: false,
+                            brainRegions: response.data.data
+                        });
+                    })
+                    .catch((error) => {
+                        this.setState({
+                            isLoading: false,
+                            isCheckingAuth: false
+                        });
+                    });   
+            } else {
                 this.setState({ isAuthenticated: false, isCheckingAuth: false });
-            })  
-        
+            }
+        })
+        .catch((err) => {
+            this.setState({ isAuthenticated: false, isCheckingAuth: false });
+        })  
+        this.setState({
+            for: this.props.location.state.for,
+        })
     }
 
     handleChange = (e) => {
         console.log('wrk')
         this.setState({ [e.target.name] : e.target.value });
-        if(e.target.name == 'principal-max-strain' && e.target.value != 'resultant-linear-acceleration' && e.target.value != 'resultant-Angular-acceleration' && this.state.brainRegions){
+        if(e.target.name === 'principal-max-strain' && e.target.value !== 'resultant-linear-acceleration' && e.target.value !== 'resultant-Angular-acceleration' && this.state.brainRegions){
             this.child.current.handleBrainStrain(e.target.value);
         }
     };
     handleRunReport =(e)=>{
         e.preventDefault();
         this.setState({isfetching: true})
+        
         getFilterdTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name,filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain']})
         .then(response=>{
             console.log('response',response.data);
@@ -90,12 +94,12 @@ class TeamStats extends React.Component {
                 });
             },200)
              setTimeout(()=>{
-                if(this.state['principal-max-strain'] != 'resultant-linear-acceleration' && this.state['principal-max-strain'] != 'resultant-Angular-acceleration' && this.state.brainRegions){
+                if(this.state['principal-max-strain'] !== 'resultant-linear-acceleration' && this.state['principal-max-strain'] !== 'resultant-Angular-acceleration' && this.state.brainRegions){
                     this.child.current.handleBrainStrain(this.state['principal-max-strain']);
                 }
             },500)
-           
         })
+        
     }
     selectOption=()=>{
         console.log('principal-max-strain')
@@ -175,17 +179,30 @@ class TeamStats extends React.Component {
                     <div className="container">
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>Team Stats</h1>
                         <div className="backbutton11" style={{position : 'relative'}}>
+                        {this.state.for == "Teams" ? 
                             <Link to={{
-                                    pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
-                                    state: {
-                                        team: {
-                                            brand: this.props.location.state.team.brand,
-                                            organization: this.props.location.state.team.organization,
-                                            team_name: this.props.location.state.team.team_name,
-                                            user_cognito_id: this.props.location.state.user_cognito_id,
-                                            staff: this.props.location.state.team.staff
-                                        }
-                                    } }}>&lt; Back To Team</Link>
+                               pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
+                                state: {
+                                    brand: {
+                                        brand: this.props.location.state.team.brand,
+                                        organization: this.props.location.state.team.organization,
+                                        user_cognito_id: this.props.location.state.user_cognito_id
+                                    }
+                                }
+                             }}>&lt; Back To Organization</Link>
+                            :
+                            <Link to={{
+                                pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
+                                state: {
+                                team: {
+                                    brand: this.props.location.state.team.brand,
+                                    organization: this.props.location.state.team.organization,
+                                    team_name: this.props.location.state.team.team_name,
+                                    user_cognito_id: this.props.location.state.user_cognito_id,
+                                    staff: this.props.location.state.team.staff
+                                }
+                            } }}>&lt; Back To Team</Link>
+                        }
                         </div>
                         <div style={{textAlign: 'center'}}>
                             <label style={{fontSize: '20px'}}>Display all member data with</label>
@@ -194,10 +211,12 @@ class TeamStats extends React.Component {
                                 <option value="principal-min-strain">Min Principal Strain</option>
                                 <option value="resultant-linear-acceleration">Resultant Linear Acceleration</option>
                                 <option value="resultant-Angular-acceleration">Resultant Angular Acceleration</option>
-
-                                <option value="csdm-max">CSDM 15</option>
                                 <option value="axonal-strain-max">Axonal Strain 15</option>
                                 <option value="masXsr-15-max">MASxSR 15</option>
+                                <option value="CSDM-5">CSDM 5</option>
+                                <option value="CSDM-10">CSDM 10</option>
+                                <option value="csdm-max">CSDM 15</option>
+
                             </select>
                             <select style={{marginLeft: '20px'}} name="filter" onChange={this.handleChange}>
                                 <option value='greater'>Greater or Equal to</option>

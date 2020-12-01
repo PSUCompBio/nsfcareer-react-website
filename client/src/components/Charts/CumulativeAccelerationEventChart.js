@@ -168,7 +168,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                             Account ID: {this.state.account_id}
                                         </p>
                                         <p ref="h1" className="player-dashboard-sub-head">
-                                            Simulation ID: {this.state.simulation_id}
+                                            Simulation ID: 
                                         </p>
                                         <p
                                             ref="h1"
