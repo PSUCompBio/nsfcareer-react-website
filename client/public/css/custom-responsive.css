@@ -199,8 +199,16 @@
     text-align: center !important;
     left: 35% !important;
   }
+  .team-edit-button .org-edit-button {
+    float: inherit !important;
+    padding-right: 0px !important;
+    left: -12% !important
+  }
   .button-edit {
     float: initial !important;
+  }
+  .team-edit-button .button-edit {
+      float: right!important;
   }
   .plyar-button-edit{
     float: right!important;
@@ -562,6 +570,10 @@
   .team-state-3dmodel {
       height: 736px;
   }
+
+  .team-edit-button .org-edit-button {  
+    left: -9% !important;
+  }
 }
 
 @media screen and (max-width: 414px) {
@@ -619,6 +631,9 @@
   .player__video_2, .player__video {
     height: 170px!important;
 }
+.team-edit-button .org-edit-button {  
+    left: -6% !important;
+  }
 }
 
 @media screen and (max-width: 412px) {
@@ -700,6 +715,10 @@
   .player__video_2, .player__video {
     height: 145px!important;
 }
+
+.team-edit-button .button-edit{  
+    font-size: 16px !important;
+  }
 }
 
 @media screen and (max-width: 360px) {
@@ -727,6 +746,10 @@
   }
   .commander-data-table h1 {
     font-size: 26px;
+  }
+  .team-edit-button .button-edit{  
+    padding: 5px 18px !important;
+    font-size: 16px !important;
   }
 
 }
