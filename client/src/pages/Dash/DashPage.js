@@ -1,14 +1,13 @@
 import React from 'react';
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-
+import brain from './brain-optimize.glb';
 //import Footer from '../../components/Footer';
 import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './dash.css';
 
 import summary from "./summary_york_tech_35204.json";
-
 import StrainMetric from './selector'
 const styleLink = document.createElement("link");
 styleLink.rel = "stylesheet";
@@ -16,14 +15,21 @@ styleLink.href =
 	"https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
 document.head.appendChild(styleLink);
 const insults = summary.Insults;
-
+let stem_json = [];
+let pariental_lobe_json = [];
+let frontal_lobe_json = [];
+let cerebellum_lobe_json = [];
+let middle_part_of_the_brain_json = [];
+let occipital_lobe_json = [];
+let temporal_lobe_json = [];
+let middle_part_of_the_brain_min_json = []
 
 let minimumPS = [[], [], [], [], [], [], []];
 let maximumPS = [[], [], [], [], [], [], []];
 let csdm_15 = [[], [], [], [], [], [], []];
 
 let previousClicked = null;
-
+// json parse
 insults.forEach((insult) => {
 	if (insult["principal-max-strain"]) {
 		switch (insult["principal-max-strain"]["brain-region"]) {
@@ -181,9 +187,7 @@ insults.forEach((insult) => {
 
 });
 
-
 let all_spheres_json = [];
-
 all_spheres_json = [...maximumPS];
 
 
@@ -195,6 +199,8 @@ const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
 const highlightColor = 0xadab24;
 const highlightEmissiveIntensity = 0.6;
+
+
 const amount = 2;
 const space = 10;
 const near = 0.1;
@@ -505,7 +511,7 @@ class DashPage extends React.Component {
 			actionButtonPositions: actionButtonPosArr
 		});
 	};
-
+	//  creat sphere according to each lobe button hover, click event
 	createLobeSheres = (type) => {
 		let me = this;
 
@@ -569,9 +575,6 @@ class DashPage extends React.Component {
 				me.generateSphere(object.x, object.y, object.z, "pointer" + i);
 			})
 		});
-
-
-
 	};
 
 	generateSphere = (x, y, z, sphereName) => {
@@ -599,6 +602,8 @@ class DashPage extends React.Component {
 			}
 		}
 	};
+
+	// lobe button click event, highlight button
 	highlightButtons = (type) => {
 		// let barColors = defaultBarColors;
 		let buttonColors = [];
@@ -998,20 +1003,18 @@ class DashPage extends React.Component {
 		camera.position.z = 3;
 	};
 
-
+	// download canvas image
+	// creat new canvas, set width, height, draw current content of canvas on new one
 	downImage = () => {
-
-
-		var c = document.createElement('canvas');
+		const c = document.createElement('canvas');
 		c.width = 400;
 		c.height = 300;
 		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 400, 300);
 		let dc = c.toDataURL();
 		var link = document.createElement("a");
 		link.download = "demo.png";
-		link.href = c.toDataURL();
-		console.log("image url", dc)
-		// link.target = "_blank";
+		link.href = dc;
+		link.target = "_blank";
 		link.click();
 		return dc;
 	}
@@ -1325,10 +1328,6 @@ class DashPage extends React.Component {
 			case "min-ps":
 				all_spheres_json = [];
 				all_spheres_json = [...minimumPS];
-				break;
-			case "csdm":
-				all_spheres_json = [[], [], [], [], [], [], []];
-
 				break;
 		}
 	}
