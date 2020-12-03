@@ -574,11 +574,17 @@
   .team-edit-button .org-edit-button {  
     left: -9% !important;
   }
+
+  .card .title-left {
+      padding: 0px;
+      font-size: 17px;
+  }
 }
 
 @media screen and (max-width: 414px) {
   .signIn-btn {
-    width: 136px !important;
+    width: 154px !important;
+    padding: 9px 7px !important;
   }
   .action_btn_block .lobe_btn {
     width: 29px !important;
@@ -630,8 +636,8 @@
   }
   .player__video_2, .player__video {
     height: 170px!important;
-}
-.team-edit-button .org-edit-button {  
+  }
+  .team-edit-button .org-edit-button {  
     left: -6% !important;
   }
 }

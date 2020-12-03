@@ -8771,6 +8771,10 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                         if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
                                                             pushdata(summary_data);
                                                         } 
+                                                    }else if(type == 'MPS-95'){
+                                                        if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
                                                     }
                                                 }
                                             })
@@ -8982,6 +8986,80 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                 CSDM_10[region].push(coordinate);
                             })
                         }
+                    }if (summary_data['MPS-95']) {
+                                                   
+                        if(summary_data['MPS-95']['frontal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['parietal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['msc']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['occipital']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['temporal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
                     }
                 }
 
@@ -8994,6 +9072,8 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                     brainRegions['masXsr-15-max'] = masXsr_15_max;
                     brainRegions['CSDM-5'] = CSDM_5;
                     brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
                     res.send({
                         message: "success",
                         data: brainRegions
