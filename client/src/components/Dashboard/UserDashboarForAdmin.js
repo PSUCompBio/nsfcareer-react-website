@@ -342,7 +342,7 @@ class UserDashboarForAdmin extends React.Component {
                     {this.state.cumulativeAccelerationTimeAlldata ? 
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
                           if(items.sensor_data.player_id == item.sensor_data.player_id){
-                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.state.state} organization ={the.state.organization}  player_id={item.sensor_data.player_id} team={the.state.team} status={item.status}/>
+                           return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.state.state} organization ={the.state.organization}  player_id={item.sensor_data.player_id} team={the.state.team} brand={the.state.brand} status={item.status}/>
                           }
                         })
                       : 
@@ -393,6 +393,10 @@ class UserDashboarForAdmin extends React.Component {
         organization = params.get('org');
         brand = params.get('brand');
         user_cognito_id = localstorage.userInfo['user_cognito_id'];
+        var level = localstorage.userInfo['level'];
+        if(level == 100){
+          brand = localstorage.userInfo['sensor'];
+        }
     }
     console.log('localstorage',user_cognito_id, organization, team)
     if(user_cognito_id && team && organization){
@@ -426,6 +430,7 @@ class UserDashboarForAdmin extends React.Component {
                 isAuthenticated: true,
                 isCheckingAuth: false,
               });
+
             })
             .catch(err => {
               this.setState({
@@ -445,6 +450,7 @@ class UserDashboarForAdmin extends React.Component {
                   state: state,
                   team: team,
                   organization: organization,
+                  brand: brand,
                   user_cognito_id: user_cognito_id,
                   cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: brand, team: team, user_cognito_id: user_cognito_id, organization: organization, staff: [], player_id: this.state.player_name, simulationCount: response.data.simulationCount}
                 });

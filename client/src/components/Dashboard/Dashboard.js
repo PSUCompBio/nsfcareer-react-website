@@ -61,7 +61,7 @@ class Dashboard extends React.Component {
         }} />;
       } else {
         return <Redirect to={{
-          pathname: '/TeamAdmin/user/dashboard/'+ this.state.userDetails.user_cognito_id+'/'+this.state.userDetails.sensor_id_number+'?team='+this.state.userDetails.team+'&org='+this.state.userDetails.organization+'&brand=',
+          pathname: '/TeamAdmin/user/dashboard/'+ this.state.userDetails.user_cognito_id+'/'+this.state.userDetails.sensor_id_number+'?team='+this.state.userDetails.team+'&org='+this.state.userDetails.organization+'&brand='+this.state.userDetails.sensor,
           state: {
             team: {
               organization: this.state.userDetails.organization,
@@ -79,26 +79,25 @@ class Dashboard extends React.Component {
 
   }
   componentDidMount() {
-      isAuthenticated(JSON.stringify({}))
-        .then((value) => {
-          if (value.data.message === 'success') {
-              this.setState({
-  		          userDetails: JSON.parse(localStorage.getItem("state")).userInfo,
-  	            isLoading: false,
-                isAuthenticated: true,
-                isCheckingAuth: false,
-                isLoaded: true
-	            });
-              console.log('userDetails    ---------------\n',JSON.parse(localStorage.getItem("state")).userInfo)
-          } else {
-            this.setState({ isAuthenticated: false, isCheckingAuth: false, isLoaded: true });
-          }
-        })
-        .catch((err) => {
-          this.setState({ isAuthenticated: false, isCheckingAuth: false, isLoaded: true });
-        })
-       
-    }
+    isAuthenticated(JSON.stringify({}))
+    .then((value) => {
+      if (value.data.message === 'success') {
+          this.setState({
+	          userDetails: JSON.parse(localStorage.getItem("state")).userInfo,
+            isLoading: false,
+            isAuthenticated: true,
+            isCheckingAuth: false,
+            isLoaded: true
+          });
+          console.log('userDetails    ---------------\n',JSON.parse(localStorage.getItem("state")).userInfo)
+      } else {
+        this.setState({ isAuthenticated: false, isCheckingAuth: false, isLoaded: true });
+      }
+    })
+    .catch((err) => {
+      this.setState({ isAuthenticated: false, isCheckingAuth: false, isLoaded: true });
+    })     
+  }
 }
 
 export default Dashboard;

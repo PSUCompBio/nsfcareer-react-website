@@ -1569,6 +1569,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         console.log('trim_video_url -------------\n',trim_video_url)
         res.send({
             message : "success",
+            simulation_id: imageData.log_stream_name,
             movie_link : movie_link_url,
             trim_video_url: trim_video_url,
             impact_video_url: impact_video_url,
