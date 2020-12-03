@@ -470,8 +470,18 @@ class Profile extends React.Component {
                         this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the model link"});
                     }
                 })
+                
+                getAvatarInspection({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : this.state.profile_to_view})
+                .then(result => {
+                    let inspection_data = '';
+                    if (result.data.data.model_jpg && result.data.data.model_ply && result.data.data.brain_ply && result.data.data.skull_ply) {
+                        inspection_data = result.data.data;
+                    }
+                    this.setState({
+                        inspection_data: inspection_data
+                    });
+                })
                 .catch((err) => {
-
                     this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the model link"});
                 });
             })
