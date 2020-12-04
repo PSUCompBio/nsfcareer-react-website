@@ -140,6 +140,9 @@ class Details extends React.Component {
       label_TrimVideo: 'Trim',
 
       isTriming: false,
+      account_id: '',
+      simulation_id: '',
+      isLoading: true
     };
   }
  
@@ -688,7 +691,6 @@ class Details extends React.Component {
       this.setVideoTime(lock_time);
       this.setVideoTime_2(lock_time_2);
     }
-   
   }
 
   /*
@@ -858,7 +860,7 @@ class Details extends React.Component {
     }
     if (!this.state.isLoaded) return <Spinner />;
 
-  const files = this.state.files.map(file => (
+    const files = this.state.files.map(file => (
       <span key={file.name}>
         {file.name} - {file.size} bytes
       </span>
@@ -966,19 +968,31 @@ class Details extends React.Component {
                 </div>
                 <div className="col-md-12" > 
                   <div className="user-simlation-details">
-                    <p>Name: {this.state.simulation_data.sensor_data.player['first-name'] +' '+this.state.simulation_data.sensor_data.player['last-name'] }</p>
-                    <p>Impact ID: </p>
-                    <p>Position: {this.state.simulation_data.sensor_data.player['position']}</p>
+                    {this.state.isLoading ? 
+                      <span style={{'width': '100%','text-align':'center','padding':'54px'}}>
+                          <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>
+                      </span>
+                      :
+                        <>
+                          <p>Name: {this.state.simulation_data.sensor_data.player['first-name'] +' '+this.state.simulation_data.sensor_data.player['last-name'] }</p>
+                          <p >
+                            Account ID: {this.state.account_id}
+                          </p>
+                          <p>
+                              Simulation ID: 
+                          </p>
+                          <p>Impact ID: </p>
+                          <p>Position: {this.state.simulation_data.sensor_data.player['position']}</p>
+                        </>
+                    }
                   </div>
                 </div>
 
                 {/*Graph section start*/}
                 <div className="col-md-12 col-lg-12 brain-simlation-details-graph">
                   <h4 className="brain-simlation-details-subtitle">Input From Sensor</h4>
-                 <div className="col-md-6" style={{'float':'left'}}>
-                    
-                      <HeadLinearAccelerationAllEvents   data={this.state.simulation_data}/>
-                    
+                  <div className="col-md-6" style={{'float':'left'}}>
+                    <HeadLinearAccelerationAllEvents data={this.state.simulation_data}/>
                   </div>
                   <div className="col-md-6" style={{'float':'left'}}>
                     
@@ -1231,12 +1245,42 @@ class Details extends React.Component {
         }
     })
   }
+  getPlayerUserDetails=(player_id, brand)=>{
+    let congito_id = player_id.split('$')[0]+'-'+brand
+    console.log('congito_id', congito_id)
+    getUserDetails({ user_cognito_id: congito_id })
+    .then(response => {
+      console.log('user details =================================\n',response)
+      if(response.data.message == "success"){
+        this.setState({
+            account_id: response.data.data.account_id,
+            isLoading: false
+        })
+      }else{
+        this.setState({
+            isLoading: false
+        })
+      }
+    }).catch(err=>{
+        console.log('err ',err)
+        this.setState({
+            isLoading: false
+        })
+    })
+  }
+
   componentDidMount() {
     const params = new URLSearchParams(window.location.search)
     console.log('this.props.match.params.player_id',params.get('org'))
     let organization = params.get('org');
     let team = params.get('t');
-    this.setState({team_name: team, organization: organization})
+    let brand = params.get('brand');
+
+    this.setState({team_name: team, organization: organization});
+    setTimeout(()=>{
+      this.getPlayerUserDetails(this.props.match.params.player_id.split('$')[0], brand);
+
+    },2000)
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
         
@@ -1252,6 +1296,7 @@ class Details extends React.Component {
                   console.log('movie_link',response)
                     this.setState({
                         movie_link:response.data.movie_link,
+                        simulation_id: response.data.simulation_id && response.data.simulation_id !== null ? response.data.simulation_id.split("/")[2] : 'NA',
                         impact_video_url: response.data.impact_video_url,
                         motion_link_url: response.data.motion_link_url,
                         left_lock_time: response.data.left_lock_time, 

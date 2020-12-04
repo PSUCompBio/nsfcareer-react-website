@@ -153,23 +153,13 @@ class CumulativeAccelerationEventChart extends React.Component {
                    >
                     <div className="row">
                        
-                            {this.state.isLoading ? 
-                                <span style={{'width': '100%','text-align':'center','padding':'54px'}}>
-                                    <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i>
-                                </span>
-                                :
+                          
                                 <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                                     <>
                                         <p
                                             ref="h1"
                                             className="player-dashboard-sub-head"
                                         >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : 'Hidden for IRB purposes'}</p>
-                                        <p ref="h1" className="player-dashboard-sub-head">
-                                            Account ID: {this.state.account_id}
-                                        </p>
-                                        <p ref="h1" className="player-dashboard-sub-head">
-                                            Simulation ID: 
-                                        </p>
                                         <p
                                             ref="h1"
                                             className="player-dashboard-sub-head"
@@ -178,7 +168,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         </p>
                                     </>
                                 </div>
-                            }
+                           
                         
                         {
                             !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
@@ -188,13 +178,12 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         paddingLeft: "15%",
                                         paddingRight: "15%"
                                     }}
-                                        onClick={() => {
-                                            this.props.history.push('/Profile')
+                                    onClick={() => {
+                                        this.props.history.push('/Profile')
 
-                                        }}
-
-                                        className="btn btn-primary pull-right sub-head-button">
-                                        Profile
+                                    }}
+                                    className="btn btn-primary pull-right sub-head-button">
+                                    Profile
                                     </button>
                                 </div>
 

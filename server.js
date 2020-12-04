@@ -1569,6 +1569,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         console.log('trim_video_url -------------\n',trim_video_url)
         res.send({
             message : "success",
+            simulation_id: imageData.log_stream_name,
             movie_link : movie_link_url,
             trim_video_url: trim_video_url,
             impact_video_url: impact_video_url,
@@ -3035,6 +3036,9 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
                 .then(data => {
                     console.log('res',data)
                     if(index == userslen){
+                        /**
+                        * Getting sensor data..     
+                        */
                         res.send({
                             message: 'success',
                             status: 200
@@ -3043,7 +3047,7 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
                 }).catch(err => {
                     console.log('err',err)
                     if(index == userslen){
-                         res.send({
+                        res.send({
                             message: 'failure',
                             status: 300,
                             err: err
@@ -8107,7 +8111,6 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
                 data: []
             })
         } else {
-
             brandList.forEach(function (brand, index) {
                 let data = brand;
                 let i = index;
@@ -8132,23 +8135,24 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
                         });
                                                         
                         if (simulation_records.length > 0) {
+
+                            console.log('simulation_records ---------------------------------\n',simulation_records)
                             getPlayerSimulationStatus(simulation_records[0].image_id)
-                                .then(simulation => {
-                                    // console.log('simulaimagimage_ide_idtion', simulation_records[0].image_id );
-                                    // console.log('simulation', simulation );
-                                    brand["simulation_status"] = simulation ? simulation.status : '';
-                                    brand["computed_time"] = simulation ? simulation.computed_time : '';
-                                    brand["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
-                                    counter++;
-                                    if (counter == brandList.length) {
-                                        res.send({
-                                            message: "success",
-                                            data: brandList
-                                        })
-                                    }
-                                }).catch(err => {
-                                    console.log('err', err);
-                                })
+                            .then(simulation => {
+                                
+                                brand["simulation_status"] = simulation ? simulation.status : '';
+                                brand["computed_time"] = simulation ? simulation.computed_time : '';
+                                brand["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                counter++;
+                                if (counter == brandList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: brandList
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log('err', err);
+                            })
                         } else {
                             counter++;
                             if (counter == brandList.length) {
@@ -8770,6 +8774,10 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                         if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
                                                             pushdata(summary_data);
                                                         } 
+                                                    }else if(type == 'MPS-95'){
+                                                        if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
                                                     }
                                                 }
                                             })
@@ -8981,6 +8989,80 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                 CSDM_10[region].push(coordinate);
                             })
                         }
+                    }if (summary_data['MPS-95']) {
+                                                   
+                        if(summary_data['MPS-95']['frontal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['parietal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['msc']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['occipital']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['temporal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
                     }
                 }
 
@@ -8993,6 +9075,8 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                     brainRegions['masXsr-15-max'] = masXsr_15_max;
                     brainRegions['CSDM-5'] = CSDM_5;
                     brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
                     res.send({
                         message: "success",
                         data: brainRegions

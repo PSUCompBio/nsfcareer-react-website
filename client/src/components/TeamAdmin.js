@@ -704,7 +704,7 @@ class TeamnAdmin extends React.Component {
                                  <div className="col-md-12 Admintitle team-edit-button" >
                                     <div className="col-md-12 org-edit-button " >
                                         <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button>
-                                        <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                        <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Org Stats</button>
                                         
                                     </div>
                                 </div>

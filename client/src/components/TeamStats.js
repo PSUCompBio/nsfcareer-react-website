@@ -216,6 +216,8 @@ class TeamStats extends React.Component {
                                 <option value="CSDM-5">CSDM 5</option>
                                 <option value="CSDM-10">CSDM 10</option>
                                 <option value="csdm-max">CSDM 15</option>
+                                <option value="MPS-95">MPS 95</option>
+
 
                             </select>
                             <select style={{marginLeft: '20px'}} name="filter" onChange={this.handleChange}>
