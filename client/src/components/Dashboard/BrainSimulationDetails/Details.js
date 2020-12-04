@@ -1254,7 +1254,6 @@ class Details extends React.Component {
       if(response.data.message == "success"){
         this.setState({
             account_id: response.data.data.account_id,
-            simulation_id: response.data.data.sensor_id_number,
             isLoading: false
         })
       }else{

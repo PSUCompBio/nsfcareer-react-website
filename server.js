@@ -3036,6 +3036,9 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
                 .then(data => {
                     console.log('res',data)
                     if(index == userslen){
+                        /**
+                        * Getting sensor data..     
+                        */
                         res.send({
                             message: 'success',
                             status: 200
@@ -3044,7 +3047,7 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
                 }).catch(err => {
                     console.log('err',err)
                     if(index == userslen){
-                         res.send({
+                        res.send({
                             message: 'failure',
                             status: 300,
                             err: err
@@ -8108,7 +8111,6 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
                 data: []
             })
         } else {
-
             brandList.forEach(function (brand, index) {
                 let data = brand;
                 let i = index;
@@ -8133,23 +8135,24 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
                         });
                                                         
                         if (simulation_records.length > 0) {
+
+                            console.log('simulation_records ---------------------------------\n',simulation_records)
                             getPlayerSimulationStatus(simulation_records[0].image_id)
-                                .then(simulation => {
-                                    // console.log('simulaimagimage_ide_idtion', simulation_records[0].image_id );
-                                    // console.log('simulation', simulation );
-                                    brand["simulation_status"] = simulation ? simulation.status : '';
-                                    brand["computed_time"] = simulation ? simulation.computed_time : '';
-                                    brand["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
-                                    counter++;
-                                    if (counter == brandList.length) {
-                                        res.send({
-                                            message: "success",
-                                            data: brandList
-                                        })
-                                    }
-                                }).catch(err => {
-                                    console.log('err', err);
-                                })
+                            .then(simulation => {
+                                
+                                brand["simulation_status"] = simulation ? simulation.status : '';
+                                brand["computed_time"] = simulation ? simulation.computed_time : '';
+                                brand["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                counter++;
+                                if (counter == brandList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: brandList
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log('err', err);
+                            })
                         } else {
                             counter++;
                             if (counter == brandList.length) {
