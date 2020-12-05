@@ -979,9 +979,9 @@ class Details extends React.Component {
                             Account ID: {this.state.account_id}
                           </p>
                           <p>
-                              Simulation ID: 
+                              Simulation ID: {this.state.log_stream_name ? this.state.log_stream_name.split('/')[2] : ''}
                           </p>
-                          <p>Impact ID: </p>
+                          <p>Impact ID: {this.state.simulation_data.sensor_data.player['impact-id'] ? this.state.simulation_data.sensor_data.player['impact-id'] : ''}</p>
                           <p>Position: {this.state.simulation_data.sensor_data.player['position']}</p>
                         </>
                     }
@@ -1277,10 +1277,7 @@ class Details extends React.Component {
     let brand = params.get('brand');
 
     this.setState({team_name: team, organization: organization});
-    setTimeout(()=>{
-      this.getPlayerUserDetails(this.props.match.params.player_id.split('$')[0], brand);
-
-    },2000)
+ 
     isAuthenticated(JSON.stringify({}))
       .then((value) => {
         
@@ -1304,7 +1301,18 @@ class Details extends React.Component {
                         video_lock_time_2: response.data.video_lock_time_2, 
                         trim_video_url: response.data.trim_video_url,
                         simulationStatus: response.data.status,
+                        log_stream_name: response.data.log_stream_name,
                     });
+
+                    if (response.data.account_id) {
+                      this.setState({
+                        account_id: response.data.account_id,
+                        isLoading: false
+                      });
+                    } else {
+                      this.getPlayerUserDetails(this.props.match.params.player_id.split('$')[0], brand);
+                    }
+
                     this.getSimlationImage();
                     getCumulativeAccelerationTimeRecords({  organization: organization, player_id: this.state.player_id, team: team })
                     .then(res=>{

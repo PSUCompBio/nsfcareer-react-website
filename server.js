@@ -1578,8 +1578,9 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
             left_lock_time: imageData.left_lock_time ? imageData.left_lock_time : '',
             right_lock_time: imageData.right_lock_time ? imageData.right_lock_time : '',
             status: status,
-            video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
-
+            log_stream_name: imageData.log_stream_name,
+            video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : '',
+            account_id: imageData.account_id ? imageData.account_id : '',
         })
     })
     .catch(err => {
@@ -1592,6 +1593,8 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
         }
         else{
             res.send({
+                log_stream_name: imageData.log_stream_name,
+                account_id: imageData.account_id ? imageData.account_id : '',
                 message : "Simulation is in process"
             })
         }
