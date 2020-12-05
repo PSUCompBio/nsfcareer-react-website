@@ -6,10 +6,18 @@ import brain from './Cumulative/brain1.glb';
 import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './Cumulative/dash.css';
+import StrainMetric from '../../pages/Dash/selector'
+const styleLink = document.createElement("link");
+styleLink.rel = "stylesheet";
+styleLink.href =
+	"https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
+document.head.appendChild(styleLink);
 
-let camera, scene, renderer, canvas, raycaster, root, sphereContainer;
+let camera, scene, renderer, canvas, raycaster, root, sphereContainer, labelSize = 10;
 let brainModel;
+let isClicked = false;
 let aspectRatio, width, height, currentSubCamera, initialRatio, prevCanvasWidth;
+let previousClicked = null;
 const defaultTransparency = 0.3;
 const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
@@ -27,7 +35,7 @@ const cameraAttArr = [
 		rotX: 0,
 		rotY: -Math.PI / 2,
 		rotZ: 0,
-		fov: 8
+		fov: 10
 	},
 	{
 		x: 1,
@@ -35,7 +43,7 @@ const cameraAttArr = [
 		rotX: -Math.PI / 15,
 		rotY: -Math.PI / 5,
 		rotZ: 0,
-		fov: 8
+		fov: 10
 	},
 	{
 		x: 1,
@@ -52,7 +60,7 @@ const defaultCamAtt = {
 	rotX: 0,
 	rotY: 0,
 	rotZ: 0,
-	fov: 8
+	fov: 10
 };
 const pickPosition = { x: 0, y: 0 };
 
@@ -84,7 +92,7 @@ class ExportPlayerReport extends React.Component {
 
 	constructor(props) {
 		super(props);
-  		console.log(window.location.pathname);
+		console.log(window.location.pathname);
 		this.state = {
 			isLoading: true,
 			brainStrainActive: 'principal-max-strain',
@@ -136,8 +144,8 @@ class ExportPlayerReport extends React.Component {
 			{
 				afterDraw: (chart) => {
 					if (this.state.loadedActionButtons) return;
-					console.log('chart',chart)
-					if(chart.canvas && chart.canvas != null){
+
+					if (chart.canvas && chart.canvas != null) {
 						setTimeout(() => this.afterDrawChart(chart), 100);
 					}
 				}
@@ -182,6 +190,16 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
+			document.getElementById("front_btn").addEventListener(
+				"click",
+				function (event) {
+					me.onMouseClick(
+						event,
+						"Frontal_Lobe_node_Frontal_Lobe"
+					);
+				},
+				false
+			);
 			document.getElementById("pariental_btn").addEventListener(
 				"mouseover",
 				function (event) {
@@ -192,10 +210,23 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
-			document.getElementById("occipital_btn").addEventListener(
-				"mouseover",
+			document.getElementById("pariental_btn").addEventListener(
+				"click",
 				function (event) {
-					me.onMouseHover(event, "node_Mesh_16");
+					me.onMouseClick(
+						event,
+						"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
+					);
+				},
+				false
+			);
+			document.getElementById("occipital_btn").addEventListener(
+				"click",
+				function (event) {
+					me.onMouseClick(
+						event,
+						"node_Mesh_16"
+					);
 				},
 				false
 			);
@@ -206,10 +237,30 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
+			document.getElementById("temporal_btn").addEventListener(
+				"click",
+				function (event) {
+					me.onMouseClick(
+						event,
+						"Temporal_Lobe_node_Temporal_Lobe"
+					);
+				},
+				false
+			);
 			document.getElementById("cerebellum_btn").addEventListener(
 				"mouseover",
 				function (event) {
 					me.onMouseHover(event, "Cerebellum_node_Cerebellum");
+				},
+				false
+			);
+			document.getElementById("cerebellum_btn").addEventListener(
+				"click",
+				function (event) {
+					me.onMouseClick(
+						event,
+						"Cerebellum_node_Cerebellum"
+					);
 				},
 				false
 			);
@@ -223,10 +274,30 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
+			document.getElementById("motor_and_sensor_cortex").addEventListener(
+				"click",
+				function (event) {
+					me.onMouseClick(
+						event,
+						"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex"
+					);
+				},
+				false
+			);
 			document.getElementById("stem_btn").addEventListener(
 				"mouseover",
 				function (event) {
 					me.onMouseHover(
+						event,
+						"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
+					);
+				},
+				false
+			);
+			document.getElementById("stem_btn").addEventListener(
+				"click",
+				function (event) {
+					me.onMouseClick(
 						event,
 						"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
 					);
@@ -362,6 +433,150 @@ class ExportPlayerReport extends React.Component {
 		}
 	};
 
+	highlightButtons = (type) => {
+		// let barColors = defaultBarColors;
+		let buttonColors = [];
+		switch (type) {
+			case "Frontal_Lobe_node_Frontal_Lobe":
+
+				this.state.actionButtons.forEach((ele) => {
+					if (ele.id == "front_btn")
+						if (isClicked) {
+							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
+							document.getElementById(ele.id + "a").style.color = "#007bff"
+						}
+						else {
+							document.getElementById(ele.id).style.backgroundColor = "#007bff";
+							document.getElementById(ele.id + "a").style.color = "white"
+						}
+					else {
+						document.getElementById(ele.id).style.backgroundColor = "#007bff";
+						document.getElementById(ele.id + "a").style.color = "white"
+					}
+				});
+				break;
+			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
+				this.state.actionButtons.forEach((ele) => {
+					if (ele.id == "pariental_btn") {
+						if (isClicked) {
+							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
+							document.getElementById(ele.id + "a").style.color = "#007bff"
+						}
+						else {
+							document.getElementById(ele.id).style.backgroundColor = "#007bff";
+							document.getElementById(ele.id + "a").style.color = "white"
+						}
+					}
+					else {
+						document.getElementById(ele.id).style.backgroundColor = "#007bff";
+						document.getElementById(ele.id + "a").style.color = "white"
+					}
+				});
+				break;
+			case "node_Mesh_16":
+				this.state.actionButtons.forEach((ele) => {
+					if (ele.id == "occipital_btn") {
+						if (isClicked) {
+							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
+							document.getElementById(ele.id + "a").style.color = "#007bff"
+						}
+						else {
+							document.getElementById(ele.id).style.backgroundColor = "#007bff";
+							document.getElementById(ele.id + "a").style.color = "white"
+						}
+					}
+					else {
+						document.getElementById(ele.id).style.backgroundColor = "#007bff";
+						document.getElementById(ele.id + "a").style.color = "white"
+					}
+				});
+				break;
+			case "Temporal_Lobe_node_Temporal_Lobe":
+				this.state.actionButtons.forEach((ele) => {
+					if (ele.id == "temporal_btn") {
+						if (isClicked) {
+							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
+							document.getElementById(ele.id + "a").style.color = "#007bff"
+						}
+						else {
+							document.getElementById(ele.id).style.backgroundColor = "#007bff";
+							document.getElementById(ele.id + "a").style.color = "white"
+						}
+					}
+					else {
+						document.getElementById(ele.id).style.backgroundColor = "#007bff";
+						document.getElementById(ele.id + "a").style.color = "white"
+					}
+				});
+				break;
+			case "Cerebellum_node_Cerebellum":
+				this.state.actionButtons.forEach((ele) => {
+					if (ele.id == "cerebellum_btn") {
+						if (isClicked) {
+							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
+							document.getElementById(ele.id + "a").style.color = "#007bff"
+						}
+						else {
+							document.getElementById(ele.id).style.backgroundColor = "#007bff";
+							document.getElementById(ele.id + "a").style.color = "white"
+						}
+					}
+					else {
+						document.getElementById(ele.id).style.backgroundColor = "#007bff";
+						document.getElementById(ele.id + "a").style.color = "white"
+					}
+
+				});
+				break;
+			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
+				this.state.actionButtons.forEach((ele) => {
+					if (ele.id == "stem_btn") {
+						if (isClicked) {
+							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
+							document.getElementById(ele.id + "a").style.color = "#007bff"
+						}
+						else {
+							document.getElementById(ele.id).style.backgroundColor = "#007bff";
+							document.getElementById(ele.id + "a").style.color = "white"
+						}
+					}
+					else {
+						document.getElementById(ele.id).style.backgroundColor = "#007bff";
+						document.getElementById(ele.id + "a").style.color = "white"
+					}
+
+				});
+				break;
+			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
+
+				this.state.actionButtons.forEach((ele) => {
+					if (ele.id == "motor_and_sensor_cortex") {
+						if (isClicked) {
+							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
+							document.getElementById(ele.id + "a").style.color = "#007bff"
+						}
+						else {
+							document.getElementById(ele.id).style.backgroundColor = "#007bff";
+							document.getElementById(ele.id + "a").style.color = "white"
+						}
+					}
+					else {
+						document.getElementById(ele.id).style.backgroundColor = "#007bff";
+						document.getElementById(ele.id + "a").style.color = "white"
+					}
+				});
+				break;
+			default:
+				break;
+		}
+
+
+		this.setState({
+			buttonColors: buttonColors
+		});
+	};
+
+
 	highlightGraphBar = (type) => {
 		let barColors = defaultBarColors;
 		switch (type) {
@@ -455,9 +670,7 @@ class ExportPlayerReport extends React.Component {
 		this.unHighlightPickedObject();
 		pickedObject = null;
 		prevPickedObject = null;
-
 		let barColors = defaultBarColors;
-
 		this.setState({
 			barColors: barColors
 		});
@@ -474,6 +687,7 @@ class ExportPlayerReport extends React.Component {
 
 	pick = (normalizedPosition, pickingScene, pickingCamera) => {
 		// cast a ray through the frustum
+		if (isClicked) return;
 		raycaster.setFromCamera(normalizedPosition, pickingCamera);
 		// get the list of objects the ray intersected
 		const intersectedObjects = raycaster.intersectObjects(
@@ -487,7 +701,6 @@ class ExportPlayerReport extends React.Component {
 
 			if (prevPickedObject && prevPickedObject.name === pickedObject.name)
 				return;
-
 			this.unHighlightPickedObject();
 			prevPickedObject = pickedObject;
 			this.highlightPickedObject();
@@ -549,6 +762,7 @@ class ExportPlayerReport extends React.Component {
 		renderer = new THREE.WebGLRenderer({
 			canvas: canvas,
 			antialias: true,
+			preserveDrawingBuffer: true,
 			alpha: true
 		});
 
@@ -614,6 +828,22 @@ class ExportPlayerReport extends React.Component {
 		camera = new THREE.ArrayCamera(cameras);
 		camera.position.z = 3;
 	};
+
+	// download canvas image
+	// creat new canvas, set width, height, draw current content of canvas on new one
+	downImage = () => {
+		const c = document.createElement('canvas');
+		c.width = 400;
+		c.height = 300;
+		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 400, 300);
+		let dc = c.toDataURL();
+		var link = document.createElement("a");
+		link.download = "demo.png";
+		link.href = dc;
+		link.target = "_blank";
+		link.click();
+		return dc;
+	}
 
 	lightSetup = () => {
 		const hemLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 1);
@@ -806,6 +1036,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onMouseHover = (event, type) => {
+		if (isClicked) return;
 		if (event !== "") event.preventDefault();
 
 		this.setState({
@@ -827,16 +1058,38 @@ class ExportPlayerReport extends React.Component {
 		this.createLobeSheres(type);
 	};
 
+	onMouseClick = (event, type) => {
+		if (previousClicked != type) isClicked = true;
+		else isClicked = !isClicked;
+		if (event !== "") event.preventDefault();
+		this.setState({
+			chartHovered: isClicked
+		});
+
+		pickedObject = scene.getObjectByName(type, true);
+		this.highlightGraphBar(type);
+		this.highlightButtons(type);
+
+		this.unHighlightPickedObject();
+		prevPickedObject = pickedObject;
+		this.highlightPickedObject();
+		this.createLobeSheres(type);
+		previousClicked = type;
+
+	}
+
 	onMouseMove = (event) => {
 		// Set pick position
 		this.setPickPosition(event);
 	};
 
 	onMouseOut = () => {
-		this.setState({
-			barColors: defaultBarColors,
-			chartHovered: false
-		});
+		if (!isClicked) {
+			this.setState({
+				barColors: defaultBarColors,
+				chartHovered: false
+			});
+		}
 	};
 
 	onMouseLeave = () => {
@@ -906,10 +1159,12 @@ class ExportPlayerReport extends React.Component {
 		});
 	}
 
+
+
 	showUpdatedRegion = () => {
 
 		const { brainStrainActive } = this.state;
-		console.log('brainRegions',this.props)
+		console.log('brainRegions', this.props.brainRegions)
 		frontal_lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
 		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
 		occipital_lobe_json = this.props.brainRegions[brainStrainActive].occipital || []
@@ -927,9 +1182,22 @@ class ExportPlayerReport extends React.Component {
 		all_spheres_json = all_spheres_json.concat(temporal_lobe_json);
 		all_spheres_json = all_spheres_json.concat(middle_part_of_the_brain_json);
 		all_spheres_json = all_spheres_json.concat(stem_json);
-		all_spheres_json = all_spheres_json.concat(csf_json);
+		// all_spheres_json = all_spheres_json.concat(csf_json);
 
 		this.showAllSpheres();
+	}
+
+	strainMetric = (e, v) => {
+		switch (v.value) {
+			case "max-ps":
+				this.handleBrainStrain('principal-max-strain')
+				break;
+			case "min-ps":
+				this.handleBrainStrain('principal-min-strain')
+				break;
+			case "csdm_15":
+				this.handleBrainStrain("CSDM-15")
+		}
 	}
 
 	render() {
@@ -965,9 +1233,12 @@ class ExportPlayerReport extends React.Component {
 			plugins: {
 				datalabels: {
 					color: "#007bff",
-					font: {
-						weight: "bold",
-						size: 24
+					font: function (context) {
+						var width = context.chart.width;
+						labelSize = Math.round(width / 20);
+						return {
+							size: labelSize
+						};
 					},
 					formatter: function (value, context) {
 						switch (context.dataIndex) {
@@ -988,9 +1259,9 @@ class ExportPlayerReport extends React.Component {
 								break;
 							case 5:
 								return stem_json.length;
+								break;
 							case 6:
 								return middle_part_of_the_brain_json.length;
-								break;
 								break;
 							default:
 								break;
@@ -1003,10 +1274,14 @@ class ExportPlayerReport extends React.Component {
 					{
 						scaleLabel: {
 							display: true,
-							labelString: "Number of MASxSR 7.5  Thresholds Exceeded"
+							labelString: "Number of Events",
+							fontSize: labelSize / 1.8,
+							fontColor: "#4c4d4d",
+
 						},
 						ticks: {
-							min: 0
+							min: 0,
+							fontSize: 12
 						}
 					}
 				],
@@ -1097,14 +1372,15 @@ class ExportPlayerReport extends React.Component {
 					key={index}
 				>
 					<span
+						id={this.state.actionButtons[index].id + "a"}
 						style={{
 							transform:
-							window.innerWidth < window.innerHeight
-							? "rotate(-50deg)"
-							: "initial"
+								window.innerWidth < 992
+									? "rotate(-50deg)"
+									: "initial"
 						}}
 					>
-						{window.innerWidth < window.innerHeight
+						{window.innerWidth < 992
 							? this.state.actionButtons[index].shortenName
 							: this.state.actionButtons[index].name}
 					</span>
@@ -1116,9 +1392,9 @@ class ExportPlayerReport extends React.Component {
 			<React.Fragment>
 				<div className="row text-center">
 					<div className="col-md-5 d-flex align-items-center justify-content-center" >
-						<div className="row" style={{ width: '100%', display: 'block',height: '100%', }} className="three_D_model_div">
+						<div className="row" style={{ width: '100%', display: 'block', height: '100%', }} >
 							{this.state.isLoading ? (
-								<div className="model_loader d-flex justify-content-center center-spinner" style={{zIndex: '999'}}>
+								<div className="model_loader d-flex justify-content-center center-spinner" style={{ zIndex: '999' }}>
 									<div
 										className="spinner-border text-primary"
 										role="status"
@@ -1127,39 +1403,37 @@ class ExportPlayerReport extends React.Component {
 									</div>
 								</div>
 							) : null}
-							<div className="col-md-12 three_D_model_div" style={{ width: '100%', height: '80%', display: 'block' }} ref={(ref) => (this.threeCanvasContainer = ref)}>
+							<div className=" " style={{ width: '100%', height: '80%', display: 'block' }} ref={(ref) => (this.threeCanvasContainer = ref)}>
 								<canvas id="c" style={{ width: '100%', height: '100%' }}></canvas>
 							</div>
-							<div className="col-md-12">
-								<button onClick={() => this.handleBrainStrain('principal-max-strain')} className={this.state.brainStrainActive === 'principal-max-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Max Principal Strain</button>
-								<button onClick={() => this.handleBrainStrain('principal-min-strain')} className={this.state.brainStrainActive === 'principal-min-strain' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Min Principal Strain</button>
-								<button onClick={() => this.handleBrainStrain('csdm-max')} className={this.state.brainStrainActive === 'csdm-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM<sub>15</sub></button>
-								<button onClick={() => this.handleBrainStrain('axonal-strain-max')} className={this.state.brainStrainActive === 'axonal-strain-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>Axonal Strain<sub>15</sub></button>
-								{this.state.pathname != "/TeamStats" && 
-									<>
-										<button onClick={() => this.handleBrainStrain('masXsr-15-max')} className={this.state.brainStrainActive === 'masXsr-15-max' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MASxSR<sub>15</sub></button>
-										{/*<button onClick={() => this.handleBrainStrain('MPS-95')} className={this.state.brainStrainActive === 'MPS-95' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>MPS-95</button>*/}
-										<button onClick={() => this.handleBrainStrain('CSDM-5')} className={this.state.brainStrainActive === 'CSDM-5' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-5</button>
-										<button onClick={() => this.handleBrainStrain('CSDM-10')} className={this.state.brainStrainActive === 'CSDM-10' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-10</button>
-										<button onClick={() => this.handleBrainStrain('CSDM-15')} className={this.state.brainStrainActive === 'CSDM-15' ? 'brain_strain settings-buttons settings-buttons-active' : 'brain_strain settings-buttons'}>CSDM-15</button>
-									</>
-								}
-							</div>
+
 						</div>
 
 					</div>
-					<div className="col-md-7" ref={(ref) => (this.chartContainer = ref)}>
+					<div className="col-md-6" ref={(ref) => (this.chartContainer = ref)}>
 						<Bar data={data} options={options} plugins={this.plugins} />
 						<div className="action-btn-container">
 							{actionButtons}
 						</div>
-						<div>
-							<span className="brain_txt">Select a Brain Region </span>
+						<h6 className="chartXlabel" style={{ fontSize: '1.2rem ' }}>Major Functional Brain Regions</h6>
+
+					</div>
+				</div>
+				<div className="row align-items-center">
+					{/* <div className="col-sm-1"></div> */}
+					<div className="col-md-6  align-items-center strainMetric"  >
+
+						<div style={{ display: "inline-block" }}>
+							<span className="strain_text">Strain Metric:</span>
 						</div>
-						<div>
-							<button onClick={this.reset} className="btn btn-primary reset_btn" id="reset_btn">Reset</button>
+						<div style={{ display: "inline-block" }}>
+							<StrainMetric strain={this.strainMetric} />
 						</div>
 					</div>
+
+				</div>
+				<div>
+					<button className="btn btn-primary d-flex justify-content-center download_btn" onClick={this.downImage}> Download Image</button>
 				</div>
 
 			</React.Fragment>
