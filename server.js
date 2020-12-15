@@ -207,7 +207,8 @@ const {
         deleteSensorData,
         deleteSimulation_imagesData,
         InsertTrimVideoKey,
-        updateTrimVideoKey
+        updateTrimVideoKey,
+        getSernsorDataByOrgTeam
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -3019,104 +3020,85 @@ app.post(`${apiPrefix}addorgTeam`, (req, res) => {
 });
 
 app.post(`${apiPrefix}renameTeam`, (req, res) => {
-    console.log('body',req.body);
+    // console.log('body',req.body);
     let organization_id = req.body.organization_id;
     let team_name =  req.body.TeamName;
     let data = req.body.data;
     renameTeam(team_name,organization_id)
-    .then(response=>{
-        // return getSernsorDataByTeam(data.TeamName,data.organization);
-        return getUserByTeam(data.TeamName,data.organization)
+    .then(a => {
+        return getSernsorDataByOrgTeam(organization_id, data.TeamName, data.organization);
     })
-    .then(response=>{
-        console.log('response',response);
-        let users_data = response;
-        if(users_data[0]){
-            let userslen = users_data.length;
-            userslen = userslen-1;
-            users_data.forEach(function (record, index) {
-                renameUsers(record.user_cognito_id, team_name)
-                .then(data => {
-                    console.log('res',data)
-                    if(index == userslen){
-                        /**
-                        * Getting sensor data..     
-                        */
-                        res.send({
-                            message: 'success',
-                            status: 200
+    .then(sensor_data => {
+        console.log('sensor_data ', sensor_data);
+        let sensor_cnt = 0;
+        sensor_data.forEach(function (record, index) {
+            const params = {
+                TableName: "sensor_details",
+                Key: {
+                    org_id: record.org_id,
+                    player_id: record.player_id,
+                },
+                UpdateExpression: "set team = :team_name",
+                ExpressionAttributeValues: {
+                    ":team_name": team_name
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+            docClient.update(params, function (err, data1) {
+                if (err) {
+                    console.log("Error when updating data\n", err);
+                } else {
+                    console.log("Sensor updated");
+                }
+                sensor_cnt++;
+                if (sensor_cnt === sensor_data.length) {
+                    getUserByTeam(data.TeamName, data.organization)
+                        .then(response => {
+                            console.log('response', response);
+                            let users_data = response;
+                            if(users_data[0]) {
+                                let userslen = users_data.length;
+                                userslen = userslen-1;
+                                users_data.forEach(function (record1, index1) {
+                                    renameUsers(record1.user_cognito_id, team_name)
+                                    .then(data => {
+                                        console.log('res',data)
+                                        if(index1 == userslen){
+                                            res.send({
+                                                message: 'success',
+                                                status: 200
+                                            })
+                                        }
+                                    }).catch(err => {
+                                        console.log('err',err)
+                                        if (index1 == userslen){ 
+                                            res.send({
+                                                message: 'failure',
+                                                status: 300,
+                                                err: err
+                                            })
+                                        }
+                                    })
+                                })
+                            } else {
+                                res.send({
+                                    message: 'success',
+                                    status: 200
+                                })
+                            }
                         })
-                    }
-                }).catch(err => {
-                    console.log('err',err)
-                    if(index == userslen){
-                        res.send({
-                            message: 'failure',
-                            status: 300,
-                            err: err
+                        .catch(err =>{
+                            console.log(err)
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
                         })
-                    }
-                })
-            })
-        }else{
-            res.send({
-                message: 'success',
-                status: 200
-            })
-        }
-        // let sensor_data = response;
-        // if(sensor_data){
-        //     let orglen = sensor_data.length;
-        //     orglen = orglen-1;
-        //     sensor_data.forEach(function (record, index) {
-        //         console.log('record',record.team);
-        //         console.log(index, orglen)
-        //         renameSernosrTeam(record.team, record.player_id, team_name)
-        //         .then(data => {
-        //             console.log('res',data)
-        //             if(index == orglen){
-        //                 res.send({
-        //                     message: 'success',
-        //                     status: 200
-        //                 })
-        //             }
-        //         }).catch(err => {
-        //             console.log('err',err)
-        //             if(index == orglen){
-        //                  res.send({
-        //                     message: 'failure',
-        //                     status: 300,
-        //                     err: err
-        //                 })
-        //             }
-        //         })
-        //     })
-        // }else{
-        //     res.send({
-        //         message: 'success',
-        //         status: 200
-        //     })
-        // }
-    })
-    .catch(err =>{
-        console.log(err)
-        res.send({
-            message: 'failure',
-            status: 300,
-            err: err
+                }
+            });
         })
     })
-    // getSernsorDataByTeam(req.body.TeamName, req.body.organization)
-    // .then(data=>{
-    //     console.log('sernsor data -----------------\n',data)
-    // }).catch(err =>{
-    //     console.log(err)
-    //     res.send({
-    //         message: 'failure',
-    //         status: 300,
-    //         err: err
-    //     })
-    // })
 });
 
 app.post(`${apiPrefix}MergeTeam`, (req, res) => {
