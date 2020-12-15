@@ -6,15 +6,15 @@ import { formDataToJson } from '../../utilities/utility';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
-import DarkMode from '../DarkMode';
+// import DarkMode from '../DarkMode';
 
 import {
     uploadProfilePic,
     getUserDetails,
     getProfilePicLink,
-    getInpFileLink,
+    // getInpFileLink,
     getModelLink,
-    getSimulationFile,
+    // getSimulationFile,
     getVtkFileLink,
     updateUserDetails,
     isAuthenticated,
@@ -31,7 +31,7 @@ import { UncontrolledAlert,
     FormGroup,
     Label,
     Input,
-    FormText,
+    // FormText,
     Button,
     Col,
     Row
@@ -49,11 +49,11 @@ import {
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
-import Img from 'react-fix-image-orientation'
+// import Img from 'react-fix-image-orientation'
 import AvatarInspectionModel from '../Popup/AvatarInspectionModel';
-import camera from './camera.png';
+// import camera from './camera.png';
 import CameraPopup from '../Popup/CameraPopup';
-import CameraPopupDesktop from '../Popup/CameraPopupDesktop';
+// import CameraPopupDesktop from '../Popup/CameraPopupDesktop';
 let options = [];
 class Profile extends React.Component {
     constructor(props) {
@@ -176,7 +176,7 @@ class Profile extends React.Component {
          getAllSensorBrands()
         .then(data =>{
             console.log('Sensor',data)
-            if(data.data.message == "success"){
+            if(data.data.message === "success"){
                 this.setState({
                   sensors: data.data.data
                 })
@@ -217,7 +217,6 @@ class Profile extends React.Component {
             isUploading: false,
             is_selfie_inp_uploaded: false,
             inp_file_url:'',
-            avatar_url : '',
             vtk_file_url : '',
             inp_latest_url_details : '',
             selfie_latest_url_details : '',
@@ -266,7 +265,7 @@ class Profile extends React.Component {
                                 res.data.avatar_url !== undefined &&
                                 res.data.avatar_url.length !== 0
                             ) {
-                                let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                                // let file_extension = this.getUploadFileExtension(res.data.avatar_url);
                                 let details = res.data.avatar_url.split(".png")[0].split('/');
 
                                 let timestamp = details[details.length - 1]
@@ -344,7 +343,6 @@ class Profile extends React.Component {
             isUploading: false,
             is_selfie_inp_uploaded: false,
             inp_file_url:'',
-            avatar_url : '',
             vtk_file_url : '',
             inp_latest_url_details : '',
             selfie_latest_url_details : '',
@@ -384,7 +382,7 @@ class Profile extends React.Component {
                             res.data.avatar_url !== undefined &&
                             res.data.avatar_url.length !== 0
                         ) {
-                            let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                            // let file_extension = this.getUploadFileExtension(res.data.avatar_url);
                             let details = res.data.avatar_url.split(".png")[0].split('/');
 
                             let timestamp = details[details.length - 1]
@@ -423,7 +421,7 @@ class Profile extends React.Component {
                             user_cognito_id : this.state.user.account_id ? this.state.user.account_id : user_id
                         }))
                         .then(response => {
-                            if(response.data.message == "success"){
+                            if(response.data.message === "success"){
                                 if(user_data.is_selfie_inp_uploaded){
                                     profile_data.vtk_file_url = response.data.vtk_file_url;
                                     let details = response.data.vtk_file_url.split(".vtk")[0].split('/');
@@ -580,7 +578,7 @@ class Profile extends React.Component {
             VerifyNumber({phone_number: this.state.phone_number, user_cognito_id:this.state.user.user_cognito_id,country_code:this.state.selectedCountryCode})
             .then(res=>{
                 console.log('res',res);
-                if(res.data.message == "success"){
+                if(res.data.message === "success"){
                     this.setState({VerifyNumber: true})
                 }else{
                         this.setState({
@@ -684,14 +682,14 @@ class Profile extends React.Component {
     handleSetPassword=(e)=>{
         console.log('e',e.target.value);
         this.setState({[e.target.name] : e.target.value});
-        if(e.target.name == 'password'){
+        if(e.target.name === 'password'){
             if(e.target.value.length < 8){
                 this.setState({lenerr: true,setpassword2: false})
             }else{
                 this.setState({lenerr: false, setpassword1: true,setpassword2: false})
             }
         }else{
-            if(e.target.value != this.state.password){
+            if(e.target.value !== this.state.password){
                 this.setState({errmatch: true})
             }else{
                 this.setState({errmatch: false,setpassword2: true});
@@ -702,17 +700,18 @@ class Profile extends React.Component {
         e.preventDefault();
         if(this.state.setpassword1 && this.state.setpassword2){
             console.log(this.state.confirm_password);
+            let user_id;
             if(this.state.profile_to_view){
-                var user_id = this.state.profile_to_view ;
+                user_id = this.state.profile_to_view ;
             }
             else{
-                var user_id = this.state.user.user_cognito_id ;
+                user_id = this.state.user.user_cognito_id ;
             }
             this.setState({isLoading3: true})
             setUserPassword({password: this.state.confirm_password, user_cognito_id: user_id})
             .then(res=>{
                 console.log(res)
-                if(res.data.message == "Success"){
+                if(res.data.message === "Success"){
                     this.setState({
                        isLoading3: false,
                        message3: true,
@@ -982,7 +981,7 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                             <Col sm={4}>
-                                                {this.state.number_verified == 'true' ? 
+                                                {this.state.number_verified === 'true' ? 
                                                     (<button className="btn btn-success btn-sm" onClick={e =>e.preventDefault()}><i class="fa fa-check" aria-hidden="true"></i> Verified</button>) 
                                                     :
                                                     (
@@ -1006,7 +1005,6 @@ class Profile extends React.Component {
                                                         showMonthDropdown
                                                         showYearDropdown
                                                         dropdownMode="select"
-                                                        className="form-control"
                                                         name="dob"
                                                         selected={this.state.user.dob ? new Date(this.state.user.dob) : ""}
                                                         onChange={this.handleDateChange}
@@ -1074,7 +1072,7 @@ class Profile extends React.Component {
                                                 <div class="input-group">
                                                     <Input
                                                         disabled="true"
-                                                        className="profile-input" type="text" name="user_type" id="" placeholder="Gender" value={this.state.user.user_type == "StandardUser" ? "Standard" : "Admin"} />
+                                                        className="profile-input" type="text" name="user_type" id="" placeholder="Gender" value={this.state.user.user_type === "StandardUser" ? "Standard" : "Admin"} />
                                                 </div>
                                             </Col>
                                             <Col sm={4}>

@@ -2,7 +2,7 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import WebFont from 'webfontloader';
-import DarkMode from './../../components/DarkMode';
+// import DarkMode from './../../components/DarkMode';
 import { svgToInline } from './../../config/InlineSvgFromImg';
 
 

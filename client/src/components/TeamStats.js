@@ -103,7 +103,7 @@ class TeamStats extends React.Component {
     }
     selectOption=()=>{
         console.log('principal-max-strain')
-        if(this.state['principal-max-strain'] == 'resultant-linear-acceleration'){
+        if(this.state['principal-max-strain'] === 'resultant-linear-acceleration'){
             return  (
             <>
                 <option value='0'>0g</option>
@@ -126,7 +126,7 @@ class TeamStats extends React.Component {
             </>
 
             )
-        }else if(this.state['principal-max-strain'] == 'resultant-Angular-acceleration'){
+        }else if(this.state['principal-max-strain'] === 'resultant-Angular-acceleration'){
             return  (
             <>
                 <option value='0'>0 rad/s^2</option>
@@ -179,7 +179,7 @@ class TeamStats extends React.Component {
                     <div className="container">
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>Team Stats</h1>
                         <div className="backbutton11" style={{position : 'relative'}}>
-                        {this.state.for == "Teams" ? 
+                        {this.state.for === "Teams" ? 
                             <Link to={{
                                pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
                                 state: {

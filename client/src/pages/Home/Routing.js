@@ -42,7 +42,7 @@ import ModelValidationPressureResponse from '../../components/ModelValidation/Mo
 import ModelValidationDisplacementResponse from '../../components/ModelValidation/ModelValidationDisplacementResponse';
 import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
 import LoginComponentHidden  from '../../components/Authentication/LoginComponentHidden';
-import Hardy_et_al from '../../components/ModelValidation/Hardy_et_al';
+import HardyEtAl from '../../components/ModelValidation/Hardy_et_al';
 import sendEmailVerifation from '../../components/Authentication/pages/sendEmailVerifation';
 
 class Routing extends React.Component {
@@ -81,7 +81,7 @@ class Routing extends React.Component {
 
   onPageChange = (pageNo) => {
       console.log("ROUTING ,", pageNo);
-    if(pageNo != 1){
+    if(pageNo !== 1){
         this.setState({
           currentPage: pageNo,
           isNavbarTransparent : false
@@ -392,12 +392,12 @@ class Routing extends React.Component {
         <Route
             exact
             path="/Hardy-et-al"
-            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+            render={(props) => <HardyEtAl {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact
             path="/Hardy-et-al/:cases"
-            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+            render={(props) => <HardyEtAl {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact
