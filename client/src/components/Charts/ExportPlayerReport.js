@@ -1,17 +1,12 @@
 import React from 'react';
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { useLocation } from 'react-router-dom'
 import brain from './Cumulative/brain1.glb';
 import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './Cumulative/dash.css';
-import StrainMetric from '../../pages/Dash/selector'
-const styleLink = document.createElement("link");
-styleLink.rel = "stylesheet";
-styleLink.href =
-	"https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
-document.head.appendChild(styleLink);
+import SelectSearch from 'react-select-search';
+
 
 let camera, scene, renderer, canvas, raycaster, root, sphereContainer, labelSize = 10;
 let brainModel;
@@ -137,7 +132,12 @@ class ExportPlayerReport extends React.Component {
 				}
 			],
 			actionButtonPositions: [],
-			pathname: window.location.pathname
+			pathname: window.location.pathname,
+			selectOption: [
+				{ name: 'Maximum Principal Strain', value: 'max-ps' },
+				{ name: 'Minimum Principal Strain', value: 'min-ps' },
+				{ name: 'CSDM-15', value: 'csdm_15' },
+			]
 		};
 
 		this.plugins = [
@@ -746,9 +746,6 @@ class ExportPlayerReport extends React.Component {
 		if (brainModel && currentSubCamera)
 			this.pick(pickPosition, scene, currentSubCamera);
 
-		// canvas.width = this.threeCanvasContainer.offsetWidth;
-		// canvas.height = this.threeCanvasContainer.offsetHeight;
-		// console.log('an' + canvas.width);
 		renderer.render(scene, camera);
 		requestAnimationFrame(this.startAnimationLoop);
 	};
@@ -1420,14 +1417,16 @@ class ExportPlayerReport extends React.Component {
 					</div>
 				</div>
 				<div className="row align-items-center">
-					{/* <div className="col-sm-1"></div> */}
+
 					<div className="col-md-6  align-items-center strainMetric"  >
 
 						<div style={{ display: "inline-block" }}>
 							<span className="strain_text">Strain Metric:</span>
 						</div>
 						<div style={{ display: "inline-block" }}>
-							<StrainMetric strain={this.strainMetric} />
+							<SelectSearch options={this.state.selectOption} value="max-ps" name="language" placeholder="Choose" onChange={(e, v) => {
+								this.strainMetric(e, v);
+							}} />
 						</div>
 					</div>
 

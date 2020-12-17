@@ -52,16 +52,16 @@ class CumulativeAccelerationEventChart extends React.Component {
     }
 
     render() {
-        console.log('this.state.data',this.props.data)
+        console.log('this.state.data', this.props.data)
         var fileName = '';
-        if(this.props.data.player_id && this.props.data.player_id.length > 0 && this.props.user.length > 0){
-       
-            console.log('props',this.props);
-            fileName = this.props.user[0].sensor_data.player['first-name']+'_'+this.props.user[0].sensor_data.player['last-name']+'_'+this.props.user[0].sensor_data.player_id.split('$')[1];
+        if (this.props.data.player_id && this.props.data.player_id.length > 0 && this.props.user.length > 0) {
+
+            console.log('props', this.props);
+            fileName = this.props.user[0].sensor_data.player['first-name'] + '_' + this.props.user[0].sensor_data.player['last-name'] + '_' + this.props.user[0].sensor_data.player_id.split('$')[1];
             // console.log('fileName',fileName)
-          
+
         }
-      
+
         return (
             <React.Fragment>
                 {this.props.data.team ?
@@ -72,7 +72,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                         <div className="col-md-12">
                             <p ref="h1" className="penstate">
                                 <Link style={{ fontWeight: "400" }} to={{
-                                    pathname: "/TeamAdmin/"+this.props.data.organization+"/"+this.props.data.brand,
+                                    pathname: "/TeamAdmin/" + this.props.data.organization + "/" + this.props.data.brand,
                                     state: {
                                         brand: {
                                             brand: this.props.data.brand,
@@ -81,9 +81,9 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         }
                                     }
                                 }}>{this.props.data.organization}
-                                </Link> >
+                                </Link>
                                 <Link style={{ fontWeight: "400" }} to={{
-                                    pathname: '/TeamAdmin/team/players/'+this.props.data.organization+'/'+this.props.data.team+'?brand='+this.props.data.brand,
+                                    pathname: '/TeamAdmin/team/players/' + this.props.data.organization + '/' + this.props.data.team + '?brand=' + this.props.data.brand,
                                     state: {
                                         team: {
                                             brand: this.props.data.brand,
@@ -94,7 +94,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         }
                                     }
                                 }}>{this.props.data.team}
-                                </Link> > 
+                                </Link>
                                 {(this.props.data.player_id && this.props.data.player_id.length > 0) ? this.props.data.player_id : this.props.user.first_name + ' ' + this.props.user.last_name}
                             </p>
                         </div>
@@ -108,49 +108,49 @@ class CumulativeAccelerationEventChart extends React.Component {
                     Player Dashboard
                 </h1>
                 { this.props.data.player &&
-                <div
-                    className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1 player-dashboard-user-datials-header"
-                   >
-                    <div className="row">
-                        <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                            <p
-                                ref="h1"
-                                className="player-dashboard-sub-head"
-                            >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : ''}</p>
-                            <p
-                                ref="h1"
-                                className="player-dashboard-sub-head"
-                            >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
+                    <div
+                        className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft1 player-dashboard-user-datials-header"
+                    >
+                        <div className="row">
+                            <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                <p
+                                    ref="h1"
+                                    className="player-dashboard-sub-head"
+                                >Name : {this.props.user.level == '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : ''}</p>
+                                <p
+                                    ref="h1"
+                                    className="player-dashboard-sub-head"
+                                >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br />
                             Number of Simulations : {this.props.data.simulationCount ? this.props.data.simulationCount : ''}
-                            </p>
-                        </div>
-                        {
-                            !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
-                                <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                    <button style={{
-                                        marginRight: "5% !important",
-                                        paddingLeft: "15%",
-                                        paddingRight: "15%"
-                                    }}
-                                        onClick={() => {
-                                            this.props.history.push('/Profile')
-
+                                </p>
+                            </div>
+                            {
+                                !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
+                                    <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                        <button style={{
+                                            marginRight: "5% !important",
+                                            paddingLeft: "15%",
+                                            paddingRight: "15%"
                                         }}
+                                            onClick={() => {
+                                                this.props.history.push('/Profile')
 
-                                        className="btn btn-primary pull-right sub-head-button">
-                                        Profile
+                                            }}
+
+                                            className="btn btn-primary pull-right sub-head-button">
+                                            Profile
                                     </button>
-                                </div>
+                                    </div>
 
-                                : null
-                        }
+                                    : null
+                            }
 
+                        </div>
                     </div>
-                </div>
                 }
                 <div
                     className="card  pt-3 pb-3 pl-2 pr-2 mb-5 animated1 fadeInLeft Cumulative-Overview-player-dash"
-                    
+
                 >
 
                     <div className="row">
@@ -161,8 +161,8 @@ class CumulativeAccelerationEventChart extends React.Component {
                             >Cumulative Overview of All Events</p>
                         </div>
                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                            
-                             {/*
+
+                            {/*
                             !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
                                null
 
@@ -183,10 +183,10 @@ class CumulativeAccelerationEventChart extends React.Component {
                     </div>
 
                     <ExportPlayerReport brainRegions={this.props.brainRegions} />
-                    
+
                 </div>
-               
-                 {/*
+
+                {/*
                             !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
                                null
 

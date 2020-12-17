@@ -1,19 +1,11 @@
 import React from 'react';
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-// import brain from './brain-optimize.glb';
-//import Footer from '../../components/Footer';
 import { Bar } from 'react-chartjs-2';
 import 'chartjs-plugin-datalabels';
 import './dash.css';
-
 import summary from "./summary_york_tech_35204.json";
-import StrainMetric from './selector'
-const styleLink = document.createElement("link");
-styleLink.rel = "stylesheet";
-styleLink.href =
-	"https://cdn.jsdelivr.net/npm/semantic-ui/dist/semantic.min.css";
-document.head.appendChild(styleLink);
+import SelectSearch from 'react-select-search';
 const insults = summary.Insults;
 let stem_json = [];
 let pariental_lobe_json = [];
@@ -183,6 +175,82 @@ insults.forEach((insult) => {
 				break;
 		}
 	}
+	if (insult["CSDM-15"]) {
+		switch (insult["CSDM-15"]["brain-region"]) {
+			case "msc":
+				csdm_15[6] = [
+					{
+						x: insult["CSDM-15"]["location"][0],
+						y: insult["CSDM-15"]["location"][1],
+						z: insult["CSDM-15"]["location"][2]
+					},
+					...csdm_15[6]
+				];
+				break;
+			case "stem":
+				csdm_15[5] = [
+					{
+						x: insult["CSDM-15"]["location"][0],
+						y: insult["CSDM-15"]["location"][1],
+						z: insult["CSDM-15"]["location"][2]
+					},
+					...csdm_15[5]
+				];
+				break;
+			case "cerebellum":
+				csdm_15[4] = [
+					{
+						x: insult["CSDM-15"]["location"][0],
+						y: insult["CSDM-15"]["location"][1],
+						z: insult["CSDM-15"]["location"][2]
+					},
+					...csdm_15[4]
+				];
+				break;
+			case "temporal":
+				csdm_15[3] = [
+					{
+						x: insult["CSDM-15"]["location"][0],
+						y: insult["CSDM-15"]["location"][1],
+						z: insult["CSDM-15"]["location"][2]
+					},
+					...csdm_15[3]
+				];
+				break;
+			case "occipital":
+				csdm_15[2] = [
+					{
+						x: insult["CSDM-15"]["location"][0],
+						y: insult["CSDM-15"]["location"][1],
+						z: insult["CSDM-15"]["location"][2]
+					},
+					...csdm_15[2]
+				];
+				break;
+			case "parietal":
+				csdm_15[1] = [
+					{
+						x: insult["CSDM-15"]["location"][0],
+						y: insult["CSDM-15"]["location"][1],
+						z: insult["CSDM-15"]["location"][2]
+					},
+					...csdm_15[1]
+				];
+				break;
+			case "frontal":
+				csdm_15[0] = [
+					{
+						x: insult["CSDM-15"]["location"][0],
+						y: insult["CSDM-15"]["location"][1],
+						z: insult["CSDM-15"]["location"][2]
+					},
+					...csdm_15[0]
+				];
+				break;
+			default:
+				break;
+		}
+	}
 
 
 });
@@ -300,7 +368,12 @@ class DashPage extends React.Component {
 					shortenName: "Frontal"
 				}
 			],
-			actionButtonPositions: []
+			actionButtonPositions: [],
+			selectOption: [
+				{ name: 'Maximum Principal Strain', value: 'max-ps' },
+				{ name: 'Minimum Principal Strain', value: 'min-ps' },
+				{ name: 'CSDM-15', value: 'csdm_15' },
+			]
 		};
 
 		this.plugins = [
@@ -1326,8 +1399,13 @@ class DashPage extends React.Component {
 				all_spheres_json = [...maximumPS]
 				break;
 			case "min-ps":
+
 				all_spheres_json = [];
 				all_spheres_json = [...minimumPS];
+				break;
+			case "csdm_15":
+				all_spheres_json = [];
+				all_spheres_json = [...csdm_15]
 				break;
 		}
 	}
@@ -1557,7 +1635,9 @@ class DashPage extends React.Component {
 							<span className="strain_text">Strain Metric:</span>
 						</div>
 						<div style={{ display: "inline-block" }}>
-							<StrainMetric strain={this.strainMetric} />
+							<SelectSearch options={this.state.selectOption} value="max-ps" name="language" placeholder="Choose" onChange={(e, v) => {
+								this.strainMetric(e, v);
+							}} />
 						</div>
 
 					</div>

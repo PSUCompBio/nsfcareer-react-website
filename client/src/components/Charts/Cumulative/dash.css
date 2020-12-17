@@ -118,6 +118,15 @@ span.sphere_count {
   position: relative;
   height: 40px;
 }
+.strain_text{
+  margin-left:20px !important;
+}
+.select-search{
+  width:220px;
+}
+.select-search__input{
+  background-color:rgb(187, 185, 185);
+}
 
 @media only screen and (max-width: 1200px) {
   .action_btn_block {
@@ -192,7 +201,9 @@ span.sphere_count {
   .action-btn-container {
     height: 60px;
   }
-
+  .select-search{
+    width:210px;
+  }
   .lobe_btn_temp {
     font-size: 12px !important;
     padding: 1px !important;
@@ -206,6 +217,9 @@ span.sphere_count {
   }
   .strain_text{
     font-size:15px !important;
+    margin-right:5px!important;
+    margin-left:0px !important;
+   
   }
 }
 
