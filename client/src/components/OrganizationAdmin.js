@@ -543,7 +543,7 @@ class OrganizationAdmin extends React.Component {
 
                     return <tr className={cls}  key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization.organization+'/'+organization.sensor,
                             state: {
                                 brand: {
                                     brand: organization.sensor,
