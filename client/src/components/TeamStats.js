@@ -177,7 +177,7 @@ class TeamStats extends React.Component {
                  
                 <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
                     <div className="container">
-                        <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>Team Stats</h1>
+                        <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>{this.state.for === 'Teams' ? 'Organization Stats' : 'Team Stats'}</h1>
                         <div className="backbutton11" style={{position : 'relative'}}>
                         {this.state.for === "Teams" ? 
                             <Link to={{
