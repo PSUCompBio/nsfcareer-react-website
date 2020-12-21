@@ -8780,7 +8780,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                 });
 
                 const pushdata = (summary_data)=>{
-                    if (summary_data['principal-max-strain']) {
+                    if (summary_data['principal-max-strain'] && summary_data['principal-max-strain']['brain-region']) {
                         let coordinate = {};
                         coordinate.x = summary_data['principal-max-strain'].location[0];
                         coordinate.y = summary_data['principal-max-strain'].location[1];
@@ -8789,7 +8789,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                         principal_max_strain[region] = principal_max_strain[region] || [];
                         principal_max_strain[region].push(coordinate);
                     }
-                    if (summary_data['principal-min-strain']) {
+                    if (summary_data['principal-min-strain'] && summary_data['principal-min-strain']['brain-region']) {
                         let coordinate = {};
                         coordinate.x = summary_data['principal-min-strain'].location[0];
                         coordinate.y = summary_data['principal-min-strain'].location[1];

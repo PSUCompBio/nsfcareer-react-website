@@ -727,6 +727,12 @@ class Details extends React.Component {
           isTriming: false,
           label_TrimVideo:'Success'
         })
+        var the = this;
+        setTimeout(()=>{
+          the.setState({
+            label_TrimVideo: 'Trim',
+          })
+        },2000)
       }else{
         this.setState({
           isTriming: false,
@@ -741,11 +747,7 @@ class Details extends React.Component {
       })
 
     })
-    setTimeout(()=>{
-      this.setState({
-        label_TrimVideo: 'Trim',
-      })
-    },2000)
+
 
   }
 
@@ -765,17 +767,19 @@ class Details extends React.Component {
         right_lock_time: 0,
       })
       console.log('res',res);
+      var the = this;
+      setTimeout(()=>{
+        the.setState({
+          label_resetVideo: 'Reset',
+        })
+      },2000)
     }).catch(err=> {
       console.log('err',err)
       this.setState({
         label_resetVideo: 'Failed',
       })
     })
-    setTimeout(()=>{
-      this.setState({
-        label_resetVideo: 'Trim',
-      })
-    },2000)
+   
   } 
 
 
@@ -1010,7 +1014,7 @@ class Details extends React.Component {
                       <div className="movie">
                         <div className="col-sm-12" >
                           <div className="col-md-6" style={{'float':'left'}}><p class="video-lebel">Simulation Video</p></div>
-                          <div className="col-md-6" style={{'float':'left'}}><p class="video-lebel">Sideline Video</p></div>
+                          <div className="col-md-6 mobileview-active" style={{'float':'left'}}><p class="video-lebel">Sideline Video</p></div>
                         </div>
                         <div className="col-md-6" style={{'float':'left'}}>
                           <div className="Simulationvideo">
@@ -1041,17 +1045,29 @@ class Details extends React.Component {
                             <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSimulationVideo}</div>
                           </div>
                         </div>
+                        <div className="col-sm-12" >
+                          <div className="col-md-6 deskView-active" style={{'float':'left'}}><p class="video-lebel">Sideline Video</p></div>
+                        </div>
                         <div className="Replace-video Replace-video-mobile">
                           <div>
-                            {this.state.impact_video_url  && 
+                            {/*!-- Video controls Mobile view --*/}
+                            {this.state.impact_video_url  ? 
                               <React.Fragment>
                                 <label for="uploadFile"><img src={upload} />  Replace</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                 <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                                <label  onClick={this.trimVideo} onClick={this.trimVideo} ><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
+                                <label  onClick={this.trimVideo} ><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
                                 <label onClick={this.resetToOriginal} ><img src={reset_icon} />  {this.state.label_resetVideo}</label>
                               </React.Fragment>
+                              :
+                              <React.Fragment>
+                                <label style={{'background':'#b7cce2'}}><img src={upload} />  Replace</label>
+                                <label style={{'background':'#b7cce2'}}><img src={remove} />  {this.state.label_remove_video}</label>
+                                <label style={{'background':'#b7cce2'}}><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
+                                <label style={{'background':'#b7cce2'}}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
+                              </React.Fragment>
                             }
+                            {/*!-- Video controls end --*/}
                           </div>
                         </div>
                         <div className="col-md-6" style={{'float':'left'}}>
@@ -1093,7 +1109,8 @@ class Details extends React.Component {
                           <div>
                             <div className="Replace-video Replace-video-desktop">
                               <div style={{width:'100%'}}>
-                                {this.state.impact_video_url &&
+                                {/*!-- Video controls Desktop view --*/}
+                                {this.state.impact_video_url ?
                                   <React.Fragment>
                                     <label for="uploadFile"><img src={upload} />  Replace</label>
                                     <input type="file" id="uploadFile" onChange={this.uploadFile} />
@@ -1102,7 +1119,15 @@ class Details extends React.Component {
                                     <label onClick={this.resetToOriginal}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
 
                                   </React.Fragment>
+                                  :
+                                  <React.Fragment>
+                                    <label style={{'background':'#b7cce2'}}><img src={upload} />  Replace</label>
+                                    <label style={{'background':'#b7cce2'}}><img src={remove} />  {this.state.label_remove_video}</label>
+                                    <label style={{'background':'#b7cce2'}}> {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} />  {this.state.label_TrimVideo}</>} </label>
+                                    <label style={{'background':'#b7cce2'}}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
+                                  </React.Fragment>
                                 }
+                                {/*!-- Video controls end --*/}
                               </div>
                             </div>
                           </div>
@@ -1111,7 +1136,7 @@ class Details extends React.Component {
                           {this.state.isTimeUpdating ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : ''}
                           </div>
                           <div>
-                            <div className="col-sm-12 no-padding">
+                            <div className="col-sm-12 sideliene-video-sliders no-padding">
                               <div className="col-sm-1 no-padding" style={{'float':'left'}}>
                                 <img src={this.state.left_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() => this.handlelock_video('left')}/>
                               </div>
