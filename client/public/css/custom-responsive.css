@@ -588,6 +588,19 @@
     position: initial!important;
   }
 
+  .mobileview-active{
+    display: none;
+  }
+  .deskView-active{
+    display: inherit;
+  }
+
+  .sideliene-video-sliders .col-sm-1{
+    width: 10%!important;
+  }
+  .sideliene-video-sliders .col-sm-10{
+    width: 80%!important;
+  }
 }
 
 @media screen and (max-width: 414px) {
