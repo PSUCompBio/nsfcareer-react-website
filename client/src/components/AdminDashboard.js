@@ -19,6 +19,7 @@ import {
     addOrganization,
     MergeOrganization,
     getAllSensorBrandsList,
+    loadMorePlayerList
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -35,6 +36,7 @@ import plus from './icons/plus.png'
 import { 
     UncontrolledAlert
 } from 'reactstrap';
+import { Button } from 'react-bootstrap';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
 class AdminDashboard extends React.Component {
@@ -180,7 +182,7 @@ class AdminDashboard extends React.Component {
             }, 2000);
             if(this.state.playerList.length === 0){
                 the.setState({isFetching: true});
-                getPlayerList({type: 'playersList'})
+                getPlayerList({type: 'playersList',lastItem : ''})
                 .then(players => {
                     console.log('players ==============\n',players)
                     this.setState({
@@ -467,6 +469,37 @@ class AdminDashboard extends React.Component {
         }
 
     }
+
+    /**
+    * Load more plyers function start here ...
+    */
+
+    handleLoadmorePlayers =()=>{
+        this.setState({
+            loadingplayers : true,
+        })
+        loadMorePlayerList({type: 'loadMorePlayerList',lastItem : ''})
+        .then(players => {
+            console.log('players ==============\n',players)
+            this.setState({
+                playerList:players.data.data,
+                loadingplayers: false,
+               isplyarloaded: true
+            })
+            let the = this;
+             setTimeout(function(){ 
+                the.hadnlesearch();
+            }, 3000);
+           
+        }).catch(err=>{
+            console.log('err',err)
+            this.setState({
+                loadingplayers: false,
+                isplyarloaded: true
+            })
+        })
+    }
+
   /*===================================
     
         Organization edit funtion end here
@@ -1336,6 +1369,17 @@ class AdminDashboard extends React.Component {
 
                                                     </tbody>
                                                 </table>
+                                                <div style={{'text-align': 'left', 'padding': '14px'}}>
+                                                    {!this.state.isplyarloaded &&
+                                                        <Button
+                                                          variant="primary"
+                                                          disabled = {this.state.loadingplayers}
+                                                          onClick={this.handleLoadmorePlayers}
+                                                        >
+                                                        {this.state.loadingplayers ? 'Loading...': 'Load More'}
+                                                        </Button>
+                                                    }
+                                                </div>
                                             </div>
                                         ) :
                                          (<div className="football-container mt-4 d-flex flex-wrap">
@@ -1448,6 +1492,17 @@ class AdminDashboard extends React.Component {
 
                                                     </tbody>
                                                 </table>
+                                                <div style={{'text-align': 'left', 'padding': '14px'}}>
+                                                    {!this.state.isplyarloaded &&
+                                                        <Button
+                                                          variant="primary"
+                                                          disabled = {this.state.loadingplayers}
+                                                          onClick={this.handleLoadmorePlayers}
+                                                        >
+                                                        {this.state.loadingplayers ? 'Loading ...': 'Load More'}
+                                                        </Button>
+                                                    }
+                                                </div>
                                             </div>
                                         ) :
                                         (<div ref="table" className="commander-data-table table-responsive ">
@@ -1503,7 +1558,7 @@ class AdminDashboard extends React.Component {
                                                     className="spinner-border text-primary"
                                                     role="status"
                                                     >
-                                                    <span className="sr-only">Uploading...</span>
+                                                    <span className="sr-only">Uploading ...</span>
                                                 </div>
                                             </div>
                                         ) : null}

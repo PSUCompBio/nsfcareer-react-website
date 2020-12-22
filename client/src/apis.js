@@ -1027,6 +1027,18 @@ export const getPlayerList = (request) =>{
       });
   })
 }
+
+export const loadMorePlayerList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/loadMorePlayerList/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const deleteItem = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/deleteItem/`,request, {withCredentials: true})
