@@ -664,7 +664,7 @@ class Profile extends React.Component {
             let vtk_file_url_details = ""
             if(response.data.data.inp_file_url) {
                 let details = response.data.data.inp_file_url.split(".inp")[0].split('/');
-                let timestamp = details[details.length - 1]
+                let timestamp = details[details.length].split('_')[1]
                 let date = new Date(parseInt(timestamp))
                 inp_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
 
@@ -1789,7 +1789,7 @@ class Profile extends React.Component {
                                         let vtk_file_url_details = ""
                                         if(response.data.data.inp_file_url) {
                                             let details = response.data.data.inp_file_url.split(".inp")[0].split('/');
-                                            let timestamp = details[details.length - 1]
+                                            let timestamp = details[details.length - 1].split('_')[1]
                                             let date = new Date(parseInt(timestamp))
                                             inp_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
 
