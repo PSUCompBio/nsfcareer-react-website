@@ -1795,20 +1795,59 @@ app.post(`${apiPrefix}getOrgUniqueTeams`, (req, res) => {
     })
 })
 
+function upDateuserProfile(User, cb) {
+    if(User.email){
+        var params = {
+            UserAttributes: [ /* required */
+              {
+                Name: 'name', /* required */
+                Value: User.name
+              },
+              {
+                Name: 'phone_number', /* required */
+                Value: User.phone_number
+              },
+              {
+                Name: 'phone_number_verified', /* required */
+                Value: User.phone_number_verified
+              },
+              /* more items */
+            ],
+            UserPoolId: cognito.userPoolId, /* required */
+            Username: User.user_name, /* required */
+          };
+          COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+            if (err) {
+                cb(err, "");
+            } // an error occurred
+            else {
+                cb("", data);
+            }             // successful response
+          });
+    }else{
+        cb("", true);
+    }
+}
+
 
 app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
     console.log('req',req.body);
     let obj = {};
     obj.user_name = req.body.user_cognito_id;
+    obj.name = req.body.first_name+req.body.last_name;
+    obj.email = req.body.email;
     obj.phone_number = req.body.country_code+req.body.phone_number;
     obj.phone_number_verified = req.body.number_verified
-    adminVerifyNumber(obj, function (err, data) {
-        if (err) {
 
+    upDateuserProfile(obj, function (err, data) {
+        if (err) {
+            res.send({
+                message : 'failure',
+                error: err
+            })
         }else{
 
             let update_details = {
-
                 TableName : 'users',
                 Key : {
                     "user_cognito_id": req.body.user_cognito_id
@@ -1819,7 +1858,7 @@ app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
                     ":lname" : req.body.last_name,
                     ":dob" : req.body.dob,
                     ":gender" : req.body.sex,
-                    ":phone_number" : req.body.country_code + req.body.phone_number,
+                    ":phone_number" : req.body.phone_number,
                     ":phone_number_verified" : req.body.number_verified
                 },
                 ReturnValues: "UPDATED_NEW"
@@ -4147,6 +4186,108 @@ app.post(`${apiPrefix}getTeamNameList`, (req, res) => {
 app.post(`${apiPrefix}getPlayerList`, (req, res) => {
     getPlayerList().then(players => {
         var player_list = [];
+        for(var i =0; i < 10; i++){
+            if(players[i].player_list && player_list.length < 10){
+                var list = players[i].player_list;
+                for(var j = 0;j < 10; j++){
+                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                }
+            }
+        }
+        if (player_list.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        }
+        else {
+            var counter = 0;
+            var indx = 0;
+            var p_data = [];
+            var player_listLn = player_list.length;
+            player_list.forEach(function (player, index) {
+                let p = player;
+                let playerData = '';
+                
+                if(player.player_id && player.player_id != 'undefined'){
+                    getTeamDataWithPlayerRecords_3(player.player_id, player.team, player.sensor, player.organization)
+                    .then(player_data => {
+
+                        playerData = player_data;
+                        counter++;
+                        p_data.push({
+                            player_name: p,
+                            //vsimulation_image: image ? image : '',
+                            simulation_data: playerData,
+                            date_time: playerData[0] ? playerData[0].player_id.split('$')[1]: '',
+                        });
+                       
+                         if (counter == player_listLn) {
+                            p_data.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            }); 
+
+                            let k = 0;
+                            var p_datalen = p_data.length;
+                            p_data.forEach(function (record, index) {
+                                if(record.simulation_data[0]){
+                                    getPlayerSimulationStatus(record.simulation_data[0].image_id)
+                                        .then(simulation => {
+                                            // console.log('simulation',simulation.status)
+                                            k++;
+                                            p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                            p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+                                            
+                                            if (k == p_datalen) {
+                                                res.send({
+                                                    message: "success",
+                                                    data: p_data
+                                                })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                        })
+                                }else{
+                                    p_datalen--;
+                                }
+                            })
+                        }
+                        
+                        indx++;
+                    })
+                    .catch(err => {
+                        console.log('err =============\n',err)
+                        counter++;
+                        if (counter == player_listLn) {
+                            res.send({
+                                message: "failure",
+                                data: p_data
+                            })
+                        }
+                    })
+                } else {
+                    counter++;
+                }
+            })
+        }
+
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+})
+
+app.post(`${apiPrefix}loadMorePlayerList`, (req, res) => {
+    getPlayerList().then(players => {
+        var player_list = [];
         for(var i =0; i < players.length; i++){
             if(players[i].player_list){
                 var list = players[i].player_list;
@@ -4245,8 +4386,6 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
         })
     })
 })
-
-
 
 app.post(`${apiPrefix}enableUser`, (req, res) => {
     enableUser(req.body.user_name, function (err, data) {
