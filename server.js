@@ -8540,216 +8540,124 @@ app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
 });
 
 app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
-     let brainRegions = {};
-            let principal_max_strain = {};
-            let principal_min_strain = {};
-            let axonal_strain_max = {};
-            let csdm_max = {};
-            let masXsr_15_max = {};
-            let MPS_95  = {};
-            let CSDM_5  = {};
-            let CSDM_10 = {};
-            let CSDM_15 = {};
-
-            let cnt = 1;
-
-            
-            brainRegions['principal-max-strain'] = {};
-            brainRegions['principal-min-strain'] = {};
-            brainRegions['axonal-strain-max'] = {};
-            brainRegions['csdm-max'] = {};
-            brainRegions['masXsr-15-max'] = {};
-            brainRegions['MPS-95'] = {};
-            brainRegions['CSDM-5'] = {};
-            brainRegions['CSDM-10'] = {};
-            brainRegions['CSDM-15'] = {};
-
-            
-            res.send({
-                message: "success",
-                brainRegions: brainRegions
-            })
-        // }
-    /* getTeamSpheres(req.body)
+    console.log('req ----',req.body)
+    let spharesData = [];
+    let count_sp = 0;
+    req.body.team.forEach(function (team_name, index) {
+        getTeamSpheres({brand:req.body.brand, organization: req.body.organization, team: team_name})
         .then(data => {
-            console.log('getTeamSpheres ============================\n',data)
-           
+            spharesData = spharesData.concat(data);
+            count_sp++;
+            if(count_sp == req.body.team.length){
+                data = spharesData;
+                console.log('data of team sphares -----\n',data)
 
-            let players = [];
-            const processData = data.map(acc_data => {
-                return new Promise((resolve, reject) => {
-                    let player_id = acc_data.player_id.split('$')[0];
-                    if (!players.includes(player_id)) {
-                        players.push(player_id);
-                        getPlayerSimulationStatus(acc_data.image_id)
-                            .then(imageData => {
-                                if (imageData.player_name && imageData.player_name != 'null') {
-                                    console.log(imageData.player_name + '/simulation/summary.json');
-                                    let file_path = imageData.player_name + '/simulation/summary.json';
-                                    return getFileFromS3(file_path, imageData.bucket_name);
-                                }
-                            })
-                            .then(output_file => {
-                                if (output_file) {
-                                    outputFile = JSON.parse(output_file.Body.toString('utf-8'));
-                                    if (outputFile.Insults) {
-                                        outputFile.Insults.forEach(function (summary_data, index) {
-                                            if (summary_data['principal-max-strain']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['principal-max-strain'].location[0];
-                                                coordinate.y = summary_data['principal-max-strain'].location[1];
-                                                coordinate.z = summary_data['principal-max-strain'].location[2];
-                                                region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
-                                                principal_max_strain[region] = principal_max_strain[region] || [];
-                                                principal_max_strain[region].push(coordinate);
-                                            }
-                                            if (summary_data['principal-min-strain']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['principal-min-strain'].location[0];
-                                                coordinate.y = summary_data['principal-min-strain'].location[1];
-                                                coordinate.z = summary_data['principal-min-strain'].location[2];
-                                                region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
-                                                principal_min_strain[region] = principal_min_strain[region] || [];
-                                                principal_min_strain[region].push(coordinate);
-                                            }
-                                            if (summary_data['axonal-strain-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['axonal-strain-max'].location[0];
-                                                coordinate.y = summary_data['axonal-strain-max'].location[1];
-                                                coordinate.z = summary_data['axonal-strain-max'].location[2];
-                                                region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
-                                                axonal_strain_max[region] = axonal_strain_max[region] || [];
-                                                axonal_strain_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['csdm-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['csdm-max'].location[0];
-                                                coordinate.y = summary_data['csdm-max'].location[1];
-                                                coordinate.z = summary_data['csdm-max'].location[2];
-                                                region = summary_data['csdm-max']['brain-region'].toLowerCase();
-                                                csdm_max[region] = csdm_max[region] || [];
-                                                csdm_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['masXsr-15-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['masXsr-15-max'].location[0];
-                                                coordinate.y = summary_data['masXsr-15-max'].location[1];
-                                                coordinate.z = summary_data['masXsr-15-max'].location[2];
-                                                region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
-                                                masXsr_15_max[region] = masXsr_15_max[region] || [];
-                                                masXsr_15_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['MPS-95']) {
-                                               
-                                                if(summary_data['MPS-95']['frontal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['frontal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'frontal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['parietal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['parietal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'parietal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['msc']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['msc'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'msc';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['cerebellum']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'cerebellum';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['occipital']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['occipital'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'occipital';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['temporal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['temporal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'temporal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                            }
-                                        })
+                let brainRegions = {};
+                let principal_max_strain = {};
+                let principal_min_strain = {};
+                let axonal_strain_max = {};
+                let csdm_max = {};
+                let masXsr_15_max = {};
+                let MPS_95  = {};
+                let CSDM_5  = {};
+                let CSDM_10 = {};
+                let CSDM_15 = {};
+                let MPS_95_DATA = [];
+                let MAX_ANGULAR_EXLARATION = [];
+
+
+
+                if (data.length === 0){
+                    brainRegions['principal-max-strain'] = {};
+                    brainRegions['principal-min-strain'] = {};
+                    brainRegions['axonal-strain-max'] = {};
+                    brainRegions['csdm-max'] = {};
+                    brainRegions['masXsr-15-max'] = {};
+                    brainRegions['MPS-95'] = {};
+                    brainRegions['CSDM-5'] = {};
+                    brainRegions['CSDM-10'] = {};
+                    brainRegions['CSDM-15'] = {};
+
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    })
+                }
+
+                let players = [];
+                const processData = data.map(acc_data => {
+                    return new Promise((resolve, reject) => {
+                        let player_id = acc_data.player_id.split('$')[0];
+                        if (!players.includes(player_id)) {
+                            players.push(player_id);
+                            getPlayerSimulationStatus(acc_data.image_id)
+                                .then(imageData => {
+                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                        console.log(imageData.player_name + '/simulation/summary.json');
+                                        let file_path = imageData.player_name + '/simulation/summary.json';
+                                        return getFileFromS3(file_path, imageData.bucket_name);
                                     }
-                                }
-                                resolve(null);
-                            })
-                            .catch(err => {
-                                reject(err);
-                            })
-                    } else {
-                        resolve(null);
-                    }
-                })
-            })
-
-            Promise.all(processData).then(resolveData => {
-                console.log('All executed');
-                brainRegions['principal-max-strain'] = principal_max_strain;
-                brainRegions['principal-min-strain'] = principal_min_strain;
-                brainRegions['axonal-strain-max'] = axonal_strain_max;
-                brainRegions['csdm-max'] = csdm_max;
-                brainRegions['masXsr-15-max'] = masXsr_15_max;
-                brainRegions['MPS-95'] = MPS_95;
-
-                res.send({
-                    message: "success",
-                    data: brainRegions
+                                })
+                                .then(output_file => {
+                                    if (output_file) {
+                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                        if (outputFile.Insults) {
+                                            outputFile.Insults.forEach(function (summary_data, index) {
+                                                pushdata(summary_data);
+                                            })
+                                        }
+                                    }
+                                    resolve(null);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                        } else {
+                            resolve(null);
+                        }
+                    })
                 });
-            });
-        })
-        .catch(err => {
+
+                const pushdata = (summary_data)=>{
+                    if (summary_data['MPS-95']) {
+                                                   
+                        if(summary_data['MPS-95']['value'] && summary_data['max-angular-acc-rads2']){
+                            MPS_95_DATA.push(summary_data['MPS-95']['value']);
+                            MAX_ANGULAR_EXLARATION.push(summary_data['max-angular-acc-rads2']);
+                        }
+                    }
+                }
+
+                Promise.all(processData).then(resolveData => {
+                    console.log('All executed');
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    });
+                });
+            }
+        }).catch(err => {
             res.send({
                 message : "failure",
                 error : err
             })
         }) 
-        */
+    })
+
+        
 });
 
 app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {

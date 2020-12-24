@@ -1369,7 +1369,7 @@ class AdminDashboard extends React.Component {
 
                                                     </tbody>
                                                 </table>
-                                                <div style={{'text-align': 'left', 'padding': '14px'}}>
+                                                <div style={{'text-align': 'center', 'padding': '14px'}}>
                                                     {!this.state.isplyarloaded &&
                                                         <Button
                                                           variant="primary"
@@ -1492,7 +1492,7 @@ class AdminDashboard extends React.Component {
 
                                                     </tbody>
                                                 </table>
-                                                <div style={{'text-align': 'left', 'padding': '14px'}}>
+                                                <div style={{'text-align': 'center', 'padding': '14px'}}>
                                                     {!this.state.isplyarloaded &&
                                                         <Button
                                                           variant="primary"

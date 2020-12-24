@@ -10,13 +10,7 @@ import {
     getTeamSpheres,
     getFilterdTeamSpheres
   } from './../apis';
-
-// let brainRegions = {};
-// brainRegions['principal-max-strain'] = {};
-// brainRegions['principal-min-strain'] = {};
-// brainRegions['axonal-strain-max'] = {};
-// brainRegions['csdm-max'] = {};
-// brainRegions['masXsr-15-max'] = {};
+import TeamStateScatterChart from './Charts/TeamStateScatterChart';
 
 class TeamStats extends React.Component {
     constructor(props) {
@@ -49,7 +43,9 @@ class TeamStats extends React.Component {
                             isAuthenticated: true,
                             isLoading: false,
                             isCheckingAuth: false,
-                            brainRegions: response.data.data
+                            brainRegions: response.data.data,
+                            MAX_ANGULAR_EXLARATION: response.data.MAX_ANGULAR_EXLARATION,
+                            MPS_95_DATA: response.data.MPS_95_DATA
                         });
                     })
                     .catch((error) => {
@@ -249,6 +245,17 @@ class TeamStats extends React.Component {
                                 </>
                             </div>
                         </div>
+
+                        {/*!-- MPS_95 chart start --*/}
+                        <div className="col-sm-12 no-padding">
+                            <div className="col-md-12 no-padding">
+                                <p className="video-lebel text-center">95% MPS Angular Acceleration </p>
+                                < TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />
+                            </div>
+                            <div className="col-md-6">
+                            </div>
+                        </div>
+                        {/*!-- MPS_95 chart end --*/}
                     </div>
                 </div>
                 
