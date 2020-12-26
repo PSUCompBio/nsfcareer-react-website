@@ -1,12 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import PlayerDetails from '../PlayerDetails/PlayerDetails';
-import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
 import CumulativeEventsAccelerationEvents from '../DashboardEventsChart/CumulativeEventsAccelerationEvents';
-import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
 import HeadAccelerationAllEvents from '../DashboardEventsChart/HeadAccelerationAllEvents';
 import { svgToInline } from '../../config/InlineSvgFromImg';
-// import DarkMode from '../DarkMode';
 import Footer from '../Footer';
 import 'jquery';
 import '../Buttons/Buttons.css';
@@ -16,25 +12,14 @@ import {
   isAuthenticated,
   getCumulativeAccelerationData,
   getSimulationFilesOfPlayer,
-  getAllCumulativeAccelerationTimeRecords,
   AllCumulativeAccelerationTimeRecords,
-  getAllCumulativeAccelerationJsonData,
   getCumulativeAccelerationTimeRecords
 } from '../../apis';
 
-import { Form,Button, Collapse,Accordion, Card } from 'react-bootstrap';
-
-
-
+import { Button,Accordion, Card } from 'react-bootstrap';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
-
-
-
 import Spinner from '../Spinner/Spinner';
-
 import ScrollToTop from 'react-scroll-up';
-
 import { getStatusOfDarkmode } from '../../reducer';
 import $ from 'jquery';
 
@@ -85,7 +70,7 @@ class UserDashboarForAdmin extends React.Component {
     this.setState({
       simulationFilePaths: []
     })
-    if (event.target.value != "-1") {
+    if (event.target.value !== "-1") {
       getSimulationFilesOfPlayer({ path: event.target.value })
         .then(response => {
           this.setState({
@@ -123,8 +108,8 @@ class UserDashboarForAdmin extends React.Component {
     $("#"+col_id).toggleClass('show');
     $("#col_icon"+col_id).toggleClass('rotate-collapse');
     $("#spin_"+col_id).toggleClass('spin_display');
-    var loaded_data = this.state.loaded_data;
-    if(this.state.loaded_data.indexOf(e) == -1){
+    // var loaded_data = this.state.loaded_data;
+    if(this.state.loaded_data.indexOf(e) === -1){
       this.setState({loaded_data : this.state.loaded_data.concat(e)});
       this.setState({open: e});
       getCumulativeAccelerationTimeRecords({ brand: this.state.brand, user_cognito_id: this.state.user_cognito_id, organization: this.state.organization, player_id: e, team: this.state.team })
@@ -160,7 +145,7 @@ class UserDashboarForAdmin extends React.Component {
 
   tConvert = (time) => {
     console.log(time)
-    if(time == 0){
+    if(time === 0){
       return 'Unknown Time'
     }else{
        // Check correct time format and split into components
@@ -341,7 +326,7 @@ class UserDashboarForAdmin extends React.Component {
                   <Card.Body>
                     {this.state.cumulativeAccelerationTimeAlldata ? 
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
-                          if(items.sensor_data.player_id == item.sensor_data.player_id){
+                          if(items.sensor_data.player_id === item.sensor_data.player_id){
                            return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.state.state} organization ={the.state.organization}  player_id={item.sensor_data.player_id} team={the.state.team} brand={the.state.brand} status={item.status}/>
                           }
                         })
@@ -394,7 +379,7 @@ class UserDashboarForAdmin extends React.Component {
         brand = params.get('brand');
         user_cognito_id = localstorage.userInfo['user_cognito_id'];
         var level = localstorage.userInfo['level'];
-        if(level == 100){
+        if(level === 100){
           brand = localstorage.userInfo['sensor'];
         }
     }

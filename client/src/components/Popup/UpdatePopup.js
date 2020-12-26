@@ -1,23 +1,13 @@
 import React from 'react';
-import ToggleToken from '../Buttons/ToggleToken';
-import { formDataToJson } from '../../utilities/utility';
 
-import { deleteItem } from '../../apis';
-
-import Spinner from './../Spinner/Spinner';
-
-import { UncontrolledAlert,
+import { 
     Form,
     FormGroup,
     Label,
     Input,
-    FormText,
-    Button,
     Col,
     Row
 } from 'reactstrap';
-
-var USER_TYPES = [];
 
 class UpdatePopup extends React.Component {
   constructor() {
@@ -40,7 +30,7 @@ class UpdatePopup extends React.Component {
     //  window.scrollTo(0, 0)
   }
   hadleApply = () =>{
-    if(this.props.data.type == "rename"){
+    if(this.props.data.type === "rename"){
       let updateData = {
         data : this.props.data,
         OrganizationName : this.state.OrganizationName 
@@ -48,7 +38,7 @@ class UpdatePopup extends React.Component {
       this.props.isUpdateData(updateData);
       this.setState({OrganizationName: ''})
     }
-     if(this.props.data.type == "renameTeam"){
+     if(this.props.data.type === "renameTeam"){
       let updateData = {
         data : this.props.data,
         TeamName : this.state.OrganizationName 
@@ -56,7 +46,7 @@ class UpdatePopup extends React.Component {
       this.props.isUpdateData(updateData);
       this.setState({OrganizationName: ''})
     }
-    if(this.props.data.type == "addOrganization"){
+    if(this.props.data.type === "addOrganization"){
       let updateData = {
         data : this.props.data,
         OrganizationName : this.state.OrganizationName 
@@ -64,7 +54,7 @@ class UpdatePopup extends React.Component {
       this.props.isUpdateData(updateData);
       this.setState({OrganizationName: ''})
     }
-    if(this.props.data.type == "addTeam"){
+    if(this.props.data.type === "addTeam"){
       let updateData = {
         data : this.props.data,
         TeamName : this.state.OrganizationName 
@@ -72,7 +62,7 @@ class UpdatePopup extends React.Component {
       this.props.isUpdateData(updateData);
       this.setState({OrganizationName: ''})
     }
-    if(this.props.data.type == "merge"){
+    if(this.props.data.type === "merge"){
       let updateData = {
         data : this.props.data,
         OrganizationName : this.state.OrganizationName 
@@ -80,7 +70,7 @@ class UpdatePopup extends React.Component {
       this.props.isUpdateData(updateData);
       this.setState({OrganizationName: ''})
     }
-    if(this.props.data.type == "mergeTeam"){
+    if(this.props.data.type === "mergeTeam"){
       let updateData = {
         data : this.props.data,
         TeamName : this.state.OrganizationName 
@@ -92,7 +82,7 @@ class UpdatePopup extends React.Component {
  
   componentWillMount() {
       
-    if(this.props.data.type == "rename"){
+    if(this.props.data.type === "rename"){
 
       this.setState({OrganizationName: this.props.data.organization})
     }
@@ -115,7 +105,7 @@ class UpdatePopup extends React.Component {
             src="/img/icon/close.svg"
             alt=""
           />
-          {this.props.data.type == "rename" &&
+          {this.props.data.type === "rename" &&
             <React.Fragment>
             <h4>Rename Organization</h4>
               <Form className="mt-2">
@@ -133,7 +123,7 @@ class UpdatePopup extends React.Component {
               </Form>
             </React.Fragment>
           }
-          {this.props.data.type == "renameTeam" &&
+          {this.props.data.type === "renameTeam" &&
             <React.Fragment>
             <h4>Rename Team</h4>
               <Form className="mt-2">
@@ -151,7 +141,7 @@ class UpdatePopup extends React.Component {
               </Form>
             </React.Fragment>
           }
-          {this.props.data.type == "addOrganization" && 
+          {this.props.data.type === "addOrganization" && 
           <React.Fragment>
             <h4>Add Organization</h4>
             <Form className="mt-2">
@@ -170,7 +160,7 @@ class UpdatePopup extends React.Component {
             </Form>
             </React.Fragment>
           }
-          {this.props.data.type == "addTeam" && 
+          {this.props.data.type === "addTeam" && 
           <React.Fragment>
             <h4>Add Team</h4>
             <Form className="mt-2">
@@ -189,7 +179,7 @@ class UpdatePopup extends React.Component {
             </Form>
             </React.Fragment>
           }
-          {this.props.data.type == "merge" &&
+          {this.props.data.type === "merge" &&
             <React.Fragment>
               <h4>Merge Organization</h4>
               <Form className="mt-2">
@@ -215,7 +205,7 @@ class UpdatePopup extends React.Component {
               </Form>
             </React.Fragment>
           }
-          {this.props.data.type == "mergeTeam" &&
+          {this.props.data.type === "mergeTeam" &&
             <React.Fragment>
               <h4>Merge Team</h4>
               <Form className="mt-2">

@@ -1,18 +1,12 @@
 import React from 'react';
-import ToggleToken from '../Buttons/ToggleToken';
-import { formDataToJson } from '../../utilities/utility';
-import { deleteItem } from '../../apis';
-import Spinner from './../Spinner/Spinner';
-import share_icon from '../icons/share_icon.png';
-import Report from '../ReportContent/Report0';
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-import $ from 'jquery';
-import DownloadReportMPS95 from './DownloadReportButtons/DownloadReportMPS95';
-import DownloadReportCSDM15 from './DownloadReportButtons/DownloadReportCSDM15';
-import DownloadReportAxonalStrain15 from './DownloadReportButtons/DownloadReportAxonalStrain15';
-import DownloadReportMASxSR15 from './DownloadReportButtons/DownloadReportMASxSR15';
 
-var USER_TYPES = [];
+import share_icon from '../icons/share_icon.png';
+// import Report from '../ReportContent/Report0';
+// import { PDFDownloadLink } from '@react-pdf/renderer';
+// import $ from 'jquery';
+// import DownloadReportMPS95 from './DownloadReportButtons/DownloadReportMPS95';
+import DownloadReportCSDM15 from './DownloadReportButtons/DownloadReportCSDM15';
+
 
 class DownloadReportPopup extends React.Component {
   constructor() {
@@ -34,20 +28,6 @@ class DownloadReportPopup extends React.Component {
   handleChange =(e)=>{
     console.log(e.target.name,!this.state[e.target.name] ? e.target.value :'' );
     this.setState({ischecked: false})
-    // this.setState({
-    //   mps_95:'',
-    //   csdm_15:'',
-    //   axonal_15: '',
-    //   masxsr_15: '',
-    //   ischecked: false
-    // });
-    // $('input:checkbox').prop('checked', false).removeAttr('checked');
-    // $('input:checkbox[name="'+e.target.name+'"]').prop('checked', true);
-    // if(e.target.name == 'csdm_15'){
-    //   this.setState({
-    //     ischecked: true
-    //   });
-    // }
     let the = this;
     setTimeout(()=>{
       the.setState({ischecked: true});

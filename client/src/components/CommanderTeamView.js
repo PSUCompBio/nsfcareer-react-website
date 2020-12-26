@@ -1,17 +1,15 @@
 import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
-import { Redirect, Link, withRouter } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 
 import Footer from './Footer';
 //import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
-import DarkMode from './DarkMode';
+// import DarkMode from './DarkMode';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
-import { UncontrolledAlert } from 'reactstrap';
 import {
     isAuthenticated,
-    getUserDetails,
     getUserDBDetails,
     uploadSensorDataAndCompute,
     getTeamAdminData,
@@ -20,12 +18,8 @@ import {
     getSimulationStatusCount,
     updateUserStatus,
 } from '../apis';
-
-import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
-
 import socketIOClient from 'socket.io-client'
-
 import Spinner from './Spinner/Spinner';
 import Switch from "react-switch";
 import team_state_icon from './team_state_icon.svg'
@@ -44,7 +38,6 @@ class CommanderTeamView extends React.Component {
             userDetails: {},
             avgLoad: 0.02,
             alerts: 0,
-            team: 2,
             athletes: 6,
             staff: 8,
             highestLoadCount: 0.046,
@@ -304,7 +297,7 @@ class CommanderTeamView extends React.Component {
                                     team_name: this.state.team
                                 }).then(staff=>{
                                     var response = staff.data;
-                                    if(response.message == 'success'){
+                                    if(response.message === 'success'){
                                         this.setState(prevState => ({
                                             staffList: response.data,
                                         }));
@@ -344,7 +337,7 @@ class CommanderTeamView extends React.Component {
         const hour = plus0(d.getHours())
         const minute = plus0(d.getMinutes())
         const second = plus0(d.getSeconds())
-        const rest = timestamp.toString().slice(-5)
+        // const rest = timestamp.toString().slice(-5)
       
         return `${month}/${date}/${year} ${hour}:${minute}:${second}`
     }
@@ -516,7 +509,6 @@ class CommanderTeamView extends React.Component {
     }
 
     militaryVersionOrNormal = () => {
-        let me = this;
         return (
             <div
                 ref="rosterContainer"
@@ -994,6 +986,8 @@ class CommanderTeamView extends React.Component {
                                                             </React.Fragment>
                                                         }
                                                     </tr>;
+                                                }else{
+                                                    return false;
                                                 }
                                             }, this)}
                                             {this.state.users.length <= 0 && <td colspan="10" style={{'textAlign':'center'}}>There is no data for this team yet.</td>}
@@ -1052,6 +1046,8 @@ class CommanderTeamView extends React.Component {
                                                             }
                                                            
                                                          </tr>
+                                                    }else{
+                                                        return false
                                                     }
                                             }, this)}
                                         </tbody>

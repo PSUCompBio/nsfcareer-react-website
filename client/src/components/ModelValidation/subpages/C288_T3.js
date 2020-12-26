@@ -1,16 +1,9 @@
 import React from 'react';
-import SignatureCanvas from 'react-signature-canvas'
+// import SignatureCanvas from 'react-signature-canvas'
 import C288_T3_chart from '../charts/C288_T3_chart'
 
-import {
-  Link,
-  Redirect
-} from "react-router-dom";
-import { Container, Row, Col , Card, Button} from 'react-bootstrap';
+import { Container, Row ,Col ,Button} from 'react-bootstrap';
 
-import axios from 'axios';
-
-let sigPad = {};
 class C288_T3 extends React.Component {
   constructor(props){
       super(props);

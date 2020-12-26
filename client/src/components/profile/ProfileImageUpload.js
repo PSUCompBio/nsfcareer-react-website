@@ -1,26 +1,23 @@
 import React from 'react';
-import { getStatusOfDarkmode } from '../../reducer';
-import SignatureCanvas from 'react-signature-canvas'
+// import { getStatusOfDarkmode } from '../../reducer';
+// import SignatureCanvas from 'react-signature-canvas'
 import Footer from '../Footer';
 
 import { uploadProfileSelfie } from '../../apis';
 
-import Spinner from '../Spinner/Spinner';
-import { formDataToJson } from '../../utilities/utility';
-import {
-  Link,
-  Redirect
-} from "react-router-dom";
+// import Spinner from '../Spinner/Spinner';
+// import { formDataToJson } from '../../utilities/utility';
+
 import { 
     UncontrolledAlert
 } from 'reactstrap';
 import camera from './camera.png';
 import upload from './upload.png'
 import CameraPopup from '../Popup/CameraPopup';
-import axios from 'axios';
+// import axios from 'axios';
 
 
-let sigPad = {};
+// let sigPad = {};
 class ProfileImageUpload extends React.Component {
 
     constructor(props){

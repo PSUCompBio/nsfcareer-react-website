@@ -32,7 +32,6 @@ import Sports from '../Sports/SportsPage';
 import Developer from '../Developer/DeveloperPage';
 import Dash from '../Dash/DashPage';
 import Report from '../../components/ReportContent/Report0';
-import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
 import Details from '../../components/Dashboard/BrainSimulationDetails/Details';
 import InviteUsers from '../../components/InviteUsers';
 import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
@@ -265,14 +264,7 @@ class Routing extends React.Component {
           exact
           path="/TeamAdmin/user/dashboard/:cognito_user_id/:player_name"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
-        />
-        <Route
-          exact
-          path="/TeamAdmin/user/dashboard/brainSimulationDetails"
-          render={(props) => <BrainSimulationDetails {...props} isDarkModeSet={this.checkDarkMode} />}
-        />
-
-        
+        />  
         <Route
           exact
           path="/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog"

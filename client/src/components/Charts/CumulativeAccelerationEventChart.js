@@ -1,33 +1,33 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
-import { Link, Redirect, withRouter } from 'react-router-dom';
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-import Report from '../ReportContent/Report0';
+// import { Line } from 'react-chartjs-2';
+import { Link, withRouter } from 'react-router-dom';
+// import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
+// import Report from '../ReportContent/Report0';
 import ExportPlayerReport from './ExportPlayerReport';
 import {
   getUserDetails,
 } from '../../apis';
 
-const options = {
-    scales: {
-        yAxes: [{
-            scaleLabel: {
-                display: true,
-                labelString: 'Linear Acceleration'
-            },
-            ticks: {
-                min: 0
-            }
-        }],
-        xAxes: [{
+// const options = {
+//     scales: {
+//         yAxes: [{
+//             scaleLabel: {
+//                 display: true,
+//                 labelString: 'Linear Acceleration'
+//             },
+//             ticks: {
+//                 min: 0
+//             }
+//         }],
+//         xAxes: [{
 
-            scaleLabel: {
-                display: true,
-                labelString: 'Angular Acceleration'
-            }
-        }]
-    }
-};
+//             scaleLabel: {
+//                 display: true,
+//                 labelString: 'Angular Acceleration'
+//             }
+//         }]
+//     }
+// };
 
 
 
@@ -71,7 +71,7 @@ class CumulativeAccelerationEventChart extends React.Component {
         .then(response => {
           console.log('user details =================================\n',response)
 
-          if(response.data.message == "success"){
+          if(response.data.message === "success"){
             this.setState({
                 account_id: response.data.data.account_id,
                 simulation_id: response.data.data.sensor_id_number,
@@ -112,7 +112,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                         <div className="col-md-12">
                             <p ref="h1" className="penstate">
                                 <Link style={{ fontWeight: "400" }} to={{
-                                    pathname: this.props.data.brand && this.props.data.brand != 'null' ? "/TeamAdmin/"+this.props.data.organization+"/"+this.props.data.brand : "/TeamAdmin/"+this.props.data.organization,
+                                    pathname: this.props.data.brand && this.props.data.brand !== 'null' ? "/TeamAdmin/"+this.props.data.organization+"/"+this.props.data.brand : "/TeamAdmin/"+this.props.data.organization,
                                     state: {
                                         brand: {
                                             brand: this.props.data.brand,
@@ -159,7 +159,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         <p
                                             ref="h1"
                                             className="player-dashboard-sub-head"
-                                        >Name : {this.props.user.level ==   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : 'Hidden for IRB purposes'}</p>
+                                        >Name : {this.props.user.level ===   '1000' ? this.props.data.team ? this.props.data.player['first-name'] + ' ' + this.props.data.player['last-name'] : this.props.user.first_name + ' ' + this.props.user.last_name : 'Hidden for IRB purposes'}</p>
                                         <p
                                             ref="h1"
                                             className="player-dashboard-sub-head"

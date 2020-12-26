@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button } from 'reactstrap';
+// import { Button } from 'reactstrap';
 
 class ToggleToken extends React.Component{
     constructor(props){

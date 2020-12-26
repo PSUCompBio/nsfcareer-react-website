@@ -1,6 +1,6 @@
 import React from 'react';
 //import { uploadModelRealData } from '../../apis';
-import { Button, Modal, Table } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import Footer from '../../components/Footer';
 import Chart from 'react-google-charts';
 import * as THREE from "three";
@@ -12,22 +12,22 @@ import './sports.css';
 import { getStatusOfDarkmode } from '../../reducer';
 
 let obj;
-let stage = 0;
-let oldx = 0;
+// let stage = 0;
+// let oldx = 0;
 let pointArray = [
-					[
-						['Time (ms)', 'Linear Acceleration'],
-					 	[0, 0],
-					 	[20, 15],
-					 	[40, 0]
-					],
-					[
-						['Time (ms)', 'Angular Acceleration'],
-					 	[0, 0],
-					 	[20, 15],
-					 	[40, 0]
-					],
-				];
+	[
+		['Time (ms)', 'Linear Acceleration'],
+	 	[0, 0],
+	 	[20, 15],
+	 	[40, 0]
+	],
+	[
+		['Time (ms)', 'Angular Acceleration'],
+	 	[0, 0],
+	 	[20, 15],
+	 	[40, 0]
+	],
+];
 				
 class SportsPage extends React.Component {
 	
@@ -340,7 +340,7 @@ class SportsPage extends React.Component {
 			margin_left_trigulated: ''
 		});
 		
-		const timer = setTimeout(() => {
+		setTimeout(() => {
 			this.setState({
 				triangular_graph_text: 'Brain simulation completed',
 				show_triangular_graph_block : 'block',

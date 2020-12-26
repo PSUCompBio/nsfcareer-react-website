@@ -50,18 +50,18 @@ class TechnologiesWeUse extends React.Component {
   }
 
   render = (props) => {
-    const makeFooterVisibeForSmallDevice = {
-      reset: {
-        marginTop: 10 + '%',
-        position: 'relative',
-        bottom: 0,
-        display: 'block!important'
-      }
-    };
+    // const makeFooterVisibeForSmallDevice = {
+    //   reset: {
+    //     marginTop: 10 + '%',
+    //     position: 'relative',
+    //     bottom: 0,
+    //     display: 'block!important'
+    //   }
+    // };
 
-    const redirectToOther = () => {
-      window.location.href = 'https://psucompbio.org/';
-    };
+    // const redirectToOther = () => {
+    //   window.location.href = 'https://psucompbio.org/';
+    // };
 
     return (
       <React.Fragment>

@@ -12,7 +12,7 @@ import {
  
 } from '../../apis'; 
 import $ from "jquery";
-import CameraPopup from '../../components/Popup/CameraPopup';
+// import CameraPopup from '../../components/Popup/CameraPopup';
 class Nav extends React.Component {
   constructor(props) {
     super(props);
@@ -107,7 +107,6 @@ class Nav extends React.Component {
         // console.log("VALUE TO BE PRINTED ",user_id);
         var profile_data = {
             profile_picture_url :'', // Not a user key
-            avatar_url : '',
             is_selfie_image_uploaded : false,
             is_selfie_model_uploaded : false,
             foundInpLink: false,
@@ -157,7 +156,7 @@ class Nav extends React.Component {
                                 res.data.avatar_url !== undefined &&
                                 res.data.avatar_url.length !== 0
                             ) {
-                                let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                                // let file_extension = this.getUploadFileExtension(res.data.avatar_url);
                                 let details = res.data.avatar_url.split(".png")[0].split('/');
 
                                 let timestamp = details[details.length - 1]
@@ -221,7 +220,7 @@ class Nav extends React.Component {
 
     // If number of properties is different,
     // objects are not equivalent
-    if (aProps.length != bProps.length) {
+    if (aProps.length !== bProps.length) {
         return false;
     }
 
@@ -281,7 +280,7 @@ getUploadFileExtension(url){
       if($( document ).width() <= '480'){
         $(document).scroll(function(){
 
-          if(timer != "undefined"){
+          if(timer !== "undefined"){
             clearTimeout(timer);
           }
           
@@ -595,7 +594,7 @@ getUploadFileExtension(url){
             onMouseLeave={this.hideUserIconLinksIfnotEnter}
             className="name"
           >
-            {( (this.state.user_details !=null || this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0 ) ? `${this.state.user_details.first_name[0].toUpperCase()} ${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
+            {( (this.state.user_details !== null || this.state.user_details !== undefined) && Object.keys(this.state.user_details).length >0 ) ? `${this.state.user_details.first_name[0].toUpperCase()} ${this.state.user_details.last_name[0].toUpperCase()}` : "NSF"}
           </div>
 
           <div
@@ -631,7 +630,7 @@ getUploadFileExtension(url){
     const localStore = JSON.parse(localStorage.getItem('state'));
     return (
 
-        <div style={(this.props.location.pathname == "/IRB" || this.props.location.pathname == "/irb" ) ? { display : "none"} : { display : "block"} }>
+        <div style={(this.props.location.pathname === "/IRB" || this.props.location.pathname === "/irb" ) ? { display : "none"} : { display : "block"} }>
 
        {/* <CameraPopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData}  />  */}
                 <nav
@@ -639,7 +638,7 @@ getUploadFileExtension(url){
               className={`navbar navbar-dark  navbar-expand-lg ${
                 'navbar-bg-change'
                 }
-                ${(( this.props.location.pathname == "/" || this.props.location.pathname == "/Home" || this.props.location.pathname == "/home") && this.props.screenWidth > 768 && this.props.isNavbarTransparent) ? 'navbar-hide ' : ' navbar-padding' } `
+                ${(( this.props.location.pathname === "/" || this.props.location.pathname === "/Home" || this.props.location.pathname === "/home") && this.props.screenWidth > 768 && this.props.isNavbarTransparent) ? 'navbar-hide ' : ' navbar-padding' } `
                 }
               >
 
@@ -689,7 +688,7 @@ getUploadFileExtension(url){
                 
                 className="mobile-user-profile"
               >
-                {( (this.state.user_details !=null || typeof this.state.user_details !=undefined) && Object.keys(this.state.user_details).length >0  && !this.state.isUploading )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : this.state.isUploading? '' : "NSF"}
+                {( (this.state.user_details !== null || typeof this.state.user_details !== undefined) && Object.keys(this.state.user_details).length >0  && !this.state.isUploading )? `${this.state.user_details.first_name[0].toUpperCase()}${this.state.user_details.last_name[0].toUpperCase()}` : this.state.isUploading? '' : "NSF"}
                <br/> 
               </div>
               <div className="upload-icon" style={Object.keys(this.state.user_details).length >0  && !this.state.isUploading ?{ 'display':'block'} : {'display':'none'}}>
@@ -794,7 +793,7 @@ getUploadFileExtension(url){
                 </a>
                 </React.Fragment>
               }
-              {Object.keys(this.state.user_details).length == 0  &&
+              {Object.keys(this.state.user_details).length === 0  &&
                  <Link
                      onClick={this.Login}
                     className="nav-handleClick"

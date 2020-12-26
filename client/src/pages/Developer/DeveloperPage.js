@@ -1,8 +1,8 @@
 import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
-import WebFont from 'webfontloader';
-import DarkMode from './../../components/DarkMode';
+// import WebFont from 'webfontloader';
+// import DarkMode from './../../components/DarkMode';
 import './developer.css';
 
 class DeveloperPage extends React.Component {

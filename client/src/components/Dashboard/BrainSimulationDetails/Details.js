@@ -1,16 +1,15 @@
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import PlayerDetails from '../../PlayerDetails/PlayerDetails';
-import CumulativeEvents from '../../DashboardEventsChart/CumulativeEvents';
-import CumulativeEventsAccelerationEvents from '../../DashboardEventsChart/CumulativeEventsAccelerationEvents';
-import HeadAccelerationEvents from '../../DashboardEventsChart/HeadAccelerationEvents';
+// import CumulativeEvents from '../../DashboardEventsChart/CumulativeEvents';
+// import CumulativeEventsAccelerationEvents from '../../DashboardEventsChart/CumulativeEventsAccelerationEvents';
+// import HeadAccelerationEvents from '../../DashboardEventsChart/HeadAccelerationEvents';
 import { svgToInline } from '../../../config/InlineSvgFromImg';
 import HeadLinearAccelerationAllEvents from '../../DashboardEventsChart/HeadLinearAccelerationAllEvents';
 import HeadAngularAccelerationAllEvents from '../../DashboardEventsChart/HeadAngularAccelerationAllEvents';
 import Dropzone from 'react-dropzone';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
-import DarkMode from '../../DarkMode';
+// import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
 import simulationLoading from '../../simulationLoading.png';
 import videoSimulationLoading from './videoSimulationLoading.png';
@@ -39,12 +38,12 @@ import {
   getUserDetails,
   getUserDBDetails,
   isAuthenticated,
-  getCumulativeAccelerationData,
-  getSimulationFilesOfPlayer,
-  getAllCumulativeAccelerationTimeRecords,
+  // getCumulativeAccelerationData,
+  // getSimulationFilesOfPlayer,
+  // getAllCumulativeAccelerationTimeRecords,
   getBrainSimulationMovie,
-  uploadSidelineImpactVideo,
-  getBrainSimulationLogFile,
+  // uploadSidelineImpactVideo,
+  // getBrainSimulationLogFile,
   removeVideo,
   setVideoTime,
   getCumulativeAccelerationTimeRecords,
@@ -55,19 +54,19 @@ import {
 } from '../../../apis';
 import axios from 'axios';
 
-import { Form, ProgressBar } from 'react-bootstrap';
+import { ProgressBar } from 'react-bootstrap';
 
 
 
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
+// import { Carousel } from 'react-responsive-carousel';
 
 import Spinner from '../../Spinner/Spinner';
 
 import ScrollToTop from 'react-scroll-up';
 import $ from 'jquery';
 
-import { getStatusOfDarkmode } from '../../../reducer';
+// import { getStatusOfDarkmode } from '../../../reducer';
 
 /**
 *  Define global variables.
@@ -187,7 +186,7 @@ class Details extends React.Component {
     })
     removeVideo({'image_id':this.state.image_id})
     .then(res => {
-      if(res.data.message == 'success'){
+      if(res.data.message === 'success'){
         this.setState({
           label_remove_video: 'Removed',
           left_lock_time: 0,
@@ -231,7 +230,7 @@ class Details extends React.Component {
     }
     axios.post(`/uploadSidelineImpactVideo`, data,options,{withCredentials: true})
     .then(function (res) {
-      if(res.data.message == 'success'){
+      if(res.data.message === 'success'){
         the.setState({uploadPercentage:100});
         setTimeout(function(){
           the.setState({impact_video_url: res.data.impact_video_url, left_lock_time: 0,right_lock_time: 0, trim_video_url: ''});
@@ -332,7 +331,7 @@ class Details extends React.Component {
           if(min < the.state.value['max']){
           // video.play();
             //--------Set min slider position if video is unlock.----------
-            if(len != 0 && !the.state.left_lock_time){
+            if(len !== 0 && !the.state.left_lock_time){
               the.setState({video_time: percent,value:{ min: percent.toFixed(0), max: the.state.value['max'] }});
               min = percent.toFixed(0);
               left_lock_time = video.currentTime;
@@ -341,7 +340,7 @@ class Details extends React.Component {
               setVideoFrameRate(left_lock_time,the.state.right_lock_time ? the.state.right_lock_time : right_lock_time);
             }
             //-----set min slider position if video is locked --------
-            else if(len == 0){
+            else if(len === 0){
               the.setState({video_time: percent,value:{ min: percent.toFixed(0), max: the.state.value['max'] }});
               min = percent.toFixed(0);
               left_lock_time = video.currentTime;
@@ -387,7 +386,7 @@ class Details extends React.Component {
         // },1000)
       },
       scrub2: (e) =>{
-        if(min != the.state.value['min']){
+        if(min !== the.state.value['min']){
 
           min = the.state.value['min'];
           var off_X = progressBar_2.offsetWidth * the.state.value['min'] / 100;
@@ -398,7 +397,7 @@ class Details extends React.Component {
             video.currentTime = scrubTime;
           }
           isupdateMax = false;
-        }else if(max != the.state.value['max']){
+        }else if(max !== the.state.value['max']){
           max = the.state.value['max'];
           var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
@@ -648,7 +647,7 @@ class Details extends React.Component {
   ========================================*/
   handlelock_video =(type)=>{
     console.log('type',type)
-    if(type == 'left')
+    if(type === 'left')
     {
       if(this.state.left_lock_time){
         this.setState({left_lock_time: 0});
@@ -719,7 +718,7 @@ class Details extends React.Component {
     trimVideo({image_id:this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time})
     .then(response=>{
       console.log('response trim video ---\n',response);
-      if(response.data.message == "success"){
+      if(response.data.message === "success"){
         this.setState({
           trim_video_url: response.data.trim_video_path,
           left_lock_time: 0,
@@ -789,7 +788,7 @@ class Details extends React.Component {
     setVideoTime({image_id:this.state.image_id,video_lock_time:time,type:'setVideoTime_2'})
     .then((response) => {
       console.log(response)
-      if(response.data.message == 'success'){
+      if(response.data.message === 'success'){
         this.setState({isTimeUpdating_2: false});
         $('.progress__filled_2').val(lock_percent_2);
         // $('.progress__filled').val(lock_percent);
@@ -813,7 +812,7 @@ class Details extends React.Component {
     setVideoTime({image_id:this.state.image_id,left_lock_time:left_lock_time,right_lock_time: right_lock_time,type: 'setVideoTime'})
     .then((response) => {
       console.log(response)
-      if(response.data.message == 'success'){
+      if(response.data.message === 'success'){
         this.setState({isTimeUpdating: false,left_lock_time: left_lock_time, right_lock_time: right_lock_time});
         $('.progress__filled_2').val(lock_percent_2);
       }else{

@@ -513,6 +513,7 @@ class AdminDashboard extends React.Component {
             $("#myTable tr").filter(function() {
                 console.log($(this).text().toLowerCase().indexOf(value))
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                return true;
             });
         });
     }
@@ -1042,6 +1043,8 @@ class AdminDashboard extends React.Component {
                         <td>{sensor.simulation_count || sensor.simulation_count === '0' || sensor.simulation_count === 0 ? sensor.simulation_count : 'Loading...'}</td>
                        
                     </tr>;
+                }else{
+                    return false;
                 }
             }, this)
         return body
@@ -1085,6 +1088,8 @@ class AdminDashboard extends React.Component {
                         <td>{organization.organization}</td>
                         <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
                     </tr>;
+                }else{
+                    return false;
                 }
             }, this)
         return body
@@ -1132,6 +1137,8 @@ class AdminDashboard extends React.Component {
                         <td>{team.simulation_count || team.simulation_count === '0' || team.simulation_count === 0 ? team.simulation_count : 'Loading...'}</td>
                         <td>{team.organization}</td>
                     </tr>;
+                }else{
+                    return false;
                 }
             }, this)
         return body
@@ -1364,6 +1371,8 @@ class AdminDashboard extends React.Component {
                                                                     <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
                                                                     <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
                                                                 </tr>;
+                                                            }else{
+                                                                return false;
                                                             }
                                                         }, this)}
 
@@ -1487,6 +1496,8 @@ class AdminDashboard extends React.Component {
                                                                     <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
                                                                     <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
                                                                 </tr>;
+                                                            }else{
+                                                                return false;
                                                             }
                                                         }, this)}
 

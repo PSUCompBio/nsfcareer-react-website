@@ -1,16 +1,16 @@
 import React from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { svgToInline } from '../config/InlineSvgFromImg';
 import CountryCode from '../config/CountryCode.json';
-import DarkMode from './DarkMode';
+// import DarkMode from './DarkMode';
 import Footer from './Footer';
-import $ from 'jquery';
+// import $ from 'jquery';
 import './Buttons/Buttons.css';
 import './Dashboard/Dashboard.css';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { subYears } from 'date-fns';
-import { formDataToJson } from '../utilities/utility';
+// import { subYears } from 'date-fns';
+// import { formDataToJson } from '../utilities/utility';
 import {
   getUserDBDetails,
   isAuthenticated,
@@ -23,8 +23,6 @@ import { UncontrolledAlert,
     FormGroup,
     Label,
     Input,
-    FormText,
-    Button,
     Col,
     Row
 } from 'reactstrap';
@@ -33,13 +31,12 @@ import { UncontrolledAlert,
 
 
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
+// import { Carousel } from 'react-responsive-carousel';
 
 import Spinner from './Spinner/Spinner';
 
 import ScrollToTop from 'react-scroll-up';
 
-import { getStatusOfDarkmode } from '../reducer';
 
 
 class InviteUsers extends React.Component {
@@ -68,7 +65,6 @@ class InviteUsers extends React.Component {
       isLoading: false,
       isFetching: false,
       totalBrand: '',
-      sensorBrandList: '',
       lavelFor: '',
       failuer: false,
       invited: false,
@@ -93,7 +89,7 @@ class InviteUsers extends React.Component {
   handleInputChange(e){
     const name = e.target.name;
     console.log(e.target.value)
-    if(name == 'phone_number'){
+    if(name === 'phone_number'){
        var value = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
        if(value.length < 11){
          this.setState({[name]: [value]});
@@ -131,7 +127,7 @@ class InviteUsers extends React.Component {
       console.log('formJsonData',formJsonData);
       InviteUser(formJsonData).then((response) => {
         console.log('response',response);
-        if(response.data.message == 'Success'){
+        if(response.data.message === 'Success'){
           this.setState({
             first_name: '',
             last_name: '',
@@ -232,7 +228,7 @@ class InviteUsers extends React.Component {
     }
     if(this.state.isRedirect){
       console.log(this.props.location.state.lavelFor)
-      if(this.props.location.state.lavelFor == '300'){
+      if(this.props.location.state.lavelFor === '300'){
         return <Redirect 
           to={{
               pathname: '/TeamAdmin',
@@ -245,18 +241,18 @@ class InviteUsers extends React.Component {
               }
           }}
         />;
-      }else if(this.props.location.state.lavelFor == '1000'){
+      }else if(this.props.location.state.lavelFor === '1000'){
         return <Redirect 
             to='/AdminDashboard'
           />;
-      }else if(this.props.location.state.lavelFor == '400'){
+      }else if(this.props.location.state.lavelFor === '400'){
         return <Redirect 
           to={{
               pathname: '/OrganizationAdmin',
               state: this.state.bk_data
           }}
         />;
-      }else if(this.props.location.state.lavelFor == '200'){
+      }else if(this.props.location.state.lavelFor === '200'){
         return <Redirect 
           to={{
               pathname: '/TeamAdmin/team/players',
@@ -410,14 +406,14 @@ class InviteUsers extends React.Component {
     if(this.props.location.state.lavelFor){
       
       var location = this.props.location.state.data;
-      if(location.type == 'organization'){
+      if(location.type === 'organization'){
         // console.log('sensorOrgList',this.selectOption(location.sensorOrgList,'Organization','organization'));
         this.setState({
           selectioptions: this.selectOption(location.sensorOrgList,'Organization','organization'),
           sensor:location.sensor
         });  
       }
-      else if(location.type == 'TeamnAdmin'){
+      else if(location.type === 'TeamnAdmin'){
         
          this.setState({
           sensor:location.bk_data.team.brand,
@@ -426,18 +422,18 @@ class InviteUsers extends React.Component {
           bk_data:location.bk_data
         }); 
       }
-      else if(location.type == 'sensorAdmin'){
+      else if(location.type === 'sensorAdmin'){
         console.log('location',location.sensorBrandList);
          this.setState({
           sensor: location.sensor,
           bk_data: location.bk_data
         }); 
-      }else if(location.type == 'Family'){
+      }else if(location.type === 'Family'){
         console.log('location',location.sensorBrandList);
          this.setState({
           sensorBrandList: this.selectOption(location.sensorBrandList,'Sensor','sensor'),
         }); 
-      }else if(location.type == 'OrgAdmin'){
+      }else if(location.type === 'OrgAdmin'){
         console.log('location',this.props.location);
         this.setState({
           sensor:location.data.brand.brand,

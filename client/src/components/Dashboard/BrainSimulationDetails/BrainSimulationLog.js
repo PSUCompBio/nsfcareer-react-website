@@ -1,37 +1,22 @@
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import PlayerDetails from '../../PlayerDetails/PlayerDetails';
-import Dropzone from 'react-dropzone';
 
-import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
-import simulationLoading from '../../simulationLoading.png';
-import videoSimulationLoading from './videoSimulationLoading.png';
-import uploadicon from './upload-icon.png'
+
 import 'jquery';
 import '../../Buttons/Buttons.css';
 import '.././Dashboard.css';
 import { svgToInline } from '../../../config/InlineSvgFromImg';
 import {
-  getUserDetails,
   getUserDBDetails,
   isAuthenticated,
   getBrainSimulationLogFile
   
 } from '../../../apis';
-
-import { Form } from 'react-bootstrap';
-
-
-
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
-
 import Spinner from '../../Spinner/Spinner';
-
 import ScrollToTop from 'react-scroll-up';
 
-import { getStatusOfDarkmode } from '../../../reducer';
 class BrainSimulationLog extends React.Component {
   constructor(props) {
     super(props);

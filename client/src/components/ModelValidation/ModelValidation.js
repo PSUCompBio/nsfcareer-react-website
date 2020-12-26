@@ -1,18 +1,18 @@
 import React from 'react';
-import { getStatusOfDarkmode } from '../../reducer';
-import SignatureCanvas from 'react-signature-canvas'
+// import { getStatusOfDarkmode } from '../../reducer';
+// import SignatureCanvas from 'react-signature-canvas'
 import Footer from '../Footer';
 
 import {
   Link,
-  Redirect
+  // Redirect
 } from "react-router-dom";
 import { Container, Row, Col } from 'react-bootstrap';
 
-import axios from 'axios';
+// import axios from 'axios';
 import grater_icon from "./grater_icon.png"
 
-let sigPad = {};
+// let sigPad = {};
 class ModelValidation extends React.Component {
 
     constructor(props){

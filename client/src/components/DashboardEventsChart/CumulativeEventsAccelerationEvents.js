@@ -1,7 +1,7 @@
 import React from 'react';
 import { svgToInline } from '../../config/InlineSvgFromImg';
 import CumulativeAccelerationEventChart from '../Charts/CumulativeAccelerationEventChart';
-import CumulatieAccelerationToTimeEventChart from '../Charts/CumulatieAccelerationToTimeEventChart';
+// import CumulatieAccelerationToTimeEventChart from '../Charts/CumulatieAccelerationToTimeEventChart';
 
 class CumulativeEventsAccelerationEvents extends React.Component {
 

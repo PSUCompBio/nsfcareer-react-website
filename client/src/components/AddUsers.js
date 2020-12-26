@@ -1,8 +1,8 @@
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import { svgToInline } from '../config/InlineSvgFromImg';
-import CountryCode from '../config/CountryCode.json';
-import DarkMode from './DarkMode';
+// import { svgToInline } from '../config/InlineSvgFromImg';
+// import CountryCode from '../config/CountryCode.json';
+// import DarkMode from './DarkMode';
 import Footer from './Footer';
 import 'jquery';
 import './Buttons/Buttons.css';
@@ -15,15 +15,11 @@ import {
 } from '../apis';
 
 // import { Form } from 'react-bootstrap';
-import { UncontrolledAlert,
+import { 
     Form,
     FormGroup,
     Label,
-    Input,
-    FormText,
-    Button,
     Col,
-    Row
 } from 'reactstrap';
 
 
@@ -35,7 +31,7 @@ import Spinner from './Spinner/Spinner';
 
 import ScrollToTop from 'react-scroll-up';
 
-import { getStatusOfDarkmode } from '../reducer';
+// import { getStatusOfDarkmode } from '../reducer';
 
 
 class numberVerification extends React.Component {
@@ -63,7 +59,7 @@ class numberVerification extends React.Component {
   handleInputChange = (e) =>{
     const name = e.target.name;
     console.log(e.target.value)
-    if(name == 'numberVerificationCode'){
+    if(name === 'numberVerificationCode'){
        var value = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
        if(value.length < 7){
          this.setState({'numberVerificationCode': [value]});
@@ -78,7 +74,7 @@ class numberVerification extends React.Component {
       VerifyVerificationCode({user_cognito_id:this.props.location.state.data.user_cognito_id, numberVerificationCode:this.state.numberVerificationCode})
       .then(res=>{
           console.log('res',res);
-          if(res.data.message == 'success'){
+          if(res.data.message === 'success'){
             this.setState({
               isLoading: false,
               message: 'Number Verification completed successfully.'
