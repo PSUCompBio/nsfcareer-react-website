@@ -815,6 +815,7 @@ class CommanderTeamView extends React.Component {
                                 <div className="col-md-6 team-edit-button">
                                     <button className="btn button-edit plyar-button-edit" style={{'margin-right': '4px'}}>Edit</button>
                                     <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                
                                    
                                 </div>
                             </h1>
@@ -941,7 +942,7 @@ class CommanderTeamView extends React.Component {
                                                             
                                                         </td>
                                                         { this.state.userDetails.level > 300 &&
-                                                            <td style={{'max-width':'162px'}} className="wrap-cell" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                            <td style={{'max-width':'162px'}} className="wrap-cell" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].user_data ? player.simulation_data[0].user_data.first_name+' '+player.simulation_data[0].user_data.last_name :  player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         }
                                                         <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
@@ -1170,6 +1171,7 @@ class CommanderTeamView extends React.Component {
             }} />
         }
 
+ 
         return (
             <React.Fragment>
                 {this.props.isMilitaryVersionActive === true ? (

@@ -44,6 +44,10 @@ import LoginComponentHidden  from '../../components/Authentication/LoginComponen
 import HardyEtAl from '../../components/ModelValidation/Hardy_et_al';
 import sendEmailVerifation from '../../components/Authentication/pages/sendEmailVerifation';
 
+//Team state demo page 
+import TeamStatsDemo from '../../components/TeamStatsDemo';
+
+
 class Routing extends React.Component {
   constructor(props) {
     super(props);
@@ -259,6 +263,11 @@ class Routing extends React.Component {
           exact
           path="/TeamStats"
           render={(props) => <TeamStats {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
+          path="/TeamStats/Demo"
+          render={(props) => <TeamStatsDemo {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact

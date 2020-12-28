@@ -9,7 +9,6 @@ import HeadAngularAccelerationAllEvents from '../../DashboardEventsChart/HeadAng
 import Dropzone from 'react-dropzone';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
-// import DarkMode from '../../DarkMode';
 import Footer from '../../Footer';
 import simulationLoading from '../../simulationLoading.png';
 import videoSimulationLoading from './videoSimulationLoading.png';
@@ -19,7 +18,6 @@ import upload from './upload.png';
 import remove from './remove.png';
 import trim_icon from './trim_icon.png';
 import reset_icon from './reset_icon.png';
-
 import pause_b from '../../icons/pause_b.png';
 import pause_bl from '../../icons/pause_bl.png';
 import video_loop_b from '../../icons/video_loop_b.png';
@@ -27,9 +25,6 @@ import video_loop_bl from '../../icons/video_loop_bl.png';
 import video_pause_b from '../../icons/video_pause_b.png';
 import video_play_bl from '../../icons/video_play_bl.png';
 import icon_download_white from '../../icons/icon_download_white.png';
-
-
-
 import uploadicon from './upload-icon.png'
 import 'jquery';
 import '../../Buttons/Buttons.css';
@@ -38,12 +33,7 @@ import {
   getUserDetails,
   getUserDBDetails,
   isAuthenticated,
-  // getCumulativeAccelerationData,
-  // getSimulationFilesOfPlayer,
-  // getAllCumulativeAccelerationTimeRecords,
   getBrainSimulationMovie,
-  // uploadSidelineImpactVideo,
-  // getBrainSimulationLogFile,
   removeVideo,
   setVideoTime,
   getCumulativeAccelerationTimeRecords,
@@ -55,18 +45,11 @@ import {
 import axios from 'axios';
 
 import { ProgressBar } from 'react-bootstrap';
-
-
-
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-// import { Carousel } from 'react-responsive-carousel';
-
 import Spinner from '../../Spinner/Spinner';
 
 import ScrollToTop from 'react-scroll-up';
 import $ from 'jquery';
-
-// import { getStatusOfDarkmode } from '../../../reducer';
 
 /**
 *  Define global variables.

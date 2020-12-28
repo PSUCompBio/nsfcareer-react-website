@@ -1169,3 +1169,28 @@ export const setVideoTime = (request) =>{
       });
   })
 }
+
+//Demo api for team state page.
+export const getFilterdTeamSpheres_demo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getFilterdTeamSpheres_demo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getTeamSpheres_Demo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamSpheres_Demo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

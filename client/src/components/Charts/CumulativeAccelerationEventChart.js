@@ -154,7 +154,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                     <div className="row">
                        
                           
-                                <div className="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <>
                                         <p
                                             ref="h1"
@@ -164,6 +164,17 @@ class CumulativeAccelerationEventChart extends React.Component {
                                             ref="h1"
                                             className="player-dashboard-sub-head"
                                         >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
+                                        </p>
+                                        <p
+                                            ref="h1"
+                                            className="player-dashboard-sub-head"
+                                        >Simulation ID : <span style={{ color: "black" }}>{this.props.log_stream_name ? this.props.log_stream_name.split('/')[2] : ''}</span><br/>
+
+                                        </p>
+                                        <p
+                                            ref="h1"
+                                            className="player-dashboard-sub-head"
+                                        >
                                         Number of Simulations : {this.props.data.simulationCount ? this.props.data.simulationCount : ''}
                                         </p>
                                     </>
@@ -232,7 +243,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                 </div>
                
                  {/*
-                            !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
+                    !(this.props.data.player_id && this.props.data.player_id.length > 0) ?
                                null
 
                                 : <button style={{

@@ -247,7 +247,7 @@ class TeamStats extends React.Component {
                         </div>
 
                         {/*!-- MPS_95 chart start --*/}
-                        <div className="col-sm-12 no-padding">
+                        <div className="col-sm-12 no-padding" style={{'margin-top': '54px'}}>
                             <div className="col-md-12 no-padding">
                                 <p className="video-lebel text-center">95% MPS Angular Acceleration </p>
                                 < TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />
