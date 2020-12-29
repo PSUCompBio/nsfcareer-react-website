@@ -102,6 +102,7 @@ class InviteUsers extends React.Component {
   handleSubmit(e) {
       console.log('Update user details clicked');
       e.preventDefault();
+      // eslint-disable-next-line
       const {first_name, last_name,email, lavelFor,organization,sensor,team} = this.state;
       var level = lavelFor
       console.log(first_name, last_name, lavelFor)

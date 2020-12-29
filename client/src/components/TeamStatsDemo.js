@@ -1,14 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom'
 import ExportPlayerReport from './Charts/ExportPlayerReport';
 import Footer from './Footer';
 import Spinners from './Spinner/Spinner';
 import {Spinner } from 'react-bootstrap';
 import {
     isAuthenticated,
-    getTeamSpheres,
-    //demo api's
     getFilterdTeamSpheres_demo,
     getTeamSpheres_Demo
   } from './../apis';

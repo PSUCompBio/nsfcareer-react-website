@@ -235,6 +235,7 @@ class HeadAccelerationAllEvents extends React.Component {
                             
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-chart">
+                        {/*eslint-disable-next-line*/}
                             <Line id="goodCanvas1"  data={this.state.data} options={options} redraw={true} aria-label="Cumulative Overview of All Events" role="chart"/>
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-image   ">

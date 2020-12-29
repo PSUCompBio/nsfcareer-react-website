@@ -29,6 +29,7 @@ class ToggleToken extends React.Component{
             }}
             onClick={()=> this.handleClick(!this.state.isActive)} class="btn btn-primary">{this.props.buttonText}</button>
             :
+            //eslint-disable-next-line
             <button type="button" style={{
                 borderRadius: "50px",
                 color : "white",
@@ -36,7 +37,7 @@ class ToggleToken extends React.Component{
                 background : "#6c757d",
                 borderWidth: "2px"
             }}
-
+            //eslint-disable-next-line
             type="button" onClick={()=> this.handleClick(!this.state.isActive)} class="btn btn-outline-primary">{this.props.buttonText}</button>
         }
         </React.Fragment>

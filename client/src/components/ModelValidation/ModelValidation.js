@@ -61,7 +61,7 @@ class ModelValidation extends React.Component {
                 <Link to="/model-pressure-response">
                   <Col sm={12} className="modael-validation-box">
                     <Col sm={10} style={{'float':'left'}}>Intracranial pressure traces are compared with experimental results.</Col>
-                    <Col sm={2} style={{'float':'left'}}><img src={grater_icon} /></Col>
+                    <Col sm={2} style={{'float':'left'}}><img src={grater_icon} alt="greater icon"/></Col>
                   </Col>
                 </Link>
               </Row>
@@ -72,7 +72,7 @@ class ModelValidation extends React.Component {
                 <Link to="/model-displacement-response">
                   <Col sm={12} className="modael-validation-box">
                     <Col sm={10} style={{'float':'left'}}>Relative brain-skull motion is compared with experimental results.</Col>
-                    <Col sm={2} style={{'float':'left'}}><img src={grater_icon} /></Col>
+                    <Col sm={2} style={{'float':'left'}}><img src={grater_icon} alt="greater icon"/></Col>
                   </Col>
                 </Link>
               </Row>
@@ -83,7 +83,7 @@ class ModelValidation extends React.Component {
                 <Link to="/model-strain-response">
                   <Col sm={12} className="modael-validation-box">
                     <Col sm={10} style={{'float':'left'}}>Intracranial strains are cimpared to live human Magnetic Resonance Image tagging.</Col>
-                    <Col sm={2} style={{'float':'left'}}><img src={grater_icon} /></Col>
+                    <Col sm={2} style={{'float':'left'}}><img src={grater_icon} alt="greater icon"/></Col>
                   </Col>
                 </Link>
               </Row>

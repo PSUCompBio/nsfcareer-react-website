@@ -147,9 +147,11 @@ class Report extends React.Component {
                 csdmTrangle = this.getTrangle(csdm);
             }
             if(this.state.jsonData['CSDM-15']){
+                //eslint-disable-next-line
                 var num = this.state.jsonData['CSDM-15'].value;
                 mps = num.toFixed(2) ;
                 let mps_val = mps;
+                //eslint-disable-next-line
                 var left = mps_val * ScaleWidth / 38;
                 //**Round up the value....
                 mpstrangleScale = ''+left.toFixed(0)+'px';

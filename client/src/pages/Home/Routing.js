@@ -276,7 +276,7 @@ class Routing extends React.Component {
         />  
         <Route
           exact
-          path="/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog"
+          path="/TeamAdmin/user/dashboard/brainSimulationDetails/simulation/log"
           render={(props) => <BrainSimulationLog {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route

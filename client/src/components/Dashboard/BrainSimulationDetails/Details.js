@@ -88,7 +88,6 @@ class Details extends React.Component {
       cumulativeEventData: {},
       movie_link: '',
       files: [],
-      isLoading: false,
       status: '',
       impact_video_url: '',
       trim_video_url: '',
@@ -194,7 +193,7 @@ class Details extends React.Component {
     data.append('file',file);
     data.append('image_id',this.state.image_id );
     this.setState({isLoading:true,IsAcceleration:true})
-    var myVar = '';
+    // var myVar = '';
     var the = this;
     const options = {
       onUploadProgress: (progressEvent) => {
@@ -233,11 +232,11 @@ class Details extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
   setRangeValue =(value) =>{
-    if(min != value.min && !this.state.left_lock_time){
+    if(min !== value.min && !this.state.left_lock_time){
       // console.log('max',max)
       this.setState({value :  {min:   value.min , max: max } })
     } 
-    if(max != value.max && !this.state.right_lock_time){
+    if(max !== value.max && !this.state.right_lock_time){
       this.setState({value :  {min:   min , max: value.max } })
     }
   }
@@ -263,7 +262,7 @@ class Details extends React.Component {
     const player = document.querySelector('.player');
     const video = player.querySelector('.viewer');
     
-    const progressBar = document.querySelector('.progress__filled');
+    // const progressBar = document.querySelector('.progress__filled');
     const lockButton = document.querySelector('.lock_video');
 
     const progressBar_2 = document.querySelector('.input-range');
@@ -382,6 +381,7 @@ class Details extends React.Component {
           isupdateMax = false;
         }else if(max !== the.state.value['max']){
           max = the.state.value['max'];
+          // eslint-disable-next-line
           var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
           console.log('updating max', scrubTime);
@@ -455,7 +455,7 @@ class Details extends React.Component {
     progressBar_2.addEventListener('mouseup', () => mousedown = false);
 
     //... for green slider events 
-    let mousedown2 = false;
+    // let mousedown2 = false;
   }
 
   vidocontrol2 =()=>{
@@ -587,7 +587,7 @@ class Details extends React.Component {
       
       //Comman progress bar ...
       const progressBar = document.querySelector('.progress__filled_3');
-      const lockButton = document.querySelector('.lock_video_3');
+      // const lockButton = document.querySelector('.lock_video_3');
       let video_duration_1 = video_1.duration;
       let video_duration_2 = video_2.duration;
       console.log('videos \n',video_1,video_2)
@@ -940,7 +940,7 @@ class Details extends React.Component {
 
                     <Link 
                     to={{
-                      pathname: '/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog',
+                      pathname: '/TeamAdmin/user/dashboard/brainSimulationDetails/simulation/log',
                       state: {
                         image_id: this.state.image_id,
                         return_url: this.props.location.pathname + this.props.location.search
@@ -1000,11 +1000,11 @@ class Details extends React.Component {
                         </div>
                         <div className="col-md-6" style={{'float':'left'}}>
                           <div className="Simulationvideo">
-                            {!this.state.movie_link || this.state.simulationStatus == 'pending' ? 
-                              <img src={videoSimulationLoading} style={{'width':'50%'}} />
+                            {!this.state.movie_link || this.state.simulationStatus === 'pending' ? 
+                              <img src={videoSimulationLoading} style={{'width':'50%'}}  alt="img"/>
                               : null
                             }
-                            {this.state.movie_link && this.state.simulationStatus != 'pending' ?
+                            {this.state.movie_link && this.state.simulationStatus !== 'pending' ?
                               <video src={this.state.movie_link} style={{'width':'100%','height':'284px'}} className="player__video_2 viewer_2" controls loop={this.state.isRepeatVideo ? true : false}></video>
                               : null
                             }
@@ -1012,12 +1012,12 @@ class Details extends React.Component {
                           </div>
                            <div className="Replace-video Replace-video-desktop">
                               <div style={{width:'100%','opacity': '0','pointer-events': 'none'}}>
-                                    <label><img src={upload} />  Replace</label>
+                                    <label><img src={upload} alt="img"/>  Replace</label>
                               </div>
                             </div>
                           <div>
                             {this.state.isTimeUpdating_2 ?<div> <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> </div>: ''}
-                            <img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2}/>
+                            <img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2} alt="img"/>
                             <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
@@ -1035,18 +1035,18 @@ class Details extends React.Component {
                             {/*!-- Video controls Mobile view --*/}
                             {this.state.impact_video_url  ? 
                               <React.Fragment>
-                                <label for="uploadFile"><img src={upload} />  Replace</label>
+                                <label for="uploadFile"><img src={upload} alt="img"/>  Replace</label>
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
-                                <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                                <label  onClick={this.trimVideo} ><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
-                                <label onClick={this.resetToOriginal} ><img src={reset_icon} />  {this.state.label_resetVideo}</label>
+                                <label onClick={this.handalRemoveVideo}><img src={remove} alt="img"/>  {this.state.label_remove_video}</label>
+                                <label  onClick={this.trimVideo} ><img src={trim_icon} alt="img"/>  {this.state.label_TrimVideo}</label>
+                                <label onClick={this.resetToOriginal} ><img src={reset_icon} alt="img"/>  {this.state.label_resetVideo}</label>
                               </React.Fragment>
                               :
                               <React.Fragment>
-                                <label style={{'background':'#b7cce2'}}><img src={upload} />  Replace</label>
-                                <label style={{'background':'#b7cce2'}}><img src={remove} />  {this.state.label_remove_video}</label>
-                                <label style={{'background':'#b7cce2'}}><img src={trim_icon} />  {this.state.label_TrimVideo}</label>
-                                <label style={{'background':'#b7cce2'}}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
+                                <label style={{'background':'#b7cce2'}}><img src={upload} alt="img"/>  Replace</label>
+                                <label style={{'background':'#b7cce2'}}><img src={remove} alt="img"/>  {this.state.label_remove_video}</label>
+                                <label style={{'background':'#b7cce2'}}><img src={trim_icon} alt="img"/>  {this.state.label_TrimVideo}</label>
+                                <label style={{'background':'#b7cce2'}}><img src={reset_icon} alt="img"/>  {this.state.label_resetVideo}</label>
                               </React.Fragment>
                             }
                             {/*!-- Video controls end --*/}
@@ -1094,19 +1094,19 @@ class Details extends React.Component {
                                 {/*!-- Video controls Desktop view --*/}
                                 {this.state.impact_video_url ?
                                   <React.Fragment>
-                                    <label for="uploadFile"><img src={upload} />  Replace</label>
+                                    <label for="uploadFile"><img src={upload} alt="img"/>  Replace</label>
                                     <input type="file" id="uploadFile" onChange={this.uploadFile} />
-                                    <label onClick={this.handalRemoveVideo}><img src={remove} />  {this.state.label_remove_video}</label>
-                                    <label  onClick={this.trimVideo} > {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} />  {this.state.label_TrimVideo}</>} </label>
-                                    <label onClick={this.resetToOriginal}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
+                                    <label onClick={this.handalRemoveVideo}><img src={remove} alt="img"/>  {this.state.label_remove_video}</label>
+                                    <label  onClick={this.trimVideo} > {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} alt="img"/>  {this.state.label_TrimVideo}</>} </label>
+                                    <label onClick={this.resetToOriginal}><img src={reset_icon} alt="img"/>  {this.state.label_resetVideo}</label>
 
                                   </React.Fragment>
                                   :
                                   <React.Fragment>
-                                    <label style={{'background':'#b7cce2'}}><img src={upload} />  Replace</label>
-                                    <label style={{'background':'#b7cce2'}}><img src={remove} />  {this.state.label_remove_video}</label>
-                                    <label style={{'background':'#b7cce2'}}> {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} />  {this.state.label_TrimVideo}</>} </label>
-                                    <label style={{'background':'#b7cce2'}}><img src={reset_icon} />  {this.state.label_resetVideo}</label>
+                                    <label style={{'background':'#b7cce2'}}><img src={upload} alt="img"/>  Replace</label>
+                                    <label style={{'background':'#b7cce2'}}><img src={remove} alt="img"/>  {this.state.label_remove_video}</label>
+                                    <label style={{'background':'#b7cce2'}}> {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> : <><img src={trim_icon} alt="img"/>  {this.state.label_TrimVideo}</>} </label>
+                                    <label style={{'background':'#b7cce2'}}><img src={reset_icon} alt="img"/>  {this.state.label_resetVideo}</label>
                                   </React.Fragment>
                                 }
                                 {/*!-- Video controls end --*/}
@@ -1120,7 +1120,7 @@ class Details extends React.Component {
                           <div>
                             <div className="col-sm-12 sideliene-video-sliders no-padding">
                               <div className="col-sm-1 no-padding" style={{'float':'left'}}>
-                                <img src={this.state.left_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() => this.handlelock_video('left')}/>
+                                <img src={this.state.left_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() => this.handlelock_video('left')} alt="img"/>
                               </div>
                               {/*<input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>*/}
                               <div className="col-sm-10 no-padding" style={{'float':'left'}}>
@@ -1133,14 +1133,14 @@ class Details extends React.Component {
                                 />
                               </div>
                               <div className="col-sm-1 no-padding" style={{'float':'left'}}>
-                                <img src={this.state.right_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() =>  this.handlelock_video('right')}/>
+                                <img src={this.state.right_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() =>  this.handlelock_video('right')} alt="img"/>
                               </div>
                             </div>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
                           {/*<div>
                             <div className="col-sm-1 no-padding" style={{'float':'left'}}>
-                              <img src={unlock} className="unlock-img-2"/>
+                              <img src={unlock} className="unlock-img-2" alt="img"/>
                             </div>
                             <div className="col-sm-10 no-padding" style={{'float':'left'}}>
                               <input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider2 progress__filled" id="MyrangeSlider2" />
@@ -1159,9 +1159,9 @@ class Details extends React.Component {
                         <div className="col-md-12">
                           <div className="video-controlls">
                             <div className="col-sm-6" style={{'float':'left'}}>
-                              <img src={this.state.controlPlayVideo ? video_play_bl : video_pause_b} className="control-1 control_play_video"/>
-                              <img src={this.state.controlPouseVideo? pause_bl : pause_b}  className="control-1 control_pouse_video"/>
-                              <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b}  className="control-2 control_loop_video"/>
+                              <img src={this.state.controlPlayVideo ? video_play_bl : video_pause_b} className="control-1 control_play_video" alt="img"/>
+                              <img src={this.state.controlPouseVideo? pause_bl : pause_b}  className="control-1 control_pouse_video" alt="img"/>
+                              <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b}  className="control-2 control_loop_video" alt="img"/>
                             </div>
                             <div className="col-sm-6" style={{'float':'left'}}>
                               <button onClick={this.handleExportVideo} disabled={!this.state.movie_link || !this.state.impact_video_url ? true : false} style={!this.state.movie_link || !this.state.impact_video_url ? {'background': '#b7cce2'} : {'background': '#4472c4'}}>
@@ -1171,7 +1171,7 @@ class Details extends React.Component {
                                   </>
                                  : 
                                  <>
-                                  <img src={icon_download_white} className="Combined-video-icon"  />
+                                  <img src={icon_download_white} className="Combined-video-icon"  alt="img"/>
                                   Export Combined Video
                                   </>
                                 }</button>
@@ -1200,11 +1200,11 @@ class Details extends React.Component {
                           <div style={{'width': '100%','display': 'flow-root'}}>
                             <p  className="video-lebel">Motion Video</p>
                           </div>
-                          {!this.state.motion_link_url || this.state.simulationStatus == 'pending' ? 
-                              <img src={videoSimulationLoading} style={{'width':'50%'}} />
+                          {!this.state.motion_link_url || this.state.simulationStatus === 'pending' ? 
+                              <img src={videoSimulationLoading} style={{'width':'50%'}} alt="img"/>
                               : null
                           }
-                          {this.state.motion_link_url && this.state.simulationStatus != 'pending' ? 
+                          {this.state.motion_link_url && this.state.simulationStatus !== 'pending' ? 
                             <video src={this.state.motion_link_url} style={{'width':'50%','height':'284px'}}  controls></video>
                             : null
                           }
@@ -1225,7 +1225,7 @@ class Details extends React.Component {
                             <button className="btn gray">MASxSR<sub>15</sub></button>
                           </div>
                           <div className="col-md-12">
-                            <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.simulationStatus != 'pending' ?  'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
+                            <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.simulationStatus !== 'pending' ?  'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="img" />
                             
                           </div>
                       </div>
@@ -1258,7 +1258,7 @@ class Details extends React.Component {
     getUserDetails({ user_cognito_id: congito_id })
     .then(response => {
       console.log('user details =================================\n',response)
-      if(response.data.message == "success"){
+      if(response.data.message === "success"){
         this.setState({
             account_id: response.data.data.account_id,
             isLoading: false
@@ -1324,7 +1324,7 @@ class Details extends React.Component {
                     getCumulativeAccelerationTimeRecords({  organization: organization, player_id: this.state.player_id, team: team })
                     .then(res=>{
                       console.log('res',res);
-                      if(res.data.message != "failure" && res.data.data[0]){
+                      if(res.data.message !== "failure" && res.data.data[0]){
                         console.log('success')
                         console.log('res',res);
                         this.setState({

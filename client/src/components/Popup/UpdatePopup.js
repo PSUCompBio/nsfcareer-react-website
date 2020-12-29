@@ -193,7 +193,7 @@ class UpdatePopup extends React.Component {
                                   <option value="male">Select</option>
                                 {this.props.data.sensorOrgList &&
                                   this.props.data.sensorOrgList.map((org, index) => (
-                                    <option value={org.organization} style={this.props.data.selectOrg == org.organization ? {'display':'none'}: {}} >{org.organization}</option>
+                                    <option value={org.organization} style={this.props.data.selectOrg === org.organization ? {'display':'none'}: {}} >{org.organization}</option>
                                   ))
                                 }
                               </Input>
@@ -219,7 +219,7 @@ class UpdatePopup extends React.Component {
                                   <option value="male">Select</option>
                                 {this.props.data.sensorOrgList &&
                                   this.props.data.sensorOrgList.map((org, index) => (
-                                    <option value={org.team_name} style={this.props.data.selectOrg == org.team_name ? {'display':'none'}: {}} >{org.team_name}</option>
+                                    <option value={org.team_name} style={this.props.data.selectOrg === org.team_name ? {'display':'none'}: {}} >{org.team_name}</option>
                                   ))
                                 }
                               </Input>

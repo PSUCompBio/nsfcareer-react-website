@@ -71,7 +71,7 @@ class DownloadReportPopup extends React.Component {
               </tbody>
             </table>
             <div className="report-download-buttons">
-              <button><img src={share_icon} style={{width:'24px'}}/>  Share</button><br/>
+              <button><img src={share_icon} style={{width:'24px'}} alt="share_icon" />  Share</button><br/>
               {/*this.state.mps_95 ?
                 <DownloadReportMPS95 Report={this.props.Report} fileName={this.props.fileName}  Metric={this.state} jsonfile={this.props.jsonData}/>
                 :

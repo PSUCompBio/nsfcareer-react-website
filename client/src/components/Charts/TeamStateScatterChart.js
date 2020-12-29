@@ -4,6 +4,7 @@ import {Scatter} from 'react-chartjs-2';
 
 
 class TeamStateScatterChart extends React.Component {
+    // eslint-disable-next-line
   constructor(props) {
     super(props);
   }

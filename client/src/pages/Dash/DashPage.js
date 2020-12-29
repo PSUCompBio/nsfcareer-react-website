@@ -7,14 +7,14 @@ import './dash.css';
 import summary from "./summary_york_tech_35204.json";
 import SelectSearch from 'react-select-search';
 const insults = summary.Insults;
-let stem_json = [];
-let pariental_lobe_json = [];
-let frontal_lobe_json = [];
-let cerebellum_lobe_json = [];
-let middle_part_of_the_brain_json = [];
-let occipital_lobe_json = [];
-let temporal_lobe_json = [];
-let middle_part_of_the_brain_min_json = []
+// let stem_json = [];
+// let pariental_lobe_json = [];
+// let frontal_lobe_json = [];
+// let cerebellum_lobe_json = [];
+// let middle_part_of_the_brain_json = [];
+// let occipital_lobe_json = [];
+// let temporal_lobe_json = [];
+// let middle_part_of_the_brain_min_json = []
 
 let minimumPS = [[], [], [], [], [], [], []];
 let maximumPS = [[], [], [], [], [], [], []];
@@ -562,7 +562,7 @@ class DashPage extends React.Component {
 	afterDrawChart = (chart) => {
 		var ctx = chart.chart.ctx;
 
-		const rect = chart.canvas.getBoundingClientRect();
+		// const rect = chart.canvas.getBoundingClientRect();
 		ctx.save();
 		var xAxis = chart.scales["x-axis-0"];
 		var yAxis = chart.scales["y-axis-0"];
@@ -684,7 +684,7 @@ class DashPage extends React.Component {
 			case "Frontal_Lobe_node_Frontal_Lobe":
 
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id == "front_btn")
+					if (ele.id === "front_btn")
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -701,7 +701,7 @@ class DashPage extends React.Component {
 				break;
 			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id == "pariental_btn") {
+					if (ele.id === "pariental_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -719,7 +719,7 @@ class DashPage extends React.Component {
 				break;
 			case "node_Mesh_16":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id == "occipital_btn") {
+					if (ele.id === "occipital_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -737,7 +737,7 @@ class DashPage extends React.Component {
 				break;
 			case "Temporal_Lobe_node_Temporal_Lobe":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id == "temporal_btn") {
+					if (ele.id === "temporal_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -755,7 +755,7 @@ class DashPage extends React.Component {
 				break;
 			case "Cerebellum_node_Cerebellum":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id == "cerebellum_btn") {
+					if (ele.id === "cerebellum_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -774,7 +774,7 @@ class DashPage extends React.Component {
 				break;
 			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id == "stem_btn") {
+					if (ele.id === "stem_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -794,7 +794,7 @@ class DashPage extends React.Component {
 			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
 
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id == "motor_and_sensor_cortex") {
+					if (ele.id === "motor_and_sensor_cortex") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -1123,7 +1123,7 @@ class DashPage extends React.Component {
 		scene.add(bg3);
 		scene.add(bg4);
 
-		let me = this;
+		// let me = this;
 
 		// Load&Add brain
 		const gltfLoader = new GLTFLoader();
@@ -1134,7 +1134,7 @@ class DashPage extends React.Component {
 				root = gltf.scene;
 
 				const box = new THREE.Box3().setFromObject(root);
-				const boxSize = box.getSize(new THREE.Vector3()).length();
+				// const boxSize = box.getSize(new THREE.Vector3()).length();
 				const boxCenter = box.getCenter(new THREE.Vector3());
 
 				sphereContainer = new THREE.Object3D();
@@ -1278,7 +1278,7 @@ class DashPage extends React.Component {
 	};
 
 	onMouseClick = (event, type) => {
-		if (previousClicked != type) isClicked = true;
+		if (previousClicked !== type) isClicked = true;
 		else isClicked = !isClicked;
 		if (event !== "") event.preventDefault();
 		this.setState({
@@ -1392,6 +1392,7 @@ class DashPage extends React.Component {
 				.removeEventListener("mouseover", this.onMouseHover);
 	};
 	strainMetric = (e, v) => {
+		// eslint-disable-next-line
 		switch (v.value) {
 			case "max-ps":
 
@@ -1452,23 +1453,31 @@ class DashPage extends React.Component {
 						switch (context.dataIndex) {
 							case 0:
 								return all_spheres_json[0].length;
+								// eslint-disable-next-line
 								break;
 							case 1:
 								return all_spheres_json[1].length;
+								// eslint-disable-next-line
 								break;
 							case 2:
 								return all_spheres_json[2].length;
+								// eslint-disable-next-line
 								break;
 							case 3:
 								return all_spheres_json[3].length;
+								// eslint-disable-next-line
 								break;
 							case 4:
 								return all_spheres_json[4].length;
+								// eslint-disable-next-line
 								break;
 							case 5:
 								return all_spheres_json[5].length;
+								// eslint-disable-next-line
+								break;
 							case 6:
 								return all_spheres_json[6].length;
+								// eslint-disable-next-line
 								break;
 							default:
 								break;

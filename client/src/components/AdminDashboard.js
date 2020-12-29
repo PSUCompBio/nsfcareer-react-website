@@ -910,6 +910,7 @@ class AdminDashboard extends React.Component {
         console.log('getAllSensorBrands', this.state.sensorBrandList);
         let inc = 1;
         var cards = new Array(this.state.totalBrand);
+        // eslint-disable-next-line
         let j = 1;
         for (let i = 0; i < this.state.totalBrand; i++) {
 

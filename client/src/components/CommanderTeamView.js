@@ -115,6 +115,7 @@ class CommanderTeamView extends React.Component {
                         this.setState({ users: [] });
 
                         for (var i = 0; i < response.data.data.length; i++) {
+                            // eslint-disable-next-line
                             this.setState(prevState => ({
                                 users: [...prevState.users, response.data.data[i]]
                             }));
@@ -230,6 +231,7 @@ class CommanderTeamView extends React.Component {
                                         .then(response => {
                                             console.log('getPlayersData ----------------------\n',response);
                                             for (var i = 0; i < response.data.data.length; i++) {
+                                                // eslint-disable-next-line
                                                 this.setState(prevState => ({
                                                     users: [...prevState.users, response.data.data[i]],
                                                     isLoaded: true
@@ -238,7 +240,9 @@ class CommanderTeamView extends React.Component {
                                             if(response.data.data.length > 4){
                                                 this.setState({isMobile: false});
                                             } 
+                                            // eslint-disable-next-line
                                             for (var i = 0; i < response.data.requested_players.length; i++) {
+                                                // eslint-disable-next-line
                                                 this.setState(prevState => ({
                                                     requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
                                                     isLoaded: true
@@ -496,6 +500,7 @@ class CommanderTeamView extends React.Component {
 
     getUrl = (obj) => {
         if (obj && this.state.userDetails.level > 300) {
+            // eslint-disable-next-line
             return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.user_cognito_id}>Profile</a>;
         } else {
             return <button className="btn btn-primary" disabled={true}>Profile</button>;
@@ -814,6 +819,7 @@ class CommanderTeamView extends React.Component {
                                 <span className="team-page-title">Team Dashboard</span>
                                 <div className="col-md-6 team-edit-button">
                                     <button className="btn button-edit plyar-button-edit" style={{'margin-right': '4px'}}>Edit</button>
+                                    {/*eslint-disable-next-line*/}
                                     <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
                                 
                                    

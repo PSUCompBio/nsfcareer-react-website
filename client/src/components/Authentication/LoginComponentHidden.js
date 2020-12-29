@@ -8,7 +8,7 @@ import store from '../../Store';
 import '../../mixed_style.css';
 import { getStatusOfDarkmode } from '../../reducer';
 import { setIsSignedInSucceeded, userDetails } from '../../Actions';
-import DarkMode from '../DarkMode';
+// import DarkMode from '../DarkMode';
 import facebook_icon from './facebook_icon.png';
 import google_icon from './google_icon.png';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
@@ -192,6 +192,7 @@ class LoginComponentHidden extends React.Component {
       this.LoginWithoutEmail(formJsonData);
     }else{
       console.log(response.first_name,response.userID);
+      // eslint-disable-next-line
       var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name,email: '',type:'facebook'}
       this.setState({
         signupData:{
@@ -202,7 +203,7 @@ class LoginComponentHidden extends React.Component {
           type:'facebook'
         }
       })
-      if(response.status != "unknown"){
+      if(response.status !== "unknown"){
         this.LoginWithoutEmail(formJsonData);
       }
     }
@@ -230,12 +231,12 @@ class LoginComponentHidden extends React.Component {
     loginWithoutEmail(formJsonData)
     .then(res=>{
       console.log('res',res);
-      if(res.data.message == 'notExists'){
+      if(res.data.message === 'notExists'){
         this.setState({
           isSingup: true,
           isLoading: false
         })
-      }else if(res.data.message == 'success'){
+      }else if(res.data.message === 'success'){
         if (res.data.status === 'FORCE_CHANGE_PASSWORD') {
           formJsonData['user_name'] = res.data.user_name;
           formJsonData['password'] = formJsonData.userID;
@@ -362,11 +363,12 @@ class LoginComponentHidden extends React.Component {
               */
               }
               <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
+                {/*eslint-disable-next-line*/}
                 <div style={{ paddingLeft: "0% !important" }} ref="loginForm" style={{ margin: "3%" }} className="card card-border">
                   <div className="card-body">
 
                     <div ref="brainIcon" className="text-center brain-icon">
-                      <img src="img/icon/brain.png" alt="" />
+                      <img src="img/icon/brain.png" alt="img" />
                     </div>
                     {params.get('error') ? (
                       <div
@@ -477,7 +479,7 @@ class LoginComponentHidden extends React.Component {
                       render={renderProps => (
                         <>
                           <div className="tab_login_buttons" onClick={renderProps.onClick}>
-                            <img src={facebook_icon} /> <p>Sign in using Facebook </p>
+                            <img src={facebook_icon} alt="img"/> <p>Sign in using Facebook </p>
                           </div>
                         </>
                       )}
@@ -487,7 +489,7 @@ class LoginComponentHidden extends React.Component {
                       render={renderProps => (
                         <>
                           <div className="tab_login_buttons2" onClick={renderProps.onClick} disabled={renderProps.disabled}>
-                            <img src={google_icon} /> <p>Sign in using Google</p>
+                            <img src={google_icon} alt="img"/> <p>Sign in using Google</p>
                           </div>
                         </>
                       )}

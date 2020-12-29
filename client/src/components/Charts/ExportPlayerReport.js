@@ -1185,6 +1185,7 @@ class ExportPlayerReport extends React.Component {
 	}
 
 	strainMetric = (e, v) => {
+		// eslint-disable-next-line
 		switch (v.value) {
 			case "max-ps":
 				this.handleBrainStrain('principal-max-strain')
@@ -1241,24 +1242,31 @@ class ExportPlayerReport extends React.Component {
 						switch (context.dataIndex) {
 							case 0:
 								return frontal_lobe_json.length;
+								// eslint-disable-next-line
 								break;
 							case 1:
 								return pariental_lobe_json.length;
+								// eslint-disable-next-line
 								break;
 							case 2:
 								return occipital_lobe_json.length;
+								// eslint-disable-next-line
 								break;
 							case 3:
 								return temporal_lobe_json.length;
+								// eslint-disable-next-line
 								break;
 							case 4:
 								return cerebellum_lobe_json.length;
+								// eslint-disable-next-line
 								break;
 							case 5:
 								return stem_json.length;
+								// eslint-disable-next-line
 								break;
 							case 6:
 								return middle_part_of_the_brain_json.length;
+								// eslint-disable-next-line
 								break;
 							default:
 								break;

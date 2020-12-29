@@ -92,7 +92,7 @@ class CumulativeAccelerationEventChart extends React.Component {
 
     render() {
         console.log('this.state.data',this.props.data)
-        
+        // eslint-disable-next-line
         var fileName = '';
         if(this.props.data.player_id && this.props.data.player_id.length > 0 && this.props.user.length > 0){
        
@@ -165,12 +165,12 @@ class CumulativeAccelerationEventChart extends React.Component {
                                             className="player-dashboard-sub-head"
                                         >Position : <span style={{ color: "black" }}>{this.props.data.team ? this.props.data.player.position : ''}</span><br/>
                                         </p>
-                                        <p
+                                        {/*<p
                                             ref="h1"
                                             className="player-dashboard-sub-head"
                                         >Simulation ID : <span style={{ color: "black" }}>{this.props.log_stream_name ? this.props.log_stream_name.split('/')[2] : ''}</span><br/>
 
-                                        </p>
+                                        </p>*/}
                                         <p
                                             ref="h1"
                                             className="player-dashboard-sub-head"

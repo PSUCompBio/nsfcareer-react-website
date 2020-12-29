@@ -4,7 +4,7 @@ import { getStatusOfDarkmode } from '../reducer';
 import SignatureCanvas from 'react-signature-canvas'
 // import Footer from './Footer';
 import { signUp } from '../apis';
-import { Redirect ,Link} from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import template_data from './../config/template_images.json'
 import "./irb.css"
 

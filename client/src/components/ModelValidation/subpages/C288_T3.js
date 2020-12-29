@@ -48,24 +48,31 @@ class C288_T3 extends React.Component {
           <Container style={{'margin-top': '30px'}}>
             <Row className="Hardy_et_al-card-Chart">
               <Col sm>
+                {/*eslint-disable-next-line*/}
                 <C288_T3_chart />
               </Col>
               <Col sm>
+              {/*eslint-disable-next-line*/}
                 <C288_T3_chart />
               </Col>
               <Col sm>
+              {/*eslint-disable-next-line*/}
                 <C288_T3_chart />
               </Col>
               <Col sm>
+              {/*eslint-disable-next-line*/}
                 <C288_T3_chart />
               </Col>
               <Col sm>
+              {/*eslint-disable-next-line*/}
                 <C288_T3_chart />
               </Col>
               <Col sm>
+              {/*eslint-disable-next-line*/}
                 <C288_T3_chart />
               </Col>
               <Col sm>
+              {/*eslint-disable-next-line*/}
                 <C288_T3_chart />
               </Col>
             </Row>

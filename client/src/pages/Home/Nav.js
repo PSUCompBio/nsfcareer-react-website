@@ -701,8 +701,9 @@ getUploadFileExtension(url){
                         display : "none"
                     }}
                   />
-                
+                {/*eslint-disable-next-line*/}
                   <label for="file" style={{'margin-bottom':'0px'}}><img  src={camera} style={{'with':'20%'}} alt="Update profile image"/></label>
+                
                
                 </div>
               
@@ -783,6 +784,7 @@ getUploadFileExtension(url){
                     className="nav-link"
                      to="profile">Settings
                 </Link>
+              {/*eslint-disable-next-line*/}
                 <a
                     onClick={() => {
                       this.signOut();

@@ -737,6 +737,7 @@ class OrganizationAdmin extends React.Component {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
+                                                {/* eslint-disable-next-line*/}
                                                     {staffList && staffList[0].map(function (staff, index) {
                                                         if(staff.data){
                                                             if(staff.data.level === 400){

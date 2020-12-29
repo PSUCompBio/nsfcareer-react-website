@@ -73,6 +73,7 @@ class sendEmailVerifation extends React.Component {
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">  
             {/*Body Section start here*/}
               <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
+              {/*eslint-disable-next-line*/}
                 <div style={{ paddingLeft: "0% !important" }} ref="loginForm" style={{ margin: "3%" }} className="card card-border">
                   <div className="card-body">
                     <div ref="brainIcon" className="text-center brain-icon">

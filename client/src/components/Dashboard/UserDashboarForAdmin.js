@@ -140,7 +140,7 @@ class UserDashboarForAdmin extends React.Component {
       const monthTmp = d.getMonth() + 1
       const month = plus0(monthTmp)
       const date = plus0(d.getDate())
-      
+      //eslint-disable-next-line
       return `${month}/${date}/${year}`+' |'
   }
 
@@ -251,8 +251,11 @@ class UserDashboarForAdmin extends React.Component {
                       </div>
                       <div className="col-md-8"  style={{'float':'left'}}>
                         <div className="injury_matrix_section">
+                          {/*eslint-disable-next-line*/}
                           <button className="injury_mat active" className="settings-buttons settings-buttons-active">MPS</button>
+                          {/*eslint-disable-next-line*/}
                           <button className="injury_mat" className="settings-buttons">Axonal Strain</button>
+                          {/*eslint-disable-next-line*/}
                           <button className="injury_mat" className="settings-buttons" >CSDM</button>
                         </div>
                       </div>
@@ -325,7 +328,9 @@ class UserDashboarForAdmin extends React.Component {
                 </Card.Header>
                 <Accordion.Collapse eventKey={item.sensor_data.player_id} id={item.sensor_data && item.sensor_data.player_id.split('$')[1]}>
                   <Card.Body>
+                    {/*eslint-disable-next-line*/}
                     {this.state.cumulativeAccelerationTimeAlldata ? 
+                        //eslint-disable-next-line
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
                           if(items.sensor_data.player_id === item.sensor_data.player_id){
                            return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.state.state} organization ={the.state.organization}  player_id={item.sensor_data.player_id} team={the.state.team} brand={the.state.brand} status={item.status}/>
@@ -422,6 +427,7 @@ class UserDashboarForAdmin extends React.Component {
               this.setState({
                 user: {},
                 isCheckingAuth: false,
+                //eslint-disable-next-line
                 isCheckingAuth: false
               });
             })
@@ -430,6 +436,7 @@ class UserDashboarForAdmin extends React.Component {
             /*
             * getting Acceleration data...
             */
+            //eslint-disable-next-line
             var image_id = '';
             getCumulativeAccelerationData({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
               .then(response => {

@@ -517,13 +517,13 @@ class SportsPage extends React.Component {
 						<h5>The following sensor data formats are accepted:</h5>
 						<div className="row sensor_logo_blk">
 							<div className="col-md-4 col-sm-4 margin-btm text-center">
-								<img src="./img/prevent_biometrics.png" />
+								<img src="./img/prevent_biometrics.png" alt="img"/>
 							</div>
 							<div className="col-md-4 col-sm-4 margin-btm text-center">
-								<img src="./img/sisu.png" />
+								<img src="./img/sisu.png" alt="img"/>
 							</div>
 							<div className="col-md-4 col-sm-4 margin-btm text-center">
-								<img src="./img/opro.png" />
+								<img src="./img/opro.png" alt="img" />
 							</div>
 						</div>
 						<div className="upload_file_block">
@@ -532,6 +532,7 @@ class SportsPage extends React.Component {
 						<div className="cpm_block">
 							<p><b>Are you a sensor company?</b></p>
 							<p>Our API is available that can be readily incorporated into your own platform.</p>
+						{/*eslint-disable-next-line*/}
 							<p><a href="#" target="_blank">Read More Here</a></p>
 						</div>
 					</Modal.Body>

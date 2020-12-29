@@ -8,7 +8,7 @@ import store from '../../Store';
 import '../../mixed_style.css';
 import { getStatusOfDarkmode } from '../../reducer';
 import { setIsSignedInSucceeded, userDetails } from '../../Actions';
-import DarkMode from '../DarkMode';
+// import DarkMode from '../DarkMode';
 
 let search = window.location.search;
 let params = new URLSearchParams(search);
@@ -254,6 +254,7 @@ class Login extends React.Component {
               */
               }
               <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
+              {/*eslint-disable-next-line*/}
                 <div style={{ paddingLeft: "0% !important" }} ref="loginForm" style={{ margin: "3%" }} className="card card-border">
                   <div className="card-body">
 
@@ -361,7 +362,7 @@ class Login extends React.Component {
                       </button>
                     </form>
                     {/* ============ re-send email verication button ===========*/}
-                      {params.get('error') == 'Invalid verification code provided, please try again.' || params.get('error') == 'Invalid code provided, please request a code again.' ? 
+                      {params.get('error') === 'Invalid verification code provided, please try again.' || params.get('error') === 'Invalid code provided, please request a code again.' ? 
                         <Link to="/re-sendEmailVerifation">
 
                           <button

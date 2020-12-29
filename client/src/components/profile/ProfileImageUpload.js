@@ -209,7 +209,7 @@ class ProfileImageUpload extends React.Component {
                   ) : null}
                   {this.state.isDeskTop ? 
                     <React.Fragment>
-                      <label className="btn profile-picture-btn" for="file_profile" > <img src={upload} className="profileCameraIcon" />  Upload Photo</label>
+                      <label className="btn profile-picture-btn" for="file_profile" > <img src={upload} className="profileCameraIcon" alt="img"/>  Upload Photo</label>
                       <input
                         onChange={this.onChangeHandler2}
                         type="file"
@@ -220,11 +220,12 @@ class ProfileImageUpload extends React.Component {
                         }}
                       />
                       <p className="h5 p_h4" style={{'text-align': 'center'}}>OR</p>
-                      <button className="btn profile-picture-btn" onClick={this.handleCameraPopup} > <img src={camera} className="profileCameraIcon" /> Take Profile</button>
+                      {/*eslint-disable-next-line*/}
+                      <button className="btn profile-picture-btn" onClick={this.handleCameraPopup} > <img src={camera} className="profileCameraIcon" alt="img"/> Take Profile</button>
                     </React.Fragment>
                     : 
                     <React.Fragment>
-                      <button className="btn profile-picture-btn" onClick={this.handleCameraPopup} > <img src={camera} className="profileCameraIcon" /> Take Profile</button>
+                      <button className="btn profile-picture-btn" onClick={this.handleCameraPopup} > <img src={camera} className="profileCameraIcon" alt="img"/> Take Profile</button>
                       
                     </React.Fragment>
                   }
