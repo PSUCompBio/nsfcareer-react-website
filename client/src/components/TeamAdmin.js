@@ -3,15 +3,15 @@ import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
 import { Redirect, withRouter, Link } from 'react-router-dom';
-import { formDataToJson } from '../utilities/utility';
+// import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import {
     isAuthenticated,
-    getUserDetails,
+    // getUserDetails,
     getUserDBDetails,
     getAllteamsOfOrganizationOfSensorBrand,
     getAllteamsOfOrganizationOfSensorBrandList,
-    fetchStaffMembers,
+    // fetchStaffMembers,
     fetchOrgStaffMembers,
     addorgTeam,
     deleteItem,
@@ -32,6 +32,8 @@ import pencil from './icons/pencil.png';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
 import plus from './icons/plus.png'
+import team_state_icon from './team_state_icon.svg'
+
 import { 
     UncontrolledAlert
 } from 'reactstrap';
@@ -51,7 +53,6 @@ class TeamnAdmin extends React.Component {
             hideEditElement: { display: 'block' },
             isFetching: true,
             rostersArray: [],
-            organization: 'PSU',
             buttonSelected: 'overview',
             staffList: '',
             sensorOrgTeamList: [],
@@ -61,7 +62,6 @@ class TeamnAdmin extends React.Component {
             isDisplay2: { display: 'none' },
             DelData: '',
             renameData : '',
-            isEdit: false,
             isDelete: false,
             isUploading: false,
             isUpdated:false,
@@ -73,8 +73,9 @@ class TeamnAdmin extends React.Component {
             mergeData: '',
             isMerge: false,
             user_cognito_id: '',
-            brand: this.props.match.params.brand,
-            organization: this.props.match.params.org
+            brand: this.props.match.params.brand && this.props.match.params.brand !== 'undefined' ? this.props.match.params.brand : '',
+            organization: this.props.match.params.org ? this.props.match.params.org : 'PSU',
+            team_name: []
         };
     }
     toggleTab = (value) => {
@@ -255,13 +256,13 @@ class TeamnAdmin extends React.Component {
     }
     isUpdateData = (data) =>{
         console.log('isUpdateData',data);
-        if(data.data.type == "renameTeam"){
+        if(data.data.type === "renameTeam"){
             this.setState({renameData: {TeamName : data.TeamName, organization_id: data.data.organization_id,data:data.data}, isRename: true})
         }
-        if(data.data.type == "addTeam"){
+        if(data.data.type === "addTeam"){
             this.setState({addTeamData: {TeamName : data.TeamName, sensor: this.state.brand,organization:this.state.organization  }, isAddOrganization: true})
         }
-        if(data.data.type == "mergeTeam"){
+        if(data.data.type === "mergeTeam"){
             this.setState({mergeData: {TeamName : data.TeamName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
         }
         this.setState({ isDisplay2:{ display: 'none' } });
@@ -296,7 +297,7 @@ class TeamnAdmin extends React.Component {
               deleteItem(this.state.DelData)
               .then(res => {
                   console.log('res',res);
-                    if(res.data.message == 'success'){
+                    if(res.data.message === 'success'){
                          this.setState(prevState => ({
                             isUpdated: false,
                         }));
@@ -327,7 +328,7 @@ class TeamnAdmin extends React.Component {
             renameTeam(this.state.renameData)
             .then(response => {
                 console.log('response',response)
-                if(response.data.message == "success"){
+                if(response.data.message === "success"){
                     this.handleMergeTeam();
                 }else{
                     this.setState({
@@ -354,7 +355,7 @@ class TeamnAdmin extends React.Component {
             MergeTeam(this.state.mergeData)
             .then(response => {
                 console.log('response',response)
-                if(response.data.message == "success"){
+                if(response.data.message === "success"){
                     this.handleAddTeam();
                 }else{
                     this.setState({
@@ -381,7 +382,7 @@ class TeamnAdmin extends React.Component {
             addorgTeam(this.state.addTeamData)
             .then(response =>{
                  console.log('response',response)
-                if(response.data.message == "success"){
+                if(response.data.message === "success"){
                     getAllteamsOfOrganizationOfSensorBrand({ brand: this.state.brand, organization: this.state.organization })
                     .then(teams => {
                         console.log('teams',teams)                              
@@ -460,10 +461,12 @@ class TeamnAdmin extends React.Component {
 
     }
     smallCards = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key,organization_id) => {
+        
+       
         // console.log(reference);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
-        if (simulation_status == 'completed') {
-            let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
+        if (simulation_status === 'completed') {
+            let computed_time1 = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
 
             let currentStamp = new Date().getTime();
             let simulationTimestamp = parseFloat(simulation_timestamp);
@@ -471,7 +474,7 @@ class TeamnAdmin extends React.Component {
             diff /= 60;
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
-            minutes = minutes - computed_time;
+            minutes = minutes - computed_time1;
             if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
@@ -480,9 +483,9 @@ class TeamnAdmin extends React.Component {
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                  <ul className="organization-edit-icons isEdit">
-                    <li><span><img src={pencil}  onClick={e => this.editRecord({TeamName:team, brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'renameTeam'})}/>Rename</span></li>
-                    <li><span><img src={merge}  onClick={e => this.editRecord({TeamName:team, brand: brand, organization_id: organization_id,type: 'mergeTeam',sensorOrgList:this.state.sensorOrgTeamList,selectOrg: organization} )} />Merge</span></li>
-                    <li><span><img src={delicon} onClick={e => this.deleteRecord({TeamName:team, brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id}) } />Delete</span></li>
+                    <li><span><img src={pencil} alt="Edit" onClick={e => this.editRecord({TeamName:team, brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'renameTeam'})}/>Rename</span></li>
+                    <li><span><img src={merge} alt="Merge" onClick={e => this.editRecord({TeamName:team, brand: brand, organization_id: organization_id,type: 'mergeTeam',sensorOrgList:this.state.sensorOrgTeamList,selectOrg: organization} )} />Merge</span></li>
+                    <li><span><img src={delicon} alt="Delete" onClick={e => this.deleteRecord({TeamName:team, brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id}) } />Delete</span></li>
                 </ul>
                 <div
                     ref={reference[0]}
@@ -511,8 +514,8 @@ class TeamnAdmin extends React.Component {
 
                         </div>
                         <div className="football-body d-flex">
-                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                {noOfSimulation || noOfSimulation == '0' ? 
+                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
+                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                  : 
                                  <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
@@ -539,7 +542,7 @@ class TeamnAdmin extends React.Component {
     iterateTeam = () => {
         let inc = 1;
         var cards = new Array(this.state.totalTeam);
-        let j = 1;
+        // let j = 1;
         for (let i = 0; i < this.state.totalTeam; i++) {
             cards[i] = this.smallCards(
                 this.state.sensorOrgTeamList[i].simulation_status,
@@ -564,7 +567,7 @@ class TeamnAdmin extends React.Component {
                 this.state.sensorOrgTeamList[i].organization_id,
 
             );
-            j++;
+            // j++;
         }
         if (this.state.totalTeam === 0) {
             return <div style={{ marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center','font-weight': '600','font-size': '30px','color': '#495057' }}>No Data To display.</div>
@@ -575,12 +578,12 @@ class TeamnAdmin extends React.Component {
     };
     tableTeams = ()=>{
         console.log(this.state.sensorOrgTeamList)
-
+        // eslint-disable-next-line
         var body =  this.state.sensorOrgTeamList.map(function (team, index) {
                 if (team) {
 
                     let cls = team.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
-                    if (team.simulation_status == 'completed') {
+                    if (team.simulation_status === 'completed') {
                         let computed_time = team.computed_time ? parseFloat(team.computed_time) / (1000 * 60) : 0;
 
                         let currentStamp = new Date().getTime();
@@ -612,7 +615,7 @@ class TeamnAdmin extends React.Component {
                     >
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{team.team_name ? team.team_name : 'NA'}</td> 
-                        <td>{team.simulation_count || team.simulation_count == '0' ? team.simulation_count : 'Loading...'}</td>
+                        <td>{team.simulation_count || team.simulation_count === '0' || team.simulation_count === 0 ? team.simulation_count : 'Loading...'}</td>
                         <td>{team.organization}</td>
                     </tr>;
                 }
@@ -690,16 +693,17 @@ class TeamnAdmin extends React.Component {
                                         <div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
                                             <div className="View">
                                                 <p className="head-team-mobile">Teams</p>
-                                                <img src={gridView} className="team-view-icon" onClick={() => this.handleViewChange('gridView')} /> 
-                                                <img src={listView} className="team-view-icon" onClick={() => this.handleViewChange('listView')} />
+                                                <img src={gridView} alt="gridView" className="team-view-icon" onClick={() => this.handleViewChange('gridView')} /> 
+                                                <img src={listView} alt="listView" className="team-view-icon" onClick={() => this.handleViewChange('listView')} />
                                             </div>
                                         </div>
                                     </h1>
                                 </div>
-                                 <div className="col-md-12 Admintitle" >
-                                    <div className="col-md-2 org-edit-button" >
+                                 <div className="col-md-12 Admintitle team-edit-button" >
+                                    <div className="col-md-12 org-edit-button " >
                                         <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button>
-                                       
+                                        <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img alt="team" src={team_state_icon} style={{'width':'32px'}} /> Org Stats</button>
+                                        
                                     </div>
                                 </div>
                                 <div
@@ -782,7 +786,7 @@ class TeamnAdmin extends React.Component {
                                         </div>
                                     }
                                     {!this.state.tabActive ?
-                                        this.state.view == 'gridView' ?
+                                        this.state.view === 'gridView' ?
                                             <div className="football-container mt-4 d-flex flex-wrap">
                                                 {this.state.userDetails.level === 1000 &&
                                                     <h2 style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}} className="head-team-desktop title-grey-color">TEAMS</h2>
@@ -797,7 +801,7 @@ class TeamnAdmin extends React.Component {
                                                         onClick={e => this.editRecord( {type: 'addTeam'})}
                                                     >
                                                         <div className="wrap_img">
-                                                       <img src={plus} />
+                                                       <img src={plus} alt="Add New" />
                                                         <h4>Add New</h4>
                                                         </div>
                                                     </div>
@@ -873,6 +877,15 @@ class TeamnAdmin extends React.Component {
         return 'military-dark-mode';
     };
 
+    /**
+    /*  Handle team state page...
+    */
+    teamStats = () => {
+        this.setState({
+            teamStats: true
+        })
+    }
+
     render() {
 
         if (!this.props.match.params.org) {
@@ -892,6 +905,26 @@ class TeamnAdmin extends React.Component {
         if (this.state.isFetching) {
             return <Spinner />;
         }
+        if (this.state.teamStats) {
+            var team_name = [];
+            for (let i = 0; i < this.state.totalTeam; i++) {
+                team_name.push(this.state.sensorOrgTeamList[i].team_name);
+            }
+            return <Redirect push to={{
+                pathname: '/TeamStats',
+                state: {
+                    user_cognito_id: this.state.user_cognito_id,
+                    for: 'Teams',
+                    team: {
+                        brand: this.state.brand,
+                        team_name: team_name,
+                        organization: this.state.organization,
+                        staff: []
+                    }
+                }
+            }} />
+        }
+
 
         return (
             <React.Fragment>

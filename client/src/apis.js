@@ -109,6 +109,18 @@ export const mergeVideos = (request) =>{
   })
 }
 
+export const trimVideo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/trimVideo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const setUserPassword = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/setUserPassword`, request,{withCredentials: true})
@@ -291,6 +303,18 @@ export const uploadSidelineImpactVideo = (request) =>{
 export const removeVideo = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/removeVideo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const resetToOriginal = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/resetToOriginal`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -1003,6 +1027,18 @@ export const getPlayerList = (request) =>{
       });
   })
 }
+
+export const loadMorePlayerList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/loadMorePlayerList/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const deleteItem = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/deleteItem/`,request, {withCredentials: true})
@@ -1125,6 +1161,31 @@ export const getOrgUniqueTeams = (request) =>{
 export const setVideoTime = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/setVideoTime/`,request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+//Demo api for team state page.
+export const getFilterdTeamSpheres_demo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getFilterdTeamSpheres_demo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getTeamSpheres_Demo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamSpheres_Demo`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

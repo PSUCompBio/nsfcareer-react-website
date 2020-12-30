@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 const options = {
     responsive: true,
@@ -90,7 +90,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
     }
 
     static getDerivedStateFromProps (props, state) {
-        let temp_data = state.data;
+        // let temp_data = state.data;
         // if (props.linearUnit === 'ms') {
         //     options.scales.yAxes[0].scaleLabel.labelString = 'Linear Acceleration (m/s2)';
         //     temp_data.datasets[0].data = props.data.linear_acceleration['xv'] ? props.data.linear_acceleration['xv'] : [];

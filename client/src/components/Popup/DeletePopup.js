@@ -1,13 +1,4 @@
 import React from 'react';
-import ToggleToken from '../Buttons/ToggleToken';
-import { formDataToJson } from '../../utilities/utility';
-
-import { deleteItem } from '../../apis';
-
-import Spinner from './../Spinner/Spinner';
-
-
-var USER_TYPES = [];
 
 class DeletePopup extends React.Component {
   constructor() {

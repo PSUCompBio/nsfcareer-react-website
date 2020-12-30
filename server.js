@@ -205,7 +205,10 @@ const {
         getPlayerCgValues,
         getBrandDataByorg,
         deleteSensorData,
-        deleteSimulation_imagesData
+        deleteSimulation_imagesData,
+        InsertTrimVideoKey,
+        updateTrimVideoKey,
+        getSernsorDataByOrgTeam
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -1299,6 +1302,30 @@ function ImpactVideoUrl(image_details) {
   })
 }
 
+function trimVideoUrl(image_details) {
+  return new Promise((resolve, reject) => {
+    const { trim_video_path } = image_details;
+    console.log('trim_video_path------------------------\n',trim_video_path)
+    if(trim_video_path) {
+      var params = {
+          Bucket: BUCKET_NAME,
+          Key: trim_video_path,
+          Expires: 1800
+      };
+      s3.getSignedUrl('getObject', params, function (err, url) {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(url);
+          }
+      });
+    } else {
+      resolve(false);
+    }
+  })
+}   
+
+
 // Miliseconds to Human readable 
 function timeConversion(duration) {
     const portions = [];
@@ -1503,64 +1530,76 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     let imageData = '';
     var movie_link_url = '';
     var motion_movie_link_url = '';
+    var trim_video_url = '';
+
     let status = 'pending';
 
     getSimulationImageRecord(image_id)
-        .then(image_data => {
-            imageData = image_data;
-            status = image_data.status;
-            return verifyImageToken(imageData['token'], image_data);
+    .then(image_data => {
+        imageData = image_data;
+        status = image_data.status;
+        return verifyImageToken(imageData['token'], image_data);
+    })
+    .then(decoded_token => {
+        return getPlayerCgValues(imageData.player_name);
+    })
+    .then(cg_coordinates => {
+        if (!imageData.movie_path) {
+            imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
+        } 
+        return getPresignedMovieUrl(imageData);
+    })
+    .then(movie_link => {
+        console.log('movie_link',movie_link);
+        movie_link_url = movie_link;
+        imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '_mps.mp4';
+        return getPresignedMovieUrl(imageData);
+    })
+    .then(motion_link_url => {
+        motion_movie_link_url =   motion_link_url;
+        return trimVideoUrl(imageData);
+        
+    }) 
+    .then(trim_video => {
+        console.log('trim_video_url ------------------------\n',trim_video)
+        trim_video_url =   trim_video;
+        return ImpactVideoUrl(imageData);
+        
+    }) 
+    .then(impact_video_url => {
+        console.log('trim_video_url -------------\n',trim_video_url)
+        res.send({
+            message : "success",
+            simulation_id: imageData.log_stream_name,
+            movie_link : movie_link_url,
+            trim_video_url: trim_video_url,
+            impact_video_url: impact_video_url,
+            motion_link_url: motion_movie_link_url,
+            video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
+            left_lock_time: imageData.left_lock_time ? imageData.left_lock_time : '',
+            right_lock_time: imageData.right_lock_time ? imageData.right_lock_time : '',
+            status: status,
+            log_stream_name: imageData.log_stream_name,
+            video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : '',
+            account_id: imageData.account_id ? imageData.account_id : '',
         })
-        .then(decoded_token => {
-            return getPlayerCgValues(imageData.player_name);
-        })
-        .then(cg_coordinates => {
-            if (!imageData.movie_path) {
-                imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '.mp4';
-            } 
-            return getPresignedMovieUrl(imageData);
-        })
-        .then(movie_link => {
-            console.log('movie_link',movie_link);
-            movie_link_url = movie_link;
-            imageData.movie_path = imageData.root_path + 'movie/' + imageData.image_id + '_mps.mp4';
-            
-            return getPresignedMovieUrl(imageData);
-        }).then(motion_link_url => {
-            motion_movie_link_url =   motion_link_url;
-
-            return ImpactVideoUrl(imageData);
-            
-        }) 
-        .then(impact_video_url => {
-            console.log('movie_link_url',movie_link_url)
+    })
+    .catch(err => {
+        console.log(err);
+        if("authorized" in err){
             res.send({
-                message : "success",
-                movie_link : movie_link_url,
-                impact_video_url: impact_video_url,
-                motion_link_url: motion_movie_link_url,
-                video_lock_time: imageData.video_lock_time ? imageData.video_lock_time : '',
-                left_lock_time: imageData.left_lock_time ? imageData.left_lock_time : '',
-                right_lock_time: imageData.right_lock_time ? imageData.right_lock_time : '',
-                status: status,
-                video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : ''
-
+                message : "failure",
+                error : "You are not authorized to access this resource."
             })
-        })
-        .catch(err => {
-            console.log(err);
-            if("authorized" in err){
-                res.send({
-                    message : "failure",
-                    error : "You are not authorized to access this resource."
-                })
-            }
-            else{
-                res.send({
-                    message : "Simulation is in process"
-                })
-            }
-        })
+        }
+        else{
+            res.send({
+                log_stream_name: imageData.log_stream_name,
+                account_id: imageData.account_id ? imageData.account_id : '',
+                message : "Simulation is in process"
+            })
+        }
+    })
 });
 
 /*+++++++++++++++++ Set video lock time funtion start here ++++++++++++++++ */
@@ -1756,20 +1795,59 @@ app.post(`${apiPrefix}getOrgUniqueTeams`, (req, res) => {
     })
 })
 
+function upDateuserProfile(User, cb) {
+    if(User.email){
+        var params = {
+            UserAttributes: [ /* required */
+              {
+                Name: 'name', /* required */
+                Value: User.name
+              },
+              {
+                Name: 'phone_number', /* required */
+                Value: User.phone_number
+              },
+              {
+                Name: 'phone_number_verified', /* required */
+                Value: User.phone_number_verified
+              },
+              /* more items */
+            ],
+            UserPoolId: cognito.userPoolId, /* required */
+            Username: User.user_name, /* required */
+          };
+          COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+            if (err) {
+                cb(err, "");
+            } // an error occurred
+            else {
+                cb("", data);
+            }             // successful response
+          });
+    }else{
+        cb("", true);
+    }
+}
+
 
 app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
     console.log('req',req.body);
     let obj = {};
     obj.user_name = req.body.user_cognito_id;
+    obj.name = req.body.first_name+req.body.last_name;
+    obj.email = req.body.email;
     obj.phone_number = req.body.country_code+req.body.phone_number;
     obj.phone_number_verified = req.body.number_verified
-    adminVerifyNumber(obj, function (err, data) {
-        if (err) {
 
+    upDateuserProfile(obj, function (err, data) {
+        if (err) {
+            res.send({
+                message : 'failure',
+                error: err
+            })
         }else{
 
             let update_details = {
-
                 TableName : 'users',
                 Key : {
                     "user_cognito_id": req.body.user_cognito_id
@@ -1780,7 +1858,7 @@ app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
                     ":lname" : req.body.last_name,
                     ":dob" : req.body.dob,
                     ":gender" : req.body.sex,
-                    ":phone_number" : req.body.country_code + req.body.phone_number,
+                    ":phone_number" : req.body.phone_number,
                     ":phone_number_verified" : req.body.number_verified
                 },
                 ReturnValues: "UPDATED_NEW"
@@ -2691,6 +2769,8 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                             }
                     
                         }
+                    }).catch(err=>{
+                        count3++;
                     })
                     //**Delete simulation data from simulation_image db...
                    
@@ -2979,101 +3059,85 @@ app.post(`${apiPrefix}addorgTeam`, (req, res) => {
 });
 
 app.post(`${apiPrefix}renameTeam`, (req, res) => {
-    console.log('body',req.body);
+    // console.log('body',req.body);
     let organization_id = req.body.organization_id;
     let team_name =  req.body.TeamName;
     let data = req.body.data;
     renameTeam(team_name,organization_id)
-    .then(response=>{
-        // return getSernsorDataByTeam(data.TeamName,data.organization);
-        return getUserByTeam(data.TeamName,data.organization)
+    .then(a => {
+        return getSernsorDataByOrgTeam(organization_id, data.TeamName, data.organization);
     })
-    .then(response=>{
-        console.log('response',response);
-        let users_data = response;
-        if(users_data[0]){
-            let userslen = users_data.length;
-            userslen = userslen-1;
-            users_data.forEach(function (record, index) {
-                renameUsers(record.user_cognito_id, team_name)
-                .then(data => {
-                    console.log('res',data)
-                    if(index == userslen){
-                        res.send({
-                            message: 'success',
-                            status: 200
+    .then(sensor_data => {
+        console.log('sensor_data ', sensor_data);
+        let sensor_cnt = 0;
+        sensor_data.forEach(function (record, index) {
+            const params = {
+                TableName: "sensor_details",
+                Key: {
+                    org_id: record.org_id,
+                    player_id: record.player_id,
+                },
+                UpdateExpression: "set team = :team_name",
+                ExpressionAttributeValues: {
+                    ":team_name": team_name
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+            docClient.update(params, function (err, data1) {
+                if (err) {
+                    console.log("Error when updating data\n", err);
+                } else {
+                    console.log("Sensor updated");
+                }
+                sensor_cnt++;
+                if (sensor_cnt === sensor_data.length) {
+                    getUserByTeam(data.TeamName, data.organization)
+                        .then(response => {
+                            console.log('response', response);
+                            let users_data = response;
+                            if(users_data[0]) {
+                                let userslen = users_data.length;
+                                userslen = userslen-1;
+                                users_data.forEach(function (record1, index1) {
+                                    renameUsers(record1.user_cognito_id, team_name)
+                                    .then(data => {
+                                        console.log('res',data)
+                                        if(index1 == userslen){
+                                            res.send({
+                                                message: 'success',
+                                                status: 200
+                                            })
+                                        }
+                                    }).catch(err => {
+                                        console.log('err',err)
+                                        if (index1 == userslen){ 
+                                            res.send({
+                                                message: 'failure',
+                                                status: 300,
+                                                err: err
+                                            })
+                                        }
+                                    })
+                                })
+                            } else {
+                                res.send({
+                                    message: 'success',
+                                    status: 200
+                                })
+                            }
                         })
-                    }
-                }).catch(err => {
-                    console.log('err',err)
-                    if(index == userslen){
-                         res.send({
-                            message: 'failure',
-                            status: 300,
-                            err: err
+                        .catch(err =>{
+                            console.log(err)
+                            res.send({
+                                message: 'failure',
+                                status: 300,
+                                err: err
+                            })
                         })
-                    }
-                })
-            })
-        }else{
-            res.send({
-                message: 'success',
-                status: 200
-            })
-        }
-        // let sensor_data = response;
-        // if(sensor_data){
-        //     let orglen = sensor_data.length;
-        //     orglen = orglen-1;
-        //     sensor_data.forEach(function (record, index) {
-        //         console.log('record',record.team);
-        //         console.log(index, orglen)
-        //         renameSernosrTeam(record.team, record.player_id, team_name)
-        //         .then(data => {
-        //             console.log('res',data)
-        //             if(index == orglen){
-        //                 res.send({
-        //                     message: 'success',
-        //                     status: 200
-        //                 })
-        //             }
-        //         }).catch(err => {
-        //             console.log('err',err)
-        //             if(index == orglen){
-        //                  res.send({
-        //                     message: 'failure',
-        //                     status: 300,
-        //                     err: err
-        //                 })
-        //             }
-        //         })
-        //     })
-        // }else{
-        //     res.send({
-        //         message: 'success',
-        //         status: 200
-        //     })
-        // }
-    })
-    .catch(err =>{
-        console.log(err)
-        res.send({
-            message: 'failure',
-            status: 300,
-            err: err
+                }
+            });
         })
     })
-    // getSernsorDataByTeam(req.body.TeamName, req.body.organization)
-    // .then(data=>{
-    //     console.log('sernsor data -----------------\n',data)
-    // }).catch(err =>{
-    //     console.log(err)
-    //     res.send({
-    //         message: 'failure',
-    //         status: 300,
-    //         err: err
-    //     })
-    // })
 });
 
 app.post(`${apiPrefix}MergeTeam`, (req, res) => {
@@ -4122,6 +4186,108 @@ app.post(`${apiPrefix}getTeamNameList`, (req, res) => {
 app.post(`${apiPrefix}getPlayerList`, (req, res) => {
     getPlayerList().then(players => {
         var player_list = [];
+        for(var i =0; i < 10; i++){
+            if(players[i].player_list && player_list.length < 10){
+                var list = players[i].player_list;
+                for(var j = 0;j < 10; j++){
+                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                }
+            }
+        }
+        if (player_list.length == 0) {
+            res.send({
+                message: "success",
+                data: []
+            })
+        }
+        else {
+            var counter = 0;
+            var indx = 0;
+            var p_data = [];
+            var player_listLn = player_list.length;
+            player_list.forEach(function (player, index) {
+                let p = player;
+                let playerData = '';
+                
+                if(player.player_id && player.player_id != 'undefined'){
+                    getTeamDataWithPlayerRecords_3(player.player_id, player.team, player.sensor, player.organization)
+                    .then(player_data => {
+
+                        playerData = player_data;
+                        counter++;
+                        p_data.push({
+                            player_name: p,
+                            //vsimulation_image: image ? image : '',
+                            simulation_data: playerData,
+                            date_time: playerData[0] ? playerData[0].player_id.split('$')[1]: '',
+                        });
+                       
+                         if (counter == player_listLn) {
+                            p_data.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            }); 
+
+                            let k = 0;
+                            var p_datalen = p_data.length;
+                            p_data.forEach(function (record, index) {
+                                if(record.simulation_data[0]){
+                                    getPlayerSimulationStatus(record.simulation_data[0].image_id)
+                                        .then(simulation => {
+                                            // console.log('simulation',simulation.status)
+                                            k++;
+                                            p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                            p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+                                            
+                                            if (k == p_datalen) {
+                                                res.send({
+                                                    message: "success",
+                                                    data: p_data
+                                                })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log(err);
+                                        })
+                                }else{
+                                    p_datalen--;
+                                }
+                            })
+                        }
+                        
+                        indx++;
+                    })
+                    .catch(err => {
+                        console.log('err =============\n',err)
+                        counter++;
+                        if (counter == player_listLn) {
+                            res.send({
+                                message: "failure",
+                                data: p_data
+                            })
+                        }
+                    })
+                } else {
+                    counter++;
+                }
+            })
+        }
+
+    }).catch(err =>{
+        console.log('err',err)
+        res.send({
+            message: "failure",
+            error: err
+        })
+    })
+})
+
+app.post(`${apiPrefix}loadMorePlayerList`, (req, res) => {
+    getPlayerList().then(players => {
+        var player_list = [];
         for(var i =0; i < players.length; i++){
             if(players[i].player_list){
                 var list = players[i].player_list;
@@ -4220,8 +4386,6 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
         })
     })
 })
-
-
 
 app.post(`${apiPrefix}enableUser`, (req, res) => {
     enableUser(req.body.user_name, function (err, data) {
@@ -4524,43 +4688,44 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
         }
         else {
             userData = data.Item;
-            if (userData.account_id) {
-                req.user_cognito_id = userData.account_id;
-            }
-            
-            getUploadedImageFileList(req.user_cognito_id, function (err, list) {
-                if (err) {
-                    console.log(err);
-
+            if(userData){
+                if (userData && userData.account_id) {
+                    req.user_cognito_id = userData.account_id;
                 }
-                else {
-                    // Fetches the latest profile pic
-                    var latestProfilePic = list.reduce(function (oldest, profile_pic) {
-                        return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
-                    }, {});
-                    // Now get the signed URL link  from S3
-                    // if no S3 link is found then send empty data link
-                    // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
-                    // No file is uploaded
-                    var key
-                    if (list.length != 0) {
-                        key = latestProfilePic.Key;
+                
+                getUploadedImageFileList(req.user_cognito_id, function (err, list) {
+                    if (err) {
+                        console.log(err);
+
                     }
                     else {
-                        key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
-                    }
-
-                    getFileSignedUrl(key, function (err, url) {
-                        if (err) {
-                            console.log(err);
-                            userData["profile_picture_url"] = "";
-                            userData["avatar_url"] = "";
-                            res.send({
-                                message: "success",
-                                data: userData
-                            })
+                        // Fetches the latest profile pic
+                        var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                            return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                        }, {});
+                        // Now get the signed URL link  from S3
+                        // if no S3 link is found then send empty data link
+                        // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                        // No file is uploaded
+                        var key
+                        if (list.length != 0) {
+                            key = latestProfilePic.Key;
                         }
                         else {
+                            key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
+                        }
+
+                        getFileSignedUrl(key, function (err, url) {
+                            if (err) {
+                                console.log(err);
+                                userData["profile_picture_url"] = "";
+                                userData["avatar_url"] = "";
+                                res.send({
+                                    message: "success",
+                                    data: userData
+                                })
+                            }
+                            else {
                             if (list.length == 0) {
                                 userData["profile_picture_url"] = "";
                             }
@@ -4702,11 +4867,16 @@ app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
                                 })
                             }
                         });
-
-
                     }
                 })
+            }else{
+                res.send({
+                    message: "failure",
+                    data: {}
+                })
             }
+
+        }
         })
     });
 
@@ -5266,11 +5436,78 @@ app.post(`${apiPrefix}removeVideo`, (req, res)=> {
                 err: 'Video not found.'
             });
         }
+
+        /**
+        * Removing trim video form s3 if exists...
+        */
+        if (imageData.trim_video_path && imageData.trim_video_path != 'null') {
+            removes3Object(imageData.trim_video_path)
+            .then(response =>{
+                console.log('trim video removed ===============')
+            })
+        }
+
     }).catch(err =>{
         console.log('err',err)
     })
 
 })
+
+app.post(`${apiPrefix}resetToOriginal`, (req, res)=> {
+    console.log('req',req.body)
+    var image_id = req.body.image_id;
+    var imageData = '';
+    getSimulationImageRecord(image_id)
+    .then(image_data =>{
+        console.log('image_data',image_data);
+        imageData = image_data;
+       
+        if (imageData.trim_video_path && imageData.trim_video_path != 'null') {
+            removes3Object(imageData.trim_video_path)
+            .then(response =>{
+                // console.log('res',res);
+                updateTrimVideoKey(image_id,false)
+                .then(response => {
+                    res.send({
+                        message: "success",
+                        data: res
+                    });
+                }) .catch(err =>{
+                    console.log('errdatabase',err)
+                    res.send({
+                        message: "success",
+                        data: err
+                    });
+                })
+            })
+            .catch(err =>{
+                console.log('errremoves3Object',err)
+                res.send({
+                    message: "failure",
+                    err: 'Somthing went wrong! Please try again.'
+                });
+            })
+        }else{
+            updateTrimVideoKey(image_id,false)
+            .then(response => {
+                res.send({
+                    message: "success",
+                    data: res
+                });
+            }) .catch(err =>{
+                console.log('errdatabase',err)
+                res.send({
+                    message: "success",
+                    data: err
+                });
+            })
+        }
+    }).catch(err =>{
+        console.log('err',err)
+    })
+
+})
+
 // Uploading the Sensor Data (CSV) file
 app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
         console.log('file',req.body);
@@ -5283,6 +5520,17 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
         };
         getSimulationImageRecord(image_id)
         .then(data => {
+
+            /**
+            * Removing trim video form s3 if exists...
+            */
+            if (data.trim_video_path && data.trim_video_path != 'null') {
+                removes3Object(imageData.trim_video_path)
+                .then(response =>{
+                    console.log('trim video removed ===============')
+                })
+            }
+
             // File Extensions
             var file_extension = req.file.originalname.split(".");
             file_extension = file_extension[file_extension.length - 1];
@@ -5631,12 +5879,12 @@ function removeYesterdayFolder(){
     let yesterday = d.getMonth()+'-'+d.getFullYear();
     var dir = 'public/uploads/'+yesterday;
     console.log('yesterday -------\n',yesterday)
-    if (fs.existsSync(dir)){
-        fs.unlinkSync(dir,function(err){
-        if(err) return console.log(err);
-            console.log('file deleted successfully');
-        });   
-    }
+    // if (fs.existsSync(dir)){
+    //     fs.unlinkSync(dir,function(err){
+    //     if(err) return console.log(err);
+    //         console.log('file deleted successfully');
+    //     });   
+    // }
 }
 
 app.post(`${apiPrefix}merge-video`, (req, res) => {
@@ -5754,8 +6002,317 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
 })
 
+app.post(`${apiPrefix}merge-video`, (req, res) => {
+    console.log(req.body);
+    removeYesterdayFolder(); // Remove yesterday directory ...
+    /*
+        Creating directory
+    */
+    var d = new Date();
+    let datetoday = d.getMonth()+'-'+d.getFullYear();
+    var dir = 'public/uploads/'+datetoday;
 
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+
+    //** 
+    //files name ..........
+    var file_path = '/uploads/'+datetoday+'/'+Date.now() + 'output.mp4';
+    var outputFilePath = 'public'+file_path;
+    let list = []
+
+        //uploading files.             
+        var name = Date.now();
+        var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+        list.push(`public/uploads/${name}_movie.mp4`);
+        https.get(req.body.movie_link , function(response ,error) { 
+
+            const file = fs.createWriteStream(file_store_path);
+            response.pipe(file);
+            file.on('finish',() => {
+
+                // ===================
+                // uploading file 2
+                //====================
+                https.get(req.body.impact_video_url , function(response ,error) {
+                    var name = Date.now();
+                    var file_store_path =  'public/uploads/'+ name + '_movie.mp4';
+                    const file = fs.createWriteStream(file_store_path);
+                    list.push(`public/uploads/${name}_movie.mp4`);
+                    response.pipe(file);
+                    file.on('finish',() => {
+                        console.log('finished -------------------------');
+                        setTimeout(()=>{
+                            writeTextfile(list);
+                        },6000)
+                    })
+                    
+                }); 
+            })
+        });
+    /**
+    *
+        Creating video frame.
+        ** Exicuting ffmpeg cmd...
+    */
+    const writeTextfile = (list)=>{
+        console.log('list',list);
+        exec(`ffmpeg -i ${list[0]} -i ${list[1]}  -filter_complex  "[0:v]pad=iw*2:ih[int]; [int][1:v]overlay=W/2:0[vid]" -map "[vid]" -c:v libx264 -crf 23  ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message: 'faiure',
+                    error: error.message
+                });
+            }
+            else{
+                console.log("videos are successfully merged");
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message:'success',
+                    file_path: file_path,
+                });
+                
+            }
+            
+        })
+    }
+    
+    
+    // const request = https.get("https://nsfcareer-users-data.s3-accelerate.amazonaws.com/35317-Prevent-Biometrics/simulation/07-22-2019/qIYe2mOoS/movie/qIYe2mOoS.mp4?AWSAccessKeyId=AKIA5UBJSELBEIFVBRCC&Expires=1603439485&Signature=%2FhX5ww3Eie9BH18D4jlW53hnRY0%3D", function(response ,error) {
+        
+    //     response.pipe(file);
+    // })
+     /*exec(`ffmpeg -safe 0 -f concat -i ${listFilePath} -c copy ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                return;
+            }
+            else{
+                console.log("videos are successfully merged")
+            res.download(outputFilePath,(err) => {
+                if(err) throw err
+
+                // req.files.forEach(file => {
+                //     fs.unlinkSync(file.path)                    
+                // });
+
+                // fs.unlinkSync(listFilePath)
+                // fs.unlinkSync(outputFilePath)
+
+              
+
+            })
+        }
+            
+        })*/
+
+})
 /*=======================merge video end ======================*/
+
+/*=======================================
+    Trim uploaded video function start
+=========================================*/
+
+app.post(`${apiPrefix}trimVideo`, (req, res) => {
+    console.log(req.body);
+    let image_id = req.body.image_id;
+    /*
+    *    Creating directory...
+    */
+    var d = new Date();
+    let datetoday = d.getMonth()+'-'+d.getFullYear();
+    var dir = 'public/uploads/'+datetoday;
+
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+
+    //** 
+    //files name ..........
+    var file_path = '/uploads/'+datetoday+'/'+Date.now() + '_trim.mp4';
+    var outputFilePath = 'public'+file_path;
+    let list = []
+
+    
+
+    //uploading files.             
+    var name = Date.now();
+    var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+    list.push(`public/uploads/${name}_movie.mp4`);
+    https.get(req.body.impact_video_url , function(response ,error) { 
+        const file = fs.createWriteStream(file_store_path);
+        response.pipe(file);
+        file.on('finish',() => {
+        console.log('finished -------------------------');
+        setTimeout(()=>{
+                writeTextfile(list);
+            },6000)
+        })
+                
+         
+        
+    });
+
+    const writeTextfile = (list)=>{
+        console.log('list',list);
+        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime}  -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message: 'faiure',
+                    error: error.message
+                });
+            }
+            else{
+                console.log("videos are successfully merged");
+                /*-- Delete all generated files --*/
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                var bufs = [];
+                var readableStream = fs.createReadStream(outputFilePath);
+                readableStream.on('data', function(chunk) {
+                    bufs.push(chunk); 
+                });
+                readableStream.on('end', function(){
+                    var buf = Buffer.concat(bufs);
+                    console.log('stream end', buf)
+                    var uploadParams = {
+                        Bucket: config.usersbucket,
+                        Key: '', // pass key
+                        Body: null, // pass file body
+                    };
+                    getSimulationImageRecord(image_id)
+                    .then(data => {
+
+                        /*
+                        * Remove trim video from s3 if already exists before trim...
+                        */
+                        removes3Object(data.trim_video_path)
+                        .then(response =>{
+                            console.log('Trim video removed successfully =================================')
+                        })
+                        /*--end--*/
+
+                        // File Extensions
+                        let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
+                        var d = new Date();
+                        console.log(d.toLocaleDateString('pt-PT'));
+                        d = d.toLocaleDateString('pt-PT');
+                        var date = d.replace("/", "-");
+                        date = date.replace("/", "-");
+                        console.log('date',date);
+                        // Setting Attributes for file upload on S3
+                        uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
+                        // console.log('req.file.buffer', req.file.buffer)
+                        uploadParams.Body = buf;
+                        
+                        s3.upload(uploadParams, (err, data) => {
+                            if (err) {
+                                console.log('======errr \n',err)
+                                res.send({
+                                    message: "failure",
+                                    data: err
+                                });
+                               
+                            }else{
+                                /*-- Unlink trimed video from directory --*/
+                                fs.unlinkSync(outputFilePath)
+
+                                /*
+                                * Insert s3 video path in simulation_image table...
+                                */
+                                InsertTrimVideoKey(req.body.image_id,uploadParams.Key).
+                                then(sensor_data => {
+                                    const  image_id  = req.body.image_id;
+                                    let imageData = '';
+
+                                    /*
+                                    * Getting image simulation image record from simulation_image table...
+                                    */
+                                    getSimulationImageRecord(image_id)
+                                    .then(image_data => {
+                                        console.log('image_data -----------------------------------\n',image_data)
+                                        imageData = image_data;
+                                        return verifyImageToken(imageData['token'], image_data);
+                                    })
+                                    .then(decoded_token => {
+                                        // console.log('decoded_token',decoded_token)
+                                        return getPlayerCgValues(imageData.player_name);
+                                    })
+                                    .then(cg_coordinates => {
+                                        // Setting cg values
+                                        // console.log("cg_coordinates",cg_coordinates)
+                                        if(cg_coordinates) {
+                                          imageData["cg_coordinates"] = cg_coordinates;
+                                        }
+                                        return trimVideoUrl(imageData);
+                                    })
+                                    .then(movie_link => {
+                                        // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                        console.log('movie_link',movie_link);
+                                        res.send({
+                                            message : "success",
+                                            trim_video_path : movie_link
+                                        })
+                                        
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
+                                        // res.removeHeader('X-Frame-Options');
+                                        // if(err.message == 'The provided key element does not match the schema'){
+                                            res.send({
+                                                message: "failure",
+                                                data: err
+                                            });
+                                        // }
+                                    })
+                                })
+                                .catch(err => {
+                                   console.log('err',err)
+                                    res.send({
+                                        message: "failure",
+                                        data: err
+                                    });
+                                })
+                            }
+                        })
+                    }).catch(err => {
+                       console.log('err',err)
+                        res.send({
+                            message: "failure",
+                            data: err
+                        });
+                    })
+
+                })
+            }
+            
+        })
+    }
+})
+// var file_name = Date.now();
+//         var image_id = req.body.image_id;
+//         var uploadParams = {
+//             Bucket: config.usersbucket,
+//             Key: '', // pass key
+//             Body: null, // pass file body
+//         };
+//        
+/*-- trim function end --*/
 
 
 /*
@@ -5765,7 +6322,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
 */
 app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
-    console.log(req.body);
+    console.log('getSimulationStatusCount',req.body);
 
     let completed = 0;
     let failed = 0;
@@ -5779,9 +6336,9 @@ app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
                     getPlayerSimulationFile(record)
                         .then(simulation => {
                             k++;
-                            if (simulation.status === 'pending') {
+                            if (simulation && simulation.status === 'pending') {
                                 pending++;
-                            } else if (simulation.status === 'completed') {
+                            } else if (simulation && simulation.status === 'completed') {
                                 completed++;
                             } else {
                                 failed++;
@@ -6127,7 +6684,6 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                 getPlayerSimulationFile(acc_data)
                 .then(image_data => {
                     imageData = image_data;
-                    console.log('summary json url ----------------------------\n', imageData.player_name + '/simulation/summary.json');
                     if (imageData.player_name && imageData.player_name != 'null') {
                         if(file_count < 1){
                             file_count++;
@@ -6143,6 +6699,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                         sensor_data: accData,   
                         status: imageData ? imageData.status : '',
                         computed_time : imageData ? imageData.computed_time : '',
+                        log_stream_name: imageData.log_stream_name,
                         date_time: accData.player_id.split('$')[1]
                     })
 
@@ -6205,8 +6762,12 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         masXsr_15_max[region].push(coordinate);
                                     }
                                 }
+
+                                /*
+                                * Commented mps 95 data ----------------
+                                */
                                 //-- For mps 95--
-                                if (summary_data['MPS-95']) {    
+                                /*if (summary_data['MPS-95']) {    
                                     if(summary_data['MPS-95']['stem']){
                                         let newCordinates = summary_data['MPS-95']['stem'].map(function (data, index) {
                                             return {x:data[0],y:data[1],z:data[2]};
@@ -6278,6 +6839,9 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         })
                                     }
                                 }
+
+                                // mps 95 data end
+
 
                                 //-- For CSDM-5--
                                 if (summary_data['CSDM-5']) {   
@@ -6499,6 +7063,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         })
                                     }
                                 }
+                                */
                             })
                         }
                     }
@@ -7058,7 +7623,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                 if (requested_player_list && requested_player_list.length > 0) {
                     let p_cnt = 0;
                     requested_player_list.forEach(function (p_record) {
-                        console.log('p_record',p_record)
+                        console.log('p_record 11',p_record)
                         getUserDetails(p_record)
                             .then (user_detail => {
                                 p_cnt++; 
@@ -7086,7 +7651,8 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                 var p_data = [];
                 var player_listLen = player_list.length;
                 player_list.forEach(function (player, index) {
-                    if(player != 'undefined'){
+                    console.log('player 112',player)
+                    if(player && player != 'undefined'){
                         console.log('player_list', player);
                         let p = player;
                         let i = index;
@@ -7095,12 +7661,14 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                         .then(player_data => {
                             playerData = player_data;
                             counter++;
-                            p_data.push({
-                                date_time: playerData[0].player_id.split('$')[1],
-                                simulation_data: playerData,
-                            });
+                            if(playerData[0]){
+                                p_data.push({
+                                    date_time: playerData[0].player_id.split('$')[1],
+                                    simulation_data: playerData,
+                                });
+                            }
                             console.log('p_data length', player_listLen, counter)
-                            if (counter == player_listLen) {
+                            if (counter >= player_listLen) {
                                 p_data.sort(function (b, a) {
                                     var keyA = a.date_time,
                                         keyB = b.date_time;
@@ -7118,9 +7686,9 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
 
                                             getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
                                                 .then (u_detail => {
+                                                    console.log('user details ', u_detail[0]['first_name'])
                                                     p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
                                                     k++;
-                                                    console.log('k == p_data.length  --------------\n',)
                                                     if (k == p_data.length) {
                                                         let requested_players = []
                                                         if (requested_player_list.length > 0) {
@@ -7157,6 +7725,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                             }
                         })
                         .catch(err => {
+                            console.log('err ------------------\n',err)
                             counter++;
                             if (counter == player_list.length) {
                                 res.send({
@@ -7668,7 +8237,6 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
                 data: []
             })
         } else {
-
             brandList.forEach(function (brand, index) {
                 let data = brand;
                 let i = index;
@@ -7693,23 +8261,24 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req,res) =>{
                         });
                                                         
                         if (simulation_records.length > 0) {
+
+                            console.log('simulation_records ---------------------------------\n',simulation_records)
                             getPlayerSimulationStatus(simulation_records[0].image_id)
-                                .then(simulation => {
-                                    // console.log('simulaimagimage_ide_idtion', simulation_records[0].image_id );
-                                    // console.log('simulation', simulation );
-                                    brand["simulation_status"] = simulation ? simulation.status : '';
-                                    brand["computed_time"] = simulation ? simulation.computed_time : '';
-                                    brand["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
-                                    counter++;
-                                    if (counter == brandList.length) {
-                                        res.send({
-                                            message: "success",
-                                            data: brandList
-                                        })
-                                    }
-                                }).catch(err => {
-                                    console.log('err', err);
-                                })
+                            .then(simulation => {
+                                
+                                brand["simulation_status"] = simulation ? simulation.status : '';
+                                brand["computed_time"] = simulation ? simulation.computed_time : '';
+                                brand["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                counter++;
+                                if (counter == brandList.length) {
+                                    res.send({
+                                        message: "success",
+                                        data: brandList
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log('err', err);
+                            })
                         } else {
                             counter++;
                             if (counter == brandList.length) {
@@ -7973,224 +8542,590 @@ app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
 });
 
 app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
-     let brainRegions = {};
-            let principal_max_strain = {};
-            let principal_min_strain = {};
-            let axonal_strain_max = {};
-            let csdm_max = {};
-            let masXsr_15_max = {};
-            let MPS_95  = {};
-            let CSDM_5  = {};
-            let CSDM_10 = {};
-            let CSDM_15 = {};
-
-            let cnt = 1;
-
-            
-            brainRegions['principal-max-strain'] = {};
-            brainRegions['principal-min-strain'] = {};
-            brainRegions['axonal-strain-max'] = {};
-            brainRegions['csdm-max'] = {};
-            brainRegions['masXsr-15-max'] = {};
-            brainRegions['MPS-95'] = {};
-            brainRegions['CSDM-5'] = {};
-            brainRegions['CSDM-10'] = {};
-            brainRegions['CSDM-15'] = {};
-
-            
-            res.send({
-                message: "success",
-                brainRegions: brainRegions
-            })
-        // }
-    /* getTeamSpheres(req.body)
+    console.log('req ----',req.body)
+    let spharesData = [];
+    let count_sp = 0;
+    req.body.team.forEach(function (team_name, index) {
+        getTeamSpheres({brand:req.body.brand, organization: req.body.organization, team: team_name})
         .then(data => {
-            console.log('getTeamSpheres ============================\n',data)
-           
+            spharesData = spharesData.concat(data);
+            count_sp++;
+            if(count_sp == req.body.team.length){
+                data = spharesData;
+                console.log('data of team sphares -----\n',data)
 
-            let players = [];
-            const processData = data.map(acc_data => {
-                return new Promise((resolve, reject) => {
-                    let player_id = acc_data.player_id.split('$')[0];
-                    if (!players.includes(player_id)) {
-                        players.push(player_id);
-                        getPlayerSimulationStatus(acc_data.image_id)
-                            .then(imageData => {
-                                if (imageData.player_name && imageData.player_name != 'null') {
-                                    console.log(imageData.player_name + '/simulation/summary.json');
-                                    let file_path = imageData.player_name + '/simulation/summary.json';
-                                    return getFileFromS3(file_path, imageData.bucket_name);
-                                }
-                            })
-                            .then(output_file => {
-                                if (output_file) {
-                                    outputFile = JSON.parse(output_file.Body.toString('utf-8'));
-                                    if (outputFile.Insults) {
-                                        outputFile.Insults.forEach(function (summary_data, index) {
-                                            if (summary_data['principal-max-strain']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['principal-max-strain'].location[0];
-                                                coordinate.y = summary_data['principal-max-strain'].location[1];
-                                                coordinate.z = summary_data['principal-max-strain'].location[2];
-                                                region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
-                                                principal_max_strain[region] = principal_max_strain[region] || [];
-                                                principal_max_strain[region].push(coordinate);
-                                            }
-                                            if (summary_data['principal-min-strain']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['principal-min-strain'].location[0];
-                                                coordinate.y = summary_data['principal-min-strain'].location[1];
-                                                coordinate.z = summary_data['principal-min-strain'].location[2];
-                                                region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
-                                                principal_min_strain[region] = principal_min_strain[region] || [];
-                                                principal_min_strain[region].push(coordinate);
-                                            }
-                                            if (summary_data['axonal-strain-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['axonal-strain-max'].location[0];
-                                                coordinate.y = summary_data['axonal-strain-max'].location[1];
-                                                coordinate.z = summary_data['axonal-strain-max'].location[2];
-                                                region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
-                                                axonal_strain_max[region] = axonal_strain_max[region] || [];
-                                                axonal_strain_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['csdm-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['csdm-max'].location[0];
-                                                coordinate.y = summary_data['csdm-max'].location[1];
-                                                coordinate.z = summary_data['csdm-max'].location[2];
-                                                region = summary_data['csdm-max']['brain-region'].toLowerCase();
-                                                csdm_max[region] = csdm_max[region] || [];
-                                                csdm_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['masXsr-15-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['masXsr-15-max'].location[0];
-                                                coordinate.y = summary_data['masXsr-15-max'].location[1];
-                                                coordinate.z = summary_data['masXsr-15-max'].location[2];
-                                                region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
-                                                masXsr_15_max[region] = masXsr_15_max[region] || [];
-                                                masXsr_15_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['MPS-95']) {
-                                               
-                                                if(summary_data['MPS-95']['frontal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['frontal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'frontal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['parietal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['parietal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'parietal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['msc']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['msc'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'msc';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['cerebellum']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'cerebellum';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['occipital']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['occipital'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'occipital';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['temporal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['temporal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'temporal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                            }
-                                        })
+                let brainRegions = {};
+                let principal_max_strain = {};
+                let principal_min_strain = {};
+                let axonal_strain_max = {};
+                let csdm_max = {};
+                let masXsr_15_max = {};
+                let MPS_95  = {};
+                let CSDM_5  = {};
+                let CSDM_10 = {};
+                let CSDM_15 = {};
+                let MPS_95_DATA = [];
+                let MAX_ANGULAR_EXLARATION = [];
+
+
+
+                if (data.length === 0){
+                    brainRegions['principal-max-strain'] = {};
+                    brainRegions['principal-min-strain'] = {};
+                    brainRegions['axonal-strain-max'] = {};
+                    brainRegions['csdm-max'] = {};
+                    brainRegions['masXsr-15-max'] = {};
+                    brainRegions['MPS-95'] = {};
+                    brainRegions['CSDM-5'] = {};
+                    brainRegions['CSDM-10'] = {};
+                    brainRegions['CSDM-15'] = {};
+
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    })
+                }
+
+                let players = [];
+                const processData = data.map(acc_data => {
+                    return new Promise((resolve, reject) => {
+                        let player_id = acc_data.player_id.split('$')[0];
+                        if (!players.includes(player_id)) {
+                            players.push(player_id);
+                            getPlayerSimulationStatus(acc_data.image_id)
+                                .then(imageData => {
+                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                        console.log(imageData.player_name + '/simulation/summary.json');
+                                        let file_path = imageData.player_name + '/simulation/summary.json';
+                                        return getFileFromS3(file_path, imageData.bucket_name);
                                     }
-                                }
-                                resolve(null);
-                            })
-                            .catch(err => {
-                                reject(err);
-                            })
-                    } else {
-                        resolve(null);
-                    }
-                })
-            })
-
-            Promise.all(processData).then(resolveData => {
-                console.log('All executed');
-                brainRegions['principal-max-strain'] = principal_max_strain;
-                brainRegions['principal-min-strain'] = principal_min_strain;
-                brainRegions['axonal-strain-max'] = axonal_strain_max;
-                brainRegions['csdm-max'] = csdm_max;
-                brainRegions['masXsr-15-max'] = masXsr_15_max;
-                brainRegions['MPS-95'] = MPS_95;
-
-                res.send({
-                    message: "success",
-                    data: brainRegions
+                                })
+                                .then(output_file => {
+                                    if (output_file) {
+                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                        if (outputFile.Insults) {
+                                            outputFile.Insults.forEach(function (summary_data, index) {
+                                                pushdata(summary_data);
+                                            })
+                                        }
+                                    }
+                                    resolve(null);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                        } else {
+                            resolve(null);
+                        }
+                    })
                 });
-            });
-        })
-        .catch(err => {
+
+                const pushdata = (summary_data)=>{
+                    if (summary_data['MPS-95']) {
+                                                   
+                        if(summary_data['MPS-95']['value'] && summary_data['max-angular-acc-rads2']){
+                            MPS_95_DATA.push(summary_data['MPS-95']['value']);
+                            MAX_ANGULAR_EXLARATION.push(summary_data['max-angular-acc-rads2']);
+                        }
+                    }
+                }
+
+                Promise.all(processData).then(resolveData => {
+                    console.log('All executed');
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    });
+                });
+            }
+        }).catch(err => {
             res.send({
                 message : "failure",
                 error : err
             })
         }) 
-        */
+    })
+
+        
 });
 
 app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
     let filter = req.body.filter;
     let gs = parseInt(req.body.gs);
     let type = req.body.type;
-    console.log('req body -------------------------------\n',type)
-    getTeamSpheres(req.body)
+    console.log('req body -------------------------------\n',req.body)
+    /**
+    * Get sphares of each team 
+    */
+
+    let spharesData = [];
+    let count_sp = 0;
+    req.body.team.forEach(function (team_name, index) {
+        getTeamSpheres({brand:req.body.brand, organization: req.body.organization, team: team_name})
+        .then(data => {
+            spharesData = spharesData.concat(data);
+            count_sp++;
+            if(count_sp == req.body.team.length){
+                data = spharesData;
+                console.log('data of team sphares -----\n',data)
+
+                let brainRegions = {};
+                let principal_max_strain = {};
+                let principal_min_strain = {};
+                let axonal_strain_max = {};
+                let csdm_max = {};
+                let masXsr_15_max = {};
+                let MPS_95  = {};
+                let CSDM_5  = {};
+                let CSDM_10 = {};
+                let CSDM_15 = {};
+
+                if (data.length === 0){
+                    brainRegions['principal-max-strain'] = {};
+                    brainRegions['principal-min-strain'] = {};
+                    brainRegions['axonal-strain-max'] = {};
+                    brainRegions['csdm-max'] = {};
+                    brainRegions['masXsr-15-max'] = {};
+                    brainRegions['MPS-95'] = {};
+                    brainRegions['CSDM-5'] = {};
+                    brainRegions['CSDM-10'] = {};
+                    brainRegions['CSDM-15'] = {};
+
+                    res.send({
+                        message: "success",
+                        data: brainRegions
+                    })
+                }
+
+                let players = [];
+                const processData = data.map(acc_data => {
+                    return new Promise((resolve, reject) => {
+                        let player_id = acc_data.player_id.split('$')[0];
+                        if (!players.includes(player_id)) {
+                            players.push(player_id);
+                            getPlayerSimulationStatus(acc_data.image_id)
+                                .then(imageData => {
+                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                        console.log(imageData.player_name + '/simulation/summary.json');
+                                        let file_path = imageData.player_name + '/simulation/summary.json';
+                                        return getFileFromS3(file_path, imageData.bucket_name);
+                                    }
+                                })
+                                .then(output_file => {
+                                    if (output_file) {
+                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                        if (outputFile.Insults) {
+                                            outputFile.Insults.forEach(function (summary_data, index) {
+                                                //** 
+                                                //Fetch value is less then....
+                                                if(filter == 'less'){
+                                                    if(type == 'resultant-Angular-acceleration'){
+                                                        if(summary_data['max-angular-acc-rads2'] <= gs){
+                                                            pushdata(summary_data);
+                                                        }
+                                                    }else if(type == 'resultant-linear-acceleration'){
+                                                        if(summary_data['max-linear-acc-g'] <= gs){
+                                                            pushdata(summary_data);
+                                                        }  
+                                                    }else if(type == 'principal-max-strain'){
+                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'principal-min-strain'){
+                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'csdm-max'){
+                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'axonal-strain-max'){
+                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'masXsr-15-max'){
+                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'CSDM-5'){
+                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'CSDM-10'){
+                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }
+                                                //** 
+                                                //Fetch value is greater then.....   
+                                                }else{
+                                                    if(type == 'resultant-Angular-acceleration'){
+                                                        if(summary_data['max-angular-acc-rads2'] >= gs){
+                                                           pushdata(summary_data);
+                                                        }
+                                                    }else if(type == 'resultant-linear-acceleration'){
+                                                        if(summary_data['max-linear-acc-g'] >= gs){
+                                                            pushdata(summary_data);
+                                                        }
+                                                    }else if(type == 'principal-max-strain'){
+                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'principal-min-strain'){
+                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'csdm-max'){
+                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'axonal-strain-max'){
+                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'masXsr-15-max'){
+                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'CSDM-5'){
+                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'CSDM-10'){
+                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }else if(type == 'MPS-95'){
+                                                        if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                                                            pushdata(summary_data);
+                                                        } 
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }
+                                    resolve(null);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                        } else {
+                            resolve(null);
+                        }
+                    })
+                });
+
+                const pushdata = (summary_data)=>{
+                    if (summary_data['principal-max-strain'] && summary_data['principal-max-strain']['brain-region']) {
+                        let coordinate = {};
+                        coordinate.x = summary_data['principal-max-strain'].location[0];
+                        coordinate.y = summary_data['principal-max-strain'].location[1];
+                        coordinate.z = summary_data['principal-max-strain'].location[2];
+                        region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                        principal_max_strain[region] = principal_max_strain[region] || [];
+                        principal_max_strain[region].push(coordinate);
+                    }
+                    if (summary_data['principal-min-strain'] && summary_data['principal-min-strain']['brain-region']) {
+                        let coordinate = {};
+                        coordinate.x = summary_data['principal-min-strain'].location[0];
+                        coordinate.y = summary_data['principal-min-strain'].location[1];
+                        coordinate.z = summary_data['principal-min-strain'].location[2];
+                        region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                        principal_min_strain[region] = principal_min_strain[region] || [];
+                        principal_min_strain[region].push(coordinate);
+                    }
+                    if (summary_data['axonal-strain-max']) {
+                        let coordinate = {};
+                        coordinate.x = summary_data['axonal-strain-max'].location[0];
+                        coordinate.y = summary_data['axonal-strain-max'].location[1];
+                        coordinate.z = summary_data['axonal-strain-max'].location[2];
+                        region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                        axonal_strain_max[region] = axonal_strain_max[region] || [];
+                        axonal_strain_max[region].push(coordinate);
+                    }
+                    if (summary_data['csdm-max']) {
+                        let coordinate = {};
+                        coordinate.x = summary_data['csdm-max'].location[0];
+                        coordinate.y = summary_data['csdm-max'].location[1];
+                        coordinate.z = summary_data['csdm-max'].location[2];
+                        region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                        csdm_max[region] = csdm_max[region] || [];
+                        csdm_max[region].push(coordinate);
+                    }
+                    if (summary_data['masXsr-15-max']) {
+                        let coordinate = {};
+                        coordinate.x = summary_data['masXsr-15-max'].location[0];
+                        coordinate.y = summary_data['masXsr-15-max'].location[1];
+                        coordinate.z = summary_data['masXsr-15-max'].location[2];
+                        region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                        masXsr_15_max[region] = masXsr_15_max[region] || [];
+                        masXsr_15_max[region].push(coordinate);
+                    }
+                    if (summary_data['CSDM-5']) {
+                                                   
+                        if(summary_data['CSDM-5']['frontal']){
+                            var coordinate = {};
+                            summary_data['CSDM-5']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                CSDM_5[region] = CSDM_5[region] || [];
+                                CSDM_5[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-5']['parietal']){
+                            var coordinate = {};
+                            summary_data['CSDM-5']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                CSDM_5[region] = CSDM_5[region] || [];
+                                CSDM_5[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-5']['msc']){
+                            var coordinate = {};
+                            summary_data['CSDM-5']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                CSDM_5[region] = CSDM_5[region] || [];
+                                CSDM_5[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-5']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['CSDM-5']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                CSDM_5[region] = CSDM_5[region] || [];
+                                CSDM_5[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-5']['occipital']){
+                            var coordinate = {};
+                            summary_data['CSDM-5']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                CSDM_5[region] = CSDM_5[region] || [];
+                                CSDM_5[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-5']['temporal']){
+                            var coordinate = {};
+                            summary_data['CSDM-5']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                CSDM_5[region] = CSDM_5[region] || [];
+                                CSDM_5[region].push(coordinate);
+                            })
+                        }
+                    }
+                    if (summary_data['CSDM-10']) {
+                                                   
+                        if(summary_data['CSDM-10']['frontal']){
+                            var coordinate = {};
+                            summary_data['CSDM-10']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                CSDM_10[region] = CSDM_10[region] || [];
+                                CSDM_10[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-10']['parietal']){
+                            var coordinate = {};
+                            summary_data['CSDM-10']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                CSDM_10[region] = CSDM_10[region] || [];
+                                CSDM_10[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-10']['msc']){
+                            var coordinate = {};
+                            summary_data['CSDM-10']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                CSDM_10[region] = CSDM_10[region] || [];
+                                CSDM_10[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-10']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['CSDM-10']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                CSDM_10[region] = CSDM_10[region] || [];
+                                CSDM_10[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-10']['occipital']){
+                            var coordinate = {};
+                            summary_data['CSDM-10']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                CSDM_10[region] = CSDM_10[region] || [];
+                                CSDM_10[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-10']['temporal']){
+                            var coordinate = {};
+                            summary_data['CSDM-10']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                CSDM_10[region] = CSDM_10[region] || [];
+                                CSDM_10[region].push(coordinate);
+                            })
+                        }
+                    }if (summary_data['MPS-95']) {
+                                                   
+                        if(summary_data['MPS-95']['frontal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['parietal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['msc']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['occipital']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPS-95']['temporal']){
+                            var coordinate = {};
+                            summary_data['MPS-95']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                MPS_95[region] = MPS_95[region] || [];
+                                MPS_95[region].push(coordinate);
+                            })
+                        }
+                    }
+                }
+
+                Promise.all(processData).then(resolveData => {
+                    console.log('All executed');
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        data: brainRegions
+                    });
+                });
+            }
+        }).catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        }) 
+    })
+
+    /*getTeamSpheres(req.body)
         .then(data => {
 
             let brainRegions = {};
@@ -8229,7 +9164,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                         players.push(player_id);
                         getPlayerSimulationStatus(acc_data.image_id)
                             .then(imageData => {
-                                if (imageData.player_name && imageData.player_name != 'null') {
+                                if (imageData && imageData.player_name && imageData.player_name != 'null') {
                                     console.log(imageData.player_name + '/simulation/summary.json');
                                     let file_path = imageData.player_name + '/simulation/summary.json';
                                     return getFileFromS3(file_path, imageData.bucket_name);
@@ -8271,6 +9206,14 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                     if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
                                                         pushdata(summary_data);
                                                     } 
+                                                }else if(type == 'CSDM-5'){
+                                                    if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
+                                                        pushdata(summary_data);
+                                                    } 
+                                                }else if(type == 'CSDM-10'){
+                                                    if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
+                                                        pushdata(summary_data);
+                                                    } 
                                                 }
                                             //** 
                                             //Fetch value is greater then.....   
@@ -8301,6 +9244,14 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                     } 
                                                 }else if(type == 'masXsr-15-max'){
                                                     if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
+                                                        pushdata(summary_data);
+                                                    } 
+                                                }else if(type == 'CSDM-5'){
+                                                    if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
+                                                        pushdata(summary_data);
+                                                    } 
+                                                }else if(type == 'CSDM-10'){
+                                                    if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
                                                         pushdata(summary_data);
                                                     } 
                                                 }
@@ -8365,6 +9316,156 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                     masXsr_15_max[region] = masXsr_15_max[region] || [];
                     masXsr_15_max[region].push(coordinate);
                 }
+                if (summary_data['CSDM-5']) {
+                                               
+                    if(summary_data['CSDM-5']['frontal']){
+                        var coordinate = {};
+                        summary_data['CSDM-5']['frontal'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'frontal';
+                            CSDM_5[region] = CSDM_5[region] || [];
+                            CSDM_5[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-5']['parietal']){
+                        var coordinate = {};
+                        summary_data['CSDM-5']['parietal'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'parietal';
+                            CSDM_5[region] = CSDM_5[region] || [];
+                            CSDM_5[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-5']['msc']){
+                        var coordinate = {};
+                        summary_data['CSDM-5']['msc'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'msc';
+                            CSDM_5[region] = CSDM_5[region] || [];
+                            CSDM_5[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-5']['cerebellum']){
+                        var coordinate = {};
+                        summary_data['CSDM-5']['cerebellum'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'cerebellum';
+                            CSDM_5[region] = CSDM_5[region] || [];
+                            CSDM_5[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-5']['occipital']){
+                        var coordinate = {};
+                        summary_data['CSDM-5']['occipital'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'occipital';
+                            CSDM_5[region] = CSDM_5[region] || [];
+                            CSDM_5[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-5']['temporal']){
+                        var coordinate = {};
+                        summary_data['CSDM-5']['temporal'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'temporal';
+                            CSDM_5[region] = CSDM_5[region] || [];
+                            CSDM_5[region].push(coordinate);
+                        })
+                    }
+                }
+                if (summary_data['CSDM-10']) {
+                                               
+                    if(summary_data['CSDM-10']['frontal']){
+                        var coordinate = {};
+                        summary_data['CSDM-10']['frontal'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'frontal';
+                            CSDM_10[region] = CSDM_10[region] || [];
+                            CSDM_10[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-10']['parietal']){
+                        var coordinate = {};
+                        summary_data['CSDM-10']['parietal'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'parietal';
+                            CSDM_10[region] = CSDM_10[region] || [];
+                            CSDM_10[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-10']['msc']){
+                        var coordinate = {};
+                        summary_data['CSDM-10']['msc'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'msc';
+                            CSDM_10[region] = CSDM_10[region] || [];
+                            CSDM_10[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-10']['cerebellum']){
+                        var coordinate = {};
+                        summary_data['CSDM-10']['cerebellum'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'cerebellum';
+                            CSDM_10[region] = CSDM_10[region] || [];
+                            CSDM_10[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-10']['occipital']){
+                        var coordinate = {};
+                        summary_data['CSDM-10']['occipital'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'occipital';
+                            CSDM_10[region] = CSDM_10[region] || [];
+                            CSDM_10[region].push(coordinate);
+                        })
+                    }
+                    if(summary_data['CSDM-10']['temporal']){
+                        var coordinate = {};
+                        summary_data['CSDM-10']['temporal'].forEach(function (data, index) {
+                            
+                            coordinate.x = data[0];
+                            coordinate.y = data[1];
+                            coordinate.z = data[2];
+                            region = 'temporal';
+                            CSDM_10[region] = CSDM_10[region] || [];
+                            CSDM_10[region].push(coordinate);
+                        })
+                    }
+                }
             }
 
             Promise.all(processData).then(resolveData => {
@@ -8374,6 +9475,8 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                 brainRegions['axonal-strain-max'] = axonal_strain_max;
                 brainRegions['csdm-max'] = csdm_max;
                 brainRegions['masXsr-15-max'] = masXsr_15_max;
+                brainRegions['CSDM-5'] = CSDM_5;
+                brainRegions['CSDM-10'] = CSDM_10;
                 res.send({
                     message: "success",
                     data: brainRegions
@@ -8385,8 +9488,483 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                 message : "failure",
                 error : err
             })
-        }) 
+        }) */
 });
+
+/**
+*   Demo filter team shpares api start here...
+*/
+
+app.post(`${apiPrefix}getFilterdTeamSpheres_demo`, (req, res) => {
+    console.log('body', req.body);
+    let filter = req.body.filter;
+    let gs = parseInt(req.body.gs);
+    let type = req.body.type;
+
+   
+    //**
+    let brainRegions = {};
+    let principal_max_strain = {};
+    let principal_min_strain = {};
+    let axonal_strain_max = {};
+    let csdm_max = {};
+    let masXsr_15_max = {};
+    let MPS_95  = {};
+    let CSDM_5  = {};
+    let CSDM_10 = {};
+    let CSDM_15 = {};
+
+    //Pushing data into array...
+    const pushdata = (summary_data)=>{
+        if (summary_data['principal-max-strain'] && summary_data['principal-max-strain']['brain-region']) {
+            let coordinate = {};
+            coordinate.x = summary_data['principal-max-strain'].location[0];
+            coordinate.y = summary_data['principal-max-strain'].location[1];
+            coordinate.z = summary_data['principal-max-strain'].location[2];
+            region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+            principal_max_strain[region] = principal_max_strain[region] || [];
+            principal_max_strain[region].push(coordinate);
+        }
+        if (summary_data['principal-min-strain'] && summary_data['principal-min-strain']['brain-region']) {
+            let coordinate = {};
+            coordinate.x = summary_data['principal-min-strain'].location[0];
+            coordinate.y = summary_data['principal-min-strain'].location[1];
+            coordinate.z = summary_data['principal-min-strain'].location[2];
+            region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+            principal_min_strain[region] = principal_min_strain[region] || [];
+            principal_min_strain[region].push(coordinate);
+        }
+        if (summary_data['axonal-strain-max']) {
+            let coordinate = {};
+            coordinate.x = summary_data['axonal-strain-max'].location[0];
+            coordinate.y = summary_data['axonal-strain-max'].location[1];
+            coordinate.z = summary_data['axonal-strain-max'].location[2];
+            region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+            axonal_strain_max[region] = axonal_strain_max[region] || [];
+            axonal_strain_max[region].push(coordinate);
+        }
+        if (summary_data['csdm-max']) {
+            let coordinate = {};
+            coordinate.x = summary_data['csdm-max'].location[0];
+            coordinate.y = summary_data['csdm-max'].location[1];
+            coordinate.z = summary_data['csdm-max'].location[2];
+            region = summary_data['csdm-max']['brain-region'].toLowerCase();
+            csdm_max[region] = csdm_max[region] || [];
+            csdm_max[region].push(coordinate);
+        }
+        if (summary_data['masXsr-15-max']) {
+            let coordinate = {};
+            coordinate.x = summary_data['masXsr-15-max'].location[0];
+            coordinate.y = summary_data['masXsr-15-max'].location[1];
+            coordinate.z = summary_data['masXsr-15-max'].location[2];
+            region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+            masXsr_15_max[region] = masXsr_15_max[region] || [];
+            masXsr_15_max[region].push(coordinate);
+        }
+        if (summary_data['CSDM-5']) {
+                                       
+            if(summary_data['CSDM-5']['frontal']){
+                var coordinate = {};
+                summary_data['CSDM-5']['frontal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'frontal';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['parietal']){
+                var coordinate = {};
+                summary_data['CSDM-5']['parietal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'parietal';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['msc']){
+                var coordinate = {};
+                summary_data['CSDM-5']['msc'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'msc';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['cerebellum']){
+                var coordinate = {};
+                summary_data['CSDM-5']['cerebellum'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'cerebellum';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['occipital']){
+                var coordinate = {};
+                summary_data['CSDM-5']['occipital'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'occipital';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['temporal']){
+                var coordinate = {};
+                summary_data['CSDM-5']['temporal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'temporal';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+        }
+        if (summary_data['CSDM-10']) {
+                                       
+            if(summary_data['CSDM-10']['frontal']){
+                var coordinate = {};
+                summary_data['CSDM-10']['frontal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'frontal';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['parietal']){
+                var coordinate = {};
+                summary_data['CSDM-10']['parietal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'parietal';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['msc']){
+                var coordinate = {};
+                summary_data['CSDM-10']['msc'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'msc';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['cerebellum']){
+                var coordinate = {};
+                summary_data['CSDM-10']['cerebellum'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'cerebellum';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['occipital']){
+                var coordinate = {};
+                summary_data['CSDM-10']['occipital'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'occipital';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['temporal']){
+                var coordinate = {};
+                summary_data['CSDM-10']['temporal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'temporal';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+        }if (summary_data['MPS-95']) {
+                                       
+            if(summary_data['MPS-95']['frontal']){
+                var coordinate = {};
+                summary_data['MPS-95']['frontal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'frontal';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['parietal']){
+                var coordinate = {};
+                summary_data['MPS-95']['parietal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'parietal';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['msc']){
+                var coordinate = {};
+                summary_data['MPS-95']['msc'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'msc';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['cerebellum']){
+                var coordinate = {};
+                summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'cerebellum';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['occipital']){
+                var coordinate = {};
+                summary_data['MPS-95']['occipital'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'occipital';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['temporal']){
+                var coordinate = {};
+                summary_data['MPS-95']['temporal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'temporal';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+        }
+    }
+
+    //Reading summary.json file...
+    let summaryFile = fs.readFileSync('summary_demo.json');//file location ./summary_demo.json
+    let outputFile = JSON.parse(summaryFile);
+    var len = outputFile.Insults.length - 1;
+    if (outputFile.Insults) {
+        outputFile.Insults.forEach(function (summary_data, index) {
+            //** 
+            //Fetch value is less then....
+            if(filter == 'less'){
+                if(type == 'resultant-Angular-acceleration'){
+                    if(summary_data['max-angular-acc-rads2'] <= gs){
+                        pushdata(summary_data); 
+                    }   
+                }else if(type == 'resultant-linear-acceleration'){
+                    if(summary_data['max-linear-acc-g'] <= gs){
+                        pushdata(summary_data);
+                    }  
+                }else if(type == 'principal-max-strain'){
+                    if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'principal-min-strain'){
+                    if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'csdm-max'){
+                    if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'axonal-strain-max'){
+                    if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'masXsr-15-max'){
+                    if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-5'){
+                    if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-10'){
+                    if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }
+            //** 
+            //Fetch value is greater then.....   
+            }else{
+                if(type == 'resultant-Angular-acceleration'){
+                    if(summary_data['max-angular-acc-rads2'] >= gs){
+                       pushdata(summary_data);
+                    }
+                }else if(type == 'resultant-linear-acceleration'){
+                    if(summary_data['max-linear-acc-g'] >= gs){
+                        pushdata(summary_data);
+                    }
+                }else if(type == 'principal-max-strain'){
+                    if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'principal-min-strain'){
+                    if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'csdm-max'){
+                    if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'axonal-strain-max'){
+                    if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'masXsr-15-max'){
+                    if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-5'){
+                    if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-10'){
+                    if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'MPS-95'){
+                    if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }
+            }
+
+            //Sending response on foreach loop completing...
+            if(len === index){
+                setTimeout(()=>{
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        data: brainRegions
+                    });
+                },1000)
+            }
+        })
+    }
+
+    
+   
+})
+
+
+//Getting team shares data for mps 95% mps chart...
+app.post(`${apiPrefix}getTeamSpheres_Demo`, (req, res) => {
+    let brainRegions = {};
+    let principal_max_strain = {};
+    let principal_min_strain = {};
+    let axonal_strain_max = {};
+    let csdm_max = {};
+    let masXsr_15_max = {};
+    let MPS_95  = {};
+    let CSDM_5  = {};
+    let CSDM_10 = {};
+    let CSDM_15 = {};
+    let MPS_95_DATA = [];
+    let MAX_ANGULAR_EXLARATION = [];
+
+    let players = [];
+    //Reading summary.json file...
+    let summaryFile = fs.readFileSync('summary_demo.json');//file location ./summary_demo.json
+    let outputFile = JSON.parse(summaryFile);
+    var len = outputFile.Insults.length - 1;
+    const pushdata = (summary_data)=>{
+        if (summary_data['MPS-95']) {
+                                       
+            if(summary_data['MPS-95']['value'] && summary_data['max-angular-acc-rads2']){
+                MPS_95_DATA.push(summary_data['MPS-95']['value']);
+                MAX_ANGULAR_EXLARATION.push(summary_data['max-angular-acc-rads2']);
+            }
+        }
+    }
+
+    if (outputFile.Insults) {
+        outputFile.Insults.forEach(function (summary_data, index) {
+            pushdata(summary_data);
+            if(len === index){
+                setTimeout(()=>{
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    });
+                },1000)
+            }
+        })
+    }
+   
+        
+});
+
+
+/*-- Demo api end --*/
 
 app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
     let jsonOutputFile = '';

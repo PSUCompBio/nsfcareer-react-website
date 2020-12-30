@@ -26,7 +26,7 @@ class Footer extends React.Component {
     } else if (this.props.location.pathname === '/Profile') {
       setClassName = 'profile__page';
     } else if (this.props.location.pathname === '/OrganizationAdmin') {
-      setClassName = 'organization_team';
+      // setClassName = 'organization_team';
     } else if (this.props.location.pathname === '/profile') {
       setClassName = 'profile__page';
     } else if (this.props.location.pathname === '/Sports') {

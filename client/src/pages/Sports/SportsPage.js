@@ -1,6 +1,6 @@
 import React from 'react';
 //import { uploadModelRealData } from '../../apis';
-import { Button, Modal, Table } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import Footer from '../../components/Footer';
 import Chart from 'react-google-charts';
 import * as THREE from "three";
@@ -12,22 +12,22 @@ import './sports.css';
 import { getStatusOfDarkmode } from '../../reducer';
 
 let obj;
-let stage = 0;
-let oldx = 0;
+// let stage = 0;
+// let oldx = 0;
 let pointArray = [
-					[
-						['Time (ms)', 'Linear Acceleration'],
-					 	[0, 0],
-					 	[20, 15],
-					 	[40, 0]
-					],
-					[
-						['Time (ms)', 'Angular Acceleration'],
-					 	[0, 0],
-					 	[20, 15],
-					 	[40, 0]
-					],
-				];
+	[
+		['Time (ms)', 'Linear Acceleration'],
+	 	[0, 0],
+	 	[20, 15],
+	 	[40, 0]
+	],
+	[
+		['Time (ms)', 'Angular Acceleration'],
+	 	[0, 0],
+	 	[20, 15],
+	 	[40, 0]
+	],
+];
 				
 class SportsPage extends React.Component {
 	
@@ -340,7 +340,7 @@ class SportsPage extends React.Component {
 			margin_left_trigulated: ''
 		});
 		
-		const timer = setTimeout(() => {
+		setTimeout(() => {
 			this.setState({
 				triangular_graph_text: 'Brain simulation completed',
 				show_triangular_graph_block : 'block',
@@ -517,13 +517,13 @@ class SportsPage extends React.Component {
 						<h5>The following sensor data formats are accepted:</h5>
 						<div className="row sensor_logo_blk">
 							<div className="col-md-4 col-sm-4 margin-btm text-center">
-								<img src="./img/prevent_biometrics.png" />
+								<img src="./img/prevent_biometrics.png" alt="img"/>
 							</div>
 							<div className="col-md-4 col-sm-4 margin-btm text-center">
-								<img src="./img/sisu.png" />
+								<img src="./img/sisu.png" alt="img"/>
 							</div>
 							<div className="col-md-4 col-sm-4 margin-btm text-center">
-								<img src="./img/opro.png" />
+								<img src="./img/opro.png" alt="img" />
 							</div>
 						</div>
 						<div className="upload_file_block">
@@ -532,6 +532,7 @@ class SportsPage extends React.Component {
 						<div className="cpm_block">
 							<p><b>Are you a sensor company?</b></p>
 							<p>Our API is available that can be readily incorporated into your own platform.</p>
+						{/*eslint-disable-next-line*/}
 							<p><a href="#" target="_blank">Read More Here</a></p>
 						</div>
 					</Modal.Body>

@@ -32,7 +32,6 @@ import Sports from '../Sports/SportsPage';
 import Developer from '../Developer/DeveloperPage';
 import Dash from '../Dash/DashPage';
 import Report from '../../components/ReportContent/Report0';
-import BrainSimulationDetails from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationDetails';
 import Details from '../../components/Dashboard/BrainSimulationDetails/Details';
 import InviteUsers from '../../components/InviteUsers';
 import BrainSimulationLog from '../../components/Dashboard/BrainSimulationDetails/BrainSimulationLog';
@@ -42,8 +41,12 @@ import ModelValidationPressureResponse from '../../components/ModelValidation/Mo
 import ModelValidationDisplacementResponse from '../../components/ModelValidation/ModelValidationDisplacementResponse';
 import ModelValidationStrainResponse from '../../components/ModelValidation/ModelValidationStrainResponse';
 import LoginComponentHidden  from '../../components/Authentication/LoginComponentHidden';
-import Hardy_et_al from '../../components/ModelValidation/Hardy_et_al';
+import HardyEtAl from '../../components/ModelValidation/Hardy_et_al';
 import sendEmailVerifation from '../../components/Authentication/pages/sendEmailVerifation';
+
+//Team state demo page 
+import TeamStatsDemo from '../../components/TeamStatsDemo';
+
 
 class Routing extends React.Component {
   constructor(props) {
@@ -81,7 +84,7 @@ class Routing extends React.Component {
 
   onPageChange = (pageNo) => {
       console.log("ROUTING ,", pageNo);
-    if(pageNo != 1){
+    if(pageNo !== 1){
         this.setState({
           currentPage: pageNo,
           isNavbarTransparent : false
@@ -263,19 +266,17 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/TeamAdmin/user/impact/dashboard/"
+          path="/TeamStats/Demo"
+          render={(props) => <TeamStatsDemo {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
+          path="/TeamAdmin/user/dashboard/:cognito_user_id/:player_name"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
-        />
+        />  
         <Route
           exact
-          path="/TeamAdmin/user/dashboard/brainSimulationDetails"
-          render={(props) => <BrainSimulationDetails {...props} isDarkModeSet={this.checkDarkMode} />}
-        />
-
-        
-        <Route
-          exact
-          path="/TeamAdmin/user/dashboard/brainSimulationDetails/BrainSimulationLog"
+          path="/TeamAdmin/user/dashboard/brainSimulationDetails/simulation/log"
           render={(props) => <BrainSimulationLog {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
@@ -316,7 +317,7 @@ class Routing extends React.Component {
         />
         <Route
             exact
-            path="/TeamAdmin/:org/:brand"
+            path="/TeamAdmin/:org/:brand?"
             render={(props) => <TeamAdmin {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
@@ -392,12 +393,12 @@ class Routing extends React.Component {
         <Route
             exact
             path="/Hardy-et-al"
-            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+            render={(props) => <HardyEtAl {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact
             path="/Hardy-et-al/:cases"
-            render={(props) => <Hardy_et_al {...props} isDarkModeSet={this.checkDarkMode} /> }
+            render={(props) => <HardyEtAl {...props} isDarkModeSet={this.checkDarkMode} /> }
         />
         <Route
             exact

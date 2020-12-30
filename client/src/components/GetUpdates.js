@@ -4,7 +4,7 @@ import { formDataToJson } from '../utilities/utility';
 
 import { getUpdatesAndNotifications } from '../apis';
 
-import Spinner from './Spinner/Spinner';
+// import Spinner from './Spinner/Spinner';
 
 
 var USER_TYPES = [];
@@ -28,7 +28,7 @@ class GetUpdates extends React.Component {
       if(USER_TYPES.indexOf(userType)>-1){
           // Remove the value from array
           USER_TYPES = USER_TYPES.filter(function(value, index, arr){
-              return value != userType;
+              return value !== userType;
           });
       }
       else{

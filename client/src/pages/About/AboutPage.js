@@ -2,13 +2,13 @@ import React from 'react';
 import Footer from '../../components/Footer';
 import { getStatusOfDarkmode } from '../../reducer';
 import ResearchArea from './../Home/ResearchArea/ReseachArea';
-import DarkMode from './../../components/DarkMode';
+// import DarkMode from './../../components/DarkMode';
 
 class AboutPage extends React.Component {
-    constructor(props){
-        super(props);
+    // constructor(props){
+    //     super(props);
 
-    }
+    // }
   changeHtmlBg = (hexCode) => {
     document.getElementsByTagName('body')[0].style.backgroundColor = hexCode;
   };
@@ -56,7 +56,7 @@ class AboutPage extends React.Component {
                         </div>
 
                         <div style={{marginBottom : "1rem",marginTop : "1rem", paddingLeft : "5%", paddingRight : "5%"}} className="col-md-12 col-sm-12">
-                            <iframe width="100%" height="300px"
+                            <iframe title="youtube video 1" width="100%" height="300px"
                                 allowfullscreen="allowfullscreen"
                                 mozallowfullscreen="mozallowfullscreen"
                                 msallowfullscreen="msallowfullscreen"
@@ -75,7 +75,7 @@ class AboutPage extends React.Component {
                         </div>
 
                         <div style={{marginBottom : "1rem",marginTop : "1rem", paddingLeft : "5%", paddingRight : "5%"}} className="col-md-12 col-sm-12">
-                            <iframe width="100%" height="300px"
+                            <iframe title="youtube video 2" width="100%" height="300px"
                                 allowfullscreen="allowfullscreen"
                                 mozallowfullscreen="mozallowfullscreen"
                                 msallowfullscreen="msallowfullscreen"

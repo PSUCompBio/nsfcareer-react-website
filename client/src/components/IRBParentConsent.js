@@ -80,7 +80,7 @@ class IRBParentConsent extends React.Component {
       console.log(formData);
       confirmGuardianIRBConsent(formData)
       .then(response => {
-          if(response.data.message == "success"){
+          if(response.data.message === "success"){
 
 
               this.setState({ isGuardianSigned : true });
@@ -122,7 +122,7 @@ class IRBParentConsent extends React.Component {
   }
   render() {
       console.log("IS GUARDIAN SIGNED ", this.state.isGuardianSigned);
-    if(Object.keys(this.state.consent_user).length ==  0 ){
+    if(Object.keys(this.state.consent_user).length ===  0 ){
         return (
             <React.Fragment>
                 <Spinner />
@@ -159,7 +159,7 @@ class IRBParentConsent extends React.Component {
 
                     </div>
                 </div>
-                {(this.state.error.length == 0 ) ?
+                {(this.state.error.length === 0 ) ?
                     <div style={{ marginTop : "15%"}}
                         class="col-md-12 col-lg-12 text-center">
                         <p className={`animated fadeInUp about-lines`}>
@@ -272,8 +272,8 @@ class IRBParentConsent extends React.Component {
                         style={{
                             width: "100%",
                             background: "-webkit-linear-gradient(45deg, #174f86, #2196f3)",
-                            background: "-o-linear-gradient(45deg, #174f86, #2196f3)",
-                            background: "linear-gradient(45deg, #174f86, #2196f3)",
+                            // background: "-o-linear-gradient(45deg, #174f86, #2196f3)",
+                            // background: "linear-gradient(45deg, #174f86, #2196f3)",
                             lineHeight: "50px",
                             textAlign: "left",
                             color: "#fff",

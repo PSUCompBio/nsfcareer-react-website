@@ -2,9 +2,9 @@ import React from 'react';
 import ListUsersTable from './listUsersTable/ListUsersTable'
 
 class ListUsers extends React.Component {
-  constructor() {
-    super();
-  }
+  // constructor() {
+  //   super();
+  // }
 
   render() {
     return <React.Fragment>

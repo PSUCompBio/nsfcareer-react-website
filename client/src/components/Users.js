@@ -1,24 +1,16 @@
 import React from 'react';
-import RostarBtn from './Buttons/RostarBtn';
-import { Redirect, Link, withRouter } from 'react-router-dom'
+// import RostarBtn from './Buttons/RostarBtn';
+import {  withRouter } from 'react-router-dom'
 
 import Footer from './Footer';
-import PenstateUniversity from './PenstateUniversity';
+// import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
-import { UncontrolledAlert } from 'reactstrap';
+// import { UncontrolledAlert } from 'reactstrap';
 
 import ListUsers from './listUsers/ListUsers';
 import { isAuthenticated } from './../apis';
-import DarkMode from './DarkMode';
-
-
-
-
-import Spinner from './Spinner/Spinner';
-
-
 
 class Users extends React.Component {
     constructor(props) {
@@ -57,17 +49,13 @@ class Users extends React.Component {
         }
         isAuthenticated(JSON.stringify({}))
         .then(value => {
-            if (value.data.message != 'success') {
+            if (value.data.message !== 'success') {
                 // If user is not authenticated , Redirect him to /home
                 this.props.history.push('/Home');
             }
         })
 
     };
-
-
-
-
 
     militaryVersionOrNormal = () => {
         return (

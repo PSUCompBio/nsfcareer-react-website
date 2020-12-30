@@ -3,14 +3,14 @@ import RostarBtn from './Buttons/RostarBtn';
 import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
 import { Redirect, withRouter, Link } from 'react-router-dom';
-import { formDataToJson } from '../utilities/utility';
+// import { formDataToJson } from '../utilities/utility';
 import Spinner from './Spinner/Spinner';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
 
 import {
     isAuthenticated,
-    getUserDetails,
+    // getUserDetails,
     getUserDBDetails,
     getAllOrganizationsOfSensorBrand,
     fetchStaffMembers,
@@ -189,13 +189,13 @@ class OrganizationAdmin extends React.Component {
     }
     isUpdateData = (data) =>{
         console.log('isUpdateData',data);
-        if(data.data.type == "rename"){
+        if(data.data.type === "rename"){
             this.setState({renameData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data}, isRename: true})
         }
-        if(data.data.type == "addOrganization"){
+        if(data.data.type === "addOrganization"){
             this.setState({addOrganizationData: {OrganizationName : data.OrganizationName, sensor: this.props.location.state.brand.brand  }, isAddOrganization: true})
         }
-        if(data.data.type == "merge"){
+        if(data.data.type === "merge"){
             this.setState({mergeData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
         }
         this.setState({ isDisplay2:{ display: 'none' } });
@@ -209,7 +209,7 @@ class OrganizationAdmin extends React.Component {
               deleteItem(this.state.DelData)
               .then(res => {
                   console.log('res',res);
-                    if(res.data.message == 'success'){
+                    if(res.data.message === 'success'){
                          this.setState(prevState => ({
                             isUpdated: false,
                         }));
@@ -240,7 +240,7 @@ class OrganizationAdmin extends React.Component {
             renameOrganization(this.state.renameData)
             .then(response => {
                 console.log('response',response)
-                if(response.data.message == "success"){
+                if(response.data.message === "success"){
                     this.handleMergeOrganization();
                 }else{
                     this.setState({
@@ -268,7 +268,7 @@ class OrganizationAdmin extends React.Component {
             MergeOrganization(this.state.mergeData)
             .then(response => {
                 console.log('response',response)
-                if(response.data.message == "success"){
+                if(response.data.message === "success"){
                     this.handleAddOrganization();
                 }else{
                     this.setState({
@@ -296,7 +296,7 @@ class OrganizationAdmin extends React.Component {
             addOrganization(this.state.addOrganizationData)
             .then(response =>{
                  console.log('response',response)
-                if(response.data.message == "success"){
+                if(response.data.message === "success"){
                     getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
                     .then(orgs => {
                         $('.isEdit').css({'display':'none'});
@@ -448,8 +448,8 @@ class OrganizationAdmin extends React.Component {
     smallCards = (organization_id,simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key) => {
         console.log('organization_id',organization_id);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
-        if (simulation_status == 'completed') {
-            let computed_time = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
+        if (simulation_status === 'completed') {
+            let computed_time1 = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
 
             let currentStamp = new Date().getTime();
             let simulationTimestamp = parseFloat(simulation_timestamp);
@@ -457,7 +457,7 @@ class OrganizationAdmin extends React.Component {
             diff /= 60;
             let minutes =  Math.abs(Math.round(diff));
             console.log('minutes', minutes);
-            minutes = minutes - computed_time;
+            minutes = minutes - computed_time1;
             if (minutes <= 30) {
                 cls = 'completedSimulation tech-football m-3';
             }
@@ -465,9 +465,9 @@ class OrganizationAdmin extends React.Component {
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <ul className="organization-edit-icons isEdit">
-                    <li><span><img src={pencil}  onClick={e => this.editRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'rename'})}/>Rename</span></li>
-                    <li><span><img src={merge}  onClick={e => this.editRecord( {brand: brand, organization_id: organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} />Merge</span></li>
-                    <li><span><img src={delicon} onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
+                    <li><span><img src={pencil} alt="edit" onClick={e => this.editRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'rename'})}/>Rename</span></li>
+                    <li><span><img src={merge} alt="merge" onClick={e => this.editRecord( {brand: brand, organization_id: organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} />Merge</span></li>
+                    <li><span><img src={delicon} alt="delete" onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
                 </ul>
                 <div
                     ref={reference[0]}
@@ -495,8 +495,8 @@ class OrganizationAdmin extends React.Component {
                             
                         </div>
                         <div className="football-body d-flex">
-                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none", width: "100%" }}>
-                                {noOfSimulation || noOfSimulation == '0' ? 
+                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
+                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                  : 
                                  <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
@@ -526,7 +526,7 @@ class OrganizationAdmin extends React.Component {
                 if (organization) {
 
                     let cls = organization.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
-                    if (organization.simulation_status == 'completed') {
+                    if (organization.simulation_status === 'completed') {
                         let computed_time = organization.computed_time ? parseFloat(organization.computed_time) / (1000 * 60) : 0;
 
                         let currentStamp = new Date().getTime();
@@ -543,7 +543,7 @@ class OrganizationAdmin extends React.Component {
 
                     return <tr className={cls}  key={index} onClick={() => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin',
+                            pathname: '/TeamAdmin/'+organization.organization+'/'+organization.sensor,
                             state: {
                                 brand: {
                                     brand: organization.sensor,
@@ -557,19 +557,21 @@ class OrganizationAdmin extends React.Component {
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{organization.organization}</td>
                         <td>{organization.sensor ? organization.sensor : 'NA'}</td>
-                        <td>{organization.simulation_count || organization.simulation_count == '0' ? organization.simulation_count : 'Loading...'}</td>
+                        <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
                     </tr>;
+                }else{
+                    return '';
                 }
             }, this)
         return body
     }
 
     iterateTeam = () => {
-        console.log('sensorOrgList',this.state.sensorOrgList)
+        console.log('sensorOrgList',this.state.sensorOrgList)   
         let inc = 1;
         var cards = new Array(this.state.totalOrganization);
         console.log('cards',cards)
-        let j = 1;
+        // let j = 1;
         for (let i = 0; i < this.state.totalOrganization; i++) {
             cards[i] = this.smallCards(
                 this.state.sensorOrgList[i].organization_id,
@@ -591,7 +593,7 @@ class OrganizationAdmin extends React.Component {
                 Number(this.state.sensorOrgList[i].simulation_count),
                 i
             );
-            j++;
+            // j++;
         }
 
         if (this.state.totalOrganization === 0) {
@@ -669,8 +671,8 @@ class OrganizationAdmin extends React.Component {
                                     <h1 className="title-grey-color"  style={{'text-decoration': 'underline','letter-spacing': '1px','font-family': 'sans-serif'}}>DASHBOARD 
                                         <div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
                                             <div className="View">
-                                                <img src={gridView} onClick={() => this.handleViewChange('gridView')} /> 
-                                                <img src={listView} onClick={() => this.handleViewChange('listView')} />
+                                                <img src={gridView} alt="gridView" onClick={() => this.handleViewChange('gridView')} /> 
+                                                <img src={listView} alt="listView" onClick={() => this.handleViewChange('listView')} />
                                             </div>
                                         </div>
                                     </h1>
@@ -735,9 +737,10 @@ class OrganizationAdmin extends React.Component {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
+                                                {/* eslint-disable-next-line*/}
                                                     {staffList && staffList[0].map(function (staff, index) {
                                                         if(staff.data){
-                                                            if(staff.data.level == 400){
+                                                            if(staff.data.level === 400){
                                                                 return <tr className="player-data-table-row" key={index}
                                                                     onClick={()=>{
                                                                         if(staff.data && level === 1000){
@@ -751,6 +754,8 @@ class OrganizationAdmin extends React.Component {
                                                                     <td>{staff.data ? staff.data.email : ''} </td>
                                                                 </tr>
                                                             }
+                                                        }else{
+                                                            return '';
                                                         }
                                                     })}
 
@@ -761,7 +766,7 @@ class OrganizationAdmin extends React.Component {
                                         </div>
                                     }
                                     {!this.state.tabActive ?
-                                        this.state.view == 'gridView' ?
+                                        this.state.view === 'gridView' ?
                                             <div className="football-container mt-4 d-flex flex-wrap">
                                                 {this.state.userDetails.level === 1000 &&
                                                     <h2  className="title-grey-color" style={{'width':'100%','fontWeight':'600','letter-spacing': '2px','font-family': 'sans-serif'}}>ORGANIZATIONS</h2>
@@ -776,7 +781,7 @@ class OrganizationAdmin extends React.Component {
                                                                 onClick={e => this.editRecord( {type: 'addOrganization'})}
                                                             >
                                                                 <div className="wrap_img">
-                                                               <img src={plus} />
+                                                               <img src={plus} alt="Add New" />
                                                                 <h4>Add New</h4>
                                                                 </div>
                                                             </div>
@@ -868,7 +873,7 @@ class OrganizationAdmin extends React.Component {
         }
 
         if (this.state.isAuthenticated && !this.state.isCheckingAuth) {
-            if (this.state.userDetails.level === 300 && this.state.userDetails.level === 200 || this.state.userDetails.level === 100 ) {
+            if (this.state.userDetails.level === 300 || this.state.userDetails.level === 200 || this.state.userDetails.level === 100 ) {
                 return <Redirect to="/Dashboard" />;
             }
         }

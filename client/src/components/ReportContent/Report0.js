@@ -1,12 +1,12 @@
 import React from 'react';
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-import ReactDOM from 'react-dom';
-import page3 from '../pg_0003.jpg';
-import header1 from './header1.png';
-import footer1 from '../footer1.jpg';
-import header2 from '../header2.jpg';
-import footer2 from '../footer2.jpg';
-import trangle from './trangle.png';
+import {  Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+// import ReactDOM from 'react-dom';
+// import page3 from '../pg_0003.jpg';
+// import header1 from './header1.png';
+// import footer1 from '../footer1.jpg';
+// import header2 from '../header2.jpg';
+// import footer2 from '../footer2.jpg';
+// import trangle from './trangle.png';
 import trangle_green from './trangle_green.png';
 import trangle_orange from './trangle_orange.png';
 import trangle_red from './trangle_red.png';
@@ -18,12 +18,12 @@ import taxture1  from './taxture1.png';
 import branImages_1 from './branImages_1.png';
 import brainimage_2 from './brainimage_2.png';
 import PageFooter_3 from './3rdPageFooter.jpg';
-import page_3 from './sub_component/page_3';
+// import page_3 from './sub_component/page_3';
 import styleOfpage3 from './sub_component/styleOfpage3.json'
 // import logo 
 // Create styles
 
-let innerWidth = window.innerWidth;
+// let innerWidth = window.innerWidth;
 
 
 class Report extends React.Component {
@@ -73,7 +73,7 @@ class Report extends React.Component {
     }
     tConvert = (time) => {
         console.log(time)
-        if(time == 0){
+        if(time === 0){
           return 'Unknown Time'
         }else{
            // Check correct time format and split into components
@@ -147,9 +147,11 @@ class Report extends React.Component {
                 csdmTrangle = this.getTrangle(csdm);
             }
             if(this.state.jsonData['CSDM-15']){
+                //eslint-disable-next-line
                 var num = this.state.jsonData['CSDM-15'].value;
                 mps = num.toFixed(2) ;
                 let mps_val = mps;
+                //eslint-disable-next-line
                 var left = mps_val * ScaleWidth / 38;
                 //**Round up the value....
                 mpstrangleScale = ''+left.toFixed(0)+'px';
@@ -723,7 +725,7 @@ class Report extends React.Component {
                         </View>
 
                         {/*============= For CSDM 15 data ====================*/}
-                            {this.state.metric.csdm_15 == 'on'? 
+                            {this.state.metric.csdm_15 === 'on'? 
                                 <>
                                     <View style={styles.col12}>
                                         <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
@@ -846,7 +848,7 @@ class Report extends React.Component {
 
                         {/*============= For mps 15 data ====================*/}
 
-                            {this.state.metric.csdm_15 != 'on' && this.state.metric.mps_95 == 'on' ? 
+                            {this.state.metric.csdm_15 !== 'on' && this.state.metric.mps_95 === 'on' ? 
                                 <>
                                     <View style={styles.col12}>
                                         <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
@@ -989,7 +991,7 @@ class Report extends React.Component {
                 {/*==========================
                             PAGE 2
                 =======================*/}
-                {this.state.metric.csdm_15 == 'on' && this.state.metric.mps_95 == 'on' ? 
+                {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ? 
                     <Page object-fit="fill" size="A4">
                         <View>
                             
@@ -1162,7 +1164,7 @@ class Report extends React.Component {
 
                         <View style={stylepage3.tableRow}>
                             <Text style={stylepage3.tableColLeft}> DATE : {this.getDateInFormat()}</Text>
-                            <Text style={stylepage3.tableColRight}> PAGE : {this.state.metric.csdm_15 == 'on' && this.state.metric.mps_95 == 'on' ?  '3 of 3' : '2 of 2'}</Text>
+                            <Text style={stylepage3.tableColRight}> PAGE : {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ?  '3 of 3' : '2 of 2'}</Text>
                         </View>
                         {/*========== Land scape blue line =============*/}
                         <View style={stylepage3.blueLine}></View>

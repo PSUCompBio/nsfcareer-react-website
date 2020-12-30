@@ -6,15 +6,15 @@ import { formDataToJson } from '../../utilities/utility';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
-import DarkMode from '../DarkMode';
+// import DarkMode from '../DarkMode';
 
 import {
     uploadProfilePic,
     getUserDetails,
     getProfilePicLink,
-    getInpFileLink,
+    // getInpFileLink,
     getModelLink,
-    getSimulationFile,
+    // getSimulationFile,
     getVtkFileLink,
     updateUserDetails,
     isAuthenticated,
@@ -31,7 +31,7 @@ import { UncontrolledAlert,
     FormGroup,
     Label,
     Input,
-    FormText,
+    // FormText,
     Button,
     Col,
     Row
@@ -49,11 +49,11 @@ import {
 } from '../../Actions';
 import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
-import Img from 'react-fix-image-orientation'
+// import Img from 'react-fix-image-orientation'
 import AvatarInspectionModel from '../Popup/AvatarInspectionModel';
-import camera from './camera.png';
+// import camera from './camera.png';
 import CameraPopup from '../Popup/CameraPopup';
-import CameraPopupDesktop from '../Popup/CameraPopupDesktop';
+// import CameraPopupDesktop from '../Popup/CameraPopupDesktop';
 let options = [];
 class Profile extends React.Component {
     constructor(props) {
@@ -61,12 +61,14 @@ class Profile extends React.Component {
 
         let search = window.location.search;
         let params = new URLSearchParams(search);
-
         let user_profile_to_view = params.get('id') ;
-        console.log('user_profile_to_view',user_profile_to_view)
         if(!user_profile_to_view){
             user_profile_to_view = '';
         }
+
+        let valStore = localStorage.getItem("state");
+        let userInfo = JSON.parse(valStore);
+        console.log('userInfo',userInfo['userInfo'])
         this.state = {
             selectedFile: null,
             isLoading: true,
@@ -102,7 +104,8 @@ class Profile extends React.Component {
             isCamera: false,
             password: '',
             confirm_password: '',
-            uploaded:''
+            uploaded:'',
+            level:userInfo['userInfo']['level']
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -176,7 +179,7 @@ class Profile extends React.Component {
          getAllSensorBrands()
         .then(data =>{
             console.log('Sensor',data)
-            if(data.data.message == "success"){
+            if(data.data.message === "success"){
                 this.setState({
                   sensors: data.data.data
                 })
@@ -217,7 +220,6 @@ class Profile extends React.Component {
             isUploading: false,
             is_selfie_inp_uploaded: false,
             inp_file_url:'',
-            avatar_url : '',
             vtk_file_url : '',
             inp_latest_url_details : '',
             selfie_latest_url_details : '',
@@ -266,7 +268,7 @@ class Profile extends React.Component {
                                 res.data.avatar_url !== undefined &&
                                 res.data.avatar_url.length !== 0
                             ) {
-                                let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                                // let file_extension = this.getUploadFileExtension(res.data.avatar_url);
                                 let details = res.data.avatar_url.split(".png")[0].split('/');
 
                                 let timestamp = details[details.length - 1]
@@ -344,7 +346,6 @@ class Profile extends React.Component {
             isUploading: false,
             is_selfie_inp_uploaded: false,
             inp_file_url:'',
-            avatar_url : '',
             vtk_file_url : '',
             inp_latest_url_details : '',
             selfie_latest_url_details : '',
@@ -384,7 +385,7 @@ class Profile extends React.Component {
                             res.data.avatar_url !== undefined &&
                             res.data.avatar_url.length !== 0
                         ) {
-                            let file_extension = this.getUploadFileExtension(res.data.avatar_url);
+                            // let file_extension = this.getUploadFileExtension(res.data.avatar_url);
                             let details = res.data.avatar_url.split(".png")[0].split('/');
 
                             let timestamp = details[details.length - 1]
@@ -423,7 +424,7 @@ class Profile extends React.Component {
                             user_cognito_id : this.state.user.account_id ? this.state.user.account_id : user_id
                         }))
                         .then(response => {
-                            if(response.data.message == "success"){
+                            if(response.data.message === "success"){
                                 if(user_data.is_selfie_inp_uploaded){
                                     profile_data.vtk_file_url = response.data.vtk_file_url;
                                     let details = response.data.vtk_file_url.split(".vtk")[0].split('/');
@@ -452,35 +453,46 @@ class Profile extends React.Component {
                                         simulation_file_latest_upload_details : profile_data.simulation_file_url_details,
                                         avatar_zip_file_url_details : profile_data.avatar_zip_file_url_details,
                                         vtk_file_url_details : profile_data.vtk_file_url_details,
-                                        isRefreshing : false
+                                        isRefreshing : false,
+                                        isLoading: false,
                                     };
                                 });
                             }
                             else{
-                                this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Invalid Request to fetch VTK File"});
+                                this.setState({ isUploading: false, isRefreshing : false, isLoading: false,fileUploadError : "Invalid Request to fetch VTK File"});
                             }
 
                         })
                         .catch(err => {
-                            this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the VTK File Link"});
+                            this.setState({ isUploading: false, isRefreshing : false,isLoading: false, fileUploadError : "Failed to find the VTK File Link"});
                         })
 
                     } else {
 
-                        this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the model link"});
+                        this.setState({ isUploading: false, isRefreshing : false,isLoading: false, fileUploadError : "Failed to find the model link"});
                     }
                 })
+                
+                getAvatarInspection({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : this.state.profile_to_view})
+                .then(result => {
+                    let inspection_data = '';
+                    if (result.data.data.model_jpg && result.data.data.model_ply && result.data.data.brain_ply && result.data.data.skull_ply) {
+                        inspection_data = result.data.data;
+                    }
+                    this.setState({
+                        inspection_data: inspection_data
+                    });
+                })
                 .catch((err) => {
-
-                    this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to find the model link"});
+                    this.setState({ isUploading: false, isRefreshing : false, isLoading: false,fileUploadError : "Failed to find the model link"});
                 });
             })
             .catch(err => {
-                this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to Fetch User Details"});
+                this.setState({ isUploading: false, isRefreshing : false, isLoading: false,fileUploadError : "Failed to Fetch User Details"});
             })
         })
         .catch(err => {
-            this.setState({ isUploading: false, isRefreshing : false, fileUploadError : "Failed to Fetch User Details"});
+            this.setState({ isUploading: false, isRefreshing : false, isLoading: false,fileUploadError : "Failed to Fetch User Details"});
         })
 
     }
@@ -570,7 +582,7 @@ class Profile extends React.Component {
             VerifyNumber({phone_number: this.state.phone_number, user_cognito_id:this.state.user.user_cognito_id,country_code:this.state.selectedCountryCode})
             .then(res=>{
                 console.log('res',res);
-                if(res.data.message == "success"){
+                if(res.data.message === "success"){
                     this.setState({VerifyNumber: true})
                 }else{
                         this.setState({
@@ -611,16 +623,16 @@ class Profile extends React.Component {
         formJsonData["user_cognito_id"] = this.state.user.user_cognito_id;
         formJsonData["number_verified"] = this.state.number_verified;
 
+        console.log('formJsonData',formJsonData)
         // Calling update user details api
         updateUserDetails(JSON.stringify(formJsonData))
         .then((response) => {
             if (response.data.message === 'success') {
                 this.setState({
-                    isLoading: false,
                     isSignInSuccessed: true,
                     message : true
                 });
-
+                this.getupdatedprofileData();
             } else {
                 // show error
                 this.setState({
@@ -634,6 +646,95 @@ class Profile extends React.Component {
             console.log(err);
         });
 
+    }
+
+    getupdatedprofileData = ()=>{
+        getUserDetails({user_cognito_id : this.state.profile_to_view})
+        .then((response) => {
+            // store.dispatch(userDetails(response.data))
+            console.log('RESPONSE DATA IS -------------------\n', response.data);
+            this.setState({
+                user: response.data.data,
+                isLoading: false
+            })
+            let inp_latest_url_details = ""
+            let selfie_latest_url_details = ""
+            let simulation_file_url_details = ""
+            let avatar_zip_file_url_details = ""
+            let vtk_file_url_details = ""
+            if(response.data.data.inp_file_url) {
+                let details = response.data.data.inp_file_url.split(".inp")[0].split('/');
+                let timestamp = details[details.length].split('_')[1]
+                let date = new Date(parseInt(timestamp))
+                inp_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+
+            }
+            if(response.data.data.profile_picture_url) {
+                let file_extension = this.getUploadFileExtension(response.data.data.profile_picture_url);
+                let details = response.data.data.profile_picture_url.split(file_extension)[0].split('/');
+
+                let timestamp = details[details.length - 1]
+
+                let date = new Date(parseInt(timestamp));
+
+                selfie_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+            }
+            if(response.data.data.simulation_file_url) {
+                let details = response.data.data.simulation_file_url.split(".png")[0].split('/');
+                let timestamp = details[details.length - 1]
+                let date = new Date(parseInt(timestamp))
+                simulation_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+            }
+            if(response.data.data.avatar_url) {
+                let details = response.data.data.avatar_url.split(".zip")[0].split('/');
+                let timestamp = details[details.length - 1]
+                let date = new Date(parseInt(timestamp))
+                avatar_zip_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+            }
+            if(response.data.data.vtk_file_url) {
+                let details = response.data.data.vtk_file_url.split(".vtk")[0].split('/');
+                let timestamp = details[details.length - 1]
+                let date = new Date(parseInt(timestamp))
+                vtk_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
+            }
+            this.setState({
+                phone_number: response.data.data.phone_number ? response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length) : '',
+                number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
+                selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
+                sensor_id_number:  response.data.data.sensor_id_number ? response.data.data.sensor_id_number : '',
+                // isLoading: false,
+                // isAuthenticated: true,
+                // isCheckingAuth: false,
+                inp_latest_upload_details : inp_latest_url_details,
+                selfie_latest_upload_details : selfie_latest_url_details,
+                simulation_file_latest_upload_details : simulation_file_url_details,
+                avatar_zip_file_url_details : avatar_zip_file_url_details,
+                vtk_file_url_details : vtk_file_url_details
+            });
+
+            if (getStatusOfDarkmode().status === true) {
+                store.dispatch(darkThemeActiveSetter());
+                this.refs.lightDark.style.background = '#232838';
+                document.getElementsByTagName('html')[0].style.background =
+                '#171b25';
+                document.getElementsByTagName('body')[0].style.background =
+                '#171b25';
+                this.refs.profileBorder.style.border = '10px solid #171b25';
+                this.refs.nameColor.style.color = '#fff';
+                this.refs.chooserColor.style.color = '#fff';
+                this.refs.darkMode.style.color = '#fff';
+                const allInputs = this.state.inputs;
+                allInputs.forEach((element) => {
+                    this.refs[element].setAttribute('id', 'dark-mode-color');
+                });
+                for (let i = 1; i <= 4; i++) {
+                    this.refs['p' + i].style.color = '#fff';
+                }
+                this.props.isDarkModeSet(this.state.isDarkMode);
+            }
+            // return getAvatarInspection({ user_cognito_id: this.state.user.selfie_location && this.state.user.selfie_location === 'old' ? this.state.profile_to_view : this.state.user.account_id})
+            return getAvatarInspection({ user_cognito_id: this.state.user.account_id ? this.state.user.account_id : this.state.profile_to_view})
+        })
     }
     handleMouthguardSubmit =(e)=>{
         e.preventDefault();
@@ -674,14 +775,14 @@ class Profile extends React.Component {
     handleSetPassword=(e)=>{
         console.log('e',e.target.value);
         this.setState({[e.target.name] : e.target.value});
-        if(e.target.name == 'password'){
+        if(e.target.name === 'password'){
             if(e.target.value.length < 8){
                 this.setState({lenerr: true,setpassword2: false})
             }else{
                 this.setState({lenerr: false, setpassword1: true,setpassword2: false})
             }
         }else{
-            if(e.target.value != this.state.password){
+            if(e.target.value !== this.state.password){
                 this.setState({errmatch: true})
             }else{
                 this.setState({errmatch: false,setpassword2: true});
@@ -692,17 +793,18 @@ class Profile extends React.Component {
         e.preventDefault();
         if(this.state.setpassword1 && this.state.setpassword2){
             console.log(this.state.confirm_password);
+            let user_id;
             if(this.state.profile_to_view){
-                var user_id = this.state.profile_to_view ;
+                user_id = this.state.profile_to_view ;
             }
             else{
-                var user_id = this.state.user.user_cognito_id ;
+                user_id = this.state.user.user_cognito_id ;
             }
             this.setState({isLoading3: true})
             setUserPassword({password: this.state.confirm_password, user_cognito_id: user_id})
             .then(res=>{
                 console.log(res)
-                if(res.data.message == "Success"){
+                if(res.data.message === "Success"){
                     this.setState({
                        isLoading3: false,
                        message3: true,
@@ -856,8 +958,12 @@ class Profile extends React.Component {
                                             <Row>
                                                 <Col md={6} sm={12}>
                                                     <div class="input-group">
-                                                        <Input
-                                                            className="profile-input" type="text" name="first_name" id="exampleEmail" value={this.state.user.first_name} placeholder="First Name" />
+                                                        {this.state.level === 1000 ? 
+                                                            <Input className="profile-input" type="text" name="first_name" id="exampleEmail" defaultValue={this.state.user.first_name} placeholder="First Name" />
+                                                            :
+                                                            <Input className="profile-input" type="text" name="first_name" id="exampleEmail" value={this.state.user.first_name} placeholder="First Name" />
+
+                                                        }
                                                         <span class="input-group-addon profile-edit-icon">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
                                                         </span>
@@ -873,8 +979,12 @@ class Profile extends React.Component {
                                                     </Col>
                                                     <Col md={6} sm={12}>
                                                         <div class="input-group">
-                                                            <Input
-                                                                className="profile-input" type="text" name="last_name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
+                                                            {this.state.level === 1000 ? 
+                                                                <Input className="profile-input" type="text" name="last_name" id="exampleEmail" defaultValue={this.state.user.last_name} placeholder="Last Name" />
+                                                                :
+                                                                <Input className="profile-input" type="text" name="last_name" id="exampleEmail" value={this.state.user.last_name} placeholder="Last Name" />
+
+                                                            }
                                                             <span class="input-group-addon profile-edit-icon"
                                                                 >
                                                                 <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -972,7 +1082,7 @@ class Profile extends React.Component {
                                                 </div>
                                             </Col>
                                             <Col sm={4}>
-                                                {this.state.number_verified == 'true' ? 
+                                                {this.state.number_verified === 'true' ? 
                                                     (<button className="btn btn-success btn-sm" onClick={e =>e.preventDefault()}><i class="fa fa-check" aria-hidden="true"></i> Verified</button>) 
                                                     :
                                                     (
@@ -996,7 +1106,6 @@ class Profile extends React.Component {
                                                         showMonthDropdown
                                                         showYearDropdown
                                                         dropdownMode="select"
-                                                        className="form-control"
                                                         name="dob"
                                                         selected={this.state.user.dob ? new Date(this.state.user.dob) : ""}
                                                         onChange={this.handleDateChange}
@@ -1064,7 +1173,7 @@ class Profile extends React.Component {
                                                 <div class="input-group">
                                                     <Input
                                                         disabled="true"
-                                                        className="profile-input" type="text" name="user_type" id="" placeholder="Gender" value={this.state.user.user_type == "StandardUser" ? "Standard" : "Admin"} />
+                                                        className="profile-input" type="text" name="user_type" id="" placeholder="Gender" value={this.state.user.user_type === "StandardUser" ? "Standard" : "Admin"} />
                                                 </div>
                                             </Col>
                                             <Col sm={4}>
@@ -1680,7 +1789,7 @@ class Profile extends React.Component {
                                         let vtk_file_url_details = ""
                                         if(response.data.data.inp_file_url) {
                                             let details = response.data.data.inp_file_url.split(".inp")[0].split('/');
-                                            let timestamp = details[details.length - 1]
+                                            let timestamp = details[details.length - 1].split('_')[1]
                                             let date = new Date(parseInt(timestamp))
                                             inp_latest_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
 
@@ -1714,7 +1823,7 @@ class Profile extends React.Component {
                                             vtk_file_url_details = [date.toLocaleDateString(),date.toLocaleTimeString({},{hour12:true})]
                                         }
                                         this.setState({
-                                            phone_number: response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length),
+                                            phone_number: response.data.data.phone_number ? response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length) : '',
                                             number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                                             selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
                                             sensor_id_number:  response.data.data.sensor_id_number ? response.data.data.sensor_id_number : '',

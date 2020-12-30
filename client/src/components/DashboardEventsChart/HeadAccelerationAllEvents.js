@@ -2,9 +2,9 @@ import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
 import simulationLoading from '../simulationLoading.png';
-import Report from '../ReportContent/Report0';
+// import Report from '../ReportContent/Report0';
 import DownloadReportPopup from '.././Popup/DownloadReportPopup';
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
+// import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import {
     getSimulationDetail,
   } from '../../apis';
@@ -235,6 +235,7 @@ class HeadAccelerationAllEvents extends React.Component {
                             
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-chart">
+                        {/*eslint-disable-next-line*/}
                             <Line id="goodCanvas1"  data={this.state.data} options={options} redraw={true} aria-label="Cumulative Overview of All Events" role="chart"/>
                         </div>
                         <div className="Individual-Head-Acceleration-player-dash-image   ">
@@ -246,14 +247,14 @@ class HeadAccelerationAllEvents extends React.Component {
                                         </div>
                                     */}
                                    
-                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status != 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
+                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status !== 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
                                      {
                                     !this.props.data.sensor_data ?
                                        null
 
                                      : 
                                     <Link  to={{
-                                            pathname: '/Details/'+this.props.data.sensor_data.image_id+'/'+this.props.player_id+'/'+this.props.state.cognito_user_id+'?org='+this.props.organization+'&t='+this.props.team,
+                                            pathname: '/Details/'+this.props.data.sensor_data.image_id+'/'+this.props.player_id+'/'+this.props.state.cognito_user_id+'?org='+this.props.organization+'&t='+this.props.team+'&brand='+this.props.brand,
                                             
                                            state:{
                                             state: this.props.state,

@@ -11,7 +11,6 @@ import { getStatusOfDarkmode } from '../../reducer';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import screenWidth from '../../utilities/ScreenWidth';
 import GetUpdates from './../../components/GetUpdates';
-import $ from "jquery";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -85,11 +84,11 @@ class HomePage extends React.Component {
 
   pageOnChange = (number) => {
       console.log("PAGE",number);
-    if(number == 4){
+    if(number === 4){
         this.setState({blockScrollDown : true})
     }
     else{
-        if(this.state.blockScrollDown == true){
+        if(this.state.blockScrollDown === true){
             this.setState({blockScrollDown : false})
         }
     }

@@ -1,17 +1,15 @@
 import React from 'react';
 import RostarBtn from './Buttons/RostarBtn';
-import { Redirect, Link, withRouter } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 
 import Footer from './Footer';
 //import PenstateUniversity from './PenstateUniversity';
 import { getStatusOfDarkmode } from '../reducer';
-import DarkMode from './DarkMode';
+// import DarkMode from './DarkMode';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
-import { UncontrolledAlert } from 'reactstrap';
 import {
     isAuthenticated,
-    getUserDetails,
     getUserDBDetails,
     uploadSensorDataAndCompute,
     getTeamAdminData,
@@ -20,12 +18,8 @@ import {
     getSimulationStatusCount,
     updateUserStatus,
 } from '../apis';
-
-import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
-
 import socketIOClient from 'socket.io-client'
-
 import Spinner from './Spinner/Spinner';
 import Switch from "react-switch";
 import team_state_icon from './team_state_icon.svg'
@@ -44,7 +38,6 @@ class CommanderTeamView extends React.Component {
             userDetails: {},
             avgLoad: 0.02,
             alerts: 0,
-            team: 2,
             athletes: 6,
             staff: 8,
             highestLoadCount: 0.046,
@@ -122,6 +115,7 @@ class CommanderTeamView extends React.Component {
                         this.setState({ users: [] });
 
                         for (var i = 0; i < response.data.data.length; i++) {
+                            // eslint-disable-next-line
                             this.setState(prevState => ({
                                 users: [...prevState.users, response.data.data[i]]
                             }));
@@ -200,7 +194,7 @@ class CommanderTeamView extends React.Component {
     componentDidMount() {
     
         const params = new URLSearchParams(window.location.search)
-        let brand = false;
+        let brand = '';
         if(params.get('brand')){
             brand = params.get('brand');
         }
@@ -237,6 +231,7 @@ class CommanderTeamView extends React.Component {
                                         .then(response => {
                                             console.log('getPlayersData ----------------------\n',response);
                                             for (var i = 0; i < response.data.data.length; i++) {
+                                                // eslint-disable-next-line
                                                 this.setState(prevState => ({
                                                     users: [...prevState.users, response.data.data[i]],
                                                     isLoaded: true
@@ -245,7 +240,9 @@ class CommanderTeamView extends React.Component {
                                             if(response.data.data.length > 4){
                                                 this.setState({isMobile: false});
                                             } 
+                                            // eslint-disable-next-line
                                             for (var i = 0; i < response.data.requested_players.length; i++) {
+                                                // eslint-disable-next-line
                                                 this.setState(prevState => ({
                                                     requestedUsers: [...prevState.requestedUsers, response.data.requested_players[i]],
                                                     isLoaded: true
@@ -254,10 +251,11 @@ class CommanderTeamView extends React.Component {
                                             return getSimulationStatusCount({
                                                 brand: user_level === 300 ? '' : brand,
                                                 organization: this.state.organization,
-                                                team_name: this.state.team
+                                                team: this.state.team
                                             })
                                            
                                         }).then(response => {
+                                            console.log('getSimulationStatusCount', response);
                                             this.setState({
                                                 simulations_completed: response.data.data.completed,
                                                 simulation_failed: response.data.data.failed,
@@ -303,7 +301,7 @@ class CommanderTeamView extends React.Component {
                                     team_name: this.state.team
                                 }).then(staff=>{
                                     var response = staff.data;
-                                    if(response.message == 'success'){
+                                    if(response.message === 'success'){
                                         this.setState(prevState => ({
                                             staffList: response.data,
                                         }));
@@ -343,7 +341,7 @@ class CommanderTeamView extends React.Component {
         const hour = plus0(d.getHours())
         const minute = plus0(d.getMinutes())
         const second = plus0(d.getSeconds())
-        const rest = timestamp.toString().slice(-5)
+        // const rest = timestamp.toString().slice(-5)
       
         return `${month}/${date}/${year} ${hour}:${minute}:${second}`
     }
@@ -502,6 +500,7 @@ class CommanderTeamView extends React.Component {
 
     getUrl = (obj) => {
         if (obj && this.state.userDetails.level > 300) {
+            // eslint-disable-next-line
             return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.user_cognito_id}>Profile</a>;
         } else {
             return <button className="btn btn-primary" disabled={true}>Profile</button>;
@@ -515,7 +514,6 @@ class CommanderTeamView extends React.Component {
     }
 
     militaryVersionOrNormal = () => {
-        let me = this;
         return (
             <div
                 ref="rosterContainer"
@@ -546,9 +544,21 @@ class CommanderTeamView extends React.Component {
                                 }
                             }} >{this.state.brand + ' > '}</Link>
                         : null}
-                         {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 || this.state.userDetails.level === 300 ?
+                         {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
                                 <Link style={{ fontWeight: "400" }} to={{
                                 pathname: '/TeamAdmin/'+this.state.organization+'/'+this.state.brand,
+                                state: {
+                                    brand: {
+                                        brand: this.state.brand,
+                                        organization: this.state.organization,
+                                        user_cognito_id: this.state.user_cognito_id
+                                    }
+                                }
+                            }}>{this.state.organization + ' > ' }</Link>
+                        : null}
+                        {this.state.userDetails.level === 300 ?
+                                <Link style={{ fontWeight: "400" }} to={{
+                                pathname: '/TeamAdmin/'+this.state.organization,
                                 state: {
                                     brand: {
                                         brand: this.state.brand,
@@ -809,7 +819,9 @@ class CommanderTeamView extends React.Component {
                                 <span className="team-page-title">Team Dashboard</span>
                                 <div className="col-md-6 team-edit-button">
                                     <button className="btn button-edit plyar-button-edit" style={{'margin-right': '4px'}}>Edit</button>
+                                    {/*eslint-disable-next-line*/}
                                     <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+                                
                                    
                                 </div>
                             </h1>
@@ -936,7 +948,7 @@ class CommanderTeamView extends React.Component {
                                                             
                                                         </td>
                                                         { this.state.userDetails.level > 300 &&
-                                                            <td style={{'max-width':'162px'}} className="wrap-cell" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                            <td style={{'max-width':'162px'}} className="wrap-cell" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].user_data ? player.simulation_data[0].user_data.first_name+' '+player.simulation_data[0].user_data.last_name :  player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         }
                                                         <td onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
@@ -981,6 +993,8 @@ class CommanderTeamView extends React.Component {
                                                             </React.Fragment>
                                                         }
                                                     </tr>;
+                                                }else{
+                                                    return false;
                                                 }
                                             }, this)}
                                             {this.state.users.length <= 0 && <td colspan="10" style={{'textAlign':'center'}}>There is no data for this team yet.</td>}
@@ -1039,6 +1053,8 @@ class CommanderTeamView extends React.Component {
                                                             }
                                                            
                                                          </tr>
+                                                    }else{
+                                                        return false
                                                     }
                                             }, this)}
                                         </tbody>
@@ -1127,7 +1143,7 @@ class CommanderTeamView extends React.Component {
 
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/impact/dashboard',
+                pathname: '/TeamAdmin/user/dashboard/'+ this.state.cognito_user_id+'/'+this.state.player_name+'?team='+this.state.team+'&org='+this.state.organization+'&brand='+this.state.brand,
                 state: {
                     user_cognito_id: this.state.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,
@@ -1144,13 +1160,16 @@ class CommanderTeamView extends React.Component {
         }
 
         if (this.state.teamStats) {
+            var team_name = [];
+            team_name[0] = this.state.team;
             return <Redirect push to={{
                 pathname: '/TeamStats',
                 state: {
                     user_cognito_id: this.state.user_cognito_id,
+                    for: 'Players',
                     team: {
                         brand: this.state.brand,
-                        team_name: this.state.team,
+                        team_name: team_name,
                         organization: this.state.organization,
                         staff: []
                     }
@@ -1158,6 +1177,7 @@ class CommanderTeamView extends React.Component {
             }} />
         }
 
+ 
         return (
             <React.Fragment>
                 {this.props.isMilitaryVersionActive === true ? (

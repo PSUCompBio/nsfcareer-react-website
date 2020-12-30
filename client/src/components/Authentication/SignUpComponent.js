@@ -2,20 +2,28 @@ import React from 'react';
 import LoginComponent from './LoginComponent';
 import { Link, withRouter, Redirect } from 'react-router-dom';
 import { formDataToJson } from '../../utilities/utility';
-import { signUp,singUpWithToken, getUserDBDetails, getUserTokenDBDetails, getOrgUniqueList, getOrgUniqueTeams } from '../../apis';
-import { useParams } from "react-router";
+import { 
+  // signUp,
+  // singUpWithToken, 
+  // getUserDBDetails, 
+  getUserTokenDBDetails, 
+  getOrgUniqueList, 
+  getOrgUniqueTeams 
+} from '../../apis';
+
+// import { useParams } from "react-router";
 import '../../mixed_style.css';
 import Footer from '../Footer';
 import CountryCode from '../../config/CountryCode.json';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { subYears } from 'date-fns';
-import { getStatusOfDarkmode } from '../../reducer';
+// import { getStatusOfDarkmode } from '../../reducer';
 import Spinner from '../Spinner/Spinner';
-import DarkMode from '../DarkMode';
+// import DarkMode from '../DarkMode';
 import moment from 'moment';
 import MaskedInput from 'react-text-mask'
-import SelectSearch from 'react-select-search';
+// import SelectSearch from 'react-select-search';
 import Select from 'react-select';
 import $ from 'jquery';
 let options = [];
@@ -45,7 +53,6 @@ class SignUpComponent extends React.Component {
       email: '',
       level: '',
       sensor:'',
-      team: '',
       organization:'',
       baseUrl: window.location.origin.toString(),
       isDirectSingUp: false,
@@ -70,7 +77,7 @@ class SignUpComponent extends React.Component {
 
   handleGuardianEmailChange(e){
       console.log("Vioolent");
-      if (this.usernameEmail.current.value == this.guardianEmail.current.value) {
+      if (this.usernameEmail.current.value === this.guardianEmail.current.value) {
           alert("Guardian/Parent Email can't be same as your personal email.")
           this.guardianEmail.current.value = "";
 
@@ -94,7 +101,7 @@ class SignUpComponent extends React.Component {
       });
       getOrgUniqueList()
       .then(data =>{
-          if(data.data.message == "success"){
+          if(data.data.message === "success"){
             this.setState({
               organizationList: data.data.data
             })
@@ -115,7 +122,7 @@ class SignUpComponent extends React.Component {
       $('#first_name').val(data.first_name);
       $('#last_name').val(data.last_name);
       $('#user_name').val(data.email);
-      if(data.type == 'google'){
+      if(data.type === 'google'){
         $('#userIDgoogle').val(data.userID);
         $('#userIDfacebook').val('');
       }else{
@@ -131,7 +138,7 @@ class SignUpComponent extends React.Component {
       });
       getOrgUniqueList()
       .then(data =>{
-          if(data.data.message == "success"){
+          if(data.data.message === "success"){
             this.setState({
               organizationList: data.data.data
             })
@@ -191,7 +198,7 @@ class SignUpComponent extends React.Component {
    handleInputChange = (e) =>{
     const name = e.target.name;
     console.log(e.target.value)
-    if(name == 'phone_number'){
+    if(name === 'phone_number'){
        var value = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
        if(value.length < 11){
          this.setState({[name]: [value]});
@@ -347,7 +354,7 @@ class SignUpComponent extends React.Component {
         getOrgUniqueTeams({org:selectedOption.value })
         .then(data => {
           console.log('teams',data)
-          if(data.data.message == 'success'){
+          if(data.data.message === 'success'){
             var opt = data.data.data;
             opt = opt.filter(item => item.team_name);
             console.log('opt',opt)
@@ -378,16 +385,16 @@ class SignUpComponent extends React.Component {
     let isClearable = true;
     return (
       <form className="mt-5" onSubmit={this.handleSubmit} ref="signUpForm">
-        {this.forJsx(this.state.baseUrl+'/'+'img/icon/user.svg', 'First name', 'first_name')}
-        {this.forJsx(this.state.baseUrl+'/'+'img/icon/user.svg', 'Last name', 'last_name')}
+        {this.forJsx(`${this.state.baseUrl}/img/icon/user.svg`, 'First name', 'first_name')}
+        {this.forJsx(`${this.state.baseUrl}/img/icon/user.svg`, 'Last name', 'last_name')}
         
-        {(this.props.location.pathname === '/SignUpElse')? this.forJsx(this.state.baseUrl+'/'+'img/icon/user.svg', 'Organization', 'organization'): null}
-        {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole(this.state.baseUrl+'/'+'img/icon/arrowDown.svg'): null}
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsx(`${this.state.baseUrl}/img/icon/user.svg`, 'Organization', 'organization'): null}
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole(`${this.state.baseUrl}/img/icon/arrowDown.svg`): null}
 
         <div className="input-group mb-5">
           <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon1">
-              <img className="age" src={this.state.baseUrl+'/'+"img/icon/age.svg"} alt="" />
+              <img className="age" src={`${this.state.baseUrl}/img/icon/age.svg`} alt="" />
             </span>
           </div>
           <DatePicker
@@ -471,7 +478,7 @@ class SignUpComponent extends React.Component {
           <div className="input-group mb-5">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src={this.state.baseUrl+'/'+"img/icon/envelop.svg"} alt="" />
+                <img src={`${this.state.baseUrl}/img/icon/envelop.svg`} alt="" />
               </span>
             </div>
             <input
@@ -496,7 +503,7 @@ class SignUpComponent extends React.Component {
                   <div className="input-group mb-5">
                     <div className="input-group-prepend">
                       <span className="input-group-text" id="basic-addon1">
-                        <img src={this.state.baseUrl+'/'+"img/icon/envelop.svg"} alt="" />
+                        <img src={`${this.state.baseUrl}/img/icon/envelop.svg`} alt="" />
                       </span>
                     </div>
                     <input
@@ -515,13 +522,13 @@ class SignUpComponent extends React.Component {
             : null
         }
 
-        {this.forJsxPassowrd(this.state.baseUrl+'/'+'img/icon/lock.svg', 'Password', 'password')}
+        {this.forJsxPassowrd(`${this.state.baseUrl}/img/icon/lock.svg`, 'Password', 'password')}
 
         <div className="form-row mb-3">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src={this.state.baseUrl+'/'+"img/icon/gender.svg"} alt="" />
+                <img src={`${this.state.baseUrl}/img/icon/gender.svg`} alt="" />
               </span>
             </div>
             <input type="hidden" name="user_type" defaultValue={this.state.userType} />
@@ -544,7 +551,7 @@ class SignUpComponent extends React.Component {
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img style={{"width": "25px"}} src={this.state.baseUrl+'/'+"img/icon/orgicon.png"} alt="" />
+                <img style={{"width": "25px"}} src={`${this.state.baseUrl}/img/icon/orgicon.png`} alt="" />
               </span>
             </div>
             {/*<SelectSearch options={options} search  onChange={this.handleOrgChange} placeholder="(Optional) Select your organization" />*/}
@@ -575,7 +582,7 @@ class SignUpComponent extends React.Component {
             <div className="input-group mb-3">
               <div className="input-group-prepend">
                 <span className="input-group-text" id="basic-addon1">
-                  <img style={{"width": "25px"}} src={this.state.baseUrl+'/'+"img/icon/team-icon.png"} alt="" />
+                  <img style={{"width": "25px"}} src={`${this.state.baseUrl}/img/icon/team-icon.png`} alt="" />
                 </span>
               </div>
               {/*<SelectSearch options={this.state.teams} search  placeholder="(Optional) Select your Team" />*/}
@@ -594,7 +601,7 @@ class SignUpComponent extends React.Component {
           <div className="input-group mb-2">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src={this.state.baseUrl+'/'+"img/icon/age.svg"} alt="" />
+                <img src={`${this.state.baseUrl}/img/icon/age.svg`} alt="" />
               </span>
             </div>
             <input
@@ -622,17 +629,17 @@ class SignUpComponent extends React.Component {
   getTokenSignupForm = () => {
     return (
       <form className="mt-5" onSubmit={this.handleSubmitTokenForm} ref="signUpForm">
-        {this.forJsx2(this.state.baseUrl+'/'+'img/icon/user.svg', 'First name', 'first_name',this.state.first_name)}
-        {this.forJsx2(this.state.baseUrl+'/'+'img/icon/user.svg', 'Last name', 'last_name',this.state.last_name)}
+        {this.forJsx2(`${this.state.baseUrl}/img/icon/user.svg`, 'First name', 'first_name',this.state.first_name)}
+        {this.forJsx2(`${this.state.baseUrl}/img/icon/user.svg`, 'Last name', 'last_name',this.state.last_name)}
         
-        {(this.props.location.pathname === '/SignUpElse')? this.forJsx('img/icon/user.svg', 'Organization', 'organization'): null}
-        {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole('img/icon/arrowDown.svg'): null}
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsx(`${this.state.baseUrl}/img/icon/user.svg`, 'Organization', 'organization'): null}
+        {(this.props.location.pathname === '/SignUpElse')? this.forJsxRole(`${this.state.baseUrl}/img/icon/arrowDown.svg`): null}
 
         <div className="input-group mb-5">
           <input type="hidden" name="InviteToken" id="InviteToken" value={this.state.user_cognito_id} />
           <div className="input-group-prepend">
             <span className="input-group-text" id="basic-addon1">
-              <img className="age" src={this.state.baseUrl+'/'+"img/icon/age.svg"} alt="" />
+              <img className="age" src={`${this.state.baseUrl}/img/icon/age.svg`} alt="" />
             </span>
           </div>
           <DatePicker
@@ -706,7 +713,7 @@ class SignUpComponent extends React.Component {
           <div className="input-group mb-5">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src={this.state.baseUrl+'/'+"img/icon/envelop.svg"} alt="" />
+                <img src={`${this.state.baseUrl}/img/icon/envelop.svg`} alt="" />
               </span>
             </div>
             <input
@@ -731,7 +738,7 @@ class SignUpComponent extends React.Component {
                   <div className="input-group mb-5">
                     <div className="input-group-prepend">
                       <span className="input-group-text" id="basic-addon1">
-                        <img src={this.state.baseUrl+'/'+"img/icon/envelop.svg"} alt="" />
+                        <img src={`${this.state.baseUrl}/img/icon/envelop.svg`} alt="" />
                       </span>
                     </div>
                     <input
@@ -750,13 +757,13 @@ class SignUpComponent extends React.Component {
             : null
         }
 
-        {this.forJsxPassowrd(this.state.baseUrl+'/'+'img/icon/lock.svg', 'Password', 'password',this.state.password)}
+        {this.forJsxPassowrd(`${this.state.baseUrl}/img/icon/lock.svg`, 'Password', 'password',this.state.password)}
 
         <div className="form-row">
           <div className="input-group mb-3">
             <div className="input-group-prepend">
               <span className="input-group-text" id="basic-addon1">
-                <img src={this.state.baseUrl+'/'+"img/icon/gender.svg"} alt="" />
+                <img src={`${this.state.baseUrl}/img/icon/gender.svg`} alt="" />
               </span>
             </div>
             <input type="hidden" name="user_type" defaultValue={this.state.userType} />
@@ -843,7 +850,7 @@ class SignUpComponent extends React.Component {
               )
                : null}
                 <div className="text-center brain-icon">
-                  <img src={this.state.baseUrl+'/'+"img/icon/brain.png"} alt="" />
+                  <img src={`${this.state.baseUrl}/img/icon/brain.png`} alt="" />
                 </div>
                 {this.state.singupWithToken ? this.state.Invaliduser ? '' : this.getTokenSignupForm() :  this.getForm()}
                 {this.state.isLoading ? (

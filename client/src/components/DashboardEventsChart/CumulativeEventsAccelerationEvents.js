@@ -1,7 +1,7 @@
 import React from 'react';
 import { svgToInline } from '../../config/InlineSvgFromImg';
 import CumulativeAccelerationEventChart from '../Charts/CumulativeAccelerationEventChart';
-import CumulatieAccelerationToTimeEventChart from '../Charts/CumulatieAccelerationToTimeEventChart';
+// import CumulatieAccelerationToTimeEventChart from '../Charts/CumulatieAccelerationToTimeEventChart';
 
 class CumulativeEventsAccelerationEvents extends React.Component {
 
@@ -9,10 +9,10 @@ class CumulativeEventsAccelerationEvents extends React.Component {
     super(props);
     console.log("Received in Props", props)
     this.state = {
-        is_selfie_image_uploaded : props.is_selfie_image_uploaded,
-        imageUrl : props.imageUrl,
-        user : props.user,
-        team : props.team
+      is_selfie_image_uploaded: props.is_selfie_image_uploaded,
+      imageUrl: props.imageUrl,
+      user: props.user,
+      team: props.team
     };
   }
 
@@ -25,7 +25,7 @@ class CumulativeEventsAccelerationEvents extends React.Component {
     return (
       <div className="row cumm mb-5 ">
         <div className="col-md-12 col-lg-12">
-          <CumulativeAccelerationEventChart brainRegions={this.props.brainRegions}  jsonData={this.props.jsonData} user={this.state.user} team={this.state.team} is_selfie_image_uploaded={this.state.is_selfie_image_uploaded}  imageUrl={this.state.imageUrl} data={this.props.data}/>
+          <CumulativeAccelerationEventChart brainRegions={this.props.brainRegions} jsonData={this.props.jsonData} user={this.state.user} team={this.state.team} is_selfie_image_uploaded={this.state.is_selfie_image_uploaded} imageUrl={this.state.imageUrl} data={this.props.data} log_stream_name={this.props.log_stream_name}/>
 
         </div>
         {/*
