@@ -452,9 +452,9 @@ class InviteUsers extends React.Component {
                   this.setState({
                       user: true,
                       userDetails: response.data.data,
-                       isAuthenticated: true,
-                        isCheckingAuth: false,
-                        lavelFor: this.props.location.state.lavelFor
+                      isAuthenticated: true,
+                      isCheckingAuth: false,
+                      lavelFor: this.props.location.state.lavelFor
                   })
               }).catch((error) => {
                   this.setState({

@@ -67,6 +67,10 @@ let called_3 = false;
 let state_updated = false;
 let min = 0;
 let max = 100;
+
+let _isFirstUpdate = '';
+let _min = 0;
+let _max = 100;
 class Details extends React.Component {
   constructor(props) {
     super(props);
@@ -232,12 +236,32 @@ class Details extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
   setRangeValue =(value) =>{
-    if(min !== value.min && !this.state.left_lock_time){
-      // console.log('max',max)
-      this.setState({value :  {min:   value.min , max: max } })
-    } 
-    if(max !== value.max && !this.state.right_lock_time){
-      this.setState({value :  {min:   min , max: value.max } })
+    if(_isFirstUpdate === ''){
+      _isFirstUpdate = true;
+      _min = value.min;
+      _max = value.max;
+      if(min !== value.min && !this.state.left_lock_time){
+        console.log('updating min =',value.min , min ,'max value = ',value.max , max );
+        this.setState({value :  {min:   value.min , max: max } })
+      } 
+      if(max !== value.max && !this.state.right_lock_time){
+        console.log('updating max =',value.max , max , 'min value = ', value.min , min)
+
+        this.setState({value :  {min:   min , max: value.max } })
+      }
+    }else{
+      console.log('not fist update');
+      if(_min !== value.min && !this.state.left_lock_time){
+        _min = value.min
+        console.log('updating min =',value.min , _min ,'max value = ',value.max , _max );
+        this.setState({value :  {min:   value.min , max: _max } })
+      } 
+      if(_max !== value.max && !this.state.right_lock_time){
+        _max = value.max;
+        console.log('updating max =',value.max , _max , 'min value = ', value.min , _min)
+
+        this.setState({value :  {min:   _min , max: value.max } })
+      }
     }
   }
 
@@ -285,7 +309,7 @@ class Details extends React.Component {
     }
     let controls = {
       //Updating scroller to video time
-      handleProgress:  ()=> {
+       handleProgress:  ()=> {
         const percent = (video.currentTime / video.duration) * 100;
         
         lock_percent = percent;
@@ -368,7 +392,7 @@ class Details extends React.Component {
         // },1000)
       },
       scrub2: (e) =>{
-        if(min !== the.state.value['min']){
+        if(min !== the.state.value['min'] && !the.state.left_lock_time){
 
           min = the.state.value['min'];
           var off_X = progressBar_2.offsetWidth * the.state.value['min'] / 100;
@@ -379,7 +403,7 @@ class Details extends React.Component {
             video.currentTime = scrubTime;
           }
           isupdateMax = false;
-        }else if(max !== the.state.value['max']){
+        }else if(max !== the.state.value['max'] &&  !the.state.right_lock_time){
           max = the.state.value['max'];
           // eslint-disable-next-line
           var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
@@ -798,13 +822,16 @@ class Details extends React.Component {
       if(response.data.message === 'success'){
         this.setState({isTimeUpdating: false,left_lock_time: left_lock_time, right_lock_time: right_lock_time});
         $('.progress__filled_2').val(lock_percent_2);
+        if(!left_lock_time){
+            $('.input-range__slider').eq(0).css({'pointer-events': 'inherit'});
+        }
       }else{
         this.setState({isTimeUpdating: false});
          // $('.progress__filled').val(lock_percent);
          $('.progress__filled_2').val(lock_percent_2);
       }
       setTimeout(()=>{this.vidocontrol3()},3000);
-      setTimeout(()=>{this.vidocontrol()},1000);
+      // setTimeout(()=>{this.vidocontrol()},1000);
     }).catch(err=>{
       console.log('err',err)
     })
@@ -960,15 +987,15 @@ class Details extends React.Component {
                       </span>
                       :
                         <>
-                          <p>Name: {this.state.simulation_data.sensor_data.player['first-name'] +' '+this.state.simulation_data.sensor_data.player['last-name'] }</p>
+                          <p>Name: {this.state.simulation_data ? this.state.simulation_data.sensor_data.player['first-name'] +' '+this.state.simulation_data.sensor_data.player['last-name'] : ''}</p>
                           <p >
                             Account ID: {this.state.account_id}
                           </p>
                           <p>
                               Simulation ID: {this.state.log_stream_name ? this.state.log_stream_name.split('/')[2] : ''}
                           </p>
-                          <p>Impact ID: {this.state.simulation_data.sensor_data.player['impact-id'] ? this.state.simulation_data.sensor_data.player['impact-id'] : ''}</p>
-                          <p>Position: {this.state.simulation_data.sensor_data.player['position']}</p>
+                          <p>Impact ID: { this.state.simulation_data ? this.state.simulation_data.sensor_data.player['impact-id'] ? this.state.simulation_data.sensor_data.player['impact-id'] : '' : ''}</p>
+                          <p>Position: {this.state.simulation_data ? this.state.simulation_data.sensor_data.player['position'] : ''}</p>
                         </>
                     }
                   </div>
@@ -978,11 +1005,14 @@ class Details extends React.Component {
                 <div className="col-md-12 col-lg-12 brain-simlation-details-graph">
                   <h4 className="brain-simlation-details-subtitle">Input From Sensor</h4>
                   <div className="col-md-6" style={{'float':'left'}}>
+                    {this.state.simulation_data && 
                     <HeadLinearAccelerationAllEvents data={this.state.simulation_data}/>
+                    }
                   </div>
                   <div className="col-md-6" style={{'float':'left'}}>
-                    
+                    {this.state.simulation_data &&
                       <HeadAngularAccelerationAllEvents   data={this.state.simulation_data}/>
+                    }
                     
                     
                   </div>
@@ -1127,7 +1157,7 @@ class Details extends React.Component {
                                 <InputRange
                                   maxValue={100}
                                   minValue={0}
-                                  step={0.01}
+                                  step={2}
                                   value={this.state.value}
                                   onChange={value => this.setRangeValue(value)} 
                                 />
@@ -1324,7 +1354,7 @@ class Details extends React.Component {
                     getCumulativeAccelerationTimeRecords({  organization: organization, player_id: this.state.player_id, team: team })
                     .then(res=>{
                       console.log('res',res);
-                      if(res.data.message !== "failure" && res.data.data[0]){
+                      if(res.data.message !== "failure"){
                         console.log('success')
                         console.log('res',res);
                         this.setState({

@@ -1033,6 +1033,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onMouseHover = (event, type) => {
+		// console.log('onMouseHover')
 		if (isClicked) return;
 		if (event !== "") event.preventDefault();
 
@@ -1077,6 +1078,7 @@ class ExportPlayerReport extends React.Component {
 
 	onMouseMove = (event) => {
 		// Set pick position
+		// console.log('mouseover')
 		this.setPickPosition(event);
 	};
 

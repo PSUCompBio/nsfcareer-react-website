@@ -6129,7 +6129,8 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     *    Creating directory...
     */
     var d = new Date();
-    let datetoday = d.getMonth()+'-'+d.getFullYear();
+    let month = d.getMonth() + 1;
+    let datetoday = month+'-'+d.getFullYear();
     var dir = 'public/uploads/'+datetoday;
 
     if (!fs.existsSync(dir)){
