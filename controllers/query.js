@@ -3284,6 +3284,27 @@ function deleteSimulation_imagesData(image_id){
     });
 }
 
+function getModalValidationDB(image_id){
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "modelValidation",
+            FilterExpression: "image_id = :image_id",
+            ExpressionAttributeValues: {
+               ":image_id": image_id
+            },
+            // ProjectionExpression: "organization, sensor, organization_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data) => {
+            if (err) {
+                reject(err);
+            }else{
+                resolve(data);
+            }
+        });
+    });
+}
+
 module.exports = {
     getUserDetails,
     getUserDetailBySensorId,
@@ -3380,5 +3401,6 @@ module.exports = {
     deleteSimulation_imagesData,
     InsertTrimVideoKey,
     updateTrimVideoKey,
-    getSernsorDataByOrgTeam
+    getSernsorDataByOrgTeam,
+    getModalValidationDB
 };

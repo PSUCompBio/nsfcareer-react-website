@@ -208,7 +208,8 @@ const {
         deleteSimulation_imagesData,
         InsertTrimVideoKey,
         updateTrimVideoKey,
-        getSernsorDataByOrgTeam
+        getSernsorDataByOrgTeam,
+        getModalValidationDB
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -9964,6 +9965,50 @@ app.post(`${apiPrefix}getTeamSpheres_Demo`, (req, res) => {
         
 });
 
+/**
+*Getting modal validation output...
+*/
+app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
+    console.log('modalValidationOutput')
+    let image_id = "ngkCxmTbR";
+    getModalValidationDB(image_id)
+    .then(response =>{
+        console.log('response',response.Items[0].file_path)
+        if(response.Items[0].file_path){
+            let file_path = response.Items[0].file_path+image_id+'_output.json';
+            getFileFromS3(file_path, config_env.usersbucket)
+            .then(data=>{
+                if(data.Body){
+                    var file = JSON.parse(data.Body.toString('utf-8'));
+                    console.log('data',file);
+                    res.send({
+                        status: 'success',
+                        data: file.plot,
+                    })
+                }else{
+                    res.send({
+                        status: 'faiure',
+                        message: 'File not found.',
+                    })
+                }
+                
+            }).catch(error=>{
+                console.log('error froms s3',error)
+                res.send({
+                    status: 'faiure',
+                    message: 'Failed to fetch output file.',
+                })
+            })
+
+        }
+    }).catch(err=>{
+        res.send({
+            status: 'faiure',
+            message: 'Failed to fetch output file.',
+        })
+        console.log('error when fetching -\n',err)
+    })
+})
 
 /*-- Demo api end --*/
 
