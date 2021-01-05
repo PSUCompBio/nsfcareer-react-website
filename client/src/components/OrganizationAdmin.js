@@ -559,13 +559,15 @@ class OrganizationAdmin extends React.Component {
                         <td>{organization.sensor ? organization.sensor : 'NA'}</td>
                         <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
                     </tr>;
+                }else{
+                    return '';
                 }
             }, this)
         return body
     }
 
     iterateTeam = () => {
-        console.log('sensorOrgList',this.state.sensorOrgList)
+        console.log('sensorOrgList',this.state.sensorOrgList)   
         let inc = 1;
         var cards = new Array(this.state.totalOrganization);
         console.log('cards',cards)
@@ -735,6 +737,7 @@ class OrganizationAdmin extends React.Component {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
+                                                {/* eslint-disable-next-line*/}
                                                     {staffList && staffList[0].map(function (staff, index) {
                                                         if(staff.data){
                                                             if(staff.data.level === 400){
@@ -751,6 +754,8 @@ class OrganizationAdmin extends React.Component {
                                                                     <td>{staff.data ? staff.data.email : ''} </td>
                                                                 </tr>
                                                             }
+                                                        }else{
+                                                            return '';
                                                         }
                                                     })}
 

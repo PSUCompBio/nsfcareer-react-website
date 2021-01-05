@@ -1,16 +1,16 @@
 import React from 'react';
-import { getStatusOfDarkmode } from '../../../reducer';
-import SignatureCanvas from 'react-signature-canvas'
+// import { getStatusOfDarkmode } from '../../../reducer';
+// import SignatureCanvas from 'react-signature-canvas'
 import Footer from '../.././Footer';
 
 import {
-  Link,
-  Redirect
+  // Link,
+  // Redirect
 } from "react-router-dom";
-import { Container, Row, Col } from 'react-bootstrap';
+// import {  Row, Col } from 'react-bootstrap';
 import { reSendVerficationEmail } from '../../../apis';
 
-let sigPad = {};
+// let sigPad = {};
 class sendEmailVerifation extends React.Component {
 
   constructor(props){
@@ -45,14 +45,14 @@ class sendEmailVerifation extends React.Component {
     reSendVerficationEmail({user_name:this.state.user_name})
     .then(res=>{
       console.log(res);
-      if(res.data.message == "success"){
+      if(res.data.message === "success"){
         this.setState({
           isLoading:false,
           error: false,
           message: res.data.message_details
         })
       }
-      else if(res.data.message = "failure"){
+      else if(res.data.message === "failure"){
         this.setState({
           isLoading:false,
           error: res.data.error,
@@ -73,6 +73,7 @@ class sendEmailVerifation extends React.Component {
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">  
             {/*Body Section start here*/}
               <div className="col-md-6 mb-6  offset-md-3 p-3 animated fadeInRight">
+              {/*eslint-disable-next-line*/}
                 <div style={{ paddingLeft: "0% !important" }} ref="loginForm" style={{ margin: "3%" }} className="card card-border">
                   <div className="card-body">
                     <div ref="brainIcon" className="text-center brain-icon">

@@ -10,11 +10,11 @@ import GLB from './SoldierMesh.glb';
 import ArrowGLB from './ArrowMesh.glb';
 import './military.css';
 import { getStatusOfDarkmode } from '../../reducer';
-import DarkMode from './../../components/DarkMode';
+// import DarkMode from './../../components/DarkMode';
 
 let obj;
-let stage = 0;
-let oldx = 0;
+// let stage = 0;
+// let oldx = 0;
 let pointArray = [
 					// [
 					// 	['x', 'p(kpa)'],
@@ -931,7 +931,7 @@ class MilitaryPage extends React.Component {
 			show_blinking_arrow_step2: 'none',
 			margin_left_trigulated: ''
 		});
-
+		// eslint-disable-next-line
 		const timer = setTimeout(() => {
 			this.setState({
 				triangular_graph_text: 'Brain simulation completed',

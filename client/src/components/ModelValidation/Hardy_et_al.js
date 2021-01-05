@@ -1,18 +1,18 @@
 import React from 'react';
-import { getStatusOfDarkmode } from '../../reducer';
-import SignatureCanvas from 'react-signature-canvas'
+// import { getStatusOfDarkmode } from '../../reducer';
+// import SignatureCanvas from 'react-signature-canvas'
 import Footer from '../Footer';
 
 import {
   Link,
-  Redirect
+  // Redirect
 } from "react-router-dom";
 import { Container, Row, Col , Card, Button} from 'react-bootstrap';
 
-import axios from 'axios';
-import grater_icon from "./grater_icon.png"
+// import axios from 'axios';
+// import grater_icon from "./grater_icon.png"
 import C288_T3 from "./subpages/C288_T3"
-let sigPad = {};
+// let sigPad = {};
 class Hardy_et_al extends React.Component {
   constructor(props){
       super(props);
@@ -32,7 +32,7 @@ class Hardy_et_al extends React.Component {
   }
   contentBody =()=>{
     console.log('pathname',this.state.pathname)
-    if(this.state.pathname == '/Hardy-et-al' || this.state.pathname == '/Hardy-et-al/'){
+    if(this.state.pathname === '/Hardy-et-al' || this.state.pathname === '/Hardy-et-al/'){
       return <React.Fragment>  
         <Container>
           <Row>
@@ -152,7 +152,7 @@ class Hardy_et_al extends React.Component {
       </React.Fragment>
     }else{
       console.log('case',this.props.match.params.cases)
-      if(this.props.match.params.cases == 'C288-T3'){
+      if(this.props.match.params.cases === 'C288-T3'){
         return <C288_T3/>
       }else{
         return null

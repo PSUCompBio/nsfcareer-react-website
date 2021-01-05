@@ -1,8 +1,7 @@
 import React from 'react';
 import Report from '../../ReportContent/ReportMASxSR15';
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-import $ from 'jquery';
-var USER_TYPES = [];
+import { PDFDownloadLink} from '@react-pdf/renderer';
+
 
 class DownloadReportMASxSR15 extends React.Component {
   constructor() {

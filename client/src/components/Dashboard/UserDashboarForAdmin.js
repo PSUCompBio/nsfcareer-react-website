@@ -1,12 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import PlayerDetails from '../PlayerDetails/PlayerDetails';
-import CumulativeEvents from '../DashboardEventsChart/CumulativeEvents';
 import CumulativeEventsAccelerationEvents from '../DashboardEventsChart/CumulativeEventsAccelerationEvents';
-import HeadAccelerationEvents from '../DashboardEventsChart/HeadAccelerationEvents';
 import HeadAccelerationAllEvents from '../DashboardEventsChart/HeadAccelerationAllEvents';
 import { svgToInline } from '../../config/InlineSvgFromImg';
-// import DarkMode from '../DarkMode';
 import Footer from '../Footer';
 import 'jquery';
 import '../Buttons/Buttons.css';
@@ -16,25 +12,14 @@ import {
   isAuthenticated,
   getCumulativeAccelerationData,
   getSimulationFilesOfPlayer,
-  getAllCumulativeAccelerationTimeRecords,
   AllCumulativeAccelerationTimeRecords,
-  getAllCumulativeAccelerationJsonData,
   getCumulativeAccelerationTimeRecords
 } from '../../apis';
 
-import { Form,Button, Collapse,Accordion, Card } from 'react-bootstrap';
-
-
-
+import { Button,Accordion, Card } from 'react-bootstrap';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
-
-
-
 import Spinner from '../Spinner/Spinner';
-
 import ScrollToTop from 'react-scroll-up';
-
 import { getStatusOfDarkmode } from '../../reducer';
 import $ from 'jquery';
 
@@ -66,6 +51,7 @@ class UserDashboarForAdmin extends React.Component {
       loading: false,
       isLoading: true,
       loaded_data: [],
+      log_stream_name: '',
       cognito_user_id: this.props.match.params.cognito_user_id,
       player_name:this.props.match.params.player_name ? this.props.match.params.player_name.split('?')[0] : '' 
     };
@@ -85,7 +71,7 @@ class UserDashboarForAdmin extends React.Component {
     this.setState({
       simulationFilePaths: []
     })
-    if (event.target.value != "-1") {
+    if (event.target.value !== "-1") {
       getSimulationFilesOfPlayer({ path: event.target.value })
         .then(response => {
           this.setState({
@@ -123,8 +109,8 @@ class UserDashboarForAdmin extends React.Component {
     $("#"+col_id).toggleClass('show');
     $("#col_icon"+col_id).toggleClass('rotate-collapse');
     $("#spin_"+col_id).toggleClass('spin_display');
-    var loaded_data = this.state.loaded_data;
-    if(this.state.loaded_data.indexOf(e) == -1){
+    // var loaded_data = this.state.loaded_data;
+    if(this.state.loaded_data.indexOf(e) === -1){
       this.setState({loaded_data : this.state.loaded_data.concat(e)});
       this.setState({open: e});
       getCumulativeAccelerationTimeRecords({ brand: this.state.brand, user_cognito_id: this.state.user_cognito_id, organization: this.state.organization, player_id: e, team: this.state.team })
@@ -154,13 +140,13 @@ class UserDashboarForAdmin extends React.Component {
       const monthTmp = d.getMonth() + 1
       const month = plus0(monthTmp)
       const date = plus0(d.getDate())
-      
+      //eslint-disable-next-line
       return `${month}/${date}/${year}`+' |'
   }
 
   tConvert = (time) => {
     console.log(time)
-    if(time == 0){
+    if(time === 0){
       return 'Unknown Time'
     }else{
        // Check correct time format and split into components
@@ -231,7 +217,7 @@ class UserDashboarForAdmin extends React.Component {
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
         {this.state.jsonData &&  this.state.user && 
-          <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} />
+          <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} log_stream_name={this.state.log_stream_name}/>
         }
           <p
             ref="h1"
@@ -265,8 +251,11 @@ class UserDashboarForAdmin extends React.Component {
                       </div>
                       <div className="col-md-8"  style={{'float':'left'}}>
                         <div className="injury_matrix_section">
+                          {/*eslint-disable-next-line*/}
                           <button className="injury_mat active" className="settings-buttons settings-buttons-active">MPS</button>
+                          {/*eslint-disable-next-line*/}
                           <button className="injury_mat" className="settings-buttons">Axonal Strain</button>
+                          {/*eslint-disable-next-line*/}
                           <button className="injury_mat" className="settings-buttons" >CSDM</button>
                         </div>
                       </div>
@@ -339,9 +328,11 @@ class UserDashboarForAdmin extends React.Component {
                 </Card.Header>
                 <Accordion.Collapse eventKey={item.sensor_data.player_id} id={item.sensor_data && item.sensor_data.player_id.split('$')[1]}>
                   <Card.Body>
+                    {/*eslint-disable-next-line*/}
                     {this.state.cumulativeAccelerationTimeAlldata ? 
+                        //eslint-disable-next-line
                         this.state.cumulativeAccelerationTimeAlldata.map(function (items, index) {
-                          if(items.sensor_data.player_id == item.sensor_data.player_id){
+                          if(items.sensor_data.player_id === item.sensor_data.player_id){
                            return <HeadAccelerationAllEvents key={index} linearUnit={the.state.linearUnit} is_selfie_simulation_file_uploaded={the.state.user.is_selfie_simulation_file_uploaded} imageUrl={the.state.user.simulation_file_url} data={items} state={the.state.state} organization ={the.state.organization}  player_id={item.sensor_data.player_id} team={the.state.team} brand={the.state.brand} status={item.status}/>
                           }
                         })
@@ -394,7 +385,7 @@ class UserDashboarForAdmin extends React.Component {
         brand = params.get('brand');
         user_cognito_id = localstorage.userInfo['user_cognito_id'];
         var level = localstorage.userInfo['level'];
-        if(level == 100){
+        if(level === 100){
           brand = localstorage.userInfo['sensor'];
         }
     }
@@ -436,6 +427,7 @@ class UserDashboarForAdmin extends React.Component {
               this.setState({
                 user: {},
                 isCheckingAuth: false,
+                //eslint-disable-next-line
                 isCheckingAuth: false
               });
             })
@@ -444,6 +436,8 @@ class UserDashboarForAdmin extends React.Component {
             /*
             * getting Acceleration data...
             */
+            //eslint-disable-next-line
+            var image_id = '';
             getCumulativeAccelerationData({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
               .then(response => {
                 this.setState({
@@ -454,6 +448,8 @@ class UserDashboarForAdmin extends React.Component {
                   user_cognito_id: user_cognito_id,
                   cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: brand, team: team, user_cognito_id: user_cognito_id, organization: organization, staff: [], player_id: this.state.player_name, simulationCount: response.data.simulationCount}
                 });
+                console.log('cumulativeAccelerationEventData ----\n', response)
+                image_id = response.data.data.image_id;
                 return AllCumulativeAccelerationTimeRecords({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
               })
 
@@ -462,6 +458,7 @@ class UserDashboarForAdmin extends React.Component {
                 this.setState({
                   cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
   		            brainRegions: response.data.brainRegions,
+                  log_stream_name: response.data.data ? response.data.data[0].log_stream_name : '', 
                   jsonData: response.data.data,
                   isLoading: false,
                 });

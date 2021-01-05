@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import {
-  getUserDetails,
   isAuthenticated
 } from '../../apis';
 import Spinner from '../Spinner/Spinner';
@@ -26,7 +25,7 @@ class Dashboard extends React.Component {
     if (this.state.isAuthenticated && !this.state.isCheckingAuth) {
       if (this.state.userDetails.level === 1000) {
         return <Redirect to="/AdminDashboard" />;
-      } else if (this.state.userDetails.level === 400) {
+      } else if (this.state.userDetails.level === 400) {  
         return <Redirect to={{
           pathname: '/OrganizationAdmin',
           state: {

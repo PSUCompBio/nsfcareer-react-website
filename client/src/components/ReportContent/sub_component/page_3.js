@@ -1,30 +1,5 @@
 import React from 'react';
-import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-
-const styles = StyleSheet.create({
-    page: {
-        flexDirection: 'row',
-        backgroundColor: 'white'
-    },
-    section: {
-        margin: 10,
-        padding: 10,
-        flexGrow: 1
-    },
-    view: {
-        width: '100%',
-        height: '100%',
-        padding: 0,
-        backgroundColor: 'white',
-    },
-    col12: {
-        width: '100%',
-        paddingLeft : '5%',
-        paddingRight : '5%',
-    },
-    
-   
-});
+import {  Page, Text, View } from '@react-pdf/renderer';
 
 class page_3 extends React.Component {
     constructor(props) {

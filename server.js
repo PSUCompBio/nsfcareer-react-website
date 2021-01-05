@@ -208,7 +208,8 @@ const {
         deleteSimulation_imagesData,
         InsertTrimVideoKey,
         updateTrimVideoKey,
-        getSernsorDataByOrgTeam
+        getSernsorDataByOrgTeam,
+        getModalValidationDB
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -6129,7 +6130,8 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     *    Creating directory...
     */
     var d = new Date();
-    let datetoday = d.getMonth()+'-'+d.getFullYear();
+    let month = d.getMonth() + 1;
+    let datetoday = month+'-'+d.getFullYear();
     var dir = 'public/uploads/'+datetoday;
 
     if (!fs.existsSync(dir)){
@@ -6699,6 +6701,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                         sensor_data: accData,   
                         status: imageData ? imageData.status : '',
                         computed_time : imageData ? imageData.computed_time : '',
+                        log_stream_name: imageData.log_stream_name,
                         date_time: accData.player_id.split('$')[1]
                     })
 
@@ -7622,7 +7625,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                 if (requested_player_list && requested_player_list.length > 0) {
                     let p_cnt = 0;
                     requested_player_list.forEach(function (p_record) {
-                        console.log('p_record',p_record)
+                        console.log('p_record 11',p_record)
                         getUserDetails(p_record)
                             .then (user_detail => {
                                 p_cnt++; 
@@ -7650,7 +7653,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                 var p_data = [];
                 var player_listLen = player_list.length;
                 player_list.forEach(function (player, index) {
-                    console.log('player',player)
+                    console.log('player 112',player)
                     if(player && player != 'undefined'){
                         console.log('player_list', player);
                         let p = player;
@@ -7685,6 +7688,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
 
                                             getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
                                                 .then (u_detail => {
+                                                    console.log('user details ', u_detail[0]['first_name'])
                                                     p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
                                                     k++;
                                                     if (k == p_data.length) {
@@ -8540,222 +8544,131 @@ app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
 });
 
 app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
-     let brainRegions = {};
-            let principal_max_strain = {};
-            let principal_min_strain = {};
-            let axonal_strain_max = {};
-            let csdm_max = {};
-            let masXsr_15_max = {};
-            let MPS_95  = {};
-            let CSDM_5  = {};
-            let CSDM_10 = {};
-            let CSDM_15 = {};
-
-            let cnt = 1;
-
-            
-            brainRegions['principal-max-strain'] = {};
-            brainRegions['principal-min-strain'] = {};
-            brainRegions['axonal-strain-max'] = {};
-            brainRegions['csdm-max'] = {};
-            brainRegions['masXsr-15-max'] = {};
-            brainRegions['MPS-95'] = {};
-            brainRegions['CSDM-5'] = {};
-            brainRegions['CSDM-10'] = {};
-            brainRegions['CSDM-15'] = {};
-
-            
-            res.send({
-                message: "success",
-                brainRegions: brainRegions
-            })
-        // }
-    /* getTeamSpheres(req.body)
+    console.log('req ----',req.body)
+    let spharesData = [];
+    let count_sp = 0;
+    req.body.team.forEach(function (team_name, index) {
+        getTeamSpheres({brand:req.body.brand, organization: req.body.organization, team: team_name})
         .then(data => {
-            console.log('getTeamSpheres ============================\n',data)
-           
+            spharesData = spharesData.concat(data);
+            count_sp++;
+            if(count_sp == req.body.team.length){
+                data = spharesData;
+                console.log('data of team sphares -----\n',data)
 
-            let players = [];
-            const processData = data.map(acc_data => {
-                return new Promise((resolve, reject) => {
-                    let player_id = acc_data.player_id.split('$')[0];
-                    if (!players.includes(player_id)) {
-                        players.push(player_id);
-                        getPlayerSimulationStatus(acc_data.image_id)
-                            .then(imageData => {
-                                if (imageData.player_name && imageData.player_name != 'null') {
-                                    console.log(imageData.player_name + '/simulation/summary.json');
-                                    let file_path = imageData.player_name + '/simulation/summary.json';
-                                    return getFileFromS3(file_path, imageData.bucket_name);
-                                }
-                            })
-                            .then(output_file => {
-                                if (output_file) {
-                                    outputFile = JSON.parse(output_file.Body.toString('utf-8'));
-                                    if (outputFile.Insults) {
-                                        outputFile.Insults.forEach(function (summary_data, index) {
-                                            if (summary_data['principal-max-strain']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['principal-max-strain'].location[0];
-                                                coordinate.y = summary_data['principal-max-strain'].location[1];
-                                                coordinate.z = summary_data['principal-max-strain'].location[2];
-                                                region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
-                                                principal_max_strain[region] = principal_max_strain[region] || [];
-                                                principal_max_strain[region].push(coordinate);
-                                            }
-                                            if (summary_data['principal-min-strain']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['principal-min-strain'].location[0];
-                                                coordinate.y = summary_data['principal-min-strain'].location[1];
-                                                coordinate.z = summary_data['principal-min-strain'].location[2];
-                                                region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
-                                                principal_min_strain[region] = principal_min_strain[region] || [];
-                                                principal_min_strain[region].push(coordinate);
-                                            }
-                                            if (summary_data['axonal-strain-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['axonal-strain-max'].location[0];
-                                                coordinate.y = summary_data['axonal-strain-max'].location[1];
-                                                coordinate.z = summary_data['axonal-strain-max'].location[2];
-                                                region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
-                                                axonal_strain_max[region] = axonal_strain_max[region] || [];
-                                                axonal_strain_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['csdm-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['csdm-max'].location[0];
-                                                coordinate.y = summary_data['csdm-max'].location[1];
-                                                coordinate.z = summary_data['csdm-max'].location[2];
-                                                region = summary_data['csdm-max']['brain-region'].toLowerCase();
-                                                csdm_max[region] = csdm_max[region] || [];
-                                                csdm_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['masXsr-15-max']) {
-                                                let coordinate = {};
-                                                coordinate.x = summary_data['masXsr-15-max'].location[0];
-                                                coordinate.y = summary_data['masXsr-15-max'].location[1];
-                                                coordinate.z = summary_data['masXsr-15-max'].location[2];
-                                                region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
-                                                masXsr_15_max[region] = masXsr_15_max[region] || [];
-                                                masXsr_15_max[region].push(coordinate);
-                                            }
-                                            if (summary_data['MPS-95']) {
-                                               
-                                                if(summary_data['MPS-95']['frontal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['frontal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'frontal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['parietal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['parietal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'parietal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['msc']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['msc'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'msc';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['cerebellum']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'cerebellum';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['occipital']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['occipital'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'occipital';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                                if(summary_data['MPS-95']['temporal']){
-                                                    var coordinate = {};
-                                                    summary_data['MPS-95']['temporal'].forEach(function (data, index) {
-                                                        
-                                                        coordinate.x = data[0];
-                                                        coordinate.y = data[1];
-                                                        coordinate.z = data[2];
-                                                        region = 'temporal';
-                                                        MPS_95[region] = MPS_95[region] || [];
-                                                        MPS_95[region].push(coordinate);
-                                                    })
-                                                }
-                                            }
-                                        })
+                let brainRegions = {};
+                let principal_max_strain = {};
+                let principal_min_strain = {};
+                let axonal_strain_max = {};
+                let csdm_max = {};
+                let masXsr_15_max = {};
+                let MPS_95  = {};
+                let CSDM_5  = {};
+                let CSDM_10 = {};
+                let CSDM_15 = {};
+                let MPS_95_DATA = [];
+                let MAX_ANGULAR_EXLARATION = [];
+
+
+
+                if (data.length === 0){
+                    brainRegions['principal-max-strain'] = {};
+                    brainRegions['principal-min-strain'] = {};
+                    brainRegions['axonal-strain-max'] = {};
+                    brainRegions['csdm-max'] = {};
+                    brainRegions['masXsr-15-max'] = {};
+                    brainRegions['MPS-95'] = {};
+                    brainRegions['CSDM-5'] = {};
+                    brainRegions['CSDM-10'] = {};
+                    brainRegions['CSDM-15'] = {};
+
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    })
+                }
+
+                let players = [];
+                const processData = data.map(acc_data => {
+                    return new Promise((resolve, reject) => {
+                        let player_id = acc_data.player_id.split('$')[0];
+                        if (!players.includes(player_id)) {
+                            players.push(player_id);
+                            getPlayerSimulationStatus(acc_data.image_id)
+                                .then(imageData => {
+                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                        console.log(imageData.player_name + '/simulation/summary.json');
+                                        let file_path = imageData.player_name + '/simulation/summary.json';
+                                        return getFileFromS3(file_path, imageData.bucket_name);
                                     }
-                                }
-                                resolve(null);
-                            })
-                            .catch(err => {
-                                reject(err);
-                            })
-                    } else {
-                        resolve(null);
-                    }
-                })
-            })
-
-            Promise.all(processData).then(resolveData => {
-                console.log('All executed');
-                brainRegions['principal-max-strain'] = principal_max_strain;
-                brainRegions['principal-min-strain'] = principal_min_strain;
-                brainRegions['axonal-strain-max'] = axonal_strain_max;
-                brainRegions['csdm-max'] = csdm_max;
-                brainRegions['masXsr-15-max'] = masXsr_15_max;
-                brainRegions['MPS-95'] = MPS_95;
-
-                res.send({
-                    message: "success",
-                    data: brainRegions
+                                })
+                                .then(output_file => {
+                                    if (output_file) {
+                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                        if (outputFile.Insults) {
+                                            outputFile.Insults.forEach(function (summary_data, index) {
+                                                pushdata(summary_data);
+                                            })
+                                        }
+                                    }
+                                    resolve(null);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                        } else {
+                            resolve(null);
+                        }
+                    })
                 });
-            });
-        })
-        .catch(err => {
+
+                const pushdata = (summary_data)=>{
+                    if (summary_data['MPS-95']) {
+                                                   
+                        if(summary_data['MPS-95']['value'] && summary_data['max-angular-acc-rads2']){
+                            MPS_95_DATA.push(summary_data['MPS-95']['value']);
+                            MAX_ANGULAR_EXLARATION.push(summary_data['max-angular-acc-rads2']);
+                        }
+                    }
+                }
+
+                Promise.all(processData).then(resolveData => {
+                    console.log('All executed');
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    });
+                });
+            }
+        }).catch(err => {
             res.send({
                 message : "failure",
                 error : err
             })
         }) 
-        */
+    })
+
+        
 });
 
 app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
     let filter = req.body.filter;
     let gs = parseInt(req.body.gs);
     let type = req.body.type;
+    let sensor = req.body.brand;
     console.log('req body -------------------------------\n',req.body)
     /**
     * Get sphares of each team 
@@ -8770,7 +8683,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
             count_sp++;
             if(count_sp == req.body.team.length){
                 data = spharesData;
-                console.log('data of team sphares -----\n',data)
+                // console.log('data of team sphares -----\n',data)
 
                 let brainRegions = {};
                 let principal_max_strain = {};
@@ -8806,112 +8719,123 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                         let player_id = acc_data.player_id.split('$')[0];
                         if (!players.includes(player_id)) {
                             players.push(player_id);
-                            getPlayerSimulationStatus(acc_data.image_id)
-                                .then(imageData => {
-                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                        console.log(imageData.player_name + '/simulation/summary.json');
-                                        let file_path = imageData.player_name + '/simulation/summary.json';
-                                        return getFileFromS3(file_path, imageData.bucket_name);
-                                    }
-                                })
-                                .then(output_file => {
-                                    if (output_file) {
-                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
-                                        if (outputFile.Insults) {
-                                            outputFile.Insults.forEach(function (summary_data, index) {
-                                                //** 
-                                                //Fetch value is less then....
-                                                if(filter == 'less'){
-                                                    if(type == 'resultant-Angular-acceleration'){
-                                                        if(summary_data['max-angular-acc-rads2'] <= gs){
-                                                            pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'resultant-linear-acceleration'){
-                                                        if(summary_data['max-linear-acc-g'] <= gs){
-                                                            pushdata(summary_data);
-                                                        }  
-                                                    }else if(type == 'principal-max-strain'){
-                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'principal-min-strain'){
-                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'csdm-max'){
-                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'axonal-strain-max'){
-                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'masXsr-15-max'){
-                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-5'){
-                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-10'){
-                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }
-                                                //** 
-                                                //Fetch value is greater then.....   
-                                                }else{
-                                                    if(type == 'resultant-Angular-acceleration'){
-                                                        if(summary_data['max-angular-acc-rads2'] >= gs){
-                                                           pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'resultant-linear-acceleration'){
-                                                        if(summary_data['max-linear-acc-g'] >= gs){
-                                                            pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'principal-max-strain'){
-                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'principal-min-strain'){
-                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'csdm-max'){
-                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'axonal-strain-max'){
-                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'masXsr-15-max'){
-                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-5'){
-                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-10'){
-                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'MPS-95'){
-                                                        if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }
-                                                }
-                                            })
+                            var newPlayerId = player_id+'-'+sensor;
+                            if(newPlayerId){
+                                console.log('player_id',newPlayerId)
+                                getUserDetailByPlayerId(newPlayerId)
+                                .then(userData => {
+                                    var player_status = userData[0].player_status
+                                    getPlayerSimulationStatus(acc_data.image_id)
+                                    .then(imageData => {
+                                        if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                            // console.log('imageData',imageData);
+                                            let file_path = imageData.player_name + '/simulation/summary.json';
+                                            return getFileFromS3(file_path, imageData.bucket_name);
                                         }
-                                    }
-                                    resolve(null);
-                                })
-                                .catch(err => {
+                                    })
+                                    .then(output_file => {
+                                        if (output_file && player_status == 'approved') {
+                                            outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                            if (outputFile.Insults) {
+                                                outputFile.Insults.forEach(function (summary_data, index) {
+                                                    //** 
+                                                    //Fetch value is less then....
+                                                    if(filter == 'less'){
+                                                        if(type == 'resultant-Angular-acceleration'){
+                                                            if(summary_data['max-angular-acc-rads2'] <= gs){
+                                                                pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'resultant-linear-acceleration'){
+                                                            if(summary_data['max-linear-acc-g'] <= gs){
+                                                                pushdata(summary_data);
+                                                            }  
+                                                        }else if(type == 'principal-max-strain'){
+                                                            if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'principal-min-strain'){
+                                                            if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'csdm-max'){
+                                                            if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'axonal-strain-max'){
+                                                            if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'masXsr-15-max'){
+                                                            if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-5'){
+                                                            if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-10'){
+                                                            if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }
+                                                    //** 
+                                                    //Fetch value is greater then.....   
+                                                    }else{
+                                                        if(type == 'resultant-Angular-acceleration'){
+                                                            if(summary_data['max-angular-acc-rads2'] >= gs){
+                                                               pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'resultant-linear-acceleration'){
+                                                            if(summary_data['max-linear-acc-g'] >= gs){
+                                                                pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'principal-max-strain'){
+                                                            if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'principal-min-strain'){
+                                                            if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'csdm-max'){
+                                                            if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'axonal-strain-max'){
+                                                            if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'masXsr-15-max'){
+                                                            if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-5'){
+                                                            if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-10'){
+                                                            if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'MPS-95'){
+                                                            if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                        resolve(null);
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    })
+                                    
+                                }).catch(err => {
                                     reject(err);
                                 })
+                            }
                         } else {
                             resolve(null);
                         }
@@ -9580,6 +9504,525 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
             })
         }) */
 });
+
+/**
+*   Demo filter team shpares api start here...
+*/
+
+app.post(`${apiPrefix}getFilterdTeamSpheres_demo`, (req, res) => {
+    console.log('body', req.body);
+    let filter = req.body.filter;
+    let gs = parseInt(req.body.gs);
+    let type = req.body.type;
+
+   
+    //**
+    let brainRegions = {};
+    let principal_max_strain = {};
+    let principal_min_strain = {};
+    let axonal_strain_max = {};
+    let csdm_max = {};
+    let masXsr_15_max = {};
+    let MPS_95  = {};
+    let CSDM_5  = {};
+    let CSDM_10 = {};
+    let CSDM_15 = {};
+
+    //Pushing data into array...
+    const pushdata = (summary_data)=>{
+        if (summary_data['principal-max-strain'] && summary_data['principal-max-strain']['brain-region']) {
+            let coordinate = {};
+            coordinate.x = summary_data['principal-max-strain'].location[0];
+            coordinate.y = summary_data['principal-max-strain'].location[1];
+            coordinate.z = summary_data['principal-max-strain'].location[2];
+            region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+            principal_max_strain[region] = principal_max_strain[region] || [];
+            principal_max_strain[region].push(coordinate);
+        }
+        if (summary_data['principal-min-strain'] && summary_data['principal-min-strain']['brain-region']) {
+            let coordinate = {};
+            coordinate.x = summary_data['principal-min-strain'].location[0];
+            coordinate.y = summary_data['principal-min-strain'].location[1];
+            coordinate.z = summary_data['principal-min-strain'].location[2];
+            region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+            principal_min_strain[region] = principal_min_strain[region] || [];
+            principal_min_strain[region].push(coordinate);
+        }
+        if (summary_data['axonal-strain-max']) {
+            let coordinate = {};
+            coordinate.x = summary_data['axonal-strain-max'].location[0];
+            coordinate.y = summary_data['axonal-strain-max'].location[1];
+            coordinate.z = summary_data['axonal-strain-max'].location[2];
+            region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+            axonal_strain_max[region] = axonal_strain_max[region] || [];
+            axonal_strain_max[region].push(coordinate);
+        }
+        if (summary_data['csdm-max']) {
+            let coordinate = {};
+            coordinate.x = summary_data['csdm-max'].location[0];
+            coordinate.y = summary_data['csdm-max'].location[1];
+            coordinate.z = summary_data['csdm-max'].location[2];
+            region = summary_data['csdm-max']['brain-region'].toLowerCase();
+            csdm_max[region] = csdm_max[region] || [];
+            csdm_max[region].push(coordinate);
+        }
+        if (summary_data['masXsr-15-max']) {
+            let coordinate = {};
+            coordinate.x = summary_data['masXsr-15-max'].location[0];
+            coordinate.y = summary_data['masXsr-15-max'].location[1];
+            coordinate.z = summary_data['masXsr-15-max'].location[2];
+            region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+            masXsr_15_max[region] = masXsr_15_max[region] || [];
+            masXsr_15_max[region].push(coordinate);
+        }
+        if (summary_data['CSDM-5']) {
+                                       
+            if(summary_data['CSDM-5']['frontal']){
+                var coordinate = {};
+                summary_data['CSDM-5']['frontal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'frontal';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['parietal']){
+                var coordinate = {};
+                summary_data['CSDM-5']['parietal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'parietal';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['msc']){
+                var coordinate = {};
+                summary_data['CSDM-5']['msc'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'msc';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['cerebellum']){
+                var coordinate = {};
+                summary_data['CSDM-5']['cerebellum'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'cerebellum';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['occipital']){
+                var coordinate = {};
+                summary_data['CSDM-5']['occipital'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'occipital';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-5']['temporal']){
+                var coordinate = {};
+                summary_data['CSDM-5']['temporal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'temporal';
+                    CSDM_5[region] = CSDM_5[region] || [];
+                    CSDM_5[region].push(coordinate);
+                })
+            }
+        }
+        if (summary_data['CSDM-10']) {
+                                       
+            if(summary_data['CSDM-10']['frontal']){
+                var coordinate = {};
+                summary_data['CSDM-10']['frontal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'frontal';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['parietal']){
+                var coordinate = {};
+                summary_data['CSDM-10']['parietal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'parietal';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['msc']){
+                var coordinate = {};
+                summary_data['CSDM-10']['msc'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'msc';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['cerebellum']){
+                var coordinate = {};
+                summary_data['CSDM-10']['cerebellum'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'cerebellum';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['occipital']){
+                var coordinate = {};
+                summary_data['CSDM-10']['occipital'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'occipital';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+            if(summary_data['CSDM-10']['temporal']){
+                var coordinate = {};
+                summary_data['CSDM-10']['temporal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'temporal';
+                    CSDM_10[region] = CSDM_10[region] || [];
+                    CSDM_10[region].push(coordinate);
+                })
+            }
+        }if (summary_data['MPS-95']) {
+                                       
+            if(summary_data['MPS-95']['frontal']){
+                var coordinate = {};
+                summary_data['MPS-95']['frontal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'frontal';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['parietal']){
+                var coordinate = {};
+                summary_data['MPS-95']['parietal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'parietal';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['msc']){
+                var coordinate = {};
+                summary_data['MPS-95']['msc'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'msc';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['cerebellum']){
+                var coordinate = {};
+                summary_data['MPS-95']['cerebellum'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'cerebellum';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['occipital']){
+                var coordinate = {};
+                summary_data['MPS-95']['occipital'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'occipital';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+            if(summary_data['MPS-95']['temporal']){
+                var coordinate = {};
+                summary_data['MPS-95']['temporal'].forEach(function (data, index) {
+                    
+                    coordinate.x = data[0];
+                    coordinate.y = data[1];
+                    coordinate.z = data[2];
+                    region = 'temporal';
+                    MPS_95[region] = MPS_95[region] || [];
+                    MPS_95[region].push(coordinate);
+                })
+            }
+        }
+    }
+
+    //Reading summary.json file...
+    let summaryFile = fs.readFileSync('summary_demo.json');//file location ./summary_demo.json
+    let outputFile = JSON.parse(summaryFile);
+    var len = outputFile.Insults.length - 1;
+    if (outputFile.Insults) {
+        outputFile.Insults.forEach(function (summary_data, index) {
+            //** 
+            //Fetch value is less then....
+            if(filter == 'less'){
+                if(type == 'resultant-Angular-acceleration'){
+                    if(summary_data['max-angular-acc-rads2'] <= gs){
+                        pushdata(summary_data); 
+                    }   
+                }else if(type == 'resultant-linear-acceleration'){
+                    if(summary_data['max-linear-acc-g'] <= gs){
+                        pushdata(summary_data);
+                    }  
+                }else if(type == 'principal-max-strain'){
+                    if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'principal-min-strain'){
+                    if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'csdm-max'){
+                    if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'axonal-strain-max'){
+                    if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'masXsr-15-max'){
+                    if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-5'){
+                    if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-10'){
+                    if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
+                        pushdata(summary_data);
+                    } 
+                }
+            //** 
+            //Fetch value is greater then.....   
+            }else{
+                if(type == 'resultant-Angular-acceleration'){
+                    if(summary_data['max-angular-acc-rads2'] >= gs){
+                       pushdata(summary_data);
+                    }
+                }else if(type == 'resultant-linear-acceleration'){
+                    if(summary_data['max-linear-acc-g'] >= gs){
+                        pushdata(summary_data);
+                    }
+                }else if(type == 'principal-max-strain'){
+                    if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'principal-min-strain'){
+                    if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'csdm-max'){
+                    if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'axonal-strain-max'){
+                    if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'masXsr-15-max'){
+                    if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-5'){
+                    if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'CSDM-10'){
+                    if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }else if(type == 'MPS-95'){
+                    if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                        pushdata(summary_data);
+                    } 
+                }
+            }
+
+            //Sending response on foreach loop completing...
+            if(len === index){
+                setTimeout(()=>{
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        data: brainRegions
+                    });
+                },1000)
+            }
+        })
+    }
+
+    
+   
+})
+
+
+//Getting team shares data for mps 95% mps chart...
+app.post(`${apiPrefix}getTeamSpheres_Demo`, (req, res) => {
+    let brainRegions = {};
+    let principal_max_strain = {};
+    let principal_min_strain = {};
+    let axonal_strain_max = {};
+    let csdm_max = {};
+    let masXsr_15_max = {};
+    let MPS_95  = {};
+    let CSDM_5  = {};
+    let CSDM_10 = {};
+    let CSDM_15 = {};
+    let MPS_95_DATA = [];
+    let MAX_ANGULAR_EXLARATION = [];
+
+    let players = [];
+    //Reading summary.json file...
+    let summaryFile = fs.readFileSync('summary_demo.json');//file location ./summary_demo.json
+    let outputFile = JSON.parse(summaryFile);
+    var len = outputFile.Insults.length - 1;
+    const pushdata = (summary_data)=>{
+        if (summary_data['MPS-95']) {
+                                       
+            if(summary_data['MPS-95']['value'] && summary_data['max-angular-acc-rads2']){
+                MPS_95_DATA.push(summary_data['MPS-95']['value']);
+                MAX_ANGULAR_EXLARATION.push(summary_data['max-angular-acc-rads2']);
+            }
+        }
+    }
+
+    if (outputFile.Insults) {
+        outputFile.Insults.forEach(function (summary_data, index) {
+            pushdata(summary_data);
+            if(len === index){
+                setTimeout(()=>{
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['MPS-95'] = MPS_95;
+                    
+                    res.send({
+                        message: "success",
+                        brainRegions: brainRegions,
+                        MPS_95_DATA: MPS_95_DATA,
+                        MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                    });
+                },1000)
+            }
+        })
+    }
+   
+        
+});
+
+/**
+*Getting modal validation output...
+*/
+app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
+    console.log('modalValidationOutput')
+    let image_id = "ngkCxmTbR";
+    getModalValidationDB(image_id)
+    .then(response =>{
+        console.log('response',response.Items[0].file_path)
+        if(response.Items[0].file_path){
+            let file_path = response.Items[0].file_path+image_id+'_output.json';
+            getFileFromS3(file_path, config_env.usersbucket)
+            .then(data=>{
+                if(data.Body){
+                    var file = JSON.parse(data.Body.toString('utf-8'));
+                    console.log('data',file);
+                    res.send({
+                        status: 'success',
+                        data: file.plot,
+                    })
+                }else{
+                    res.send({
+                        status: 'faiure',
+                        message: 'File not found.',
+                    })
+                }
+                
+            }).catch(error=>{
+                console.log('error froms s3',error)
+                res.send({
+                    status: 'faiure',
+                    message: 'Failed to fetch output file.',
+                })
+            })
+
+        }
+    }).catch(err=>{
+        res.send({
+            status: 'faiure',
+            message: 'Failed to fetch output file.',
+        })
+        console.log('error when fetching -\n',err)
+    })
+})
+
+/*-- Demo api end --*/
 
 app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
     let jsonOutputFile = '';

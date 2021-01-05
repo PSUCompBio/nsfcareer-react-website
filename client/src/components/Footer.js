@@ -48,6 +48,7 @@ class Footer extends React.Component {
     const redirectToOther = () => {
       window.location.href = 'https://psucompbio.org/';
     };
+    var d = new Date();
     return (
       <div style={(this.props.screenWidth && this.props.screenWidth < 765) ? {position : "relative"} : {position : "relative", height : "inherit"}} className={`footer ${this.addFooterClass()}`}>
 
@@ -82,7 +83,7 @@ class Footer extends React.Component {
           <div className="row text-center">
             <div className="col-md-12 pb-3">
               <p onClick={redirectToOther} className="copyright">
-                © 2020 Copyright: Penn State Computational Biomechanics Group
+                © {d.getFullYear()} Copyright: Penn State Computational Biomechanics Group
               </p>
             </div>
           </div>
