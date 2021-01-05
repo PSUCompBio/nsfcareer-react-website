@@ -1394,7 +1394,9 @@ button.btn.button-yes {
 }
 .glow-spinner{
     text-align: center;
+    width: 97%!important;
     padding: 50px;
+    margin-left: 2px;
     position: absolute!important;
     width: 100%;
     height: 100%;
@@ -1402,7 +1404,7 @@ button.btn.button-yes {
     z-index: 2;
 }
 .glow-spinner .spinner-center{
-      position: fixed;
+      position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -1473,4 +1475,29 @@ button.btn.button-yes {
 }
 .deskView-active{
   display: none;
+}
+
+.team-state-text-center {
+  position: absolute;
+    top: 41%;
+    left: 50%;
+    width: 35%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.card-team-state-page{
+  padding: 12px 12px 50px!important;
+  border: 1px solid rgb(10, 84, 143)!important;
+}
+.team-state-cart-left{
+  padding-left: 0px!important;
+}
+
+.team-state-cart-right{
+  padding-right: : 0px!important;
+}
+.player-dashboard-machinelearning-button{
+  padding: 5px 2px!important;
+  width: 49%!important;
+  font-size: 15px!important;
 }

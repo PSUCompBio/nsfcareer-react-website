@@ -8668,6 +8668,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
     let filter = req.body.filter;
     let gs = parseInt(req.body.gs);
     let type = req.body.type;
+    let sensor = req.body.brand;
     console.log('req body -------------------------------\n',req.body)
     /**
     * Get sphares of each team 
@@ -8682,7 +8683,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
             count_sp++;
             if(count_sp == req.body.team.length){
                 data = spharesData;
-                console.log('data of team sphares -----\n',data)
+                // console.log('data of team sphares -----\n',data)
 
                 let brainRegions = {};
                 let principal_max_strain = {};
@@ -8718,112 +8719,123 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                         let player_id = acc_data.player_id.split('$')[0];
                         if (!players.includes(player_id)) {
                             players.push(player_id);
-                            getPlayerSimulationStatus(acc_data.image_id)
-                                .then(imageData => {
-                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                        console.log(imageData.player_name + '/simulation/summary.json');
-                                        let file_path = imageData.player_name + '/simulation/summary.json';
-                                        return getFileFromS3(file_path, imageData.bucket_name);
-                                    }
-                                })
-                                .then(output_file => {
-                                    if (output_file) {
-                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
-                                        if (outputFile.Insults) {
-                                            outputFile.Insults.forEach(function (summary_data, index) {
-                                                //** 
-                                                //Fetch value is less then....
-                                                if(filter == 'less'){
-                                                    if(type == 'resultant-Angular-acceleration'){
-                                                        if(summary_data['max-angular-acc-rads2'] <= gs){
-                                                            pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'resultant-linear-acceleration'){
-                                                        if(summary_data['max-linear-acc-g'] <= gs){
-                                                            pushdata(summary_data);
-                                                        }  
-                                                    }else if(type == 'principal-max-strain'){
-                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'principal-min-strain'){
-                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'csdm-max'){
-                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'axonal-strain-max'){
-                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'masXsr-15-max'){
-                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-5'){
-                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-10'){
-                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }
-                                                //** 
-                                                //Fetch value is greater then.....   
-                                                }else{
-                                                    if(type == 'resultant-Angular-acceleration'){
-                                                        if(summary_data['max-angular-acc-rads2'] >= gs){
-                                                           pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'resultant-linear-acceleration'){
-                                                        if(summary_data['max-linear-acc-g'] >= gs){
-                                                            pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'principal-max-strain'){
-                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'principal-min-strain'){
-                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'csdm-max'){
-                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'axonal-strain-max'){
-                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'masXsr-15-max'){
-                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-5'){
-                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-10'){
-                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'MPS-95'){
-                                                        if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }
-                                                }
-                                            })
+                            var newPlayerId = player_id+'-'+sensor;
+                            if(newPlayerId){
+                                console.log('player_id',newPlayerId)
+                                getUserDetailByPlayerId(newPlayerId)
+                                .then(userData => {
+                                    var player_status = userData[0].player_status
+                                    getPlayerSimulationStatus(acc_data.image_id)
+                                    .then(imageData => {
+                                        if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                            // console.log('imageData',imageData);
+                                            let file_path = imageData.player_name + '/simulation/summary.json';
+                                            return getFileFromS3(file_path, imageData.bucket_name);
                                         }
-                                    }
-                                    resolve(null);
-                                })
-                                .catch(err => {
+                                    })
+                                    .then(output_file => {
+                                        if (output_file && player_status == 'approved') {
+                                            outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                            if (outputFile.Insults) {
+                                                outputFile.Insults.forEach(function (summary_data, index) {
+                                                    //** 
+                                                    //Fetch value is less then....
+                                                    if(filter == 'less'){
+                                                        if(type == 'resultant-Angular-acceleration'){
+                                                            if(summary_data['max-angular-acc-rads2'] <= gs){
+                                                                pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'resultant-linear-acceleration'){
+                                                            if(summary_data['max-linear-acc-g'] <= gs){
+                                                                pushdata(summary_data);
+                                                            }  
+                                                        }else if(type == 'principal-max-strain'){
+                                                            if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'principal-min-strain'){
+                                                            if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'csdm-max'){
+                                                            if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'axonal-strain-max'){
+                                                            if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'masXsr-15-max'){
+                                                            if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-5'){
+                                                            if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-10'){
+                                                            if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }
+                                                    //** 
+                                                    //Fetch value is greater then.....   
+                                                    }else{
+                                                        if(type == 'resultant-Angular-acceleration'){
+                                                            if(summary_data['max-angular-acc-rads2'] >= gs){
+                                                               pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'resultant-linear-acceleration'){
+                                                            if(summary_data['max-linear-acc-g'] >= gs){
+                                                                pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'principal-max-strain'){
+                                                            if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'principal-min-strain'){
+                                                            if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'csdm-max'){
+                                                            if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'axonal-strain-max'){
+                                                            if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'masXsr-15-max'){
+                                                            if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-5'){
+                                                            if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-10'){
+                                                            if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'MPS-95'){
+                                                            if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                        resolve(null);
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    })
+                                    
+                                }).catch(err => {
                                     reject(err);
                                 })
+                            }
                         } else {
                             resolve(null);
                         }

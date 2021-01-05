@@ -6,7 +6,7 @@ import { Line } from 'react-chartjs-2';
 class C288_T3_chart extends React.Component {
     constructor(props) {
         super(props);
-        console.log('data',this.props)
+        // console.log('data',this.props)
         this.state = {
             values: []
         };
@@ -21,7 +21,7 @@ class C288_T3_chart extends React.Component {
             for(var i = 0; i < val.val_x.length; i++){
                 values.push({ 'x':val.val_x[i] ,'y':val.val_y[i] });
                 if(i === len){
-                    console.log('values',values)
+                    // console.log('values',values)
                     this.setState({
                         values: values
                     })
@@ -46,19 +46,18 @@ class C288_T3_chart extends React.Component {
             }
         }
 
-        console.log('values',values)
+        // console.log('values',values)
 
         //Defiend data variable ...
         let data = {
-            labels: ['0','20','40'],
+            labels: ['0','60','120'],
             fill: false,
             datasets: [ {
-                lineTension: 1,
-                label: "Z Angular Acceleration",
+                lineTension: 0.1,
+                label: this.props.label,
                 backgroundColor: '#000000',
                 borderColor: '#000000',
-                yAxisID: 'B',
-                pointRadius: 1,
+                pointRadius: 0,
                 fill: false,
                 data: values,
             }]
@@ -70,7 +69,10 @@ class C288_T3_chart extends React.Component {
             animation: false,
             maintainAspectRatio: false,
             fill: false,
-
+            title: {
+                display: true,
+                text: this.props.title
+            },
             legend: {
                 display: false,
             },
@@ -94,9 +96,9 @@ class C288_T3_chart extends React.Component {
                     id: 'B',
                     position: 'left',
                     ticks: {
-                        suggestedMin: -1,
-                        suggestedMax: 1,
-                         stepSize: 1
+                        suggestedMin: -0.005,
+                        suggestedMax: 0.005,
+                         stepSize: 0.1
                     }
                 }],
                 xAxes: [{
@@ -115,7 +117,7 @@ class C288_T3_chart extends React.Component {
         };
 
         return (
-            <>
+            <>  
                 <Line id="goodCanvas1" data={data} options={options} redraw={true} />
             </>
         );
