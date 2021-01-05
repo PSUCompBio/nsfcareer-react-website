@@ -19,6 +19,8 @@ let middle_part_of_the_brain_min_json = []
 let minimumPS = [[], [], [], [], [], [], []];
 let maximumPS = [[], [], [], [], [], [], []];
 let csdm_15 = [[], [], [], [], [], [], []];
+let csdm_5 = [[], [], [], [], [], [], []];
+let csdm_10 = [[], [], [], [], [], [], []];
 
 let previousClicked = null;
 // json parse
@@ -251,6 +253,160 @@ insults.forEach((insult) => {
 				break;
 		}
 	}
+	if (insult["CSDM-5"]) {
+		switch (insult["CSDM-5"]["brain-region"]) {
+			case "msc":
+				csdm_5[6] = [
+					{
+						x: insult["CSDM-5"]["location"][0],
+						y: insult["CSDM-5"]["location"][1],
+						z: insult["CSDM-5"]["location"][2]
+					},
+					...csdm_5[6]
+				];
+				break;
+			case "stem":
+				csdm_5[5] = [
+					{
+						x: insult["CSDM-5"]["location"][0],
+						y: insult["CSDM-5"]["location"][1],
+						z: insult["CSDM-5"]["location"][2]
+					},
+					...csdm_5[5]
+				];
+				break;
+			case "cerebellum":
+				csdm_5[4] = [
+					{
+						x: insult["CSDM-5"]["location"][0],
+						y: insult["CSDM-5"]["location"][1],
+						z: insult["CSDM-5"]["location"][2]
+					},
+					...csdm_5[4]
+				];
+				break;
+			case "temporal":
+				csdm_5[3] = [
+					{
+						x: insult["CSDM-5"]["location"][0],
+						y: insult["CSDM-5"]["location"][1],
+						z: insult["CSDM-5"]["location"][2]
+					},
+					...csdm_5[3]
+				];
+				break;
+			case "occipital":
+				csdm_5[2] = [
+					{
+						x: insult["CSDM-5"]["location"][0],
+						y: insult["CSDM-5"]["location"][1],
+						z: insult["CSDM-5"]["location"][2]
+					},
+					...csdm_5[2]
+				];
+				break;
+			case "parietal":
+				csdm_5[1] = [
+					{
+						x: insult["CSDM-5"]["location"][0],
+						y: insult["CSDM-5"]["location"][1],
+						z: insult["CSDM-5"]["location"][2]
+					},
+					...csdm_5[1]
+				];
+				break;
+			case "frontal":
+				csdm_5[0] = [
+					{
+						x: insult["CSDM-5"]["location"][0],
+						y: insult["CSDM-5"]["location"][1],
+						z: insult["CSDM-5"]["location"][2]
+					},
+					...csdm_5[0]
+				];
+				break;
+			default:
+				break;
+		}
+	}
+
+	if (insult["CSDM-10"]) {
+		switch (insult["CSDM-10"]["brain-region"]) {
+			case "msc":
+				csdm_10[6] = [
+					{
+						x: insult["CSDM-10"]["location"][0],
+						y: insult["CSDM-10"]["location"][1],
+						z: insult["CSDM-10"]["location"][2]
+					},
+					...csdm_10[6]
+				];
+				break;
+			case "stem":
+				csdm_10[5] = [
+					{
+						x: insult["CSDM-10"]["location"][0],
+						y: insult["CSDM-10"]["location"][1],
+						z: insult["CSDM-10"]["location"][2]
+					},
+					...csdm_10[5]
+				];
+				break;
+			case "cerebellum":
+				csdm_10[4] = [
+					{
+						x: insult["CSDM-10"]["location"][0],
+						y: insult["CSDM-10"]["location"][1],
+						z: insult["CSDM-10"]["location"][2]
+					},
+					...csdm_10[4]
+				];
+				break;
+			case "temporal":
+				csdm_10[3] = [
+					{
+						x: insult["CSDM-10"]["location"][0],
+						y: insult["CSDM-10"]["location"][1],
+						z: insult["CSDM-10"]["location"][2]
+					},
+					...csdm_10[3]
+				];
+				break;
+			case "occipital":
+				csdm_10[2] = [
+					{
+						x: insult["CSDM-10"]["location"][0],
+						y: insult["CSDM-10"]["location"][1],
+						z: insult["CSDM-10"]["location"][2]
+					},
+					...csdm_10[2]
+				];
+				break;
+			case "parietal":
+				csdm_10[1] = [
+					{
+						x: insult["CSDM-10"]["location"][0],
+						y: insult["CSDM-10"]["location"][1],
+						z: insult["CSDM-10"]["location"][2]
+					},
+					...csdm_10[1]
+				];
+				break;
+			case "frontal":
+				csdm_10[0] = [
+					{
+						x: insult["CSDM-10"]["location"][0],
+						y: insult["CSDM-10"]["location"][1],
+						z: insult["CSDM-10"]["location"][2]
+					},
+					...csdm_10[0]
+				];
+				break;
+			default:
+				break;
+		}
+	}
+
 
 
 });
@@ -373,6 +529,8 @@ class DashPage extends React.Component {
 				{ name: 'Maximum Principal Strain', value: 'max-ps' },
 				{ name: 'Minimum Principal Strain', value: 'min-ps' },
 				{ name: 'CSDM-15', value: 'csdm_15' },
+				{ name: 'CSDM-5', value: 'csdm_5' },
+				{ name: 'CSDM-10', value: 'csdm_10' },
 			]
 		};
 
@@ -669,10 +827,14 @@ class DashPage extends React.Component {
 	};
 
 	removeSpheres = () => {
+
 		if (root) {
 			for (let i = sphereContainer.children.length - 1; i >= 0; i--) {
+				sphereContainer.children[i].geometry.dispose();
+				sphereContainer.children[i].material.dispose();
 				sphereContainer.remove(sphereContainer.children[i]);
 			}
+
 		}
 	};
 
@@ -824,6 +986,7 @@ class DashPage extends React.Component {
 
 	highlightGraphBar = (type) => {
 		let barColors = defaultBarColors;
+
 		switch (type) {
 			case "Frontal_Lobe_node_Frontal_Lobe":
 				barColors = [
@@ -1139,6 +1302,7 @@ class DashPage extends React.Component {
 
 				sphereContainer = new THREE.Object3D();
 				root.add(sphereContainer);
+
 				this.showAllSpheres();
 
 				root.position.x -= boxCenter.x;
@@ -1308,16 +1472,17 @@ class DashPage extends React.Component {
 		pickedObject = scene.getObjectByName(type, true);
 		this.highlightGraphBar(type);
 
-		// if (
-		// 	!pickedObject ||
-		// 	(prevPickedObject && prevPickedObject.name === pickedObject.name)
-		// )
-		// 	return;
+		if (
+			!pickedObject ||
+			(prevPickedObject && prevPickedObject.name === pickedObject.name)
+		)
+			return;
 
 		this.unHighlightPickedObject();
 		prevPickedObject = pickedObject;
 		this.highlightPickedObject();
 		this.createLobeSheres(type);
+		console.log("hover")
 	};
 
 	onMouseMove = (event) => {
@@ -1406,6 +1571,14 @@ class DashPage extends React.Component {
 			case "csdm_15":
 				all_spheres_json = [];
 				all_spheres_json = [...csdm_15]
+				break;
+			case "csdm_5":
+				all_spheres_json = [];
+				all_spheres_json = [...csdm_5]
+				break;
+			case "csdm_10":
+				all_spheres_json = [];
+				all_spheres_json = [...csdm_10]
 				break;
 		}
 	}

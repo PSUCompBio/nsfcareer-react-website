@@ -137,6 +137,8 @@ class ExportPlayerReport extends React.Component {
 				{ name: 'Maximum Principal Strain', value: 'max-ps' },
 				{ name: 'Minimum Principal Strain', value: 'min-ps' },
 				{ name: 'CSDM-15', value: 'csdm_15' },
+				{ name: 'CSDM-5', value: 'csdm_5' },
+				{ name: 'CSDM-10', value: 'csdm_10' },
 			]
 		};
 
@@ -146,7 +148,7 @@ class ExportPlayerReport extends React.Component {
 					if (this.state.loadedActionButtons) return;
 
 					if (chart.canvas && chart.canvas != null) {
-						setTimeout(() => this.afterDrawChart(chart), 100);
+						setTimeout(() => this.afterDrawChart(chart), 1000);
 					}
 				}
 			}
@@ -216,6 +218,16 @@ class ExportPlayerReport extends React.Component {
 					me.onMouseClick(
 						event,
 						"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
+					);
+				},
+				false
+			);
+			document.getElementById("occipital_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"node_Mesh_16"
 					);
 				},
 				false
@@ -1056,7 +1068,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onMouseClick = (event, type) => {
-		if (previousClicked != type) isClicked = true;
+		if (previousClicked !== type) isClicked = true;
 		else isClicked = !isClicked;
 		if (event !== "") event.preventDefault();
 		this.setState({
@@ -1194,6 +1206,13 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "csdm_15":
 				this.handleBrainStrain("CSDM-15")
+				break;
+			case "csdm_10":
+				this.handleBrainStrain("CSDM-10")
+				break;
+			case "csdm_5":
+				this.handleBrainStrain("CSDM-5")
+				break;
 		}
 	}
 
