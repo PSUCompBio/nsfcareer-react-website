@@ -1829,7 +1829,7 @@ class DashPage extends React.Component {
 
 				</div>
 				<div>
-					<button className="btn btn-primary d-flex justify-content-center download_btn" onClick={this.downImage}> Download Image</button>
+					<button className="btn btn-primary d-flex justify-content-center download_brainImage" onClick={this.downImage}> Download Image</button>
 				</div>
 
 

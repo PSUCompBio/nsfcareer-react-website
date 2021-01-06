@@ -74,7 +74,7 @@ let defaultBarColors = [
 ];
 
 let stem_json = [];
-// let csf_json = [];
+let csf_json = [];
 let frontal_lobe_json = [];
 let cerebellum_lobe_json = [];
 let middle_part_of_the_brain_json = [];
@@ -332,7 +332,7 @@ class ExportPlayerReport extends React.Component {
 	afterDrawChart = (chart) => {
 		var ctx = chart.chart.ctx;
 
-		// const rect = chart.canvas.getBoundingClientRect();
+		const rect = chart.canvas.getBoundingClientRect();
 		ctx.save();
 		var xAxis = chart.scales["x-axis-0"];
 		var yAxis = chart.scales["y-axis-0"];
@@ -452,7 +452,7 @@ class ExportPlayerReport extends React.Component {
 			case "Frontal_Lobe_node_Frontal_Lobe":
 
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "front_btn")
+					if (ele.id == "front_btn")
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -469,7 +469,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "pariental_btn") {
+					if (ele.id == "pariental_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -487,7 +487,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "node_Mesh_16":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "occipital_btn") {
+					if (ele.id == "occipital_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -505,7 +505,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Temporal_Lobe_node_Temporal_Lobe":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "temporal_btn") {
+					if (ele.id == "temporal_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -523,7 +523,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Cerebellum_node_Cerebellum":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "cerebellum_btn") {
+					if (ele.id == "cerebellum_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -542,7 +542,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "stem_btn") {
+					if (ele.id == "stem_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -562,7 +562,7 @@ class ExportPlayerReport extends React.Component {
 			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
 
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "motor_and_sensor_cortex") {
+					if (ele.id == "motor_and_sensor_cortex") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -840,11 +840,26 @@ class ExportPlayerReport extends React.Component {
 
 	// download canvas image
 	// creat new canvas, set width, height, draw current content of canvas on new one
-	downImage = () => {
+	downBrainImage = () => {
 		const c = document.createElement('canvas');
 		c.width = 400;
 		c.height = 300;
 		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 400, 300);
+		let dc = c.toDataURL();
+		var link = document.createElement("a");
+		link.download = "demo.png";
+		link.href = dc;
+		link.target = "_blank";
+		link.click();
+		return dc;
+	}
+	downPlotImage = () => {
+		const c = document.createElement('canvas');
+		c.width = 400;
+		c.height = 300;
+		const plotCanvas = document.querySelector(".chartjs-render-monitor");
+		console.log("plotcanvas", plotCanvas)
+		c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 0, 0, 400, 300);
 		let dc = c.toDataURL();
 		var link = document.createElement("a");
 		link.download = "demo.png";
@@ -886,7 +901,7 @@ class ExportPlayerReport extends React.Component {
 		scene.add(bg3);
 		scene.add(bg4);
 
-		// let me = this;
+		let me = this;
 
 		this.setState({
 			isLoading: true
@@ -899,7 +914,7 @@ class ExportPlayerReport extends React.Component {
 				root = gltf.scene;
 
 				const box = new THREE.Box3().setFromObject(root);
-				// const boxSize = box.getSize(new THREE.Vector3()).length();
+				const boxSize = box.getSize(new THREE.Vector3()).length();
 				const boxCenter = box.getCenter(new THREE.Vector3());
 
 				sphereContainer = new THREE.Object3D();
@@ -1045,7 +1060,6 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onMouseHover = (event, type) => {
-		// console.log('onMouseHover')
 		if (isClicked) return;
 		if (event !== "") event.preventDefault();
 
@@ -1090,7 +1104,6 @@ class ExportPlayerReport extends React.Component {
 
 	onMouseMove = (event) => {
 		// Set pick position
-		// console.log('mouseover')
 		this.setPickPosition(event);
 	};
 
@@ -1199,7 +1212,6 @@ class ExportPlayerReport extends React.Component {
 	}
 
 	strainMetric = (e, v) => {
-		// eslint-disable-next-line
 		switch (v.value) {
 			case "max-ps":
 				this.handleBrainStrain('principal-max-strain')
@@ -1263,31 +1275,24 @@ class ExportPlayerReport extends React.Component {
 						switch (context.dataIndex) {
 							case 0:
 								return frontal_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 1:
 								return pariental_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 2:
 								return occipital_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 3:
 								return temporal_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 4:
 								return cerebellum_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 5:
 								return stem_json.length;
-								// eslint-disable-next-line
 								break;
 							case 6:
 								return middle_part_of_the_brain_json.length;
-								// eslint-disable-next-line
 								break;
 							default:
 								break;
@@ -1459,8 +1464,10 @@ class ExportPlayerReport extends React.Component {
 					</div>
 
 				</div>
-				<div>
-					<button className="btn btn-primary d-flex justify-content-center download_btn" onClick={this.downImage}> Download Image</button>
+				<div className="row">
+					<div className="col-md-5"><button className="btn btn-primary download_btn brain_btn" onClick={this.downBrainImage}> Download Brain Image </button></div>
+					<div className="col-md-5"><button className="btn btn-primary download_btn plot_btn" onClick={this.downPlotImage}> Download Full Image </button></div>
+
 				</div>
 
 			</React.Fragment>
