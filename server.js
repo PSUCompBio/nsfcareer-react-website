@@ -2456,15 +2456,15 @@ function updateCognitoUser(body, user_cognito_id) {
             ],
             UserPoolId: cognito.userPoolId, /* required */
             Username: user_cognito_id, /* required */
-          };
-          COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+        };
+        COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
             if (err) {
                 reject(err);
             } // an error occurred
             else {
                 resolve(data);
             }             // successful response
-          });
+        });
     })
 }
 /*=========== Set user default login password =============*/
@@ -2831,20 +2831,22 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
             let sensorlen = result.length;
             let count1 = 0; 
             let count3 = 0;
+            console.log(sensorlen)
             if(sensorlen > 0){
                 result.forEach(async function (record, index) {
 
                     count1++;
                     /*========== Delete data from sensor data table ==============*/
-                    if( record.team && record.player_id){
-                        deleteSensorData(record.team, record.player_id)
+                    console.log('record.player_id', record.org_id,  record.player_id)
+                    if(  record.org_id && record.player_id){
+                        deleteSensorData(record.org_id, record.player_id)
                         .then(deldata => {
                             console.log('deldata',deldata)
                         }).catch(err=>{
-
+                            console.log('deleteSensorData error \n', err)
                         })
                     }
-
+                    console.log('image_id ----',record.image_id)
                     /*=========== Get simulation data and root path of folder ==========*/
                     getPlayerSimulationFile({image_id: record.image_id})
                     .then(image_Data =>{
@@ -2915,7 +2917,7 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                     });
                 })
             }else{
-                 getOrganizatonByTeam(data.organization, data.TeamName)
+                getOrganizatonByTeam(data.organization, data.TeamName)
                 .then(org =>{
                     var orglen = org.length;
                     orglen = orglen-1;

@@ -79,184 +79,206 @@ class C288_T3 extends React.Component {
         <Row className="Hardy_et_al-card-Chart" style={{ 'width': '96%','margin': 'auto','margin-top': '50px'}}>
             {DisplacementData && 
                 <>
-                <Col sm={12} style={{'display': 'flex'}}>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-0'].x : ''}} label={lable_1} title={"NDTx1"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-1'].x : ''}} label={lable_1} title={"NDTx2"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-2'].x : ''}} label={lable_1} title={"NDTx3"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-3'].x : ''}} label={lable_1} title={"NDTx4"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-4'].x : ''}} label={lable_1} title={"NDTx5"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-5'].x : ''}} label={lable_1} title={"NDTx6"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-6'].x : ''}} label={lable_1} title={"NDTx7"}/>
-                    </Col>
-                </Col>
-                <Col sm={12} style={{'display': 'flex'}}>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-7'].x : ''}} label={lable_1} title={"NDTx8"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-8'].x : ''}} label={lable_1} title={"NDTx9"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-9'].x : ''}} label={lable_1} title={"NDTx10"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-10'].x : ''}} label={lable_1} title={"NDTx11"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-11'].x : ''}} label={lable_1} title={"NDTx12"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-12'].x : ''}} label={lable_1} title={"NDTx13"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-13'].x : ''}} label={lable_1} title={"NDTx14"}/>
-                    </Col>
-                </Col>
-
-                <Col sm={12} style={{'display': 'flex'}}>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-0'].y : ''}} label={lable_2} title={"NDTx1"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-1'].y : ''}} label={lable_2} title={"NDTx2"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-2'].y : ''}} label={lable_2} title={"NDTx3"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-3'].y : ''}} label={lable_2} title={"NDTx4"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-4'].y : ''}} label={lable_2} title={"NDTx5"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-5'].y : ''}} label={lable_2} title={"NDTx6"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-6'].y : ''}} label={lable_2} title={"NDTx7"}/>
-                    </Col>
-                </Col>
-                <Col sm={12} style={{'display': 'flex'}}>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-7'].y : ''}} label={lable_2} title={"NDTx8"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-8'].y : ''}} label={lable_2} title={"NDTx9"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-9'].y : ''}} label={lable_2} title={"NDTx10"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-10'].y : ''}} label={lable_2} title={"NDTx11"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-11'].y : ''}} label={lable_2} title={"NDTx12"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-12'].y : ''}} label={lable_2} title={"NDTx13"}/>
-                    </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
-                      {/*eslint-disable-next-line*/}
-                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-13'].y : ''}} label={lable_2} title={"NDTx14"}/>
-                    </Col>
-                </Col>
-
-                <Col sm={12} style={{'display': 'flex'}}>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-0'].z : ''}} label={lable_3} title={"NDTx1"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+
+                  </Col>
+                  <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-1'].x : ''}} label={lable_1} title={"NDTx2"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-1'].y : ''}} label={lable_2} title={"NDTx2"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-1'].z : ''}} label={lable_3} title={"NDTx2"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                </Col>
+
+                 <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-2'].x : ''}} label={lable_1} title={"NDTx3"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-2'].y : ''}} label={lable_2} title={"NDTx3"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-2'].z : ''}} label={lable_3} title={"NDTx3"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                  </Col>
+                  <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-3'].x : ''}} label={lable_1} title={"NDTx4"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-3'].y : ''}} label={lable_2} title={"NDTx4"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-3'].z : ''}} label={lable_3} title={"NDTx4"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                </Col>
+
+                <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-4'].x : ''}} label={lable_1} title={"NDTx5"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-4'].y : ''}} label={lable_2} title={"NDTx5"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-4'].z : ''}} label={lable_3} title={"NDTx5"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                  </Col>
+                  <Col md={6} style={{'display': 'flex'}} className="no-padding">
+
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-5'].x : ''}} label={lable_1} title={"NDTx6"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-5'].y : ''}} label={lable_2} title={"NDTx6"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-5'].z : ''}} label={lable_3} title={"NDTx6"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                </Col>
+                
+                <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-6'].x : ''}} label={lable_1} title={"NDTx7"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-6'].y : ''}} label={lable_2} title={"NDTx7"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-6'].z : ''}} label={lable_3} title={"NDTx7"}/>
                     </Col>
-                </Col>
-                <Col sm={12} style={{'display': 'flex'}}>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                  </Col>
+                  <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-7'].x : ''}} label={lable_1} title={"NDTx8"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-7'].y : ''}} label={lable_2} title={"NDTx8"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-7'].z : ''}} label={lable_3} title={"NDTx8"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                </Col>
+
+                <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-8'].x : ''}} label={lable_1} title={"NDTx9"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-8'].y : ''}} label={lable_2} title={"NDTx9"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-8'].z : ''}} label={lable_3} title={"NDTx9"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                  </Col>
+                  <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-9'].x : ''}} label={lable_1} title={"NDTx10"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-9'].y : ''}} label={lable_2} title={"NDTx10"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-9'].z : ''}} label={lable_3} title={"NDTx10"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                </Col>
+
+                <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-10'].x : ''}} label={lable_1} title={"NDTx11"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-10'].y : ''}} label={lable_2} title={"NDTx11"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-10'].z : ''}} label={lable_3} title={"NDTx11"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                  </Col>
+                  <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-11'].x : ''}} label={lable_1} title={"NDTx12"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-11'].y : ''}} label={lable_2} title={"NDTx12"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-11'].z : ''}} label={lable_3} title={"NDTx12"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                </Col>
+
+                <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-12'].x : ''}} label={lable_1} title={"NDTx13"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-12'].y : ''}} label={lable_2} title={"NDTx13"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-12'].z : ''}} label={lable_3} title={"NDTx13"}/>
                     </Col>
-                    <Col sm={3} style={{'flex': '0 0 14%','max-width': '14%',margin: 'auto'}}>
+                  </Col>
+                  <Col md={6} style={{'display': 'flex'}} className="no-padding">
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-13'].x : ''}} label={lable_1} title={"NDTx14"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
+                      {/*eslint-disable-next-line*/}
+                      <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-13'].y : ''}} label={lable_2} title={"NDTx14"}/>
+                    </Col>
+                    <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData.['nodal-displacement-13'].z : ''}} label={lable_3} title={"NDTx14"}/>
                     </Col>
