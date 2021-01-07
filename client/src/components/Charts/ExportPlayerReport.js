@@ -853,16 +853,17 @@ class ExportPlayerReport extends React.Component {
 		link.click();
 		return dc;
 	}
-	downPlotImage = () => {
+	downFullImage = () => {
 		const c = document.createElement('canvas');
-		c.width = 400;
+		c.width = 800;
 		c.height = 300;
 		const plotCanvas = document.querySelector(".chartjs-render-monitor");
 		console.log("plotcanvas", plotCanvas)
-		c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 0, 0, 400, 300);
+		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 400, 300);
+		c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 0, 400, 300);
 		let dc = c.toDataURL();
 		var link = document.createElement("a");
-		link.download = "demo.png";
+		link.download = "full_image.png";
 		link.href = dc;
 		link.target = "_blank";
 		link.click();
@@ -1466,7 +1467,7 @@ class ExportPlayerReport extends React.Component {
 				</div>
 				<div className="row">
 					<div className="col-md-5"><button className="btn btn-primary download_btn brain_btn" onClick={this.downBrainImage}> Download Brain Image </button></div>
-					<div className="col-md-5"><button className="btn btn-primary download_btn plot_btn" onClick={this.downPlotImage}> Download Full Image </button></div>
+					<div className="col-md-5"><button className="btn btn-primary download_btn plot_btn" onClick={this.downFullImage}> Download Full Image </button></div>
 
 				</div>
 
