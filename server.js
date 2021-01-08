@@ -9985,19 +9985,152 @@ app.post(`${apiPrefix}getTeamSpheres_Demo`, (req, res) => {
 app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
     console.log('modalValidationOutput')
     let image_id = "ngkCxmTbR";
+    let staticPath = 'HardyExperimentalData_C288T3/';
+    let json_data = '';
+    let newDisplacementData = {
+        time_x_0: [],
+        dis_x_0: [],
+        time_y_0: [],
+        dis_y_0: [],
+        time_z_0: [],
+        dis_z_0: [],
+
+        time_x_1: [],
+        dis_x_1: [],
+        time_y_1: [],
+        dis_y_1: [],
+        time_z_1: [],
+        dis_z_1: [],
+
+        time_x_2: [],
+        dis_x_2: [],
+        time_y_2: [],
+        dis_y_2: [],
+        time_z_2: [],
+        dis_z_2: [],
+
+        time_x_3: [],
+        dis_x_3: [],
+        time_y_3: [],
+        dis_y_3: [],
+        time_z_3: [],
+        dis_z_3: [],
+
+        time_x_4: [],
+        dis_x_4: [],
+        time_y_4: [],
+        dis_y_4: [],
+        time_z_4: [],
+        dis_z_4: [],
+
+        time_x_5: [],
+        dis_x_5: [],
+        time_y_5: [],
+        dis_y_5: [],
+        time_z_5: [],
+        dis_z_5: [],
+
+        time_x_6: [],
+        dis_x_6: [],
+        time_y_6: [],
+        dis_y_6: [],
+        time_z_6: [],
+        dis_z_6: [],
+
+        time_x_7: [],
+        dis_x_7: [],
+        time_y_7: [],
+        dis_y_7: [],
+        time_z_7: [],
+        dis_z_7: [],
+
+        time_x_8: [],
+        dis_x_8: [],
+        time_y_8: [],
+        dis_y_8: [],
+        time_z_8: [],
+        dis_z_8: [],
+
+        time_x_9: [],
+        dis_x_9: [],
+        time_y_9: [],
+        dis_y_9: [],
+        time_z_9: [],
+        dis_z_9: [],
+
+        time_x_10: [],
+        dis_x_10: [],
+        time_y_10: [],
+        dis_y_10: [],
+        time_z_10: [],
+        dis_z_10: [],
+
+        time_x_11: [],
+        dis_x_11: [],
+        time_y_11: [],
+        dis_y_11: [],
+        time_z_11: [],
+        dis_z_11: [],
+
+        time_x_12: [],
+        dis_x_12: [],
+        time_y_12: [],
+        dis_y_12: [],
+        time_z_12: [],
+        dis_z_12: [],
+
+        time_x_13: [],
+        dis_x_13: [],
+        time_y_13: [],
+        dis_y_13: [],
+        time_z_13: [],
+        dis_z_13: [],
+    }
     getModalValidationDB(image_id)
     .then(response =>{
-        console.log('response',response.Items[0].file_path)
-        if(response.Items[0].file_path){
-            let file_path = response.Items[0].file_path+image_id+'_output.json';
-            getFileFromS3(file_path, config_env.usersbucket)
+        console.log('response',staticPath)
+        if(staticPath){
+            let file_path = staticPath+image_id+'_output.json';
+            let file_pathHardyExperimentalData = staticPath+'HardyExperimentalData_C288T3.json';
+            getFileFromS3(file_pathHardyExperimentalData, config_env.usersbucket)
+            .then(buffData=>{
+                json_data = JSON.parse(buffData.Body.toString('utf-8'));
+                // console.log('buffData',json_data)
+                return getFileFromS3(file_path, config_env.usersbucket);
+            })
             .then(data=>{
+                if(json_data){
+                    for (var i = 0; i < json_data.length  ; i++) {
+                        // json_data[i]
+                         console.log(i)
+                        for (var j = 0; j < 14; j++) {
+                            if(json_data[i] && json_data[i]['dis_x_'+j] != null){
+                               // console.log(json_data[i]['time_x_'+j] )
+                                newDisplacementData['time_x_'+j].push(json_data[i]['time_x_'+j]);
+                                newDisplacementData['dis_x_'+j].push(json_data[i]['dis_x_'+j]);
+                            }
+
+                            if(json_data[i] && json_data[i]['dis_y_'+j] != null){
+                               // console.log(json_data[i]['time_x_'+j] )
+                                newDisplacementData['time_y_'+j].push(json_data[i]['time_y_'+j]);
+                                newDisplacementData['dis_y_'+j].push(json_data[i]['dis_y_'+j]);
+                            }
+
+                            if(json_data[i] && json_data[i]['dis_z_'+j] != null){
+                               // console.log(json_data[i]['time_x_'+j] )
+                                newDisplacementData['time_z_'+j].push(json_data[i]['time_z_'+j]);
+                                newDisplacementData['dis_z_'+j].push(json_data[i]['dis_z_'+j]);
+                            }
+                        }
+                    }
+                }
                 if(data.Body){
                     var file = JSON.parse(data.Body.toString('utf-8'));
-                    console.log('data',file);
+                    // console.log('data',file);
                     res.send({
                         status: 'success',
                         data: file.plot,
+                        data_2: newDisplacementData
                     })
                 }else{
                     res.send({
@@ -10030,6 +10163,7 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
     let jsonOutputFile = '';
     let simulationImage = '';
     let simulationData = '';
+    let machinLearningImage = '';
     getSimulationImageRecord(req.body.image_id)
         .then(simulation_data => {
             simulationData = simulation_data;
@@ -10049,6 +10183,22 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
         })
         .then(image => {
             simulationImage = image;
+
+            if (simulationData.root_path && simulationData.root_path != 'null') {
+                let image_path = simulationData.root_path + simulationData.image_id + '_ML.png';
+                return getFileFromS3(image_path, simulationData.bucket_name);
+            }else{
+                return false;
+            }
+            
+        }).then(image_s3 => {
+            if (image_s3) {
+                return getImageFromS3Buffer(image_s3);
+            }else{
+                return false;
+            }
+        }).then(ml_image => {
+            machinLearningImage = ml_image || '';
             if (simulationData.ouput_file_path && simulationData.ouput_file_path != 'null') {
                 let file_path = simulationData.ouput_file_path;
                 file_path = file_path.replace(/'/g, "");
@@ -10069,7 +10219,7 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
 
             res.send({
                 message: "success",
-                data: {simulationImage: simulationImage, jsonOutputFile: jsonOutputFile},
+                data: {simulationImage: simulationImage, jsonOutputFile: jsonOutputFile, machinLearningImage: machinLearningImage},
             })
         }) 
         .catch(err => {
