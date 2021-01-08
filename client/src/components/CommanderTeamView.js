@@ -8,6 +8,8 @@ import { getStatusOfDarkmode } from '../reducer';
 // import DarkMode from './DarkMode';
 import SideBar from './SideBar';
 import { connect } from 'react-redux';
+import BrainSubmitPortal from './brainComponent/brainSubmitPortal';
+
 import {
     isAuthenticated,
     getUserDBDetails,
@@ -68,7 +70,8 @@ class CommanderTeamView extends React.Component {
             isSensorIdUpdating: false,
             isMobile: true,
             organization:this.props.match.params.org,
-            team:this.props.match.params.team ? this.props.match.params.team.split('?')[0] : ''
+            team:this.props.match.params.team ? this.props.match.params.team.split('?')[0] : '',
+            isbrainSubmitPortal: false
         };
     }
     activateTab = (value) => {
@@ -187,6 +190,15 @@ class CommanderTeamView extends React.Component {
             this.setState({ visibilityRosterValueSelector: { display: 'block' } });
         else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
     };
+
+
+
+    makeVisible = (data) => {
+        console.log('data',data)
+        this.setState({ isbrainSubmitPortal : data });
+    }
+
+
     componentWillUnmount() {
         const socket = socketIOClient();
         socket.off('fileUploadLog');
@@ -815,16 +827,27 @@ class CommanderTeamView extends React.Component {
                 <div className="row mb-5 mt-5">
                     <div className="col-md-12">
                         <div className="col-md-12 Admintitle2" >
-                            <h1>
-                                <span className="team-page-title">Team Dashboard</span>
-                                <div className="col-md-6 team-edit-button">
-                                    <button className="btn button-edit plyar-button-edit" style={{'margin-right': '4px'}}>Edit</button>
-                                    {/*eslint-disable-next-line*/}
-                                    <button className="btn button-edit plyar-button-edit" onClick={() => {this.teamStats() }} style={{'margin-right':'5px'}}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
-                                
-                                   
+                            <div className="row">
+                                <div className="col-md-4 no-padding">
+                                    <button className="btn team-page-edit-button" onClick={()=>this.setState({isbrainSubmitPortal: true})} >Submit Brain Simulations</button>
                                 </div>
-                            </h1>
+                                <div className="col-md-4 no-padding">
+                                    <h2 className="team-dashboard-heading">Team Dashboard</h2>
+                                </div>
+                                <div className="col-md-4 no-padding">
+                                    <div className="col-md-6 no-padding" style={{'display':'contents'}}>
+                                        <button className="btn team-page-edit-button" onClick={() => {this.teamStats() }}><img src={team_state_icon} style={{'width':'32px'}} /> Team Stats</button>
+
+                                    </div>
+                                    <div className="col-md-6 no-padding" style={{'display':'contents'}}>
+                                        <button className="btn team-page-edit-button plyar-button-edit" style={{'margin-left': '10px'}}>Edit</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        
+
                         </div>
                         {/*<div className="text-left">
                                                 <button type="btn" className="impact-sumary-btn">
@@ -1136,6 +1159,11 @@ class CommanderTeamView extends React.Component {
         if (!this.state.isLoaded) {
             return <Spinner />;
         }
+
+        if(this.state.isbrainSubmitPortal){
+            return <BrainSubmitPortal makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} />;
+        }
+
         // impactHistoryBarData.labels = this.state.impactHistoryData.force;
         // impactHistoryBarData.datasets[0].data = this.state.impactHistoryData.pressure;
         // impactSummaryBarData.labels = this.state.impactSummaryData.force;
