@@ -33,18 +33,26 @@ class C288_T3_chart extends React.Component {
 
     render() {
         var values = [];
-        
+        var values_2 = [];
         var val = this.props.data;
         var len = val.val_x.length;
-        console.log('len',len)
+        var data_2 = this.props.data_2;
+        console.log('pros are ---\n')
         for(var i = 0; i < val.val_x.length; i++){
             values.push({ 'x': val.val_x[i] * 1000,'y': val.val_y[i] * 1000});
-            // if(i === len){
-            //     this.setState({
-            //         values: values
-            //     })
-            // }
         }
+
+        /**
+        * 
+        */
+        if(data_2){
+           for(var i = 0; i < data_2.val_x.length; i++){
+            // console.log(data_2.val_x[i])
+                values_2.push({ 'x': data_2.val_x[i],'y': data_2.val_y[i]});
+            }
+ 
+        }
+        // console.log('values_2',values_2)
 
         // console.log('values',values)
 
@@ -60,6 +68,14 @@ class C288_T3_chart extends React.Component {
                 pointRadius: 0,
                 fill: false,
                 data: values,
+            },{
+                lineTension: 0.1,
+                label: this.props.label,
+                backgroundColor: '#FF0000',
+                borderColor: '#FF0000',
+                pointRadius: 0,
+                fill: false,
+                data: values_2,
             }]
         }
 
@@ -96,9 +112,8 @@ class C288_T3_chart extends React.Component {
                     id: 'B',
                     position: 'left',
                     ticks: {
-                        suggestedMin: -5,
-                        suggestedMax: 5,
-                        // stepSize: 1
+                        autoSkip: true,
+                        maxTicksLimit: 5
                     }
                 }],
                 xAxes: [{
@@ -111,11 +126,10 @@ class C288_T3_chart extends React.Component {
                         display: true,
                         labelString: 'Time (ms)'
                     },
-                    //  ticks: {
-                    //     suggestedMin: 0,
-                    //     suggestedMax: 120,
-                    //     stepSize: 1
-                    // }
+                     ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 3
+                    }
                 }]
             }
 

@@ -208,8 +208,8 @@ class TeamStats extends React.Component {
                                         <select style={{marginLeft: '20px'}} onChange={this.handleChange} name={this.state.insult}>
                                             <option value="principal-max-strain">Max Principal Strain</option>
                                             <option value="principal-min-strain">Min Principal Strain</option>
-                                            <option value="resultant-linear-acceleration">Resultant Linear Acceleration</option>
-                                            <option value="resultant-Angular-acceleration">Resultant Angular Acceleration</option>
+                                            {/*<option value="resultant-linear-acceleration">Resultant Linear Acceleration</option>
+                                            <option value="resultant-Angular-acceleration">Resultant Angular Acceleration</option>*/}
                                             <option value="axonal-strain-max">Axonal Strain 15</option>
                                             <option value="masXsr-15-max">MASxSR 15</option>
                                             <option value="CSDM-5">CSDM 5</option>
@@ -256,13 +256,13 @@ class TeamStats extends React.Component {
                                 </Card >
                             </Col>
                             <Row className="no-padding" style={{'display':'flex'}}>
-                                <Col md={6}  className="team-state-cart-left" style={{marginTop:'50px'}}>
-                                    <Card style={{'border': '1px solid rgb(10, 84, 143)'}} >
+                                <Col md={6}  className="team-state-cart-left" style={{marginTop:'50px','display':'flex'}}>
+                                    <Card style={{'border': '1px solid rgb(10, 84, 143)','width':'100%'}} >
                                         {/*!-- MPS_95 chart start --*/}
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}}>
                                             <div className="col-md-12 no-padding">
-                                                <p className="video-lebel text-center">95% MPS Angular Acceleration </p>
-                                                < TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />
+                                                <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
+                                                {/*< TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />*/}
                                             </div>
                                             <div className="col-md-6">
                                             </div>
@@ -272,9 +272,27 @@ class TeamStats extends React.Component {
                                 </Col>
                                 <Col md={6}  className="team-state-cart-right" style={{marginTop:'50px'}}> 
                                     <Card style={{'border': '1px solid rgb(10, 84, 143)','height': '100%'}}>
+                                        {/*!-- MPS_95 chart start --*/}
+                                        <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}}>
+                                            <div className="col-md-12 no-padding">
+                                                <p className="video-lebel text-center">95 Percentile MPS Maximum Angular Acceleration </p>
+                                                < TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />
+                                            </div>
+                                            <div className="col-md-6">
+                                            </div>
+                                        </div>
+                                        {/*!-- MPS_95 chart end --*/}
+                                    </Card>
+                                </Col>
+                            </Row>
+
+                             <Row className="no-padding" style={{'display':'flex'}}>
+                                <Col md={6}  className="team-state-cart-left" style={{marginTop:'50px'}}>
+                                    <Card style={{'border': '1px solid rgb(10, 84, 143)'}} >
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">Machine Learning</p>
+                                                <div style={{'padding':'80px'}}></div>
                                             </div>
                                         </div>
                                     </Card>
