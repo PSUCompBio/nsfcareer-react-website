@@ -13,6 +13,7 @@ let brainModel;
 let isClicked = false;
 let aspectRatio, width, height, currentSubCamera, initialRatio, prevCanvasWidth;
 let previousClicked = null;
+let title = 'Maximum Principal Strain'
 const defaultTransparency = 0.3;
 const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
@@ -855,12 +856,14 @@ class ExportPlayerReport extends React.Component {
 	}
 	downFullImage = () => {
 		const c = document.createElement('canvas');
-		c.width = 800;
-		c.height = 300;
+		c.width = 900;
+		c.height = 350;
 		const plotCanvas = document.querySelector(".chartjs-render-monitor");
 		console.log("plotcanvas", plotCanvas)
-		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 400, 300);
-		c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 0, 400, 300);
+		c.getContext('2d').font = "20px Arial";
+		c.getContext('2d').fillText('Location of ' + title, 300, 37);
+		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 50, 400, 300);
+		c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 50, 500, 300);
 		let dc = c.toDataURL();
 		var link = document.createElement("a");
 		link.download = "full_image.png";
@@ -1181,6 +1184,23 @@ class ExportPlayerReport extends React.Component {
 		}, () => {
 			me.removeSpheres();
 			me.showUpdatedRegion();
+			switch (val) {
+				case "principal-max-strain":
+					title = "Maximum Principal Strain"
+					break;
+				case "principal-min-strain":
+					title = "Minimum Principal Strain"
+					break;
+				case "CSDM-15":
+					title = "CSDM-15"
+					break;
+				case "CSDM-10":
+					title = "CSDM-10"
+					break;
+				case "CSDM-5":
+					title = "CSDM-5"
+					break;
+			}
 		});
 	}
 
@@ -1237,7 +1257,7 @@ class ExportPlayerReport extends React.Component {
 		let me = this;
 
 		const data = {
-			labels: [0, 0, 0, 0, 0, 0, 0],
+			labels: ["Frontal", "Parietal", "Occipital", "Temporal", "Cerebellum", "Stem", ["Motor/", "Sensory", "Cortex"]],
 			datasets: [
 				{
 					label: "Events",
@@ -1262,6 +1282,13 @@ class ExportPlayerReport extends React.Component {
 		const options = {
 			animation: false,
 			responsive: true,
+			// title: {
+			// 	display: true,
+			// 	text: title,
+			// 	fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+			// 	fontSize: 14,
+			// 	lineHeight: 1.5
+			// },
 			plugins: {
 				datalabels: {
 					color: "#007bff",
@@ -1324,7 +1351,8 @@ class ExportPlayerReport extends React.Component {
 							labelString: "Angular Acceleration"
 						},
 						ticks: {
-							display: false //this will remove only the label
+							display: true, // like location of Maximum principal strain
+							fontSize: labelSize / 2.3,
 						}
 					}
 				]
@@ -1335,7 +1363,7 @@ class ExportPlayerReport extends React.Component {
 			tooltips: {
 				callbacks: {
 					title: function (tooltipItem, data) {
-						//return data['labels'][tooltipItem[0]['index']];
+						// return data['labels'][tooltipItem[0]['index']];
 					},
 					label: function (tooltipItem, data) {
 						let event = data["datasets"][0]["data"][tooltipItem["index"]];
