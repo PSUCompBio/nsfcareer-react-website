@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button, Container, Row, Col, Form } from 'react-bootstrap';
 import Footer from '../Footer';
 import DragMod  from './dragDropModule/dragModule';
-import TableMod from './table/table'
+import TableMod from './table/table' 
+import {submitBrainsimulationJobs} from '../../apis';
+import $ from 'jquery';
 
 const style = {
     heading: {
@@ -23,6 +25,8 @@ class BrainSubmitPortal extends React.Component {
             isDragMod: false,
             files: '',
             list: [],
+            meshType: '',
+            isUploaded: false
         };
     }
     componentDidMount=()=>{
@@ -56,8 +60,6 @@ class BrainSubmitPortal extends React.Component {
             return `${url.split('.').pop()} file not supported`;
         }
     }
-
-
 
     handleFileSelect = (file, fileType, key)=> {
         let reader = new FileReader();
@@ -129,8 +131,61 @@ class BrainSubmitPortal extends React.Component {
         }
     }
 
+    handelSubmit =(e)=>{
+        e.preventDefault();
+        $('#submit').prop('disabled', true);//#disable submit button on submit click...
+
+        let userData = localStorage.getItem("state");
+        userData = JSON.parse(userData);
+
+        const { files } = this.state; 
+        const user = userData['userInfo']['email'];
+       
+        let count = 0;
+        if(files[0]){
+            for(var i = 0; i < files.length; i++){
+                $("#status_"+i).html('<div class="spinner-border text-success"></div>');
+                console.log('file',files[i]);
+                var formdata = new FormData();
+                formdata.append("user", user);
+                formdata.append("filename", files[i]);
+                formdata.append("overwrite", "true");
+                formdata.append("fileNum", i);
+                //# creating new jobs...
+                submitBrainsimulationJobs(formdata)
+                .then(res=>{
+                    console.log('res',res)
+                    if(res.data.message === "success"){
+                        $("#status_"+res.data.fileNum).html('<p class="text-success"><i class="fa fa-check" aria-hidden="true"></i></p>');
+                    }else{
+                        $("#status_"+res.data.fileNum).html('<p class="text-danger">Failed!'+res.data.error+' </p>');
+                    }
+                    count++;
+                    if(count === files.length){
+                        this.setState({
+                            isUploaded: true,
+                        })
+                    }
+                }).catch(err=>{
+                    alert('failed to create jobs');
+                }); 
+            }
+        }
+
+
+    }
     render() {
-        const { isDragMod, list, files } = this.state;
+        const { isDragMod, list, files, meshType, isUploaded } = this.state;
+        let estimatedCost = 0;
+        if(list[0]){
+            if(meshType === 'coarse'){
+                estimatedCost = list.length * 0.23;
+                estimatedCost = estimatedCost.toFixed(2);
+            }else if(meshType === 'fine'){
+                estimatedCost = list.length * 1.06;
+                estimatedCost = estimatedCost.toFixed(2);
+            }
+        }
 
         return (
             <> 
@@ -168,16 +223,21 @@ class BrainSubmitPortal extends React.Component {
                                                 <div style={{'width':'80%','margin':'auto'}}>
                                                     <div className="simulation-file-list-header">
                                                         <p>{files.length} simulation uploaded</p>
-                                                        <p>Would you like to use the coarse mesh or fine mesh? <Form.Check inline label="Coarse" />  <Form.Check inline label="Fine" /></p>
-                                                        <p>Estimated Cost: </p>
+                                                        <p>Would you like to use the coarse mesh or fine mesh? <Form.Check type="checkbox" checked={this.state.meshType === "coarse" ? true : false} onClick={()=>this.setState({meshType: "coarse"})} inline value="coarse" name="mesh" label="Coarse" />  <Form.Check type="checkbox" checked={this.state.meshType === "fine" ? true : false} onClick={()=>this.setState({meshType: "fine"})} value="fine" name="mesh" inline label="Fine" /></p>
+                                                        <p>Estimated Cost: ${estimatedCost}</p>
                                                     </div>
                                                     {/*-- Table --*/}
                                                     <div>
+                                                        {isUploaded && 
+                                                            <div className="alert alert-success">
+                                                                <strong>Success!</strong> Jobs has been created.
+                                                            </div>
+                                                        }
                                                         <h3 style={{'text-align':'center'}}>Remove any unwanted simulations</h3>
                                                         <TableMod list={list} handleRemoveFile={this.props.handleRemoveFile ? this.props.handleRemoveFile : this.handleRemoveFile }/>
                                                     </div>
                                                     <div style={{'text-align':'center'}}>
-                                                        <Button variant="success"> Submit </Button>
+                                                        <Button id="submit" variant="success" onClick={this.handelSubmit}> Submit </Button>
                                                     </div>
                                                 </div>
                                             }

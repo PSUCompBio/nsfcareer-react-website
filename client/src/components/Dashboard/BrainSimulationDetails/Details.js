@@ -221,7 +221,7 @@ class Details extends React.Component {
         setTimeout(function(){
           the.setState({impact_video_url: res.data.impact_video_url, left_lock_time: 0,right_lock_time: 0, trim_video_url: ''});
         },2000);
-        setTimeout(()=>{the.vidocontrol3()},4000);
+        // setTimeout(()=>{the.vidocontrol3()},4000);
         setTimeout(()=>{the.vidocontrol()},2000);
       }else{
         the.setState({status: res.data.data.message});
@@ -295,9 +295,9 @@ class Details extends React.Component {
     right_lock_time = video.duration;
 
     let the = this;
-    video.onplay = ('play', function(e){
-      video.play();
-    });
+    // video.onplay = ('play', function(e){
+    //   video.play();
+    // });
     let len = 0;
     const setVideoFrameRate = (leftTime, rightTime) =>{
       console.log(leftTime, rightTime);
@@ -467,12 +467,14 @@ class Details extends React.Component {
     video.addEventListener('timeupdate', controls.handleProgress);
     video.addEventListener('loadeddata',()=> {setTimeout(()=>{
       controls.setvideoTime();
+      the.vidocontrol3();
+
     },2000)} );
 
     // progressBar.addEventListener('click', controls.scrub);
     progressBar_2.addEventListener('click', (e) => controls.scrub2(e));
 
-    lockButton.addEventListener('click', controls.lockVideo);
+    // lockButton.addEventListener('click', controls.lockVideo); #lock video event ...
     let mousedown = false;
     progressBar_2.addEventListener('mousemove', (e) => mousedown && controls.scrub2(e));
     progressBar_2.addEventListener('mousedown', () => mousedown = true);
@@ -536,10 +538,11 @@ class Details extends React.Component {
     
     video.addEventListener('loadeddata', ()=> {setTimeout(()=>{
       controls.Onload();
-    },2000)} );
+      the.vidocontrol3();
+    },3000)} );
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
-    lockButton.addEventListener('click', controls.lockVideo);
+    // lockButton.addEventListener('click', controls.lockVideo); #lock video event ...
     let mousedown = false;
     progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
     progressBar.addEventListener('mousedown', () => mousedown = true);
@@ -571,11 +574,14 @@ class Details extends React.Component {
       play:()=>{
         console.log('play');
         if(the.state.controlPlayVideo){
+          console.log('videos paused')
+
           if(video_1) video_1.pause();
           if(video_2) video_2.pause();
 
           the.setState({controlPlayVideo: false});
         }else{
+          console.log('videos played')
           if(video_1) video_1.play();
           if(video_2) video_2.play();
 
@@ -1047,7 +1053,7 @@ class Details extends React.Component {
                             </div>
                           <div>
                             {this.state.isTimeUpdating_2 ?<div> <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> </div>: ''}
-                            <img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2} alt="img"/>
+                            {/*<img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2} alt="img"/>*/}
                             <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
@@ -1149,11 +1155,11 @@ class Details extends React.Component {
                           </div>
                           <div>
                             <div className="col-sm-12 sideliene-video-sliders no-padding">
-                              <div className="col-sm-1 no-padding" style={{'float':'left'}}>
+                              {/*<div className="col-sm-1 no-padding" style={{'float':'left'}}>
                                 <img src={this.state.left_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() => this.handlelock_video('left')} alt="img"/>
-                              </div>
+                              </div>*/}
                               {/*<input type="range" min="0" max="100" step="0.05" value={this.state.video_time}  onChange={this.handleChangeRange} className="MyrangeSlider1 progress__filled" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>*/}
-                              <div className="col-sm-10 no-padding" style={{'float':'left'}}>
+                              <div className="col-sm-12 no-padding" style={{'float':'left'}}>
                                 <InputRange
                                   maxValue={100}
                                   minValue={0}
@@ -1162,9 +1168,9 @@ class Details extends React.Component {
                                   onChange={value => this.setRangeValue(value)} 
                                 />
                               </div>
-                              <div className="col-sm-1 no-padding" style={{'float':'left'}}>
+                              {/*<div className="col-sm-1 no-padding" style={{'float':'left'}}>
                                 <img src={this.state.right_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() =>  this.handlelock_video('right')} alt="img"/>
-                              </div>
+                              </div>*/}
                             </div>
                             <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
                           </div>
@@ -1186,14 +1192,18 @@ class Details extends React.Component {
                           </div>
                         </div>
                         
-                        <div className="col-md-12">
+                        <div className="col-md-12" style={{'float':'left'}}>
+                        
                           <div className="video-controlls">
-                            <div className="col-sm-6" style={{'float':'left'}}>
+                            <div className="col-sm-2" style={{'float':'left','padding': '0px'}}>
+                              <p style={{'font-weight': '600','color': '#4472c4'}}>Play both videos at the same time</p>
+                            </div>
+                            <div className="col-sm-4" style={{'float':'left'}}>
                               <img src={this.state.controlPlayVideo ? video_play_bl : video_pause_b} className="control-1 control_play_video" alt="img"/>
                               <img src={this.state.controlPouseVideo? pause_bl : pause_b}  className="control-1 control_pouse_video" alt="img"/>
                               <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b}  className="control-2 control_loop_video" alt="img"/>
                             </div>
-                            <div className="col-sm-6" style={{'float':'left'}}>
+                            <div className="col-sm-4" style={{'float':'left'}}>
                               <button onClick={this.handleExportVideo} disabled={!this.state.movie_link || !this.state.impact_video_url ? true : false} style={!this.state.movie_link || !this.state.impact_video_url ? {'background': '#b7cce2'} : {'background': '#4472c4'}}>
                                 {this.state.exporting ? 
                                   <>
@@ -1213,7 +1223,7 @@ class Details extends React.Component {
                             <div className="bottom-large-slider">
                               {/*<img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>*/}
                               <input type="range"  min="1" max="100" value={this.state.video_time_3}  onChange={this.handleChangeRange_3} className="MyrangeSlider3 progress__filled_3" id="MyrangeSlider3" />
-                              <p style={{'font-weight':'600'}}>Drag slider to advance both movies. The start time for each video can be adjust and locked above.</p>
+                              <p style={{'font-weight':'600'}}>Drag the slider to advance both movies at the same time. The sideline video can be trimmed to the duration of interest.</p>
                             </div>
                           </div>
                         }

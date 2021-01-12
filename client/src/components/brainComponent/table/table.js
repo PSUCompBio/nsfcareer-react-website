@@ -28,6 +28,8 @@ class table extends React.Component {
                                     <td>{res.position}</td>
                                     <td>{res.team}</td>
                                     <td><span onClick={() => this.props.handleRemoveFile(res.key)} style={{'cursor': 'pointer'}}> <img src={cencel} id={res.key} style={{'width': '26px'}} alt="img"/></span></td>
+                                    <td id={'status_'+res.key}> -- </td>
+                                    
                                 </tr>
                             )
                         })

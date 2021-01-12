@@ -1206,3 +1206,16 @@ export const modalValidationOutput = () =>{
       });
   })
 }
+
+//# submit jobs api called
+export const submitBrainsimulationJobs = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/api/v2/upload/sensor/`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

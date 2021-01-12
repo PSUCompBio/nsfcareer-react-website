@@ -8209,6 +8209,112 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
     })
 })
 
+
+// Run simulation using cURL command
+app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", maxCount: 1}, {name: "selfie", maxCount: 1}]), VerifyToken, (req, res) => {
+    console.log('req body',req.body)
+    let data_filename = null;
+    let base64File = null;
+    let fileNum = req.body.fileNum;
+    if (req.files.filename) {
+        let file_data = req.files.filename[0].buffer
+        base64File = file_data.toString('base64');
+        data_filename = req.files.filename[0].originalname
+    }
+
+    let selfie = null;
+    let base64Selfie = null;
+    if (req.files.selfie) {
+        let selfie_data = req.files.selfie[0].buffer
+        base64Selfie = selfie_data.toString('base64');
+        selfie = req.files.selfie[0].originalname;
+    }
+    var user_type = "standard";
+    getUser(req.body.user, function (err, data) {
+        if (err) {
+            console.log(err);
+
+            res.send({
+                message: "failure",
+                error: err
+            });
+        } else {
+            getUserDbData(data.Username, function (err, user_details) {
+                console.log('user_details =====================\n',user_details)
+                if (err) {
+                    res.send({
+                        message: "failure",
+                        error: err
+                    })
+                }
+                else {
+                    if (user_details.Item["level"] === 400 || user_details.Item["level"] === 300) {
+                        // console.log(user_details.Item);
+                        req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
+                        req.body["sensor_brand"] = user_details.Item["sensor"];
+                        req.body["level"] = user_details.Item["level"];
+                        if (user_details.Item["level"] === 300 && !req.body["organization"]) {
+                            req.body["organization"] = user_details.Item["organization"];
+                        }
+                        req.body["upload_file"] = base64File;
+                        req.body["data_filename"] = data_filename;
+                        req.body["selfie"] = base64Selfie;
+                        req.body["filename"] = selfie; 
+                        request.post({
+                            url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
+                            json: req.body
+                        }, function (err, httpResponse, body) {
+                            if (err) {
+                                res.send({
+                                    message: "failure",
+                                    error: err
+                                })
+                            }
+                            else {
+                                if (httpResponse.body.image_url) {
+                                    let body = '<!DOCTYPE html>\
+                                        <html>\
+                                        <body>';
+                                    let counter = 0;                                                
+                                    httpResponse.body.image_url.forEach((url, m) => {
+                                        counter++;
+                                        body += '<iframe src=\'' + url + '\' width=\'100%\' height=\'500px\'></iframe>';
+                                        if (counter == httpResponse.body.image_url.length) {
+                                            body += '</body>\
+                                                    </html>';
+                                            //res.send(body);
+                                            res.send({
+                                                message: "success",
+                                                data: url,
+                                                fileNum: fileNum
+                                            })
+                                        }
+                                    })
+                                } else {
+                                    res.send({
+                                        message: 'success',
+                                        fileNum: fileNum
+                                    });
+                                }
+                            }
+                        })
+                    } else {
+                        res.send({
+                            message: "failure",
+                            error: 'User is not sensor company.'
+                        })
+                    }
+                }
+            })
+        }
+    })
+        
+      
+        
+    
+})
+
+
 app.post(`${apiPrefix}getAllSensorBrandsList`, (req,res) =>{
     getAllSensorBrands()
     .then(list => {
