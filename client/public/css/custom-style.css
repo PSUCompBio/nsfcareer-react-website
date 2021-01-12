@@ -1562,3 +1562,7 @@ button.btn.button-yes {
     font-weight: 800;
     font-size: 41px;
 }
+.simulation-file-list-header{
+  font-size: 22px;
+  font-weight: 500;
+}

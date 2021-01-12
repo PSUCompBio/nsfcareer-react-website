@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import { Button, Container, Row, Col, Form } from 'react-bootstrap';
 import Footer from '../Footer';
-import DragMod  from './dragDropModule/dragModule'
+import DragMod  from './dragDropModule/dragModule';
+import TableMod from './table/table'
 
 const style = {
     heading: {
@@ -19,13 +20,117 @@ class BrainSubmitPortal extends React.Component {
         // console.log('data',this.props)
         this.state = {
             isMobile: true,
+            isDragMod: false,
+            files: '',
+            list: [],
         };
     }
     componentDidMount=()=>{
         var values = [];
     }
 
+    handleUpLoadedFiles = (files)=>{
+        console.log('handleUpLoadedFiles',files);
+        // console.log('files',files);
+        this.setState({files: [],isDragMod: false})
+        for(var i =0; i < files.length; i++){
+            let file = this.getUploadFileExtension3(files[i].path);
+            // console.log('file',file)
+            if(file === 'json' || file === 'csv'){
+                this.setState(prevState => ({
+                    files: prevState.files.concat(files[i])
+                }))
+                this.handleFileSelect(files[i], file, i)
+            }else{
+                alert(file);
+            }
+        }
+    }
+
+    getUploadFileExtension3 = (url) =>{
+        if(new RegExp(".json").test(url)){
+            return "json";
+        }else if(new RegExp(".csv").test(url)){
+            return "csv";
+        }else{
+            return `${url.split('.').pop()} file not supported`;
+        }
+    }
+
+
+
+    handleFileSelect = (file, fileType, key)=> {
+        let reader = new FileReader();
+        let the  = this;
+        reader.onload = function(e) {
+            if(fileType === 'json'){
+                let data = JSON.parse(e.target.result);
+                data = data[0]
+                console.log('data',data)
+                if(data && data.player){
+                    the.setState(prevState => 
+                        ({
+                            list: prevState.list.concat({
+                                key:key,
+                                name:data.player['first-name'] +' '+ data.player['last-name'], 
+                                position:data.player['position'], 
+                                team:data.player['team'], 
+                            })
+                        }) 
+                    );
+                }else{
+                    alert(`${file.name} file data farmat invalid.`);
+                }
+            }else{
+                the.setState(prevState => 
+                    ({
+                        list: prevState.list.concat({
+                            key:key,
+                            name: 'unknown', 
+                            position: 'unknown', 
+                            team: 'unknown', 
+                        })
+                    }) 
+                );
+            }
+          // that.displayData(e.target.result);
+        };
+        reader.readAsText(file);
+    }
+
+    handleRemoveFile =(key)=>{
+        // key = key.toString();
+        let file  = this.state.files;
+        var newfile = [];
+        this.setState({files: []})
+        for(var i = 0; i < file.length; i++){
+            if(i !== key){
+                console.log('i',file[i])
+                newfile.push(file[i]);
+                // this.setState(prevState => ({
+                //     files: prevState.files.concat(file[i])
+                // }))
+            }else{
+                console.log('file deleted')
+            }
+        }
+        console.log('remove file',newfile);
+        this.setState({files: newfile})
+        setTimeout(()=>{
+            this.setList()
+        },500)
+    }
+    setList =()=>{
+        const { files } = this.state;
+        console.log('files',files)
+        this.setState({list : []})
+        for(var i =0; i < files.length; i++){
+            this.handleFileSelect(files[i], files[i].name.split('.').pop(), i)
+        }
+    }
+
     render() {
+        const { isDragMod, list, files } = this.state;
 
         return (
             <> 
@@ -44,12 +149,39 @@ class BrainSubmitPortal extends React.Component {
                             {/*-- Body --*/}
                                 <Row>
                                     <Col sm={12} className="upload-sensor-data-button">
-                                        <Button>Upload Sensor Data</Button>
+                                        {!isDragMod && !list[0] ?
+                                            <Button onClick={()=>this.setState({isDragMod: true})}>Upload Sensor Data</Button>
+                                            : ''
+                                        }
                                     </Col>
                                     <Col sm={12}>
-                                        <div className="drag-drop-component">
-                                            <DragMod />
-                                        </div>
+                                        {/*-- Drop Zone --*/}
+                                        {isDragMod && 
+                                            <div className="drag-drop-component">
+                                                <DragMod handleUpLoadedFiles={this.props.handleUpLoadedFiles ? this.props.handleUpLoadedFiles : this.handleUpLoadedFiles} />
+                                            </div>
+                                        }
+                                        {/*-- Drop Zone end--*/}
+
+                                        {/*-- File List table --*/}
+                                            {list[0] && 
+                                                <div style={{'width':'80%','margin':'auto'}}>
+                                                    <div className="simulation-file-list-header">
+                                                        <p>{files.length} simulation uploaded</p>
+                                                        <p>Would you like to use the coarse mesh or fine mesh? <Form.Check inline label="Coarse" />  <Form.Check inline label="Fine" /></p>
+                                                        <p>Estimated Cost: </p>
+                                                    </div>
+                                                    {/*-- Table --*/}
+                                                    <div>
+                                                        <h3 style={{'text-align':'center'}}>Remove any unwanted simulations</h3>
+                                                        <TableMod list={list} handleRemoveFile={this.props.handleRemoveFile ? this.props.handleRemoveFile : this.handleRemoveFile }/>
+                                                    </div>
+                                                    <div style={{'text-align':'center'}}>
+                                                        <Button variant="success"> Submit </Button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        {/*-- File List end --*/}
                                     </Col>
                                 </Row>
                             {/*-- Body end --*/}

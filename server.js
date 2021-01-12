@@ -9986,6 +9986,7 @@ app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
     console.log('modalValidationOutput')
     let image_id = "ngkCxmTbR";
     let staticPath = 'HardyExperimentalData_C288T3/';
+
     let json_data = '';
     let newDisplacementData = {
         time_x_0: [],
@@ -10088,9 +10089,9 @@ app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
     }
     getModalValidationDB(image_id)
     .then(response =>{
-        console.log('response',staticPath)
+        console.log('response',response.Items[0]['file_path'])
         if(staticPath){
-            let file_path = staticPath+image_id+'_output.json';
+            let file_path = response.Items[0]['file_path']+image_id+'_output.json';
             let file_pathHardyExperimentalData = staticPath+'HardyExperimentalData_C288T3.json';
             getFileFromS3(file_pathHardyExperimentalData, config_env.usersbucket)
             .then(buffData=>{
