@@ -1055,7 +1055,7 @@ class Details extends React.Component {
                             {this.state.isTimeUpdating_2 ?<div> <i className="fa fa-spinner fa-spin" style={{'font-size':'24px'}}></i> </div>: ''}
                             {/*<img src={this.state.video_lock_time_2? lock : unlock} className="unlock-img lock_video_2" onClick={this.handlelock_video_2} alt="img"/>*/}
                             <input type="range" min="0" max="100" step="0.05" value={this.state.video_time_2}  onChange={this.handleChangeRange_2} className="MyrangeSlider1 progress__filled_2" id="MyrangeSlider1" disabled ={!this.state.video_lock_time_2 ? false : true}/>
-                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                            <p style={{'font-weight':'600','opacity': '0'}}>Drag slider to set the zero frame</p>
                           </div>
                           
                           <div className="col-md-12">
@@ -1172,7 +1172,7 @@ class Details extends React.Component {
                                 <img src={this.state.right_lock_time? lock : unlock} className="unlock-img-2 lock_video" onClick={() =>  this.handlelock_video('right')} alt="img"/>
                               </div>*/}
                             </div>
-                            <p style={{'font-weight':'600'}}>Drag slider to set the zero frame</p>
+                            <p style={{'font-weight':'600'}}>Use the sliders to set the desired video segment and then select trim.</p>
                           </div>
                           {/*<div>
                             <div className="col-sm-1 no-padding" style={{'float':'left'}}>
@@ -1191,8 +1191,16 @@ class Details extends React.Component {
                             <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSidelineVideo}</div>
                           </div>
                         </div>
-                        
-                        <div className="col-md-12" style={{'float':'left'}}>
+                        {this.state.isCommonControl && 
+                          <div className="" style={{'padding': '0px 14px'}}>
+                            <div className="bottom-large-slider">
+                              {/*<img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>*/}
+                              <input type="range"  min="1" max="100" value={this.state.video_time_3}  onChange={this.handleChangeRange_3} className="MyrangeSlider3 progress__filled_3" id="MyrangeSlider3" />
+                              <p style={{'font-weight':'600'}}>Drag the slider to advance both movies at the same time. The sideline video can be trimmed to the duration of interest.</p>
+                            </div>
+                          </div>
+                        }
+                        <div className="col-md-12" style={{'float':'left','margin-top': '28px'}}>
                         
                           <div className="video-controlls">
                             <div className="col-sm-2" style={{'float':'left','padding': '0px'}}>
@@ -1218,15 +1226,7 @@ class Details extends React.Component {
                             </div>
                           </div>
                         </div>
-                        {this.state.isCommonControl && 
-                          <div className="" style={{'padding': '0px 14px'}}>
-                            <div className="bottom-large-slider">
-                              {/*<img src={this.state.lock_video_3? lock : unlock} className="unlock-img lock_video_3" onClick={this.handlelock_video_3} style={{'width': '2.5%'}}/>*/}
-                              <input type="range"  min="1" max="100" value={this.state.video_time_3}  onChange={this.handleChangeRange_3} className="MyrangeSlider3 progress__filled_3" id="MyrangeSlider3" />
-                              <p style={{'font-weight':'600'}}>Drag the slider to advance both movies at the same time. The sideline video can be trimmed to the duration of interest.</p>
-                            </div>
-                          </div>
-                        }
+                        
                       </div>
                     </div>
                   </div>

@@ -279,8 +279,10 @@ class UserDashboarForAdmin extends React.Component {
               let impact_time = '';
               let time = '';
               let impact_id = item.sensor_data.player_id.split('$')[0];
-              let cls = item.status === 'pending' ? 'card-orange' : '';
-              if (item.status === 'completed' ) {
+              let cls =  '';
+              if(item.status === 'pending'){
+                  cls = 'card-orange';
+              }else if (item.status === 'completed' ) {
 
                 let computed_time = item.computed_time ? parseFloat(item.computed_time) / (1000 * 60) : 0;
 
@@ -293,6 +295,21 @@ class UserDashboarForAdmin extends React.Component {
                 minutes = minutes - computed_time;
                 if (minutes <= 30) {
                     cls = 'card-green';
+                }
+              }else{
+                let computed_time = item.computed_time ? parseFloat(item.computed_time) / (1000 * 60) : 0;
+
+                let currentStamp = new Date().getTime();
+                let simulationTimestamp = parseFloat(item.sensor_data.player_id.split('$')[1]);
+                var diff =(currentStamp - simulationTimestamp) / 1000;
+                diff /= 60;
+                let minutes =  Math.abs(Math.round(diff));
+                console.log('minutes', minutes);
+                minutes = minutes - computed_time;
+                if (minutes <= 30) {
+                    cls = 'card-red';
+                }else{
+                    cls = 'card-light-red';
                 }
               }
 

@@ -3307,6 +3307,38 @@ function getModalValidationDB(image_id){
     });
 }
 
+function checkSensorDataExists(obj) {
+    console.log(obj);
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            FilterExpression: "player.#impact_id = :impact_id and player.#sensor_id = :sensor_id",
+            ExpressionAttributeValues: {
+                ":impact_id": obj['impact_id'],
+                ":sensor_id": obj['sensor_id']
+            },
+            ExpressionAttributeNames: {
+                "#impact_id": "impact-id",
+                "#sensor_id": "sensor-id",
+            },
+            ProjectionExpression: "org_id, image_id, team, player_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    })
+}
+
+
 module.exports = {
     getUserDetails,
     getUserDetailBySensorId,
@@ -3404,5 +3436,7 @@ module.exports = {
     InsertTrimVideoKey,
     updateTrimVideoKey,
     getSernsorDataByOrgTeam,
-    getModalValidationDB
+    getModalValidationDB,
+
+    checkSensorDataExists
 };

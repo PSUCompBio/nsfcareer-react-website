@@ -137,7 +137,8 @@ class ExportPlayerReport extends React.Component {
 				{ name: 'Maximum Principal Strain', value: 'max-ps' },
 				{ name: 'Minimum Principal Strain', value: 'min-ps' },
 				{ name: 'CSDM-15', value: 'csdm_15' },
-			]
+			],
+			buttonType: 'Finite'
 		};
 
 		this.plugins = [
@@ -161,9 +162,9 @@ class ExportPlayerReport extends React.Component {
 		this.init();
 
 		window.addEventListener("resize", this.onWindowResize, false);
-		window.addEventListener("mousemove", this.onMouseMove, false);
-		window.addEventListener("mouseout", this.onMouseOut, false);
-		window.addEventListener("mouseleave", this.onMouseLeave, false);
+		// window.addEventListener("mousemove", this.onMouseMove, false);
+		// window.addEventListener("mouseout", this.onMouseOut, false);
+		// window.addEventListener("mouseleave", this.onMouseLeave, false);
 		window.addEventListener("touchstart", this.onTouchStart, false);
 		window.addEventListener("touchmove", this.onTouchMove, false);
 		window.addEventListener("touchend", this.onTouchEnd, false);
@@ -183,13 +184,13 @@ class ExportPlayerReport extends React.Component {
 			let me = this;
 
 			// Highlight brain model on mouse hover on brain button
-			document.getElementById("front_btn").addEventListener(
-				"mouseover",
-				function (event) {
-					me.onMouseHover(event, "Frontal_Lobe_node_Frontal_Lobe");
-				},
-				false
-			);
+			// document.getElementById("front_btn").addEventListener(
+			// 	"mouseover",
+			// 	function (event) {
+			// 		me.onMouseHover(event, "Frontal_Lobe_node_Frontal_Lobe");
+			// 	},
+			// 	false
+			// );
 			document.getElementById("front_btn").addEventListener(
 				"click",
 				function (event) {
@@ -200,16 +201,16 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
-			document.getElementById("pariental_btn").addEventListener(
-				"mouseover",
-				function (event) {
-					me.onMouseHover(
-						event,
-						"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
-					);
-				},
-				false
-			);
+			// document.getElementById("pariental_btn").addEventListener(
+			// 	"mouseover",
+			// 	function (event) {
+			// 		me.onMouseHover(
+			// 			event,
+			// 			"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
+			// 		);
+			// 	},
+			// 	false
+			// );
 			document.getElementById("pariental_btn").addEventListener(
 				"click",
 				function (event) {
@@ -230,13 +231,13 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
-			document.getElementById("temporal_btn").addEventListener(
-				"mouseover",
-				function (event) {
-					me.onMouseHover(event, "Temporal_Lobe_node_Temporal_Lobe");
-				},
-				false
-			);
+			// document.getElementById("temporal_btn").addEventListener(
+			// 	"mouseover",
+			// 	function (event) {
+			// 		me.onMouseHover(event, "Temporal_Lobe_node_Temporal_Lobe");
+			// 	},
+			// 	false
+			// );
 			document.getElementById("temporal_btn").addEventListener(
 				"click",
 				function (event) {
@@ -247,13 +248,13 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
-			document.getElementById("cerebellum_btn").addEventListener(
-				"mouseover",
-				function (event) {
-					me.onMouseHover(event, "Cerebellum_node_Cerebellum");
-				},
-				false
-			);
+			// document.getElementById("cerebellum_btn").addEventListener(
+			// 	"mouseover",
+			// 	function (event) {
+			// 		me.onMouseHover(event, "Cerebellum_node_Cerebellum");
+			// 	},
+			// 	false
+			// );
 			document.getElementById("cerebellum_btn").addEventListener(
 				"click",
 				function (event) {
@@ -264,16 +265,16 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
-			document.getElementById("motor_and_sensor_cortex").addEventListener(
-				"mouseover",
-				function (event) {
-					me.onMouseHover(
-						event,
-						"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex"
-					);
-				},
-				false
-			);
+			// document.getElementById("motor_and_sensor_cortex").addEventListener(
+			// 	"mouseover",
+			// 	function (event) {
+			// 		me.onMouseHover(
+			// 			event,
+			// 			"Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex"
+			// 		);
+			// 	},
+			// 	false
+			// );
 			document.getElementById("motor_and_sensor_cortex").addEventListener(
 				"click",
 				function (event) {
@@ -284,16 +285,16 @@ class ExportPlayerReport extends React.Component {
 				},
 				false
 			);
-			document.getElementById("stem_btn").addEventListener(
-				"mouseover",
-				function (event) {
-					me.onMouseHover(
-						event,
-						"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
-					);
-				},
-				false
-			);
+			// document.getElementById("stem_btn").addEventListener(
+			// 	"mouseover",
+			// 	function (event) {
+			// 		me.onMouseHover(
+			// 			event,
+			// 			"Brainstem_Spinal_cord_node_Brainstem_Spinal_cord"
+			// 		);
+			// 	},
+			// 	false
+			// );
 			document.getElementById("stem_btn").addEventListener(
 				"click",
 				function (event) {
@@ -309,9 +310,9 @@ class ExportPlayerReport extends React.Component {
 
 	componentWillUnmount() {
 		window.removeEventListener("resize", this.onWindowResize);
-		window.removeEventListener("mousemove", this.onMouseMove);
-		window.removeEventListener("mouseout", this.onMouseOut);
-		window.removeEventListener("mouseleave", this.onMouseLeave);
+		// window.removeEventListener("mousemove", this.onMouseMove);
+		// window.removeEventListener("mouseout", this.onMouseOut);
+		// window.removeEventListener("mouseleave", this.onMouseLeave);
 		window.removeEventListener("touchstart", this.onTouchStart);
 		window.removeEventListener("touchmove", this.onTouchMove);
 		window.removeEventListener("touchend", this.onTouchEnd);
@@ -1118,34 +1119,34 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	removeEventListeners = () => {
-		if (document.getElementById("front_btn"))
-			document
-				.getElementById("front_btn")
-				.removeEventListener("mouseover", this.onMouseHover);
-		if (document.getElementById("pariental_btn"))
-			document
-				.getElementById("pariental_btn")
-				.removeEventListener("mouseover", this.onMouseHover);
-		if (document.getElementById("occipital_btn"))
-			document
-				.getElementById("occipital_btn")
-				.removeEventListener("mouseover", this.onMouseHover);
-		if (document.getElementById("temporal_btn"))
-			document
-				.getElementById("temporal_btn")
-				.removeEventListener("mouseover", this.onMouseHover);
-		if (document.getElementById("cerebellum_btn"))
-			document
-				.getElementById("cerebellum_btn")
-				.removeEventListener("mouseover", this.onMouseHover);
-		if (document.getElementById("motor_and_sensor_cortex"))
-			document
-				.getElementById("motor_and_sensor_cortex")
-				.removeEventListener("mouseover", this.onMouseHover);
-		if (document.getElementById("stem_btn"))
-			document
-				.getElementById("stem_btn")
-				.removeEventListener("mouseover", this.onMouseHover);
+		// if (document.getElementById("front_btn"))
+		// 	document
+		// 		.getElementById("front_btn")
+		// 		.removeEventListener("mouseover", this.onMouseHover);
+		// if (document.getElementById("pariental_btn"))
+		// 	document
+		// 		.getElementById("pariental_btn")
+		// 		.removeEventListener("mouseover", this.onMouseHover);
+		// if (document.getElementById("occipital_btn"))
+		// 	document
+		// 		.getElementById("occipital_btn")
+		// 		.removeEventListener("mouseover", this.onMouseHover);
+		// if (document.getElementById("temporal_btn"))
+		// 	document
+		// 		.getElementById("temporal_btn")
+		// 		.removeEventListener("mouseover", this.onMouseHover);
+		// if (document.getElementById("cerebellum_btn"))
+		// 	document
+		// 		.getElementById("cerebellum_btn")
+		// 		.removeEventListener("mouseover", this.onMouseHover);
+		// if (document.getElementById("motor_and_sensor_cortex"))
+		// 	document
+		// 		.getElementById("motor_and_sensor_cortex")
+		// 		.removeEventListener("mouseover", this.onMouseHover);
+		// if (document.getElementById("stem_btn"))
+		// 	document
+		// 		.getElementById("stem_btn")
+		// 		.removeEventListener("mouseover", this.onMouseHover);
 	};
 
 	handleBrainStrain = (val) => {
@@ -1417,6 +1418,16 @@ class ExportPlayerReport extends React.Component {
 
 					</div>
 					<div className="col-md-6" ref={(ref) => (this.chartContainer = ref)}>
+						<div style={{
+							'display': 'inline-flex',
+						    'width': '80%',
+						    'padding': '10px',
+						    'margin': 'auto',
+						    'margin-left': '46px'
+						}}>
+                        	<button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button>
+                        	<button className={this.state.buttonType === "Finite" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
+                      	</div>
 						<Bar data={data} options={options} plugins={this.plugins} />
 						<div className="action-btn-container">
 							{actionButtons}

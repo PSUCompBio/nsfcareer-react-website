@@ -1392,6 +1392,15 @@ button.btn.button-yes {
 .card-orange{
   background: #ff8842e8!important;
 }
+
+.card-red{
+  background: #ff0000!important;
+}
+
+.card-light-red{
+  background: #ff5050!important;
+}
+
 .glow-spinner{
     text-align: center;
     width: 97%!important;
@@ -1565,4 +1574,28 @@ button.btn.button-yes {
 .simulation-file-list-header{
   font-size: 22px;
   font-weight: 500;
+  border: 2px solid #0c65ab;
+  padding: 18px;
+  margin-bottom: 25px;
+}
+
+/*-- update jan -1-14-2021 ---*/
+
+.simulation-portal-subheading p{
+  text-align: center;
+    color: #534e4e;
+    font-size: 20px;
+    font-weight: 500;
+}
+.uploading-simulation-list thead{
+  background: #e1e1e1;
+    color: #007bff;
+}
+.simulation-image-upload-icon img{
+  width: 30px;
+  cursor: pointer;
+}
+.simulationCencel{
+  pointer-events: none;
+  opacity: 0.5;
 }

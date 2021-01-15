@@ -46,7 +46,10 @@ class TeamStats extends React.Component {
                             isCheckingAuth: false,
                             brainRegions: response.data.data,
                             MAX_ANGULAR_EXLARATION: response.data.MAX_ANGULAR_EXLARATION,
-                            MPS_95_DATA: response.data.MPS_95_DATA
+                            MPS_95_DATA: response.data.MPS_95_DATA,
+                            MAX_ANGULAR_VEL_EXLARATION: response.data.MAX_ANGULAR_VEL_EXLARATION,
+                            MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
+                            
                         });
                     })
                     .catch((error) => {
@@ -262,7 +265,7 @@ class TeamStats extends React.Component {
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}}>
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
-                                                {/*< TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />*/}
+                                                {< TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_VEL_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_VEL_DATA} />}
                                             </div>
                                             <div className="col-md-6">
                                             </div>
@@ -292,6 +295,16 @@ class TeamStats extends React.Component {
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">Machine Learning</p>
+                                                <div style={{'padding':'80px'}}></div>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </Col>
+                                <Col md={6}  className="team-state-cart-left" style={{marginTop:'50px'}}>
+                                    <Card style={{'border': '1px solid rgb(10, 84, 143)'}} >
+                                        <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
+                                            <div className="col-md-12 no-padding">
+                                                <p className="video-lebel text-center">Brain Loading by Position</p>
                                                 <div style={{'padding':'80px'}}></div>
                                             </div>
                                         </div>

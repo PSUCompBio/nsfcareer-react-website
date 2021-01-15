@@ -209,7 +209,8 @@ const {
         InsertTrimVideoKey,
         updateTrimVideoKey,
         getSernsorDataByOrgTeam,
-        getModalValidationDB
+        getModalValidationDB,
+        checkSensorDataExists
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -8236,7 +8237,8 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
 
             res.send({
                 message: "failure",
-                error: err
+                error: err,
+                fileNum: fileNum
             });
         } else {
             getUserDbData(data.Username, function (err, user_details) {
@@ -8244,7 +8246,8 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                 if (err) {
                     res.send({
                         message: "failure",
-                        error: err
+                        error: err,
+                        fileNum: fileNum
                     })
                 }
                 else {
@@ -8267,7 +8270,9 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                             if (err) {
                                 res.send({
                                     message: "failure",
-                                    error: err
+                                    error: err,
+                                    fileNum: fileNum
+
                                 })
                             }
                             else {
@@ -8301,19 +8306,43 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                     } else {
                         res.send({
                             message: "failure",
-                            error: 'User is not sensor company.'
+                            error: 'User is not sensor company.',
+                            fileNum: fileNum
+
                         })
                     }
                 }
             })
         }
     })
-        
-      
-        
-    
+           
 })
-
+app.post(`${apiPrefix}api/v2/checkSensorDataExists/json/`, VerifyToken, (req, res) => {
+    console.log('req.query',req.body)
+     checkSensorDataExists(req.body)
+        .then(sensor_detail => {
+        console.log('sensor_detail ', sensor_detail);
+        if (sensor_detail.length > 0) {
+            res.send({
+                message: "success",
+                key: req.body.key,
+                isExists: true
+            })
+        } else {
+            res.send({
+                message: "success",
+                key: req.body.key,
+                isExists: false
+            })
+        }
+    }).catch(err=>{
+        res.send({
+            message: "success",
+            key: req.body.key,
+            isExists: false
+        })
+    })
+})
 
 app.post(`${apiPrefix}getAllSensorBrandsList`, (req,res) =>{
     getAllSensorBrands()
@@ -8676,8 +8705,9 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let CSDM_15 = {};
                 let MPS_95_DATA = [];
                 let MAX_ANGULAR_EXLARATION = [];
+                let MPS_95_VEL_DATA = [];
 
-
+                let MAX_ANGULAR_VEL_EXLARATION = [];
 
                 if (data.length === 0){
                     brainRegions['principal-max-strain'] = {};
@@ -8695,6 +8725,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         brainRegions: brainRegions,
                         MPS_95_DATA: MPS_95_DATA,
                         MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                        MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
+                        MPS_95_VEL_DATA: MPS_95_VEL_DATA
                     })
                 }
 
@@ -8739,6 +8771,10 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                             MPS_95_DATA.push(summary_data['MPS-95']['value']);
                             MAX_ANGULAR_EXLARATION.push(summary_data['max-angular-acc-rads2']);
                         }
+                        if(summary_data['MPS-95']['value'] && summary_data['max-angular-vel-rads']){
+                            MPS_95_VEL_DATA.push(summary_data['MPS-95']['value']);
+                            MAX_ANGULAR_VEL_EXLARATION.push(summary_data['max-angular-vel-rads']);
+                        }
                     }
                 }
 
@@ -8758,6 +8794,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         brainRegions: brainRegions,
                         MPS_95_DATA: MPS_95_DATA,
                         MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
+                        MPS_95_VEL_DATA: MPS_95_VEL_DATA,
+                        MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION
                     });
                 });
             }

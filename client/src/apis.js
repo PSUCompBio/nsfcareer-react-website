@@ -1219,3 +1219,17 @@ export const submitBrainsimulationJobs = (request) =>{
       });
   })
 }
+
+
+//# ...
+export const checkSensorDataExistsSimulationjsonData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/api/v2/checkSensorDataExists/json/`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

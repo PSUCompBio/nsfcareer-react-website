@@ -20,13 +20,7 @@ class dragModule extends React.Component {
         this.props.handleUpLoadedFiles(files)
         // console.log('files',);
     }
-
-   
-
-    
     render() {
-        
-
         return (
             <>  
                 <Dropzone onDrop={this.onDrop}>
