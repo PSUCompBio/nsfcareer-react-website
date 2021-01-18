@@ -11,6 +11,8 @@ import {
     getFilterdTeamSpheres
   } from './../apis';
 import TeamStateScatterChart from './Charts/TeamStateScatterChart';
+import BarChart from './Charts/BarChart';
+
 import { Card , Row, Col } from 'react-bootstrap';
 
 class TeamStats extends React.Component {
@@ -172,7 +174,41 @@ class TeamStats extends React.Component {
            return <Redirect to="/Login" />;
         }
         if (this.state.isLoading) return <Spinners />;
-       return (
+
+        const BrainPositionChartData = {
+            datasets: [{
+                label: 'Unknown',
+                barThickness: 25,
+                backgroundColor: '#0c68b2',
+                borderColor: '#0c68b2',
+                minBarLength: 2,
+                data: [0]
+            }],
+            labels: ['Unknown']
+        };
+        const BrainPositionChartoptions = {
+            scales: {
+                xAxes: [{
+                    gridLines: {
+                        offsetGridLines: true
+                    },
+                    scaleLabel: {
+                        display: true,
+                    },
+                   
+                }],
+                yAxes: [ {
+                    ticks: {
+                        suggestedMin: 0,
+                       
+                        suggestedMax: 50,
+                         stepSize: 5,
+                    }
+
+                }]
+            }
+        };
+        return (
             <React.Fragment>
                  
                 <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
@@ -305,7 +341,9 @@ class TeamStats extends React.Component {
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">Brain Loading by Position</p>
-                                                <div style={{'padding':'80px'}}></div>
+                                                <div>
+                                                    <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
+                                                </div>
                                             </div>
                                         </div>
                                     </Card>

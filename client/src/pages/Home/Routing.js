@@ -46,6 +46,8 @@ import sendEmailVerifation from '../../components/Authentication/pages/sendEmail
 
 //Team state demo page 
 import TeamStatsDemo from '../../components/TeamStatsDemo';
+import FailedSimulationList from '../../components/TeamPageComponent/FailedSimulationList';
+
 
 
 class Routing extends React.Component {
@@ -409,6 +411,11 @@ class Routing extends React.Component {
             
             path="/re-sendEmailVerifation"
              component = {sendEmailVerifation}
+        />
+        <Route
+            exact
+            path="/failedSimulation/:org/:team/:brand?"
+            render={(props) => <FailedSimulationList {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
         />
       </React.Fragment>
     );

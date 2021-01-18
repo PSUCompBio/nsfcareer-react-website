@@ -1888,10 +1888,11 @@ app.post(`${apiPrefix}updateUserMouthguardDetails`,(req, res) => {
         Key : {
             "user_cognito_id": req.body.user_cognito_id
         },
-        UpdateExpression : "set sensor = :sensor, sensor_id_number = :sensor_id_number",
+        UpdateExpression : "set sensor = :sensor, sensor_id_number = :sensor_id_number, player_position = :player_position",
         ExpressionAttributeValues : {
             ":sensor" : req.body.sensor,
-            ":sensor_id_number" : req.body.sensor_id_number
+            ":sensor_id_number" : req.body.sensor_id_number,
+            ":player_position" : req.body.position
         },
         ReturnValues: "UPDATED_NEW"
     };
@@ -1899,7 +1900,8 @@ app.post(`${apiPrefix}updateUserMouthguardDetails`,(req, res) => {
     docClient.update(update_details, function(err, data){
         if(err) {
             res.send({
-                message : 'failure'
+                message : 'failure',
+                err: err
             })
         } else {
             res.send({
@@ -6396,6 +6398,60 @@ app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
             })
         })
 })
+
+app.post(`${apiPrefix}getFailedSimulationList`, (req,res) =>{
+    console.log('req -----',req.body);
+    let failedList = {};
+    getTeamData(req.body)
+    .then(sensor_data => {
+        console.log('sensor_data',sensor_data)
+        //..
+        let k = 0
+        if (sensor_data.length > 0) {
+            sensor_data.forEach(function (record, index) {
+                console.log('record',record);
+                var player = record.player['first-name']+'-'+record.player['last-name']+'-'+record.player_id;
+                var sensorData = record;
+                getPlayerSimulationFile(record)
+                .then(simulation => {
+                    console.log('simulation',player)
+                    k++
+                    if (simulation && simulation.status != 'pending' && simulation.status != 'completed') {
+                        failedList[player] = [];
+                        failedList[player].push(sensorData);
+                    } 
+                    if (k == sensor_data.length) {
+                        res.send({
+                            message: "success",
+                            data: failedList
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log('err',err)
+                    res.send({
+                        message: "failure",
+                        error: err,
+                        data: ''
+                    })
+                })
+            })
+        } else {
+            res.send({
+                message: "success",
+                data: ''
+            })
+        }
+        
+    }).catch(err => {
+        res.send({
+            message: "failure",
+            error: err,
+            data: ''
+
+        })
+    })
+})  
 
 app.post(`${apiPrefix}getCumulativeAccelerationData`, (req,res) =>{
     getCumulativeAccelerationData(req.body)

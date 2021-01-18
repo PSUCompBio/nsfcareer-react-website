@@ -405,6 +405,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	showAllSpheres = () => {
+		console.log('showing allshpere')
 		const me = this;
 		// console.log('showAllSpheres------------------------\n',all_spheres_json)
 		all_spheres_json.forEach(function (object, index) {
@@ -414,6 +415,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	generateSphere = (x, y, z, sphereName) => {
+		console.log('creating shaprers')
 		if (root) {
 			// Add pointer(s) to brain model as children
 			// const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);

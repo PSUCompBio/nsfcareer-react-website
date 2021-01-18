@@ -642,7 +642,11 @@ function getTeamData(obj) {
                                 ":organization": obj.organization,
                                 ":team": obj.team
                             },
-                            ProjectionExpression: "team, player_id, image_id"
+                            ExpressionAttributeNames: {
+                                "#impactDate": "impact-date",
+                                "#impactTime": "impact-time",
+                            },
+                            ProjectionExpression: "team, player_id, image_id,player,#impactDate,#impactTime"
                         };
                     } else {
                         params = {
@@ -654,7 +658,11 @@ function getTeamData(obj) {
                                 ":organization": obj.organization,
                                 ":team": obj.team
                             },
-                            ProjectionExpression: "team, player_id, image_id"
+                            ExpressionAttributeNames: {
+                                "#impactDate": "impact-date",
+                                "#impactTime": "impact-time",
+                            },
+                            ProjectionExpression: "team, player_id, image_id,player,#impactDate,#impactTime"
                         };
                     }
                     

@@ -97,6 +97,8 @@ class Profile extends React.Component {
             VerifyNumber:false,
             sensors: [],
             selectedOption: null,
+            selectedOptionPosition: null,
+
             inspection_data: '',
             isDisplay: { display: 'none' },
             isDisplay2: { display: 'none' },
@@ -701,6 +703,7 @@ class Profile extends React.Component {
                 phone_number: response.data.data.phone_number ? response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length) : '',
                 number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                 selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
+                selectedOptionPosition:  response.data.data.player_position ? {value:response.data.data.player_position , label:response.data.data.player_position }: [],
                 sensor_id_number:  response.data.data.sensor_id_number ? response.data.data.sensor_id_number : '',
                 // isLoading: false,
                 // isAuthenticated: true,
@@ -879,6 +882,12 @@ class Profile extends React.Component {
         }
       }
 
+    /*
+    * Handling postion drop down ...
+    */
+    handlePositionChange = (selectedOptionPosition)=>{
+        this.setState({selectedOptionPosition})
+    }
     showProfile = () => {
         console.log('this.state.user.first_name', this.state.user)
         // this.setState({phone_number: this.state.user.phone_number})
@@ -888,6 +897,10 @@ class Profile extends React.Component {
         let isClearable = true;
         let disable_btn = !this.state.inspection_data ? 'disable_btn' : '';
         console.log('tdd',this.state.isCamera)
+        const positionOptions = [
+          { value: 'unknown', label: 'unknown' },
+        ];
+
         return (
             <React.Fragment>
             {
@@ -1328,7 +1341,7 @@ class Profile extends React.Component {
                                     <div ref="lightDark" style={{ border: "2px solid rgb(15, 129, 220)", borderRadius: "1.8rem" }} className="row profile-container">
                                         <div className="col-md-10 ml-4 mt-2 pt-2">
                                             <p className="player-dashboard-sub-head">
-                                                Mouthguard of Sensor Information
+                                                Sensor and Position Information
                                             </p>
                                             <Form className="mt-2" onSubmit = {this.handleMouthguardSubmit} >
                                                 
@@ -1352,8 +1365,25 @@ class Profile extends React.Component {
                                                     <FormGroup row>
                                                         <Label for="exampleEmail" sm={2}>Sensor ID Number</Label>
                                                         <Col sm={6}>
-                                                            <div class="input-group">
+                                                            <div className="input-group">
                                                                 <Input className="profile-input" type="text" name="sensor_id_number"  defaultValue={this.state.sensor_id_number} id="sensor_id_number"  placeholder="Sensor Id number" />
+                                                            </div>
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <FormGroup row>
+                                                        <Label for="exampleEmail" sm={2}>Position</Label>
+                                                        <Col sm={6}>
+                                                            <div className="input-group">
+                                                               <Select
+                                                                  className="custom-profile-select"
+                                                                  value={this.state.selectedOptionPosition}
+                                                                  defaultValue ={this.state.selectedOptionPosition}
+                                                                  name="position"
+                                                                  placeholder="Select player position"
+                                                                  onChange={this.handlePositionChange}
+                                                                  options={positionOptions}
+                                                                  isClearable={isClearable}
+                                                                />
                                                             </div>
                                                         </Col>
                                                     </FormGroup>

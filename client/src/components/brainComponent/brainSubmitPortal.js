@@ -28,7 +28,7 @@ class BrainSubmitPortal extends React.Component {
             isDragMod: false,
             files: '',
             list: [],
-            meshType: '',
+            meshType: 'coarse',
             isUploaded: false,
             isCalledExists: false,
             isError: false,
@@ -362,7 +362,7 @@ class BrainSubmitPortal extends React.Component {
                                                 <div style={{'width':'80%','margin':'auto'}}>
                                                     <div className="simulation-file-list-header">
                                                         <p>{files.length} simulations uploaded</p>
-                                                        <p>Would you like to use the coarse mesh or fine mesh? &nbsp;&nbsp;&nbsp;&nbsp; <Form.Check type="checkbox" checked={this.state.meshType === "coarse" ? true : false} onClick={()=>this.setState({meshType: "coarse"})} inline value="coarse" name="mesh" label="Coarse" />  <Form.Check type="checkbox" checked={this.state.meshType === "fine" ? true : false} onClick={()=>this.setState({meshType: "fine"})} value="fine" name="mesh" inline label="Fine" /></p>
+                                                        <p>Would you like to use the coarse mesh or fine mesh? &nbsp;&nbsp;&nbsp;&nbsp; <Form.Check type="checkbox" checked={this.state.meshType === "coarse" ? true : false} onClick={()=>this.setState({meshType: "coarse"})} inline value="coarse" name="mesh" label="Coarse" disabled/>  <Form.Check type="checkbox" checked={this.state.meshType === "fine" ? true : false} onClick={()=>this.setState({meshType: "fine"})} value="fine" name="mesh" inline label="Fine" disabled/></p>
                                                         <p>Estimated Cost: ${estimatedCost}</p>
                                                     </div>
                                                     {/*-- Table --*/}
