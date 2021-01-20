@@ -51,6 +51,7 @@ class TeamStats extends React.Component {
                             MPS_95_DATA: response.data.MPS_95_DATA,
                             MAX_ANGULAR_VEL_EXLARATION: response.data.MAX_ANGULAR_VEL_EXLARATION,
                             MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
+                            PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS
                             
                         });
                     })
@@ -174,6 +175,15 @@ class TeamStats extends React.Component {
            return <Redirect to="/Login" />;
         }
         if (this.state.isLoading) return <Spinners />;
+        const { PLAYERS_POSITIONS } = this.state;
+        var data = [];
+        var labels = [];
+        if(PLAYERS_POSITIONS){
+            for(var i = 0; i < PLAYERS_POSITIONS.length; i++){
+                data.push(0);
+                labels.push(PLAYERS_POSITIONS[i]);
+            }
+        }
 
         const BrainPositionChartData = {
             datasets: [{
@@ -182,9 +192,9 @@ class TeamStats extends React.Component {
                 backgroundColor: '#0c68b2',
                 borderColor: '#0c68b2',
                 minBarLength: 2,
-                data: [0]
+                data: data
             }],
-            labels: ['Unknown']
+            labels: labels
         };
         const BrainPositionChartoptions = {
             scales: {

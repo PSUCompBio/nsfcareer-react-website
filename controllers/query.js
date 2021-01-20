@@ -3346,6 +3346,91 @@ function checkSensorDataExists(obj) {
     })
 }
 
+function getPlayerImageDetailsByaccoutId(account_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "simulation_images",
+            FilterExpression:
+                "account_id = :account_id",
+            ExpressionAttributeValues: {
+                ":account_id": account_id,
+            },
+            ProjectionExpression: "org_id, image_id, team, player_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+
+function getOrgIdbyImageId(image_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            FilterExpression: "image_id = :image_id",
+            ExpressionAttributeValues: {
+               ":image_id":image_id
+            },
+            ProjectionExpression: "org_id,player_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+
+function updatePlayerPositions(player_id ,org_id, position, sport) {
+    console.log('player_id ',player_id ,org_id, position)
+    return new Promise((resolve, reject) => {
+        var params = {
+            TableName: "sensor_details",
+            Key: { 
+                "org_id": org_id,
+                "player_id": player_id
+            },
+            UpdateExpression: "set player.sport = :sport, player.#player_position = :p",
+            ExpressionAttributeValues:{
+                ":sport":sport,
+                ":p":position,
+
+            },
+            ExpressionAttributeNames: {
+                "#player_position": "position",
+            },
+            ReturnValues:"UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating sensor data\n",err);
+                reject(err);
+
+            } else {
+                console.log('position updated')
+                resolve(data)
+            }
+        });
+    });
+}
+
 
 module.exports = {
     getUserDetails,
@@ -3446,5 +3531,8 @@ module.exports = {
     getSernsorDataByOrgTeam,
     getModalValidationDB,
 
-    checkSensorDataExists
+    checkSensorDataExists,
+    getPlayerImageDetailsByaccoutId,
+    getOrgIdbyImageId,
+    updatePlayerPositions
 };

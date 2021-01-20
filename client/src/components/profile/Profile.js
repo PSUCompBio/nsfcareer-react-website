@@ -54,6 +54,9 @@ import AvatarInspectionModel from '../Popup/AvatarInspectionModel';
 // import camera from './camera.png';
 import CameraPopup from '../Popup/CameraPopup';
 // import CameraPopupDesktop from '../Popup/CameraPopupDesktop';
+import { sportsList, amricanFootballPositions, rugbyPositions, soccerPositions, combatSportsOptions, militaryTrainingOptions } from './positionData';
+
+
 let options = [];
 class Profile extends React.Component {
     constructor(props) {
@@ -98,7 +101,8 @@ class Profile extends React.Component {
             sensors: [],
             selectedOption: null,
             selectedOptionPosition: null,
-
+            positionOptions: '',
+            selectedSprot: null,
             inspection_data: '',
             isDisplay: { display: 'none' },
             isDisplay2: { display: 'none' },
@@ -703,7 +707,9 @@ class Profile extends React.Component {
                 phone_number: response.data.data.phone_number ? response.data.data.phone_number.substring(response.data.data.phone_number.length - 10 , response.data.data.phone_number.length) : '',
                 number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                 selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
-                selectedOptionPosition:  response.data.data.player_position ? {value:response.data.data.player_position , label:response.data.data.player_position }: [],
+                selectedOptionPosition:  {value:response.data.data.player_position , label:response.data.data.player_position },
+                selectedSprot:  response.data.data.sport ? {value:response.data.data.sport , label:response.data.data.sport.charAt(0).toUpperCase() + response.data.data.sport.slice(1)}: [],
+
                 sensor_id_number:  response.data.data.sensor_id_number ? response.data.data.sensor_id_number : '',
                 // isLoading: false,
                 // isAuthenticated: true,
@@ -746,6 +752,7 @@ class Profile extends React.Component {
 
         console.log('update User Details api called');
         const formData = new FormData(e.target);
+        formData.append('account_id',this.state.user.account_id);
         this.setState({
             isLoginError2: false,
             isLoading2: true
@@ -882,6 +889,38 @@ class Profile extends React.Component {
         }
       }
 
+    //# handling sport drop-down ...
+    handleSportChange=(selectedSprot)=>{
+        console.log('selectedSprot',selectedSprot)
+        this.setState({selectedSprot});
+        var sport = selectedSprot ? selectedSprot.value : '';
+        var option = '';
+        switch(sport) {
+          case 'american_football':
+            option = amricanFootballPositions;
+            break;
+          case 'rugby':
+            option = rugbyPositions;
+            
+            break;
+           case 'soccer':
+            option = soccerPositions;
+            
+            break;
+           case 'combat_sports':
+            option = combatSportsOptions;
+            
+            break;
+           case 'military_training':
+            option = militaryTrainingOptions;
+            
+            break;
+          default:
+            // code block
+        }
+        this.setState({positionOptions: option, selectedOptionPosition: null})
+    }
+  
     /*
     * Handling postion drop down ...
     */
@@ -896,10 +935,22 @@ class Profile extends React.Component {
         });
         let isClearable = true;
         let disable_btn = !this.state.inspection_data ? 'disable_btn' : '';
+
         console.log('tdd',this.state.isCamera)
-        const positionOptions = [
-          { value: 'unknown', label: 'unknown' },
-        ];
+        // const colourStyles = {
+        //   control: styles => ({ ...styles, backgroundColor: 'white' }),
+        //   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+            
+        //     return {
+        //       ...styles,
+        //       // backgroundColor: data.color,
+        //       color: data.color,
+        //       cursor: isDisabled ? 'not-allowed' : 'default',
+
+              
+        //     };
+        //   },
+        // };
 
         return (
             <React.Fragment>
@@ -1371,22 +1422,42 @@ class Profile extends React.Component {
                                                         </Col>
                                                     </FormGroup>
                                                     <FormGroup row>
-                                                        <Label for="exampleEmail" sm={2}>Position</Label>
+                                                        <Label for="sport" sm={2}>Sport</Label>
                                                         <Col sm={6}>
                                                             <div className="input-group">
                                                                <Select
                                                                   className="custom-profile-select"
-                                                                  value={this.state.selectedOptionPosition}
-                                                                  defaultValue ={this.state.selectedOptionPosition}
-                                                                  name="position"
-                                                                  placeholder="Select player position"
-                                                                  onChange={this.handlePositionChange}
-                                                                  options={positionOptions}
+                                                                  value={this.state.selectedSprot}
+                                                                  defaultValue ={this.state.selectedSprot}
+                                                                  name="sport"
+                                                                  placeholder="Select player sport"
+                                                                  onChange={this.handleSportChange}
+                                                                  options={sportsList}
                                                                   isClearable={isClearable}
                                                                 />
                                                             </div>
                                                         </Col>
                                                     </FormGroup>
+                                                    {this.state.positionOptions && 
+                                                        <FormGroup row>
+                                                            <Label for="exampleEmail" sm={2}>Position</Label>
+                                                            <Col sm={6}>
+                                                                <div className="input-group">
+                                                                   <Select
+                                                                      className="custom-profile-select"
+                                                                      value={this.state.selectedOptionPosition}
+                                                                      defaultValue ={this.state.selectedOptionPosition}
+                                                                      name="position"
+                                                                      placeholder="Select player position"
+                                                                      onChange={this.handlePositionChange}
+                                                                      options={this.state.positionOptions}
+                                                                      isClearable={isClearable}
+                                                                      // styles={colourStyles}
+                                                                    />
+                                                                </div>
+                                                            </Col>
+                                                        </FormGroup>
+                                                    }
                                                     <div className="text-center" style={{'margin-bottom': '14px'}}>
                                                         <Button color="primary"> Save Changes </Button>
                                                     </div>
@@ -1857,6 +1928,9 @@ class Profile extends React.Component {
                                             number_verified: response.data.data.phone_number_verified ? response.data.data.phone_number_verified : 'false',
                                             selectedOption: response.data.data.sensor ? {value:response.data.data.sensor , label:response.data.data.sensor }: [],
                                             sensor_id_number:  response.data.data.sensor_id_number ? response.data.data.sensor_id_number : '',
+                                            selectedOptionPosition:  {value:response.data.data.player_position , label:response.data.data.player_position },
+                                            selectedSprot:  response.data.data.sport ? {value:response.data.data.sport , label:response.data.data.sport.charAt(0).toUpperCase() + response.data.data.sport.slice(1)}: [],
+
                                             // isLoading: false,
                                             // isAuthenticated: true,
                                             // isCheckingAuth: false,
@@ -1866,6 +1940,34 @@ class Profile extends React.Component {
                                             avatar_zip_file_url_details : avatar_zip_file_url_details,
                                             vtk_file_url_details : vtk_file_url_details
                                         });
+                                        if(response.data.data.sport){
+                                            var option = '';
+                                            var sport = response.data.data.sport;
+                                            switch(sport) {
+                                              case 'american_football':
+                                                option = amricanFootballPositions;
+                                                break;
+                                              case 'rugby':
+                                                option = rugbyPositions;
+                                                
+                                                break;
+                                               case 'soccer':
+                                                option = soccerPositions;
+                                                
+                                                break;
+                                               case 'combat_sports':
+                                                option = combatSportsOptions;
+                                                
+                                                break;
+                                               case 'military_training':
+                                                option = militaryTrainingOptions;
+                                                
+                                                break;
+                                              default:
+                                                // code block
+                                            }
+                                            this.setState({positionOptions: option});
+                                        }
 
                                         if (getStatusOfDarkmode().status === true) {
                                             store.dispatch(darkThemeActiveSetter());

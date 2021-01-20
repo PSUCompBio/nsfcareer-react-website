@@ -210,7 +210,10 @@ const {
         updateTrimVideoKey,
         getSernsorDataByOrgTeam,
         getModalValidationDB,
-        checkSensorDataExists
+        checkSensorDataExists,
+        getPlayerImageDetailsByaccoutId,
+        getOrgIdbyImageId,
+        updatePlayerPositions
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -1881,21 +1884,45 @@ app.post(`${apiPrefix}updateUserDetails`,(req, res) => {
     })
 })
 
+function updatePlayerPosition(position, account_id, sport){
+    getPlayerImageDetailsByaccoutId(account_id)
+    .then(data=>{
+        console.log('data',data)
+        data.forEach(async function (record, index) {
+            getOrgIdbyImageId(record.image_id)
+            .then(res=>{
+                // console.log('res',res)
+                res.forEach(async function (player_data, index) {
+                    updatePlayerPositions(player_data.player_id,player_data.org_id, position, sport);
+                })
+            })
+        })
+    })
+}
+
 app.post(`${apiPrefix}updateUserMouthguardDetails`,(req, res) => {
     console.log('req',req.body);
+    var position = req.body.position ? req.body.position : '';
+    var sport = req.body.sport ? req.body.sport : '';
+    var account_id = req.body.account_id;
+
     let update_details = {
         TableName : 'users',
         Key : {
             "user_cognito_id": req.body.user_cognito_id
         },
-        UpdateExpression : "set sensor = :sensor, sensor_id_number = :sensor_id_number, player_position = :player_position",
+        UpdateExpression : "set sensor = :sensor, sensor_id_number = :sensor_id_number, player_position = :player_position,sport = :sport ",
         ExpressionAttributeValues : {
             ":sensor" : req.body.sensor,
             ":sensor_id_number" : req.body.sensor_id_number,
-            ":player_position" : req.body.position
+            ":player_position" :position,
+            ":sport" : sport,
         },
         ReturnValues: "UPDATED_NEW"
     };
+    if(req.body.account_id){
+        updatePlayerPosition(position, account_id, sport);
+    }
 
     docClient.update(update_details, function(err, data){
         if(err) {
@@ -1904,9 +1931,11 @@ app.post(`${apiPrefix}updateUserMouthguardDetails`,(req, res) => {
                 err: err
             })
         } else {
-            res.send({
-                message : 'success'
-            })
+            setTimeout(()=>{
+                res.send({
+                    message : 'success'
+                })
+            },2000)
         }
     })
 })
@@ -8747,7 +8776,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
             count_sp++;
             if(count_sp == req.body.team.length){
                 data = spharesData;
-                console.log('data of team sphares -----\n',data)
+                // console.log('data of team sphares -----\n',data)
 
                 let brainRegions = {};
                 let principal_max_strain = {};
@@ -8762,8 +8791,9 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let MPS_95_DATA = [];
                 let MAX_ANGULAR_EXLARATION = [];
                 let MPS_95_VEL_DATA = [];
-
                 let MAX_ANGULAR_VEL_EXLARATION = [];
+                let PLAYERS_POSITIONS = [];
+
 
                 if (data.length === 0){
                     brainRegions['principal-max-strain'] = {};
@@ -8782,7 +8812,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MPS_95_DATA: MPS_95_DATA,
                         MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
                         MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
-                        MPS_95_VEL_DATA: MPS_95_VEL_DATA
+                        MPS_95_VEL_DATA: MPS_95_VEL_DATA,
+                        PLAYERS_POSITIONS: PLAYERS_POSITIONS
                     })
                 }
 
@@ -8790,7 +8821,10 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
                         let player_id = acc_data.player_id.split('$')[0];
+                       
                         if (!players.includes(player_id)) {
+                            console.log('player_id',player_id)
+                            PLAYERS_POSITIONS.push(acc_data.player['position']);
                             players.push(player_id);
                             getPlayerSimulationStatus(acc_data.image_id)
                                 .then(imageData => {
@@ -8851,7 +8885,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MPS_95_DATA: MPS_95_DATA,
                         MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
                         MPS_95_VEL_DATA: MPS_95_VEL_DATA,
-                        MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION
+                        MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
+                        PLAYERS_POSITIONS: PLAYERS_POSITIONS
                     });
                 });
             }

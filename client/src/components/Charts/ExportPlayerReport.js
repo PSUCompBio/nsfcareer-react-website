@@ -143,7 +143,8 @@ class ExportPlayerReport extends React.Component {
 				{ name: 'Maximum Principal Strain', value: 'max-ps' },
 				{ name: 'Minimum Principal Strain', value: 'min-ps' },
 				{ name: 'CSDM-15', value: 'csdm_15' },
-			]
+			],
+			isResetShpares: true,
 		};
 
 		this.plugins = [
@@ -161,17 +162,17 @@ class ExportPlayerReport extends React.Component {
 
 	componentDidMount() {
 		// Scrolling the screen to top
-		console.log('ExportPlayerReport')
+		// console.log('ExportPlayerReport')
 		window.scrollTo(0, 0);
 
 		this.init();
 
 		window.addEventListener("resize", this.onWindowResize, false);
-		window.addEventListener("mousemove", this.onMouseMove, false);
+		// window.addEventListener("mousemove", this.onMouseMove, false);
 		// window.addEventListener("mouseout", this.onMouseOut, false);
-		window.addEventListener("mouseleave", this.onMouseLeave, false);
+		// window.addEventListener("mouseleave", this.onMouseLeave, false);
 		window.addEventListener("touchstart", this.onTouchStart, false);
-		window.addEventListener("touchmove", this.onTouchMove, false);
+		// window.addEventListener("touchmove", this.onTouchMove, false);
 		window.addEventListener("touchend", this.onTouchEnd, false);
 
 		this.startAnimationLoop();
@@ -315,11 +316,11 @@ class ExportPlayerReport extends React.Component {
 
 	componentWillUnmount() {
 		window.removeEventListener("resize", this.onWindowResize);
-		window.removeEventListener("mousemove", this.onMouseMove);
+		// window.removeEventListener("mousemove", this.onMouseMove);
 		// window.removeEventListener("mouseout", this.onMouseOut);
-		window.removeEventListener("mouseleave", this.onMouseLeave);
+		// window.removeEventListener("mouseleave", this.onMouseLeave);
 		window.removeEventListener("touchstart", this.onTouchStart);
-		window.removeEventListener("touchmove", this.onTouchMove);
+		// window.removeEventListener("touchmove", this.onTouchMove);
 		window.removeEventListener("touchend", this.onTouchEnd);
 	}
 
@@ -350,6 +351,8 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	createLobeSheres = (type) => {
+		// console.log('createLobeSheres')
+		this.setState({isResetShpares: true})
 		let me = this;
 
 		// Remove prev spheres
@@ -405,7 +408,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	showAllSpheres = () => {
-		console.log('showing allshpere')
+		// console.log('showing allshpere')
 		const me = this;
 		// console.log('showAllSpheres------------------------\n',all_spheres_json)
 		all_spheres_json.forEach(function (object, index) {
@@ -415,7 +418,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	generateSphere = (x, y, z, sphereName) => {
-		console.log('creating shaprers')
+		// console.log('creating shaprers')
 		if (root) {
 			// Add pointer(s) to brain model as children
 			// const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);
@@ -675,6 +678,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	reset = () => {
+		// console.log('reseting')
 		this.unHighlightPickedObject();
 		pickedObject = null;
 		prevPickedObject = null;
@@ -687,10 +691,14 @@ class ExportPlayerReport extends React.Component {
 			barColors: barColors,
 			chartHovered: false
 		});
-
-		this.removeSpheres();
-		// Show all spheres
-		this.showAllSpheres();
+		this.setState({chartHovered: false})
+		if(this.state.isResetShpares){
+			this.setState({isResetShpares:false})
+			this.removeSpheres();
+			// Show all spheres
+			this.showAllSpheres();
+		}
+		
 	};
 
 	pick = (normalizedPosition, pickingScene, pickingCamera) => {
@@ -1085,12 +1093,16 @@ class ExportPlayerReport extends React.Component {
 	}
 
 	onMouseMove = (event) => {
+		// console.log('onMouseMove')
+		if (this.state.isResetShpares) this.reset();
 		// Set pick position
 		// console.log('mouseover')
 		this.setPickPosition(event);
 	};
 
 	onMouseOut = () => {
+		// console.log('onMouseOut')
+
 		if (!isClicked) {
 			this.setState({
 				barColors: defaultBarColors,
@@ -1100,6 +1112,8 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onMouseLeave = () => {
+		// console.log('onMouseLeave')
+
 		// Clear pick position
 		this.clearPickPosition();
 
@@ -1110,6 +1124,8 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onTouchStart = (event) => {
+		// console.log('onTouchStart')
+
 		// prevent the window from scrolling
 		event.preventDefault();
 		this.setPickPosition(event.touches[0]);
@@ -1406,7 +1422,7 @@ class ExportPlayerReport extends React.Component {
 		return (
 			<React.Fragment>
 				<div className="row text-center">
-					<div className="col-md-5 d-flex align-items-center justify-content-center" >
+					<div className="col-md-5 d-flex align-items-center justify-content-center" onMouseMove={this.onMouseMove}>
 						<div className="row" style={{ width: '100%', display: 'block', height: '100%', }} >
 							{this.state.isLoading ? (
 								<div className="model_loader d-flex justify-content-center center-spinner" style={{ zIndex: '999' }}>
