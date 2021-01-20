@@ -257,7 +257,7 @@ select.select-gender {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #205b912e;
+  /*background: #205b912e;*/
 }
 div.modal_form {
   height: 580px !important;

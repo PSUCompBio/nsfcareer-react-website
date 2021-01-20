@@ -6443,9 +6443,11 @@ app.post(`${apiPrefix}getFailedSimulationList`, (req,res) =>{
                 var sensorData = record;
                 getPlayerSimulationFile(record)
                 .then(simulation => {
-                    console.log('simulation',player)
+                    // console.log('simulation',player)
                     k++
                     if (simulation && simulation.status != 'pending' && simulation.status != 'completed') {
+                        sensorData['account_id'] = simulation.account_id ? simulation.account_id : 'N/A';
+                        sensorData['simulation_id'] = simulation.log_stream_name ? simulation.log_stream_name.split('/')[2] : 'N/A';
                         failedList[player] = [];
                         failedList[player].push(sensorData);
                     } 
@@ -8231,10 +8233,12 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
                                     // console.log(user_details.Item);
                                     req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                                     req.body["sensor_brand"] = user_details.Item["sensor"];
+                                    // req.body["sensor"] = user_details.Item["sensor"];
+
                                     req.body["level"] = user_details.Item["level"];
                                     if (user_details.Item["level"] === 300 && !req.body["organization"]) {
                                         req.body["organization"] = user_details.Item["organization"];
-                                    }
+                                    }       
                                     req.body["upload_file"] = base64File;
                                     req.body["data_filename"] = data_filename;
                                     req.body["selfie"] = base64Selfie;
@@ -8340,6 +8344,13 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                         // console.log(user_details.Item);
                         req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                         req.body["sensor_brand"] = user_details.Item["sensor"];
+                        var sensor =  user_details.Item["sensor"];
+                        if (sensor && sensor.toLowerCase() != 'sensor_company_x' && sensor.toLowerCase() != 'swa' && sensor.toLowerCase() != 'prevent') {
+                            req.body["sensor"] = 'swa';
+                        }else{
+                            req.body["sensor"] = sensor;   
+                        }
+                       
                         req.body["level"] = user_details.Item["level"];
                         if (user_details.Item["level"] === 300 && !req.body["organization"]) {
                             req.body["organization"] = user_details.Item["organization"];
@@ -8348,10 +8359,12 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                         req.body["data_filename"] = data_filename;
                         req.body["selfie"] = base64Selfie;
                         req.body["filename"] = selfie; 
+                         console.log('sensor -----',req.body["sensor"])
                         request.post({
                             url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
                             json: req.body
                         }, function (err, httpResponse, body) {
+                            console.log('body',body)
                             if (err) {
                                 res.send({
                                     message: "failure",
@@ -8379,6 +8392,12 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                                                 fileNum: fileNum
                                             })
                                         }
+                                    })
+                                }else if(body.message == 'failure'){
+                                    res.send({
+                                        message: "failure",
+                                        error: body.error,
+                                        fileNum: fileNum
                                     })
                                 } else {
                                     res.send({

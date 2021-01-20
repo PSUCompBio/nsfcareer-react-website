@@ -7,28 +7,7 @@ import ExportPlayerReport from './ExportPlayerReport';
 import {
   getUserDetails,
 } from '../../apis';
-
-// const options = {
-//     scales: {
-//         yAxes: [{
-//             scaleLabel: {
-//                 display: true,
-//                 labelString: 'Linear Acceleration'
-//             },
-//             ticks: {
-//                 min: 0
-//             }
-//         }],
-//         xAxes: [{
-
-//             scaleLabel: {
-//                 display: true,
-//                 labelString: 'Angular Acceleration'
-//             }
-//         }]
-//     }
-// };
-
+import DownloadCustomReportPopup from '../Popup/DownloadCustomReportPopup';
 
 
 class CumulativeAccelerationEventChart extends React.Component {
@@ -54,7 +33,9 @@ class CumulativeAccelerationEventChart extends React.Component {
             player_name:this.props.match.params.player_name ? this.props.match.params.player_name.split('?')[0] : '',
             account_id: '',
             simulation_id: '',
-            isLoading: true
+            isLoading: true,
+            isDisplay: { display: 'none' },
+
 
         };
         this.getPlayerUserDetails();
@@ -89,6 +70,9 @@ class CumulativeAccelerationEventChart extends React.Component {
             })
         })
     }
+     makeVisible = (data) => {
+        this.setState({ isDisplay: data });
+    }
 
     render() {
         console.log('this.state.data',this.props.data)
@@ -104,6 +88,8 @@ class CumulativeAccelerationEventChart extends React.Component {
       
         return (
             <React.Fragment>
+                <DownloadCustomReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible}/>
+
                 {this.props.data.team ?
                     <div className="row" style={{
                         marginTop: 0,
@@ -154,7 +140,7 @@ class CumulativeAccelerationEventChart extends React.Component {
                     <div className="row">
                        
                           
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div className="col-lg-8 col-md-8 col-sm-12 ">
                                     <>
                                         <p
                                             ref="h1"
@@ -179,6 +165,14 @@ class CumulativeAccelerationEventChart extends React.Component {
                                         </p>
                                     </>
                                 </div>
+
+                            {/*-- custom player report export module --*/}
+                                <div className="col-lg-4 col-md-4 col-sm-12 ">
+                                    <button className="btn btn-download-custom-report" onClick={()=> this.setState({isDisplay: { display: 'block' }})}>Export Player Report</button>
+
+                                </div>
+                            {/*-- custom player report export module end --*/}
+
                            
                         
                         {

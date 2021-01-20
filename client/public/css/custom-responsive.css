@@ -611,6 +611,31 @@
   .team-state-cart-right{
     padding-right: : 15px!important;
   }
+  .download-custom-report-box{
+    background: #F2F2F2!important;
+    border: 1px solid #0e7ad0!important;
+    width: 97%!important;
+    height: auto!important;
+    padding: 23px!important;
+    position: fixed;
+    color: #fff;
+    text-align: center;
+    top: 20%;
+    left: 1%;
+    margin-top: -100px !important;
+    animation: fadeIn 1s, slideIn 0.8s linear;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px #999;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-flow: column;
+  }
+  .download-custom-report-box .head .datepickers{
+    margin: 0px 0px 17px;
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 414px) {

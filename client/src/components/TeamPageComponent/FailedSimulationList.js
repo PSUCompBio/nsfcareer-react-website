@@ -11,6 +11,8 @@ import {
 
 import { Container, Row, Col , Button,Accordion, Card ,Alert } from 'react-bootstrap';
 import Spinner from '../Spinner/Spinner';
+import { Level } from '../Authentication/getAuthanticatUserData';
+
 
 
 class FailedSimulationList extends React.Component {
@@ -30,6 +32,7 @@ class FailedSimulationList extends React.Component {
     console.log('test')
   }
   componentDidMount() {
+    console.log('User',Level)
     // API to get the details of user whose consent is being approves
     isAuthenticated(JSON.stringify({}))
     .then((value) => {
@@ -119,6 +122,7 @@ class FailedSimulationList extends React.Component {
             <Accordion as={Button} variant="link"  >
               <span className="title-left" >Event ID: #{ impact_id }</span>
               <span className="title-left">{`${res &&  res['impact-date'] ? this.getDate(res['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(impact_time) : res['date'] ? this.getDate(res['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(time)  : 'Unknown Date and Time'}`}</span>
+              <span className="title-left" >Simulation ID: #{ res.simulation_id }</span>
               <span className="title-right" id={res && 'col_icon'+res.player_id.split('$')[1]}>></span>
             </Accordion>
           </Card.Header>
@@ -166,7 +170,7 @@ class FailedSimulationList extends React.Component {
                   // console.log('res',key, data)
                   var name = key.split('-');
                   return <><div className="player-name">
-                      Player : {name[0]+' '+name[1]}
+                      {Level === 1000 ? 'Player : '+ name[0]+' '+name[1] : ''} &nbsp;&nbsp;&nbsp;&nbsp; Account ID: {data[0].account_id}
                     </div>
                     <Accordion className="player-collapes-div" style={{'margin-bottom': '25px'}}>
                       {this.cards(data)}
