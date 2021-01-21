@@ -75,7 +75,7 @@ class CumulativeAccelerationEventChart extends React.Component {
     }
 
     render() {
-        console.log('this.state.data',this.props.data)
+        console.log('this.state.data',this.props)
         // eslint-disable-next-line
         var fileName = '';
         if(this.props.data.player_id && this.props.data.player_id.length > 0 && this.props.user.length > 0){
@@ -88,7 +88,7 @@ class CumulativeAccelerationEventChart extends React.Component {
       
         return (
             <React.Fragment>
-                <DownloadCustomReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible}/>
+                <DownloadCustomReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} data={this.props}/>
 
                 {this.props.data.team ?
                     <div className="row" style={{

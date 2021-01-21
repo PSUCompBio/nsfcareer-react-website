@@ -1,14 +1,11 @@
 import React from 'react';
 
 import share_icon from '../icons/share_icon.png';
-// import Report from '../ReportContent/Report0';
-// import { PDFDownloadLink } from '@react-pdf/renderer';
-// import $ from 'jquery';
-// import DownloadReportMPS95 from './DownloadReportButtons/DownloadReportMPS95';
-import DownloadReportCSDM15 from './DownloadReportButtons/DownloadReportCSDM15';
 import DatePicker from "react-datepicker";
 import { Row, Col, Card, Container, DropdownButton, Dropdown, Button, Table } from 'react-bootstrap';
 // import "react-datepicker/dist/react-datepicker.css";
+import Report from '../ReportContent/ExportCustomReport';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
 class DownloadReportPopup extends React.Component {
   constructor() {
@@ -21,22 +18,62 @@ class DownloadReportPopup extends React.Component {
       ischecked: true,
       startDate: new Date(),
       endDate: new Date(),
-      selectedItem: 'Today'
+      selectedItem: 'Today',
+      merticsImage: ''
     };
 
   }
 
   scrollToTop(){
   }
-  componentWillUnmount() {
+  componentDidMount() {
+    
   }
-  handleChange =(e)=>{
 
+  downFullImage = () => {
+    let title = 'Maximum Principal Strain'
+    let canvas = document.querySelector("#c");
+    const c = document.createElement('canvas');
+    c.width = 900;
+    c.height = 350;
+    const plotCanvas = document.querySelector(".chartjs-render-monitor");
+    console.log("plotcanvas", plotCanvas)
+    c.getContext('2d').font = "20px Arial";
+    // c.getContext('2d').fillText('Location of ' + title, 300, 37);
+    c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 50, 400, 300);
+    c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 50, 500, 300);
+    let dc = c.toDataURL();
+    console.log('dc',dc)
+    this.setState({merticsImage: dc})
+    // var link = document.createElement("a");
+    // link.download = "full_image.png";
+    // link.href = dc;
+    // link.target = "_blank";
+    // link.click();
+    // return dc;
+  }
+
+
+  handleChange =(e)=>{
+    this.downFullImage();
+    console.log(e.target.name,!this.state[e.target.name] ? e.target.value :'' );
+    this.setState({ischecked: false})
+    let the = this;
+    setTimeout(()=>{
+      the.setState({ischecked: true});
+    },1000)
+    this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
 
   }
   render() {
-    console.log("propsData 2", this.props);
+    console.log("propsData 3", this.props);
     const { startDate, endDate, selectedItem } = this.state;
+
+    let fileName = "unknown.pdf";
+    if(this.props.data.data){
+      fileName = this.props.data.data.player['first-name']+'_'+this.props.data.data.player['last-name']+'_'+this.props.data.data.org_id.split('-')[1]+'.pdf';
+    }
+
     return (
       <div style={this.props.isVisible} className="modal__wrapper ">
         
@@ -157,37 +194,15 @@ class DownloadReportPopup extends React.Component {
                 <button className="Download-button-custom-report"><img src={share_icon} style={{width:'24px'}} alt="share_icon" />  Share</button><br/>
               </Col>
               <Col md={4}>
-                <button className="Download-button-custom-report">Download</button><br/>
-              </Col>
-            </Row>
-          <div className="popu-body">
-            {/*<h2>Select Strain Metric</h2>
-            <p>Select all that apply</p>
-            <table>
-              <tbody>
-                <tr>
-                  <td><input name="mps_95" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>MPS-15</td>
-                </tr>
-                <tr>
-                  <td><input name="csdm_15" type="checkbox" onChange={this.handleChange} /></td>
-                  <td>CSDM<sub>15</sub></td>
-                </tr>
-                <tr>
-                  <td><input name="axonal_15" type="checkbox" onChange={this.handleChange} disabled/></td>
-                  <td style={{'color': '#b3b3b3'}}>Axonal Strain<sub>15</sub></td>
-                </tr>
-                <tr>
-                  <td><input name="masxsr_15" type="checkbox" onChange={this.handleChange} disabled/></td>
-                  <td style={{'color': '#b3b3b3'}}>MASxSR<sub>15</sub></td>
-                </tr>
-              </tbody>
-            </table>*/}
-           {/* <div className="report-download-buttons">
-              <button><img src={share_icon} style={{width:'24px'}} alt="share_icon" />  Share</button><br/>
-             
-              {this.state.ischecked && <DownloadReportCSDM15 Report={this.props.Report} fileName={this.props.fileName} Metric={this.state} jsonfile={this.props.jsonData}/> }
-              {!this.state.ischecked ? (
+                {this.state.ischecked &&
+                  <PDFDownloadLink document={<Report Metric={this.state} jsonfile={this.props.brainRegions} data={this.props.data.data} />} className="export-cumulative-player" fileName={fileName} style={{
+                    color: 'white'
+                    }}>
+                      <button className="Download-button-custom-report">Download</button>
+                    {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+                  </PDFDownloadLink>
+                }
+                {!this.state.ischecked ? (
                       <div className="d-flex justify-content-center center-spinner">
                         <div
                           className="spinner-border text-primary"
@@ -197,12 +212,8 @@ class DownloadReportPopup extends React.Component {
                         </div>
                       </div>
                     ) : null}
-             
-            
-              
-              
-            </div>*/}
-          </div>
+              </Col>
+            </Row>
         </div>
       </div>
     );

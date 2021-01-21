@@ -36,7 +36,7 @@ class DownloadReportPopup extends React.Component {
 
   }
   render() {
-    console.log("propsData 2", this.props.jsonData);
+    console.log("propsData 2", this.props.Report);
     return (
       <div style={this.props.isVisible} className="modal__wrapper ">
          {this.props.isVisible ? this.scrollToTop() : null}

@@ -240,23 +240,23 @@ class Details extends React.Component {
       _isFirstUpdate = true;
       _min = value.min;
       _max = value.max;
-      if(min !== value.min && !this.state.left_lock_time){
+      if(min !== value.min){
         console.log('updating min =',value.min , min ,'max value = ',value.max , max );
         this.setState({value :  {min:   value.min , max: max } })
       } 
-      if(max !== value.max && !this.state.right_lock_time){
+      if(max !== value.max){
         console.log('updating max =',value.max , max , 'min value = ', value.min , min)
 
         this.setState({value :  {min:   min , max: value.max } })
       }
     }else{
       console.log('not fist update');
-      if(_min !== value.min && !this.state.left_lock_time){
+      if(_min !== value.min){
         _min = value.min
         console.log('updating min =',value.min , _min ,'max value = ',value.max , _max );
         this.setState({value :  {min:   value.min , max: _max } })
       } 
-      if(_max !== value.max && !this.state.right_lock_time){
+      if(_max !== value.max){
         _max = value.max;
         console.log('updating max =',value.max , _max , 'min value = ', value.min , _min)
 
@@ -320,7 +320,7 @@ class Details extends React.Component {
           max = percent.toFixed(0);
 
           //*---------Set max slider position greater then min slider-----------*
-          if(max > the.state.value['min'] && lock_percent > 1 && !the.state.right_lock_time){
+          if(max > the.state.value['min']){
             the.setState({video_time: percent,value:{ max: percent.toFixed(0), min: the.state.value['min'] }});
             right_lock_time = video.currentTime;
             //Update fram rate and video lenght...
@@ -337,13 +337,13 @@ class Details extends React.Component {
           if(min < the.state.value['max']){
           // video.play();
             //--------Set min slider position if video is unlock.----------
-            if(len !== 0 && !the.state.left_lock_time){
+            if(len !== 0){
               the.setState({video_time: percent,value:{ min: percent.toFixed(0), max: the.state.value['max'] }});
               min = percent.toFixed(0);
               left_lock_time = video.currentTime;
 
               //Update fram rate and video lenght...
-              setVideoFrameRate(left_lock_time,the.state.right_lock_time ? the.state.right_lock_time : right_lock_time);
+              setVideoFrameRate(left_lock_time,right_lock_time);
             }
             //-----set min slider position if video is locked --------
             else if(len === 0){
@@ -357,7 +357,7 @@ class Details extends React.Component {
                 the.setState({video_time: percent})
               }else{
                 video.pause();
-                video.currentTime = the.state.left_lock_time || 0;
+                video.currentTime = 0;
                 the.setState({video_time: percent})
 
               }
@@ -365,52 +365,33 @@ class Details extends React.Component {
           }else{
             min = percent.toFixed(0);
             video.pause();
-            video.currentTime = the.state.left_lock_time || 0;
+            video.currentTime = 0;
           }
           len++;
         }else{
           video.pause();
         }
       },
-      scrub: (e) =>{
-        // const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
-        // var time = scrubTime;
-        
-        // var val = e.target.value - 4;
-        // var val2 = parseInt(e.target.value) + 1;
-
-        //   console.log( val2 , the.state.value['min'])
-
-        // if(scrubTime && val  < the.state.value['max'] &&  val2 > the.state.value['min'] ){
-        //   the.setState({SidelineVidoeCT : the.getVideoTime(time)});
-        //   video.currentTime = scrubTime;
-        // }else{
-        //   the.setState({video_time:  the.state.value['min']});          
-        // }
-        // setTimeout(()=>{
-        //   the.setState({SidelineVidoeCT : ''})
-        // },1000)
-      },
       scrub2: (e) =>{
-        if(min !== the.state.value['min'] && !the.state.left_lock_time){
+        if(min !== the.state.value['min']){
 
           min = the.state.value['min'];
           var off_X = progressBar_2.offsetWidth * the.state.value['min'] / 100;
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
           console.log('updating min', scrubTime);
 
-          if(scrubTime && !the.state.video_lock_time){
+          if(scrubTime){
             video.currentTime = scrubTime;
           }
           isupdateMax = false;
-        }else if(max !== the.state.value['max'] &&  !the.state.right_lock_time){
+        }else if(max !== the.state.value['max']){
           max = the.state.value['max'];
           // eslint-disable-next-line
           var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
           console.log('updating max', scrubTime);
 
-          if(scrubTime && !the.state.video_lock_time){
+          if(scrubTime){
             video.currentTime = scrubTime;
           }
           isupdateMax = true;
@@ -424,39 +405,39 @@ class Details extends React.Component {
       },
       setvideoTime:()=>{
         console.log('setting lock time')
-        video.currentTime = the.state.left_lock_time || 0; 
+        video.currentTime = 0; 
         let total_video_duration = 0;
         let frameRate = 0;
-        if(the.state.right_lock_time > 0){
-          const percent2 = (the.state.right_lock_time / video.duration) * 100;
-          max = percent2;
-          $('.input-range__slider').eq(1).css({'pointer-events': 'none'});
-          the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: percent2 ? percent2.toFixed(0) : 100 }});
+        // if(the.state.right_lock_time > 0){
+        //   const percent2 = (the.state.right_lock_time / video.duration) * 100;
+        //   max = percent2;
+        //   $('.input-range__slider').eq(1).css({'pointer-events': 'none'});
+        //   the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: percent2 ? percent2.toFixed(0) : 100 }});
 
-          /*
-          * Set Cropped video duration and fram rate...
-          */
-          total_video_duration = the.state.left_lock_time ? the.state.right_lock_time - the.state.left_lock_time : the.state.right_lock_time;
-          frameRate = Math.floor(total_video_duration*29.7);
-          total_video_duration =  the.getVideoTime(total_video_duration);
-        }else{
+        //   /*
+        //   * Set Cropped video duration and fram rate...
+        //   */
+        //   total_video_duration = the.state.left_lock_time ? the.state.right_lock_time - the.state.left_lock_time : the.state.right_lock_time;
+        //   frameRate = Math.floor(total_video_duration*29.7);
+        //   total_video_duration =  the.getVideoTime(total_video_duration);
+        // }else{
           frameRate = Math.floor(video.duration*29.7);
           total_video_duration = the.getVideoTime( video.duration);
           right_lock_time = video.duration;
-          the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: 100 }});
-          if(the.state.left_lock_time){
-            $('.input-range__slider').eq(0).css({'pointer-events': 'none'});
-            /*
-            * Set Cropped video duration fram rate...
-            */
-            total_video_duration = video.duration - the.state.left_lock_time ;
-            frameRate = Math.floor(total_video_duration*29.7);
-            total_video_duration = the.getVideoTime(total_video_duration);
-          }else{
+          the.setState({value: {min: 0 , max: 100 }});
+          // if(the.state.left_lock_time){
+          //   $('.input-range__slider').eq(0).css({'pointer-events': 'none'});
+          //   /*
+          //   * Set Cropped video duration fram rate...
+          //   */
+          //   total_video_duration = video.duration - the.state.left_lock_time ;
+          //   frameRate = Math.floor(total_video_duration*29.7);
+          //   total_video_duration = the.getVideoTime(total_video_duration);
+          // }else{
             $('.input-range__slider').eq(0).css({'pointer-events': 'inherit'});
-          }
+          // }
           $('.input-range__slider').eq(1).css({'pointer-events': 'inherit'});
-        }
+        // }
 
         //Get video frames
         
@@ -539,7 +520,7 @@ class Details extends React.Component {
     video.addEventListener('loadeddata', ()=> {setTimeout(()=>{
       controls.Onload();
       the.vidocontrol3();
-    },3000)} );
+    },2000)} );
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
     // lockButton.addEventListener('click', controls.lockVideo); #lock video event ...

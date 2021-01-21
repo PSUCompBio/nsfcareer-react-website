@@ -119,7 +119,7 @@ class FailedSimulationList extends React.Component {
         }
         return <Card >
           <Card.Header className="card-light-red">
-            <Accordion as={Button} variant="link"  >
+            <Accordion as={Button} variant="link"  style={{'text-decoration':'none'}}>
               <span className="title-left" >Event ID: #{ impact_id }</span>
               <span className="title-left">{`${res &&  res['impact-date'] ? this.getDate(res['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(impact_time) : res['date'] ? this.getDate(res['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(time)  : 'Unknown Date and Time'}`}</span>
               <span className="title-left" >Simulation ID: #{ res.simulation_id }</span>

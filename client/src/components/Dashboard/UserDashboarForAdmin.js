@@ -465,13 +465,13 @@ class UserDashboarForAdmin extends React.Component {
                   user_cognito_id: user_cognito_id,
                   cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: brand, team: team, user_cognito_id: user_cognito_id, organization: organization, staff: [], player_id: this.state.player_name, simulationCount: response.data.simulationCount}
                 });
-                console.log('cumulativeAccelerationEventData ----\n', response)
+                // console.log('jsondata 1 ----\n', response)
                 image_id = response.data.data.image_id;
                 return AllCumulativeAccelerationTimeRecords({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
               })
 
               .then(response => {
-                console.log('cumulativeAccelerationTimeAllRecords',response)
+                console.log('jsondata 2 ----\n',response.data.brainRegions)
                 this.setState({
                   cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
   		            brainRegions: response.data.brainRegions,

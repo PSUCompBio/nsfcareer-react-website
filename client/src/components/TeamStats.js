@@ -51,7 +51,8 @@ class TeamStats extends React.Component {
                             MPS_95_DATA: response.data.MPS_95_DATA,
                             MAX_ANGULAR_VEL_EXLARATION: response.data.MAX_ANGULAR_VEL_EXLARATION,
                             MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
-                            PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS
+                            PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS,
+                            BRAIN_POSITIONS: response.data.BRAIN_POSITIONS
                             
                         });
                     })
@@ -171,23 +172,82 @@ class TeamStats extends React.Component {
         
     }
     render() {
+
+        //imported Modules ...
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
            return <Redirect to="/Login" />;
         }
         if (this.state.isLoading) return <Spinners />;
-        const { PLAYERS_POSITIONS } = this.state;
-        var data = [];
-        var labels = [];
+
+        //Modules end
+
+        const { PLAYERS_POSITIONS, BRAIN_POSITIONS } = this.state;
+        
+        //# Couting duplicate label of player ...
+        var count_positions = {};
         if(PLAYERS_POSITIONS){
-            for(var i = 0; i < PLAYERS_POSITIONS.length; i++){
-                data.push(0);
-                labels.push(PLAYERS_POSITIONS[i]);
-            }
+            // var count = {};
+            PLAYERS_POSITIONS.forEach(async (i) => { 
+                count_positions[i] = (count_positions[i]||0) + 1;
+            });
+            console.log('count_positions',count_positions)
         }
 
+        //# Addition of player mps by positions
+        var count_positions_val = {};
+        if(BRAIN_POSITIONS){
+            // var count = {};
+
+            BRAIN_POSITIONS.forEach(async  (res)=> { 
+                Object.entries(res).forEach(([key, value]) =>{
+                     // console.log('res',key, value)
+                     count_positions_val[key] = (count_positions_val[key]||0) + value;
+                })
+               
+            });
+        }
+        console.log('count_positions_val',count_positions_val);
+
+        /*
+        * Bar chart data for brain  positons 
+        */
+        var data = [];
+        var labels = [];
+        const  capitalizePosition = (words) => {
+           var separateWord = words.toLowerCase().split(' ');
+           for (var i = 0; i < separateWord.length; i++) {
+              separateWord[i] = /^[a-zA-Z]+$/.test(separateWord[i]) ? separateWord[i].charAt(0).toUpperCase() : '';
+           }
+           return separateWord.join(' ');
+        }
+        if(count_positions && count_positions_val){
+
+            Object.entries(count_positions).forEach(([key, value],index) =>{
+                let playerLen = value;
+                let totalPostionVal = count_positions_val[key];
+                totalPostionVal = totalPostionVal ? totalPostionVal.toFixed(2) : 0;
+                let mpsAvg = (totalPostionVal) / playerLen;
+                mpsAvg = mpsAvg.toFixed(2);
+                let position = key;
+                if(key !== 'Unknown'){
+                    position = capitalizePosition(key);
+                }
+                
+                data.push(mpsAvg);
+                labels.push(position);
+
+                console.log(playerLen, totalPostionVal);
+                console.log('mpsAvg', mpsAvg);
+
+
+            })
+           
+        }
+
+        //**Brain graph data ...
         const BrainPositionChartData = {
             datasets: [{
-                label: 'Unknown',
+                label: 'Position',
                 barThickness: 25,
                 backgroundColor: '#0c68b2',
                 borderColor: '#0c68b2',
@@ -208,6 +268,13 @@ class TeamStats extends React.Component {
                    
                 }],
                 yAxes: [ {
+                    scaleLabel: {
+                        display: true,
+                         fontSize: 18,
+                         fontWeight: 800,
+
+                        labelString: 'Average MPS'
+                    },
                     ticks: {
                         suggestedMin: 0,
                        
@@ -218,6 +285,9 @@ class TeamStats extends React.Component {
                 }]
             }
         };
+
+        //  Brain position chart data closed ...
+
         return (
             <React.Fragment>
                  

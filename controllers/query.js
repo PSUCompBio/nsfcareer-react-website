@@ -2538,13 +2538,13 @@ function renameOrganization(OrganizationName,organization_id) {
         });
     });
 }
-function renameSensorOrganization(OrganizationName,player_id, team) {
+function renameSensorOrganization(OrganizationName,player_id, org_id) {
     console.log('OrganizationName',OrganizationName)
     return new Promise((resolve, reject) => {
         var params = {
             TableName: "sensor_details",
             Key: { 
-                "team": team,
+                "org_id": org_id,
                 "player_id" : player_id
             },
             UpdateExpression: "set #organization = :organization",

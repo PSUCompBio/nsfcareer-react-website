@@ -3016,7 +3016,7 @@ app.post(`${apiPrefix}renameOrganization`, (req, res) => {
                 sensorlen = sensorlen-1;
                 sensor_data.forEach(function (record, index) {
                     // console.log('sensor',record);
-                    renameSensorOrganization(OrganizationName, record.player_id, record.team)
+                    renameSensorOrganization(OrganizationName, record.player_id, record.org_id)
                     .then(response=>{
                         console.log('response',response)
                         if(index == sensorlen){
@@ -8345,8 +8345,13 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                         req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                         req.body["sensor_brand"] = user_details.Item["sensor"];
                         var sensor =  user_details.Item["sensor"];
-                        if (sensor && sensor.toLowerCase() != 'sensor_company_x' && sensor.toLowerCase() != 'swa' && sensor.toLowerCase() != 'prevent') {
+                        if (sensor && sensor.toLowerCase() == 'sensor_company_x' || sensor.toLowerCase() == 'swa') {
                             req.body["sensor"] = 'swa';
+                        }else if(sensor.toLowerCase() == 'prevent biometrics'){
+                            req.body["sensor"] = 'prevent';
+
+                        }else if(sensor.toLowerCase()  == 'biocore'){
+                            req.body["sensor"] = 'biocore';
                         }else{
                             req.body["sensor"] = sensor;   
                         }
@@ -8812,6 +8817,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let MPS_95_VEL_DATA = [];
                 let MAX_ANGULAR_VEL_EXLARATION = [];
                 let PLAYERS_POSITIONS = [];
+                let BRAIN_POSITIONS = [];
 
 
                 if (data.length === 0){
@@ -8832,7 +8838,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
                         MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
                         MPS_95_VEL_DATA: MPS_95_VEL_DATA,
-                        PLAYERS_POSITIONS: PLAYERS_POSITIONS
+                        PLAYERS_POSITIONS: PLAYERS_POSITIONS,
+                        BRAIN_POSITIONS: BRAIN_POSITIONS
                     })
                 }
 
@@ -8842,7 +8849,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         let player_id = acc_data.player_id.split('$')[0];
                        
                         if (!players.includes(player_id)) {
-                            console.log('player_id',player_id)
+                            // console.log('player_id',player_id)
                             PLAYERS_POSITIONS.push(acc_data.player['position']);
                             players.push(player_id);
                             getPlayerSimulationStatus(acc_data.image_id)
@@ -8859,6 +8866,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                         if (outputFile.Insults) {
                                             outputFile.Insults.forEach(function (summary_data, index) {
                                                 pushdata(summary_data);
+                                                pushPostionData(summary_data,acc_data.player['position']);
+
                                             })
                                         }
                                     }
@@ -8872,6 +8881,15 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         }
                     })
                 });
+
+                pushPostionData = (summary_data,position)=>{
+                     if (summary_data['principal-max-strain']) {
+                        if(summary_data['principal-max-strain']['value']){
+                            // console.log('position values',summary_data['principal-max-strain']['value'])
+                            BRAIN_POSITIONS.push({[position]: summary_data['principal-max-strain']['value']});
+                        }
+                     }
+                }
 
                 const pushdata = (summary_data)=>{
                     if (summary_data['MPS-95']) {
@@ -8905,7 +8923,9 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MAX_ANGULAR_EXLARATION: MAX_ANGULAR_EXLARATION,
                         MPS_95_VEL_DATA: MPS_95_VEL_DATA,
                         MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
-                        PLAYERS_POSITIONS: PLAYERS_POSITIONS
+                        PLAYERS_POSITIONS: PLAYERS_POSITIONS,
+                        BRAIN_POSITIONS: BRAIN_POSITIONS
+
                     });
                 });
             }
