@@ -105,8 +105,9 @@ class TeamStats extends React.Component {
         })
         
     }
+
+    //Filter options ...
     selectOption=()=>{
-        console.log('principal-max-strain')
         if(this.state['principal-max-strain'] === 'resultant-linear-acceleration'){
             return  (
             <>
@@ -183,10 +184,9 @@ class TeamStats extends React.Component {
 
         const { PLAYERS_POSITIONS, BRAIN_POSITIONS } = this.state;
         
-        //# Couting duplicate label of player ...
+        //# Counting duplicate label of player ...
         var count_positions = {};
         if(PLAYERS_POSITIONS){
-            // var count = {};
             PLAYERS_POSITIONS.forEach(async (i) => { 
                 count_positions[i] = (count_positions[i]||0) + 1;
             });
@@ -196,8 +196,6 @@ class TeamStats extends React.Component {
         //# Addition of player mps by positions
         var count_positions_val = {};
         if(BRAIN_POSITIONS){
-            // var count = {};
-
             BRAIN_POSITIONS.forEach(async  (res)=> { 
                 Object.entries(res).forEach(([key, value]) =>{
                      // console.log('res',key, value)
@@ -206,13 +204,14 @@ class TeamStats extends React.Component {
                
             });
         }
-        console.log('count_positions_val',count_positions_val);
 
         /*
-        * Bar chart data for brain  positons 
+        * Bar chart data for brain  positons ...
         */
         var data = [];
         var labels = [];
+
+        // # Take first latter of postions ...
         const  capitalizePosition = (words) => {
            var separateWord = words.toLowerCase().split(' ');
            for (var i = 0; i < separateWord.length; i++) {
@@ -220,6 +219,7 @@ class TeamStats extends React.Component {
            }
            return separateWord.join(' ');
         }
+
         if(count_positions && count_positions_val){
 
             Object.entries(count_positions).forEach(([key, value],index) =>{
@@ -229,17 +229,12 @@ class TeamStats extends React.Component {
                 let mpsAvg = (totalPostionVal) / playerLen;
                 mpsAvg = mpsAvg.toFixed(2);
                 let position = key;
+
                 if(key !== 'Unknown'){
                     position = capitalizePosition(key);
                 }
-                
                 data.push(mpsAvg);
                 labels.push(position);
-
-                console.log(playerLen, totalPostionVal);
-                console.log('mpsAvg', mpsAvg);
-
-
             })
            
         }
@@ -256,7 +251,12 @@ class TeamStats extends React.Component {
             }],
             labels: labels
         };
+
+        // # Brain postion graph options ...
         const BrainPositionChartoptions = {
+            legend: {
+                display: false
+            },
             scales: {
                 xAxes: [{
                     gridLines: {
@@ -275,13 +275,12 @@ class TeamStats extends React.Component {
 
                         labelString: 'Average MPS'
                     },
-                    ticks: {
-                        suggestedMin: 0,
+                    // ticks: {
+                    //     suggestedMin: 0,
                        
-                        suggestedMax: 50,
-                         stepSize: 5,
-                    }
-
+                    //     suggestedMax: 50,
+                    //      stepSize: 5,
+                    // }
                 }]
             }
         };
@@ -410,7 +409,8 @@ class TeamStats extends React.Component {
                                     <Card style={{'border': '1px solid rgb(10, 84, 143)'}} >
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
                                             <div className="col-md-12 no-padding">
-                                                <p className="video-lebel text-center">Machine Learning</p>
+                                                <p className="video-lebel text-center"
+                                                >Machine Learning</p>
                                                 <div style={{'padding':'80px'}}></div>
                                             </div>
                                         </div>
@@ -421,6 +421,14 @@ class TeamStats extends React.Component {
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">Brain Loading by Position</p>
+                                                <p className="circle-sub-title"
+                                                     style={{
+                                                        'text-align': 'center',
+                                                        'color': 'gray',
+                                                        'font-size': '14px',
+                                                        'padding-bottom': '10px',
+                                                    }}
+                                                >Player positions can be set in their profile pages.</p>
                                                 <div>
                                                     <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
                                                 </div>

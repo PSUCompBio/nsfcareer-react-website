@@ -6,6 +6,9 @@ import { Row, Col, Card, Container, DropdownButton, Dropdown, Button, Table } fr
 // import "react-datepicker/dist/react-datepicker.css";
 import Report from '../ReportContent/ExportCustomReport';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import * as htmlToImage from 'html-to-image';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+
 
 class DownloadReportPopup extends React.Component {
   constructor() {
@@ -31,26 +34,32 @@ class DownloadReportPopup extends React.Component {
   }
 
   downFullImage = () => {
-    let title = 'Maximum Principal Strain'
-    let canvas = document.querySelector("#c");
-    const c = document.createElement('canvas');
-    c.width = 900;
-    c.height = 350;
-    const plotCanvas = document.querySelector(".chartjs-render-monitor");
-    console.log("plotcanvas", plotCanvas)
-    c.getContext('2d').font = "20px Arial";
-    // c.getContext('2d').fillText('Location of ' + title, 300, 37);
-    c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 50, 400, 300);
-    c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 50, 500, 300);
-    let dc = c.toDataURL();
-    console.log('dc',dc)
-    this.setState({merticsImage: dc})
+    // let title = 'Maximum Principal Strain'
+    // let canvas = document.querySelector("#c");
+    // const c = document.createElement('canvas');
+    // c.width = 930;
+    // c.height = 350;
+    // const plotCanvas = document.querySelector(".chartjs-render-monitor");
+    // console.log("plotcanvas", plotCanvas)
+    // c.getContext('2d').font = "20px Arial";
+    // // c.getContext('2d').fillText('Location of ' + title, 300, 37);
+    // c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 50, 400, 300);
+    // c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 50, 500, 300);
+    // let dc = c.toDataURL();
+    // console.log('dc',dc)
     // var link = document.createElement("a");
     // link.download = "full_image.png";
     // link.href = dc;
     // link.target = "_blank";
     // link.click();
     // return dc;
+    var the = this;
+    htmlToImage.toPng(document.getElementById('my-event-image'))
+    .then(function (dataUrl) {
+      // console.log(dataUrl, 'my-node.png');
+       the.setState({merticsImage: dataUrl, ischecked: true})
+
+    });
   }
 
 
@@ -59,9 +68,9 @@ class DownloadReportPopup extends React.Component {
     console.log(e.target.name,!this.state[e.target.name] ? e.target.value :'' );
     this.setState({ischecked: false})
     let the = this;
-    setTimeout(()=>{
-      the.setState({ischecked: true});
-    },1000)
+    // setTimeout(()=>{
+    //   the.setState({ischecked: true});
+    // },1000)
     this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
 
   }

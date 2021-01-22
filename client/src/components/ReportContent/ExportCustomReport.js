@@ -14,10 +14,11 @@ import arrow_left from './arrow_left.png'
 import arrow_right from './arrow_right.png'
 
 import ClinicalReportHeader from './Clinical-Report-Header.png';
-import taxture1  from './taxture2.jpg';
+import taxture1  from './taxture1.png';
 import branImages_1 from './branImages_1.png';
 import brainimage_2 from './brainimage_2.png';
 import PageFooter_3 from './3rdPageFooter.jpg';
+import alert_icon from './alert.png'
 // import page_3 from './sub_component/page_3';
 import styleOfpage3 from './sub_component/styleOfpage3.json'
 // import logo 
@@ -517,13 +518,13 @@ class ExportCustomReport extends React.Component {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '70%'
+                marginTop: '66%'
             },
             taxture2_div:{
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '441px'
+                marginTop: '400px'
             },
             taxture3_div:{
                 width: '79%',
@@ -691,7 +692,309 @@ class ExportCustomReport extends React.Component {
                 flexDirection : 'column',
                 float:'left',
                 textAlign: 'center'
+            },
+            table: {
+                width: '100%',
+                borderWidth: 2,
+                display: 'flex',
+                marginVertical: 12
+            },
+            tableRow:{
+                display: 'flex',
+                flexDirection: 'row',
+            },
+            tableRowBody: {
+                display: 'flex',
+                flexDirection: 'row',
+                marginTop: '3px'
+            },
+            tableColLeft1: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '20%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 12,
+                textAlign : 'left',
+                padding: '5px'
+            },
+            tableColLeft2: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '60%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 12,
+                textAlign : 'left',
+                padding: '5px'
+
+            },
+             th1:{
+                'width': '30%',
+            },
+            th2:{
+                'width': '30%',
+            },
+            th3:{
+                'width': '40%',
+            },
+            tableHead:{
+                backgroundColor: '#C3C3C3',
+                color: 'black',
+                marginTop: '5px',
+                marginBottom: '5px'
+            },
+            row:{
+                display: 'flex',
+                flexDirection: 'row',
+            },
+            headerText: {
+                fontWeight: 'bold'
             }
+        })
+
+        const stylepage4 = StyleSheet.create({
+            HeaderHeading: {
+                width: '100%',
+                textAlign: 'center',
+                color: "#2F5597",
+                marginTop: '40px',
+                marginBottom: '40px'
+
+            },
+
+            head: {
+                flex: 1,
+                flexDirection : 'row',
+                marginTop: '15px'
+            },
+            col12:{
+                width:'100%',
+                display: 'inline-block',
+                flexDirection : 'column',
+            },
+            col6:{
+                width:'50%',
+                float: 'left',
+                display: 'inline-block',
+                
+            },
+            col6Left:{
+                width:'49%',
+                float: 'right',
+                display: 'inline-block',
+            },
+            blueLine:{
+                width: '100%',
+                height: '1px',
+                backgroundColor: '#2F5597',
+                marginTop: '20px',
+                marginBottom: '15px'
+            },
+            tableRow: {
+                flex: 1,
+                flexDirection : 'row',
+            },
+            haderLeft: {
+                borderStyle: "solid",
+                color: '#4265A2',
+                display : 'inline-block',
+                width : '50%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 18,
+                textAlign : 'left',
+                
+            },
+            tableColLeft: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '50%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                textAlign : 'left'
+            },
+            tableColRight: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '50%',
+                float : 'right',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                textAlign : 'right'
+            },
+            brainimage_2:{
+                width: '100%',
+                marginTop: '20px',
+            },
+            FooterImg: {
+                width: '100%',
+                marginTop: '30px',
+            },
+            styleOfpage3: {
+                width: '50%'
+            },
+            FooterSection:{
+                width: '100%',
+                display : 'inline-block',
+                flexDirection : 'column',
+                float:'left',
+                textAlign: 'center'
+            },
+            table: {
+                width: '100%',
+                borderWidth: 2,
+                display: 'flex',
+                marginVertical: 12
+            },
+            tableRow:{
+                display: 'flex',
+                flexDirection: 'row',
+            },
+            tableRowBody: {
+                display: 'flex',
+                flexDirection: 'row',
+                marginTop: '3px'
+            },
+            tableColLeft1: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '47%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 16,
+                textAlign : 'left',
+                backgroundColor: '#DAE3F3',
+                color: '#4265A2',
+                padding: '10px',
+                fontWeight: 600
+            },
+            tableColLeft3:{
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '47%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 16,
+                textAlign : 'left',
+                padding: '10px',
+                fontWeight: 600
+            },
+            tableColLeft2: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '47%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 16,
+                textAlign : 'left',
+                padding: '5px',
+                marginLeft: '4%',
+                backgroundColor: '#DAE3F3',
+                color: '#4265A2',
+                padding: '10px',
+                fontWeight: 600
+
+            },
+            tablecontentLeft: {
+                  display: 'flex',
+                flexDirection: 'row',
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                width : '47%',
+                float : 'left',
+                marginTop: '7px'
+            },
+            tablecontentRight: {
+                display: 'flex',
+                flexDirection: 'row',
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                width : '47%',
+                float : 'right',
+                marginTop: '7px',
+                marginLeft: '2%'
+            },
+            textRight:{
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '85%',
+                float : 'right',
+                flexDirection : 'column',
+                fontSize : 13,
+                textAlign : 'left',
+                color: '#7D8A96',
+                marginLeft: '4%'
+            },
+            th1:{
+                'width': '30%',
+            },
+            th2:{
+                'width': '30%',
+            },
+            th3:{
+                'width': '40%',
+            },
+            tableHead:{
+                backgroundColor: '#C3C3C3',
+                color: 'black',
+                marginTop: '5px',
+                marginBottom: '5px'
+            },
+            row:{
+                display: 'flex',
+                flexDirection: 'row',
+            },
+            headerText: {
+                fontWeight: 'bold'
+            },
+            alert_icon: {
+                width: '10%',
+                borderStyle: "solid",
+                display : 'inline-block',
+                height: '26px'
+
+            },
+            bottomView: {
+              width: '100%',
+              height: 50,
+              justifyContent: 'center',
+              textAlign: 'center',
+              color : 'grey',
+              position: 'absolute', //Here is the trick
+              marginTop : '780',
+            },
         })
         return (
             <Document>
@@ -733,16 +1036,16 @@ class ExportCustomReport extends React.Component {
                         <View style={styles.tableRow}>
 
                             <Text style={styles.tableColLeft}> Sex : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
-                            <Text style={styles.tableColLeft}> Impact Time : <Text style={{color:'#2d549a'}}> {this.state.impact_time} </Text> </Text>
-                            <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{"N/A" } </Text></Text>
+                            <Text style={styles.tableColLeft}> Team : <Text style={{color:'#2d549a'}}> {this.state.data['team']} </Text> </Text>
+                            <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{this.state.data['organization']} </Text></Text>
 
                         </View>
                         {/*-- Analysis duration --*/}
-                        <View style={styles.col12}>
-                            <View style={styles.durationBar}>
-                                <Text>Analysis Duration: </Text>
-                            </View>
-                        </View>
+                       {/* <View style={styles.col12}>
+                           <View style={styles.durationBar}>
+                               <Text>Analysis Duration: </Text>
+                           </View>
+                        </View>*/}
 
                         {/*============= For CSDM 15 data ====================*/}
                             {this.state.metric.csdm_15 === 'on'? 
@@ -817,7 +1120,24 @@ class ExportCustomReport extends React.Component {
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
-                                    
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Cerebellum</Text>
+                                         <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
                                     <View style={styles.col12}>
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
@@ -839,6 +1159,9 @@ class ExportCustomReport extends React.Component {
                                         <View style={styles.p1_footer_arrow_left}>
                                             <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                         </View>
+                                    </View>
+                                    <View style={styles.tableRow}>                          
+                                        <Image  style={styles.trangle_scale} src={this.state.metric.merticsImage ? this.state.metric.merticsImage : branImages_1} alt="trangle"/>
                                     </View>
                                 </>
                                 :
@@ -927,6 +1250,24 @@ class ExportCustomReport extends React.Component {
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Cerebellum</Text>
+                                         <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
                                     <View style={styles.col12}>
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
@@ -966,7 +1307,7 @@ class ExportCustomReport extends React.Component {
 
                         {/*====================Footer heading ==============================*/}
                         <View style={styles.bottomView}>
-                            <Text>NOT FOR CLINICAL USE</Text>
+                            <Text>EXAMPLE OVERVIEW, NOT FOR CLINICAL USE</Text>
                         </View>
                         {/*====================Footer heading end ==============================*/}
 
@@ -1055,6 +1396,24 @@ class ExportCustomReport extends React.Component {
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Cerebellum</Text>
+                                         <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
+                                    <View style={styles.tableRow}>
+                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <View style={styles.tableColRight_scale}>
+                                            <View style={styles.point_scale}>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.tableColRight2_2}></Text>
+                                    </View>
                                     <View style={styles.col12}>
                                         <View style={styles.tableFootBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                     </View>
@@ -1086,35 +1445,6 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                     {/*====================Footer heading end ==============================*/}
                                 </>
-                                 
-
-                                {/*<>
-                                    <View style= {styles.tableRowHead}>
-
-                                        <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
-                                    </View>
-                                    <Text style = {{
-                                        fontSize : 15,
-                                        textAlign : 'center',
-                                        color : "#0E263D",
-                                        marginTop : '2%',
-                                        marginBottom : '2%'
-                                    }}>NSFCAREER OVERVIEW</Text>
-                                    <View >
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
-                                            <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
-
-                                        </View>
-                                        <View style={styles.tableRow}>
-
-                                            <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
-
-                                            <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
-
-                                        </View>
-                                    </View>    
-                                </>*/}
                         </View>
                     </Page>
                     : null
@@ -1134,35 +1464,43 @@ class ExportCustomReport extends React.Component {
                             <Text style={stylepage3.tableColRight}> PAGE : {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ?  '3 of 3' : '2 of 2'}</Text>
                         </View>
                         {/*========== Land scape blue line =============*/}
-                        <View style={stylepage3.blueLine}></View>
-
+                            {/*<View style={stylepage3.blueLine}></View>*/}
                         {/*=========== Customer details ===============*/}
-                        <View style={stylepage3.col12}>
-                            <Text 
-                                style={{
-                                    width: '100%',
-                                    textAlign: 'center',
-                                    color: '#2F5597',
-                                    fontSize : 25,
-                                    fontWeight: 800,
-                                    marginBottom: '15px',
-                                }}
-                            >
-                                {this.state.data['first-name'] +' '+this.state.data['last-name']}
-                            </Text>
+
+
+                        {/*<View style={stylepage3.blueLine}></View>*/}
+
+                        {/*-- Table start --*/}
+                        <View style={[stylepage3.tableRow,stylepage3.tableHead]}>
+                            {/*-- Table head --*/}
+                              <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
+                              <Text style={[stylepage3.tableColLeft1]}>Date</Text>
+                              <Text style={[stylepage3.tableColLeft2]}>MASxSR Value</Text>
+                            {/*-- Table head end--*/}
+
                         </View>
 
-                         <View style={stylepage3.tableRow}>
+                        {/*-- Table body start --*/}
+                            <View style={stylepage3.tableRowBody}>
+                                <Text style={[stylepage3.tableColLeft1]}>1</Text>
+                                <Text style={[stylepage3.tableColLeft1]}></Text>
+                                <Text style={[stylepage3.tableColLeft2]}></Text>
+                            </View>
 
-                            <Text style={stylepage3.tableColLeft}> DOB : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
-                            <Text style={stylepage3.tableColRight}>Referring physician : <Text style={{color:'#2d549a'}}>Unknown</Text> </Text>
-                        </View>
-                         <View style={stylepage3.tableRow}>
+                            <View style={stylepage3.tableRowBody}>
+                                <Text style={[stylepage3.tableColLeft1]}>2</Text>
+                                <Text style={[stylepage3.tableColLeft1]}></Text>
+                                <Text style={[stylepage3.tableColLeft2]}></Text>
+                            </View>
 
-                            <Text style={stylepage3.tableColLeft}> Patient ID : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
-                            <Text style={stylepage3.tableColRight}>Organization : <Text style={{color:'#2d549a'}}>{this.props.data ? this.props.data.organization : 'Unknown'}</Text> </Text>
-                        </View>
-                        <View style={stylepage3.blueLine}></View>
+                            <View style={stylepage3.tableRowBody}>
+                                <Text style={[stylepage3.tableColLeft1]}>3</Text>
+                                <Text style={[stylepage3.tableColLeft1]}></Text>
+                                <Text style={[stylepage3.tableColLeft2]}></Text>
+                            </View>
+                        {/*-- Table body end --*/}
+
+                        {/*-- Table end --*/}
 
                         {/*=========== Header section end ============*/}
 
@@ -1173,8 +1511,85 @@ class ExportCustomReport extends React.Component {
                         <View style={stylepage3.FooterSection}> 
                             <Image  style={stylepage3.FooterImg} src={PageFooter_3} alt="trangle"/>
                         </View>
+                        
                     </View>
+                    {/*====================Footer heading ==============================*/}
+                    <View style={stylepage4.bottomView}>
+                        <Text>EXAMPLE OVERVIEW, NOT FOR CLINICAL USE</Text>
+                    </View>
+                    {/*====================Footer heading end ==============================*/}
                 </Page>
+
+                {/*======================
+                        * PAGE 4 * 
+                =======================*/}
+                    <Page object-fit="fill" size="A4">
+                        <View style={styles.col12}>
+                            <View style={stylepage4.head}>
+                                <Text style={stylepage4.haderLeft}>ADDITIONAL INFORMATION</Text>
+                                <Text style={stylepage4.tableColRight}> PAGE : {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ?  '4 of 4' : '3 of 3'}</Text>
+                            </View>
+                            {/*========== Land scape blue line =============*/}
+                            {<View style={stylepage4.blueLine}></View>}
+
+                            {/*======= Body start ========*/}
+                                <View style={[stylepage4.tableRow]}>
+                                    {/*-- Table head --*/}
+                                      <Text style={[stylepage4.tableColLeft1]}>WARNINGS</Text>
+                                      <Text style={[stylepage4.tableColLeft2]}>MASxSR ERROR</Text>
+                                    {/*-- Table head end--*/}
+
+                                </View>
+                                <View style={[stylepage4.tableRow]}>
+                                    <View style={[stylepage4.tablecontentLeft]}>
+                                        <Image  style={stylepage4.alert_icon} src={alert_icon} alt="trangle"/>
+                                        <Text style={stylepage4.textRight}>Brain simulations are estimates based on material properties published in peer-reviewed liteature.</Text>
+                                    </View>
+                                 </View>
+                                 <View style={[stylepage4.tableRow]}>
+                                    <View style={[stylepage4.tablecontentLeft]}>
+                                        <Image  style={stylepage4.alert_icon} src={alert_icon} alt="trangle"/>
+                                        <Text style={stylepage4.textRight}>The locations of injury cannot be guaranteed.</Text>
+                                    </View>
+                                 </View>
+                                 <View style={[stylepage4.tableRow]}>
+                                    <View style={[stylepage4.tablecontentLeft]}>
+                                        <Image  style={stylepage4.alert_icon} src={alert_icon} alt="trangle"/>
+                                        <Text style={stylepage4.textRight}>Functional impairments are based on current knowledge from peer-reviewed liteature.</Text>
+                                    </View>
+                                </View>
+
+                                <View style={[stylepage4.tableRow]}>
+                                    {/*-- Table head --*/}
+                                      <Text style={[stylepage4.tableColLeft3]}></Text>
+                                      <Text style={[stylepage4.tableColLeft2]}>REFERENCES</Text>
+                                    {/*-- Table head end--*/}
+                                </View>
+
+                                  <View style={[stylepage4.tableRow]}>
+                                    <Text style={[stylepage4.tableColLeft3]}></Text>
+                                    <View style={[stylepage4.tablecontentRight]}>
+                                        <Text style={stylepage4.textRight}>1. Reference #1</Text>
+                                    </View>
+                                 </View>
+                                 <View style={[stylepage4.tableRow]}>
+                                    <Text style={[stylepage4.tableColLeft3]}></Text>
+                                    <View style={[stylepage4.tablecontentRight]}>
+                                        <Text style={stylepage4.textRight}>2. Reference #2</Text>
+                                    </View>
+                                 </View>
+                            {/*======= Body end ========*/}
+                           
+                        </View>
+                         {/*====================Footer heading ==============================*/}
+                        <View style={stylepage4.bottomView}>
+                            <Text>EXAMPLE OVERVIEW, NOT FOR CLINICAL USE</Text>
+                        </View>
+                        {/*====================Footer heading end ==============================*/}
+                    </Page>
+                {/*======================
+                        * PAGE 4 END* 
+                =======================*/}
             </Document>
         );
 

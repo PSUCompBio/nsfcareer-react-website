@@ -18,3 +18,16 @@ const userLevel = () =>{
 }
 
 export const Level = userLevel();
+
+const userSensor = () =>{
+	let userdata = userData();
+	if(userdata){
+		return userdata['userInfo']['sensor'];
+	}else{
+		return false;
+	};
+}
+
+
+
+export const Sensor = userSensor();

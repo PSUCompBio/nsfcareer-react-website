@@ -1421,7 +1421,7 @@ class ExportPlayerReport extends React.Component {
 
 		return (
 			<React.Fragment>
-				<div className="row text-center">
+				<div className="row text-center" id="my-event-image">
 					<div className="col-md-5 d-flex align-items-center justify-content-center" onMouseMove={this.onMouseMove}>
 						<div className="row" style={{ width: '100%', display: 'block', height: '100%', }} >
 							{this.state.isLoading ? (

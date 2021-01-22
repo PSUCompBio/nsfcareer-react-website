@@ -9,6 +9,7 @@ import {
     checkSensorDataExistsSimulationjsonData
 } from '../../apis';
 import $ from 'jquery';
+import { Sensor } from '../Authentication/getAuthanticatUserData';
 
 const style = {
     heading: {
@@ -133,7 +134,17 @@ class BrainSubmitPortal extends React.Component {
                     }) 
                 );
                 var filename = file.name;
-                if(!the.state.isCalledExists) the.checkSimulationExists({'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1],'key':key});
+                if(!the.state.isCalledExists) {
+                    if(Sensor === 'BioCore'){
+                        var impact_id = filename.split('.')[0];
+                        impact_id = impact_id.replace(/_/g, '');
+                        impact_id = impact_id.replace(/-/g, '');
+                        console.log('impact_id',impact_id)
+                        the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': filename.split("-")[0],'key':key});
+                    }else{
+                        the.checkSimulationExists({'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1],'key':key});
+                    } 
+                }
 
             }
           // that.displayData(e.target.result);
