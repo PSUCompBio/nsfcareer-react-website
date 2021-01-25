@@ -293,33 +293,75 @@ class TeamStats extends React.Component {
                 <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
                     <div className="container">
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>{this.state.for === 'Teams' ? 'Organization Analytics' : 'Team Analytics'}</h1>
-                        <div className="backbutton11" style={{position : 'relative'}}>
-                            {this.state.for === "Teams" ? 
-                                <Link to={{
-                                   pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
-                                    state: {
-                                        brand: {
-                                            brand: this.props.location.state.team.brand,
-                                            organization: this.props.location.state.team.organization,
-                                            user_cognito_id: this.props.location.state.user_cognito_id
-                                        }
+                        <div className="backbutton11" style={{position : 'relative','padding': '8px'}}>
+                            <div className="col-md-3 no-padding" style={{'float': 'left'}}>
+                                <button className="btn btn-primary">
+                                    {this.state.for === "Teams" ? 
+                                        <Link to={{
+                                           pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
+                                            state: {
+                                                brand: {
+                                                    brand: this.props.location.state.team.brand,
+                                                    organization: this.props.location.state.team.organization,
+                                                    user_cognito_id: this.props.location.state.user_cognito_id
+                                                }
+                                            }
+                                         }}
+                                        style={{
+                                            'color': 'white',
+                                            'text-decoration': 'none'
+                                        }}
+
+                                         >&lt; Back To Organization</Link>
+                                        :
+                                        <Link to={{
+                                            pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
+                                            state: {
+                                            team: {
+                                                brand: this.props.location.state.team.brand,
+                                                organization: this.props.location.state.team.organization,
+                                                team_name: this.props.location.state.team.team_name,
+                                                user_cognito_id: this.props.location.state.user_cognito_id,
+                                                staff: this.props.location.state.team.staff
+                                            }
+                                        } }}
+                                        style={{
+                                            'color': 'white',
+                                            'text-decoration': 'none'
+                                        }}
+                                        >&lt; Back To Team</Link>
                                     }
-                                 }}>&lt; Back To Organization</Link>
-                                :
-                                <Link to={{
-                                    pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
-                                    state: {
-                                    team: {
-                                        brand: this.props.location.state.team.brand,
-                                        organization: this.props.location.state.team.organization,
-                                        team_name: this.props.location.state.team.team_name,
-                                        user_cognito_id: this.props.location.state.user_cognito_id,
-                                        staff: this.props.location.state.team.staff
-                                    }
-                                } }}>&lt; Back To Team</Link>
-                            }
+                                </button>
+                            </div>
+                            <div className="col-md-6 no-padding" style={{'float': 'left','text-align': 'center'}}>
+                                {this.state.for !== "Teams" ? 
+                                    <p style={{
+                                        'padding': '6px'
+                                    }}>
+                                        Note: Team members must be activated on the Team Dashboard for their data to show up here. <br/>
+                                        <Link to={{
+                                            pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
+                                            state: {
+                                            team: {
+                                                brand: this.props.location.state.team.brand,
+                                                organization: this.props.location.state.team.organization,
+                                                team_name: this.props.location.state.team.team_name,
+                                                user_cognito_id: this.props.location.state.user_cognito_id,
+                                                staff: this.props.location.state.team.staff
+                                            }
+                                        } }}
+                                        style={{
+                                            'color': '#0b62a6',
+                                        }}
+                                        >Return to Team Dashboard</Link> to activate team members.
+                                    </p>
+                                    : null
+                                }
+                            </div>
+                            <div className="col-md-3 no-padding" style={{'float': 'left'}}>
+                            </div>
                         </div>
-                            <Col md={12} className="no-padding">
+                            <Col md={12} className="no-padding" style={{'display': 'flow-root'}}>
                                 <Card  className="card-team-state-page">
                                     <div style={{textAlign: 'center'}}>
                                         <label style={{fontSize: '20px'}}>Display all member data with</label>

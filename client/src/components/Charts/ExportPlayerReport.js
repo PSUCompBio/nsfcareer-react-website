@@ -113,7 +113,7 @@ class ExportPlayerReport extends React.Component {
 				},
 				{
 					id: "cerebellum_btn",
-					name: "Cerebellum Lobe",
+					name: "Cerebellum",
 					shortenName: "Cerebellum"
 				},
 				{
@@ -142,7 +142,16 @@ class ExportPlayerReport extends React.Component {
 			selectOption: [
 				{ name: 'Maximum Principal Strain', value: 'max-ps' },
 				{ name: 'Minimum Principal Strain', value: 'min-ps' },
+				{ name: 'CSDM-5', value: 'csdm_5' },
+				{ name: 'CSDM-10', value: 'csdm_10' },
 				{ name: 'CSDM-15', value: 'csdm_15' },
+				{ name: 'CSDM-30', value: 'csdm_30' },
+				{ name: 'MPSR-120', value: 'MPSR_120' },
+				{ name: 'MPSxSR-28', value: 'MPSxSR_28' },
+				{ name: 'MPSxSR-95', value: 'MPSxSR_95' },
+				{ name: 'maximum-PSxSR', value: 'maximum_PSxSR' },
+
+
 			],
 			isResetShpares: true,
 		};
@@ -1187,16 +1196,16 @@ class ExportPlayerReport extends React.Component {
 	showUpdatedRegion = () => {
 
 		const { brainStrainActive } = this.state;
-		console.log('brainRegions', this.props.brainRegions)
-		frontal_lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
-		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
-		occipital_lobe_json = this.props.brainRegions[brainStrainActive].occipital || []
-		pariental_lobe_json = this.props.brainRegions[brainStrainActive].parietal || []
-		temporal_lobe_json = this.props.brainRegions[brainStrainActive].temporal || []
-		middle_part_of_the_brain_json = this.props.brainRegions[brainStrainActive].msc || []
-		stem_json = this.props.brainRegions[brainStrainActive].stem || []
+		console.log('brainRegions', brainStrainActive)
+		frontal_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].frontal || [] : [];
+		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].cerebellum || [] : [];
+		occipital_lobe_json =  this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].occipital || [] : [];
+		pariental_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].parietal || [] : [];
+		temporal_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].temporal || [] : [];
+		middle_part_of_the_brain_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].msc || [] : [];
+		stem_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].stem || [] : [];
 		//csf_json = this.props.brainRegions[brainStrainActive].csf || []
-
+		console.log('frontal_lobe_json',pariental_lobe_json)
 		all_spheres_json = [];
 		all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
 		all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
@@ -1220,7 +1229,29 @@ class ExportPlayerReport extends React.Component {
 				this.handleBrainStrain('principal-min-strain')
 				break;
 			case "csdm_15":
-				this.handleBrainStrain("CSDM-15")
+				this.handleBrainStrain("CSDM-15");
+				break;
+			case "csdm_5":
+				this.handleBrainStrain("CSDM-5")
+				break;
+			case "csdm_10":
+				this.handleBrainStrain("CSDM-10");
+				break;
+			case "CSDM_30":
+				this.handleBrainStrain("CSDM-30");
+				break;
+			case "MPSR_120":
+				this.handleBrainStrain("MPSR-120");
+				break;
+			case "MPSxSR_28":
+				this.handleBrainStrain("MPSxSR-28");
+				break;
+			case "MPSxSR_95":
+				this.handleBrainStrain("MPSxSR-95");
+				break;
+			case "maximum_PSxSR":
+				this.handleBrainStrain("maximum-PSxSR");
+				break;	
 		}
 	}
 

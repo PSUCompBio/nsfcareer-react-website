@@ -1496,8 +1496,9 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
 });
 
 app.get(`${apiPrefix}getBrainSimulationLogFile/:image_id`, (req, res) => {
-    const { image_id } = req.body
-    getPlayerSimulationFile(req.body)
+    const { image_id } = req.params
+    // console.log('image_id',image_id)
+    getPlayerSimulationFile({image_id : image_id})
         .then(imageData => {
             // console.log('image_data',imageData)
             if (imageData.log_path && imageData.log_path != 'null') {
@@ -1511,6 +1512,7 @@ app.get(`${apiPrefix}getBrainSimulationLogFile/:image_id`, (req, res) => {
                 }
             }
         }) .then(log_s3 => {
+            // console.log('log_s3',log_s3)
             let log = '';
             if (log_s3) {
                 log = Buffer.from(log_s3.Body).toString('utf8');
@@ -6744,6 +6746,11 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
             let CSDM_5  = {};
             let CSDM_10 = {};
             let CSDM_15 = {};
+            let CSDM_30 = {};
+            let MPSR_120 = {};
+            let MPSxSR_28 = {};
+            let MPSxSR_95 = {};
+            let maximum_PSxSR = {};
 
             let cnt = 1;
 
@@ -6757,6 +6764,12 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                 brainRegions['CSDM-5'] = {};
                 brainRegions['CSDM-10'] = {};
                 brainRegions['CSDM-15'] = {};
+                brainRegions['CSDM-30'] = {};
+                brainRegions['MPSR-120'] = {};
+                brainRegions['MPSxSR-28'] = {};
+                brainRegions['MPSxSR-95'] = {};
+                brainRegions['maximum-PSxSR'] = {}
+
                 
                 res.send({
                     message: "success",
@@ -7169,6 +7182,244 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                     brainRegions['CSDM-5'] = CSDM_5;
                     brainRegions['CSDM-10'] = CSDM_10;
                     brainRegions['CSDM-15'] = CSDM_15;
+                    brainRegions['CSDM-30'] = {};
+                    brainRegions['MPSR-120'] = {};
+                    brainRegions['MPSxSR-28'] = {};
+                    brainRegions['MPSxSR-95'] = {};
+                    brainRegions['maximum-PSxSR'] = {}
+                    // console.log('brainRegions', JSON.stringify(brainRegions));
+
+                    if (data.length === cnt) {
+                        acceleration_data_list.sort(function(b, a) {
+                            var keyA = a.date_time,
+                            keyB = b.date_time;
+                            if (keyA < keyB) return -1;
+                            if (keyA > keyB) return 1;
+                            return 0;
+                        });
+                        res.send({
+                            message: "success",
+                            data: acceleration_data_list,
+                            // frontal_Lobe: frontal_Lobe,
+                            brainRegions: brainRegions
+                        })
+                    }
+
+                    cnt++;
+                })
+                .catch(err => {
+                    let brainRegions = {};
+                    brainRegions['principal-max-strain'] = {};
+                    brainRegions['principal-min-strain'] = {};
+                    brainRegions['axonal-strain-max'] = {};
+                    brainRegions['csdm-max'] = {};
+                    brainRegions['masXsr-15-max'] = {};
+                    brainRegions['CSDM-5'] = {};
+                    brainRegions['CSDM-10'] = {};
+                    brainRegions['CSDM-15'] = {};
+                    brainRegions['MPS-95'] = {}
+                    brainRegions['CSDM-30'] = {};
+                    brainRegions['MPSR-120'] = {};
+                    brainRegions['MPSxSR-28'] = {};
+                    brainRegions['MPSxSR-95'] = {};
+                    brainRegions['maximum-PSxSR'] = {}
+                    var acceleration_data_list = [];
+                    // acceleration_data_list.push({
+                    //     sensor_data: ''
+                    // })
+                    res.send({
+                        message: "failure",
+                        data: acceleration_data_list,
+                        brainRegions: brainRegions,
+                        error: err
+                    })
+                })
+            })
+           
+        })
+        .catch(err => {
+            let brainRegions = {};
+            brainRegions['principal-max-strain'] = {};
+            brainRegions['principal-min-strain'] = {};
+            brainRegions['axonal-strain-max'] = {};
+            brainRegions['csdm-max'] = {};
+            brainRegions['masXsr-15-max'] = {};
+            brainRegions['CSDM-5'] = {};
+            brainRegions['CSDM-10'] = {};
+            brainRegions['CSDM-15'] = {};
+            brainRegions['MPS-95'] = {}
+            brainRegions['CSDM-30'] = {};
+            brainRegions['MPSR-120'] = {};
+            brainRegions['MPSxSR-28'] = {};
+            brainRegions['MPSxSR-95'] = {};
+            brainRegions['maximum-PSxSR'] = {}
+            var acceleration_data_list = [];
+            // acceleration_data_list.push({
+            //     sensor_data: ''
+            // })
+            res.send({
+                message: "failure",
+                data: acceleration_data_list,
+                brainRegions: brainRegions,
+                error: err
+            })
+        })
+})
+
+app.patch(`${apiPrefix}filterStrainMetric`, (req,res) =>{
+    console.log('req',req.body)
+    getCumulativeAccelerationData(req.body)
+        .then(data => {
+            let acceleration_data_list = [];
+            // let frontal_Lobe = [];
+            let brainRegions = {};
+            let principal_max_strain = {};
+            let principal_min_strain = {};
+            let axonal_strain_max = {};
+            let csdm_max = {};
+            let masXsr_15_max = {};
+            let MPS_95  = {};
+            let CSDM_5  = {};
+            let CSDM_10 = {};
+            let CSDM_15 = {};
+            let CSDM_30 = {};
+            let MPSR_120 = {};
+            let MPSxSR_28 = {};
+            let MPSxSR_95 = {};
+            let maximum_PSxSR = {};
+
+            let cnt = 1;
+
+            if (data.length === 0){
+                brainRegions['principal-max-strain'] = {};
+                brainRegions['principal-min-strain'] = {};
+                brainRegions['axonal-strain-max'] = {};
+                brainRegions['csdm-max'] = {};
+                brainRegions['masXsr-15-max'] = {};
+                brainRegions['MPS-95'] = {};
+                brainRegions['CSDM-5'] = {};
+                brainRegions['CSDM-10'] = {};
+                brainRegions['CSDM-15'] = {};
+                brainRegions['CSDM-30'] = {};
+                brainRegions['MPSR-120'] = {};
+                brainRegions['MPSxSR-28'] = {};
+                brainRegions['MPSxSR-95'] = {};
+                brainRegions['maximum-PSxSR'] = {}
+                
+                res.send({
+                    message: "success",
+                    data: acceleration_data_list,
+                    // frontal_Lobe: frontal_Lobe,
+                    brainRegions: brainRegions
+                })
+            }
+            let index_file = 0;
+            let file_count = 0;
+            data.forEach(function (acc_data, acc_index) {
+                let accData = acc_data;
+                let imageData = '';
+                let outputFile = '';
+                let jsonOutputFile = '';
+                let simulationImage = '';
+                getPlayerSimulationFile(acc_data)
+                .then(image_data => {
+                    imageData = image_data;
+                    if (imageData.player_name && imageData.player_name != 'null') {
+                        if(file_count < 1){
+                            file_count++;
+                            index_file = acc_index;
+                            let file_path = imageData.player_name + '/simulation/summary.json';
+                            return getFileFromS3(file_path, imageData.bucket_name);
+                        }
+                    }
+                })
+               .then(output_file => {
+                    if (output_file) outputFile = output_file;
+                    acceleration_data_list.push({
+                        sensor_data: accData,   
+                        status: imageData ? imageData.status : '',
+                        computed_time : imageData ? imageData.computed_time : '',
+                        log_stream_name: imageData.log_stream_name,
+                        date_time: accData.player_id.split('$')[1]
+                    })
+
+                    if (acc_index === index_file && outputFile) {
+                        outputFile = JSON.parse(outputFile.Body.toString('utf-8'));
+                        if (outputFile.Insults) {
+                            outputFile.Insults.forEach(function (summary_data, index) {
+                                if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-max-strain'].location[0];
+                                    coordinate.y = summary_data['principal-max-strain'].location[1];
+                                    coordinate.z = summary_data['principal-max-strain'].location[2];
+                                    if (summary_data['principal-max-strain']['brain-region']) {
+                                        region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                        principal_max_strain[region] = principal_max_strain[region] || [];
+                                        principal_max_strain[region].push(coordinate);
+                                    }
+                                }
+                                if (summary_data['principal-min-strain'] && summary_data['principal-min-strain'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['principal-min-strain'].location[0];
+                                    coordinate.y = summary_data['principal-min-strain'].location[1];
+                                    coordinate.z = summary_data['principal-min-strain'].location[2];
+                                    if (summary_data['principal-min-strain']['brain-region']) {
+                                        region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
+                                        principal_min_strain[region] = principal_min_strain[region] || [];
+                                        principal_min_strain[region].push(coordinate);
+                                    }
+                                }
+                                if (summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['axonal-strain-max'].location[0];
+                                    coordinate.y = summary_data['axonal-strain-max'].location[1];
+                                    coordinate.z = summary_data['axonal-strain-max'].location[2];
+                                    if (summary_data['axonal-strain-max']['brain-region']) {
+                                        region = summary_data['axonal-strain-max']['brain-region'].toLowerCase();
+                                        axonal_strain_max[region] = axonal_strain_max[region] || [];
+                                        axonal_strain_max[region].push(coordinate);
+                                    }
+                                }
+                                if (summary_data['csdm-max'] && summary_data['csdm-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['csdm-max'].location[0];
+                                    coordinate.y = summary_data['csdm-max'].location[1];
+                                    coordinate.z = summary_data['csdm-max'].location[2];
+                                    if (summary_data['csdm-max']['brain-region']) {
+                                        region = summary_data['csdm-max']['brain-region'].toLowerCase();
+                                        csdm_max[region] = csdm_max[region] || [];
+                                        csdm_max[region].push(coordinate);
+                                    }
+                                }
+                                if (summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].location) {
+                                    let coordinate = {};
+                                    coordinate.x = summary_data['masXsr-15-max'].location[0];
+                                    coordinate.y = summary_data['masXsr-15-max'].location[1];
+                                    coordinate.z = summary_data['masXsr-15-max'].location[2];
+                                    if (summary_data['masXsr-15-max']['brain-region']) {
+                                        region = summary_data['masXsr-15-max']['brain-region'].toLowerCase();
+                                        masXsr_15_max[region] = masXsr_15_max[region] || [];
+                                        masXsr_15_max[region].push(coordinate);
+                                    }
+                                }
+                            })
+                        }
+                    }
+
+                    brainRegions['principal-max-strain'] = principal_max_strain;
+                    brainRegions['principal-min-strain'] = principal_min_strain;
+                    brainRegions['axonal-strain-max'] = axonal_strain_max;
+                    brainRegions['csdm-max'] = csdm_max;
+                    brainRegions['masXsr-15-max'] = masXsr_15_max;
+                    brainRegions['MPS-95'] = MPS_95;
+                    brainRegions['CSDM-5'] = CSDM_5;
+                    brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['CSDM-15'] = CSDM_15;
+                    brainRegions['CSDM-30'] = {};
+                    brainRegions['MPSR-120'] = {};
+                    brainRegions['MPSxSR-28'] = {};
+                    brainRegions['MPSxSR-95'] = {};
+                    brainRegions['maximum-PSxSR'] = {}
 
                     // console.log('brainRegions', JSON.stringify(brainRegions));
 
@@ -7234,6 +7485,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
             })
         })
 })
+
 
 function getbrainRegions_V1(summary_data, dataFor){
     return new Promise((resolve, reject) => {
@@ -7778,9 +8030,10 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
 
                                             getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
                                                 .then (u_detail => {
-                                                    console.log('user details ', u_detail[0]['first_name'])
-                                                    p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
+                                                   
                                                     k++;
+                                                    // console.log('user details ', u_detail[0]['first_name'])
+                                                    p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
                                                     if (k == p_data.length) {
                                                         let requested_players = []
                                                         if (requested_player_list.length > 0) {
@@ -8793,6 +9046,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
     console.log('req ----',req.body)
     let spharesData = [];
     let count_sp = 0;
+    let sensor = req.body.brand;
     req.body.team.forEach(function (team_name, index) {
         getTeamSpheres({brand:req.body.brand, organization: req.body.organization, team: team_name})
         .then(data => {
@@ -8850,32 +9104,48 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                        
                         if (!players.includes(player_id)) {
                             // console.log('player_id',player_id)
+
                             PLAYERS_POSITIONS.push(acc_data.player['position']);
                             players.push(player_id);
-                            getPlayerSimulationStatus(acc_data.image_id)
-                                .then(imageData => {
-                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                        console.log(imageData.player_name + '/simulation/summary.json');
-                                        let file_path = imageData.player_name + '/simulation/summary.json';
-                                        return getFileFromS3(file_path, imageData.bucket_name);
-                                    }
-                                })
-                                .then(output_file => {
-                                    if (output_file) {
-                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
-                                        if (outputFile.Insults) {
-                                            outputFile.Insults.forEach(function (summary_data, index) {
-                                                pushdata(summary_data);
-                                                pushPostionData(summary_data,acc_data.player['position']);
 
-                                            })
-                                        }
+                            var newPlayerId = player_id+'-'+sensor;
+                            if(newPlayerId){
+                                console.log('player_id',newPlayerId)
+                                getUserDetailByPlayerId(newPlayerId)
+                                .then(userData => {
+                                    var player_status = userData[0].player_status
+                                    if (player_status == 'approved') {
+                                        getPlayerSimulationStatus(acc_data.image_id)
+                                        .then(imageData => {
+                                            if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                                console.log(imageData.player_name + '/simulation/summary.json');
+                                                let file_path = imageData.player_name + '/simulation/summary.json';
+                                                return getFileFromS3(file_path, imageData.bucket_name);
+                                            }
+                                        })
+                                        .then(output_file => {
+                                            if (output_file) {
+                                                outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                                if (outputFile.Insults) {
+                                                    outputFile.Insults.forEach(function (summary_data, index) {
+                                                        pushdata(summary_data);
+                                                        pushPostionData(summary_data,acc_data.player['position']);
+
+                                                    })
+                                                }
+                                            }
+                                            resolve(null);
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        })
+                                    }else{
+                                        resolve(null);
                                     }
-                                    resolve(null);
-                                })
-                                .catch(err => {
+                                }).catch(err => {
                                     reject(err);
                                 })
+                            }
                         } else {
                             resolve(null);
                         }
@@ -8971,7 +9241,12 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                 let CSDM_5  = {};
                 let CSDM_10 = {};
                 let CSDM_15 = {};
-
+                let CSDM_30 = {};
+                let MPSR_120 = {};
+                let MPSxSR_28 = {};
+                let MPSxSR_95 = {};
+                let maximum_PSxSR = {};
+ 
                 if (data.length === 0){
                     brainRegions['principal-max-strain'] = {};
                     brainRegions['principal-min-strain'] = {};
@@ -8982,7 +9257,11 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                     brainRegions['CSDM-5'] = {};
                     brainRegions['CSDM-10'] = {};
                     brainRegions['CSDM-15'] = {};
-
+                    brainRegions['CSDM-30'] = {};
+                    brainRegions['MPSR-120'] = {};
+                    brainRegions['MPSxSR-28'] = {};
+                    brainRegions['MPSxSR-95'] = {};
+                    brainRegions['maximum-PSxSR'] = {}
                     res.send({
                         message: "success",
                         data: brainRegions
@@ -9053,7 +9332,16 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                             if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
                                                                 pushdata(summary_data);
                                                             } 
+                                                        }else if(type == 'CSDM-15'){
+                                                            if(summary_data['CSDM-15'] && summary_data['CSDM-15'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'MPS-95'){
+                                                            if(summary_data['MPS-95'] && summary_data['MPS-95'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
                                                         }
+
                                                     //** 
                                                     //Fetch value is greater then.....   
                                                     }else{
@@ -9095,6 +9383,10 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                                             } 
                                                         }else if(type == 'MPS-95'){
                                                             if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-15'){
+                                                            if(summary_data['CSDM-15'] && summary_data['CSDM-15'].value >= gs){
                                                                 pushdata(summary_data);
                                                             } 
                                                         }
@@ -9313,7 +9605,8 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                 CSDM_10[region].push(coordinate);
                             })
                         }
-                    }if (summary_data['MPS-95']) {
+                    }
+                    if (summary_data['MPS-95']) {
                                                    
                         if(summary_data['MPS-95']['frontal']){
                             var coordinate = {};
@@ -9388,6 +9681,460 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                             })
                         }
                     }
+                    if (summary_data['CSDM-15']) {
+                                                   
+                        if(summary_data['CSDM-15']['frontal']){
+                            var coordinate = {};
+                            summary_data['CSDM-15']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                CSDM_15[region] = CSDM_15[region] || [];
+                                CSDM_15[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-15']['parietal']){
+                            var coordinate = {};
+                            summary_data['CSDM-15']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                CSDM_15[region] = CSDM_15[region] || [];
+                                CSDM_15[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-15']['msc']){
+                            var coordinate = {};
+                            summary_data['CSDM-15']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                CSDM_15[region] = CSDM_15[region] || [];
+                                CSDM_15[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-15']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['CSDM-15']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                CSDM_15[region] = CSDM_15[region] || [];
+                                CSDM_15[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-15']['occipital']){
+                            var coordinate = {};
+                            summary_data['CSDM-15']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                CSDM_15[region] = CSDM_15[region] || [];
+                                CSDM_15[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-15']['temporal']){
+                            var coordinate = {};
+                            summary_data['CSDM-15']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                CSDM_15[region] = CSDM_15[region] || [];
+                                CSDM_15[region].push(coordinate);
+                            })
+                        }
+                    }
+                    if (summary_data['CSDM-30']) {
+                                                   
+                        if(summary_data['CSDM-30']['frontal']){
+                            var coordinate = {};
+                            summary_data['CSDM-30']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                CSDM_30[region] = CSDM_30[region] || [];
+                                CSDM_30[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-30']['parietal']){
+                            var coordinate = {};
+                            summary_data['CSDM-30']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                CSDM_30[region] = CSDM_30[region] || [];
+                                CSDM_30[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-30']['msc']){
+                            var coordinate = {};
+                            summary_data['CSDM-30']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                CSDM_30[region] = CSDM_30[region] || [];
+                                CSDM_30[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-30']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['CSDM-30']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                CSDM_30[region] = CSDM_30[region] || [];
+                                CSDM_30[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-30']['occipital']){
+                            var coordinate = {};
+                            summary_data['CSDM-30']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                CSDM_30[region] = CSDM_30[region] || [];
+                                CSDM_30[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['CSDM-30']['temporal']){
+                            var coordinate = {};
+                            summary_data['CSDM-30']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                CSDM_30[region] = CSDM_30[region] || [];
+                                CSDM_30[region].push(coordinate);
+                            })
+                        }
+                    }
+
+                    if (summary_data['MPSR-120']) {
+                                                   
+                        if(summary_data['MPSR-120']['frontal']){
+                            var coordinate = {};
+                            summary_data['MPSR-120']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                MPSR_120[region] = MPSR_120[region] || [];
+                                MPSR_120[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSR-120']['parietal']){
+                            var coordinate = {};
+                            summary_data['MPSR-120']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                MPSR_120[region] = MPSR_120[region] || [];
+                                MPSR_120[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSR-120']['msc']){
+                            var coordinate = {};
+                            summary_data['MPSR-120']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                MPSR_120[region] = MPSR_120[region] || [];
+                                MPSR_120[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSR-120']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['MPSR-120']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                MPSR_120[region] = MPSR_120[region] || [];
+                                MPSR_120[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSR-120']['occipital']){
+                            var coordinate = {};
+                            summary_data['MPSR-120']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                MPSR_120[region] = MPSR_120[region] || [];
+                                MPSR_120[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSR-120']['temporal']){
+                            var coordinate = {};
+                            summary_data['MPSR-120']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                MPSR_120[region] = MPSR_120[region] || [];
+                                MPSR_120[region].push(coordinate);
+                            })
+                        }
+                    }
+
+                    if (summary_data['MPSxSR-28']) {
+                                                   
+                        if(summary_data['MPSxSR-28']['frontal']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-28']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                MPSxSR_28[region] = MPSxSR_28[region] || [];
+                                MPSxSR_28[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-28']['parietal']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-28']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                MPSxSR_28[region] = MPSxSR_28[region] || [];
+                                MPSxSR_28[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-28']['msc']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-28']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                MPSxSR_28[region] = MPSxSR_28[region] || [];
+                                MPSxSR_28[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-28']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-28']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                MPSxSR_28[region] = MPSxSR_28[region] || [];
+                                MPSxSR_28[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-28']['occipital']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-28']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                MPSxSR_28[region] = MPSxSR_28[region] || [];
+                                MPSxSR_28[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-28']['temporal']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-28']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                MPSxSR_28[region] = MPSxSR_28[region] || [];
+                                MPSxSR_28[region].push(coordinate);
+                            })
+                        }
+                    }
+
+                    if (summary_data['MPSxSR-95']) {
+                                                   
+                        if(summary_data['MPSxSR-95']['frontal']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-95']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                MPSxSR_95[region] = MPSxSR_95[region] || [];
+                                MPSxSR_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-95']['parietal']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-95']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                MPSxSR_95[region] = MPSxSR_95[region] || [];
+                                MPSxSR_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-95']['msc']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-95']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                MPSxSR_95[region] = MPSxSR_95[region] || [];
+                                MPSxSR_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-95']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-95']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                MPSxSR_95[region] = MPSxSR_95[region] || [];
+                                MPSxSR_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-95']['occipital']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-95']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                MPSxSR_95[region] = MPSxSR_95[region] || [];
+                                MPSxSR_95[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['MPSxSR-95']['temporal']){
+                            var coordinate = {};
+                            summary_data['MPSxSR-95']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                MPSxSR_95[region] = MPSxSR_95[region] || [];
+                                MPSxSR_95[region].push(coordinate);
+                            })
+                        }
+                    }
+
+                    if (summary_data['maximum-PSxSR']) {
+                                                   
+                        if(summary_data['maximum-PSxSR']['frontal']){
+                            var coordinate = {};
+                            summary_data['maximum-PSxSR']['frontal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'frontal';
+                                maximum_PSxSR[region] = maximum_PSxSR[region] || [];
+                                maximum_PSxSR[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['maximum-PSxSR']['parietal']){
+                            var coordinate = {};
+                            summary_data['maximum-PSxSR']['parietal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'parietal';
+                                maximum_PSxSR[region] = maximum_PSxSR[region] || [];
+                                maximum_PSxSR[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['maximum-PSxSR']['msc']){
+                            var coordinate = {};
+                            summary_data['maximum-PSxSR']['msc'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'msc';
+                                maximum_PSxSR[region] = maximum_PSxSR[region] || [];
+                                maximum_PSxSR[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['maximum-PSxSR']['cerebellum']){
+                            var coordinate = {};
+                            summary_data['maximum-PSxSR']['cerebellum'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'cerebellum';
+                                maximum_PSxSR[region] = maximum_PSxSR[region] || [];
+                                maximum_PSxSR[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['maximum-PSxSR']['occipital']){
+                            var coordinate = {};
+                            summary_data['maximum-PSxSR']['occipital'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'occipital';
+                                maximum_PSxSR[region] = maximum_PSxSR[region] || [];
+                                maximum_PSxSR[region].push(coordinate);
+                            })
+                        }
+                        if(summary_data['maximum-PSxSR']['temporal']){
+                            var coordinate = {};
+                            summary_data['maximum-PSxSR']['temporal'].forEach(function (data, index) {
+                                
+                                coordinate.x = data[0];
+                                coordinate.y = data[1];
+                                coordinate.z = data[2];
+                                region = 'temporal';
+                                maximum_PSxSR[region] = maximum_PSxSR[region] || [];
+                                maximum_PSxSR[region].push(coordinate);
+                            })
+                        }
+                    }
                 }
 
                 Promise.all(processData).then(resolveData => {
@@ -9399,8 +10146,13 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                     brainRegions['masXsr-15-max'] = masXsr_15_max;
                     brainRegions['CSDM-5'] = CSDM_5;
                     brainRegions['CSDM-10'] = CSDM_10;
+                    brainRegions['CSDM-15'] = CSDM_15;
+                    brainRegions['CSDM-30'] = CSDM_30;
                     brainRegions['MPS-95'] = MPS_95;
-                    
+                    brainRegions['MPSR-120'] = MPSR_120;
+                    brainRegions['MPSxSR-28'] = MPSxSR_28;
+                    brainRegions['MPSxSR-95'] = MPSxSR_95;
+                    brainRegions['maximum-PSxSR'] = maximum_PSxSR;
                     res.send({
                         message: "success",
                         data: brainRegions

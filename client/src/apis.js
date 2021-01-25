@@ -1246,3 +1246,16 @@ export const getFailedSimulationList = (request) =>{
       });
   })
 }
+
+//# getFailedSimulationList
+export const filterStrainMetric = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.patch(`/filterStrainMetric`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

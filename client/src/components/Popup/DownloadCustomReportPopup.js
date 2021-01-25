@@ -8,7 +8,9 @@ import Report from '../ReportContent/ExportCustomReport';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import * as htmlToImage from 'html-to-image';
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
-
+import {
+  filterStrainMetric
+} from '../../apis';
 
 class DownloadReportPopup extends React.Component {
   constructor() {
@@ -21,8 +23,13 @@ class DownloadReportPopup extends React.Component {
       ischecked: true,
       startDate: new Date(),
       endDate: new Date(),
-      selectedItem: 'Today',
-      merticsImage: ''
+      selectedItem: 'All Time',
+      merticsImage: '',
+      brand: '',
+      user_cognito_id: '',
+      organization: '',
+      player_id: '',
+      team : ''
     };
 
   }
@@ -30,7 +37,8 @@ class DownloadReportPopup extends React.Component {
   scrollToTop(){
   }
   componentDidMount() {
-    
+
+
   }
 
   downFullImage = () => {
@@ -74,6 +82,27 @@ class DownloadReportPopup extends React.Component {
     this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
 
   }
+
+  filterStrainMetric=()=>{
+    const { brand, user_cognito_id, organization, player_id, team } = this.props.data.data;
+    console.log('data',this.props.data.data)
+    // if(data){
+    //   this.setState({
+    //     brand: data.brand,
+    //     user_cognito_id: data.user_cognito_id,
+    //     organization: data.organization,
+    //     player_id: data.player_id,
+    //     team : data.team
+    //   })
+    // }
+    filterStrainMetric({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: player_id, team: team })
+    .then(res=>{
+      console.log('res',res);
+    }).catch(err=>{
+      console.log('err',err)
+    })
+  }
+
   render() {
     console.log("propsData 3", this.props);
     const { startDate, endDate, selectedItem } = this.state;
@@ -111,13 +140,15 @@ class DownloadReportPopup extends React.Component {
               </Col>
               <Col md={3} style={{'text-align': 'left'}}>
                 <DropdownButton id="dropdown-basic-button" title={selectedItem}>
-                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Today'})}>Today</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Yesterday'})}>Yesterday</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Last 7 Days'})}>Last 7 Days</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Last 30 Days'})}>Last 30 Days</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'This Month'})}>This Month</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Last Month'})}>Last Month</Dropdown.Item>
-                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Custom Range'})}>Custom Range</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Today'})} style={{'pointer-events': 'none','opacity': '0.5'}}>Today</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Yesterday'})} style={{'pointer-events': 'none','opacity': '0.5'}}>Yesterday</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Last 7 Days'})} style={{'pointer-events': 'none','opacity': '0.5'}}>Last 7 Days</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Last 30 Days'})} style={{'pointer-events': 'none','opacity': '0.5'}}>Last 30 Days</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'This Month'})} style={{'pointer-events': 'none','opacity': '0.5'}}>This Month</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Last Month'})} style={{'pointer-events': 'none','opacity': '0.5'}}>Last Month</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'Custom Range'})} style={{'pointer-events': 'none','opacity': '0.5'}}>Custom Range</Dropdown.Item>
+                  <Dropdown.Item onClick={()=>this.setState({selectedItem: 'All Time'})}>All Time</Dropdown.Item>
+
                 </DropdownButton>
               </Col>
               {selectedItem === 'Custom Range' && 
@@ -145,12 +176,12 @@ class DownloadReportPopup extends React.Component {
               }
               {selectedItem !== 'Custom Range' && 
                 <>
-                  <Col md={2}>
-                    <Button variant="success">APPLY</Button>
+                  {/*<Col md={2}>
+                    <Button variant="success" onClick={this.filterStrainMetric}>APPLY</Button>
                   </Col>
                   <Col md={2}>
                     <Button variant="secondary">CANCEL</Button>
-                  </Col>
+                  </Col>*/}
                 </>
               }
             </Row>
@@ -160,7 +191,7 @@ class DownloadReportPopup extends React.Component {
               {selectedItem === 'Custom Range' && 
                 <>
                   <Col md={2} style={{'text-align': 'left'}}>
-                    <Button variant="success">APPLY</Button>
+                    <Button variant="success" onClick={this.filterStrainMetric}>APPLY</Button>
                   </Col>
                   <Col md={2} style={{'text-align': 'left'}}>
                     <Button variant="secondary">CANCEL</Button>

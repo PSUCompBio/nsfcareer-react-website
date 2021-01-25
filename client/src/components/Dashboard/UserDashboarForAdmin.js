@@ -217,7 +217,16 @@ class UserDashboarForAdmin extends React.Component {
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
         {this.state.jsonData &&  this.state.user && 
-          <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} log_stream_name={this.state.log_stream_name}/>
+          <CumulativeEventsAccelerationEvents 
+            brainRegions={this.state.brainRegions} 
+            jsonData={this.state.jsonData} 
+            team={this.state.team} 
+            user={this.state.user} 
+            is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} 
+            imageUrl={this.state.user.profile_picture_url} 
+            data={this.state.cumulativeAccelerationEventData} 
+            log_stream_name={this.state.log_stream_name}
+          />
         }
           <p
             ref="h1"

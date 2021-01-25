@@ -1631,6 +1631,7 @@ function getOrganizationTeamData(obj) {
 }
 
 function getPlayerSimulationFile(obj) {
+    console.log('obj.image_id',obj.image_id)
     return new Promise((resolve, reject) => {
         let params = {
             TableName: "simulation_images",

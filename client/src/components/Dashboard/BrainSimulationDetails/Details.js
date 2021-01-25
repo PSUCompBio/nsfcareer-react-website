@@ -585,9 +585,9 @@ class Details extends React.Component {
     const control_loop_video = document.querySelector('.control_loop_video');
 
     //controls .......
-    control_play_video.addEventListener('click', custom_controls.play);
-    control_pouse_video.addEventListener('click', custom_controls.pause);
-    control_loop_video.addEventListener('click', custom_controls.repeatVideo);
+    if(control_play_video) control_play_video.addEventListener('click', custom_controls.play);
+    if(control_pouse_video) control_pouse_video.addEventListener('click', custom_controls.pause);
+    if(control_loop_video) control_loop_video.addEventListener('click', custom_controls.repeatVideo);
 
 
     if(this.state.impact_video_url && this.state.movie_link){
@@ -627,11 +627,11 @@ class Details extends React.Component {
         }
       }
 
-      progressBar.addEventListener('click', controls.scrub);
+      if(progressBar) progressBar.addEventListener('click', controls.scrub);
       let mousedown = false;
-      progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
-      progressBar.addEventListener('mousedown', () => mousedown = true);
-      progressBar.addEventListener('mouseup', () => mousedown = false);
+      if(progressBar) progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
+      if(progressBar) progressBar.addEventListener('mousedown', () => mousedown = true);
+      if(progressBar) progressBar.addEventListener('mouseup', () => mousedown = false);
     }else{
       this.setState({isCommonControl: false , lock_video_3: false});
     }
