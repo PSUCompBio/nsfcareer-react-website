@@ -103,7 +103,7 @@ class ExportPlayerReport extends React.Component {
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
-					name: "Motor/Sensor Cortex",
+					name: "Motor / Sensor Cortex",
 					shortenName: "Motor& Sensor Cortex"
 				},
 				{
@@ -1495,9 +1495,9 @@ class ExportPlayerReport extends React.Component {
 					</div>
 
 				</div>
-				<div>
+				{/*<div>
 					<button className="btn btn-primary d-flex justify-content-center download_btn" onClick={this.downImage}> Download Image</button>
-				</div>
+				</div>*/}
 
 			</React.Fragment>
 		);

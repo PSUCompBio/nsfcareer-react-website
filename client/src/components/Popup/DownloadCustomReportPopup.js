@@ -42,43 +42,47 @@ class DownloadReportPopup extends React.Component {
   }
 
   downFullImage = () => {
-    // let title = 'Maximum Principal Strain'
-    // let canvas = document.querySelector("#c");
-    // const c = document.createElement('canvas');
-    // c.width = 930;
-    // c.height = 350;
-    // const plotCanvas = document.querySelector(".chartjs-render-monitor");
-    // console.log("plotcanvas", plotCanvas)
-    // c.getContext('2d').font = "20px Arial";
-    // // c.getContext('2d').fillText('Location of ' + title, 300, 37);
-    // c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 50, 400, 300);
-    // c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 50, 500, 300);
-    // let dc = c.toDataURL();
-    // console.log('dc',dc)
+    let title = 'Maximum Principal Strain'
+    let canvas = document.querySelector("#c");
+    const c = document.createElement('canvas');
+    c.width = 930;
+    c.height = 350;
+    let width = canvas.width;
+    let height = canvas.height ;
+    const plotCanvas = document.querySelector(".chartjs-render-monitor");
+    console.log("plotcanvas", canvas.width, canvas.height)
+    c.getContext('2d').font = "20px Arial";
+    // c.getContext('2d').fillText('Location of ' + title, 300, 37);
+    c.getContext('2d').drawImage(canvas, 0, 0, width , height, 0, 50, 400, 250);
+    c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height - 50, 400, 50, 500, 250);
+    let dc = c.toDataURL();
+   
     // var link = document.createElement("a");
     // link.download = "full_image.png";
     // link.href = dc;
     // link.target = "_blank";
     // link.click();
     // return dc;
-    var the = this;
-    htmlToImage.toPng(document.getElementById('my-event-image'))
-    .then(function (dataUrl) {
-      // console.log(dataUrl, 'my-node.png');
-       the.setState({merticsImage: dataUrl, ischecked: true})
+    this.setState({merticsImage: dc});
+     console.log('dc',dc)
+    // return dc;
+    // var the = this;
+    // htmlToImage.toPng(document.getElementById('my-event-image'))
+    // .then(function (dataUrl) {
+    //   // console.log(dataUrl, 'my-node.png');
 
-    });
+    // });
   }
 
 
   handleChange =(e)=>{
+    this.setState({ischecked: false})
     this.downFullImage();
     console.log(e.target.name,!this.state[e.target.name] ? e.target.value :'' );
-    this.setState({ischecked: false})
     let the = this;
-    // setTimeout(()=>{
-    //   the.setState({ischecked: true});
-    // },1000)
+    setTimeout(()=>{
+      the.setState({ischecked: true});
+    },1000)
     this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
 
   }
@@ -105,8 +109,8 @@ class DownloadReportPopup extends React.Component {
 
   render() {
     console.log("propsData 3", this.props);
-    const { startDate, endDate, selectedItem } = this.state;
-
+    const { startDate, endDate, selectedItem, ischecked } = this.state;
+    console.log('ischecked',ischecked)
     let fileName = "unknown.pdf";
     if(this.props.data.data){
       fileName = this.props.data.data.player['first-name']+'_'+this.props.data.data.player['last-name']+'_'+this.props.data.data.org_id.split('-')[1]+'.pdf';
@@ -234,7 +238,7 @@ class DownloadReportPopup extends React.Component {
                 <button className="Download-button-custom-report"><img src={share_icon} style={{width:'24px'}} alt="share_icon" />  Share</button><br/>
               </Col>
               <Col md={4}>
-                {this.state.ischecked &&
+                {ischecked &&
                   <PDFDownloadLink document={<Report Metric={this.state} jsonfile={this.props.brainRegions} data={this.props.data.data} />} className="export-cumulative-player" fileName={fileName} style={{
                     color: 'white'
                     }}>
@@ -242,7 +246,7 @@ class DownloadReportPopup extends React.Component {
                     {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                   </PDFDownloadLink>
                 }
-                {!this.state.ischecked ? (
+                {!ischecked ? (
                       <div className="d-flex justify-content-center center-spinner">
                         <div
                           className="spinner-border text-primary"

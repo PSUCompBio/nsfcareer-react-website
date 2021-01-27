@@ -1585,10 +1585,10 @@ function getOrganizationTeamData(obj) {
                     if (obj.sensor) {
                         params = {
                             TableName: "sensor_details",
-                            KeyConditionExpression:  "org_id = :org_id",
+                            // KeyConditionExpression:  "org_id = :org_id",
                             FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
                             ExpressionAttributeValues: {
-                                ":org_id": org[0].organization_id,
+                                // ":org_id": org[0].organization_id,
                                 ":sensor": obj.sensor,
                                 ":organization": obj.organization,
                                 ":team": obj.team
@@ -1599,10 +1599,10 @@ function getOrganizationTeamData(obj) {
                     } else {
                         params = {
                             TableName: "sensor_details",
-                            KeyConditionExpression: "org_id = :org_id",
+                            // KeyConditionExpression: "org_id = :org_id",
                             FilterExpression: "organization = :organization and team = :team",
                             ExpressionAttributeValues: {
-                                ":org_id": org[0].organization_id,
+                                // ":org_id": org[0].organization_id,
                                 ":organization": obj.organization,
                                 ":team": obj.team
                             },
@@ -1612,8 +1612,9 @@ function getOrganizationTeamData(obj) {
                     }
                     
                     var item = [];
-                    docClient.query(params).eachPage((err, data, done) => {
+                    docClient.scan(params).eachPage((err, data, done) => {
                         if (err) {
+                            console.log('err',err)
                             reject(err);
                         }
                         if (data == null) {
@@ -3049,10 +3050,10 @@ function getTeamDataWithPlayerRecords_2(obj) {
                     if (obj.sensor) {
                         params = {
                             TableName: "sensor_details",
-                            KeyConditionExpression:  "org_id = :org_id and begins_with(player_id,:player_id)",
-                            FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+                            // KeyConditionExpression:  "org_id = :org_id and begins_with(player_id,:player_id)",
+                            FilterExpression: "sensor = :sensor and organization = :organization and team = :team and begins_with(player_id,:player_id)",
                             ExpressionAttributeValues: {
-                                ":org_id": org[0].organization_id, 
+                                // ":org_id": org[0].organization_id, 
                                 ":sensor": obj.sensor,
                                 ":organization": obj.organization,
                                 ":team": obj.team,
@@ -3070,10 +3071,10 @@ function getTeamDataWithPlayerRecords_2(obj) {
                     } else {
                         params = {
                             TableName: "sensor_details",
-                            KeyConditionExpression:  "org_id = :org_id and begins_with(player_id,:player_id)",
-                            FilterExpression: "organization = :organization and team = :team",
+                            // KeyConditionExpression:  "org_id = :org_id and begins_with(player_id,:player_id)",
+                            FilterExpression: "organization = :organization and team = :team and begins_with(player_id,:player_id)",
                             ExpressionAttributeValues: {
-                                ":org_id": org[0].organization_id,
+                                // ":org_id": org[0].organization_id,
                                 ":organization": obj.organization,
                                 ":team": obj.team,
                                 ":player_id": obj.player_id + '$',
@@ -3089,7 +3090,7 @@ function getTeamDataWithPlayerRecords_2(obj) {
                         };
                     }
                     var item = [];
-                    docClient.query(params).eachPage((err, data, done) => {
+                    docClient.scan(params).eachPage((err, data, done) => {
                         if (err) {
                             reject(err);
                         }

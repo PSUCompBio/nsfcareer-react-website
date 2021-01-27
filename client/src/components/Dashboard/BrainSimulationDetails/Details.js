@@ -127,7 +127,9 @@ class Details extends React.Component {
       isTriming: false,
       account_id: '',
       simulation_id: '',
-      isLoading: true
+      isLoading: true,
+      framesRateSimulationVideo: 0,
+      framesRateSidelineVideo: 0,
     };
   }
  
@@ -300,13 +302,20 @@ class Details extends React.Component {
     // });
     let len = 0;
     const setVideoFrameRate = (leftTime, rightTime) =>{
-      console.log(leftTime, rightTime);
       var total_video_duration = rightTime - leftTime;
       var frameRate = Math.floor(total_video_duration*29.7);
       total_video_duration = the.getVideoTime(total_video_duration);
-      the.setState({framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration})
+      the.setState({framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration});
+
+      
 
     }
+
+    const setFrameRate = (duration) =>{
+      var frameRate = Math.floor(duration*29.7);
+      the.setState({framesRateSidelineVideo: frameRate})
+    }
+
     let controls = {
       //Updating scroller to video time
        handleProgress:  ()=> {
@@ -325,6 +334,7 @@ class Details extends React.Component {
             right_lock_time = video.currentTime;
             //Update fram rate and video lenght...
             setVideoFrameRate(left_lock_time,right_lock_time);
+            setFrameRate(video.currentTime);// set frame rate..
           }else{
             video.pause();
             video.currentTime = left_lock_time;
@@ -344,6 +354,8 @@ class Details extends React.Component {
 
               //Update fram rate and video lenght...
               setVideoFrameRate(left_lock_time,right_lock_time);
+              setFrameRate(video.currentTime);// set frame rate..
+
             }
             //-----set min slider position if video is locked --------
             else if(len === 0){
@@ -408,32 +420,12 @@ class Details extends React.Component {
         video.currentTime = 0; 
         let total_video_duration = 0;
         let frameRate = 0;
-        // if(the.state.right_lock_time > 0){
-        //   const percent2 = (the.state.right_lock_time / video.duration) * 100;
-        //   max = percent2;
-        //   $('.input-range__slider').eq(1).css({'pointer-events': 'none'});
-        //   the.setState({value: {min: the.state.left_lock_time ? the.state.left_lock_time : 0 , max: percent2 ? percent2.toFixed(0) : 100 }});
-
-        //   /*
-        //   * Set Cropped video duration and fram rate...
-        //   */
-        //   total_video_duration = the.state.left_lock_time ? the.state.right_lock_time - the.state.left_lock_time : the.state.right_lock_time;
-        //   frameRate = Math.floor(total_video_duration*29.7);
-        //   total_video_duration =  the.getVideoTime(total_video_duration);
-        // }else{
+       
           frameRate = Math.floor(video.duration*29.7);
           total_video_duration = the.getVideoTime( video.duration);
           right_lock_time = video.duration;
           the.setState({value: {min: 0 , max: 100 }});
-          // if(the.state.left_lock_time){
-          //   $('.input-range__slider').eq(0).css({'pointer-events': 'none'});
-          //   /*
-          //   * Set Cropped video duration fram rate...
-          //   */
-          //   total_video_duration = video.duration - the.state.left_lock_time ;
-          //   frameRate = Math.floor(total_video_duration*29.7);
-          //   total_video_duration = the.getVideoTime(total_video_duration);
-          // }else{
+         
             $('.input-range__slider').eq(0).css({'pointer-events': 'inherit'});
           // }
           $('.input-range__slider').eq(1).css({'pointer-events': 'inherit'});
@@ -450,7 +442,7 @@ class Details extends React.Component {
       controls.setvideoTime();
       the.vidocontrol3();
 
-    },2000)} );
+    },1000)} );
 
     // progressBar.addEventListener('click', controls.scrub);
     progressBar_2.addEventListener('click', (e) => controls.scrub2(e));
@@ -474,6 +466,10 @@ class Details extends React.Component {
 
 
     let the = this;
+    const setVideoFrameRate = (duration) =>{
+      var frameRate = Math.floor(duration*29.7);
+      the.setState({framesRateSimulationVideo: frameRate})
+    }
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
@@ -482,6 +478,7 @@ class Details extends React.Component {
        
         lock_percent_2 = percent;
         lock_time_2 = video.currentTime;
+        setVideoFrameRate(video.currentTime);
         the.setState({video_time_2: percent});
 
       },
@@ -505,11 +502,11 @@ class Details extends React.Component {
 
       },
       Onload:()=>{
-        setTimeout(()=>{
+        // setTimeout(()=>{
           var frameRate = Math.floor(video.duration*29.7);
           the.setState({framesofSimulationVideo: frameRate})
           the.setState({lengthofSimulationVideo: the.getVideoTime(video.duration)})
-        },1000)
+        // },1000)
       }
     }
     if(video && this.state.video_lock_time_2){
@@ -520,7 +517,7 @@ class Details extends React.Component {
     video.addEventListener('loadeddata', ()=> {setTimeout(()=>{
       controls.Onload();
       the.vidocontrol3();
-    },2000)} );
+    },1000)} );
     video.addEventListener('timeupdate', controls.handleProgress);
     progressBar.addEventListener('click', controls.scrub);
     // lockButton.addEventListener('click', controls.lockVideo); #lock video event ...
@@ -534,6 +531,7 @@ class Details extends React.Component {
     Video controls of both movies start
   ========================================*/
   vidocontrol3=()=>{
+
     //Player 1 controls ...
     let video_1 = '';
     let video_2 = '';
@@ -554,48 +552,53 @@ class Details extends React.Component {
     const custom_controls = { 
       play:()=>{
         console.log('play');
-        if(the.state.controlPlayVideo){
-          console.log('videos paused')
-
-          if(video_1) video_1.pause();
-          if(video_2) video_2.pause();
-
-          the.setState({controlPlayVideo: false});
-        }else{
+        // if(the.state.controlPlayVideo){
+        //   console.log('videos paused')
+        //   if(video_1) video_1.pause();
+        //   if(video_2) video_2.pause();
+        //   the.setState({controlPlayVideo: false});
+        // }else{
           console.log('videos played')
           if(video_1) video_1.play();
           if(video_2) video_2.play();
-
           the.setState({controlPlayVideo: true, controlPouseVideo: false});
-        }
+        // }
       },
       pause:()=>{
         if(video_1) video_1.pause();
         if(video_2) video_2.pause();
         the.setState({controlPlayVideo: false, controlPouseVideo : true});
-      },
-      repeatVideo:()=>{
-
-        the.setState({isRepeatVideo: the.state.isRepeatVideo ? false : true });
-      },
+      }
     }
     //Video play controll button .......... 
     const control_play_video = document.querySelector('.control_play_video');
     const control_pouse_video = document.querySelector('.control_pouse_video');
-    const control_loop_video = document.querySelector('.control_loop_video');
 
     //controls .......
     if(control_play_video) control_play_video.addEventListener('click', custom_controls.play);
     if(control_pouse_video) control_pouse_video.addEventListener('click', custom_controls.pause);
-    if(control_loop_video) control_loop_video.addEventListener('click', custom_controls.repeatVideo);
 
+    this.controlCommentSlider();
+  }
 
-    if(this.state.impact_video_url && this.state.movie_link){
-      this.setState({isCommonControl: true});
-      if(this.state.video_lock_time && this.state.video_lock_time_2){
-        this.setState({lock_video_3: true});
-      }
-      
+  controlCommentSlider =()=>{
+    //Player 1 controls ...
+    let video_1 = '';
+    let video_2 = '';
+
+    const player_1 = document.querySelector('.player');
+    if(player_1){
+        video_1 = player_1.querySelector('.viewer');
+    }
+    
+    //player 2 controls ....
+    const player_2 = document.querySelector('.Simulationvideo');
+    if(player_2){
+       video_2 = player_2.querySelector('.viewer_2');
+    }
+
+    if(this.state.impact_video_url && this.state.movie_link && video_1 && video_2){
+      this.setState({isCommonControl: true}); 
       //Comman progress bar ...
       const progressBar = document.querySelector('.progress__filled_3');
       // const lockButton = document.querySelector('.lock_video_3');
@@ -606,9 +609,10 @@ class Details extends React.Component {
        
         scrub: (e) =>{
           let scrubTime = 0;
-         
-          video_1.pause();
-          video_2.pause();
+          // video_duration_1 = video_1.duration;
+          // video_duration_2 = video_2.duration;
+          // video_1.pause();
+          // video_2.pause();
           if(video_duration_1 > video_duration_2){
             scrubTime = (e.offsetX / progressBar.offsetWidth) * video_duration_1;
           }else{
@@ -636,54 +640,10 @@ class Details extends React.Component {
       this.setState({isCommonControl: false , lock_video_3: false});
     }
   }
-  /*====================================
-    Video controls of both movies end
-  ========================================*/
-  handlelock_video =(type)=>{
-    console.log('type',type)
-    if(type === 'left')
-    {
-      if(this.state.left_lock_time){
-        this.setState({left_lock_time: 0});
-        this.setVideoTime(0, this.state.right_lock_time);
-      }else{
-        this.setVideoTime(left_lock_time , this.state.right_lock_time);
-      }
-    }else{
-      if(this.state.right_lock_time){
-        this.setState({right_lock_time: false});
-        this.setVideoTime(this.state.left_lock_time, 0);
-      }else{
-        this.setVideoTime(this.state.left_lock_time , right_lock_time);
-      }
-    }
-    
-    
-  }
-
-
-  handlelock_video_2=()=>{
-    console.log('lock_time',lock_time_2)
-    if(this.state.video_lock_time_2){
-      this.setState({video_lock_time_2: 0});
-      this.setVideoTime_2(0);
-    }else{
-      this.setState({video_lock_time_2: lock_time_2});
-      this.setVideoTime_2(lock_time_2);
-    }
-    
-  }
-  handlelock_video_3 = ()=>{
-    if(this.state.video_lock_time && this.state.video_lock_time_2){
-      this.setState({video_lock_time: 0 ,video_lock_time_2: 0});
-      this.setVideoTime(0);
-      this.setVideoTime_2(0);
-    }else{
-      this.setState({video_lock_time: lock_time,video_lock_time_2: lock_time_2});
-      console.log(lock_time, lock_time_2)
-      this.setVideoTime(lock_time);
-      this.setVideoTime_2(lock_time_2);
-    }
+  
+  repeatVideo = () =>{
+    console.log('repeatVideo')
+    this.setState({isRepeatVideo: this.state.isRepeatVideo ? false : true });
   }
 
   /*
@@ -740,8 +700,6 @@ class Details extends React.Component {
       })
 
     })
-
-
   }
 
   /*
@@ -774,56 +732,6 @@ class Details extends React.Component {
     })
    
   } 
-
-
-  //Setting video lockTime
-  setVideoTime_2 =(time)=>{
-    this.setState({isTimeUpdating_2: true})
-    setVideoTime({image_id:this.state.image_id,video_lock_time:time,type:'setVideoTime_2'})
-    .then((response) => {
-      console.log(response)
-      if(response.data.message === 'success'){
-        this.setState({isTimeUpdating_2: false});
-        $('.progress__filled_2').val(lock_percent_2);
-        // $('.progress__filled').val(lock_percent);
-         console.log(lock_percent_2,lock_percent)
-      }else{
-        this.setState({isTimeUpdating_2: false});
-         $('.progress__filled_2').val(lock_percent_2);
-         // $('.progress__filled').val(lock_percent);
-      }
-      
-      setTimeout(()=>{this.vidocontrol3()},3000);
-      setTimeout(()=>{this.vidocontrol2()},1000);
-        
-    }).catch(err=>{
-      console.log('err',err)
-    })
-  }
-  //Setting video lockTime
-  setVideoTime =(left_lock_time , right_lock_time)=>{
-    this.setState({isTimeUpdating: true})
-    setVideoTime({image_id:this.state.image_id,left_lock_time:left_lock_time,right_lock_time: right_lock_time,type: 'setVideoTime'})
-    .then((response) => {
-      console.log(response)
-      if(response.data.message === 'success'){
-        this.setState({isTimeUpdating: false,left_lock_time: left_lock_time, right_lock_time: right_lock_time});
-        $('.progress__filled_2').val(lock_percent_2);
-        if(!left_lock_time){
-            $('.input-range__slider').eq(0).css({'pointer-events': 'inherit'});
-        }
-      }else{
-        this.setState({isTimeUpdating: false});
-         // $('.progress__filled').val(lock_percent);
-         $('.progress__filled_2').val(lock_percent_2);
-      }
-      setTimeout(()=>{this.vidocontrol3()},3000);
-      // setTimeout(()=>{this.vidocontrol()},1000);
-    }).catch(err=>{
-      console.log('err',err)
-    })
-  }
-
 
   handleChangeRange_2=(event)=>{
     this.setState({video_time_2: event.target.value});
@@ -865,6 +773,10 @@ class Details extends React.Component {
         {file.name} - {file.size} bytes
       </span>
     ));
+
+    /*
+    * Calling video controls funtions ... 
+    */
     var the = this;
     if(this.state.impact_video_url && !called){
       setTimeout(()=>{the.vidocontrol()},1000);
@@ -873,10 +785,6 @@ class Details extends React.Component {
     if(this.state.movie_link && !called_2){
       setTimeout(()=>{the.vidocontrol2()},1000);
       called_2 = true
-    }
-    if(!called_3){
-      setTimeout(()=>{the.vidocontrol3()},3000);
-      called_3= true
     }
     return (
       <React.Fragment>
@@ -1040,8 +948,10 @@ class Details extends React.Component {
                           </div>
                           
                           <div className="col-md-12">
-                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Length of video = {this.state.lengthofSimulationVideo}</div>
-                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSimulationVideo}</div>
+                            <div className="col-md-4" style={{'float':'left','padding': '8px 0px'}}>Length of video = {this.state.lengthofSimulationVideo}</div>
+                            <div className="col-md-4" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSimulationVideo}</div>
+                            <div className="col-md-4" style={{'float':'left','padding': '8px 0px'}}>Frame Rate = {this.state.framesRateSimulationVideo}</div>
+
                           </div>
                         </div>
                         <div className="col-sm-12" >
@@ -1168,8 +1078,10 @@ class Details extends React.Component {
                             <p style={{'font-weight':'600'}}>Adjust the frame rate</p>
                           </div>*/}
                           <div className="col-md-12">
-                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Length of video = {this.state.lengthofSidelineVideo}</div>
-                            <div className="col-md-6" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSidelineVideo}</div>
+                            <div className="col-md-4" style={{'float':'left','padding': '8px 0px'}}>Length of video = {this.state.lengthofSidelineVideo}</div>
+                            <div className="col-md-4" style={{'float':'left','padding': '8px 0px'}}>Number of frames = {this.state.framesofSidelineVideo}</div>
+                            <div className="col-md-4" style={{'float':'left','padding': '8px 0px'}}>Frame Rate = {this.state.framesRateSidelineVideo}</div>
+
                           </div>
                         </div>
                         {this.state.isCommonControl && 
@@ -1190,7 +1102,7 @@ class Details extends React.Component {
                             <div className="col-sm-4" style={{'float':'left'}}>
                               <img src={this.state.controlPlayVideo ? video_play_bl : video_pause_b} className="control-1 control_play_video" alt="img"/>
                               <img src={this.state.controlPouseVideo? pause_bl : pause_b}  className="control-1 control_pouse_video" alt="img"/>
-                              <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b}  className="control-2 control_loop_video" alt="img"/>
+                              <img src={this.state.isRepeatVideo ? video_loop_bl : video_loop_b} onClick={this.repeatVideo} className="control-2 control_loop_video" alt="img"/>
                             </div>
                             <div className="col-sm-4" style={{'float':'left'}}>
                               <button onClick={this.handleExportVideo} disabled={!this.state.movie_link || !this.state.impact_video_url ? true : false} style={!this.state.movie_link || !this.state.impact_video_url ? {'background': '#b7cce2'} : {'background': '#4472c4'}}>
@@ -1298,6 +1210,7 @@ class Details extends React.Component {
   }
 
   componentDidMount() {
+
     const params = new URLSearchParams(window.location.search)
     console.log('this.props.match.params.player_id',params.get('org'))
     let organization = params.get('org');

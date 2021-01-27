@@ -220,6 +220,7 @@ class TeamStats extends React.Component {
            return separateWord.join(' ');
         }
 
+        console.log('count_positions_val', count_positions_val)
         if(count_positions && count_positions_val){
 
             Object.entries(count_positions).forEach(([key, value],index) =>{

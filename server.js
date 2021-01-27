@@ -7946,6 +7946,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
             let player_list = [];
             let requested_player_list = [];
             data.forEach(function (u) {
+                console.log('------------------u ', u)
                 if (u.player_list) {
                     if (req.body.brand && u.sensor === req.body.brand) {
                         player_list = player_list.concat(u.player_list);
@@ -7955,7 +7956,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                     }
                     
                 }
-                console.log('0------------\n',u.requested_player_list)
+                console.log('0------------\n',u.player_list, u.requested_player_list)
                 if (u.requested_player_list) {
                     requested_player_list = requested_player_list.concat(u.requested_player_list);
                 }
