@@ -41,9 +41,9 @@ class table extends React.Component {
                           <th>Name</th>
                           <th>Organization</th>
                           <th>Team</th>
-                          <th>Cancel<br/>Simulation</th>
                           <th>Profile Image</th>
                           <th>Overwrite<br/>Simulation</th>
+                          <th>Cancel<br/>Simulation</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,11 +54,6 @@ class table extends React.Component {
                                     <td>{res.name}</td>
                                     <td>{res.position}</td>
                                     <td>{res.team}</td>
-                                    <td className={"simulationCencel"} style={res.isfetched ? {'opacity': '1','pointer-events': 'inherit'} : {}} >
-                                        <span onClick={() => this.props.handleRemoveFile(res.key)} style={{'cursor': 'pointer'}}> 
-                                            <img src={cencel} id={res.key} style={{'width': '26px'}} alt="img"/>
-                                        </span>
-                                    </td>
                                     <td style={{'text-align':'center'}} id={'uploadedimg_'+res.key}>
                                         {/*-- image upload --*/}
                                         {res.image ? 
@@ -72,7 +67,11 @@ class table extends React.Component {
                                         }
                                     </td>
                                     <td id={'status_'+res.key} style={{"text-align":'center'}}> {res.isExists === 'exsits' ? <p class="text-primary" style={{'font-size': '28px'}}><i class="fa fa-check" aria-hidden="true"></i></p> : res.isExists === 'loading' ? <div class="spinner-border text-success"></div> : res.isExists === 'uploaded' ? <p class="text-success" style={{'font-size': '28px'}}><i class="fa fa-check" aria-hidden="true"></i></p> : '--'} </td>
-                                    
+                                     <td className={"simulationCencel"} style={res.isfetched ? {'opacity': '1','pointer-events': 'inherit'} : {}} >
+                                        <span onClick={() => this.props.handleRemoveFile(res.key)} style={{'cursor': 'pointer'}}> 
+                                            <img src={cencel} id={res.key} style={{'width': '26px'}} alt="img"/>
+                                        </span>
+                                    </td>
                                 </tr>
                             )
                         })

@@ -620,19 +620,22 @@ class CommanderTeamView extends React.Component {
                                         <p class="circle-sub-title" ref="h1">Simulations<br />Pending</p>
                                     </div>
                                     <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
-                                        <div
-                                            style={{
-                                                background: "#f4b183",
-                                                borderColor: "#ff954c"
-                                            }}
-                                            className="team-view-counter mb-2 ">
-                                            <p
+                                        
+                                        <Link style={{ fontWeight: "400" }} to={'/failedSimulation/'+this.state.organization+'/'+this.state.team+'/'+this.state.brand}>
+                                            <div
                                                 style={{
-                                                    color: "#616060"
+                                                    background: "#f4b183",
+                                                    borderColor: "#ff954c"
                                                 }}
-                                            >{this.state.simulation_failed}</p>
-                                        </div>
-                                        <p class="circle-sub-title" ref="h1">Simulations<br />Failed</p>
+                                                className="team-view-counter mb-2 ">
+                                                <p
+                                                    style={{
+                                                        color: "#616060"
+                                                    }}
+                                                >{this.state.simulation_failed}</p>
+                                            </div>
+                                            <p className="circle-sub-title" ref="h1" style={{'color': '#686868'}}>Simulations<br />Failed</p>
+                                        </Link>
                                     </div>
 
                                 </div>

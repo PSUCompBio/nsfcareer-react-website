@@ -9,6 +9,7 @@ import {
     checkSensorDataExistsSimulationjsonData
 } from '../../apis';
 import $ from 'jquery';
+import { Sensor } from '../Authentication/getAuthanticatUserData';
 
 const style = {
     heading: {
@@ -28,7 +29,7 @@ class BrainSubmitPortal extends React.Component {
             isDragMod: false,
             files: '',
             list: [],
-            meshType: '',
+            meshType: 'coarse',
             isUploaded: false,
             isCalledExists: false,
             isError: false,
@@ -133,7 +134,17 @@ class BrainSubmitPortal extends React.Component {
                     }) 
                 );
                 var filename = file.name;
-                if(!the.state.isCalledExists) the.checkSimulationExists({'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1],'key':key});
+                if(!the.state.isCalledExists) {
+                    if(Sensor === 'BioCore'){
+                        var impact_id = filename.split('.')[0];
+                        impact_id = impact_id.replace(/_/g, '');
+                        impact_id = impact_id.replace(/-/g, '');
+                        console.log('impact_id',impact_id)
+                        the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': filename.split("-")[0],'key':key});
+                    }else{
+                        the.checkSimulationExists({'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1],'key':key});
+                    } 
+                }
 
             }
           // that.displayData(e.target.result);
@@ -362,8 +373,8 @@ class BrainSubmitPortal extends React.Component {
                                                 <div style={{'width':'80%','margin':'auto'}}>
                                                     <div className="simulation-file-list-header">
                                                         <p>{files.length} simulations uploaded</p>
-                                                        <p>Would you like to use the coarse mesh or fine mesh? &nbsp;&nbsp;&nbsp;&nbsp; <Form.Check type="checkbox" checked={this.state.meshType === "coarse" ? true : false} onClick={()=>this.setState({meshType: "coarse"})} inline value="coarse" name="mesh" label="Coarse" />  <Form.Check type="checkbox" checked={this.state.meshType === "fine" ? true : false} onClick={()=>this.setState({meshType: "fine"})} value="fine" name="mesh" inline label="Fine" /></p>
-                                                        <p>Estimated Cost: ${estimatedCost}</p>
+                                                        <p>Would you like to use the coarse mesh or fine mesh? &nbsp;&nbsp;&nbsp;&nbsp; <Form.Check type="checkbox" checked={this.state.meshType === "coarse" ? true : false} onClick={()=>this.setState({meshType: "coarse"})} inline value="coarse" name="mesh" label="Coarse" disabled/>  <Form.Check type="checkbox" checked={this.state.meshType === "fine" ? true : false} onClick={()=>this.setState({meshType: "fine"})} value="fine" name="mesh" inline label="Fine" disabled/></p>
+                                                        {/*<p>Estimated Cost: ${estimatedCost}</p>*/}
                                                     </div>
                                                     {/*-- Table --*/}
                                                     <div>

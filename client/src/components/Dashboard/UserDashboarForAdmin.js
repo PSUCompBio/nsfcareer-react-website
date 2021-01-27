@@ -217,7 +217,16 @@ class UserDashboarForAdmin extends React.Component {
 
         <div className="container dashboard UserDashboarForAdmin-page-navigation bottom-margin">
         {this.state.jsonData &&  this.state.user && 
-          <CumulativeEventsAccelerationEvents brainRegions={this.state.brainRegions} jsonData={this.state.jsonData} team={this.state.team} user={this.state.user} is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} imageUrl={this.state.user.profile_picture_url} data={this.state.cumulativeAccelerationEventData} log_stream_name={this.state.log_stream_name}/>
+          <CumulativeEventsAccelerationEvents 
+            brainRegions={this.state.brainRegions} 
+            jsonData={this.state.jsonData} 
+            team={this.state.team} 
+            user={this.state.user} 
+            is_selfie_image_uploaded={this.state.user.is_selfie_image_uploaded} 
+            imageUrl={this.state.user.profile_picture_url} 
+            data={this.state.cumulativeAccelerationEventData} 
+            log_stream_name={this.state.log_stream_name}
+          />
         }
           <p
             ref="h1"
@@ -465,13 +474,13 @@ class UserDashboarForAdmin extends React.Component {
                   user_cognito_id: user_cognito_id,
                   cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: brand, team: team, user_cognito_id: user_cognito_id, organization: organization, staff: [], player_id: this.state.player_name, simulationCount: response.data.simulationCount}
                 });
-                console.log('cumulativeAccelerationEventData ----\n', response)
+                // console.log('jsondata 1 ----\n', response)
                 image_id = response.data.data.image_id;
                 return AllCumulativeAccelerationTimeRecords({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
               })
 
               .then(response => {
-                console.log('cumulativeAccelerationTimeAllRecords',response)
+                console.log('jsondata 2 ----\n',response.data.brainRegions)
                 this.setState({
                   cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
   		            brainRegions: response.data.brainRegions,

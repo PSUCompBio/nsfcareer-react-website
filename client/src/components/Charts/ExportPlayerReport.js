@@ -103,7 +103,7 @@ class ExportPlayerReport extends React.Component {
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
-					name: "Motor/Sensor Cortex",
+					name: "Motor / Sensor Cortex",
 					shortenName: "Motor& Sensor Cortex"
 				},
 				{
@@ -113,7 +113,7 @@ class ExportPlayerReport extends React.Component {
 				},
 				{
 					id: "cerebellum_btn",
-					name: "Cerebellum Lobe",
+					name: "Cerebellum",
 					shortenName: "Cerebellum"
 				},
 				{
@@ -142,8 +142,18 @@ class ExportPlayerReport extends React.Component {
 			selectOption: [
 				{ name: 'Maximum Principal Strain', value: 'max-ps' },
 				{ name: 'Minimum Principal Strain', value: 'min-ps' },
+				{ name: 'CSDM-5', value: 'csdm_5' },
+				{ name: 'CSDM-10', value: 'csdm_10' },
 				{ name: 'CSDM-15', value: 'csdm_15' },
-			]
+				{ name: 'CSDM-30', value: 'csdm_30' },
+				{ name: 'MPSR-120', value: 'MPSR_120' },
+				{ name: 'MPSxSR-28', value: 'MPSxSR_28' },
+				{ name: 'MPSxSR-95', value: 'MPSxSR_95' },
+				{ name: 'maximum-PSxSR', value: 'maximum_PSxSR' },
+
+
+			],
+			isResetShpares: true,
 		};
 
 		this.plugins = [
@@ -161,17 +171,17 @@ class ExportPlayerReport extends React.Component {
 
 	componentDidMount() {
 		// Scrolling the screen to top
-		console.log('ExportPlayerReport')
+		// console.log('ExportPlayerReport')
 		window.scrollTo(0, 0);
 
 		this.init();
 
 		window.addEventListener("resize", this.onWindowResize, false);
-		window.addEventListener("mousemove", this.onMouseMove, false);
+		// window.addEventListener("mousemove", this.onMouseMove, false);
 		// window.addEventListener("mouseout", this.onMouseOut, false);
-		window.addEventListener("mouseleave", this.onMouseLeave, false);
+		// window.addEventListener("mouseleave", this.onMouseLeave, false);
 		window.addEventListener("touchstart", this.onTouchStart, false);
-		window.addEventListener("touchmove", this.onTouchMove, false);
+		// window.addEventListener("touchmove", this.onTouchMove, false);
 		window.addEventListener("touchend", this.onTouchEnd, false);
 
 		this.startAnimationLoop();
@@ -315,11 +325,11 @@ class ExportPlayerReport extends React.Component {
 
 	componentWillUnmount() {
 		window.removeEventListener("resize", this.onWindowResize);
-		window.removeEventListener("mousemove", this.onMouseMove);
+		// window.removeEventListener("mousemove", this.onMouseMove);
 		// window.removeEventListener("mouseout", this.onMouseOut);
-		window.removeEventListener("mouseleave", this.onMouseLeave);
+		// window.removeEventListener("mouseleave", this.onMouseLeave);
 		window.removeEventListener("touchstart", this.onTouchStart);
-		window.removeEventListener("touchmove", this.onTouchMove);
+		// window.removeEventListener("touchmove", this.onTouchMove);
 		window.removeEventListener("touchend", this.onTouchEnd);
 	}
 
@@ -350,6 +360,8 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	createLobeSheres = (type) => {
+		// console.log('createLobeSheres')
+		this.setState({isResetShpares: true})
 		let me = this;
 
 		// Remove prev spheres
@@ -405,6 +417,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	showAllSpheres = () => {
+		// console.log('showing allshpere')
 		const me = this;
 		// console.log('showAllSpheres------------------------\n',all_spheres_json)
 		all_spheres_json.forEach(function (object, index) {
@@ -414,6 +427,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	generateSphere = (x, y, z, sphereName) => {
+		// console.log('creating shaprers')
 		if (root) {
 			// Add pointer(s) to brain model as children
 			// const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);
@@ -673,6 +687,7 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	reset = () => {
+		// console.log('reseting')
 		this.unHighlightPickedObject();
 		pickedObject = null;
 		prevPickedObject = null;
@@ -685,10 +700,14 @@ class ExportPlayerReport extends React.Component {
 			barColors: barColors,
 			chartHovered: false
 		});
-
-		this.removeSpheres();
-		// Show all spheres
-		this.showAllSpheres();
+		this.setState({chartHovered: false})
+		if(this.state.isResetShpares){
+			this.setState({isResetShpares:false})
+			this.removeSpheres();
+			// Show all spheres
+			this.showAllSpheres();
+		}
+		
 	};
 
 	pick = (normalizedPosition, pickingScene, pickingCamera) => {
@@ -1083,12 +1102,16 @@ class ExportPlayerReport extends React.Component {
 	}
 
 	onMouseMove = (event) => {
+		// console.log('onMouseMove')
+		if (this.state.isResetShpares) this.reset();
 		// Set pick position
 		// console.log('mouseover')
 		this.setPickPosition(event);
 	};
 
 	onMouseOut = () => {
+		// console.log('onMouseOut')
+
 		if (!isClicked) {
 			this.setState({
 				barColors: defaultBarColors,
@@ -1098,6 +1121,8 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onMouseLeave = () => {
+		// console.log('onMouseLeave')
+
 		// Clear pick position
 		this.clearPickPosition();
 
@@ -1108,6 +1133,8 @@ class ExportPlayerReport extends React.Component {
 	};
 
 	onTouchStart = (event) => {
+		// console.log('onTouchStart')
+
 		// prevent the window from scrolling
 		event.preventDefault();
 		this.setPickPosition(event.touches[0]);
@@ -1169,16 +1196,16 @@ class ExportPlayerReport extends React.Component {
 	showUpdatedRegion = () => {
 
 		const { brainStrainActive } = this.state;
-		console.log('brainRegions', this.props.brainRegions)
-		frontal_lobe_json = this.props.brainRegions[brainStrainActive].frontal || []
-		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive].cerebellum || []
-		occipital_lobe_json = this.props.brainRegions[brainStrainActive].occipital || []
-		pariental_lobe_json = this.props.brainRegions[brainStrainActive].parietal || []
-		temporal_lobe_json = this.props.brainRegions[brainStrainActive].temporal || []
-		middle_part_of_the_brain_json = this.props.brainRegions[brainStrainActive].msc || []
-		stem_json = this.props.brainRegions[brainStrainActive].stem || []
+		console.log('brainRegions', brainStrainActive)
+		frontal_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].frontal || [] : [];
+		cerebellum_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].cerebellum || [] : [];
+		occipital_lobe_json =  this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].occipital || [] : [];
+		pariental_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].parietal || [] : [];
+		temporal_lobe_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].temporal || [] : [];
+		middle_part_of_the_brain_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].msc || [] : [];
+		stem_json = this.props.brainRegions[brainStrainActive] ? this.props.brainRegions[brainStrainActive].stem || [] : [];
 		//csf_json = this.props.brainRegions[brainStrainActive].csf || []
-
+		console.log('frontal_lobe_json',pariental_lobe_json)
 		all_spheres_json = [];
 		all_spheres_json = all_spheres_json.concat(frontal_lobe_json);
 		all_spheres_json = all_spheres_json.concat(cerebellum_lobe_json);
@@ -1202,7 +1229,29 @@ class ExportPlayerReport extends React.Component {
 				this.handleBrainStrain('principal-min-strain')
 				break;
 			case "csdm_15":
-				this.handleBrainStrain("CSDM-15")
+				this.handleBrainStrain("CSDM-15");
+				break;
+			case "csdm_5":
+				this.handleBrainStrain("CSDM-5")
+				break;
+			case "csdm_10":
+				this.handleBrainStrain("CSDM-10");
+				break;
+			case "CSDM_30":
+				this.handleBrainStrain("CSDM-30");
+				break;
+			case "MPSR_120":
+				this.handleBrainStrain("MPSR-120");
+				break;
+			case "MPSxSR_28":
+				this.handleBrainStrain("MPSxSR-28");
+				break;
+			case "MPSxSR_95":
+				this.handleBrainStrain("MPSxSR-95");
+				break;
+			case "maximum_PSxSR":
+				this.handleBrainStrain("maximum-PSxSR");
+				break;	
 		}
 	}
 
@@ -1403,8 +1452,8 @@ class ExportPlayerReport extends React.Component {
 
 		return (
 			<React.Fragment>
-				<div className="row text-center">
-					<div className="col-md-5 d-flex align-items-center justify-content-center" >
+				<div className="row text-center" id="my-event-image">
+					<div className="col-md-5 d-flex align-items-center justify-content-center" onMouseMove={this.onMouseMove}>
 						<div className="row" style={{ width: '100%', display: 'block', height: '100%', }} >
 							{this.state.isLoading ? (
 								<div className="model_loader d-flex justify-content-center center-spinner" style={{ zIndex: '999' }}>
@@ -1446,9 +1495,9 @@ class ExportPlayerReport extends React.Component {
 					</div>
 
 				</div>
-				<div>
+				{/*<div>
 					<button className="btn btn-primary d-flex justify-content-center download_btn" onClick={this.downImage}> Download Image</button>
-				</div>
+				</div>*/}
 
 			</React.Fragment>
 		);

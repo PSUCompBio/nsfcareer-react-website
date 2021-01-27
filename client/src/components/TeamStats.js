@@ -11,6 +11,8 @@ import {
     getFilterdTeamSpheres
   } from './../apis';
 import TeamStateScatterChart from './Charts/TeamStateScatterChart';
+import BarChart from './Charts/BarChart';
+
 import { Card , Row, Col } from 'react-bootstrap';
 
 class TeamStats extends React.Component {
@@ -49,6 +51,8 @@ class TeamStats extends React.Component {
                             MPS_95_DATA: response.data.MPS_95_DATA,
                             MAX_ANGULAR_VEL_EXLARATION: response.data.MAX_ANGULAR_VEL_EXLARATION,
                             MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
+                            PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS,
+                            BRAIN_POSITIONS: response.data.BRAIN_POSITIONS
                             
                         });
                     })
@@ -101,8 +105,9 @@ class TeamStats extends React.Component {
         })
         
     }
+
+    //Filter options ...
     selectOption=()=>{
-        console.log('principal-max-strain')
         if(this.state['principal-max-strain'] === 'resultant-linear-acceleration'){
             return  (
             <>
@@ -168,43 +173,196 @@ class TeamStats extends React.Component {
         
     }
     render() {
+
+        //imported Modules ...
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
            return <Redirect to="/Login" />;
         }
         if (this.state.isLoading) return <Spinners />;
-       return (
+
+        //Modules end
+
+        const { PLAYERS_POSITIONS, BRAIN_POSITIONS } = this.state;
+        
+        //# Counting duplicate label of player ...
+        var count_positions = {};
+        if(PLAYERS_POSITIONS){
+            PLAYERS_POSITIONS.forEach(async (i) => { 
+                count_positions[i] = (count_positions[i]||0) + 1;
+            });
+            console.log('count_positions',count_positions)
+        }
+
+        //# Addition of player mps by positions
+        var count_positions_val = {};
+        if(BRAIN_POSITIONS){
+            BRAIN_POSITIONS.forEach(async  (res)=> { 
+                Object.entries(res).forEach(([key, value]) =>{
+                     // console.log('res',key, value)
+                     count_positions_val[key] = (count_positions_val[key]||0) + value;
+                })
+               
+            });
+        }
+
+        /*
+        * Bar chart data for brain  positons ...
+        */
+        var data = [];
+        var labels = [];
+
+        // # Take first latter of postions ...
+        const  capitalizePosition = (words) => {
+           var separateWord = words.toLowerCase().split(' ');
+           for (var i = 0; i < separateWord.length; i++) {
+              separateWord[i] = /^[a-zA-Z]+$/.test(separateWord[i]) ? separateWord[i].charAt(0).toUpperCase() : '';
+           }
+           return separateWord.join(' ');
+        }
+
+        console.log('count_positions_val', count_positions_val)
+        if(count_positions && count_positions_val){
+
+            Object.entries(count_positions).forEach(([key, value],index) =>{
+                let playerLen = value;
+                let totalPostionVal = count_positions_val[key];
+                totalPostionVal = totalPostionVal ? totalPostionVal.toFixed(2) : 0;
+                let mpsAvg = (totalPostionVal) / playerLen;
+                mpsAvg = mpsAvg.toFixed(2);
+                let position = key;
+
+                if(key !== 'Unknown'){
+                    position = capitalizePosition(key);
+                }
+                data.push(mpsAvg);
+                labels.push(position);
+            })
+           
+        }
+
+        //**Brain graph data ...
+        const BrainPositionChartData = {
+            datasets: [{
+                label: 'Position',
+                barThickness: 25,
+                backgroundColor: '#0c68b2',
+                borderColor: '#0c68b2',
+                minBarLength: 2,
+                data: data
+            }],
+            labels: labels
+        };
+
+        // # Brain postion graph options ...
+        const BrainPositionChartoptions = {
+            legend: {
+                display: false
+            },
+            scales: {
+                xAxes: [{
+                    gridLines: {
+                        offsetGridLines: true
+                    },
+                    scaleLabel: {
+                        display: true,
+                    },
+                   
+                }],
+                yAxes: [ {
+                    scaleLabel: {
+                        display: true,
+                         fontSize: 18,
+                         fontWeight: 800,
+
+                        labelString: 'Average MPS'
+                    },
+                    // ticks: {
+                    //     suggestedMin: 0,
+                       
+                    //     suggestedMax: 50,
+                    //      stepSize: 5,
+                    // }
+                }]
+            }
+        };
+
+        //  Brain position chart data closed ...
+
+        return (
             <React.Fragment>
                  
                 <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
                     <div className="container">
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>{this.state.for === 'Teams' ? 'Organization Analytics' : 'Team Analytics'}</h1>
-                        <div className="backbutton11" style={{position : 'relative'}}>
-                            {this.state.for === "Teams" ? 
-                                <Link to={{
-                                   pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
-                                    state: {
-                                        brand: {
-                                            brand: this.props.location.state.team.brand,
-                                            organization: this.props.location.state.team.organization,
-                                            user_cognito_id: this.props.location.state.user_cognito_id
-                                        }
+                        <div className="backbutton11" style={{position : 'relative','padding': '8px'}}>
+                            <div className="col-md-3 no-padding" style={{'float': 'left'}}>
+                                <button className="btn btn-primary">
+                                    {this.state.for === "Teams" ? 
+                                        <Link to={{
+                                           pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
+                                            state: {
+                                                brand: {
+                                                    brand: this.props.location.state.team.brand,
+                                                    organization: this.props.location.state.team.organization,
+                                                    user_cognito_id: this.props.location.state.user_cognito_id
+                                                }
+                                            }
+                                         }}
+                                        style={{
+                                            'color': 'white',
+                                            'text-decoration': 'none'
+                                        }}
+
+                                         >&lt; Back To Organization</Link>
+                                        :
+                                        <Link to={{
+                                            pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
+                                            state: {
+                                            team: {
+                                                brand: this.props.location.state.team.brand,
+                                                organization: this.props.location.state.team.organization,
+                                                team_name: this.props.location.state.team.team_name,
+                                                user_cognito_id: this.props.location.state.user_cognito_id,
+                                                staff: this.props.location.state.team.staff
+                                            }
+                                        } }}
+                                        style={{
+                                            'color': 'white',
+                                            'text-decoration': 'none'
+                                        }}
+                                        >&lt; Back To Team</Link>
                                     }
-                                 }}>&lt; Back To Organization</Link>
-                                :
-                                <Link to={{
-                                    pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
-                                    state: {
-                                    team: {
-                                        brand: this.props.location.state.team.brand,
-                                        organization: this.props.location.state.team.organization,
-                                        team_name: this.props.location.state.team.team_name,
-                                        user_cognito_id: this.props.location.state.user_cognito_id,
-                                        staff: this.props.location.state.team.staff
-                                    }
-                                } }}>&lt; Back To Team</Link>
-                            }
+                                </button>
+                            </div>
+                            <div className="col-md-6 no-padding" style={{'float': 'left','text-align': 'center'}}>
+                                {this.state.for !== "Teams" ? 
+                                    <p style={{
+                                        'padding': '6px'
+                                    }}>
+                                        Note: Team members must be activated on the Team Dashboard for their data to show up here. <br/>
+                                        <Link to={{
+                                            pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
+                                            state: {
+                                            team: {
+                                                brand: this.props.location.state.team.brand,
+                                                organization: this.props.location.state.team.organization,
+                                                team_name: this.props.location.state.team.team_name,
+                                                user_cognito_id: this.props.location.state.user_cognito_id,
+                                                staff: this.props.location.state.team.staff
+                                            }
+                                        } }}
+                                        style={{
+                                            'color': '#0b62a6',
+                                        }}
+                                        >Return to Team Dashboard</Link> to activate team members.
+                                    </p>
+                                    : null
+                                }
+                            </div>
+                            <div className="col-md-3 no-padding" style={{'float': 'left'}}>
+                            </div>
                         </div>
-                            <Col md={12} className="no-padding">
+                            <Col md={12} className="no-padding" style={{'display': 'flow-root'}}>
                                 <Card  className="card-team-state-page">
                                     <div style={{textAlign: 'center'}}>
                                         <label style={{fontSize: '20px'}}>Display all member data with</label>
@@ -294,7 +452,8 @@ class TeamStats extends React.Component {
                                     <Card style={{'border': '1px solid rgb(10, 84, 143)'}} >
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
                                             <div className="col-md-12 no-padding">
-                                                <p className="video-lebel text-center">Machine Learning</p>
+                                                <p className="video-lebel text-center"
+                                                >Machine Learning</p>
                                                 <div style={{'padding':'80px'}}></div>
                                             </div>
                                         </div>
@@ -305,7 +464,17 @@ class TeamStats extends React.Component {
                                         <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">Brain Loading by Position</p>
-                                                <div style={{'padding':'80px'}}></div>
+                                                <p className="circle-sub-title"
+                                                     style={{
+                                                        'text-align': 'center',
+                                                        'color': 'gray',
+                                                        'font-size': '14px',
+                                                        'padding-bottom': '10px',
+                                                    }}
+                                                >Player positions can be set in their profile pages.</p>
+                                                <div>
+                                                    <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
+                                                </div>
                                             </div>
                                         </div>
                                     </Card>
