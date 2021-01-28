@@ -115,7 +115,9 @@ const BUCKET_NAME = config_env.usersbucket;
 
 // AWS Credentials loaded
 var myconfig = AWS.config.update({
-    accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region
+    accessKeyId: config_env.awsAccessKeyId, secretAccessKey: config_env.awsSecretAccessKey, region: config_env.region,
+    maxRetries: 15,
+    retryDelayOptions: {base: 500}
 });
 // Cognito Configurationo
 var cognito = {
@@ -2720,27 +2722,30 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
         
         getBrandDataByorg(data.brand, data.organization)
         .then (result => {
+            console.log('result',result)
             let sensorlen = result.length;
             let count1 = 0; 
             let count3 = 0;
             if(sensorlen > 0){
 
                 /*========== Delete data from sensor data table ==============*/
-                result.forEach(async function (record, index) {
+                result.forEach(function (record, index) {
                     count1++;
                     if( record.team && record.player_id){
                         deleteSensorData(record.team, record.player_id)
                         .then(deldata => {
-                            console.log('deldata',deldata)
+                            console.log('deldata org1',deldata)
                         })
                     }
+                    console.log('getPlayerSimulationFile')
                     /*=-==========Get simulation data and root path of folder ==========*/
                     getPlayerSimulationFile({image_id: record.image_id})
                     .then(image_Data =>{
+                        // console.log('image_Data root_path',image_Data.root_path)
                         count3++;
-                        console.log('image_Data root_path',image_Data.root_path)
+                        
                         //*** delete simulation file from s3
-                        if(image_Data.root_path && image_Data.root_path != 'undefined'){
+                        if(image_Data && image_Data.root_path && image_Data.root_path != 'undefined'){
                             emptyBucket({bucket_name: image_Data.bucket_name,root_path: image_Data.root_path},function (err, data) {
                                 console.log('data',data)
                             })
@@ -2753,9 +2758,10 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                                 count2++;
                                 deleteSimulation_imagesData(record.image_id)
                                 .then(deldata => {
-                                    console.log('deldata',deldata)
+                                    console.log('deldata  org',deldata)
                                 })
                             })
+                            console.log('count2',count2 ,sensorlen)
                             if(count2 == sensorlen){
                                 //** Delete data from organization table...
                                 getOrganizatonBynameSensor(data.organization, data.brand)
@@ -2806,6 +2812,7 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                         }
                     }).catch(err=>{
                         count3++;
+                        console.log('err org',err)
                     })
                     //**Delete simulation data from simulation_image db...
                    
@@ -2904,32 +2911,32 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                                 })
                             })
                             if(count2 == sensorlen){
-                                getOrganizatonByTeam(data.organization, data.TeamName)
+                                getOrganizatonByTeam(data.organization, data.TeamName,data.brand)
                                 .then(org =>{
                                     var orglen = org.length;
                                     orglen = orglen-1;
                                     if(org){
                                         org.forEach(function (record, index) {
-                                            console.log(index, orglen)
-                                            DeleteOrganization(record.organization_id)
-                                            .then(data => {
-                                                console.log('res',data)
-                                                if(index == orglen){
-                                                    res.send({
-                                                        message: 'success',
-                                                        status: 200
-                                                    })
-                                                }
-                                            }).catch(err => {
-                                                console.log('err',err)
-                                                if(index == orglen){
-                                                     res.send({
-                                                        message: 'failure',
-                                                        status: 300,
-                                                        err: err
-                                                    })
-                                                }
-                                            })
+                                            console.log('organization_id',record.organization_id)
+                                            // DeleteOrganization(record.organization_id)
+                                            // .then(data => {
+                                            //     console.log('res',data)
+                                            //     if(index == orglen){
+                                            //         res.send({
+                                            //             message: 'success',
+                                            //             status: 200
+                                            //         })
+                                            //     }
+                                            // }).catch(err => {
+                                            //     console.log('err',err)
+                                            //     if(index == orglen){
+                                            //          res.send({
+                                            //             message: 'failure',
+                                            //             status: 300,
+                                            //             err: err
+                                            //         })
+                                            //     }
+                                            // })
                                         })
                                     }else{
                                         res.send({
@@ -2951,7 +2958,7 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                     });
                 })
             }else{
-                getOrganizatonByTeam(data.organization, data.TeamName)
+                getOrganizatonByTeam(data.organization, data.TeamName, data.brand)
                 .then(org =>{
                     var orglen = org.length;
                     orglen = orglen-1;
@@ -2959,25 +2966,25 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                         org.forEach(function (record, index) {
                             console.log('record',record.organization_id);
                             console.log(index, orglen)
-                            DeleteOrganization(record.organization_id)
-                            .then(data => {
-                                console.log('res',data)
-                                if(index == orglen){
-                                    res.send({
-                                        message: 'success',
-                                        status: 200
-                                    })
-                                }
-                            }).catch(err => {
-                                console.log('err',err)
-                                if(index == orglen){
-                                     res.send({
-                                        message: 'failure',
-                                        status: 300,
-                                        err: err
-                                    })
-                                }
-                            })
+                            // DeleteOrganization(record.organization_id)
+                            // .then(data => {
+                            //     console.log('res',data)
+                            //     if(index == orglen){
+                            //         res.send({
+                            //             message: 'success',
+                            //             status: 200
+                            //         })
+                            //     }
+                            // }).catch(err => {
+                            //     console.log('err',err)
+                            //     if(index == orglen){
+                            //          res.send({
+                            //             message: 'failure',
+                            //             status: 300,
+                            //             err: err
+                            //         })
+                            //     }
+                            // })
                         })
                     }else{
                         res.send({
@@ -8351,6 +8358,13 @@ function hadleAuthanticat(user_name,password){
     })
 }
 
+
+/**
+* API FOR RETURN CLINICAL PDF REPORT -
+*/
+
+
+
 app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req, res) => {
     // TODO : Start receiving user type or remove user type from this function
     var user_type = "standard";
@@ -9072,8 +9086,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let MPS_95_VEL_DATA = [];
                 let MAX_ANGULAR_VEL_EXLARATION = [];
                 let PLAYERS_POSITIONS = [];
-                let BRAIN_POSITIONS = [];
-
+                let P_MAX_S_POSITIONS = [];
+                let P_MIN_S_POSITIONS = [];
 
                 if (data.length === 0){
                     brainRegions['principal-max-strain'] = {};
@@ -9094,7 +9108,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
                         MPS_95_VEL_DATA: MPS_95_VEL_DATA,
                         PLAYERS_POSITIONS: PLAYERS_POSITIONS,
-                        BRAIN_POSITIONS: BRAIN_POSITIONS
+                        P_MAX_S_POSITIONS: P_MAX_S_POSITIONS,
+                        P_MIN_S_POSITIONS: P_MIN_S_POSITIONS
                     })
                 }
 
@@ -9102,16 +9117,13 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
                         let player_id = acc_data.player_id.split('$')[0];
-                       
+                        // console.log('player_id',player_id, acc_data.image_id);
+                        PLAYERS_POSITIONS.push(acc_data.player['position']);// Adding player positions
                         if (!players.includes(player_id)) {
                             // console.log('player_id',player_id)
-
-                            PLAYERS_POSITIONS.push(acc_data.player['position']);
                             players.push(player_id);
-
                             var newPlayerId = player_id+'-'+sensor;
                             if(newPlayerId){
-                                console.log('player_id',newPlayerId)
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
                                     var player_status = userData[0].player_status
@@ -9135,20 +9147,23 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                     })
                                                 }
                                             }
+                                            console.log('return')
                                             resolve(null);
                                         })
                                         .catch(err => {
+                                            console.log('err - 1',err)
                                             reject(err);
                                         })
                                     }else{
                                         resolve(null);
                                     }
                                 }).catch(err => {
+                                    console.log('err - 2',err);
                                     reject(err);
                                 })
                             }
                         } else {
-                            resolve(null);
+                            resolve(null);   
                         }
                     })
                 });
@@ -9157,7 +9172,14 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                      if (summary_data['principal-max-strain']) {
                         if(summary_data['principal-max-strain']['value']){
                             // console.log('position values',summary_data['principal-max-strain']['value'])
-                            BRAIN_POSITIONS.push({[position]: summary_data['principal-max-strain']['value']});
+                            P_MAX_S_POSITIONS.push({[position]: summary_data['principal-max-strain']['value']});
+                        }
+                     }
+
+                     if (summary_data['principal-min-strain']) {
+                        if(summary_data['principal-min-strain']['value']){
+                            // console.log('position values',summary_data['principal-max-strain']['value'])
+                            P_MIN_S_POSITIONS.push({[position]: summary_data['principal-min-strain']['value']});
                         }
                      }
                 }
@@ -9195,8 +9217,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MPS_95_VEL_DATA: MPS_95_VEL_DATA,
                         MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
                         PLAYERS_POSITIONS: PLAYERS_POSITIONS,
-                        BRAIN_POSITIONS: BRAIN_POSITIONS
-
+                        P_MAX_S_POSITIONS: P_MAX_S_POSITIONS,
+                        P_MIN_S_POSITIONS: P_MIN_S_POSITIONS
                     });
                 });
             }

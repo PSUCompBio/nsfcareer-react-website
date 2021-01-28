@@ -44,7 +44,7 @@ class TeamStateScatterChart extends React.Component {
                          fontSize: 18,
                          fontWeight: 800,
 
-                        labelString: 'Ang Acc (rad/s2)'
+                        // labelString: 'Ang Acc (rad/s2)'
                     },
                 }],
                 yAxes: [{

@@ -58,8 +58,8 @@ class AdminDashboard extends React.Component {
             staffList: [],
             sensorBrandList: [],
             OrganizationList: [],
-            isOrganization: false,
-            isSensor: true,
+            isOrganization: true,
+            isSensor: false,
             isTeams: false,
             teamList: [],
             isPlayers: false,
@@ -101,27 +101,9 @@ class AdminDashboard extends React.Component {
         console.log(e.target.name);
         var the = this;
         if(e.target.name === 'organization'){
-            if(this.state.OrganizationList.length === 0){
-                the.setState({isFetching: true});
-                getOrganizationNameList({type:'organizations'}).then(organizations =>{
-                    console.log('organizations',organizations);
-                    this.setState({
-                        OrganizationList: organizations.data.data,
-                        totalOrganization: organizations.data.data.length,
-                        isSensor: false,
-                        isOrganization: true,
-                        isTeams: false,
-                        isFetching: false,
-                        isPlayers: false
-                    })
-                })
-                getOrganizationList({type:'organizations'}).then(organizations =>{
-                    this.setState({
-                        OrganizationList: organizations.data.data,
-                        totalOrganization: organizations.data.data.length,
-                    })
-                })
-            }else{
+            // if(this.state.OrganizationList.length === 0){
+               
+            // }else{
                 this.setState({      
                     isSensor: false,
                     isOrganization: true,
@@ -129,15 +111,40 @@ class AdminDashboard extends React.Component {
                     isFetching: false,
                     isPlayers: false
                 });
-            }
+            // }
         }else if(e.target.name === 'sensor_companies'){
-            this.setState({
-                isFetching: false,
-                isSensor: true,
-                isTeams: false,
-                isOrganization: false,
-                isPlayers: false
-            })
+            if(this.state.sensorBrandList.length === 0){
+                the.setState({isFetching: true});
+                getAllSensorBrandsList()
+                .then(brands => {
+                    this.setState(prevState => ({
+                        totalBrand: brands.data.data.length,
+                        sensorBrandList: brands.data.data,
+                        isFetching: false,
+                        isSensor: true,
+                        isTeams: false,
+                        isOrganization: false,
+                        isPlayers: false
+                    }));
+                   
+                })
+                getAllSensorBrands()
+                .then(brandList =>{
+                    this.setState(prevState => ({
+                        totalBrand: brandList.data.data.length,
+                        sensorBrandList: brandList.data.data,
+                    }));
+                })
+            }else{
+                this.setState({
+                    isFetching: false,
+                    isSensor: true,
+                    isTeams: false,
+                    isOrganization: false,
+                    isPlayers: false
+                })
+            }
+            
         }else if(e.target.name === 'teams'){
             if(this.state.teamList.length === 0){
                 the.setState({isFetching: true});
@@ -576,12 +583,12 @@ class AdminDashboard extends React.Component {
                     if (this.state.userDetails.level === 1000) {
                         this.setState({
                             isAdmin: true
-                        });
-                        getAllSensorBrandsList()
-                        .then(brands => {
+                        }); 
+                        getOrganizationNameList()
+                        .then(organizations => {
                             this.setState(prevState => ({
-                                totalBrand: brands.data.data.length,
-                                sensorBrandList: brands.data.data,
+                                OrganizationList: organizations.data.data,
+                                totalOrganization: organizations.data.data.length,
                                 isAuthenticated: true, 
                                 isCheckingAuth: true,
                                 isFetching: false
@@ -595,11 +602,11 @@ class AdminDashboard extends React.Component {
                                     
                                 }));
                             }
-                            return getAllSensorBrands();
-                        }).then(brandList =>{
+                            return getOrganizationList();
+                        }).then(organizations =>{
                             this.setState(prevState => ({
-                                totalBrand: brandList.data.data.length,
-                                sensorBrandList: brandList.data.data,
+                                OrganizationList: organizations.data.data,
+                                totalOrganization: organizations.data.data.length,
                             }));
                         })
                         .catch(err => {

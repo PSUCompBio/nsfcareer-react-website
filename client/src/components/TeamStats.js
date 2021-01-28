@@ -27,7 +27,8 @@ class TeamStats extends React.Component {
             insult: 'principal-max-strain',
             filter: 'greater',
             gs: 0,
-            'principal-max-strain': 'principal-max-strain'
+            'principal-max-strain': 'principal-max-strain',
+            brainPosition: 'principal-max-strain',
         };
         this.child = React.createRef();
     }
@@ -52,7 +53,7 @@ class TeamStats extends React.Component {
                             MAX_ANGULAR_VEL_EXLARATION: response.data.MAX_ANGULAR_VEL_EXLARATION,
                             MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
                             PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS,
-                            BRAIN_POSITIONS: response.data.BRAIN_POSITIONS
+                            BRAIN_POSITIONS: {'principal-max-strain': response.data.P_MAX_S_POSITIONS, 'principal-min-strain': response.data.P_MIN_S_POSITIONS}
                             
                         });
                     })
@@ -172,6 +173,11 @@ class TeamStats extends React.Component {
         }
         
     }
+
+    handlePostionMetric=(e)=>{
+        this.setState({brainPosition: e.target.value})
+    }
+
     render() {
 
         //imported Modules ...
@@ -182,7 +188,7 @@ class TeamStats extends React.Component {
 
         //Modules end
 
-        const { PLAYERS_POSITIONS, BRAIN_POSITIONS } = this.state;
+        const { PLAYERS_POSITIONS, BRAIN_POSITIONS, brainPosition } = this.state;
         
         //# Counting duplicate label of player ...
         var count_positions = {};
@@ -195,8 +201,8 @@ class TeamStats extends React.Component {
 
         //# Addition of player mps by positions
         var count_positions_val = {};
-        if(BRAIN_POSITIONS){
-            BRAIN_POSITIONS.forEach(async  (res)=> { 
+        if(BRAIN_POSITIONS[brainPosition]){
+            BRAIN_POSITIONS[brainPosition].forEach(async  (res)=> { 
                 Object.entries(res).forEach(([key, value]) =>{
                      // console.log('res',key, value)
                      count_positions_val[key] = (count_positions_val[key]||0) + value;
@@ -224,10 +230,10 @@ class TeamStats extends React.Component {
         if(count_positions && count_positions_val){
 
             Object.entries(count_positions).forEach(([key, value],index) =>{
-                let playerLen = value;
+                let impactLen = value;
                 let totalPostionVal = count_positions_val[key];
                 totalPostionVal = totalPostionVal ? totalPostionVal.toFixed(2) : 0;
-                let mpsAvg = (totalPostionVal) / playerLen;
+                let mpsAvg = (totalPostionVal) / impactLen;
                 mpsAvg = mpsAvg.toFixed(2);
                 let position = key;
 
@@ -404,7 +410,7 @@ class TeamStats extends React.Component {
                                                     </div>
                                                 }
                                             {/*---! Call 3d page ---*/}
-                                                {this.state.brainRegions && <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />}
+                                                {this.state.brainRegions && <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} isTeamStatePage={true} />}
                                                 {!this.state.brainRegions && !this.state.isfetching && 
                                                     <h4 className="team-state-text-center"> 
                                                         Run a Report to Generate Brain Simulation Results.
@@ -424,6 +430,14 @@ class TeamStats extends React.Component {
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
                                                 {< TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_VEL_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_VEL_DATA} />}
+                                                <p
+                                                    style={{
+                                                        'text-align': 'center',
+                                                        'font-weight': '800',
+                                                        'color': '#666666',
+                                                        'padding-bottom': '20px'
+                                                    }}
+                                                >Ang Acc (rad/s)</p>
                                             </div>
                                             <div className="col-md-6">
                                             </div>
@@ -438,6 +452,14 @@ class TeamStats extends React.Component {
                                             <div className="col-md-12 no-padding">
                                                 <p className="video-lebel text-center">95 Percentile MPS Maximum Angular Acceleration </p>
                                                 < TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />
+                                                <p
+                                                    style={{
+                                                        'text-align': 'center',
+                                                        'font-weight': '800',
+                                                        'color': '#666666',
+                                                        'padding-bottom': '20px'
+                                                    }}
+                                                >Ang Acc (rad/s<sup>2</sup>)</p>
                                             </div>
                                             <div className="col-md-6">
                                             </div>
@@ -472,6 +494,18 @@ class TeamStats extends React.Component {
                                                         'padding-bottom': '10px',
                                                     }}
                                                 >Player positions can be set in their profile pages.</p>
+                                                <div style={{
+                                                    'padding': '8px'
+                                                }}>
+                                                    <select style={{
+                                                        'float': 'right'
+                                                    }}
+                                                    onChange={this.handlePostionMetric}
+                                                    >
+                                                        <option value="principal-max-strain">Max Principal Strain</option>
+                                                        <option value="principal-min-strain">Min Principal Strain</option>
+                                                    </select>
+                                                </div>
                                                 <div>
                                                     <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
                                                 </div>

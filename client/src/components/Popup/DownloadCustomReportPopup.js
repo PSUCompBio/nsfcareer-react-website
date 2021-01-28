@@ -53,8 +53,8 @@ class DownloadReportPopup extends React.Component {
     console.log("plotcanvas", canvas.width, canvas.height)
     c.getContext('2d').font = "20px Arial";
     // c.getContext('2d').fillText('Location of ' + title, 300, 37);
-    c.getContext('2d').drawImage(canvas, 0, 0, width , height, 0, 50, 400, 250);
-    c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height - 50, 400, 50, 500, 250);
+    c.getContext('2d').drawImage(canvas, 0, 0, width , height, 0, 0, 400, 250);
+    c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height , 400, 0, 500, 230);
     let dc = c.toDataURL();
    
     // var link = document.createElement("a");
@@ -235,14 +235,14 @@ class DownloadReportPopup extends React.Component {
               <Col md={3}>
               </Col>
               <Col md={4}>
-                <button className="Download-button-custom-report"><img src={share_icon} style={{width:'24px'}} alt="share_icon" />  Share</button><br/>
+                <button className="Download-button-custom-report " style={{'margin-top': '6px'}}><img src={share_icon} style={{width:'24px'}} alt="share_icon" />  Share</button><br/>
               </Col>
               <Col md={4}>
                 {ischecked &&
                   <PDFDownloadLink document={<Report Metric={this.state} jsonfile={this.props.brainRegions} data={this.props.data.data} />} className="export-cumulative-player" fileName={fileName} style={{
                     color: 'white'
                     }}>
-                      <button className="Download-button-custom-report">Download</button>
+                      <button className="Download-button-custom-report" style={{'margin-top': '6px'}}>Download</button>
                     {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
                   </PDFDownloadLink>
                 }

@@ -128,8 +128,8 @@ class Details extends React.Component {
       account_id: '',
       simulation_id: '',
       isLoading: true,
-      framesRateSimulationVideo: 0,
-      framesRateSidelineVideo: 0,
+      framesRateSimulationVideo: '',
+      framesRateSidelineVideo: '',
     };
   }
  
@@ -311,10 +311,10 @@ class Details extends React.Component {
 
     }
 
-    const setFrameRate = (duration) =>{
-      var frameRate = Math.floor(duration*29.7);
-      the.setState({framesRateSidelineVideo: frameRate})
-    }
+    // const setFrameRate = (duration) =>{
+    //   var frameRate = Math.floor(duration*29.7);
+    //   the.setState({framesRateSidelineVideo: 29.7})
+    // }
 
     let controls = {
       //Updating scroller to video time
@@ -334,7 +334,7 @@ class Details extends React.Component {
             right_lock_time = video.currentTime;
             //Update fram rate and video lenght...
             setVideoFrameRate(left_lock_time,right_lock_time);
-            setFrameRate(video.currentTime);// set frame rate..
+            // setFrameRate(video.currentTime);// set frame rate..
           }else{
             video.pause();
             video.currentTime = left_lock_time;
@@ -354,7 +354,7 @@ class Details extends React.Component {
 
               //Update fram rate and video lenght...
               setVideoFrameRate(left_lock_time,right_lock_time);
-              setFrameRate(video.currentTime);// set frame rate..
+              // setFrameRate(video.currentTime);// set frame rate..
 
             }
             //-----set min slider position if video is locked --------
@@ -424,7 +424,7 @@ class Details extends React.Component {
           frameRate = Math.floor(video.duration*29.7);
           total_video_duration = the.getVideoTime( video.duration);
           right_lock_time = video.duration;
-          the.setState({value: {min: 0 , max: 100 }});
+          the.setState({value: {min: 0 , max: 100}});
          
             $('.input-range__slider').eq(0).css({'pointer-events': 'inherit'});
           // }
@@ -433,7 +433,7 @@ class Details extends React.Component {
 
         //Get video frames
         
-        the.setState({framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration})
+        the.setState({framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration, framesRateSidelineVideo: 29.7})
       }
     }
     
@@ -466,10 +466,10 @@ class Details extends React.Component {
 
 
     let the = this;
-    const setVideoFrameRate = (duration) =>{
-      var frameRate = Math.floor(duration*29.7);
-      the.setState({framesRateSimulationVideo: frameRate})
-    }
+    // const setVideoFrameRate = (duration) =>{
+    //   var frameRate = Math.floor(duration*29.7);
+    //   the.setState({framesRateSimulationVideo: 29.7})
+    // }
     let controls = {
       //Updating scroller to video time
       handleProgress:  ()=> {
@@ -478,7 +478,7 @@ class Details extends React.Component {
        
         lock_percent_2 = percent;
         lock_time_2 = video.currentTime;
-        setVideoFrameRate(video.currentTime);
+        // setVideoFrameRate(video.currentTime);
         the.setState({video_time_2: percent});
 
       },
@@ -504,7 +504,7 @@ class Details extends React.Component {
       Onload:()=>{
         // setTimeout(()=>{
           var frameRate = Math.floor(video.duration*29.7);
-          the.setState({framesofSimulationVideo: frameRate})
+          the.setState({framesofSimulationVideo: frameRate, framesRateSimulationVideo: 29.7})
           the.setState({lengthofSimulationVideo: the.getVideoTime(video.duration)})
         // },1000)
       }

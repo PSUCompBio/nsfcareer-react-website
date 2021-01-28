@@ -2462,14 +2462,15 @@ function getOrganizatonBynameSensor(organization, sensor){
     })
 }
 
-function getOrganizatonByTeam(organization, team_name){
+function getOrganizatonByTeam(organization, team_name,sensor){
     return new Promise((resolve, reject) =>{
         var   params = {
                 TableName: "organizations",
-                FilterExpression: "team_name = :team_name and organization = :organization ",
+                FilterExpression: "team_name = :team_name and organization = :organization and sensor = :sensor ",
                 ExpressionAttributeValues: {
                 ":team_name": team_name,
                 ":organization": organization,
+                ":sensor": sensor,
                 },
             };
         var item = [];

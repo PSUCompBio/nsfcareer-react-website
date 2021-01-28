@@ -103,7 +103,7 @@ class ExportPlayerReport extends React.Component {
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
-					name: "Motor / Sensor Cortex",
+					name: "Motor/ Sensor Cortex",
 					shortenName: "Motor& Sensor Cortex"
 				},
 				{
@@ -1471,7 +1471,7 @@ class ExportPlayerReport extends React.Component {
 						</div>
 
 					</div>
-					<div className="col-md-6" ref={(ref) => (this.chartContainer = ref)}>
+					<div className="col-md-6" id="chartjs-size-monitor" ref={(ref) => (this.chartContainer = ref)}>
 						<Bar data={data} options={options} plugins={this.plugins} />
 						<div className="action-btn-container">
 							{actionButtons}
@@ -1481,7 +1481,7 @@ class ExportPlayerReport extends React.Component {
 					</div>
 				</div>
 				<div className="row align-items-center">
-
+					{!this.props.isTeamStatePage &&
 					<div className="col-md-6  align-items-center strainMetric"  >
 
 						<div style={{ display: "inline-block" }}>
@@ -1493,7 +1493,7 @@ class ExportPlayerReport extends React.Component {
 							}} />
 						</div>
 					</div>
-
+					}
 				</div>
 				{/*<div>
 					<button className="btn btn-primary d-flex justify-content-center download_btn" onClick={this.downImage}> Download Image</button>
