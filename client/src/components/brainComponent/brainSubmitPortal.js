@@ -141,6 +141,9 @@ class BrainSubmitPortal extends React.Component {
                         impact_id = impact_id.replace(/-/g, '');
                         console.log('impact_id',impact_id)
                         the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': filename.split("-")[0],'key':key});
+                    }else if(Sensor === 'Athlete Intelligence'){
+                        var impact_id = filename.split("-").slice(2, 7).join(" ").split(' ')[0];
+                        the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': '1','key':key});
                     }else{
                         the.checkSimulationExists({'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1],'key':key});
                     } 

@@ -28,6 +28,9 @@ const https = require('https');
 var _ = require('lodash');
 const { exec } = require('child_process')
 var nodemailer = require('nodemailer');
+let ejs = require("ejs");
+let pdf = require("html-pdf");
+
 app.use(express.static(path.resolve('./public')));
 // var transporter = nodemailer.createTransport({
 //   host: 'email.us-west-2.amazonaws.com',
@@ -8363,6 +8366,49 @@ function hadleAuthanticat(user_name,password){
 * API FOR RETURN CLINICAL PDF REPORT -
 */
 
+app.patch(`${apiPrefix}api/player/report`, setConnectionTimeout('10m'), (req, res) => {
+    console.log('req ---',req.body);
+    let students = [
+        {name: "Joy",
+         email: "joy@example.com",
+         city: "New York",
+         country: "USA"},
+        {name: "John",
+         email: "John@example.com",
+         city: "San Francisco",
+         country: "USA"},
+        {name: "Clark",
+         email: "Clark@example.com",
+         city: "Seattle",
+         country: "USA"},
+        {name: "Watson",
+         email: "Watson@example.com",
+         city: "Boston",
+         country: "USA"},
+        {name: "Tony",
+         email: "Tony@example.com",
+         city: "Los Angels",
+         country: "USA"
+     }];
+     ejs.renderFile(path.join(__dirname, './views/', "report-template.ejs"), {students: students}, (err, data) => {
+        if (err) {
+              res.send(err);
+        } else {
+            let options = {
+                "format": "Letter", 
+            
+            };
+            pdf.create(data, options).toFile("report.pdf", function (err, data) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.send("File created successfully");
+                }
+            });
+        }
+     })
+    
+})
 
 
 app.post(`${apiPrefix}api/upload/sensor-file`, setConnectionTimeout('10m'), (req, res) => {
@@ -8620,6 +8666,8 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
 
                         }else if(sensor.toLowerCase()  == 'biocore'){
                             req.body["sensor"] = 'biocore';
+                        }else if(sensor.toLowerCase() == 'Athlete Intelligence'){
+                            req.body["sensor"] = 'athlete';
                         }else{
                             req.body["sensor"] = sensor;   
                         }
@@ -9126,7 +9174,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                             if(newPlayerId){
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
-                                    var player_status = userData[0].player_status
+                                    // console.log('userData',userData)
+                                    var player_status = userData[0]  ? userData[0].player_status : '';
                                     if (player_status == 'approved') {
                                         getPlayerSimulationStatus(acc_data.image_id)
                                         .then(imageData => {
