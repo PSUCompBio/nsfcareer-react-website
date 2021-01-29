@@ -944,6 +944,17 @@ export const getBrainSimulationLogFile = (request) =>{
       });
   })
 }
+export const downloadLogFileFromS3 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.get(`/downloadLogFileFromS3/`+request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 
 export const getOrganizationList = (request) =>{
   return new Promise((resolve,reject)=>{
@@ -1007,6 +1018,17 @@ export const getTeamSpheres = (request) =>{
 export const getFilterdTeamSpheres = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getFilterdTeamSpheres`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+export const getFilterdTeamSpheresTest = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getFilterdTeamSpheresTest`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

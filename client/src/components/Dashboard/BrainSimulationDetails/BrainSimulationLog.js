@@ -10,7 +10,8 @@ import { svgToInline } from '../../../config/InlineSvgFromImg';
 import {
   getUserDBDetails,
   isAuthenticated,
-  getBrainSimulationLogFile
+  getBrainSimulationLogFile,
+  downloadLogFileFromS3
   
 } from '../../../apis';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -47,7 +48,14 @@ class BrainSimulationLog extends React.Component {
   gotoTop = () => {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
-
+	handledownloadlog =(e)=>{
+        e.preventDefault();        
+        downloadLogFileFromS3(this.props.location.state.image_id)
+        .then(response=>{
+            console.log('response',response);
+        })
+        
+    }
 
  
   render() {
@@ -120,8 +128,14 @@ class BrainSimulationLog extends React.Component {
                     to={this.props.location.state.return_url}
                   >&lt; Back To Details
                   </Link>
+                </div>			
+                <div className="downloadbutton" style={{position: 'absolute',left:'40%',marginTop:"48px",display:"none"}} >
+                  <button style={{fontSize: '20px',backgroundColor:'blue',color:'#ffffff',padding:"7px",textDecoration: "none"}}
+                    onClick={this.handledownloadlog}
+                  > Download Log
+                  </button>
                 </div>
-                <p style={{'width': '100%','margin-top': '124px'}}>{this.state.simulation_log && log}</p>
+                <p style={{'width': '100%','margin-top': '114px'}}>{this.state.simulation_log && log}</p>
                 {!this.state.simulation_log && 
                   <p>No Logs available</p>
                 }

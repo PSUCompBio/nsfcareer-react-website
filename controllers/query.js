@@ -3433,6 +3433,31 @@ function updatePlayerPositions(player_id ,org_id, position, sport) {
         });
     });
 }
+function getPlayerSummariesData(player_id) {
+    console.log('player_id ',player_id)
+    return new Promise((resolve, reject) => {
+        var params = {
+		TableName: 'player_summaries_table',
+		FilterExpression: "player_id = :player_id",		
+		ExpressionAttributeValues: {
+			":player_id": player_id,
+		}
+	};
+	var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+				//console.log(data.Items);
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 
 
 module.exports = {
@@ -3537,5 +3562,6 @@ module.exports = {
     checkSensorDataExists,
     getPlayerImageDetailsByaccoutId,
     getOrgIdbyImageId,
-    updatePlayerPositions
+    updatePlayerPositions,
+	getPlayerSummariesData
 };

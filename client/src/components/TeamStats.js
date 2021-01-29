@@ -30,6 +30,7 @@ class TeamStats extends React.Component {
             'principal-max-strain': 'principal-max-strain',
             brainPosition: 'principal-max-strain',
         };
+		
         this.child = React.createRef();
     }
    
