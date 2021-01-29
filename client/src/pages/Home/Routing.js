@@ -24,6 +24,7 @@ import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
 import TeamStats from '../../components/TeamStats';
+import TeamStatsTest from '../../components/TeamStatsTest';
 import TeamPlayers from '../../components/CommanderTeamView';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
@@ -265,6 +266,11 @@ class Routing extends React.Component {
           exact
           path="/TeamStats"
           render={(props) => <TeamStats {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
+          path="/TeamStatsTest"
+          render={(props) => <TeamStatsTest {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact
