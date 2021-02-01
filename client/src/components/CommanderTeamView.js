@@ -913,6 +913,7 @@ class CommanderTeamView extends React.Component {
                                         </thead>
                                       <tbody className="player-table">
                                             {this.state.users.map(function (player, index) {
+                                                console.log('checkign status',player.simulation_data.length)
                                                 if (player.simulation_data.length > 0) {
                                                     let impact_time = '';
                                                     let time = '';
@@ -945,6 +946,13 @@ class CommanderTeamView extends React.Component {
                                                         cls = 'completedSimulation player-data-table-row';
                                                     }
                                                   }
+                                                //   for(var i = 0; i < player.simulation_data.length; i++){
+                                                //       console.log('i',i)
+                                                //       console.log('status',player.simulation_data[i].simulation_status)
+                                                //       if(player.simulation_data[i].simulation_status === 'pending'){
+                                                //         cls = 'pendingSimulation player-data-table-row';
+                                                //       }
+                                                //   }
 
                                                     return <tr className={cls} key={index} >
                                                         <th style={{ verticalAlign: "middle" }} scope="row" onClick={() => {this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
