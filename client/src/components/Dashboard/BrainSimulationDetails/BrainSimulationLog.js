@@ -135,7 +135,7 @@ class BrainSimulationLog extends React.Component {
                   </Link>
                 </div>			
                 <div className="downloadbutton" style={{position: 'absolute',left:'40%',marginTop:"39px"}} >
-                  <button style={{fontSize: '20px',backgroundColor:'blue',border:'1px solid blue',color:'#ffffff',padding:"7px",textDecoration: "none"}}
+                  <button style={{fontSize: '20px',backgroundColor:'#0a538d',border:'1px solid #0a538d',color:'#ffffff',padding:"7px",textDecoration: "none"}}
                     onClick={this.handledownloadlog}
                   > Download Log
                   </button>

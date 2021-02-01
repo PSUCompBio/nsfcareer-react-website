@@ -10,7 +10,7 @@ import {
     getTeamSpheres,
     getFilterdTeamSpheresTest
   } from './../apis';
-import TeamStateScatterChart from './Charts/TeamStateScatterChart';
+import TeamStateScatterChart from './Charts/TeamStateScatterChartTest';
 import BarChart from './Charts/BarChart';
 
 import { Card , Row, Col } from 'react-bootstrap';
@@ -18,7 +18,6 @@ import { Card , Row, Col } from 'react-bootstrap';
 class TeamStatsTest extends React.Component {
     constructor(props) {
         super(props);
-        
         this.state = {
             isAuthenticated: false,
             isCheckingAuth: true,
@@ -32,7 +31,6 @@ class TeamStatsTest extends React.Component {
         };
         this.child = React.createRef();
     }
-   
     componentDidMount() {
         console.log('req----', this.props)
         // Scrolling winddow to top when user clicks on about us page
@@ -54,8 +52,7 @@ class TeamStatsTest extends React.Component {
                             MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
                             PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS,
                             BRAIN_POSITIONS: {'principal-max-strain': response.data.P_MAX_S_POSITIONS, 'principal-min-strain': response.data.P_MIN_S_POSITIONS}
-                            
-                        });
+                       });
                     })
                     .catch((error) => {
                         this.setState({
@@ -74,7 +71,6 @@ class TeamStatsTest extends React.Component {
             for: 'Players',
         })
     }
-
     handleChange = (e) => {
         console.log('wrk')
         this.setState({ [e.target.name] : e.target.value });
@@ -85,10 +81,9 @@ class TeamStatsTest extends React.Component {
     handleRunReport =(e)=>{
         e.preventDefault();
         this.setState({isfetching: true})
-        
-        getFilterdTeamSpheresTest({ brand: 'Prevent Biometrics', organization: 'Army Research Laboratory', team: ["2020 POMPOC Study"],filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain']})
+       getFilterdTeamSpheresTest({ brand: 'Prevent Biometrics', organization: 'Army Research Laboratory', team: ["2020 POMPOC Study"],filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain']})
         .then(response=>{
-            console.log('response',response.data);
+            //console.log('response',response.data);
             this.setState({
                 brainRegions: ''
             })
@@ -106,7 +101,6 @@ class TeamStatsTest extends React.Component {
         })
         
     }
-
     //Filter options ...
     selectOption=()=>{
         if(this.state['principal-max-strain'] === 'resultant-linear-acceleration'){
@@ -130,7 +124,6 @@ class TeamStatsTest extends React.Component {
                 <option value='140'>140g</option>
                 <option value='140'>150g</option> 
             </>
-
             )
         }else if(this.state['principal-max-strain'] === 'resultant-Angular-acceleration'){
             return  (
@@ -145,7 +138,6 @@ class TeamStatsTest extends React.Component {
                 <option value='6000'>6000 rad/s^2</option>
                 <option value='7000'>7000 rad/s^2</option>
             </>
-
             )
         }else{
             return  (
@@ -168,29 +160,21 @@ class TeamStatsTest extends React.Component {
                 <option value='140'>140%</option>
                 <option value='140'>150%</option> 
             </>
-
             )
         }
-        
-    }
-
+   }
     handlePostionMetric=(e)=>{
         this.setState({brainPosition: e.target.value})
     }
-
     render() {
-
         //imported Modules ...
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
            return <Redirect to="/Login" />;
         }
         if (this.state.isLoading) return <Spinners />;
-
         //Modules end
-
         const { PLAYERS_POSITIONS, BRAIN_POSITIONS, brainPosition } = this.state;
-        
-        //# Counting duplicate label of player ...
+      //# Counting duplicate label of player ...
         var count_positions = {};
         if(PLAYERS_POSITIONS){
             PLAYERS_POSITIONS.forEach(async (i) => { 
@@ -198,7 +182,6 @@ class TeamStatsTest extends React.Component {
             });
             console.log('count_positions',count_positions)
         }
-
         //# Addition of player mps by positions
         var count_positions_val = {};
         if(BRAIN_POSITIONS[brainPosition]){
@@ -207,17 +190,14 @@ class TeamStatsTest extends React.Component {
                      // console.log('res',key, value)
                      count_positions_val[key] = (count_positions_val[key]||0) + value;
                 })
-               
-            });
+           });
         }
-
         /*
         * Bar chart data for brain  positons ...
         */
         var data = [];
         var labels = [];
-
-        // # Take first latter of postions ...
+       // # Take first latter of postions ...
         const  capitalizePosition = (words) => {
            var separateWord = words.toLowerCase().split(' ');
            for (var i = 0; i < separateWord.length; i++) {
@@ -225,10 +205,8 @@ class TeamStatsTest extends React.Component {
            }
            return separateWord.join(' ');
         }
-
         console.log('count_positions_val', count_positions_val)
-        if(count_positions && count_positions_val){
-
+       if(count_positions && count_positions_val){
             Object.entries(count_positions).forEach(([key, value],index) =>{
                 let impactLen = value;
                 let totalPostionVal = count_positions_val[key];
@@ -242,10 +220,8 @@ class TeamStatsTest extends React.Component {
                 }
                 data.push(mpsAvg);
                 labels.push(position);
-            })
-           
+            })      
         }
-
         //**Brain graph data ...
         const BrainPositionChartData = {
             datasets: [{
@@ -258,7 +234,6 @@ class TeamStatsTest extends React.Component {
             }],
             labels: labels
         };
-
         // # Brain postion graph options ...
         const BrainPositionChartoptions = {
             legend: {
@@ -271,15 +246,13 @@ class TeamStatsTest extends React.Component {
                     },
                     scaleLabel: {
                         display: true,
-                    },
-                   
+                    },                   
                 }],
                 yAxes: [ {
                     scaleLabel: {
                         display: true,
                          fontSize: 18,
                          fontWeight: 800,
-
                         labelString: 'Average MPS'
                     },
                     // ticks: {
@@ -291,13 +264,10 @@ class TeamStatsTest extends React.Component {
                 }]
             }
         };
-
         //  Brain position chart data closed ...
-
         return (
             <React.Fragment>
-                 
-                <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
+				<div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
                     <div className="container">
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>{this.state.for === 'Teams' ? 'Organization Analytics' : 'Team Analytics'}</h1>
                         <div className="backbutton11" style={{position : 'relative','padding': '8px'}}>

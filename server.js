@@ -6248,9 +6248,10 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     *    Creating directory...
     */
     var d = new Date();
+	var rootpath = path.resolve('./');
     let month = d.getMonth() + 1;
     let datetoday = month+'-'+d.getFullYear();
-    var dir = 'public/uploads/'+datetoday;
+    var dir = rootpath+'/client/public/uploads/'+datetoday;
 
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
@@ -6259,15 +6260,15 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     //** 
     //files name ..........
     var file_path = '/uploads/'+datetoday+'/'+Date.now() + '_trim.mp4';
-    var outputFilePath = 'public'+file_path;
+    var outputFilePath = rootpath+'/client/public'+file_path;
     let list = []
 
     
-
+ 
     //uploading files.             
     var name = Date.now();
-    var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
-    list.push(`public/uploads/${name}_movie.mp4`);
+    var file_store_path =  rootpath+'/client/public/uploads/'+ name +'_movie.mp4';
+    list.push(rootpath+"/client/public/uploads/"+name+"_movie.mp4");
     https.get(req.body.impact_video_url , function(response ,error) { 
         const file = fs.createWriteStream(file_store_path);
         response.pipe(file);
@@ -6284,7 +6285,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
 
     const writeTextfile = (list)=>{
         console.log('list',list);
-        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime}  -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
+        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -codec copy -t ${outputFilePath}`, (error, stdout, stderr) => { 
           
             if (error) {
                 console.log(`error: ${error.message}`);
@@ -6541,6 +6542,63 @@ app.post(`${apiPrefix}getFailedSimulationList`, (req,res) =>{
                             data: failedList
                         })
                     }
+                })
+                .catch(err => {
+                    console.log('err',err)
+                    res.send({
+                        message: "failure",
+                        error: err,
+                        data: ''
+                    })
+                })
+            })
+        } else {
+            res.send({
+                message: "success",
+                data: ''
+            })
+        }
+        
+    }).catch(err => {
+        res.send({
+            message: "failure",
+            error: err,
+            data: ''
+
+        })
+    })
+})  
+
+app.post(`${apiPrefix}getCompleteSimulationList`, (req,res) =>{
+    console.log('req -----',req.body);
+    let failedList = {};
+    getTeamData(req.body)
+    .then(sensor_data => {
+        console.log('sensor_data',sensor_data)
+        //..
+        let k = 0
+        if (sensor_data.length > 0) {
+            sensor_data.forEach(function (record, index) {
+                console.log('record',record);
+                var player = record.player['first-name']+'-'+record.player['last-name']+'-'+record.player_id;
+                var sensorData = record;
+                getPlayerSimulationFile(record)
+                .then(simulation => {
+                     console.log('simulation',simulation)
+                    k++
+                    if (simulation.status == 'completed') {
+                        sensorData['account_id'] = simulation.account_id ? simulation.account_id : 'N/A';
+                        sensorData['simulation_id'] = simulation.log_stream_name ? simulation.log_stream_name.split('/')[2] : 'N/A';
+                        sensorData['computed_time'] = timeConversion(simulation.computed_time) ? timeConversion(simulation.computed_time) : 'N/A';
+                        failedList[player] = [];
+                        failedList[player].push(sensorData);
+                    } 
+                    if (k == sensor_data.length) {
+                        res.send({
+                            message: "success",
+                            data: failedList
+                        })
+                    } 
                 })
                 .catch(err => {
                     console.log('err',err)
@@ -11140,6 +11198,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
                                                                 pushdata(summary_data);
                                                             } 
                                                         }
+														
                                                     }
                                                 })
                                             }
