@@ -1535,13 +1535,57 @@ app.get(`${apiPrefix}getBrainSimulationLogFile/:image_id`, (req, res) => {
 app.get(`${apiPrefix}downloadLogFileFromS3/:image_id`, (req, res) => {
     const { image_id } = req.params
     // console.log('image_id',image_id)
-     var options = {
-        Bucket    : BUCKET_NAME,
-        Key    : image_id,
-    };
-    res.attachment(image_id);
-    var fileStream = s3.getObject(options).createReadStream();
-    fileStream.pipe(res);
+	getPlayerSimulationFile({image_id : image_id})
+        .then(imageData => {
+            if (imageData.log_path && imageData.log_path != 'null') {
+                let key = imageData.log_path;
+                key = key.replace(/'/g, "");
+                 return key;// getFileFromS3(key, imageData.bucket_name);
+            } else {
+                if (imageData.root_path && imageData.root_path != 'null') {
+                    let log_path = imageData.root_path + 'logs/femtech_' + imageData.image_id + '.log';
+                    return log_path;//getFileFromS3(log_path, imageData.bucket_name);
+                }
+            }
+        }) .then(log_s3 => {
+			 var params = {
+				Bucket: BUCKET_NAME,
+				Key: log_s3
+			};
+
+			s3.headObject(params, function (err, metadata) {  
+				if (err && err.code === 'NotFound') {  
+				  // Handle no object on cloud here 
+				  res.send({
+								message: "failure",
+								data: '',
+								error: err
+							})
+				} else {  
+					s3.getSignedUrl('getObject', params, function (err, url) {
+						if (err) {
+							 res.send({
+								message: "failure",
+								data: '',
+								error: err
+							})
+						} else {
+							res.send({
+								message: "success",
+								data: url,
+							}) 
+						}
+					});
+				}
+			  });			
+        }).catch(err =>{
+            res.send({
+                message: "failure",
+                data: '',
+                error: err
+            })
+        })
+    
 })
 
 //Getting brain simulation details page video
@@ -9128,8 +9172,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
                         let player_id = acc_data.player_id.split('$')[0];
-                        // console.log('player_id',player_id, acc_data.image_id);
-                        PLAYERS_POSITIONS.push(acc_data.player['position']);// Adding player positions
+                        console.log('acc_data',acc_data.player);
+                       // PLAYERS_POSITIONS.push(acc_data.player['player_position']);// Adding player positions
                         if (!players.includes(player_id)) {
                             // console.log('player_id',player_id)
                             players.push(player_id);
@@ -9138,6 +9182,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
                                     var player_status = userData[0].player_status
+									 PLAYERS_POSITIONS.push(userData[0].player_position);
+                          //   console.log('userData 1',userData)
                                     if (player_status == 'approved') {
                                         getPlayerSimulationStatus(acc_data.image_id)
                                         .then(imageData => {
