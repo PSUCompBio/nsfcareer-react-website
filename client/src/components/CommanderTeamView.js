@@ -590,6 +590,7 @@ class CommanderTeamView extends React.Component {
                             <div className="col-md-12">
                                 <div className="col-md-8 d-flex mt-3 justify-content-center align-items-center ">
                                     <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
+									<Link style={{ fontWeight: "400" }} to={'/completeSimulation/'+this.state.organization+'/'+this.state.team+'/'+this.state.brand}>
                                         <div
                                             style={{
                                                 background: "#c5e0b4",
@@ -602,7 +603,8 @@ class CommanderTeamView extends React.Component {
                                                 }}
                                             >{this.state.simulations_completed}</p>
                                         </div>
-                                        <p class="circle-sub-title" ref="h1">Simulations<br />Complete</p>
+                                        <p class="circle-sub-title" ref="h1" style={{'color': '#686868'}}>Simulations<br />Complete</p>
+                                        </Link>
                                     </div>
                                     <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
                                         <div
@@ -617,7 +619,7 @@ class CommanderTeamView extends React.Component {
                                                 }}
                                             >{this.state.simulations_pending}</p>
                                         </div>
-                                        <p class="circle-sub-title" ref="h1">Simulations<br />Pending</p>
+                                        <p class="circle-sub-title" ref="h1" style={{'color': '#686868'}}>Simulations<br />Pending</p>
                                     </div>
                                     <div className="circle-badge counter-container ml-md-auto mr-md-auto text-center">
                                         
