@@ -52,7 +52,12 @@ class BrainSimulationLog extends React.Component {
         e.preventDefault();        
         downloadLogFileFromS3(this.props.location.state.image_id)
         .then(response=>{
-            console.log('response',response);
+			const link = document.createElement('a');
+			link.href = response.data.data;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+           // console.log('response',response.data.data);
         })
         
     }
@@ -129,8 +134,8 @@ class BrainSimulationLog extends React.Component {
                   >&lt; Back To Details
                   </Link>
                 </div>			
-                <div className="downloadbutton" style={{position: 'absolute',left:'40%',marginTop:"48px",display:"none"}} >
-                  <button style={{fontSize: '20px',backgroundColor:'blue',color:'#ffffff',padding:"7px",textDecoration: "none"}}
+                <div className="downloadbutton" style={{position: 'absolute',left:'40%',marginTop:"39px"}} >
+                  <button style={{fontSize: '20px',backgroundColor:'blue',border:'1px solid blue',color:'#ffffff',padding:"7px",textDecoration: "none"}}
                     onClick={this.handledownloadlog}
                   > Download Log
                   </button>
