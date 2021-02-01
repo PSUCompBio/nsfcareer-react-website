@@ -222,7 +222,18 @@ class TeamStats extends React.Component {
         const  capitalizePosition = (words) => {
            var separateWord = words.toLowerCase().split(' ');
            for (var i = 0; i < separateWord.length; i++) {
-              separateWord[i] = /^[a-zA-Z]+$/.test(separateWord[i]) ? separateWord[i].charAt(0).toUpperCase() : '';
+               if(i == 0){
+                if(separateWord[0].split('-').length > 1){
+                    var char = separateWord[0].split('-')[1]
+                    separateWord[i] =  separateWord[i].charAt(0).toUpperCase();
+                    separateWord[1] = char.charAt(0).toUpperCase()
+                }else{
+                    separateWord[i] =  separateWord[i].charAt(0).toUpperCase();
+                }
+               }else{
+                    separateWord[i] = /^[a-zA-Z]+$/.test(separateWord[i]) ? separateWord[i].charAt(0).toUpperCase() : '';
+                
+               }
            }
            return separateWord.join(' ');
         }
@@ -241,6 +252,7 @@ class TeamStats extends React.Component {
                 if(key !== 'Unknown'){
                     position = capitalizePosition(key);
                 }
+                console.log('position',position)
                 data.push(mpsAvg);
                 labels.push(position);
             })

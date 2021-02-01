@@ -1,12 +1,6 @@
 import React from 'react';
 import {  Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
-// import ReactDOM from 'react-dom';
-// import page3 from '../pg_0003.jpg';
-// import header1 from './header1.png';
-// import footer1 from '../footer1.jpg';
-// import header2 from '../header2.jpg';
-// import footer2 from '../footer2.jpg';
-// import trangle from './trangle.png';
+
 import trangle_green from './trangle_green.png';
 import trangle_orange from './trangle_orange.png';
 import trangle_red from './trangle_red.png';
