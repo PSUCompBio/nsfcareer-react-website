@@ -71,7 +71,7 @@ io.on('connection', socket => {
 
 })
 
-
+ 
 
 // ================================================
 //            SERVER CONFIGURATION
@@ -6581,8 +6581,8 @@ app.post(`${apiPrefix}getCompleteSimulationList`, (req,res) =>{
                             message: "success",
                             data: failedList
                         })
-                    } 
-                })
+                    }  
+                }) 
                 .catch(err => {
                     console.log('err',err)
                     res.send({
@@ -9272,8 +9272,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         P_MAX_S_POSITIONS: P_MAX_S_POSITIONS,
                         P_MIN_S_POSITIONS: P_MIN_S_POSITIONS
                     })
-                }
-
+                }  
                 let players = [];
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
@@ -9287,14 +9286,11 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                             if(newPlayerId){
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
-<<<<<<< HEAD
                                     // console.log('userData',userData)
                                     var player_status = userData[0]  ? userData[0].player_status : '';
-=======
                                     var player_status = userData[0].player_status
 									 PLAYERS_POSITIONS.push(userData[0].player_position);
                           //   console.log('userData 1',userData)
->>>>>>> 4663b66057cd67c7be05b39b4c2e555d0fb60f72
                                     if (player_status == 'approved') {
                                         getPlayerSimulationStatus(acc_data.image_id)
                                         .then(imageData => {
