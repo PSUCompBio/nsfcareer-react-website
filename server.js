@@ -6248,10 +6248,9 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     *    Creating directory...
     */
     var d = new Date();
-	var rootpath = path.resolve('./');
     let month = d.getMonth() + 1;
     let datetoday = month+'-'+d.getFullYear();
-    var dir = rootpath+'/client/public/uploads/'+datetoday;
+    var dir = 'public/uploads/'+datetoday;
 
     if (!fs.existsSync(dir)){
         fs.mkdirSync(dir);
@@ -6260,15 +6259,15 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     //** 
     //files name ..........
     var file_path = '/uploads/'+datetoday+'/'+Date.now() + '_trim.mp4';
-    var outputFilePath = rootpath+'/client/public'+file_path;
+    var outputFilePath = 'public'+file_path;
     let list = []
 
     
- 
+
     //uploading files.             
     var name = Date.now();
-    var file_store_path =  rootpath+'/client/public/uploads/'+ name +'_movie.mp4';
-    list.push(rootpath+"/client/public/uploads/"+name+"_movie.mp4");
+    var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+    list.push(`public/uploads/${name}_movie.mp4`);
     https.get(req.body.impact_video_url , function(response ,error) { 
         const file = fs.createWriteStream(file_store_path);
         response.pipe(file);
@@ -6285,7 +6284,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
 
     const writeTextfile = (list)=>{
         console.log('list',list);
-        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -codec copy -t ${outputFilePath}`, (error, stdout, stderr) => { 
+        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime}  -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
           
             if (error) {
                 console.log(`error: ${error.message}`);
@@ -6588,6 +6587,8 @@ app.post(`${apiPrefix}getCompleteSimulationList`, (req,res) =>{
                     k++
                     if (simulation.status == 'completed') {
                         sensorData['account_id'] = simulation.account_id ? simulation.account_id : 'N/A';
+                        sensorData['model'] = simulation.mesh ? simulation.mesh : 'N/A';
+                        sensorData['submitting_admin'] = simulation.admin_detail ? simulation.admin_detail : 'N/A';
                         sensorData['simulation_id'] = simulation.log_stream_name ? simulation.log_stream_name.split('/')[2] : 'N/A';
                         sensorData['computed_time'] = timeConversion(simulation.computed_time) ? timeConversion(simulation.computed_time) : 'N/A';
                         failedList[player] = [];
@@ -9541,6 +9542,11 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let P_MAX_S_POSITIONS = [];
                 let P_MIN_S_POSITIONS = [];
 
+                let PLAYERS_SPORT = [];
+                let S_MAX_S_POSITIONS = [];
+                let S_MIN_S_POSITIONS = [];
+            
+
                 if (data.length === 0){
                     brainRegions['principal-max-strain'] = {};
                     brainRegions['principal-min-strain'] = {};
@@ -9561,7 +9567,10 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MPS_95_VEL_DATA: MPS_95_VEL_DATA,
                         PLAYERS_POSITIONS: PLAYERS_POSITIONS,
                         P_MAX_S_POSITIONS: P_MAX_S_POSITIONS,
-                        P_MIN_S_POSITIONS: P_MIN_S_POSITIONS
+                        P_MIN_S_POSITIONS: P_MIN_S_POSITIONS,
+                        PLAYERS_SPORT: PLAYERS_SPORT,
+                        S_MAX_S_POSITIONS: S_MAX_S_POSITIONS,
+                        S_MIN_S_POSITIONS: S_MIN_S_POSITIONS
                     })
                 }
 
@@ -9578,12 +9587,17 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                             if(newPlayerId){
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
+                                    
                                     // console.log('userData',userData)
                                     var player_status = userData[0]  ? userData[0].player_status : '';
-                                    var player_status = userData[0].player_status
-									 PLAYERS_POSITIONS.push(userData[0].player_position);
-                          //   console.log('userData 1',userData)
-                                    if (player_status == 'approved') {
+                                    // var player_status = userData[0].player_status
+                                    if(userData[0]){
+                                        PLAYERS_POSITIONS.push(userData[0].player_position);
+                                        PLAYERS_SPORT.push(userData[0].sport);
+                                    }
+								
+                                //   console.log('userData 1',userData)
+                                    if (userData[0] && player_status == 'approved') {
                                         getPlayerSimulationStatus(acc_data.image_id)
                                         .then(imageData => {
                                             if (imageData && imageData.player_name && imageData.player_name != 'null') {
@@ -9598,7 +9612,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                 if (outputFile.Insults) {
                                                     outputFile.Insults.forEach(function (summary_data, index) {
                                                         pushdata(summary_data);
-                                                        pushPostionData(summary_data,acc_data.player['position']);
+                                                        pushPostionData(summary_data,acc_data.player['position'], acc_data.player['sport']);
 
                                                     })
                                                 }
@@ -9624,11 +9638,13 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                     })
                 });
 
-                pushPostionData = (summary_data,position)=>{
+                pushPostionData = (summary_data, position, sport)=>{
+                    sport = sport ? sport : 'Unknown'
                      if (summary_data['principal-max-strain']) {
                         if(summary_data['principal-max-strain']['value']){
                             // console.log('position values',summary_data['principal-max-strain']['value'])
                             P_MAX_S_POSITIONS.push({[position]: summary_data['principal-max-strain']['value']});
+                            S_MAX_S_POSITIONS.push({[sport]: summary_data['principal-max-strain']['value']});
                         }
                      }
 
@@ -9636,6 +9652,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         if(summary_data['principal-min-strain']['value']){
                             // console.log('position values',summary_data['principal-max-strain']['value'])
                             P_MIN_S_POSITIONS.push({[position]: summary_data['principal-min-strain']['value']});
+                            S_MIN_S_POSITIONS.push({[sport]: summary_data['principal-min-strain']['value']});
+
                         }
                      }
                 }
@@ -9674,7 +9692,10 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         MAX_ANGULAR_VEL_EXLARATION: MAX_ANGULAR_VEL_EXLARATION,
                         PLAYERS_POSITIONS: PLAYERS_POSITIONS,
                         P_MAX_S_POSITIONS: P_MAX_S_POSITIONS,
-                        P_MIN_S_POSITIONS: P_MIN_S_POSITIONS
+                        P_MIN_S_POSITIONS: P_MIN_S_POSITIONS,
+                        PLAYERS_SPORT: PLAYERS_SPORT,
+                        S_MAX_S_POSITIONS: S_MAX_S_POSITIONS,
+                        S_MIN_S_POSITIONS: S_MIN_S_POSITIONS
                     });
                 });
             }

@@ -1685,3 +1685,12 @@ button.btn.button-yes {
     border: none;
     border-radius: 5px
 }
+
+#chartjs-tooltip{
+  position: absolute;
+  position: fixed;
+  z-index: 999;
+  background: #000000c7;
+  color: white;
+  border-radius: 10px;
+}

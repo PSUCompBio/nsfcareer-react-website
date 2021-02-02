@@ -99,42 +99,6 @@ class CompleteSimulationList extends React.Component {
     }
   }
 
-  cards =(data)=>{
-    // console.log('data',data)
-    return data.map((res,index)=>{
-      console.log(res)
-        let impact_id = res.player_id.split('$')[0];
-        let impact_time = '';
-        let time = '';
-        if (res['impact-time']) {
-          let split = res['impact-time'].split(":");
-          impact_time = split.slice(0, split.length - 1).join(":");
-        }
-        if (res['time']) {
-          let split = res['time'].toString();
-          console.log(split)
-          split = split.replace(".", ":");
-          split = split.split(":");
-          time = split.slice(0, split.length - 1).join(":");
-        }
-        return <Card >
-          <Card.Header className="card-light-red">
-            <Accordion as={Button} variant="link"  style={{'text-decoration':'none'}}>
-              <span className="title-left" >Event ID: #{ impact_id }</span>
-              <span className="title-left">{`${res &&  res['impact-date'] ? this.getDate(res['impact-date'].replace(/:|-/g, "/")) +' '+ this.tConvert(impact_time) : res['date'] ? this.getDate(res['date'].replace(/:|-/g, "/"))  +' '+ this.tConvert(time)  : 'Unknown Date and Time'}`}</span>
-              <span className="title-left" >Simulation ID: #{ res.simulation_id }</span>
-              <span className="title-right" id={res && 'col_icon'+res.player_id.split('$')[1]}>></span>
-            </Accordion>
-          </Card.Header>
-          <Accordion.Collapse >
-            <Card.Body>
-            </Card.Body>
-          </Accordion.Collapse>
-        </Card>
-    })
-  }
-
-
   render() {
     if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
         return <Redirect to="/Login" />;
@@ -184,8 +148,10 @@ class CompleteSimulationList extends React.Component {
 						{data[0]["simulation_id"]}                     
                     </td>
                     <td className="player-collapes-div" style={{'margin-bottom': '25px','border':'1px solid #084371'}}>						
+                      {data[0]["submitting_admin"] !== "N/A" ? data[0]["submitting_admin"]['name'] : "N/A"}
                     </td>
                     <td className="player-collapes-div" style={{'margin-bottom': '25px','border':'1px solid #084371'}}> 
+                      {data[0]["model"]} 
                     </td>
                     <td className="player-collapes-div" style={{'margin-bottom': '25px','border':'1px solid #084371'}}>
                        {data[0]["computed_time"]}   

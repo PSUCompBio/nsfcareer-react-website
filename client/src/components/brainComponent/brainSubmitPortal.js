@@ -249,7 +249,7 @@ class BrainSubmitPortal extends React.Component {
         let userData = localStorage.getItem("state");
         userData = JSON.parse(userData);
 
-        const { files, list } = this.state; 
+        const { files, list ,meshType} = this.state; 
         const user = userData['userInfo']['email'];
         const reloadPage = () => {
             setInterval(()=>{
@@ -268,6 +268,7 @@ class BrainSubmitPortal extends React.Component {
                 formdata.append("filename", files[i]);
                 formdata.append("overwrite", "true");
                 formdata.append("fileNum", i);
+                formdata.append("mesh", meshType);
                 if(list[i].imageFile){
                     formdata.append("selfie", list[i].imageFile);
                 }
