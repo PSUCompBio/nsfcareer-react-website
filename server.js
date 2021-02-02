@@ -4288,11 +4288,11 @@ app.post(`${apiPrefix}getTeamNameList`, (req, res) => {
 app.post(`${apiPrefix}getPlayerList`, (req, res) => {
     getPlayerList().then(players => {
         var player_list = [];
-        for(var i =0; i < 10; i++){
-            if(players[i].player_list && player_list.length < 10){
+        for(var i =0; player_list.length <  10; i++){
+            if(players[i] && players[i].player_list && player_list.length < 10){
                 var list = players[i].player_list;
                 for(var j = 0;j < 10; j++){
-                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                    if(list[j]) player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
                 }
             }
         }
@@ -4390,14 +4390,31 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
 app.post(`${apiPrefix}loadMorePlayerList`, (req, res) => {
     getPlayerList().then(players => {
         var player_list = [];
-        for(var i =0; i < players.length; i++){
-            if(players[i].player_list){
-                var list = players[i].player_list;
-                for(var j = 0;j < list.length; j++){
-                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+        let requested_player_list = [];
+        players.forEach(function (u) {
+            console.log('------------------u ', u)
+            if (u.player_list) {
+                if (req.body.brand && u.sensor === req.body.brand) {
+                    player_list = player_list.concat(u.player_list);
                 }
+                if (!req.body.brand) {
+                    player_list = player_list.concat(u.player_list);
+                }
+                
             }
-        }
+            console.log('0------------\n',u.player_list, u.requested_player_list)
+            if (u.requested_player_list) {
+                requested_player_list = requested_player_list.concat(u.requested_player_list);
+            }
+        }) 
+        // for(var i =0; i < players.length; i++){
+        //     if(players[i].player_list){
+        //         var list = players[i].player_list;
+        //         for(var j = 0;j < list.length; j++){
+        //             player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+        //         }
+        //     }
+        // }
         if (player_list.length == 0) {
             res.send({
                 message: "success",
@@ -6991,6 +7008,80 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                     }
                                 }
 
+                                 //-- For CSDM-15--
+                                 if (summary_data['CSDM-15']) {   
+                                    if(summary_data['CSDM-15']['stem']){
+                                        let newCordinates = summary_data['CSDM-15']['stem'].map(function (data, index) {
+                                            return {x:data[0],y:data[1],z:data[2]};
+                                        })
+                                        newCordinates.forEach(function (summary_data, index) {
+                                            var region = 'stem';
+                                            CSDM_15[region] = CSDM_15[region] || [];
+                                            CSDM_15[region].push(summary_data);
+                                        })
+                                    }     
+                                    if(summary_data['CSDM-15']['frontal']){
+                                        let newCordinates = summary_data['CSDM-15']['frontal'].map(function (data, index) {
+                                            return {x:data[0],y:data[1],z:data[2]};
+                                        })
+                                        newCordinates.forEach(function (summary_data, index) {
+                                            var region = 'frontal';
+                                            CSDM_15[region] = CSDM_15[region] || [];
+                                            CSDM_15[region].push(summary_data);
+                                        })
+                                    }
+                                    if(summary_data['CSDM-15']['parietal']){
+                                        let newCordinates = summary_data['CSDM-15']['parietal'].map(function (data, index) {
+                                            return {x:data[0],y:data[1],z:data[2]};
+                                        })
+                                        newCordinates.forEach(function (summary_data, index) {
+                                            var region = 'parietal';
+                                            CSDM_15[region] = CSDM_15[region] || [];
+                                            CSDM_15[region].push(summary_data);
+                                        })
+                                    }
+                                    if(summary_data['CSDM-15']['msc']){
+                                        let newCordinates = summary_data['CSDM-15']['msc'].map(function (data, index) {
+                                            return {x:data[0],y:data[1],z:data[2]};
+                                        })
+                                        newCordinates.forEach(function (summary_data, index) {
+                                            var region = 'msc';
+                                            CSDM_15[region] = CSDM_15[region] || [];
+                                            CSDM_15[region].push(summary_data);
+                                        })
+                                    }
+                                    if(summary_data['CSDM-15']['cerebellum']){
+                                        let newCordinates = summary_data['CSDM-15']['cerebellum'].map(function (data, index) {
+                                            return {x:data[0],y:data[1],z:data[2]};
+                                        })
+                                        newCordinates.forEach(function (summary_data, index) {
+                                            var region = 'cerebellum';
+                                            CSDM_15[region] = CSDM_15[region] || [];
+                                            CSDM_15[region].push(summary_data);
+                                        })
+                                    }
+                                    if(summary_data['CSDM-15']['occipital']){
+                                        let newCordinates = summary_data['CSDM-15']['occipital'].map(function (data, index) {
+                                            return {x:data[0],y:data[1],z:data[2]};
+                                        })
+                                        newCordinates.forEach(function (summary_data, index) {
+                                            var region = 'occipital';
+                                            CSDM_15[region] = CSDM_15[region] || [];
+                                            CSDM_15[region].push(summary_data);
+                                        })
+                                    }
+                                    if(summary_data['CSDM-15']['temporal']){
+                                        let newCordinates = summary_data['CSDM-15']['temporal'].map(function (data, index) {
+                                            return {x:data[0],y:data[1],z:data[2]};
+                                        })
+                                        newCordinates.forEach(function (summary_data, index) {
+                                            var region = 'temporal';
+                                            CSDM_15[region] = CSDM_15[region] || [];
+                                            CSDM_15[region].push(summary_data);
+                                        })
+                                    }
+                                }
+
                                 /*
                                 * Commented mps 95 data ----------------
                                 */
@@ -7218,79 +7309,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                     }
                                 }
 
-                                //-- For CSDM-15--
-                                if (summary_data['CSDM-15']) {   
-                                    if(summary_data['CSDM-15']['stem']){
-                                        let newCordinates = summary_data['CSDM-15']['stem'].map(function (data, index) {
-                                            return {x:data[0],y:data[1],z:data[2]};
-                                        })
-                                        newCordinates.forEach(function (summary_data, index) {
-                                            var region = 'stem';
-                                            CSDM_15[region] = CSDM_15[region] || [];
-                                            CSDM_15[region].push(summary_data);
-                                        })
-                                    }     
-                                    if(summary_data['CSDM-15']['frontal']){
-                                        let newCordinates = summary_data['CSDM-15']['frontal'].map(function (data, index) {
-                                            return {x:data[0],y:data[1],z:data[2]};
-                                        })
-                                        newCordinates.forEach(function (summary_data, index) {
-                                            var region = 'frontal';
-                                            CSDM_15[region] = CSDM_15[region] || [];
-                                            CSDM_15[region].push(summary_data);
-                                        })
-                                    }
-                                    if(summary_data['CSDM-15']['parietal']){
-                                        let newCordinates = summary_data['CSDM-15']['parietal'].map(function (data, index) {
-                                            return {x:data[0],y:data[1],z:data[2]};
-                                        })
-                                        newCordinates.forEach(function (summary_data, index) {
-                                            var region = 'parietal';
-                                            CSDM_15[region] = CSDM_15[region] || [];
-                                            CSDM_15[region].push(summary_data);
-                                        })
-                                    }
-                                    if(summary_data['CSDM-15']['msc']){
-                                        let newCordinates = summary_data['CSDM-15']['msc'].map(function (data, index) {
-                                            return {x:data[0],y:data[1],z:data[2]};
-                                        })
-                                        newCordinates.forEach(function (summary_data, index) {
-                                            var region = 'msc';
-                                            CSDM_15[region] = CSDM_15[region] || [];
-                                            CSDM_15[region].push(summary_data);
-                                        })
-                                    }
-                                    if(summary_data['CSDM-15']['cerebellum']){
-                                        let newCordinates = summary_data['CSDM-15']['cerebellum'].map(function (data, index) {
-                                            return {x:data[0],y:data[1],z:data[2]};
-                                        })
-                                        newCordinates.forEach(function (summary_data, index) {
-                                            var region = 'cerebellum';
-                                            CSDM_15[region] = CSDM_15[region] || [];
-                                            CSDM_15[region].push(summary_data);
-                                        })
-                                    }
-                                    if(summary_data['CSDM-15']['occipital']){
-                                        let newCordinates = summary_data['CSDM-15']['occipital'].map(function (data, index) {
-                                            return {x:data[0],y:data[1],z:data[2]};
-                                        })
-                                        newCordinates.forEach(function (summary_data, index) {
-                                            var region = 'occipital';
-                                            CSDM_15[region] = CSDM_15[region] || [];
-                                            CSDM_15[region].push(summary_data);
-                                        })
-                                    }
-                                    if(summary_data['CSDM-15']['temporal']){
-                                        let newCordinates = summary_data['CSDM-15']['temporal'].map(function (data, index) {
-                                            return {x:data[0],y:data[1],z:data[2]};
-                                        })
-                                        newCordinates.forEach(function (summary_data, index) {
-                                            var region = 'temporal';
-                                            CSDM_15[region] = CSDM_15[region] || [];
-                                            CSDM_15[region].push(summary_data);
-                                        })
-                                    }
-                                }
+                               
                                 */
                             })
                         }
@@ -8479,47 +8498,319 @@ function hadleAuthanticat(user_name,password){
 * API FOR RETURN CLINICAL PDF REPORT -
 */
 
-app.patch(`${apiPrefix}api/player/report`, setConnectionTimeout('10m'), (req, res) => {
+function getDateInFormat(){
+    var today = new Date();
+    var dd = today.getDate();
+
+    var mm = today.getMonth()+1;
+    var yyyy = today.getFullYear();
+    if(dd<10)
+    {
+        dd='0'+dd;
+    }
+    if(mm<10)
+    {
+        mm='0'+mm;
+    }
+    return today = mm+'/'+dd+'/'+yyyy;
+}
+
+function getDate(timestamp){
+
+    const plus0 = num => `0${num.toString()}`.slice(-2)
+  
+    const d = new Date(timestamp)
+  
+    const year = d.getFullYear()
+    const monthTmp = d.getMonth() + 1
+    const month = plus0(monthTmp)
+    const date = plus0(d.getDate())
+    
+    return `${month}/${date}/${year}`
+  }
+
+app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeout('10m'), (req, res) => {
     console.log('req ---',req.body);
-    let students = [
-        {name: "Joy",
-         email: "joy@example.com",
-         city: "New York",
-         country: "USA"},
-        {name: "John",
-         email: "John@example.com",
-         city: "San Francisco",
-         country: "USA"},
-        {name: "Clark",
-         email: "Clark@example.com",
-         city: "Seattle",
-         country: "USA"},
-        {name: "Watson",
-         email: "Watson@example.com",
-         city: "Boston",
-         country: "USA"},
-        {name: "Tony",
-         email: "Tony@example.com",
-         city: "Los Angels",
-         country: "USA"
-     }];
-     ejs.renderFile(path.join(__dirname, './views/', "report-template.ejs"), {students: students}, (err, data) => {
-        if (err) {
-              res.send(err);
-        } else {
-            let options = {
-                "format": "Letter", 
-            
-            };
-            pdf.create(data, options).toFile("report.pdf", function (err, data) {
+    const { option, team, organization, player_id } = req.body;
+    hadleAuthanticat(req.body.user, req.body.password) 
+    .then(response =>{
+        // console.log('response===================\n',response)
+        if(response.message == 'failure'){
+            res.send({
+                message: "failure", 
+                error: response.error
+            })
+        }else{
+            var user_type = "standard";
+            login(req.body.user, response.password, user_type, (err, data) => {
                 if (err) {
-                    res.send(err);
-                } else {
-                    res.send("File created successfully");
+                    res.send({
+                        message: "failure",
+                        error: err
+                    })
+                }
+                else {
+                    if(option && option == 'summary_clinical'){
+                        getCumulativeAccelerationData(req.body)
+                        .then(data => {
+                            let acceleration_data_list = [];
+                            // let frontal_Lobe = [];
+                            let brainRegions = {};
+
+                            let CSDM_15 = {};
+
+                            let cnt = 1;
+
+                            if (data.length === 0){
+
+                                res.send({
+                                    message: "failure",
+                                    error: 'Summary data not found for this player.'
+                                })
+                            }
+                            let index_file = 0;
+                            let file_count = 0;
+                            data.forEach(function (acc_data, acc_index) {
+                                let accData = acc_data;
+                                let imageData = '';
+                                let outputFile = '';
+                                let jsonOutputFile = '';
+                                let simulationImage = '';
+                                getPlayerSimulationFile(acc_data)
+                                .then(image_data => {
+                                    imageData = image_data;
+                                    if (imageData.player_name && imageData.player_name != 'null') {
+                                        if(file_count < 1){
+                                            file_count++;
+                                            index_file = acc_index;
+                                            let file_path = imageData.player_name + '/simulation/summary.json';
+                                            return getFileFromS3(file_path, imageData.bucket_name);
+                                        }
+                                    }
+                                })
+                            .then(output_file => {
+                                    if (output_file) outputFile = output_file;
+                                    acceleration_data_list.push({
+                                        sensor_data: accData,   
+                                        status: imageData ? imageData.status : '',
+                                        computed_time : imageData ? imageData.computed_time : '',
+                                        log_stream_name: imageData.log_stream_name,
+                                        date_time: accData.player_id.split('$')[1]
+                                    })
+
+                                    if (acc_index === index_file && outputFile) {
+                                        outputFile = JSON.parse(outputFile.Body.toString('utf-8'));
+                                        if (outputFile.Insults) {
+                                            outputFile.Insults.forEach(function (summary_data, index) {
+                                    
+                                                //-- For CSDM-15--
+                                                if (summary_data['CSDM-15']) {   
+                                                    if(summary_data['CSDM-15']['stem']){
+                                                        let newCordinates = summary_data['CSDM-15']['stem'].map(function (data, index) {
+                                                            return {x:data[0],y:data[1],z:data[2]};
+                                                        })
+                                                        newCordinates.forEach(function (summary_data, index) {
+                                                            var region = 'stem';
+                                                            CSDM_15[region] = CSDM_15[region] || [];
+                                                            CSDM_15[region].push(summary_data);
+                                                        })
+                                                    }     
+                                                    if(summary_data['CSDM-15']['frontal']){
+                                                        let newCordinates = summary_data['CSDM-15']['frontal'].map(function (data, index) {
+                                                            return {x:data[0],y:data[1],z:data[2]};
+                                                        })
+                                                        newCordinates.forEach(function (summary_data, index) {
+                                                            var region = 'frontal';
+                                                            CSDM_15[region] = CSDM_15[region] || [];
+                                                            CSDM_15[region].push(summary_data);
+                                                        })
+                                                    }
+                                                    if(summary_data['CSDM-15']['parietal']){
+                                                        let newCordinates = summary_data['CSDM-15']['parietal'].map(function (data, index) {
+                                                            return {x:data[0],y:data[1],z:data[2]};
+                                                        })
+                                                        newCordinates.forEach(function (summary_data, index) {
+                                                            var region = 'parietal';
+                                                            CSDM_15[region] = CSDM_15[region] || [];
+                                                            CSDM_15[region].push(summary_data);
+                                                        })
+                                                    }
+                                                    if(summary_data['CSDM-15']['msc']){
+                                                        let newCordinates = summary_data['CSDM-15']['msc'].map(function (data, index) {
+                                                            return {x:data[0],y:data[1],z:data[2]};
+                                                        })
+                                                        newCordinates.forEach(function (summary_data, index) {
+                                                            var region = 'msc';
+                                                            CSDM_15[region] = CSDM_15[region] || [];
+                                                            CSDM_15[region].push(summary_data);
+                                                        })
+                                                    }
+                                                    if(summary_data['CSDM-15']['cerebellum']){
+                                                        let newCordinates = summary_data['CSDM-15']['cerebellum'].map(function (data, index) {
+                                                            return {x:data[0],y:data[1],z:data[2]};
+                                                        })
+                                                        newCordinates.forEach(function (summary_data, index) {
+                                                            var region = 'cerebellum';
+                                                            CSDM_15[region] = CSDM_15[region] || [];
+                                                            CSDM_15[region].push(summary_data);
+                                                        })
+                                                    }
+                                                    if(summary_data['CSDM-15']['occipital']){
+                                                        let newCordinates = summary_data['CSDM-15']['occipital'].map(function (data, index) {
+                                                            return {x:data[0],y:data[1],z:data[2]};
+                                                        })
+                                                        newCordinates.forEach(function (summary_data, index) {
+                                                            var region = 'occipital';
+                                                            CSDM_15[region] = CSDM_15[region] || [];
+                                                            CSDM_15[region].push(summary_data);
+                                                        })
+                                                    }
+                                                    if(summary_data['CSDM-15']['temporal']){
+                                                        let newCordinates = summary_data['CSDM-15']['temporal'].map(function (data, index) {
+                                                            return {x:data[0],y:data[1],z:data[2]};
+                                                        })
+                                                        newCordinates.forEach(function (summary_data, index) {
+                                                            var region = 'temporal';
+                                                            CSDM_15[region] = CSDM_15[region] || [];
+                                                            CSDM_15[region].push(summary_data);
+                                                        })
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }
+                                    brainRegions['CSDM-15'] = CSDM_15;
+                                
+                                    // console.log('brainRegions', JSON.stringify(brainRegions));
+
+                                    if (data.length === cnt) {
+                                        acceleration_data_list.sort(function(b, a) {
+                                            var keyA = a.date_time,
+                                            keyB = b.date_time;
+                                            if (keyA < keyB) return -1;
+                                            if (keyA > keyB) return 1;
+                                            return 0;
+                                        });
+
+                                        // Data for pdf ...
+                                        //Scale position of lobe point(Trangle) ...
+                                        let scdmTranglePostion = {
+                                            csdmFrontaltrangleScale :"0px",
+                                            csdmParietaltrangleScale :"0px",
+                                            csdmOccipitaltrangleScale : "0px",
+                                            csdmTemporaltrangleScale : "0px",
+                                            csdmCerebellumtrangleScale : "0px",
+                                            csdmMotortrangleScale : "0px",
+                                        }
+
+                                        let ScaleWidth = 502;
+                                        let jsonData = brainRegions;
+                                        if(jsonData['CSDM-15']){
+                                            var num1 = jsonData['CSDM-15'].cerebellum ? jsonData['CSDM-15'].cerebellum.value : "0.0000";
+                                            var num2 = jsonData['CSDM-15'].frontal ? jsonData['CSDM-15'].frontal.value : "0.0000";
+                                            var num3 = jsonData['CSDM-15'].occipital ? jsonData['CSDM-15'].occipital.value : "0.0000";
+                                            var num4 = jsonData['CSDM-15'].parietal ? jsonData['CSDM-15'].parietal.value : "0.0000";
+                                            var num5 = jsonData['CSDM-15'].temporal ? jsonData['CSDM-15'].temporal.value : "0.0000";
+                                            var num6 = jsonData['CSDM-15'].msc ? jsonData['CSDM-15'].msc.value : "0.0000";
+                                            if(num1 !== undefined){
+                                                // csdm = jsonData['CSDM-15'].value.toFixed(2);
+                                                let csdm_val1 = num1;
+                                                let csdm_val2 = num2;
+                                                let csdm_val3 = num3;
+                                                let csdm_val4 = num4;
+                                                let csdm_val5 = num5;
+                                                let csdm_val6 = num6;
+                                                var left1 = csdm_val1 * ScaleWidth / 100;
+                                                var left2 = csdm_val2 * ScaleWidth / 100;
+                                                var left3 = csdm_val3 * ScaleWidth / 100;
+                                                var left4 = csdm_val4 * ScaleWidth / 100;
+                                                var left5 = csdm_val5 * ScaleWidth / 100;
+                                                var left6 = csdm_val6 * ScaleWidth / 100;
+                                                //**Round up the value....
+                                                scdmTranglePostion.csdmCerebellumtrangleScale = ''+left1.toFixed(0)+'px';
+                                                scdmTranglePostion.csdmFrontaltrangleScale = ''+left2.toFixed(0)+'px';
+                                                scdmTranglePostion.csdmOccipitaltrangleScale = ''+left3.toFixed(0)+'px';
+                                                scdmTranglePostion.csdmParietaltrangleScale = ''+left4.toFixed(0)+'px';
+                                                scdmTranglePostion.csdmTemporaltrangleScale = ''+left5.toFixed(0)+'px';
+                                                scdmTranglePostion.csdmMotortrangleScale = ''+left6.toFixed(0)+'px';
+                                                // scdmTranglePostion.csdmTrangle = this.getTrangle(csdm);
+                                            }
+                                        }
+
+                                        let reportData = {
+                                            reportDate: getDateInFormat(),
+                                            player: acceleration_data_list[0].sensor_data.player,
+                                            impact_date: acceleration_data_list[0].sensor_data['impact-date'] ? getDate(acceleration_data_list[0].sensor_data['impact-date'].replace(/:|-/g, "/")) : acceleration_data_list[0].sensor_data['date'] ? getDate(acceleration_data_list[0].sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
+                                            scdmTranglePostion: scdmTranglePostion
+                                        }
+
+                                        // Modyfying pdf template using ejs ...
+                                        ejs.renderFile(path.join(__dirname, './views/', "report-template.ejs"), reportData, (err, data) => {
+                                            if (err) {
+                                                res.send(err);
+                                            } else {
+                                                let options = {
+                                                    "format": "Letter",
+                                                };
+                                                pdf.create(data, options).toBuffer(function(err, buffer){
+                                                    if (err) {
+                                                        res.send(err);
+                                                    } else {
+                                                    
+                                                        var jsfile = buffer.toString('base64');
+                                                        console.log('converted to base64');
+                                                        res.writeHead(200, {
+                                                            'Content-Type': 'application/pdf',
+                                                            'Content-Disposition': 'attachment; filename="filename.pdf"'
+                                                        });
+                                                        // res.header('content-type', 'application/pdf');
+                                                        const download = Buffer.from(jsfile.toString('utf-8'), 'base64');
+
+                                                        res.end(download);
+                                                        // res.send({
+                                                        //     message: "success",
+                                                        //     data: acceleration_data_list,
+                                                        //     // frontal_Lobe: frontal_Lobe,
+                                                        //     brainRegions: brainRegions
+                                                        // });
+                                                    }
+                                                });
+                                            }
+                                        })
+                                        
+                                    }
+
+                                    cnt++;
+                                })
+                                .catch(err => {
+                                    console.log('err',err)
+                                    let brainRegions = {};
+                                    res.send({
+                                        message: "failure 1",
+                                        error: err
+                                    })
+                                })
+                            })
+                        
+                        })
+                        .catch(err => {
+                            
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        })
+                    }
                 }
             });
         }
-     })
+    }).catch(err=>{
+        console.log('err==============\n',err)
+        res.send({
+            message: "failure",
+            error: 'Internal server error.'
+        })
+    })
     
 })
 
