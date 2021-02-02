@@ -71,7 +71,7 @@ io.on('connection', socket => {
 
 })
 
-
+ 
 
 // ================================================
 //            SERVER CONFIGURATION
@@ -6599,8 +6599,8 @@ app.post(`${apiPrefix}getCompleteSimulationList`, (req,res) =>{
                             message: "success",
                             data: failedList
                         })
-                    } 
-                })
+                    }  
+                }) 
                 .catch(err => {
                     console.log('err',err)
                     res.send({
@@ -9572,8 +9572,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         S_MAX_S_POSITIONS: S_MAX_S_POSITIONS,
                         S_MIN_S_POSITIONS: S_MIN_S_POSITIONS
                     })
-                }
-
+                }  
                 let players = [];
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
@@ -11103,7 +11102,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
                             var newPlayerId = player_id+'-'+sensor;
 							playerids.push(newPlayerId);
                             if(newPlayerId){
-                                console.log('player_id',newPlayerId)
+                               // console.log('player_id',newPlayerId)
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
                                     var player_status = userData[0].player_status
@@ -11118,7 +11117,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
                                     })
 									getPlayerSummariesData(newPlayerId)
                                     .then(outputFile => {
-												console.log("dbplayer",outputFile);
+												//console.log("dbplayer",outputFile);
                                         if (outputFile && player_status == 'approved') {										
                                             if (outputFile) {
                                                 outputFile.forEach(function (summary_data, index) {
