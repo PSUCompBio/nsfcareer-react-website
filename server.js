@@ -11081,7 +11081,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
                             var newPlayerId = player_id+'-'+sensor;
 							playerids.push(newPlayerId);
                             if(newPlayerId){
-                                console.log('player_id',newPlayerId)
+                               // console.log('player_id',newPlayerId)
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
                                     var player_status = userData[0].player_status
@@ -11096,7 +11096,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
                                     })
 									getPlayerSummariesData(newPlayerId)
                                     .then(outputFile => {
-												console.log("dbplayer",outputFile);
+												//console.log("dbplayer",outputFile);
                                         if (outputFile && player_status == 'approved') {										
                                             if (outputFile) {
                                                 outputFile.forEach(function (summary_data, index) {
