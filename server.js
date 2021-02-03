@@ -4391,108 +4391,161 @@ app.post(`${apiPrefix}loadMorePlayerList`, (req, res) => {
     getPlayerList().then(players => {
         var player_list = [];
         let requested_player_list = [];
-        players.forEach(function (u) {
-            console.log('------------------u ', u)
-            if (u.player_list) {
-                if (req.body.brand && u.sensor === req.body.brand) {
-                    player_list = player_list.concat(u.player_list);
-                }
-                if (!req.body.brand) {
-                    player_list = player_list.concat(u.player_list);
-                }
-                
-            }
-            console.log('0------------\n',u.player_list, u.requested_player_list)
-            if (u.requested_player_list) {
-                requested_player_list = requested_player_list.concat(u.requested_player_list);
-            }
-        }) 
-        // for(var i =0; i < players.length; i++){
-        //     if(players[i].player_list){
-        //         var list = players[i].player_list;
-        //         for(var j = 0;j < list.length; j++){
-        //             player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+        // players.forEach(function (u) {
+        //     console.log('------------------u ', u)
+        //     if (u.player_list) {
+        //         if (req.body.brand && u.sensor === req.body.brand) {
+        //             player_list = player_list.concat(u.player_list);
         //         }
+        //         if (!req.body.brand) {
+        //             player_list = player_list.concat(u.player_list);
+        //         }
+                
         //     }
-        // }
+        //     console.log('0------------\n',u.player_list, u.requested_player_list)
+        //     if (u.requested_player_list && u.requested_player_list != undefined) {
+        //         requested_player_list = requested_player_list.concat(u.requested_player_list);
+        //     }
+        // }) 
+        for(var i =0; i < players.length; i++){
+            if(players[i].player_list){
+                var list = players[i].player_list;
+                for(var j = 0;j < list.length; j++){
+                    player_list.push({player_id: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                }
+            }
+
+            if(players[i].requested_player_list != undefined && players[i].requested_player_list){
+                var list = players[i].requested_player_list;
+                for(var j = 0;j < list.length; j++){
+                    requested_player_list.push({user_name: list[j],team:players[i].team_name,sensor:  players[i].sensor,organization: players[i].organization})
+                }
+            }
+        }
         if (player_list.length == 0) {
-            res.send({
-                message: "success",
-                data: []
-            })
+            let requested_players = [];
+            if (requested_player_list && requested_player_list.length > 0) {
+                let p_cnt = 0;
+                requested_player_list.forEach(function (p_record) {
+                    console.log('p_record 11',p_record)
+                    getUserDetails(p_record)
+                        .then (user_detail => {
+                            p_cnt++; 
+                            requested_players.push(user_detail.Item);
+
+                            if (p_cnt === requested_player_list.length) {
+                                res.send({
+                                    message: "success",
+                                    data: [],
+                                    requested_players: requested_players
+                                })
+                            }
+                        })
+                })         
+            } else {
+                res.send({
+                    message: "success",
+                    data: [],
+                    requested_players: []
+                })
+            }
         }
         else {
+
             var counter = 0;
-            var indx = 0;
             var p_data = [];
-            var player_listLn = player_list.length;
+            var player_listLen = player_list.length;
             player_list.forEach(function (player, index) {
-                let p = player;
-                let playerData = '';
-                
-                if(player.player_id && player.player_id != 'undefined'){
+                console.log('player 112',player)
+                if(player && player != 'undefined'){
+                    console.log('player_list', player);
+                    let p = player;
+                    let i = index;
+                    let playerData = '';
                     getTeamDataWithPlayerRecords_3(player.player_id, player.team, player.sensor, player.organization)
                     .then(player_data => {
-
                         playerData = player_data;
                         counter++;
-                        p_data.push({
-                            player_name: p,
-                            //vsimulation_image: image ? image : '',
-                            simulation_data: playerData,
-                            date_time: playerData[0] ? playerData[0].player_id.split('$')[1]: '',
-                        });
-                       
-                         if (counter == player_listLn) {
+                        if(playerData[0]){
+                            p_data.push({
+                                date_time: playerData[0].player_id.split('$')[1],
+                                simulation_data: playerData,
+                            });
+                        }
+                        // console.log('p_data length', player_listLen, counter)
+                        if (counter >= player_listLen) {
                             p_data.sort(function (b, a) {
                                 var keyA = a.date_time,
                                     keyB = b.date_time;
                                 if (keyA < keyB) return -1;
                                 if (keyA > keyB) return 1;
                                 return 0;
-                            }); 
+                            });
 
                             let k = 0;
-                            var p_datalen = p_data.length;
                             p_data.forEach(function (record, index) {
-                                if(record.simulation_data[0]){
-                                    getPlayerSimulationStatus(record.simulation_data[0].image_id)
-                                        .then(simulation => {
-                                            // console.log('simulation',simulation.status)
-                                            k++;
-                                            p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
-                                            p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-                                            
-                                            if (k == p_datalen) {
-                                                res.send({
-                                                    message: "success",
-                                                    data: p_data
-                                                })
-                                            }
-                                        })
-                                        .catch(err => {
-                                            console.log(err);
-                                        })
-                                }else{
-                                    p_datalen--;
-                                }
+                                getPlayerSimulationFile(record.simulation_data[0])
+                                    .then(simulation => {
+                                        p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                        p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+
+                                        getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
+                                            .then (u_detail => {
+                                               
+                                                k++;
+                                                // console.log('user details ', u_detail[0]['first_name'])
+                                                p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
+                                                if (k == p_data.length) {
+                                                    let requested_players = []
+                                                    if (requested_player_list.length > 0) {
+                                                        let p_cnt = 0;
+                                                        requested_player_list.forEach(function (p_record) {
+                                                            console.log('p_record--------------------\n',p_record)
+                                                            getUserDetails(p_record.user_name)
+                                                                .then (user_detail => {
+
+                                                                    p_cnt++; 
+                                                                    requested_players.push(user_detail.Item);
+
+                                                                    if (p_cnt === requested_player_list.length) {
+                                                                        res.send({
+                                                                            message: "success",
+                                                                            data: p_data,
+                                                                            requested_players: requested_players
+                                                                        })
+                                                                    }
+                                                                }).catch(err=>{
+                                                                    console.log('user_detail error ----------------------\n', err )
+                                                                }) 
+                                                            }) 
+                                                    } else {
+                                                        res.send({
+                                                            message: "success",
+                                                            data: p_data,
+                                                            requested_players: requested_players
+                                                        })
+                                                    }
+                                                }
+
+                                            })
+                                    })
                             })
                         }
-                        
-                        indx++;
                     })
                     .catch(err => {
-                        console.log('err =============\n',err)
+                        console.log('err ------------------\n',err)
                         counter++;
-                        if (counter == player_listLn) {
+                        if (counter == player_list.length) {
                             res.send({
                                 message: "failure",
-                                data: p_data
+                                data: p_data,
+                                requested_players: [],
+                                error:err
                             })
                         }
                     })
-                } else {
-                    counter++;
+                }else{
+                    player_listLen--;
                 }
             })
         }
@@ -8532,7 +8585,7 @@ function getDate(timestamp){
 
 app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeout('10m'), (req, res) => {
     console.log('req ---',req.body);
-    const { option, team, organization, player_id } = req.body;
+    const { option, team, organization, player_id,csdm15,mps } = req.body;
     hadleAuthanticat(req.body.user, req.body.password) 
     .then(response =>{
         // console.log('response===================\n',response)
@@ -8559,6 +8612,8 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                             let brainRegions = {};
 
                             let CSDM_15 = {};
+                            let principal_max_strain = {};
+
 
                             let cnt = 1;
 
@@ -8603,7 +8658,14 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                         outputFile = JSON.parse(outputFile.Body.toString('utf-8'));
                                         if (outputFile.Insults) {
                                             outputFile.Insults.forEach(function (summary_data, index) {
-                                    
+                                                // -- mps --
+                                                if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
+                                                    if (summary_data['principal-max-strain']['brain-region']) {
+                                                        region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
+                                                        principal_max_strain[region] = principal_max_strain[region] || [];
+                                                    }
+                                                }
+
                                                 //-- For CSDM-15--
                                                 if (summary_data['CSDM-15']) {   
                                                     if(summary_data['CSDM-15']['stem']){
@@ -8681,6 +8743,8 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                         }
                                     }
                                     brainRegions['CSDM-15'] = CSDM_15;
+                                    brainRegions['MPS-95'] = principal_max_strain;
+
                                 
                                     // console.log('brainRegions', JSON.stringify(brainRegions));
 
@@ -8703,6 +8767,15 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                             csdmCerebellumtrangleScale : "0px",
                                             csdmMotortrangleScale : "0px",
                                         }
+                                        let mpsTranglePostion = {
+                                             mpsFrontaltrangleScale : "0px",
+                                             mpsParietaltrangleScale : "0px",
+                                             mpsOccipitaltrangleScale : "0px",
+                                             mpsTemporaltrangleScale : "0px",
+                                             mpsCerebellumtrangleScale : "0px",
+                                             mpsMotortrangleScale : "0px",
+                                        }
+
 
                                         let ScaleWidth = 502;
                                         let jsonData = brainRegions;
@@ -8738,11 +8811,47 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                             }
                                         }
 
+                                        if(jsonData['MPS-95']){               
+                                            //eslint-disable-next-line
+                                                var num1 = jsonData['MPS-95'].cerebellum ? jsonData['MPS-95'].cerebellum.value : "0.0000";
+                                                var num2 = jsonData['MPS-95'].frontal ? jsonData['MPS-95'].frontal.value : "0.0000";
+                                                var num3 = jsonData['MPS-95'].occipital ? jsonData['MPS-95'].occipital.value : "0.0000";
+                                                var num4 = jsonData['MPS-95'].parietal ? jsonData['MPS-95'].parietal.value : "0.0000";
+                                                var num5 = jsonData['MPS-95'].temporal ? jsonData['MPS-95'].temporal.value : "0.0000";
+                                                var num6 = jsonData['MPS-95'].msc ? jsonData['MPS-95'].msc.value : "0.0000";
+                                                if(num1 !== undefined){
+                                                    let mps_val1 = num1;
+                                                    let mps_val2 = num2;
+                                                    let mps_val3 = num3;
+                                                    let mps_val4 = num4;
+                                                    let mps_val5 = num5;
+                                                    let mps_val6 = num6;
+                                                    var left1 = mps_val1 * ScaleWidth / 100;
+                                                    var left2 = mps_val2 * ScaleWidth / 100;
+                                                    var left3 = mps_val3 * ScaleWidth / 100;
+                                                    var left4 = mps_val4 * ScaleWidth / 100;
+                                                    var left5 = mps_val5 * ScaleWidth / 100;
+                                                    var left6 = mps_val6 * ScaleWidth / 100;
+                                                    //**Round up the value....
+                                                    mpsTranglePostion.mpsCerebellumtrangleScale = ''+left1.toFixed(0)+'px';
+                                                    mpsTranglePostion.mpsFrontaltrangleScale = ''+left2.toFixed(0)+'px';
+                                                    mpsTranglePostion.mpsOccipitaltrangleScale = ''+left3.toFixed(0)+'px';
+                                                    mpsTranglePostion.mpsParietaltrangleScale = ''+left4.toFixed(0)+'px';
+                                                    mpsTranglePostion.mpsTemporaltrangleScale = ''+left5.toFixed(0)+'px';
+                                                    mpsTranglePostion.mpsMotortrangleScale = ''+left6.toFixed(0)+'px';
+                                                    // mpsTranglePostion.mpsTrangle = this.getTrangle(mps);
+                                                }
+                                            }
+
                                         let reportData = {
                                             reportDate: getDateInFormat(),
+                                            iscsdm: csdm15 == 'true' ?  '': 'display: none',
+                                            iscmps: mps == 'true'   ? csdm15 != 'true' ? 'display: none' : '': 'display: none',
+                                            iscmps1:  csdm15 != 'true' ?  '': 'display: none',
                                             player: acceleration_data_list[0].sensor_data.player,
                                             impact_date: acceleration_data_list[0].sensor_data['impact-date'] ? getDate(acceleration_data_list[0].sensor_data['impact-date'].replace(/:|-/g, "/")) : acceleration_data_list[0].sensor_data['date'] ? getDate(acceleration_data_list[0].sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
-                                            scdmTranglePostion: scdmTranglePostion
+                                            scdmTranglePostion: scdmTranglePostion,
+                                            mpsTranglePostion: mpsTranglePostion
                                         }
 
                                         // Modyfying pdf template using ejs ...
@@ -8757,23 +8866,14 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                                     if (err) {
                                                         res.send(err);
                                                     } else {
-                                                    
                                                         var jsfile = buffer.toString('base64');
-                                                        console.log('converted to base64');
                                                         res.writeHead(200, {
                                                             'Content-Type': 'application/pdf',
                                                             'Content-Disposition': 'attachment; filename="filename.pdf"'
                                                         });
                                                         // res.header('content-type', 'application/pdf');
                                                         const download = Buffer.from(jsfile.toString('utf-8'), 'base64');
-
                                                         res.end(download);
-                                                        // res.send({
-                                                        //     message: "success",
-                                                        //     data: acceleration_data_list,
-                                                        //     // frontal_Lobe: frontal_Lobe,
-                                                        //     brainRegions: brainRegions
-                                                        // });
                                                     }
                                                 });
                                             }
@@ -8786,7 +8886,7 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                 .catch(err => {
                                     console.log('err',err)
                                     let brainRegions = {};
-                                    res.send({
+                                    res.end({
                                         message: "failure 1",
                                         error: err
                                     })
@@ -8796,7 +8896,7 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                         })
                         .catch(err => {
                             
-                            res.send({
+                            res.end({
                                 message: "failure",
                                 error: err
                             })
@@ -9536,6 +9636,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let CSDM_15 = {};
                 let MPS_95_DATA = [];
                 let MAX_ANGULAR_EXLARATION = [];
+                
                 let MPS_95_VEL_DATA = [];
                 let MAX_ANGULAR_VEL_EXLARATION = [];
                 let PLAYERS_POSITIONS = [];
@@ -9610,7 +9711,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                 outputFile = JSON.parse(output_file.Body.toString('utf-8'));
                                                 if (outputFile.Insults) {
                                                     outputFile.Insults.forEach(function (summary_data, index) {
-                                                        pushdata(summary_data);
+                                                        pushdata(summary_data, player_id);
                                                         pushPostionData(summary_data,acc_data.player['position'], acc_data.player['sport']);
 
                                                     })
@@ -9657,12 +9758,12 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                      }
                 }
 
-                const pushdata = (summary_data)=>{
+                const pushdata = (summary_data, player_id)=>{
                     if (summary_data['MPS-95']) {
                                                    
                         if(summary_data['MPS-95']['value'] && summary_data['max-angular-acc-rads2']){
                             MPS_95_DATA.push(summary_data['MPS-95']['value']);
-                            MAX_ANGULAR_EXLARATION.push(summary_data['max-angular-acc-rads2']);
+                            MAX_ANGULAR_EXLARATION.push({player_id: player_id, val: summary_data['max-angular-acc-rads2']});
                         }
                         if(summary_data['MPS-95']['value'] && summary_data['max-angular-vel-rads']){
                             MPS_95_VEL_DATA.push(summary_data['MPS-95']['value']);

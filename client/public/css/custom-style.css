@@ -1693,4 +1693,5 @@ button.btn.button-yes {
   background: #000000c7;
   color: white;
   border-radius: 10px;
+  border-top-left-radius: inherit;
 }
