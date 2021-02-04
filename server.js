@@ -8142,34 +8142,32 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
             let player_list = [];
             let requested_player_list = [];
             data.forEach(function (u) {
-                console.log('------------------u ', u)
+               // console.log('------------------u ', u)
                 if (u.player_list) {
                     if (req.body.brand && u.sensor === req.body.brand) {
                         player_list = player_list.concat(u.player_list);
                     }
                     if (!req.body.brand) {
                         player_list = player_list.concat(u.player_list);
-                    }
-                    
+                    }                    
                 }
-                console.log('0------------\n',u.player_list, u.requested_player_list)
+                //console.log('0------------\n',u.player_list, u.requested_player_list)
                 if (u.requested_player_list) {
                     requested_player_list = requested_player_list.concat(u.requested_player_list);
                 }
             }) 
-            console.log('requested_player_list', requested_player_list);
+           // console.log('requested_player_list', requested_player_list);
             // let player_list = data[0].player_list ? data[0].player_list : [];
             if (player_list.length == 0) {
                 let requested_players = []
                 if (requested_player_list && requested_player_list.length > 0) {
                     let p_cnt = 0;
                     requested_player_list.forEach(function (p_record) {
-                        console.log('p_record 11',p_record)
+                     //   console.log('p_record 11',p_record)
                         getUserDetails(p_record)
                             .then (user_detail => {
                                 p_cnt++; 
                                 requested_players.push(user_detail.Item);
-
                                 if (p_cnt === requested_player_list.length) {
                                     res.send({
                                         message: "success",
@@ -8192,9 +8190,9 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                 var p_data = [];
                 var player_listLen = player_list.length;
                 player_list.forEach(function (player, index) {
-                    console.log('player 112',player)
+                    //console.log('player 112',player)
                     if(player && player != 'undefined'){
-                        console.log('player_list', player);
+                       // console.log('player_list', player);
                         let p = player;
                         let i = index;
                         let playerData = '';
@@ -8208,7 +8206,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                     simulation_data: playerData,
                                 });
                             }
-                            console.log('p_data length', player_listLen, counter)
+                           // console.log('p_data length', player_listLen, counter)
                             if (counter >= player_listLen) {
                                 p_data.sort(function (b, a) {
                                     var keyA = a.date_time,
@@ -8224,10 +8222,8 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                         .then(simulation => {
                                             p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
                                             p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-
                                             getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
-                                                .then (u_detail => {
-                                                   
+                                                .then (u_detail => {                                                   
                                                     k++;
                                                     // console.log('user details ', u_detail[0]['first_name'])
                                                     p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
@@ -8236,13 +8232,11 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                                         if (requested_player_list.length > 0) {
                                                             let p_cnt = 0;
                                                             requested_player_list.forEach(function (p_record) {
-                                                                console.log('p_record--------------------\n',p_record)
-                                                                getUserDetails(p_record)
+                                                               // console.log('p_record--------------------\n',p_record)
+                                                                getUserDetails(p_record) 
                                                                     .then (user_detail => {
-
                                                                         p_cnt++; 
-                                                                        requested_players.push(user_detail.Item);
-    
+                                                                        requested_players.push(user_detail.Item);    
                                                                         if (p_cnt === requested_player_list.length) {
                                                                             res.send({
                                                                                 message: "success",
@@ -8251,7 +8245,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                                                             })
                                                                         }
                                                                     })
-                                                            })         
+                                                            })           
                                                         } else {
                                                             res.send({
                                                                 message: "success",
@@ -8267,7 +8261,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                             }
                         })
                         .catch(err => {
-                            console.log('err ------------------\n',err)
+                          //  console.log('err ------------------\n',err)
                             counter++;
                             if (counter == player_list.length) {
                                 res.send({
@@ -9701,7 +9695,8 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
                         let player_id = acc_data.player_id.split('$')[0];
-                        console.log('acc_data',acc_data.player);
+                      //  console.log('acc_data',acc_data.player);
+						//PLAYERS_POSITIONS = [];
                        // PLAYERS_POSITIONS.push(acc_data.player['player_position']);// Adding player positions
                         if (!players.includes(player_id)) {
                             // console.log('player_id',player_id)
@@ -9715,7 +9710,10 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                     var player_status = userData[0]  ? userData[0].player_status : '';
                                     // var player_status = userData[0].player_status
                                     if(userData[0]){
-                                        PLAYERS_POSITIONS.push(userData[0].player_position);
+										if(userData[0].player_position){
+											console.log("player_position",userData[0].player_position)
+											PLAYERS_POSITIONS.push(userData[0].player_position);
+										}
                                         PLAYERS_SPORT.push(userData[0].sport);
                                     }
 								
@@ -9724,7 +9722,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                         getPlayerSimulationStatus(acc_data.image_id)
                                         .then(imageData => {
                                             if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                                console.log(imageData.player_name + '/simulation/summary.json');
+                                               // console.log(imageData.player_name + '/simulation/summary.json');
                                                 let file_path = imageData.player_name + '/simulation/summary.json';
                                                 return getFileFromS3(file_path, imageData.bucket_name);
                                             }
@@ -9740,11 +9738,11 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                     })
                                                 }
                                             }
-                                            console.log('return')
+                                            //console.log('return')
                                             resolve(null);
                                         })
                                         .catch(err => {
-                                            console.log('err - 1',err)
+                                           // console.log('err - 1',err)
                                             reject(err);
                                         })
                                     }else{

@@ -49,6 +49,7 @@ import sendEmailVerifation from '../../components/Authentication/pages/sendEmail
 import TeamStatsDemo from '../../components/TeamStatsDemo';
 import FailedSimulationList from '../../components/TeamPageComponent/FailedSimulationList';
 import CompleteSimulationList from '../../components/TeamPageComponent/CompleteSimulationList';
+import ToolKit from '../../components/ToolKit';
 
 
 
@@ -428,6 +429,11 @@ class Routing extends React.Component {
             exact
             path="/completeSimulation/:org/:team/:brand?"
             render={(props) => <CompleteSimulationList {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+          exact
+          path="/toolkit"
+          render={(props) => <ToolKit {...props} isDarkModeSet={this.checkDarkMode} />}
         />
       </React.Fragment>
     );

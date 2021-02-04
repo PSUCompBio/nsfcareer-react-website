@@ -19,7 +19,8 @@ function getUserDetails(user_name, cb) {
             Key: {
                 user_cognito_id: user_name,
             },
-        };
+            ProjectionExpression: "last_name,first_name,team,sensor,organization,sensor_id_number,player_position",
+			};
         docClient.get(db_table, function (err, data) {
             if (err) {
                 reject(err);
