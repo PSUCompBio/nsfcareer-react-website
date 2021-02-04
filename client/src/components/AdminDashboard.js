@@ -1511,7 +1511,7 @@ class AdminDashboard extends React.Component {
                                                                 return false;
                                                             }
                                                         }, this)}
-
+									
                                                     </tbody>
                                                 </table>
                                                 <div style={{'text-align': 'center', 'padding': '14px'}}>
