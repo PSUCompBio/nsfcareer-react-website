@@ -39,6 +39,8 @@ import {
 import { Button } from 'react-bootstrap';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
+import SimulationCount from './PlayerDetails/SimulationCount';
+
 class AdminDashboard extends React.Component {
     constructor() {
         super();
@@ -604,12 +606,12 @@ class AdminDashboard extends React.Component {
 
                                     }));
                                 }
-                                return getOrganizationList();
-                            }).then(organizations => {
-                                this.setState(prevState => ({
-                                    OrganizationList: organizations.data.data,
-                                    totalOrganization: organizations.data.data.length,
-                                }));
+                            //     return getOrganizationList();
+                            // }).then(organizations => {
+                            //     this.setState(prevState => ({
+                            //         OrganizationList: organizations.data.data,
+                            //         totalOrganization: organizations.data.data.length,
+                            //     }));
                             })
                             .catch(err => {
                                 alert(err);
@@ -755,11 +757,12 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
+                            <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} />
+                                {/*noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                     :
                                     <i className="fa fa-spinner fa-spin" style={{ "font-size": "34px", "padding": '10px', 'color': '#0f81dc' }}></i>
-                                }
+                */}
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>

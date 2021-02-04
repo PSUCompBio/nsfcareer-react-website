@@ -7,6 +7,8 @@ import { Redirect, withRouter, Link } from 'react-router-dom';
 import Spinner from './Spinner/Spinner';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
+import SimulationCount from './PlayerDetails/SimulationCount';
+import SimulationCountForList from './PlayerDetails/SimulationCountForList';
 
 import {
     isAuthenticated,
@@ -412,13 +414,13 @@ class OrganizationAdmin extends React.Component {
                                         .catch(err => {
                                             alert(err);
                                         })
-                                        getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
-                                        .then(orgList =>{
-                                            this.setState(prevState => ({
-                                                totalOrganization: orgList.data.data.length,
-                                                sensorOrgList: orgList.data.data
-                                            }));
-                                        })
+                                        // getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+                                        // .then(orgList =>{
+                                        //     this.setState(prevState => ({
+                                        //         totalOrganization: orgList.data.data.length,
+                                        //         sensorOrgList: orgList.data.data
+                                        //     }));
+                                        // })
                                     }
                                 })
                                 .catch((error) => {
@@ -496,11 +498,12 @@ class OrganizationAdmin extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
+                                <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} />
+                                {/*noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                  : 
                                  <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
-                                }
+                */}
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>

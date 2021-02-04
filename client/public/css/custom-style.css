@@ -1694,4 +1694,6 @@ button.btn.button-yes {
   color: white;
   border-radius: 10px;
   border-top-left-radius: inherit;
+  font-size: 15px;
+  letter-spacing: 1px;
 }

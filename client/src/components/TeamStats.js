@@ -188,6 +188,15 @@ class TeamStats extends React.Component {
         this.setState({ brainPosition: e.target.value })
     }
 
+    handleHover =(e)=>{
+        // console.log(e.target);
+        var tooltipEl = document.getElementById('chartjs-tooltip');
+        if (tooltipEl) {  
+            tooltipEl.style.opacity = 0;
+            return;
+        }
+    }
+
     render() {
         console.log('prosps',this.props)
         //imported Modules ...
@@ -367,6 +376,7 @@ class TeamStats extends React.Component {
                 }]
             }
         };
+        
 
         //  Brain position chart data closed ...
 
@@ -500,14 +510,14 @@ class TeamStats extends React.Component {
                                 </div>
                             </Card >
                         </Col>
-                        <Row className="no-padding" style={{ 'display': 'flex' }}>
+                        <Row className="no-padding" style={{ 'display': 'flex' }} onMouseOver ={this.handleHover}>
                             <Col md={6} className="team-state-cart-left" style={{ marginTop: '50px', 'display': 'flex' }}>
                                 <Card style={{ 'border': '1px solid rgb(10, 84, 143)', 'width': '100%' }} >
                                     {/*!-- MPS_95 chart start --*/}
                                     <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
                                         <div className="col-md-12 no-padding">
                                             <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
-                                            {< TeamStateScatterChartVolacity MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_VEL_EXLARATION} MPS_95_DATA={this.state.MPS_95_VEL_DATA} />}
+                                            {< TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_VEL_EXLARATION} MPS_95_DATA={this.state.MPS_95_VEL_DATA} teamData={this.state.teamData}/>}
                                             <p
                                                 style={{
                                                     'text-align': 'center',
@@ -523,7 +533,7 @@ class TeamStats extends React.Component {
                                     {/*!-- MPS_95 chart end --*/}
                                 </Card>
                             </Col>
-                            <Col md={6} className="team-state-cart-right" style={{ marginTop: '50px' }}>
+                            <Col md={6} className="team-state-cart-right" style={{ marginTop: '50px' }} >
                                 <Card style={{ 'border': '1px solid rgb(10, 84, 143)', 'height': '100%' }}>
                                     {/*!-- MPS_95 chart start --*/}
                                     <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>

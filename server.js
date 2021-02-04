@@ -8885,9 +8885,8 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                 })
                                 .catch(err => {
                                     console.log('err',err)
-                                    let brainRegions = {};
                                     res.end({
-                                        message: "failure 1",
+                                        message: "failure",
                                         error: err
                                     })
                                 })
@@ -9482,6 +9481,30 @@ app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req,res) =>{
                 })
             }
         })
+});
+
+
+app.post(`${apiPrefix}getAllOrganizationsSimultionCount`, (req,res) =>{
+    console.log('count ',req.body)
+    
+    getBrandOrganizationData2(req.body)
+    .then(simulation_records => {
+        
+        var count = Number(simulation_records.length).toString();
+        res.send({
+            message: "success",
+            count: count
+        })
+    })
+    .catch(err => {
+       
+        res.send({
+            message: "failure",
+            error: err
+        })
+      
+    })
+    
 })
 
 app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req,res) =>{
@@ -9767,7 +9790,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         }
                         if(summary_data['MPS-95']['value'] && summary_data['max-angular-vel-rads']){
                             MPS_95_VEL_DATA.push(summary_data['MPS-95']['value']);
-                            MAX_ANGULAR_VEL_EXLARATION.push(summary_data['max-angular-vel-rads']);
+                            MAX_ANGULAR_VEL_EXLARATION.push({player_id: player_id,val:summary_data['max-angular-vel-rads']});
                         }
                     }
                 }

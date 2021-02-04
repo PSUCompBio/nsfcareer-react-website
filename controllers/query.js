@@ -3111,15 +3111,28 @@ function getTeamDataWithPlayerRecords_2(obj) {
 
 function getBrandOrganizationData2(obj) {
     return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "sensor_details",
-            FilterExpression: "sensor = :sensor and organization = :organization",
-            ExpressionAttributeValues: {
-                ":sensor": obj.sensor,
-                ":organization": obj.organization
-            },
-            ProjectionExpression: "sensor,image_id,player_id,computed_time"
-        };
+        let params = '';
+        if(obj.sensor && obj.sensor != null){
+            params = {
+                TableName: "sensor_details",
+                FilterExpression: "sensor = :sensor and organization = :organization",
+                ExpressionAttributeValues: {
+                    ":sensor": obj.sensor,
+                    ":organization": obj.organization
+                },
+                ProjectionExpression: "sensor,image_id,player_id,computed_time"
+            };
+        }else{
+            params = {
+                TableName: "sensor_details",
+                FilterExpression: "organization = :organization",
+                ExpressionAttributeValues: {
+                   ":organization": obj.organization
+                },
+                ProjectionExpression: "sensor,image_id,player_id,computed_time"
+            };
+        }
+       
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
