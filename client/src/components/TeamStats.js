@@ -31,6 +31,11 @@ class TeamStats extends React.Component {
             gs: 0,
             'principal-max-strain': 'principal-max-strain',
             brainPosition: 'principal-max-strain',
+            teamData: {
+                brand: this.props.location.state.team.brand,
+                organization: this.props.location.state.team.organization,
+                team: this.props.location.state.team.team_name
+            }
         };
 
         this.child = React.createRef();
@@ -524,7 +529,7 @@ class TeamStats extends React.Component {
                                     <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
                                         <div className="col-md-12 no-padding">
                                             <p className="video-lebel text-center">95 Percentile MPS Maximum Angular Acceleration </p>
-                                            < TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_EXLARATION} MPS_95_DATA={this.state.MPS_95_DATA} />
+                                            < TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_EXLARATION} MPS_95_DATA={this.state.MPS_95_DATA} teamData={this.state.teamData}/>
                                             <p
                                                 style={{
                                                     'text-align': 'center',

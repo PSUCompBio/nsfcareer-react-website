@@ -33,12 +33,14 @@ import delicon from './icons/delete.png';
 // import merge from './icons/merge.png';
 import pencil from './icons/pencil.png';
 import plus from './icons/plus.png'
-import { 
+import {
     UncontrolledAlert
 } from 'reactstrap';
 import { Button } from 'react-bootstrap';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
+import SimulationCount from './PlayerDetails/SimulationCount';
+
 class AdminDashboard extends React.Component {
     constructor() {
         super();
@@ -69,11 +71,11 @@ class AdminDashboard extends React.Component {
             isDisplay: { display: 'none' },
             isDisplay2: { display: 'none' },
             DelData: '',
-            renameData : '',
+            renameData: '',
             isEdit: false,
             isDelete: false,
             isUploading: false,
-            isUpdated:false,
+            isUpdated: false,
             Error: '',
             data: '',
             isRename: false,
@@ -81,6 +83,7 @@ class AdminDashboard extends React.Component {
             isAddOrganization: false,
             mergeData: '',
             isMerge: false,
+            requestedUsers: ''
         };
     }
     toggleTab = (value) => {
@@ -91,51 +94,51 @@ class AdminDashboard extends React.Component {
     getTargetBtn = (value) => {
         this.setState({ targetBtn: value });
     };
-    handleViewChange = (view) =>{
-        console.log('view',view)
+    handleViewChange = (view) => {
+        console.log('view', view)
         localStorage.setItem('view', view);
-        this.setState({view:view})
+        this.setState({ view: view })
     }
 
-    handleButtonChanges =(e)=>{
+    handleButtonChanges = (e) => {
         console.log(e.target.name);
         var the = this;
-        if(e.target.name === 'organization'){
+        if (e.target.name === 'organization') {
             // if(this.state.OrganizationList.length === 0){
-               
+
             // }else{
-                this.setState({      
-                    isSensor: false,
-                    isOrganization: true,
-                    isTeams: false,
-                    isFetching: false,
-                    isPlayers: false
-                });
+            this.setState({
+                isSensor: false,
+                isOrganization: true,
+                isTeams: false,
+                isFetching: false,
+                isPlayers: false
+            });
             // }
-        }else if(e.target.name === 'sensor_companies'){
-            if(this.state.sensorBrandList.length === 0){
-                the.setState({isFetching: true});
+        } else if (e.target.name === 'sensor_companies') {
+            if (this.state.sensorBrandList.length === 0) {
+                the.setState({ isFetching: true });
                 getAllSensorBrandsList()
-                .then(brands => {
-                    this.setState(prevState => ({
-                        totalBrand: brands.data.data.length,
-                        sensorBrandList: brands.data.data,
-                        isFetching: false,
-                        isSensor: true,
-                        isTeams: false,
-                        isOrganization: false,
-                        isPlayers: false
-                    }));
-                   
-                })
+                    .then(brands => {
+                        this.setState(prevState => ({
+                            totalBrand: brands.data.data.length,
+                            sensorBrandList: brands.data.data,
+                            isFetching: false,
+                            isSensor: true,
+                            isTeams: false,
+                            isOrganization: false,
+                            isPlayers: false
+                        }));
+
+                    })
                 getAllSensorBrands()
-                .then(brandList =>{
-                    this.setState(prevState => ({
-                        totalBrand: brandList.data.data.length,
-                        sensorBrandList: brandList.data.data,
-                    }));
-                })
-            }else{
+                    .then(brandList => {
+                        this.setState(prevState => ({
+                            totalBrand: brandList.data.data.length,
+                            sensorBrandList: brandList.data.data,
+                        }));
+                    })
+            } else {
                 this.setState({
                     isFetching: false,
                     isSensor: true,
@@ -144,12 +147,12 @@ class AdminDashboard extends React.Component {
                     isPlayers: false
                 })
             }
-            
-        }else if(e.target.name === 'teams'){
-            if(this.state.teamList.length === 0){
-                the.setState({isFetching: true});
-                getTeamNameList({type:"team"}).then(teams =>{
-                    console.log('teams',teams)
+
+        } else if (e.target.name === 'teams') {
+            if (this.state.teamList.length === 0) {
+                the.setState({ isFetching: true });
+                getTeamNameList({ type: "team" }).then(teams => {
+                    console.log('teams', teams)
                     this.setState({
                         teamList: teams.data.data,
                         totalTeam: teams.data.data.length,
@@ -159,21 +162,21 @@ class AdminDashboard extends React.Component {
                         isOrganization: false,
                         isPlayers: false
                     })
-                }).catch(err=>{
-                    console.log('err',err)
+                }).catch(err => {
+                    console.log('err', err)
                     this.setState({
                         isFetching: false,
-                        isAuthenticated: false, 
+                        isAuthenticated: false,
                         isCheckingAuth: false
                     })
                 });
-                getTeamList({type:"team"}).then(teams =>{
+                getTeamList({ type: "team" }).then(teams => {
                     this.setState({
                         teamList: teams.data.data,
                         totalTeam: teams.data.data.length,
                     })
                 });
-            }else{
+            } else {
                 this.setState({
                     isFetching: false,
                     isSensor: false,
@@ -182,35 +185,35 @@ class AdminDashboard extends React.Component {
                     isPlayers: false
                 })
             }
-        }else if(e.target.name === 'individuals'){
-            
-            setTimeout(function(){ 
+        } else if (e.target.name === 'individuals') {
+
+            setTimeout(function () {
                 the.hadnlesearch();
             }, 2000);
-            if(this.state.playerList.length === 0){
-                the.setState({isFetching: true});
-                getPlayerList({type: 'playersList',lastItem : ''})
-                .then(players => {
-                    console.log('players ==============\n',players)
-                    this.setState({
-                        playerList:players.data.data,
-                        isSensor: false,
-                        isTeams: false,
-                        isOrganization: false,
-                        isPlayers: true,
-                    })
+            if (this.state.playerList.length === 0) {
+                the.setState({ isFetching: true });
+                getPlayerList({ type: 'playersList', lastItem: '' })
+                    .then(players => {
+                        console.log('players ==============\n', players)
+                        this.setState({
+                            playerList: players.data.data,
+                            isSensor: false,
+                            isTeams: false,
+                            isOrganization: false,
+                            isPlayers: true,
+                        })
 
-                     setTimeout(function(){ 
-                        the.setState({isFetching: false});
-                        the.hadnlesearch();
-                    }, 3000);
-                    setTimeout(function(){ 
-                        the.hadnlesearch();
-                    }, 4000);
-                }).catch(err=>{
-                    console.log('err',err)
-                })
-            }else{
+                        setTimeout(function () {
+                            the.setState({ isFetching: false });
+                            the.hadnlesearch();
+                        }, 3000);
+                        setTimeout(function () {
+                            the.hadnlesearch();
+                        }, 4000);
+                    }).catch(err => {
+                        console.log('err', err)
+                    })
+            } else {
                 this.setState({
                     isSensor: false,
                     isTeams: false,
@@ -226,12 +229,12 @@ class AdminDashboard extends React.Component {
         Organization edit funtion start here
 
     =============================================*/
-    handleEdit = (e) =>{
+    handleEdit = (e) => {
         console.log('edit')
-        $('.isEdit').css({'display':'inherit'});
+        $('.isEdit').css({ 'display': 'inherit' });
         $('.button-edit').addClass('button-edit-active');
         this.setState({
-            isEdit:true,
+            isEdit: true,
             DelData: '',
             isDelete: false,
             isUpdated: false,
@@ -239,16 +242,16 @@ class AdminDashboard extends React.Component {
         })
     }
 
-    handleCencel =()=>{
-        $('.isEdit').css({'display':'none'});
+    handleCencel = () => {
+        $('.isEdit').css({ 'display': 'none' });
         $('.button-edit').removeClass('button-edit-active');
         this.setState({
-            isEdit:false,
+            isEdit: false,
             DelData: '',
             isDelete: false,
             isUpdated: false,
             Error: '',
-            isUploading:false,
+            isUploading: false,
             renameData: '',
             isRename: false,
             isAddOrganization: false,
@@ -258,159 +261,174 @@ class AdminDashboard extends React.Component {
         })
     }
 
-    editRecord = (e) =>{
-        console.log('data',e.type)
-        this.setState({data:e })
+    editRecord = (e) => {
+        console.log('data', e.type)
+        this.setState({ data: e })
         if (this.state.isDisplay2.display === 'none') {
-          this.setState({ isDisplay2: {display:'flex'} });
+            this.setState({ isDisplay2: { display: 'flex' } });
         } else {
-          this.setState({ isDisplay2: {display:'none'} });
+            this.setState({ isDisplay2: { display: 'none' } });
         }
     }
 
-     makeVisible = (data) => {
+    makeVisible = (data) => {
         this.setState({ isDisplay: data });
     }
     makeVisible2 = (data) => {
         this.setState({ isDisplay2: data });
     }
 
-    deleteRecord = (e) =>{
-        console.log('delete',e)
-        this.setState({DelData: {type: 'team',data:e} })
+    deleteRecord = (e) => {
+        console.log('delete', e)
+        this.setState({ DelData: { type: 'team', data: e } })
         if (this.state.isDisplay.display === 'none') {
-          this.setState({ isDisplay: {display:'flex'} });
+            this.setState({ isDisplay: { display: 'flex' } });
         } else {
-          this.setState({ isDisplay: {display:'none'} });
+            this.setState({ isDisplay: { display: 'none' } });
         }
     }
 
     isDeleteData = (isDelete) => {
-        console.log('isDelete',isDelete)
+        console.log('isDelete', isDelete)
         this.setState({ isDelete: isDelete });
-        this.setState({ isDisplay:{ display: 'none' } });
+        this.setState({ isDisplay: { display: 'none' } });
     }
 
-    isUpdateData = (data) =>{
-        console.log('isUpdateData',data);
-        if(data.data.type === "rename"){
-            this.setState({renameData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data}, isRename: true})
+    isUpdateData = (data) => {
+        console.log('isUpdateData', data);
+        if (data.data.type === "rename") {
+            this.setState({ renameData: { OrganizationName: data.OrganizationName, organization_id: data.data.organization_id, data: data.data }, isRename: true })
         }
-        if(data.data.type === "addOrganization"){
-            this.setState({addOrganizationData: {OrganizationName : data.OrganizationName, sensor: ''  }, isAddOrganization: true})
+        if (data.data.type === "addOrganization") {
+            this.setState({ addOrganizationData: { OrganizationName: data.OrganizationName, sensor: '' }, isAddOrganization: true })
         }
-        if(data.data.type === "merge"){
-            this.setState({mergeData: {OrganizationName : data.OrganizationName, organization_id: data.data.organization_id,data:data.data }, isMerge: true})
+        if (data.data.type === "merge") {
+            this.setState({ mergeData: { OrganizationName: data.OrganizationName, organization_id: data.data.organization_id, data: data.data }, isMerge: true })
         }
-        this.setState({ isDisplay2:{ display: 'none' } });
+        this.setState({ isDisplay2: { display: 'none' } });
     }
 
-    handleChangeSave = () =>{
-        console.log('Save',this.state.renameData, this.state.addOrganizationData);
-        this.setState({isUploading: true});
-        if(this.state.isDelete){
-              console.log('deleting')
-              deleteItem(this.state.DelData)
-              .then(res => {
-                  console.log('res',res);
-                    if(res.data.message === 'success'){
-                         this.setState(prevState => ({
+    handleChangeSave = () => {
+        console.log('Save', this.state.renameData, this.state.addOrganizationData);
+        this.setState({ isUploading: true });
+        if (this.state.isDelete) {
+            console.log('deleting')
+            deleteItem(this.state.DelData)
+                .then(res => {
+                    console.log('res', res);
+                    if (res.data.message === 'success') {
+                        this.setState(prevState => ({
                             isUpdated: false,
                         }));
                         this.handleRenmaeOrganization();
-                    }else{
+                    } else {
                         this.setState({
                             isUploading: false,
                             Error: 'Somthing went wrong when deleting data.'
                         })
                     }
-                
-              }).catch(err=>{
+
+                }).catch(err => {
                     console.log(err)
                     this.setState({
                         isUploading: false,
                         isUpdated: false,
                         Error: 'Somthing went wrong when deleting data.'
                     })
-              })
-        }else{
+                })
+        } else {
             this.handleRenmaeOrganization();
         }
     }
 
     handleRenmaeOrganization = () => {
-        console.log('rename',this.state.data)
-        if(this.state.isRename){
+        console.log('rename', this.state.data)
+        if (this.state.isRename) {
             renameOrganization(this.state.renameData)
-            .then(response => {
-                console.log('response',response)
-                if(response.data.message === "success"){
-                    this.handleMergeOrganization();
-                }else{
+                .then(response => {
+                    console.log('response', response)
+                    if (response.data.message === "success") {
+                        this.handleMergeOrganization();
+                    } else {
+                        this.setState({
+                            isUpdated: false,
+                            isUploading: false,
+                            Error: 'Somthing went wrong when renaming organization.'
+                        })
+                    }
+
+                }).catch(err => {
+                    console.log('errRename', err);
                     this.setState({
-                     isUpdated: false,
                         isUploading: false,
                         Error: 'Somthing went wrong when renaming organization.'
                     })
-                }
-
-            }).catch(err =>{
-                console.log('errRename',err);
-                this.setState({
-                    isUploading: false,
-                    Error: 'Somthing went wrong when renaming organization.'
                 })
-            })
-        }else{
+        } else {
             this.handleMergeOrganization();
         }
     }
 
     handleMergeOrganization = () => {
-        console.log('rename',this.state.mergeData)
-        if(this.state.isMerge){
+        console.log('rename', this.state.mergeData)
+        if (this.state.isMerge) {
             MergeOrganization(this.state.mergeData)
-            .then(response => {
-                console.log('response',response)
-                if(response.data.message === "success"){
-                    this.handleAddOrganization();
-                }else{
+                .then(response => {
+                    console.log('response', response)
+                    if (response.data.message === "success") {
+                        this.handleAddOrganization();
+                    } else {
+                        this.setState({
+                            isUpdated: false,
+                            isUploading: false,
+                            Error: 'Somthing went wrong when merging organization.'
+                        })
+                    }
+
+                }).catch(err => {
+                    console.log('errRename', err);
                     this.setState({
-                        isUpdated: false,
                         isUploading: false,
                         Error: 'Somthing went wrong when merging organization.'
                     })
-                }
-
-            }).catch(err =>{
-                console.log('errRename',err);
-                this.setState({
-                    isUploading: false,
-                    Error: 'Somthing went wrong when merging organization.'
                 })
-            })
-        }else{
+        } else {
             this.handleAddOrganization();
         }
     }
 
-    handleAddOrganization=()=>{
-        console.log('addOrganization',this.state.addOrganizationData);
-        if(this.state.isAddOrganization){
+    handleAddOrganization = () => {
+        console.log('addOrganization', this.state.addOrganizationData);
+        if (this.state.isAddOrganization) {
             addOrganization(this.state.addOrganizationData)
-            .then(response =>{
-                 console.log('response',response)
-                if(response.data.message === "success"){
-                    getOrganizationList({type:'organizations'})
-                    .then(orgs => {
-                        $('.isEdit').css({'display':'none'});
-                        $('.button-edit').removeClass('button-edit-active');
-                        this.setState(prevState => ({
-                            totalOrganization: orgs.data.data.length,
-                            OrganizationList: orgs.data.data,
-                            isEdit: false,
-                            isUpdated: true,
+                .then(response => {
+                    console.log('response', response)
+                    if (response.data.message === "success") {
+                        getOrganizationList({ type: 'organizations' })
+                            .then(orgs => {
+                                $('.isEdit').css({ 'display': 'none' });
+                                $('.button-edit').removeClass('button-edit-active');
+                                this.setState(prevState => ({
+                                    totalOrganization: orgs.data.data.length,
+                                    OrganizationList: orgs.data.data,
+                                    isEdit: false,
+                                    isUpdated: true,
+                                    isUploading: false,
+                                    isDelete: false,
+                                    DelData: '',
+                                    isRename: false,
+                                    renameData: '',
+                                    isMerge: false,
+                                    mergeData: '',
+                                    isAddOrganization: false,
+                                    addOrganizationData: ''
+                                }));
+                            })
+                    } else {
+                        this.setState({
+                            isUpdated: false,
                             isUploading: false,
+                            Error: 'Somthing went wrong when Adding organization.',
                             isDelete: false,
                             DelData: '',
                             isRename: false,
@@ -419,12 +437,13 @@ class AdminDashboard extends React.Component {
                             mergeData: '',
                             isAddOrganization: false,
                             addOrganizationData: ''
-                        }));
-                    })
-                }else{
+                        })
+                    }
+                }).catch(err => {
+                    console.log('erradd', err);
                     this.setState({
-                     isUpdated: false,
                         isUploading: false,
+                        isUpdated: false,
                         Error: 'Somthing went wrong when Adding organization.',
                         isDelete: false,
                         DelData: '',
@@ -435,44 +454,28 @@ class AdminDashboard extends React.Component {
                         isAddOrganization: false,
                         addOrganizationData: ''
                     })
-                }    
-            }).catch(err =>{
-                console.log('erradd',err);
-                this.setState({
-                    isUploading: false,
-                    isUpdated: false,
-                    Error: 'Somthing went wrong when Adding organization.',
-                    isDelete: false,
-                    DelData: '',
-                    isRename: false,
-                    renameData: '',
-                    isMerge: false,
-                    mergeData: '',
-                    isAddOrganization: false,
-                    addOrganizationData: ''
                 })
-            })
-        }else{
-            getOrganizationList({type:'organizations'})
-            .then(orgs => {
-                $('.isEdit').css({'display':'none'});
-                $('.button-edit').removeClass('button-edit-active');
-                this.setState(prevState => ({
-                    totalOrganization: orgs.data.data.length,
-                    OrganizationList: orgs.data.data,
-                    isEdit: false,
-                    isUpdated: true,
-                    isUploading: false,
-                    isDelete: false,
-                    DelData: '',
-                    isRename: false,
-                    renameData: '',
-                    isMerge: false,
-                    mergeData: '',
-                    isAddOrganization: false,
-                    addOrganizationData: ''
-                }));
-            })
+        } else {
+            getOrganizationList({ type: 'organizations' })
+                .then(orgs => {
+                    $('.isEdit').css({ 'display': 'none' });
+                    $('.button-edit').removeClass('button-edit-active');
+                    this.setState(prevState => ({
+                        totalOrganization: orgs.data.data.length,
+                        OrganizationList: orgs.data.data,
+                        isEdit: false,
+                        isUpdated: true,
+                        isUploading: false,
+                        isDelete: false,
+                        DelData: '',
+                        isRename: false,
+                        renameData: '',
+                        isMerge: false,
+                        mergeData: '',
+                        isAddOrganization: false,
+                        addOrganizationData: ''
+                    }));
+                })
         }
 
     }
@@ -481,43 +484,44 @@ class AdminDashboard extends React.Component {
     * Load more plyers function start here ...
     */
 
-    handleLoadmorePlayers =()=>{
+    handleLoadmorePlayers = () => {
         this.setState({
-            loadingplayers : true,
+            loadingplayers: true,
         })
-        loadMorePlayerList({type: 'loadMorePlayerList',lastItem : ''})
-        .then(players => {
-            console.log('players ==============\n',players)
-            this.setState({
-                playerList:players.data.data,
-                loadingplayers: false,
-               isplyarloaded: true
+        loadMorePlayerList({ type: 'loadMorePlayerList', lastItem: '' })
+            .then(players => {
+                console.log('players ==============\n', players)
+                this.setState({
+                    playerList: players.data.data,
+                    requestedUsers: players.data.requested_players,
+                    loadingplayers: false,
+                    isplyarloaded: true
+                })
+                let the = this;
+                setTimeout(function () {
+                    the.hadnlesearch();
+                }, 3000);
+
+            }).catch(err => {
+                console.log('err', err)
+                this.setState({
+                    loadingplayers: false,
+                    isplyarloaded: true
+                })
             })
-            let the = this;
-             setTimeout(function(){ 
-                the.hadnlesearch();
-            }, 3000);
-           
-        }).catch(err=>{
-            console.log('err',err)
-            this.setState({
-                loadingplayers: false,
-                isplyarloaded: true
-            })
-        })
     }
 
-  /*===================================
-    
-        Organization edit funtion end here
-
-    =============================================*/
-    hadnlesearch =() =>{
-        console.log('button',$("#myInput").html())
-        $("#myInput").on("keyup", function() {
+    /*===================================
+      
+          Organization edit funtion end here
+  
+      =============================================*/
+    hadnlesearch = () => {
+        console.log('button', $("#myInput").html())
+        $("#myInput").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            console.log('keyup',value)
-            $("#myTable tr").filter(function() {
+            console.log('keyup', value)
+            $("#myTable tr").filter(function () {
                 console.log($(this).text().toLowerCase().indexOf(value))
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 return true;
@@ -568,9 +572,9 @@ class AdminDashboard extends React.Component {
         // Scrolling winddow to top when user clicks on about us page
         window.scrollTo(0, 0)
         var view = localStorage.getItem('view');
-        if(view){
-            console.log('view',view)
-            this.setState({view: view})
+        if (view) {
+            console.log('view', view)
+            this.setState({ view: view })
         }
         isAuthenticated(JSON.stringify({}))
             .then((value) => {
@@ -583,35 +587,35 @@ class AdminDashboard extends React.Component {
                     if (this.state.userDetails.level === 1000) {
                         this.setState({
                             isAdmin: true
-                        }); 
+                        });
                         getOrganizationNameList()
-                        .then(organizations => {
-                            this.setState(prevState => ({
-                                OrganizationList: organizations.data.data,
-                                totalOrganization: organizations.data.data.length,
-                                isAuthenticated: true, 
-                                isCheckingAuth: true,
-                                isFetching: false
-                            }));
-                            return fetchAdminStaffMembers({});
-                        }).then(staff=>{
-                            var response = staff.data;
-                            if(response.message === 'success'){
+                            .then(organizations => {
                                 this.setState(prevState => ({
-                                    staffList: response.data,
-                                    
+                                    OrganizationList: organizations.data.data,
+                                    totalOrganization: organizations.data.data.length,
+                                    isAuthenticated: true,
+                                    isCheckingAuth: true,
+                                    isFetching: false
                                 }));
-                            }
-                            return getOrganizationList();
-                        }).then(organizations =>{
-                            this.setState(prevState => ({
-                                OrganizationList: organizations.data.data,
-                                totalOrganization: organizations.data.data.length,
-                            }));
-                        })
-                        .catch(err => {
-                            alert(err);
-                        })
+                                return fetchAdminStaffMembers({});
+                            }).then(staff => {
+                                var response = staff.data;
+                                if (response.message === 'success') {
+                                    this.setState(prevState => ({
+                                        staffList: response.data,
+
+                                    }));
+                                }
+                            //     return getOrganizationList();
+                            // }).then(organizations => {
+                            //     this.setState(prevState => ({
+                            //         OrganizationList: organizations.data.data,
+                            //         totalOrganization: organizations.data.data.length,
+                            //     }));
+                            })
+                            .catch(err => {
+                                alert(err);
+                            })
                     } else {
                         this.setState({
                             isAdmin: false,
@@ -635,7 +639,7 @@ class AdminDashboard extends React.Component {
     };
 
     setRedirectData = (id, p_name) => {
-        console.log('setRedirectData',id,p_name,this.state.userDetails)
+        console.log('setRedirectData', id, p_name, this.state.userDetails)
         this.setState({
             cognito_user_id: id,
             player_name: p_name,
@@ -650,9 +654,9 @@ class AdminDashboard extends React.Component {
 
             let currentStamp = new Date().getTime();
             let simulationTimestamp = parseFloat(simulation_timestamp);
-            var diff =(currentStamp - simulationTimestamp) / 1000;
+            var diff = (currentStamp - simulationTimestamp) / 1000;
             diff /= 60;
-            let minutes =  Math.abs(Math.round(diff));
+            let minutes = Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time1;
             if (minutes <= 30) {
@@ -686,10 +690,10 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
+                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
-                                 : 
-                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                    :
+                                    <i className="fa fa-spinner fa-spin" style={{ "font-size": "34px", "padding": '10px', 'color': '#0f81dc' }}></i>
                                 }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
@@ -702,7 +706,7 @@ class AdminDashboard extends React.Component {
         );
     };
 
-     smallCards2 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key,organization_id) => {
+    smallCards2 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key, organization_id) => {
         // console.log(reference);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status === 'completed') {
@@ -710,9 +714,9 @@ class AdminDashboard extends React.Component {
 
             let currentStamp = new Date().getTime();
             let simulationTimestamp = parseFloat(simulation_timestamp);
-            var diff =(currentStamp - simulationTimestamp) / 1000;
+            var diff = (currentStamp - simulationTimestamp) / 1000;
             diff /= 60;
-            let minutes =  Math.abs(Math.round(diff));
+            let minutes = Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time1;
             if (minutes <= 30) {
@@ -722,15 +726,15 @@ class AdminDashboard extends React.Component {
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <ul className="organization-edit-icons isEdit">
-                    <li><span><img src={pencil} alt="Edit" onClick={e => this.editRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'rename'})}/>Rename</span></li>
-                    
-                    <li><span><img src={delicon} alt="Delete" onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
+                    <li><span><img src={pencil} alt="Edit" onClick={e => this.editRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id, type: 'rename' })} />Rename</span></li>
+
+                    <li><span><img src={delicon} alt="Delete" onClick={e => this.deleteRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id })} />Delete</span></li>
                 </ul>
                 <div
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: brand && brand !== undefined ? '/TeamAdmin/'+organization+'/' + brand : '/TeamAdmin/'+organization,
+                            pathname: brand && brand !== undefined ? '/TeamAdmin/' + organization + '/' + brand : '/TeamAdmin/' + organization,
                             state: {
                                 brand: {
                                     brand: brand,
@@ -746,18 +750,19 @@ class AdminDashboard extends React.Component {
                     <div style={this.state.hideEditElement}>
                         <div ref={reference[1]} className="football-header ">
                             <p className="teamName mobile-dashboard-card" ref={reference[2]}>
-                           
+
                                 <b>{organization}</b>
                             </p>
-                            
+
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
+                            <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} />
+                                {/*noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
-                                 : 
-                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
-                                }
+                                    :
+                                    <i className="fa fa-spinner fa-spin" style={{ "font-size": "34px", "padding": '10px', 'color': '#0f81dc' }}></i>
+                */}
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -770,7 +775,7 @@ class AdminDashboard extends React.Component {
     };
 
     iterateTeam2 = () => {
-        console.log('OrganizationList',this.state.OrganizationList)
+        console.log('OrganizationList', this.state.OrganizationList)
         let inc = 1;
         var cards = new Array(this.state.totalOrganization);
         // let j = 1;
@@ -799,11 +804,11 @@ class AdminDashboard extends React.Component {
         }
 
         if (this.state.totalOrganization === 0) {
-            return  <div style={{marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center'}}>No Organization added yet.</div>
+            return <div style={{ marginTop: '80px', marginBottom: '80px', width: '100%', textAlign: 'center' }}>No Organization added yet.</div>
         }
 
         return cards;
-        
+
     };
 
     smallCards3 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
@@ -814,9 +819,9 @@ class AdminDashboard extends React.Component {
 
             let currentStamp = new Date().getTime();
             let simulationTimestamp = parseFloat(simulation_timestamp);
-            var diff =(currentStamp - simulationTimestamp) / 1000;
+            var diff = (currentStamp - simulationTimestamp) / 1000;
             diff /= 60;
-            let minutes =  Math.abs(Math.round(diff));
+            let minutes = Math.abs(Math.round(diff));
             console.log('minutes', minutes);
             minutes = minutes - computed_time1;
             if (minutes <= 30) {
@@ -829,7 +834,7 @@ class AdminDashboard extends React.Component {
                     ref={reference[0]}
                     onClick={(e) => {
                         this.props.history.push({
-                            pathname: '/TeamAdmin/team/players/'+organization+'/'+team+'?brand='+brand,
+                            pathname: '/TeamAdmin/team/players/' + organization + '/' + team + '?brand=' + brand,
                             state: {
                                 team: {
                                     brand: brand,
@@ -852,11 +857,11 @@ class AdminDashboard extends React.Component {
 
                         </div>
                         <div className="football-body d-flex">
-                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none"}}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
+                            <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
+                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
-                                 : 
-                                 <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
+                                    :
+                                    <i className="fa fa-spinner fa-spin" style={{ "font-size": "34px", "padding": '10px', 'color': '#0f81dc' }}></i>
                                 }
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
@@ -870,7 +875,7 @@ class AdminDashboard extends React.Component {
     };
 
     iterateTeam3 = () => {
-        console.log('teamList',this.state.teamList)
+        console.log('teamList', this.state.teamList)
         let inc = 1;
         var cards = new Array(this.state.totalTeam);
         // let j = 1;
@@ -922,7 +927,7 @@ class AdminDashboard extends React.Component {
         for (let i = 0; i < this.state.totalBrand; i++) {
 
             // const brand = this.state.sensorBrandList[i];
-            
+
             cards[i] = this.smallCards(
                 this.state.sensorBrandList[i].simulation_status,
                 this.state.sensorBrandList[i].computed_time,
@@ -950,9 +955,9 @@ class AdminDashboard extends React.Component {
     getDateTime = (timestamp) => {
 
         const plus0 = num => `0${num.toString()}`.slice(-2)
-      
+
         const d = new Date(timestamp)
-      
+
         const year = d.getFullYear()
         const monthTmp = d.getMonth() + 1
         const month = plus0(monthTmp)
@@ -961,34 +966,34 @@ class AdminDashboard extends React.Component {
         const minute = plus0(d.getMinutes())
         const second = plus0(d.getSeconds())
         // const rest = timestamp.toString().slice(-5)
-      
+
         return `${month}/${date}/${year} ${hour}:${minute}:${second}`
     }
 
     getDate = (timestamp) => {
 
         const plus0 = num => `0${num.toString()}`.slice(-2)
-      
+
         const d = new Date(timestamp)
-      
+
         const year = d.getFullYear()
         const monthTmp = d.getMonth() + 1
         const month = plus0(monthTmp)
         const date = plus0(d.getDate())
-        
+
         return `${month}/${date}/${year}`
     }
 
     tConvert = (time) => {
         // Check correct time format and split into components
-        time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-      
+        time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
         if (time.length > 1) { // If time format correct
-          time = time.slice (1);  // Remove full string match value
-          time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-          time[0] = +time[0] % 12 || 12; // Adjust hours
+            time = time.slice(1);  // Remove full string match value
+            time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+            time[0] = +time[0] % 12 || 12; // Adjust hours
         }
-        return time.join (''); // return adjusted time or original string
+        return time.join(''); // return adjusted time or original string
     }
 
 
@@ -1015,140 +1020,140 @@ class AdminDashboard extends React.Component {
         );
     };
     tableSensor = () => {
-        var body =  this.state.sensorBrandList.map(function (sensor, index) {
-                if (sensor) {
+        var body = this.state.sensorBrandList.map(function (sensor, index) {
+            if (sensor) {
 
-                    let cls = sensor.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
-                    if (sensor.simulation_status === 'completed') {
-                        let computed_time = sensor.computed_time ? parseFloat(sensor.computed_time) / (1000 * 60) : 0;
+                let cls = sensor.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                if (sensor.simulation_status === 'completed') {
+                    let computed_time = sensor.computed_time ? parseFloat(sensor.computed_time) / (1000 * 60) : 0;
 
-                        let currentStamp = new Date().getTime();
-                        let simulationTimestamp = parseFloat(sensor.simulation_timestamp);
-                        var diff =(currentStamp - simulationTimestamp) / 1000;
-                        diff /= 60;
-                        let minutes =  Math.abs(Math.round(diff));
-                        console.log('minutes', minutes);
-                        minutes = minutes - computed_time;
-                        if (minutes <= 30) {
-                            cls = 'completedSimulation tech-football m-3';
-                        }
+                    let currentStamp = new Date().getTime();
+                    let simulationTimestamp = parseFloat(sensor.simulation_timestamp);
+                    var diff = (currentStamp - simulationTimestamp) / 1000;
+                    diff /= 60;
+                    let minutes = Math.abs(Math.round(diff));
+                    console.log('minutes', minutes);
+                    minutes = minutes - computed_time;
+                    if (minutes <= 30) {
+                        cls = 'completedSimulation tech-football m-3';
                     }
-
-                    return <tr className={cls} key={index} onClick={() => {
-                        this.props.history.push({
-                            pathname: '/OrganizationAdmin',
-                            state: {
-                                brand: {
-                                    brand: sensor.sensor,
-                                    user_cognito_id: this.state.userDetails.user_cognito_id
-                                }
-                            }
-                        })
-                    }}
-                    >
-                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
-                        <td>{sensor.sensor}</td>
-                        <td>{sensor.simulation_count || sensor.simulation_count === '0' || sensor.simulation_count === 0 ? sensor.simulation_count : 'Loading...'}</td>
-                       
-                    </tr>;
-                }else{
-                    return false;
                 }
-            }, this)
+
+                return <tr className={cls} key={index} onClick={() => {
+                    this.props.history.push({
+                        pathname: '/OrganizationAdmin',
+                        state: {
+                            brand: {
+                                brand: sensor.sensor,
+                                user_cognito_id: this.state.userDetails.user_cognito_id
+                            }
+                        }
+                    })
+                }}
+                >
+                    <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                    <td>{sensor.sensor}</td>
+                    <td>{sensor.simulation_count || sensor.simulation_count === '0' || sensor.simulation_count === 0 ? sensor.simulation_count : 'Loading...'}</td>
+
+                </tr>;
+            } else {
+                return false;
+            }
+        }, this)
         return body
-        
+
     }
-    tableOrganization = ()=> {
+    tableOrganization = () => {
         console.log(this.state.OrganizationList)
-        var body =  this.state.OrganizationList.map(function (organization, index) {
-                if (organization) {
+        var body = this.state.OrganizationList.map(function (organization, index) {
+            if (organization) {
 
-                    let cls = organization.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
-                    if (organization.simulation_status === 'completed') {
-                        let computed_time = organization.computed_time ? parseFloat(organization.computed_time) / (1000 * 60) : 0;
+                let cls = organization.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                if (organization.simulation_status === 'completed') {
+                    let computed_time = organization.computed_time ? parseFloat(organization.computed_time) / (1000 * 60) : 0;
 
-                        let currentStamp = new Date().getTime();
-                        let simulationTimestamp = parseFloat(organization.simulation_timestamp);
-                        var diff =(currentStamp - simulationTimestamp) / 1000;
-                        diff /= 60;
-                        let minutes =  Math.abs(Math.round(diff));
-                        console.log('minutes', minutes);
-                        minutes = minutes - computed_time;
-                        if (minutes <= 30) {
-                            cls = 'completedSimulation tech-football m-3';
-                        }
+                    let currentStamp = new Date().getTime();
+                    let simulationTimestamp = parseFloat(organization.simulation_timestamp);
+                    var diff = (currentStamp - simulationTimestamp) / 1000;
+                    diff /= 60;
+                    let minutes = Math.abs(Math.round(diff));
+                    console.log('minutes', minutes);
+                    minutes = minutes - computed_time;
+                    if (minutes <= 30) {
+                        cls = 'completedSimulation tech-football m-3';
                     }
-
-                    return <tr className={cls}  key={index} onClick={() => {
-                        this.props.history.push({
-                            pathname: organization.sensor && organization.sensor !== undefined ? '/TeamAdmin/'+organization.organization+'/'+organization.sensor : '/TeamAdmin/'+organization.organization,
-                            state: {
-                                brand: {
-                                    brand: organization.sensor,
-                                    organization: organization.organization,
-                                    user_cognito_id: this.state.userDetails.user_cognito_id
-                                }
-                            }
-                        })
-                    }}
-                    >
-                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
-                        <td>{organization.organization}</td>
-                        <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
-                    </tr>;
-                }else{
-                    return false;
                 }
-            }, this)
+
+                return <tr className={cls} key={index} onClick={() => {
+                    this.props.history.push({
+                        pathname: organization.sensor && organization.sensor !== undefined ? '/TeamAdmin/' + organization.organization + '/' + organization.sensor : '/TeamAdmin/' + organization.organization,
+                        state: {
+                            brand: {
+                                brand: organization.sensor,
+                                organization: organization.organization,
+                                user_cognito_id: this.state.userDetails.user_cognito_id
+                            }
+                        }
+                    })
+                }}
+                >
+                    <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                    <td>{organization.organization}</td>
+                    <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
+                </tr>;
+            } else {
+                return false;
+            }
+        }, this)
         return body
     }
 
-    tableTeams = ()=>{
+    tableTeams = () => {
         console.log(this.state.teamList)
 
-        var body =  this.state.teamList.map(function (team, index) {
-                if (team) {
+        var body = this.state.teamList.map(function (team, index) {
+            if (team) {
 
-                    let cls = team.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
-                    if (team.simulation_status === 'completed') {
-                        let computed_time = team.computed_time ? parseFloat(team.computed_time) / (1000 * 60) : 0;
+                let cls = team.simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
+                if (team.simulation_status === 'completed') {
+                    let computed_time = team.computed_time ? parseFloat(team.computed_time) / (1000 * 60) : 0;
 
-                        let currentStamp = new Date().getTime();
-                        let simulationTimestamp = parseFloat(team.simulation_timestamp);
-                        var diff =(currentStamp - simulationTimestamp) / 1000;
-                        diff /= 60;
-                        let minutes =  Math.abs(Math.round(diff));
-                        console.log('minutes', minutes);
-                        minutes = minutes - computed_time;
-                        if (minutes <= 30) {
-                            cls = 'completedSimulation tech-football m-3';
-                        }
+                    let currentStamp = new Date().getTime();
+                    let simulationTimestamp = parseFloat(team.simulation_timestamp);
+                    var diff = (currentStamp - simulationTimestamp) / 1000;
+                    diff /= 60;
+                    let minutes = Math.abs(Math.round(diff));
+                    console.log('minutes', minutes);
+                    minutes = minutes - computed_time;
+                    if (minutes <= 30) {
+                        cls = 'completedSimulation tech-football m-3';
                     }
-                    return <tr className={cls} key={index} onClick={() => {
-                        this.props.history.push({
-                            pathname: '/TeamAdmin/team/players/'+team.organization+'/'+team.team_name+'?brand='+team.sensor,
-                            state: {
-                                team: {
-                                    brand: team.sensor,
-                                    organization: team.organization,
-                                    team_name: team.team_name,
-                                    user_cognito_id: this.state.userDetails.user_cognito_id,
-                                    staff: this.state.staffList
-                                }
-                            }
-                        })
-                        
-                    }}
-                    >
-                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
-                        <td>{team.team_name ? team.team_name : 'NA'}</td> 
-                        <td>{team.simulation_count || team.simulation_count === '0' || team.simulation_count === 0 ? team.simulation_count : 'Loading...'}</td>
-                        <td>{team.organization}</td>
-                    </tr>;
-                }else{
-                    return false;
                 }
-            }, this)
+                return <tr className={cls} key={index} onClick={() => {
+                    this.props.history.push({
+                        pathname: '/TeamAdmin/team/players/' + team.organization + '/' + team.team_name + '?brand=' + team.sensor,
+                        state: {
+                            team: {
+                                brand: team.sensor,
+                                organization: team.organization,
+                                team_name: team.team_name,
+                                user_cognito_id: this.state.userDetails.user_cognito_id,
+                                staff: this.state.staffList
+                            }
+                        }
+                    })
+
+                }}
+                >
+                    <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                    <td>{team.team_name ? team.team_name : 'NA'}</td>
+                    <td>{team.simulation_count || team.simulation_count === '0' || team.simulation_count === 0 ? team.simulation_count : 'Loading...'}</td>
+                    <td>{team.organization}</td>
+                </tr>;
+            } else {
+                return false;
+            }
+        }, this)
         return body
     }
 
@@ -1166,48 +1171,48 @@ class AdminDashboard extends React.Component {
                     <div className="organization-admin-pt-8 row text-center  organization-pad__military">
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{ textAlign: 'center', fontSize: '30px' }}>Admin Dashboard</p>
                         <div className="col-md-10 organization-admin-table-margin-5-mobile-overview dashboard-custom-button">
-                            <button type="button" className={this.state.isSensor ?  "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
-                            <button type="button" className={this.state.isOrganization ?  "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
-                            <button type="button" className={this.state.isTeams ?  "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
-                            <button type="button" className= "btn   custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
-                            <button type="button"  className={this.state.isPlayers ?  "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
+                            <button type="button" className={this.state.isSensor ? "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Sensor Companies</button>
+                            <button type="button" className={this.state.isOrganization ? "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Organization</button>
+                            <button type="button" className={this.state.isTeams ? "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Teams</button>
+                            <button type="button" className="btn   custom-button" name="families" style={{ 'margin': '7px' }}>Families</button>
+                            <button type="button" className={this.state.isPlayers ? "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Individuals</button>
 
                         </div>
-                         <div className="col-md-2 dashboard-custom-button" >
-                            {!this.state.isPlayers && 
+                        <div className="col-md-2 dashboard-custom-button" >
+                            {!this.state.isPlayers &&
                                 <div className="View">
-                                    <img src={gridView} alt="gridView" onClick={() => this.handleViewChange('gridView')} /> 
+                                    <img src={gridView} alt="gridView" onClick={() => this.handleViewChange('gridView')} />
                                     <img src={listView} alt="listView" onClick={() => this.handleViewChange('listView')} />
                                 </div>
                             }
                         </div>
                         <div className="col-md-12 individuals-search-input">
-                            {this.state.isPlayers && 
+                            {this.state.isPlayers &&
                                 <label>
-                                    Search: <input id="myInput" type="text"  placeholder="Search.."/>
+                                    Search: <input id="myInput" type="text" placeholder="Search.." />
                                 </label>
                             }
                         </div>
                         <div className="col-md-12  dashboard-custom-button2">
-                            <button type="button" className={this.state.isSensor ?  "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Sensor Companies</button> 
-                            <button type="button" className={this.state.isOrganization ?  "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Organization</button> 
-                            <button type="button" className={this.state.isTeams ?  "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Teams</button> 
+                            <button type="button" className={this.state.isSensor ? "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Sensor Companies</button>
+                            <button type="button" className={this.state.isOrganization ? "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Organization</button>
+                            <button type="button" className={this.state.isTeams ? "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Teams</button>
                         </div>
-                         <div className="col-md-8 dashboard-custom-button2">
-                            <button type="button" className= "btn   custom-button" name="families"  style={{'margin': '7px'}}>Families</button> 
-                            <button type="button"  className={this.state.isPlayers ?  "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{'margin': '7px'}}>Individuals</button> 
-                            {!this.state.isPlayers && 
+                        <div className="col-md-8 dashboard-custom-button2">
+                            <button type="button" className="btn   custom-button" name="families" style={{ 'margin': '7px' }}>Families</button>
+                            <button type="button" className={this.state.isPlayers ? "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Individuals</button>
+                            {!this.state.isPlayers &&
                                 <div className="View">
-                                    <img src={gridView} alt="gridView" onClick={() => this.handleViewChange('gridView')} /> 
+                                    <img src={gridView} alt="gridView" onClick={() => this.handleViewChange('gridView')} />
                                     <img src={listView} alt="listView" onClick={() => this.handleViewChange('listView')} />
                                 </div>
                             }
                         </div>
-                        {this.state.isOrganization && 
+                        {this.state.isOrganization &&
                             <div className="col-md-12 Admintitle" >
                                 <div className="col-md-2 org-edit-button" >
-                                    <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button>
-                                   
+                                    <button className="btn  button-edit" style={this.state.isEdit ? { 'display': 'none' } : { 'display': 'inherit' }} onClick={this.handleEdit}>Edit</button>
+
                                 </div>
                             </div>
                         }
@@ -1217,14 +1222,14 @@ class AdminDashboard extends React.Component {
                                     ref="cardContainer"
                                     className="col-md-12 current-roster-card mb-5 mt-4 p-0"
                                 >
-                                 {this.props.isMilitaryVersionActive === true ? (
+                                    {this.props.isMilitaryVersionActive === true ? (
                                         ''
                                     ) : (
                                             <div className="rostar-selector">
                                                 {this.retunrnRosterBtn()}
                                             </div>
-                                        )} 
-                                     {!this.state.tabActive ?
+                                        )}
+                                    {!this.state.tabActive ?
                                         <div className="row">
                                             <div className="col-md-12 text-right">
 
@@ -1255,17 +1260,17 @@ class AdminDashboard extends React.Component {
                                                 }} >
                                                     <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Organization Admin</button> 
                                                 </Link>*/}
-                                                <Link  to={{
-                                                    pathname: '/InviteUsers',
-                                                    state: {
-                                                        lavelFor: '1000',
-                                                        data:{
-                                                            type: 'Admin',
-                                                        }                                        
+                                            <Link to={{
+                                                pathname: '/InviteUsers',
+                                                state: {
+                                                    lavelFor: '1000',
+                                                    data: {
+                                                        type: 'Admin',
                                                     }
-                                                }} >
-                                                    <button type="button" className="btn btn-primary float-right" style={{'margin': '7px'}}>Invite Admin</button> 
-                                                </Link>
+                                                }
+                                            }} >
+                                                <button type="button" className="btn btn-primary float-right" style={{ 'margin': '7px' }}>Invite Admin</button>
+                                            </Link>
                                             <table style={{ whiteSpace: "nowrap" }} className="table">
                                                 <thead>
                                                     <tr>
@@ -1275,11 +1280,11 @@ class AdminDashboard extends React.Component {
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
-                                                    {this.state.staffList && 
+                                                    {this.state.staffList &&
                                                         this.state.staffList.map(function (staff, index) {
                                                             return <tr className="player-data-table-row" key={index}
-                                                                onClick={()=>{
-                                                                    var win = window.open('/admin/view/user?id='+staff.user_cognito_id);
+                                                                onClick={() => {
+                                                                    var win = window.open('/admin/view/user?id=' + staff.user_cognito_id);
                                                                     win.focus();
                                                                 }}
                                                             >
@@ -1287,84 +1292,84 @@ class AdminDashboard extends React.Component {
                                                                 <td>{staff.first_name} {staff.last_name}</td>
                                                                 <td>{staff.email}</td>
                                                             </tr>
-                                                    })}
-                                                    {!this.state.staffList && 
+                                                        })}
+                                                    {!this.state.staffList &&
                                                         <p>No data to show here.</p>
                                                     }
                                                 </tbody>
 
                                             </table>
                                         </div>
-                                    } 
+                                    }
                                     {!this.state.tabActive ?
                                         this.state.view === 'gridView' ?
-                                        this.state.isPlayers ? (
-                                            <div ref="table" className="commander-data-table table-responsive ">
-                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
-                                                    <thead>
-                                                        <tr>
-                                                        <th scope="col">Player ID</th>
-                                                        <th scope="col">Player Name</th>
-                                                        <th scope="col"># of Simulations</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}></span>Profile</th>
+                                            this.state.isPlayers ? (
+                                                <div ref="table" className="commander-data-table table-responsive ">
+                                                    <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Player ID</th>
+                                                                <th scope="col">Player Name</th>
+                                                                <th scope="col"># of Simulations</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Impact Date</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Impact Time</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Simulation Date</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Simulation Time</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}></span>Profile</th>
 
-                                                        </tr>
-                                                    </thead>
-                                                  <tbody id="myTable" className="player-table" >
-                                                        {this.state.playerList.map(function (player, index) {
-                                                            if (player.simulation_data.length > 0) {
-                                                                let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
-                                                                let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
-              
-                                                                if (player.simulation_data[0]['impact-time']) {
-                                                                  let split = player.simulation_data[0]['impact-time'].split(":");
-                                                                  player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
-                                                                }
-              
-                                                                if (player.simulation_data[0]['time']) {
-                                                                  let split = player.simulation_data[0]['time'].toString();
-                                                                  split = split.split(":");
-                                                                  player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
-                                                                }
-              
-                                                                if (player.simulation_data[0].simulation_status === 'completed' ) {
-              
-                                                                  let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
-              
-                                                                  let currentStamp = new Date().getTime();
-                                                                  let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
-                                                                  var diff =(currentStamp - simulationTimestamp) / 1000;
-                                                                  diff /= 60;
-                                                                  let minutes =  Math.abs(Math.round(diff));
-                                                                  console.log('minutes', minutes);
-                                                                  minutes = minutes - computed_time;
-                                                                  if (minutes <= 30) {
-                                                                      cls = 'completedSimulation player-data-table-row';
-                                                                  }
-                                                                }
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="myTable" className="player-table" >
+                                                            {this.state.playerList.map(function (player, index) {
+                                                                if (player.simulation_data.length > 0) {
+                                                                    let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                    let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
 
-                                                                return <tr className={cls} key={index} onClick={() => {
+                                                                    if (player.simulation_data[0]['impact-time']) {
+                                                                        let split = player.simulation_data[0]['impact-time'].split(":");
+                                                                        player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                                    }
 
-                                                                    this.setRedirectData(Number(index + 1).toString(), player.player_name)
-                                                                }}
-                                                                >
-                                                                    <th style={{ verticalAlign: "middle" }} scope="row">
-                                                                    {  
-                                                                        player.simulation_data[0].player_id.split('$')[0]
+                                                                    if (player.simulation_data[0]['time']) {
+                                                                        let split = player.simulation_data[0]['time'].toString();
+                                                                        split = split.split(":");
+                                                                        player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                                    }
 
-                                                                    }</th>
-                                                                    <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                                    <td>{player.simulation_data.length}</td>
-                                                                    <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
-                                                                    <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time' } </td>
-                                                                    {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
-                                                                    {/*<td>0</td>
+                                                                    if (player.simulation_data[0].simulation_status === 'completed') {
+
+                                                                        let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
+
+                                                                        let currentStamp = new Date().getTime();
+                                                                        let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
+                                                                        var diff = (currentStamp - simulationTimestamp) / 1000;
+                                                                        diff /= 60;
+                                                                        let minutes = Math.abs(Math.round(diff));
+                                                                        console.log('minutes', minutes);
+                                                                        minutes = minutes - computed_time;
+                                                                        if (minutes <= 30) {
+                                                                            cls = 'completedSimulation player-data-table-row';
+                                                                        }
+                                                                    }
+
+                                                                    return <tr className={cls} key={index} onClick={() => {
+
+                                                                        this.setRedirectData(Number(index + 1).toString(), player.player_name)
+                                                                    }}
+                                                                    >
+                                                                        <th style={{ verticalAlign: "middle" }} scope="row">
+                                                                            {
+                                                                                player.simulation_data[0].player_id.split('$')[0]
+
+                                                                            }</th>
+                                                                        <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                                        <td>{player.simulation_data.length}</td>
+                                                                        <td style={{ alignItems: "center" }}>
+                                                                            {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date'} </td>
+                                                                        <td style={{ alignItems: "center" }}>
+                                                                            {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time'} </td>
+                                                                        {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
+                                                                        {/*<td>0</td>
                                                                                             <td>
                                                                                             <div className="progress my-progress">
                                                                                             <div
@@ -1378,119 +1383,136 @@ class AdminDashboard extends React.Component {
                                                                                             </div>
                                                                                             </td>
                                                                                             */}
-                                                                    <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
-                                                                    <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
-                                                                    <td style={{ alignItems: "center" }}><a className="btn btn-primary" target='_blank' href={"/profile?id=" + player.simulation_data[0].user_cognito_id}>Profile</a></td>
-                                                                </tr>;
-                                                            }else{
-                                                                return false;
-                                                            }
-                                                        }, this)}
+                                                                        <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
+                                                                        <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
+                                                                        <td style={{ alignItems: "center" }}><a className="btn btn-primary" target='_blank' href={"/profile?id=" + player.simulation_data[0].user_cognito_id}>Profile</a></td>
+                                                                    </tr>;
+                                                                } else {
+                                                                    return false;
+                                                                }
+                                                            }, this)}
+                                                            {this.state.requestedUsers && this.state.requestedUsers.map(function (r_player, r_index) {
+                                                                if (r_player) {
+                                                                    let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
+                                                                    return <tr key={r_index} style={{ lineHeight: lineHeight }}>
+                                                                        <td>-</td>
+                                                                        <td style={{ 'max-width': '162px' }} className="wrap-cell">{r_player.first_name + ' ' + r_player.last_name}</td>
+                                                                        <td>-</td>
+                                                                        <td>-</td>
+                                                                        <td>-</td>
+                                                                        <td>-</td>
+                                                                        <td>-</td>
+                                                                        <td style={{ alignItems: "center" }}><a className="btn btn-primary" target='_blank' href={"/profile?id=" + r_player.user_cognito_id}>Profile</a></td>
 
-                                                    </tbody>
-                                                </table>
-                                                <div style={{'text-align': 'center', 'padding': '14px'}}>
-                                                    {!this.state.isplyarloaded &&
-                                                        <Button
-                                                          variant="primary"
-                                                          disabled = {this.state.loadingplayers}
-                                                          onClick={this.handleLoadmorePlayers}
-                                                        >
-                                                        {this.state.loadingplayers ? 'Loading...': 'Load More'}
-                                                        </Button>
-                                                    }
-                                                </div>
-                                            </div>
-                                        ) :
-                                         (<div className="football-container mt-4 d-flex flex-wrap">
-                                            <>
-                                            {this.state.isSensor && this.iterateTeam()}
-                                            {this.state.isOrganization && 
-                                                <>
-                                                    {this.iterateTeam2()}
-                                                    <div  className="isEdit" >
-                                                        <div
-                                                            className="tech-football m-3 add-box"
-                                                            onClick={e => this.editRecord( {type: 'addOrganization'})}
-                                                        >
-                                                            <div className="wrap_img">
-                                                           <img src={plus} alt="Add New" />
-                                                            <h4>Add New</h4>
-                                                            </div>
-                                                        </div>
+                                                                    </tr>
+                                                                } else {
+                                                                    return false
+                                                                }
+                                                            }, this)}
+                                                        </tbody>
+                                                    </table>
+                                                    <div style={{ 'text-align': 'center', 'padding': '14px' }}>
+                                                        {!this.state.isplyarloaded &&
+                                                            <Button
+                                                                variant="primary"
+                                                                disabled={this.state.loadingplayers}
+                                                                onClick={this.handleLoadmorePlayers}
+                                                            >
+                                                                {this.state.loadingplayers ? 'Loading...' : 'Load More'}
+                                                            </Button>
+                                                        }
                                                     </div>
-                                                </>
-                                            }
-                                            {this.state.isTeams && this.iterateTeam3()}
-                                            </>
-                                        </div>)
-                                        :   
-                                        this.state.isPlayers ? (
-                                            <div ref="table" className="commander-data-table table-responsive ">
-                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
-                                                    <thead>
-                                                        <tr>
+                                                </div>
+                                            ) :
+                                                (<div className="football-container mt-4 d-flex flex-wrap">
+                                                    <>
+                                                        {this.state.isSensor && this.iterateTeam()}
+                                                        {this.state.isOrganization &&
+                                                            <>
+                                                                {this.iterateTeam2()}
+                                                                <div className="isEdit" >
+                                                                    <div
+                                                                        className="tech-football m-3 add-box"
+                                                                        onClick={e => this.editRecord({ type: 'addOrganization' })}
+                                                                    >
+                                                                        <div className="wrap_img">
+                                                                            <img src={plus} alt="Add New" />
+                                                                            <h4>Add New</h4>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </>
+                                                        }
+                                                        {this.state.isTeams && this.iterateTeam3()}
+                                                    </>
+                                                </div>)
+                                            :
+                                            this.state.isPlayers ? (
+                                                <div ref="table" className="commander-data-table table-responsive ">
+                                                    <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                        <thead>
+                                                            <tr>
 
-                                                        <th scope="col">Player ID</th>
-                                                        <th scope="col">Player Name</th>
-                                                        <th scope="col"># of Simulations</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Date</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Impact Time</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Date</th>
-                                                        <th scope="col" ><span style={{display: 'block'}}>Last</span>Simulation Time</th>   
-                                                        </tr>
-                                                    </thead>
-                                                  <tbody className="player-table" id="myTable">
-                                                        {this.state.playerList.map(function (player, index) {
-                                                            if (player.simulation_data.length > 0) {
-                                                                let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
-                                                                let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
-              
-                                                                if (player.simulation_data[0]['impact-time']) {
-                                                                  let split = player.simulation_data[0]['impact-time'].split(":");
-                                                                  player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
-                                                                }
-              
-                                                                if (player.simulation_data[0]['time']) {
-                                                                  let split = player.simulation_data[0]['time'].toString();
-                                                                  split = split.split(":");
-                                                                  player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
-                                                                }
-              
-                                                                if (player.simulation_data[0].simulation_status === 'completed' ) {
-              
-                                                                  let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
-              
-                                                                  let currentStamp = new Date().getTime();
-                                                                  let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
-                                                                  var diff =(currentStamp - simulationTimestamp) / 1000;
-                                                                  diff /= 60;
-                                                                  let minutes =  Math.abs(Math.round(diff));
-                                                                  console.log('minutes', minutes);
-                                                                  minutes = minutes - computed_time;
-                                                                  if (minutes <= 30) {
-                                                                      cls = 'completedSimulation player-data-table-row';
-                                                                  }
-                                                                }
+                                                                <th scope="col">Player ID</th>
+                                                                <th scope="col">Player Name</th>
+                                                                <th scope="col"># of Simulations</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Impact Date</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Impact Time</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Simulation Date</th>
+                                                                <th scope="col" ><span style={{ display: 'block' }}>Last</span>Simulation Time</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="player-table" id="myTable">
+                                                            {this.state.playerList.map(function (player, index) {
+                                                                if (player.simulation_data.length > 0) {
+                                                                    let dateTime = this.getDateTime(parseFloat(player.simulation_data[0].player_id.split('$')[1]));
+                                                                    let cls = player.simulation_data[0].simulation_status === 'pending' ? 'pendingSimulation player-data-table-row' : 'player-data-table-row';
 
-                                                                return <tr className={cls} key={index} onClick={() => {
+                                                                    if (player.simulation_data[0]['impact-time']) {
+                                                                        let split = player.simulation_data[0]['impact-time'].split(":");
+                                                                        player.simulation_data[0]['impact-time'] = split.slice(0, split.length - 1).join(":");
+                                                                    }
 
-                                                                    this.setRedirectData(Number(index + 1).toString(), player.player_name)
-                                                                }}
-                                                                >
-                                                                    <th style={{ verticalAlign: "middle" }} scope="row">
-                                                                    {  
-                                                                        player.simulation_data[0].player_id.split('$')[0]
+                                                                    if (player.simulation_data[0]['time']) {
+                                                                        let split = player.simulation_data[0]['time'].toString();
+                                                                        split = split.split(":");
+                                                                        player.simulation_data[0]['time'] = split.slice(0, split.length - 1).join(":");
+                                                                    }
 
-                                                                    }</th>
-                                                                    <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
-                                                                    <td>{player.simulation_data.length}</td>
-                                                                    <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date' } </td>
-                                                                    <td style={{ alignItems: "center" }}>
-                                                                        {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time' } </td>
-                                                                    {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
-                                                                    {/*<td>0</td>
+                                                                    if (player.simulation_data[0].simulation_status === 'completed') {
+
+                                                                        let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
+
+                                                                        let currentStamp = new Date().getTime();
+                                                                        let simulationTimestamp = parseFloat(player.simulation_data[0].player_id.split('$')[1]);
+                                                                        var diff = (currentStamp - simulationTimestamp) / 1000;
+                                                                        diff /= 60;
+                                                                        let minutes = Math.abs(Math.round(diff));
+                                                                        console.log('minutes', minutes);
+                                                                        minutes = minutes - computed_time;
+                                                                        if (minutes <= 30) {
+                                                                            cls = 'completedSimulation player-data-table-row';
+                                                                        }
+                                                                    }
+
+                                                                    return <tr className={cls} key={index} onClick={() => {
+
+                                                                        this.setRedirectData(Number(index + 1).toString(), player.player_name)
+                                                                    }}
+                                                                    >
+                                                                        <th style={{ verticalAlign: "middle" }} scope="row">
+                                                                            {
+                                                                                player.simulation_data[0].player_id.split('$')[0]
+
+                                                                            }</th>
+                                                                        <td>{player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
+                                                                        <td>{player.simulation_data.length}</td>
+                                                                        <td style={{ alignItems: "center" }}>
+                                                                            {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date'} </td>
+                                                                        <td style={{ alignItems: "center" }}>
+                                                                            {player.simulation_data[0]['impact-time'] ? this.tConvert(player.simulation_data[0]['impact-time']) : player.simulation_data[0]['time'] ? this.tConvert(player.simulation_data[0]['time']) : 'Unknown Time'} </td>
+                                                                        {/*<td>{Number(player.impact)%(index + 1)*2}</td>*/}
+                                                                        {/*<td>0</td>
                                                                                             <td>
                                                                                             <div className="progress my-progress">
                                                                                             <div
@@ -1504,105 +1526,105 @@ class AdminDashboard extends React.Component {
                                                                                             </div>
                                                                                             </td>
                                                                                             */}
-                                                                    <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
-                                                                    <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
-                                                                </tr>;
-                                                            }else{
-                                                                return false;
-                                                            }
-                                                        }, this)}
-									
-                                                    </tbody>
-                                                </table>
-                                                <div style={{'text-align': 'center', 'padding': '14px'}}>
-                                                    {!this.state.isplyarloaded &&
-                                                        <Button
-                                                          variant="primary"
-                                                          disabled = {this.state.loadingplayers}
-                                                          onClick={this.handleLoadmorePlayers}
-                                                        >
-                                                        {this.state.loadingplayers ? 'Loading ...': 'Load More'}
-                                                        </Button>
-                                                    }
-                                                </div>
-                                            </div>
-                                        ) :
-                                        (<div ref="table" className="commander-data-table table-responsive ">
-                                            {this.state.isSensor && 
-                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
-                                                    <thead>
-                                                        <tr>
+                                                                        <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
+                                                                        <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
+                                                                    </tr>;
+                                                                } else {
+                                                                    return false;
+                                                                }
+                                                            }, this)}
 
-                                                            <th scope="col">S.No.</th>
-                                                            <th scope="col">Sensor</th>
-                                                            <th scope="col">Simulations</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody className="player-table">
-                                                        {this.tableSensor()}
-                                                    </tbody>
-                                                </table>
-                                            }
-                                            {this.state.isOrganization && 
-                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">S.No.</th>
-                                                            <th scope="col">Organization</th>
-                                                            <th scope="col">Simulations</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody className="player-table">
-                                                        {this.tableOrganization()}
-                                                    </tbody>
-                                                </table>
-                                            }
-                                            {this.state.isTeams && 
-                                                <table style={{ whiteSpace: "nowrap" }} className="table ">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">S.No.</th>
-                                                            <th scope="col">Team Name</th>
-                                                            <th scope="col">Simulations</th>
-                                                            <th scope="col">Organization</th> 
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody className="player-table">
-                                                        {this.tableTeams()}
-                                                    </tbody>
-                                                </table>
-                                            }
-                                        </div>)
+                                                        </tbody>
+                                                    </table>
+                                                    <div style={{ 'text-align': 'center', 'padding': '14px' }}>
+                                                        {!this.state.isplyarloaded &&
+                                                            <Button
+                                                                variant="primary"
+                                                                disabled={this.state.loadingplayers}
+                                                                onClick={this.handleLoadmorePlayers}
+                                                            >
+                                                                {this.state.loadingplayers ? 'Loading ...' : 'Load More'}
+                                                            </Button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            ) :
+                                                (<div ref="table" className="commander-data-table table-responsive ">
+                                                    {this.state.isSensor &&
+                                                        <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                            <thead>
+                                                                <tr>
+
+                                                                    <th scope="col">S.No.</th>
+                                                                    <th scope="col">Sensor</th>
+                                                                    <th scope="col">Simulations</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="player-table">
+                                                                {this.tableSensor()}
+                                                            </tbody>
+                                                        </table>
+                                                    }
+                                                    {this.state.isOrganization &&
+                                                        <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">S.No.</th>
+                                                                    <th scope="col">Organization</th>
+                                                                    <th scope="col">Simulations</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="player-table">
+                                                                {this.tableOrganization()}
+                                                            </tbody>
+                                                        </table>
+                                                    }
+                                                    {this.state.isTeams &&
+                                                        <table style={{ whiteSpace: "nowrap" }} className="table ">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">S.No.</th>
+                                                                    <th scope="col">Team Name</th>
+                                                                    <th scope="col">Simulations</th>
+                                                                    <th scope="col">Organization</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="player-table">
+                                                                {this.tableTeams()}
+                                                            </tbody>
+                                                        </table>
+                                                    }
+                                                </div>)
                                         : null}
                                     {this.state.isUploading ? (
-                                            <div className="d-flex justify-content-center center-spinner">
-                                                <div
-                                                    className="spinner-border text-primary"
-                                                    role="status"
-                                                    >
-                                                    <span className="sr-only">Uploading ...</span>
-                                                </div>
+                                        <div className="d-flex justify-content-center center-spinner">
+                                            <div
+                                                className="spinner-border text-primary"
+                                                role="status"
+                                            >
+                                                <span className="sr-only">Uploading ...</span>
                                             </div>
-                                        ) : null}
+                                        </div>
+                                    ) : null}
 
-                                        {this.state.isUpdated ? (
-                                            <UncontrolledAlert
-                                                color="success"
-                                                style={{ marginTop: '5px' }}
-                                                >
-                                                Changes has been done successfully.
-                                            </UncontrolledAlert>
-                                        ) : null}
-                                        {this.state.Error ? (
-                                            <UncontrolledAlert
-                                                style={{ marginTop: '5px' }}
-                                                color="danger"
+                                    {this.state.isUpdated ? (
+                                        <UncontrolledAlert
+                                            color="success"
+                                            style={{ marginTop: '5px' }}
+                                        >
+                                            Changes has been done successfully.
+                                        </UncontrolledAlert>
+                                    ) : null}
+                                    {this.state.Error ? (
+                                        <UncontrolledAlert
+                                            style={{ marginTop: '5px' }}
+                                            color="danger"
 
-                                                >
-                                                {this.state.Error}
+                                        >
+                                            {this.state.Error}
 
-                                            </UncontrolledAlert>
-                                        ) : null}
+                                        </UncontrolledAlert>
+                                    ) : null}
                                     {this.state.isOrganization &&
                                         <div className="delete-confirmation-button isEdit">
                                             <button className="btn button-back " onClick={this.handleCencel}>Cancel</button>
@@ -1627,10 +1649,10 @@ class AdminDashboard extends React.Component {
         if ((!this.state.isAuthenticated && !this.state.isCheckingAuth) || this.state.isAdmin === false) {
             return <Redirect to="/Dashboard" />;
         }
-        
+
         if (this.state.cognito_user_id) {
             return <Redirect push to={{
-                pathname: '/TeamAdmin/user/dashboard/'+ this.state.cognito_user_id+'/'+this.state.player_name.player_id+'?team='+this.state.player_name.team+'&org='+this.state.player_name.organization+'&brand='+this.state.player_name.sensor,
+                pathname: '/TeamAdmin/user/dashboard/' + this.state.cognito_user_id + '/' + this.state.player_name.player_id + '?team=' + this.state.player_name.team + '&org=' + this.state.player_name.organization + '&brand=' + this.state.player_name.sensor,
                 state: {
                     user_cognito_id: this.state.userDetails.user_cognito_id,
                     cognito_user_id: this.state.cognito_user_id,
@@ -1652,9 +1674,9 @@ class AdminDashboard extends React.Component {
 
         return (
             <React.Fragment>
-                <DeletePopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData)? this.props.isDeleteData : this.isDeleteData} />
-                <UpdatePopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData} data={this.state.data}/>
-                
+                <DeletePopup isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible) ? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData) ? this.props.isDeleteData : this.isDeleteData} />
+                <UpdatePopup isVisible2={this.state.isDisplay2} makeVisible2={(this.props.makeVisible2) ? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData) ? this.props.isUpdateData : this.isUpdateData} data={this.state.data} />
+
                 {this.props.isMilitaryVersionActive === true ? (
                     <div className="militay-view">
                         <div className="military-sidebar">
@@ -1692,7 +1714,7 @@ function mapStateToProps(state) {
     console.log('state', state);
     return {
         isMilitaryVersionActive: state.militaryVersion,
-        user_details : state.userInfo
+        user_details: state.userInfo
     };
 }
 

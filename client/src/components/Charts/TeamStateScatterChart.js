@@ -12,6 +12,8 @@ class TeamStateScatterChart extends React.Component {
     }
 
     render() {
+        const { team , organization, brand} = this.props.teamData;
+
         window.addEventListener('scroll', function(){
             var tooltipEl = document.getElementById('chartjs-tooltip');
             if (tooltipEl) {
@@ -25,7 +27,7 @@ class TeamStateScatterChart extends React.Component {
         let mps_95 = this.props.MPS_95_DATA
 
         for (var i = 0; i < max_axlation.length; i++) {
-            values.push({ 'x': max_axlation[i], 'y': mps_95[i] });
+            values.push({ 'x': max_axlation[i].val, 'y': mps_95[i] });
         }
         console.log('values', values)
         const data = {
@@ -41,6 +43,14 @@ class TeamStateScatterChart extends React.Component {
             ]
         };
 
+        // filter player id ...
+        function filterPlayerId(values, angAcc) {
+            // console.log(values, angAcc)
+          return values.val == angAcc;
+        }
+        
+        
+        //Customize tooltip of chart ...
         var customTooltips = function (tooltip) {
             // Tooltip Element
             var tooltipEl = document.getElementById('chartjs-tooltip');
@@ -84,11 +94,17 @@ class TeamStateScatterChart extends React.Component {
                     style += '; border-color:' + colors.borderColor;
                     style += '; border-width: 2px';
                     style += '; margin-left: 5px';
-
+                    var angAcc = newbody.split(',')[0];
+                    let player_id = max_axlation.filter((value)=>filterPlayerId(value,angAcc));
+                    // console.log('player_id',player_id)
+                    player_id =  player_id[0] ?  player_id[0].player_id : '';
+                    angAcc = parseFloat(angAcc);
+                    // console.log('angAcc',angAcc)
+                    var mps = parseFloat(newbody.split(',')[1]);
                     var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-                    innerHtml += '<tr><td>PlayerID:</td><td>Unknown</td></tr>';
-                    innerHtml += '<tr><td>Ang.Acc:</td><td>' + span + newbody.split(',')[0] + '</td></tr>';
-                    innerHtml += '<tr><td>95%MPS:</td><td>' + span + newbody.split(',')[1] + '</td></tr>';
+                    innerHtml += '<tr><td>PlayerID:</td><td><a href="/TeamAdmin/user/dashboard/1/'+player_id+'?team='+team[0]+'&org='+organization+'&brand='+brand+'" target="_blank">'+player_id+'</a></td></tr>';
+                    innerHtml += '<tr><td>Ang.Acc:</td><td>' + span + angAcc.toFixed(2) + '</td></tr>';
+                    innerHtml += '<tr><td>95%MPS:</td><td>' + span + mps.toFixed(2) + '</td></tr>';
                 });
                 innerHtml += '</tbody>';
                 var tableRoot = tooltipEl.querySelector('table');
