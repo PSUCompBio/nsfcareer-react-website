@@ -19,7 +19,7 @@ function getUserDetails(user_name, cb) {
             Key: {
                 user_cognito_id: user_name,
             },
-            ProjectionExpression: "last_name,first_name,team,sensor,organization,sensor_id_number,player_position",
+            ProjectionExpression: "last_name,first_name,team,sensor,organization,sensor_id_number,player_position, user_cognito_id",
 			};
         docClient.get(db_table, function (err, data) {
             if (err) {
@@ -1965,6 +1965,53 @@ function InsertUserIntoSensor(user_name,sensor) {
     });
 }
 
+
+function InsertUserIntoOrg(user_name,organization_id, requested_player_list) {
+    console.log('user_name',user_name,organization_id)
+    return new Promise((resolve, reject) => {
+        if(requested_player_list){
+            var dbInsert = {
+                TableName: "organizations",
+                Key: { 
+                    "organization_id" : organization_id
+                },
+                UpdateExpression: "set #requested_player_list = list_append(#requested_player_list, :user_cognito_id)",
+                ExpressionAttributeNames: {
+                    "#requested_player_list": "requested_player_list"
+                },
+                ExpressionAttributeValues: {
+                    ":user_cognito_id": [user_name]
+                },
+                ReturnValues: "UPDATED_NEW"
+            }
+        }else{
+            var dbInsert = {
+                TableName: "organizations",
+                Key: { 
+                    "organization_id" : organization_id
+                },
+                UpdateExpression: "set #list = :newItem ",
+                ExpressionAttributeNames: {
+                    "#list": "requested_player_list",
+                },
+                ExpressionAttributeValues: {
+                    ":newItem":  [user_name],
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+        }   
+        docClient.update(dbInsert, function (err, data) {
+            if (err) {
+                console.log("ERROR WHILE CREATING DATA",err);
+                reject(err);
+
+            } else {
+                resolve(data)
+            }
+        });
+    });
+}
+
 function InsertImpactVideoKey(video_id,impact_video_path) {
     console.log('user_name',video_id,impact_video_path)
     return new Promise((resolve, reject) => {
@@ -3577,5 +3624,6 @@ module.exports = {
     getPlayerImageDetailsByaccoutId,
     getOrgIdbyImageId,
     updatePlayerPositions,
-	getPlayerSummariesData
+    getPlayerSummariesData,
+    InsertUserIntoOrg
 };

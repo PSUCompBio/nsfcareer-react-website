@@ -281,7 +281,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/TeamAdmin/user/dashboard/:cognito_user_id/:player_name"
+          path="/TeamAdmin/user/dashboard/:cognito_user_id/:player_name?"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
         />  
         <Route

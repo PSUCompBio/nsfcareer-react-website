@@ -219,8 +219,10 @@ const {
         getPlayerImageDetailsByaccoutId,
         getOrgIdbyImageId,
         updatePlayerPositions,
-		getPlayerSummariesData,
-		downloadLogFileFromS3
+        getPlayerSummariesData,
+        InsertUserIntoOrg,
+        downloadLogFileFromS3,
+      
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -2264,7 +2266,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["name"] = req.body.first_name + req.body.last_name;
     var user_name = req.body.user_name;
     console.log('user_name',user_name)
-
+    delete req.body['confirm_password'];
     req.body["email"] = user_name.toLowerCase();
     req.body["user_name"] = user_name.toLowerCase();
     console.log('email',req.body["email"] )
@@ -2445,6 +2447,21 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                         .catch(err => {
                                            console.log('err',err)
                                         })
+                                }else if(mergedObject.level == 100){
+                                    getAllTeamsOfOrganizationsOfSensorBrand({organization: mergedObject.organization, brand: ''})
+                                    .then(orgData => {
+                                        console.log('orgData -------------\n',orgData)
+                                        InsertUserIntoOrg(mergedObject.user_cognito_id,orgData[0].organization_id, orgData[0].requested_player_list)
+                                        .then(sensor_data => {
+                                        
+                                            console.log('sensor_data',sensor_data)
+                                        })
+                                        .catch(err => {
+                                            console.log('err',err)
+                                        })
+                                    }).catch(err => {
+                                        console.log('err',err)
+                                    })
                                 }
                                 // Add user to corresponding group...
                                 // event.user_type
@@ -3016,6 +3033,7 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                     });
                 })
             }else{
+
                 getOrganizatonByTeam(data.organization, data.TeamName, data.brand)
                 .then(org =>{
                     var orglen = org.length;
@@ -3024,25 +3042,25 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                         org.forEach(function (record, index) {
                             console.log('record',record.organization_id);
                             console.log(index, orglen)
-                            // DeleteOrganization(record.organization_id)
-                            // .then(data => {
-                            //     console.log('res',data)
-                            //     if(index == orglen){
-                            //         res.send({
-                            //             message: 'success',
-                            //             status: 200
-                            //         })
-                            //     }
-                            // }).catch(err => {
-                            //     console.log('err',err)
-                            //     if(index == orglen){
-                            //          res.send({
-                            //             message: 'failure',
-                            //             status: 300,
-                            //             err: err
-                            //         })
-                            //     }
-                            // })
+                            DeleteOrganization(record.organization_id)
+                            .then(data => {
+                                console.log('res',data)
+                                if(index == orglen){
+                                    res.send({
+                                        message: 'success',
+                                        status: 200
+                                    })
+                                }
+                            }).catch(err => {
+                                console.log('err',err)
+                                if(index == orglen){
+                                     res.send({
+                                        message: 'failure',
+                                        status: 300,
+                                        err: err
+                                    })
+                                }
+                            })
                         })
                     }else{
                         res.send({
@@ -9506,7 +9524,7 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req,res) =>{
     .then(list => {
         let uniqueList = [];
         var teamList = list.filter(function (team_name) {
-            if (uniqueList.indexOf(team_name.team_name) === -1) {
+            if (team_name.team_name && team_name.team_name != null && team_name.team_name != undefined && uniqueList.indexOf(team_name.team_name) === -1) {
                 uniqueList.push(team_name.team_name);
                 return team_name;
             }
@@ -9535,7 +9553,7 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
             // });
             let uniqueList = [];
             var teamList = list.filter(function (team_name) {
-                if (uniqueList.indexOf(team_name.team_name) === -1) {
+                if (team_name.team_name && team_name.team_name != null && team_name.team_name != undefined && uniqueList.indexOf(team_name.team_name) === -1) {
                     uniqueList.push(team_name.team_name);
                     return team_name;
                 }

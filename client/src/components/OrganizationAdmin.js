@@ -45,6 +45,7 @@ class OrganizationAdmin extends React.Component {
         this.state = {
             isAuthenticated: false,
             isCheckingAuth: true,
+         
             tabActive: 0,
             targetBtn: '',
             totalTeam: 0,
@@ -498,7 +499,7 @@ class OrganizationAdmin extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} />
+                                <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} setSimulationCount={this.setSimulationCount}/>
                                 {/*noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                  : 
@@ -524,7 +525,7 @@ class OrganizationAdmin extends React.Component {
     }
 
      tableOrganization = ()=> {
-        console.log(this.state.sensorOrgList)
+        console.log('sensorOrgList', this.state.sensorOrgList)
         var body =  this.state.sensorOrgList.map(function (organization, index) {
                 if (organization) {
 
@@ -560,13 +561,26 @@ class OrganizationAdmin extends React.Component {
                         <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                         <td>{organization.organization}</td>
                         <td>{organization.sensor ? organization.sensor : 'NA'}</td>
-                        <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
+                        <td><SimulationCountForList count={organization.simulation_count } sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount}/></td>
                     </tr>;
                 }else{
                     return '';
                 }
             }, this)
         return body
+    }
+
+    setSimulationCount= (count, organization)=>{
+        let lsitOrg = this.state.sensorOrgList;
+        console.log('count',count, organization)
+        for (let i = 0; i < this.state.totalOrganization; i++) {
+            if(lsitOrg[i].organization === organization){
+                lsitOrg[i].simulation_count =  count;
+            }
+
+        }
+
+        this.setState({sensorOrgList: lsitOrg});
     }
 
     iterateTeam = () => {

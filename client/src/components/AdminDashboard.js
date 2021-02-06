@@ -40,6 +40,8 @@ import { Button } from 'react-bootstrap';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
 import SimulationCount from './PlayerDetails/SimulationCount';
+import SimulationCountForList from './PlayerDetails/SimulationCountForList';
+
 
 class AdminDashboard extends React.Component {
     constructor() {
@@ -757,7 +759,7 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                            <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} />
+                            <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} setSimulationCount={this.setSimulationCount}/>
                                 {/*noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                     :
@@ -1099,7 +1101,7 @@ class AdminDashboard extends React.Component {
                 >
                     <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                     <td>{organization.organization}</td>
-                    <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
+                    <td><SimulationCountForList count={organization.simulation_count } sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount}/></td>
                 </tr>;
             } else {
                 return false;
@@ -1108,6 +1110,18 @@ class AdminDashboard extends React.Component {
         return body
     }
 
+    setSimulationCount= (count, organization)=>{
+        let lsitOrg = this.state.OrganizationList;
+        console.log('count',count, organization)
+        for (let i = 0; i < this.state.totalOrganization; i++) {
+            if(lsitOrg[i].organization === organization){
+                lsitOrg[i].simulation_count =  count;
+            }
+
+        }
+
+        this.setState({OrganizationList: lsitOrg});
+    }
     tableTeams = () => {
         console.log(this.state.teamList)
 
