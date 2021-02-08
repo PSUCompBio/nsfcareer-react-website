@@ -105,7 +105,7 @@ class BrainSubmitPortal extends React.Component {
                             list: prevState.list.concat({
                                 key:key,
                                 name:data.player['first-name'] +' '+ data.player['last-name'], 
-                                position:data.player['position'], 
+                                position:data.player['organization'], 
                                 team:data.player['team'], 
                                 image: '',
                                 imageFile:'',

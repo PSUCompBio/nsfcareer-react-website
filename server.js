@@ -9175,17 +9175,21 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                         req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                         req.body["sensor_brand"] = user_details.Item["sensor"];
                         var sensor =  user_details.Item["sensor"];
-                        if (sensor && sensor.toLowerCase() == 'sensor_company_x' || sensor.toLowerCase() == 'swa') {
-                            req.body["sensor"] = 'swa';
-                        }else if(sensor.toLowerCase() == 'prevent biometrics'){
-                            req.body["sensor"] = 'prevent';
+                        if(sensor && sensor != undefined && sensor != null){
+                            if (sensor && sensor.toLowerCase() == 'sensor_company_x' || sensor.toLowerCase() == 'swa') {
+                                req.body["sensor"] = 'swa';
+                            }else if(sensor.toLowerCase() == 'prevent biometrics'){
+                                req.body["sensor"] = 'prevent';
 
-                        }else if(sensor.toLowerCase()  == 'biocore'){
-                            req.body["sensor"] = 'biocore';
-                        }else if(sensor.toLowerCase() == 'Athlete Intelligence'){
-                            req.body["sensor"] = 'athlete';
+                            }else if(sensor.toLowerCase()  == 'biocore'){
+                                req.body["sensor"] = 'biocore';
+                            }else if(sensor.toLowerCase() == 'Athlete Intelligence'){
+                                req.body["sensor"] = 'athlete';
+                            }else{
+                                req.body["sensor"] = sensor;   
+                            }
                         }else{
-                            req.body["sensor"] = sensor;   
+                            req.body["sensor"] = 'swa';
                         }
                        
                         req.body["level"] = user_details.Item["level"];
