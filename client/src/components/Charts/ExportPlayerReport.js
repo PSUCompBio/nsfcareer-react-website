@@ -337,6 +337,7 @@ class ExportPlayerReport extends React.Component {
 		var ctx = chart.chart.ctx;
 
 		// const rect = chart.canvas.getBoundingClientRect();
+		if(ctx){
 		ctx.save();
 		var xAxis = chart.scales["x-axis-0"];
 		var yAxis = chart.scales["y-axis-0"];
@@ -352,11 +353,13 @@ class ExportPlayerReport extends React.Component {
 				...actionButtonPosArr
 			];
 		});
-		ctx.restore();
-
-		this.setState({
-			actionButtonPositions: actionButtonPosArr
-		});
+		
+			ctx.restore();
+			this.setState({
+				actionButtonPositions: actionButtonPosArr
+			});
+		}
+		
 	};
 
 	createLobeSheres = (type) => {

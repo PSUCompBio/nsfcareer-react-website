@@ -9921,7 +9921,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                 console.log('player_id',newPlayerId)
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
-                                    var player_status = userData[0].player_status
+                                    var player_status = userData[0] ? userData[0].player_status : 'pending';
                                     getPlayerSimulationStatus(acc_data.image_id)
                                     .then(imageData => {
                                         if (imageData && imageData.player_name && imageData.player_name != 'null') {
