@@ -525,7 +525,7 @@ class TeamStats extends React.Component {
                                                     'color': '#666666',
                                                     'padding-bottom': '20px'
                                                 }}
-                                            >Ang Acc (rad/s)</p>
+                                            >Ang Vel (rad/s)</p>
                                         </div>
                                         <div className="col-md-6">
                                         </div>

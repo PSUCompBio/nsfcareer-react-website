@@ -487,30 +487,48 @@ class AdminDashboard extends React.Component {
     */
 
     handleLoadmorePlayers = () => {
-        this.setState({
-            loadingplayers: true,
-        })
-        loadMorePlayerList({ type: 'loadMorePlayerList', lastItem: '' })
-            .then(players => {
-                console.log('players ==============\n', players)
-                this.setState({
-                    playerList: players.data.data,
-                    requestedUsers: players.data.requested_players,
-                    loadingplayers: false,
-                    isplyarloaded: true
-                })
-                let the = this;
-                setTimeout(function () {
-                    the.hadnlesearch();
-                }, 3000);
-
-            }).catch(err => {
-                console.log('err', err)
-                this.setState({
-                    loadingplayers: false,
-                    isplyarloaded: true
-                })
+       
+        if(!this.state.loadingplayers){
+            this.setState({
+                loadingplayers: true,
             })
+            loadMorePlayerList({ type: 'loadMorePlayerList', lastItem: '' })
+                .then(players => {
+                    console.log('players ==============\n', players)
+                    this.setState({
+                        playerList: players.data.data,
+                        requestedUsers: players.data.requested_players,
+                        loadingplayers: false,
+                        isplyarloaded: true
+                    })
+                    let the = this;
+                    setTimeout(function () {
+                        the.filterText();
+                    }, 3000);
+
+                }).catch(err => {
+                    console.log('err', err)
+                    this.setState({
+                        loadingplayers: false,
+                        isplyarloaded: true
+                    })
+            })
+        }
+    }
+
+    filterText = () => {
+        var the = this;
+        if($("#myInput") && $("#myInput") !== null){
+            var value = $("#myInput").val().toLowerCase();
+            // console.log('keyup', value)
+            the.handleLoadmorePlayers();
+            $("#myTable tr").filter(function () {
+                console.log($(this).text().toLowerCase().indexOf(value))
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                return true;
+            });
+        }
+
     }
 
     /*===================================
@@ -520,9 +538,11 @@ class AdminDashboard extends React.Component {
       =============================================*/
     hadnlesearch = () => {
         console.log('button', $("#myInput").html())
+        var the = this;
         $("#myInput").on("keyup", function () {
             var value = $(this).val().toLowerCase();
-            console.log('keyup', value)
+            // console.log('keyup', value)
+            the.handleLoadmorePlayers();
             $("#myTable tr").filter(function () {
                 console.log($(this).text().toLowerCase().indexOf(value))
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
@@ -608,12 +628,12 @@ class AdminDashboard extends React.Component {
 
                                     }));
                                 }
-                            //     return getOrganizationList();
-                            // }).then(organizations => {
-                            //     this.setState(prevState => ({
-                            //         OrganizationList: organizations.data.data,
-                            //         totalOrganization: organizations.data.data.length,
-                            //     }));
+                                //     return getOrganizationList();
+                                // }).then(organizations => {
+                                //     this.setState(prevState => ({
+                                //         OrganizationList: organizations.data.data,
+                                //         totalOrganization: organizations.data.data.length,
+                                //     }));
                             })
                             .catch(err => {
                                 alert(err);
@@ -759,7 +779,7 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                            <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} setSimulationCount={this.setSimulationCount}/>
+                                <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} setSimulationCount={this.setSimulationCount} />
                                 {/*noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                     :
@@ -1101,7 +1121,7 @@ class AdminDashboard extends React.Component {
                 >
                     <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                     <td>{organization.organization}</td>
-                    <td><SimulationCountForList count={organization.simulation_count } sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount}/></td>
+                    <td><SimulationCountForList count={organization.simulation_count} sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount} /></td>
                 </tr>;
             } else {
                 return false;
@@ -1110,17 +1130,17 @@ class AdminDashboard extends React.Component {
         return body
     }
 
-    setSimulationCount= (count, organization)=>{
+    setSimulationCount = (count, organization) => {
         let lsitOrg = this.state.OrganizationList;
-        console.log('count',count, organization)
+        console.log('count', count, organization)
         for (let i = 0; i < this.state.totalOrganization; i++) {
-            if(lsitOrg[i].organization === organization){
-                lsitOrg[i].simulation_count =  count;
+            if (lsitOrg[i].organization === organization) {
+                lsitOrg[i].simulation_count = count;
             }
 
         }
 
-        this.setState({OrganizationList: lsitOrg});
+        this.setState({ OrganizationList: lsitOrg });
     }
     tableTeams = () => {
         console.log(this.state.teamList)

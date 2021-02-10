@@ -130,7 +130,9 @@ class TeamStateScatterChart extends React.Component {
                 xAxes: [{
                     type: 'linear',
                     position: 'bottom',
-
+                    ticks: {
+                        min: 0, // it is for ignoring negative step.
+                    },
                     scaleLabel: {
                         display: true,
                         fontSize: 18,
@@ -140,8 +142,11 @@ class TeamStateScatterChart extends React.Component {
                     },
                 }],
                 yAxes: [{
-                    type: 'linear',
 
+                    type: 'linear',
+                    ticks: {
+                        min: 0, // it is for ignoring negative step.
+                    },
                     scaleLabel: {
                         display: true,
                         fontSize: 18,

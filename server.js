@@ -2274,7 +2274,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
     req.body["is_selfie_model_uploaded"] = false;
     req.body["is_selfie_inp_uploaded"] = false;
     // Hardcoding Done Here need to be replaced with actual organization in request.
-    if(!req.body.organization){
+    if(!req.body.organization || req.body.organization == undefined || req.body.organization == null){
         req.body["organization"] = "PSU";
     }
     if(!req.body.level){
@@ -2482,7 +2482,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                         console.log("actual age is ", age);
                                         // Adding user's age in details
                                         mergedObject["age"] = age;
-
+                                        mergedObject["user_cognito_id"] = req.body["account_id"];
                                         if( age < 18) {
                                             // Disable user account
                                         }
@@ -4486,6 +4486,7 @@ app.post(`${apiPrefix}loadMorePlayerList`, (req, res) => {
                         counter++;
                         if(playerData[0]){
                             p_data.push({
+                                player_name: p,
                                 date_time: playerData[0].player_id.split('$')[1],
                                 simulation_data: playerData,
                             });
@@ -6526,6 +6527,7 @@ app.post(`${apiPrefix}getSimulationStatusCount`, (req,res) =>{
                 sensor_data.forEach(function (record, index) {
                     getPlayerSimulationFile(record)
                         .then(simulation => {
+                            console.log('simulation.status',simulation.status,'image id -',simulation.image_id)
                             k++;
                             if (simulation && simulation.status === 'pending') {
                                 pending++;
@@ -8226,6 +8228,13 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                             console.log('playerData -------------------\n')
                             counter++;
                             if(playerData[0]){
+                                playerData.sort(function (b, a) {
+                                    var keyA = a.player_id.split('$')[1],
+                                        keyB = b.player_id.split('$')[1];
+                                    if (keyA < keyB) return -1;
+                                    if (keyA > keyB) return 1;
+                                    return 0;
+                                });
                                 p_data.push({
                                     date_time: playerData[0].player_id.split('$')[1],
                                     simulation_data: playerData,
@@ -8233,7 +8242,6 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                             }
                            // console.log('p_data length', player_listLen, counter)
                             if (counter >= player_listLen) {
-                                console.log('playerlist executed -----------------------\n')
                                 p_data.sort(function (b, a) {
                                     var keyA = a.date_time,
                                         keyB = b.date_time;
@@ -8243,10 +8251,15 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                 });
 
                                 let k = 0;
+                                console.log('playerlist executed -----------------------\n',p_data)
+
                                 p_data.forEach(function (record, index) {
+                                    console.log('record.simulation_data[0]',record.simulation_data[0].image_id)
                                     getPlayerSimulationFile(record.simulation_data[0])
                                         .then(simulation => {
                                             p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                            p_data[index]['simulation_data'][0]['image_id_2'] = simulation ? simulation.image_id : '';
+
                                             p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
                                             getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
                                                 .then (u_detail => {                                                   
@@ -8913,6 +8926,8 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
 
                                         let reportData = {
                                             reportDate: getDateInFormat(),
+                                            csdm15: csdm15 == 'true' ?  '': 'display: none',
+                                            mps: mps == 'true' ?  '': 'display: none',
                                             iscsdm: csdm15 == 'true' ?  '': 'display: none',
                                             iscmps: mps == 'true'   ? csdm15 != 'true' ? 'display: none' : '': 'display: none',
                                             iscmps1:  csdm15 != 'true' ?  '': 'display: none',
