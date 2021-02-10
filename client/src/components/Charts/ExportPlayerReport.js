@@ -170,6 +170,7 @@ class ExportPlayerReport extends React.Component {
 	}
 
 	componentDidMount() {
+		console.log('brain ---------------------------------\n',brain)
 		// Scrolling the screen to top
 		// console.log('ExportPlayerReport')
 		window.scrollTo(0, 0);

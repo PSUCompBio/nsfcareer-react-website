@@ -74,7 +74,7 @@ function getUserDetailByPlayerId(sensor_id_number) {
        
         params = {
             TableName: "users",
-            FilterExpression: "player_id = :player_id",
+            FilterExpression: "contains(player_id, :player_id)",
             ExpressionAttributeValues: {
                 ":player_id": sensor_id_number
             }
@@ -1633,7 +1633,7 @@ function getOrganizationTeamData(obj) {
 }
 
 function getPlayerSimulationFile(obj) {
-    console.log('obj.image_id',obj.image_id)
+    // console.log('obj.image_id',obj.image_id)
     return new Promise((resolve, reject) => {
         let params = {
             TableName: "simulation_images",
@@ -3225,7 +3225,7 @@ function getTeamSpheres(obj) {
     return new Promise((resolve, reject) => {
         let params;
 
-        if (obj.brand) {
+        if (obj.brand && obj.brand != undefined && obj.brand != null) {
             params = {
                 TableName: "sensor_details",
                 FilterExpression: "sensor = :sensor and organization = :organization and team = :team",

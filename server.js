@@ -8155,8 +8155,11 @@ app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
 
 
 app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
+    console.log('getplayer data --------------------------------\n')
     getPlayersListFromTeamsDB_2(req.body)
         .then(data => {
+            console.log('PlayerList -------------------\n')
+
             let player_list = [];
             let requested_player_list = [];
             data.forEach(function (u) {
@@ -8204,19 +8207,23 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                 }
             }
             else {
+                console.log('playerRecord -------------------\n')
+
                 var counter = 0;
                 var p_data = [];
                 var player_listLen = player_list.length;
                 player_list.forEach(function (player, index) {
                     //console.log('player 112',player)
-                    if(player && player != 'undefined'){
+                    if(player && player != undefined){
                        // console.log('player_list', player);
                         let p = player;
                         let i = index;
                         let playerData = '';
                         getTeamDataWithPlayerRecords_2({ player_id: p, team: req.body.team_name, sensor: req.body.brand, organization: req.body.organization })
                         .then(player_data => {
+
                             playerData = player_data;
+                            console.log('playerData -------------------\n')
                             counter++;
                             if(playerData[0]){
                                 p_data.push({
@@ -8226,6 +8233,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                             }
                            // console.log('p_data length', player_listLen, counter)
                             if (counter >= player_listLen) {
+                                console.log('playerlist executed -----------------------\n')
                                 p_data.sort(function (b, a) {
                                     var keyA = a.date_time,
                                         keyB = b.date_time;
@@ -8247,7 +8255,7 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                                     p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
                                                     if (k == p_data.length) {
                                                         let requested_players = []
-                                                        if (requested_player_list.length > 0) {
+                                                        if (requested_player_list.length > 100) {
                                                             let p_cnt = 0;
                                                             requested_player_list.forEach(function (p_record) {
                                                                // console.log('p_record--------------------\n',p_record)
@@ -8295,6 +8303,54 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                     }
                 })
             }
+        })
+        .catch(err => {
+            res.send({
+                message: "failure",
+                error: err
+            })
+        });
+})
+
+app.post(`${apiPrefix}getRequestedPlayersData`, (req,res) =>{
+    console.log('getplayer data --------------------------------\n')
+    getPlayersListFromTeamsDB_2(req.body)
+        .then(data => {
+            console.log('PlayerList -------------------\n');
+            let requested_player_list = [];
+            data.forEach(function (u) {
+              
+                if (u.requested_player_list) {
+                    requested_player_list = requested_player_list.concat(u.requested_player_list);
+                }
+            }) 
+            let requested_players = []
+            if (requested_player_list && requested_player_list.length > 0) {
+                let p_cnt = 0;
+                requested_player_list.forEach(function (p_record) {
+                    //   console.log('p_record 11',p_record)
+                    getUserDetails(p_record)
+                        .then (user_detail => {
+                            p_cnt++; 
+                            requested_players.push(user_detail.Item);
+                            if (p_cnt === requested_player_list.length) {
+                                res.send({
+                                    message: "success",
+                                    data: [],
+                                    requested_players: requested_players
+                                })
+                            }
+                        })
+                })         
+            } else {
+                res.send({
+                    message: "success",
+                    data: [],
+                    requested_players: []
+                })
+            }
+            
+           
         })
         .catch(err => {
             res.send({
@@ -9174,7 +9230,11 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                         // console.log(user_details.Item);
                         req.body["user_cognito_id"] = user_details.Item["user_cognito_id"];
                         req.body["sensor_brand"] = user_details.Item["sensor"];
-                        var sensor =  user_details.Item["sensor"];
+                        var sensor = req.body["sensor"];
+
+                        if(sensor == '' || sensor == null || sensor == undefined){
+                            sensor =  user_details.Item["sensor"];
+                        }
                         if(sensor && sensor != undefined && sensor != null){
                             if (sensor && sensor.toLowerCase() == 'sensor_company_x' || sensor.toLowerCase() == 'swa') {
                                 req.body["sensor"] = 'swa';
@@ -9183,19 +9243,24 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
 
                             }else if(sensor.toLowerCase()  == 'biocore'){
                                 req.body["sensor"] = 'biocore';
-                            }else if(sensor.toLowerCase() == 'Athlete Intelligence'){
+                            }else if(sensor.toLowerCase() == 'athlete intelligence'){
                                 req.body["sensor"] = 'athlete';
                             }else{
                                 req.body["sensor"] = sensor;   
                             }
                         }else{
-                            req.body["sensor"] = 'swa';
+                            req.body["sensor"] = 'prevent';
                         }
                        
                         req.body["level"] = user_details.Item["level"];
-                        if (user_details.Item["level"] === 300 && !req.body["organization"]) {
-                            req.body["organization"] = user_details.Item["organization"];
+                        
+                        req.body["organization"] = user_details.Item["organization"];
+                        
+                        if(req.body["team"] == '' || req.body["team"] ==  undefined || req.body["team"] == null){
+                            req.body["team"] = user_details.Item["team"];
                         }
+
+                        
                         req.body["upload_file"] = base64File;
                         req.body["data_filename"] = data_filename;
                         req.body["selfie"] = base64Selfie;
@@ -9867,11 +9932,12 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
     req.body.team.forEach(function (team_name, index) {
         getTeamSpheres({brand:req.body.brand, organization: req.body.organization, team: team_name})
         .then(data => {
+            
             spharesData = spharesData.concat(data);
             count_sp++;
             if(count_sp == req.body.team.length){
                 data = spharesData;
-                // console.log('data of team sphares -----\n',data)
+                console.log('data of team sphares -----\n',data)
 
                 let brainRegions = {};
                 let principal_max_strain = {};

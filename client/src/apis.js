@@ -538,6 +538,19 @@ export const getPlayersData = (request) =>{
   })
 }
 
+export const getRequestedPlayersData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getRequestedPlayersData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
 export const getOrganizationAdminData = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getOrganizationAdminData`, request,{withCredentials: true})

@@ -6,11 +6,12 @@ import DragMod  from './dragDropModule/dragModule';
 import TableMod from './table/table' 
 import {
     submitBrainsimulationJobs,
-    checkSensorDataExistsSimulationjsonData
+    checkSensorDataExistsSimulationjsonData,
+    getAllSensorBrands
 } from '../../apis';
 import $ from 'jquery';
 import { Sensor } from '../Authentication/getAuthanticatUserData';
-
+import Select from 'react-select';
 const style = {
     heading: {
         "widht": '100%',
@@ -19,7 +20,7 @@ const style = {
         'margin-top': '24px'
     }
 } 
-
+let options = [];
 class BrainSubmitPortal extends React.Component {
     constructor(props) {
         super(props);
@@ -33,11 +34,34 @@ class BrainSubmitPortal extends React.Component {
             isUploaded: false,
             isCalledExists: false,
             isError: false,
-            countDown: 5
+            countDown: 5,
+            selectedOption: null,
+            sensors: [],
+            sensor: Sensor,
+            loadingSensorList: true,
+            team: this.props.team
         };
     }
     componentDidMount=()=>{
+        console.log('Sensor -------------------------\n',Sensor)
         var values = [];
+        if(!Sensor || Sensor === undefined || Sensor === null){
+            getAllSensorBrands()
+            .then(data =>{
+                console.log('Sensor',data)
+                if(data.data.message === "success"){
+                    this.setState({
+                        sensors: data.data.data,
+                        loadingSensorList: false
+                    })
+                }
+            }).catch(err =>{
+                 this.setState({
+                        loadingSensorList: false
+                    })
+                console.log('err',err)
+            })
+        }
     }
 
     handleUpLoadedFiles = (files)=>{
@@ -92,6 +116,7 @@ class BrainSubmitPortal extends React.Component {
     }
 
     handleFileSelect = (file, fileType, key)=> {
+        const {sensor} = this.state;
         let reader = new FileReader();
         let the  = this;
         reader.onload = function(e) {
@@ -135,13 +160,13 @@ class BrainSubmitPortal extends React.Component {
                 );
                 var filename = file.name;
                 if(!the.state.isCalledExists) {
-                    if(Sensor === 'BioCore'){
+                    if(sensor === 'BioCore'){
                         var impact_id = filename.split('.')[0];
                         impact_id = impact_id.replace(/_/g, '');
                         impact_id = impact_id.replace(/-/g, '');
                         console.log('impact_id',impact_id)
                         the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': filename.split("-")[0],'key':key});
-                    }else if(Sensor === 'Athlete Intelligence'){
+                    }else if(sensor === 'Athlete Intelligence'){
                         var impact_id = filename.split("-").slice(2, 7).join(" ").split(' ')[0];
                         the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': '1','key':key});
                     }else{
@@ -242,6 +267,25 @@ class BrainSubmitPortal extends React.Component {
         }
     }
 
+    handleSensorChange = (selectedOption)=>{
+      console.log(selectedOption);
+      if(selectedOption != null){
+        this.setState({sensor: selectedOption.value});
+      }else{
+        this.setState({sensor: ''});
+      }
+      this.setState({ selectedOption });
+    }
+
+    enableDragmode =()=>{
+        const { sensor } = this.state;
+        if(!sensor || sensor === undefined || sensor === null){
+            alert('Please select sensor company first.')
+        }else{
+            this.setState({isDragMod: true});
+        }
+    }
+
     handelSubmit =(e)=>{
         e.preventDefault();
         $('#submit').prop('disabled', true);//#disable submit button on submit click...
@@ -249,7 +293,7 @@ class BrainSubmitPortal extends React.Component {
         let userData = localStorage.getItem("state");
         userData = JSON.parse(userData);
 
-        const { files, list ,meshType} = this.state; 
+        const { files, list ,meshType, sensor, team} = this.state; 
         const user = userData['userInfo']['email'];
         const reloadPage = () => {
             setInterval(()=>{
@@ -269,6 +313,11 @@ class BrainSubmitPortal extends React.Component {
                 formdata.append("overwrite", "true");
                 formdata.append("fileNum", i);
                 formdata.append("mesh", meshType);
+                formdata.append("sensor", sensor);
+                formdata.append("team", team);
+
+
+
                 if(list[i].imageFile){
                     formdata.append("selfie", list[i].imageFile);
                 }
@@ -301,10 +350,16 @@ class BrainSubmitPortal extends React.Component {
 
     }
     render() {
-        const { isDragMod, list, files, meshType, isUploaded, isError, countDown } = this.state;
+        console.log('team =---------------------',this.props.team)
+        const { isDragMod, list, files, meshType, isUploaded, isError, countDown, loadingSensorList } = this.state;
         let estimatedCost = 0;
         if(countDown < 1){
             window.location.reload(); 
+        }
+        if(this.state.sensors){
+            options = this.state.sensors.map(function(sensors,index){
+                return {value:sensors.sensor,label:sensors.sensor }
+            });
         }
         if(list[0]){
             if(meshType === 'coarse'){
@@ -349,7 +404,34 @@ class BrainSubmitPortal extends React.Component {
                                 <Row>
                                     {!isDragMod && !list[0] ?
                                             <Col sm={12} className="upload-sensor-data-button">
-                                                    <Button onClick={()=>this.setState({isDragMod: true})}>Upload Sensor Data</Button>   
+                                                <Col sm={6}
+                                                    style={{
+                                                        'margin': 'auto',
+                                                        'text-align': 'center',
+                                                        'padding': '19px'
+                                                    }}
+                                                >
+                                                    { !Sensor || Sensor === undefined || Sensor === null 
+                                                        ?
+                                                        loadingSensorList ?
+                                                            "Loading sensor list ..."
+                                                        :
+                                                            <div class="input-group">
+                                                                <Select
+                                                                    className="custom-profile-select"
+                                                                    value={this.state.selectedOption}
+                                                                    defaultValue ={this.state.selectedOption}
+                                                                    name="sensor"
+                                                                    placeholder="Select sensor brand"
+                                                                    onChange={this.handleSensorChange}
+                                                                    options={options}
+                                                                    isClearable={true}
+                                                                />
+                                                            </div>
+                                                        : null
+                                                    }
+                                                </Col>
+                                                    <Button onClick={this.enableDragmode}>Upload Sensor Data</Button>   
                                             </Col>
                                         : ''
                                     }
