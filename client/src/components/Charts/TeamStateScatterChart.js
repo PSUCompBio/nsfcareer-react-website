@@ -25,7 +25,6 @@ class TeamStateScatterChart extends React.Component {
         let values = []
         let max_axlation = this.props.MAX_ANGULAR_EXLARATION
         let mps_95 = this.props.MPS_95_DATA
-
         for (var i = 0; i < max_axlation.length; i++) {
             values.push({ 'x': max_axlation[i].val, 'y': mps_95[i] });
         }

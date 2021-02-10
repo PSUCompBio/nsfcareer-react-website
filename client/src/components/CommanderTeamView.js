@@ -20,6 +20,7 @@ import {
     getRequestedPlayersData,
     getSimulationStatusCount,
     updateUserStatus,
+	deleteuserfromteam,
 } from '../apis';
 import 'filepond/dist/filepond.min.css';
 import socketIOClient from 'socket.io-client'
@@ -451,6 +452,20 @@ class CommanderTeamView extends React.Component {
             sensor_id: obj ? obj.sensor_id_number : ''
         });
     }
+    deleteuser = (obj) => {
+		if(obj.player_id){
+			var PlayerID = obj.player_id.split('-')[0];
+		}else{ 
+			var PlayerID =  obj.user_cognito_id
+		}
+       deleteuserfromteam({ PlayerID: PlayerID, organization: this.state.organization, Team: this.state.team })
+        .then(response=>{
+           if(response.data.message == "success"){
+			console.log(PlayerID);
+			    document.getElementById(PlayerID).style.display = 'none';
+		   }          
+        })
+    }
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
@@ -732,6 +747,7 @@ class CommanderTeamView extends React.Component {
                                                     <React.Fragment>
                                                         <th scope="col" ><span style={{ display: 'block' }}>Team</span>Status</th>
                                                         <th scope="col" ><span style={{ display: 'block' }}>Profile</span>Settings</th>
+                                                        <th scope="col" ><span style={{ display: 'block' }}>Delete</span>Player</th>
                                                     </React.Fragment>
                                                 }
                                             </tr>
@@ -779,7 +795,7 @@ class CommanderTeamView extends React.Component {
                                                     //       }
                                                     //   }
 
-                                                    return <tr className={cls} key={index} >
+                                                    return <tr className={cls} key={index} id={player.simulation_data[0].player_id.split('$')[0]}>
                                                         <th style={{ verticalAlign: "middle" }} scope="row" onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                             {
                                                                 player.simulation_data[0].player_id.split('$')[0]
@@ -835,6 +851,13 @@ class CommanderTeamView extends React.Component {
                                                                 <td>
                                                                     {this.getUrl(player.simulation_data[0]['user_data'])}
                                                                 </td>
+                                                                <td>
+                                                                   <span className="delete-user-box">
+
+
+                                                                    <i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(player.simulation_data[0]['user_data']) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
+                                                                </span>
+                                                                </td>
                                                             </React.Fragment>
                                                         }
                                                     </tr>;
@@ -859,7 +882,7 @@ class CommanderTeamView extends React.Component {
                                             {this.state.requestedUsers.map(function (r_player, r_index) {
                                                 if (r_player) {
                                                     let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
-                                                    return <tr key={r_index} style={{ lineHeight: lineHeight }}>
+                                                    return <tr key={r_index} style={{ lineHeight: lineHeight }}  id={r_player.user_cognito_id}>
                                                         <td>-</td>
                                                         <td>
                                                             {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
@@ -907,9 +930,13 @@ class CommanderTeamView extends React.Component {
                                                                 <td>
                                                                     {this.getUrl(r_player)}
                                                                 </td>
+                                                                <td>
+                                                                   <span className="delete-user-box">
+                                                                    <i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(r_player) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
+                                                                </span>
+                                                                </td>
                                                             </React.Fragment>
                                                         }
-
                                                     </tr>
                                                 } else {
                                                     return false

@@ -242,6 +242,12 @@ class Report extends React.Component {
                 flexDirection : 'row',
                 marginBottom : '6px'
             },
+            tableRow1: {
+                flex: 1,
+                flexDirection : 'row',
+                marginBottom : '6px',
+				backgroundColor: 'gray',
+            },
             tableRowCenter: {
                 flex: 1,
                 marginLeft : '5%',
@@ -460,6 +466,32 @@ class Report extends React.Component {
                 fontSize : 10,
                 textAlign : 'left'
             },
+            tableColLeft1: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '30%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'black',
+                fontSize : 10,
+                textAlign : 'left'
+            },
+            tableColLeftfull: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '50%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 10,
+                textAlign : 'left'
+            },
             tableColRight: {
                 borderStyle: "solid",
                 borderWidth: 0,
@@ -470,6 +502,20 @@ class Report extends React.Component {
                 float : 'left',
                 flexDirection : 'column',
                 color : 'grey',
+                fontSize : 10,
+                marginRight : '3%',
+                textAlign : 'left'
+            },
+            tableColRight1: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : 'auto',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'black',
                 fontSize : 10,
                 marginRight : '3%',
                 textAlign : 'left'
@@ -750,6 +796,66 @@ class Report extends React.Component {
                 color : 'grey',
                 fontSize : 12,
                 textAlign : 'left'
+            },				
+            tableRowBody: {
+                display: 'flex',
+                flexDirection: 'row',
+                marginTop: '3px'
+            },	
+            tableHead:{
+                backgroundColor: '#C3C3C3',
+                color: 'black',
+                marginTop: '5px',
+                marginBottom: '5px'
+            },
+			tableColLeft1: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '30%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 12,
+                textAlign : 'left',
+                color: '#000000',
+                fontWeight: 600,
+                padding: '5px'
+            },
+            tableColLeft2: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '30%',
+                float : 'left',
+                flexDirection : 'column',
+                fontSize : 12,
+                textAlign : 'left',
+                color: '#000000',
+                fontWeight: 600,				
+                padding: '5px'
+            },
+            tableRow1: {
+                flex: 1,
+                flexDirection : 'row',
+                marginBottom : '6px',
+				backgroundColor: 'gray',
+            },
+            tableColLeftfull: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '100%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 12,
+                textAlign : 'left'
             },
             tableColRight: {
                 borderStyle: "solid",
@@ -818,7 +924,7 @@ class Report extends React.Component {
 
                         <View style={styles.tableRow}>
                             <Text style={styles.tableColLeft}> DOB : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
-                            <Text style={styles.tableColLeft}> Impact Date : <Text style={{color:'#2d549a'}}>{this.state.impact_date}</Text> </Text>
+                            <Text style={styles.tableColLeftfull}> Impact Date: <Text style={{color:'#2d549a'}}>{this.state.impact_date}</Text></Text>
                         </View>
                         <View style={styles.tableRow}>
 
@@ -911,7 +1017,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmMotor_point_scale}>
                                                 <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
@@ -1038,7 +1144,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsMotor_point_scale}>
                                                 <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
@@ -1184,7 +1290,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsMotor_point_scale}>
                                                 <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
@@ -1264,15 +1370,60 @@ class Report extends React.Component {
                     <View style={styles.col12}>
 
                         {/*=========== Header section start here ============*/}
-                        <Text style={stylepage3.HeaderHeading}>NSFCAREER MASxSR OVERVIEW</Text>
+						<Text style={stylepage3.HeaderHeading}>NSFCAREER OVERVIEW</Text>
 
                         <View style={stylepage3.tableRow}>
                             <Text style={stylepage3.tableColLeft}> DATE : {this.getDateInFormat()}</Text>
                             <Text style={stylepage3.tableColRight}> PAGE : {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ?  '3 of 3' : '2 of 2'}</Text>
                         </View>
                         {/*========== Land scape blue line =============*/}
-                        <View style={stylepage3.blueLine}></View>
+							{/*<View style={stylepage3.blueLine}></View>*/}
+						
+                         {/*-- Table start --*/}
+                        <View style={[stylepage3.tableRow,stylepage3.tableHead]}>
+                            {/*-- Table head --*/}
+                              <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
+                              <Text style={[stylepage3.tableColLeft1]}>Date</Text>
+                              <Text style={[stylepage3.tableColLeft2]}>MASxSR Value</Text>
+                            {/*-- Table head end--*/}
 
+                        </View>
+
+                        {/*-- Table body start --*/}
+						
+						 {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 !== 'on' ? 
+                            <View style={stylepage3.tableRowBody}>
+                                <Text style={[stylepage3.tableColLeft1]}>1</Text>
+                                <Text style={[stylepage3.tableColLeft1]}></Text>
+								<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value }</Text>
+                            </View>
+							 : null
+						 }
+						  {this.state.metric.csdm_15 !== 'on' && this.state.metric.mps_95 === 'on' ? 
+                            <View style={stylepage3.tableRowBody}>
+                                <Text style={[stylepage3.tableColLeft1]}>1</Text>
+                                <Text style={[stylepage3.tableColLeft1]}></Text>
+                                <Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value }</Text>
+                            </View>
+							 : null
+						  }
+						  
+						{this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ? 
+							<>
+							   <View style={[stylepage3.tableRowBody]}>
+									<Text style={[stylepage3.tableColLeft1]}>1</Text>
+									<Text style={[stylepage3.tableColLeft1]}></Text>
+									<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value}</Text>
+								</View>
+								<View style={stylepage3.tableRowBody}>
+									<Text style={[stylepage3.tableColLeft1]}>2</Text>
+									<Text style={[stylepage3.tableColLeft1]}></Text>
+									<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value }</Text>
+								</View>
+							</>
+							 : null
+						  }
+						  
                         {/*=========== Customer details ===============*/}
                         <View style={stylepage3.col12}>
                             <Text 

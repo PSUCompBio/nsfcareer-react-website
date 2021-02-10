@@ -3520,6 +3520,76 @@ function getPlayerSummariesData(player_id) {
     });
 }
 
+function removePlayerFromTeam(PlayerId,organization,Team) {
+    console.log("IN delete functionality");
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "organizations",
+            FilterExpression: "organization = :organization and team_name = :team_name",		
+			ExpressionAttributeValues: {
+				":organization": organization,
+				":team_name": Team,
+			}
+        };
+		var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+				//console.log(data.Items);
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function removePlayerFromTeam1(PlayerId,organization_id,player_list,requested_player_list) {
+    console.log(organization_id);
+    return new Promise((resolve, reject) => {
+		var playerList = [];
+		var requestedPlayerList = [];
+		 if(player_list){
+			 player_list.forEach(function (pdata, index) {
+				 if(PlayerId != pdata){
+					 playerList.push(pdata);
+				 }
+			 })
+		}
+		 if(requested_player_list){
+			requested_player_list.forEach(function (rdata, index) {
+				 if(PlayerId != rdata){
+					 requestedPlayerList.push(rdata);
+				 }
+			})
+		}
+		var params = {
+            TableName: "organizations",
+            Key: { 
+                "organization_id": organization_id,
+            },
+            UpdateExpression: "set player_list = :player_list, requested_player_list = :requested_player_list",
+            ExpressionAttributeValues:{
+                ":player_list":playerList,
+                ":requested_player_list":requestedPlayerList,
+
+            },
+            ReturnValues:"UPDATED_NEW"
+        }
+        docClient.update(params, function (err, data) {
+            if (err) {
+                console.log("error when updating sensor data\n",err);
+                reject(err);
+
+            } else {
+                console.log('position updated')
+                resolve(data)
+            }
+        });
+    });
+}
 
 module.exports = {
     getUserDetails,
@@ -3619,11 +3689,12 @@ module.exports = {
     updateTrimVideoKey,
     getSernsorDataByOrgTeam,
     getModalValidationDB,
-
     checkSensorDataExists,
     getPlayerImageDetailsByaccoutId,
     getOrgIdbyImageId,
     updatePlayerPositions,
     getPlayerSummariesData,
-    InsertUserIntoOrg
+    InsertUserIntoOrg,
+	removePlayerFromTeam,
+	removePlayerFromTeam1,
 };

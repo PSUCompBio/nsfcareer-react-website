@@ -354,7 +354,9 @@ class ExportCustomReport extends React.Component {
             },
             trangle: {
                 textAlign:'center',
-                width: '22%',
+                width: '22%',				
+                padding: 7,		
+                paddingTop: 6,		
                 marginLeft: '31%'
             },
             trangle_scale : {
@@ -447,6 +449,19 @@ class ExportCustomReport extends React.Component {
                 borderTopWidth: 0,
                 display : 'inline-block',
                 width : '30%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 10,
+                textAlign : 'left'
+            },
+            tableColLeftfull: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '50%',
                 float : 'left',
                 flexDirection : 'column',
                 color : 'grey',
@@ -1127,7 +1142,7 @@ class ExportCustomReport extends React.Component {
 
                         <View style={styles.tableRow}>
                             <Text style={styles.tableColLeft}> DOB : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
-                            <Text style={styles.tableColLeft}> Impact Date : <Text style={{color:'#2d549a'}}>{this.state.impact_date}</Text> </Text>
+                            <Text style={styles.tableColLeftfull}> Report Date Range : <Text style={{color:'#2d549a'}}>{this.state.impact_date}</Text> - <Text style={{color:'#2d549a'}}>{this.getDateInFormat()}</Text>  </Text>
                         </View>
                         <View style={styles.tableRow}>
 
@@ -1226,7 +1241,7 @@ class ExportCustomReport extends React.Component {
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmMotor_point_scale}>
                                                 <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
@@ -1356,7 +1371,7 @@ class ExportCustomReport extends React.Component {
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.point_scale}>
                                                 <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
@@ -1502,7 +1517,7 @@ class ExportCustomReport extends React.Component {
                                         <Text style={styles.tableColRight2_2}></Text>
                                     </View>
                                     <View style={styles.tableRow}>
-                                        <Text style={styles.tableTd1}>Motor Sensor Cortex</Text>
+                                        <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.point_scale}>
                                                 <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
@@ -1553,7 +1568,7 @@ class ExportCustomReport extends React.Component {
                     <View style={styles.col12}>
 
                         {/*=========== Header section start here ============*/}
-                        <Text style={stylepage3.HeaderHeading}>NSFCAREER MASxSR OVERVIEW</Text>
+                        <Text style={stylepage3.HeaderHeading}>NSFCAREER OVERVIEW</Text>
 
                         <View style={stylepage3.tableRow}>
                             <Text style={stylepage3.tableColLeft}> DATE : {this.getDateInFormat()}</Text>
@@ -1576,24 +1591,44 @@ class ExportCustomReport extends React.Component {
 
                         </View>
 
-                        {/*-- Table body start --*/}
+                        {/*-- Table body start --*/}	
+						{this.state.jsonData ? 
+						<>
+						 {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 !== 'on' ? 
                             <View style={stylepage3.tableRowBody}>
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
                                 <Text style={[stylepage3.tableColLeft1]}></Text>
-                                <Text style={[stylepage3.tableColLeft2]}></Text>
+								<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value }</Text>
                             </View>
-
+							 : null
+						 }
+						  {this.state.metric.csdm_15 !== 'on' && this.state.metric.mps_95 === 'on' ? 
                             <View style={stylepage3.tableRowBody}>
-                                <Text style={[stylepage3.tableColLeft1]}>2</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>1</Text>
                                 <Text style={[stylepage3.tableColLeft1]}></Text>
-                                <Text style={[stylepage3.tableColLeft2]}></Text>
+                                <Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value }</Text>
                             </View>
-
-                            <View style={stylepage3.tableRowBody}>
-                                <Text style={[stylepage3.tableColLeft1]}>3</Text>
-                                <Text style={[stylepage3.tableColLeft1]}></Text>
-                                <Text style={[stylepage3.tableColLeft2]}></Text>
-                            </View>
+							 : null
+						  }
+						  
+						{this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ? 
+							<>
+							   <View style={[stylepage3.tableRowBody]}>
+									<Text style={[stylepage3.tableColLeft1]}>1</Text>
+									<Text style={[stylepage3.tableColLeft1]}></Text>
+									<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value}</Text>
+								</View>
+								<View style={stylepage3.tableRowBody}>
+									<Text style={[stylepage3.tableColLeft1]}>2</Text>
+									<Text style={[stylepage3.tableColLeft1]}></Text>
+									<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value }</Text>
+								</View>
+							</>
+							 : null
+						  }
+						  </>
+						   : null
+						}
                         {/*-- Table body end --*/}
 
                         {/*-- Table end --*/}

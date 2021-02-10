@@ -222,6 +222,8 @@ const {
         getPlayerSummariesData,
         InsertUserIntoOrg,
         downloadLogFileFromS3,
+		removePlayerFromTeam,
+		removePlayerFromTeam1,
       
     } = require('./controllers/query');
 
@@ -12926,6 +12928,33 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
             })
         }) 
         .catch(err => {
+            res.send({
+                message : "failure",
+                error : err
+            })
+        })  
+})
+/*-- Demo api end --*/
+
+app.post(`${apiPrefix}deleteuserfromteam`, (req, res) => {
+	var data = req.body;
+	var PlayerId = data.PlayerID;
+	var organization = data.organization;
+	var Team = data.Team;
+	removePlayerFromTeam(PlayerId,organization,Team)
+	.then(responcedata => {	
+			   responcedata.forEach(function (rdata, index) {
+				removePlayerFromTeam1(PlayerId,rdata.organization_id,rdata.player_list,rdata.requested_player_list)
+				.then(responcedata1 => {
+					res.send({
+						message : "success",
+						data : responcedata1
+					})					
+			 })
+		
+		})
+	})
+	.catch(err => {
             res.send({
                 message : "failure",
                 error : err
