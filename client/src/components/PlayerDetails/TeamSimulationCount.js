@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {
-  getAllOrganizationsSimultionCount,
+  getTeamSimultionCount,
 } from '../../apis';
-class SimulationCountForList extends React.Component {
+class SimulationCount extends React.Component {
   constructor(props) {
     super(props);
 
@@ -15,28 +15,27 @@ class SimulationCountForList extends React.Component {
 
 
   componentDidMount() {
-    const {count, sensor, organization } = this.props;
+    const {count, sensor, team, organization } = this.props;
     if( count || count === '0' || count === 0){
 
     }else{
-      getAllOrganizationsSimultionCount({sensor,organization})
+      getTeamSimultionCount({sensor,organization,team})
       .then(res =>{
         console.log('res ---',res);
         if(res.data.message === "success"){
           this.setState({simulationCount: res.data.count});
-          this.props.setSimulationCount( res.data.count, organization,res.data.simulation_status, res.data.computed_time, res.data.simulation_timestamp);
+          this.props.setSimulationCount( res.data.count, team,res.data.simulation_status, res.data.computed_time, res.data.simulation_timestamp,organization);
         }else{
           this.setState({simulationCount: 0});
-          this.props.setSimulationCount(0, organization, '','','');
+          this.props.setSimulationCount(0, team, '','','',organization);
 
         }
       }).catch(err=>{
         console.log('err',err);
         this.setState({simulationCount: 0});
-        this.props.setSimulationCount(0, organization,'','','');
+        this.props.setSimulationCount(0, team,'','','',organization);
       })
     }
-   
 
   }
 
@@ -50,18 +49,19 @@ class SimulationCountForList extends React.Component {
       <>
         {simulationCount || simulationCount === '0' || simulationCount === 0 ?
           count || count === '0' || count === 0  ?
-            count
+            <p style={{ fontSize: "50px" }}>{count} </p>
             :
-            simulationCount
+            <p style={{ fontSize: "50px" }}>{simulationCount} </p>
           :
+
           count || count === '0' || count === 0  ?
-          count
-          :
-          "Loading..."
+            <p style={{ fontSize: "50px" }}>{count} </p>
+            :
+          <i className="fa fa-spinner fa-spin" style={{ "font-size": "34px", "padding": '10px', 'color': '#0f81dc' }}></i>
         }
       </>
     );
   }
 }
 
-export default SimulationCountForList;
+export default SimulationCount;

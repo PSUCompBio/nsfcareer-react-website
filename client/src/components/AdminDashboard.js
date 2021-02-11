@@ -41,6 +41,8 @@ import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
 import SimulationCount from './PlayerDetails/SimulationCount';
 import SimulationCountForList from './PlayerDetails/SimulationCountForList';
+import TeamSimulationCount from './PlayerDetails/TeamSimulationCount';
+import TeamSimulationCountForList from './PlayerDetails/TeamSimulationCountForList';
 
 
 class AdminDashboard extends React.Component {
@@ -172,12 +174,12 @@ class AdminDashboard extends React.Component {
                         isCheckingAuth: false
                     })
                 });
-                getTeamList({ type: "team" }).then(teams => {
-                    this.setState({
-                        teamList: teams.data.data,
-                        totalTeam: teams.data.data.length,
-                    })
-                });
+                // getTeamList({ type: "team" }).then(teams => {
+                //     this.setState({
+                //         teamList: teams.data.data,
+                //         totalTeam: teams.data.data.length,
+                //     })
+                // });
             } else {
                 this.setState({
                     isFetching: false,
@@ -833,6 +835,23 @@ class AdminDashboard extends React.Component {
 
     };
 
+    setTeamSimulationCount= (count, team,simulation_status, computed_time, simulation_timestamp,organization)=>{
+        let lsitOrg = this.state.teamList;
+        console.log('count',count, team)
+        for (let i = 0; i < this.state.totalTeam; i++) {
+            if(lsitOrg[i].team_name === team && lsitOrg[i].organization === organization){
+                lsitOrg[i].simulation_count =  count;
+                lsitOrg[i].simulation_status =  simulation_status;
+                lsitOrg[i].computed_time =  computed_time;
+                lsitOrg[i].simulation_timestamp =  simulation_timestamp;
+            }
+
+        }
+
+        this.setState({teamList: lsitOrg});
+    }
+
+
     smallCards3 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
@@ -880,11 +899,7 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
-                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
-                                    :
-                                    <i className="fa fa-spinner fa-spin" style={{ "font-size": "34px", "padding": '10px', 'color': '#0f81dc' }}></i>
-                                }
+                                <TeamSimulationCount count={noOfSimulation} sensor={brand} organization={organization} team={team} setSimulationCount={this.setTeamSimulationCount}/>
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -1130,17 +1145,20 @@ class AdminDashboard extends React.Component {
         return body
     }
 
-    setSimulationCount = (count, organization) => {
+    setSimulationCount= (count, organization, simulation_status, computed_time, simulation_timestamp)=>{
         let lsitOrg = this.state.OrganizationList;
-        console.log('count', count, organization)
+        console.log('count',count, organization)
         for (let i = 0; i < this.state.totalOrganization; i++) {
-            if (lsitOrg[i].organization === organization) {
-                lsitOrg[i].simulation_count = count;
+            if(lsitOrg[i].organization === organization){
+                lsitOrg[i].simulation_count =  count;
+                lsitOrg[i].simulation_status = simulation_status; 
+                lsitOrg[i].computed_time = computed_time;
+                lsitOrg[i].simulation_timestamp = simulation_timestamp;
             }
 
         }
 
-        this.setState({ OrganizationList: lsitOrg });
+        this.setState({OrganizationList: lsitOrg});
     }
     tableTeams = () => {
         console.log(this.state.teamList)
@@ -1181,7 +1199,7 @@ class AdminDashboard extends React.Component {
                 >
                     <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                     <td>{team.team_name ? team.team_name : 'NA'}</td>
-                    <td>{team.simulation_count || team.simulation_count === '0' || team.simulation_count === 0 ? team.simulation_count : 'Loading...'}</td>
+                    <td><TeamSimulationCountForList count={team.simulation_count} sensor={team.sensor} organization={team.organization} team={team.team_name} setSimulationCount={this.setTeamSimulationCount}/></td>
                     <td>{team.organization}</td>
                 </tr>;
             } else {

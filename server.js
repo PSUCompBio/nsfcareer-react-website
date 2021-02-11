@@ -7010,6 +7010,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                             file_count++;
                             index_file = acc_index;
                             let file_path = imageData.player_name + '/simulation/summary.json';
+                            console.log('file_path ------------------',file_path)
                             return getFileFromS3(file_path, imageData.bucket_name);
                         }
                     }
@@ -7037,6 +7038,10 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
                                         principal_max_strain[region] = principal_max_strain[region] || [];
                                         principal_max_strain[region].push(coordinate);
+                                        console.log('summary_datavalue',summary_data['principal-max-strain'].value)
+                                        principal_max_strain['value'] = principal_max_strain['value'] || [];
+                                        principal_max_strain['value'].push(summary_data['principal-max-strain'].value);
+
                                     }
                                 }
                                 if (summary_data['principal-min-strain'] && summary_data['principal-min-strain'].location) {
@@ -7048,6 +7053,9 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         region = summary_data['principal-min-strain']['brain-region'].toLowerCase();
                                         principal_min_strain[region] = principal_min_strain[region] || [];
                                         principal_min_strain[region].push(coordinate);
+                                        principal_min_strain['value'] = principal_min_strain['value'] || [];
+                                        principal_min_strain['value'].push(summary_data['principal-min-strain'].value);
+
                                     }
                                 }
                                 if (summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].location) {
@@ -7086,6 +7094,8 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req,res) =>{
 
                                  //-- For CSDM-15--
                                  if (summary_data['CSDM-15']) {   
+                                    CSDM_15['value'] = CSDM_15['value'] || [];
+                                    CSDM_15['value'].push(summary_data['CSDM-15'].value);
                                     if(summary_data['CSDM-15']['stem']){
                                         let newCordinates = summary_data['CSDM-15']['stem'].map(function (data, index) {
                                             return {x:data[0],y:data[1],z:data[2]};
@@ -8743,6 +8753,11 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                             outputFile.Insults.forEach(function (summary_data, index) {
                                                 // -- mps --
                                                 if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
+                                                    principal_max_strain['value'] = principal_max_strain['value'] || [];
+                                                    if(summary_data['principal-max-strain'].value.toFixed(2) != '0.00'){
+                                                        principal_max_strain['value'].push(summary_data['principal-max-strain'].value.toFixed(2));
+
+                                                    }
                                                     if (summary_data['principal-max-strain']['brain-region']) {
                                                         region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
                                                         principal_max_strain[region] = principal_max_strain[region] || [];
@@ -8751,6 +8766,10 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
 
                                                 //-- For CSDM-15--
                                                 if (summary_data['CSDM-15']) {   
+                                                    CSDM_15['value'] = CSDM_15['value'] || [];
+                                                    if(summary_data['CSDM-15'].value.toFixed(2) != '0.00'){
+                                                        CSDM_15['value'].push(summary_data['CSDM-15'].value.toFixed(2));
+                                                    }
                                                     if(summary_data['CSDM-15']['stem']){
                                                         let newCordinates = summary_data['CSDM-15']['stem'].map(function (data, index) {
                                                             return {x:data[0],y:data[1],z:data[2]};
@@ -8769,6 +8788,7 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                                             var region = 'frontal';
                                                             CSDM_15[region] = CSDM_15[region] || [];
                                                             CSDM_15[region].push(summary_data);
+                                                            
                                                         })
                                                     }
                                                     if(summary_data['CSDM-15']['parietal']){
@@ -8925,7 +8945,7 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                                     // mpsTranglePostion.mpsTrangle = this.getTrangle(mps);
                                                 }
                                             }
-
+                                        console.log('jsonData.value',jsonData['CSDM-15'].value)
                                         let reportData = {
                                             reportDate: getDateInFormat(),
                                             csdm15: csdm15 == 'true' ?  '': 'display: none',
@@ -8936,7 +8956,9 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                             player: acceleration_data_list[0].sensor_data.player,
                                             impact_date: acceleration_data_list[0].sensor_data['impact-date'] ? getDate(acceleration_data_list[0].sensor_data['impact-date'].replace(/:|-/g, "/")) : acceleration_data_list[0].sensor_data['date'] ? getDate(acceleration_data_list[0].sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
                                             scdmTranglePostion: scdmTranglePostion,
-                                            mpsTranglePostion: mpsTranglePostion
+                                            mpsTranglePostion: mpsTranglePostion,
+                                            valueCsdm15: jsonData['CSDM-15'].value,
+                                            valueMps: jsonData['MPS-95'].value,
                                         }
 
                                         // Modyfying pdf template using ejs ...
@@ -9589,10 +9611,40 @@ app.post(`${apiPrefix}getAllOrganizationsSimultionCount`, (req,res) =>{
     .then(simulation_records => {
         
         var count = Number(simulation_records.length).toString();
-        res.send({
-            message: "success",
-            count: count
+        simulation_records.forEach(function (simulation_record, index) {
+            simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
         })
+
+        simulation_records.sort(function (b, a) {
+            var keyA = a.date_time,
+                keyB = b.date_time;
+            if (keyA < keyB) return -1;
+            if (keyA > keyB) return 1;
+            return 0;
+        });
+        
+        getPlayerSimulationStatus(simulation_records[0].image_id)
+        .then(simulation => {
+            var simulation_status = simulation ? simulation.status : '';
+            var computed_time = simulation ? simulation.computed_time : '';
+            var simulation_timestamp = simulation_records[0].player_id.split('$')[1];
+            res.send({
+                message: "success",
+                count: count,
+                simulation_status: simulation_status,
+                computed_time:  computed_time,
+                simulation_timestamp: simulation_timestamp
+            })
+        }).catch(err => {
+            res.send({
+                message: "failure",
+                count: 0,
+                simulation_status: '',
+                computed_time:  '',
+                simulation_timestamp: ''
+            })
+        })
+        
     })
     .catch(err => {
        
@@ -9714,6 +9766,58 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req,res) =>{
             }
         })
 })
+
+app.post(`${apiPrefix}getTeamSimultionCount`, (req,res) =>{      
+    getOrganizationTeamData({ sensor: req.body.sensor, organization: req.body.organization, team: req.body.team })
+    .then(simulation_records => {
+        var count = Number(simulation_records.length).toString();
+        simulation_records.forEach(function (simulation_record, index) {
+            simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+        })
+
+        simulation_records.sort(function (b, a) {
+            var keyA = a.date_time,
+                keyB = b.date_time;
+            if (keyA < keyB) return -1;
+            if (keyA > keyB) return 1;
+            return 0;
+        });
+        
+     
+        getPlayerSimulationStatus(simulation_records[0].image_id)
+        .then(simulation => {
+            var simulation_status = simulation ? simulation.status : '';
+            var computed_time = simulation ? simulation.computed_time : '';
+            var simulation_timestamp = simulation_records[0].player_id.split('$')[1];
+            res.send({
+                message: "success",
+                count: count,
+                simulation_status: simulation_status,
+                computed_time:  computed_time,
+                simulation_timestamp: simulation_timestamp
+            })
+        }).catch(err => {
+            res.send({
+                message: "failure",
+                count: 0,
+                simulation_status: '',
+                computed_time:  '',
+                simulation_timestamp: ''
+            })
+        })
+       
+    })
+    .catch(err => {
+       
+            res.send({
+                message: "failure",
+                error: err
+            })
+        
+    })
+               
+})
+
 
 app.post(`${apiPrefix}updateUserStatus`, VerifyToken, (req, res) => {
     updateUserStatus(req.body)

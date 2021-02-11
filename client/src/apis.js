@@ -912,6 +912,19 @@ export const getAllOrganizationsSimultionCount = (request) =>{
   })
 }
 
+export const getTeamSimultionCount = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamSimultionCount`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
 export const getAllOrganizationsOfSensorBrandList = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllOrganizationsOfSensorBrandList`, request,{withCredentials: true})

@@ -64,7 +64,7 @@ class DownloadReportPopup extends React.Component {
     // link.click();
     // return dc;
     this.setState({merticsImage: dc});
-     console.log('dc',dc)
+    //  console.log('dc',dc)
     // return dc;
     // var the = this;
     // htmlToImage.toPng(document.getElementById('my-event-image'))
@@ -239,7 +239,7 @@ class DownloadReportPopup extends React.Component {
               </Col>
               <Col md={4}>
                 {ischecked &&
-                  <PDFDownloadLink document={<Report Metric={this.state} jsonfile={this.props.brainRegions} data={this.props.data.data} />} className="export-cumulative-player" fileName={fileName} style={{
+                  <PDFDownloadLink document={<Report Metric={this.state} jsonfile={this.props.data.brainRegions} data={this.props.data.data} />} className="export-cumulative-player" fileName={fileName} style={{
                     color: 'white'
                     }}>
                       <button className="Download-button-custom-report" style={{'margin-top': '6px'}}>Download</button>

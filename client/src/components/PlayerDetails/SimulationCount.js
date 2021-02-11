@@ -24,16 +24,16 @@ class SimulationCount extends React.Component {
         console.log('res ---',res);
         if(res.data.message === "success"){
           this.setState({simulationCount: res.data.count});
-          this.props.setSimulationCount( res.data.count, organization);
+          this.props.setSimulationCount( res.data.count, organization,res.data.simulation_status, res.data.computed_time, res.data.simulation_timestamp);
         }else{
           this.setState({simulationCount: 0});
-          this.props.setSimulationCount(0, organization);
+          this.props.setSimulationCount(0, organization, '','','');
 
         }
       }).catch(err=>{
         console.log('err',err);
         this.setState({simulationCount: 0});
-        this.props.setSimulationCount(0, organization);
+        this.props.setSimulationCount(0, organization,'','','');
       })
     }
 

@@ -232,7 +232,7 @@ class InviteUsers extends React.Component {
       if(this.props.location.state.lavelFor === '300'){
         return <Redirect 
           to={{
-              pathname: '/TeamAdmin',
+              pathname: '/TeamAdmin/'+this.props.location.state.data.data.brand.organization+'/'+this.props.location.state.data.data.brand.brand,
               state: {
                   brand: {
                       brand:  this.props.location.state.data.data.brand.brand,
@@ -256,7 +256,7 @@ class InviteUsers extends React.Component {
       }else if(this.props.location.state.lavelFor === '200'){
         return <Redirect 
           to={{
-              pathname: '/TeamAdmin/team/players',
+              pathname: '/TeamAdmin/team/players/'+this.state.bk_data.team.organization+'/'+this.state.bk_data.team.team_name+'?brand='+this.state.bk_data.team.brand,
               state: this.state.bk_data
           }}
         />;
@@ -407,6 +407,7 @@ class InviteUsers extends React.Component {
     if(this.props.location.state.lavelFor){
       
       var location = this.props.location.state.data;
+      console.log('location.bk_data', location.bk_data)
       if(location.type === 'organization'){
         // console.log('sensorOrgList',this.selectOption(location.sensorOrgList,'Organization','organization'));
         this.setState({

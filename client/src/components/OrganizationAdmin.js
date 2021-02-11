@@ -570,12 +570,15 @@ class OrganizationAdmin extends React.Component {
         return body
     }
 
-    setSimulationCount= (count, organization)=>{
+    setSimulationCount= (count, organization, simulation_status, computed_time, simulation_timestamp)=>{
         let lsitOrg = this.state.sensorOrgList;
         console.log('count',count, organization)
         for (let i = 0; i < this.state.totalOrganization; i++) {
             if(lsitOrg[i].organization === organization){
                 lsitOrg[i].simulation_count =  count;
+                lsitOrg[i].simulation_status = simulation_status; 
+                lsitOrg[i].computed_time = computed_time;
+                lsitOrg[i].simulation_timestamp = simulation_timestamp;
             }
 
         }

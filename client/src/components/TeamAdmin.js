@@ -4,6 +4,10 @@ import Footer from './Footer';
 import { getStatusOfDarkmode } from '../reducer';
 import { Redirect, withRouter, Link } from 'react-router-dom';
 // import { formDataToJson } from '../utilities/utility';
+import TeamSimulationCount from './PlayerDetails/TeamSimulationCount';
+import TeamSimulationCountForList from './PlayerDetails/TeamSimulationCountForList';
+
+
 import Spinner from './Spinner/Spinner';
 import {
     isAuthenticated,
@@ -177,16 +181,16 @@ class TeamnAdmin extends React.Component {
                                                 isFetching: false
                                             }));
                                         });
-                                    getAllteamsOfOrganizationOfSensorBrand({ brand: this.state.brand, organization: this.state.organization })
-                                        .then(teamList => {
-                                            this.setState(prevState => ({
-                                                totalTeam: teamList.data.data.length,
-                                                sensorOrgTeamList: teamList.data.data
-                                            }));
-                                        }).catch(err => {
-                                            console.log(err);
-                                            this.setState({ isAuthenticated: false, isCheckingAuth: false });
-                                        })
+                                    // getAllteamsOfOrganizationOfSensorBrand({ brand: this.state.brand, organization: this.state.organization })
+                                    //     .then(teamList => {
+                                    //         this.setState(prevState => ({
+                                    //             totalTeam: teamList.data.data.length,
+                                    //             sensorOrgTeamList: teamList.data.data
+                                    //         }));
+                                    //     }).catch(err => {
+                                    //         console.log(err);
+                                    //         this.setState({ isAuthenticated: false, isCheckingAuth: false });
+                                    //     })
                                 }
                             })
                             .catch((error) => {
@@ -460,6 +464,23 @@ class TeamnAdmin extends React.Component {
         }
 
     }
+
+    setTeamSimulationCount= (count, team,simulation_status, computed_time, simulation_timestamp)=>{
+        let lsitOrg = this.state.sensorOrgTeamList;
+        console.log('count',count, team)
+        for (let i = 0; i < this.state.totalTeam; i++) {
+            if(lsitOrg[i].team_name === team){
+                lsitOrg[i].simulation_count =  count;
+                lsitOrg[i].simulation_status =  simulation_status;
+                lsitOrg[i].computed_time =  computed_time;
+                lsitOrg[i].simulation_timestamp =  simulation_timestamp;
+            }
+
+        }
+
+        this.setState({sensorOrgTeamList: lsitOrg});
+    }
+
     smallCards = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key, organization_id) => {
 
 
@@ -515,11 +536,8 @@ class TeamnAdmin extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ?
-                                    <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
-                                    :
-                                    <i className="fa fa-spinner fa-spin" style={{ "font-size": "34px", "padding": '10px', 'color': '#0f81dc' }}></i>
-                                }
+                                <TeamSimulationCount count={noOfSimulation} sensor={brand} organization={organization} team={team} setSimulationCount={this.setTeamSimulationCount}/>
+                                
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -618,7 +636,8 @@ class TeamnAdmin extends React.Component {
                 >
                     <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                     <td>{team.team_name ? team.team_name : 'NA'}</td>
-                    <td>{team.simulation_count || team.simulation_count === '0' || team.simulation_count === 0 ? team.simulation_count : 'Loading...'}</td>
+                    
+                    <td><TeamSimulationCountForList count={team.simulation_count} sensor={team.sensor} organization={team.organization} team={team.team_name} setSimulationCount={this.setTeamSimulationCount}/></td>
                     <td>{team.organization}</td>
                 </tr>;
             }

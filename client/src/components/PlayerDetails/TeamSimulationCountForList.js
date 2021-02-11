@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  getAllOrganizationsSimultionCount,
+  getTeamSimultionCount,
 } from '../../apis';
 class SimulationCountForList extends React.Component {
   constructor(props) {
@@ -15,25 +15,25 @@ class SimulationCountForList extends React.Component {
 
 
   componentDidMount() {
-    const {count, sensor, organization } = this.props;
+    const {count, sensor, organization, team } = this.props;
     if( count || count === '0' || count === 0){
 
     }else{
-      getAllOrganizationsSimultionCount({sensor,organization})
+      getTeamSimultionCount({sensor,organization,team})
       .then(res =>{
         console.log('res ---',res);
         if(res.data.message === "success"){
           this.setState({simulationCount: res.data.count});
-          this.props.setSimulationCount( res.data.count, organization,res.data.simulation_status, res.data.computed_time, res.data.simulation_timestamp);
+          this.props.setSimulationCount( res.data.count, team,res.data.simulation_status, res.data.computed_time, res.data.simulation_timestamp,organization);
         }else{
           this.setState({simulationCount: 0});
-          this.props.setSimulationCount(0, organization, '','','');
+          this.props.setSimulationCount(0, team, '','','',organization);
 
         }
       }).catch(err=>{
         console.log('err',err);
         this.setState({simulationCount: 0});
-        this.props.setSimulationCount(0, organization,'','','');
+        this.props.setSimulationCount(0, team,'','','',organization);
       })
     }
    
