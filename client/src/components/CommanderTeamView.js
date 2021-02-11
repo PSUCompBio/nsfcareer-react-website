@@ -447,6 +447,12 @@ class CommanderTeamView extends React.Component {
     }
 
     editable = (obj) => {
+		if(obj.player_id){
+			var PlayerID = obj.player_id.split('-')[0];
+		}else{ 
+			var PlayerID =  obj.user_cognito_id
+		}
+		console.log(PlayerID);
         this.setState({
             editableId: obj ? obj.user_cognito_id : '',
             sensor_id: obj ? obj.sensor_id_number : ''
@@ -852,11 +858,14 @@ class CommanderTeamView extends React.Component {
                                                                     {this.getUrl(player.simulation_data[0]['user_data'])}
                                                                 </td>
                                                                 <td>
-                                                                   <span className="delete-user-box">
-
-
-                                                                    <i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(player.simulation_data[0]['user_data']) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
-                                                                </span>
+																{this.state.editableId && this.state.editableId === player.simulation_data[0]['user_data'].user_cognito_id ?
+																	<>
+																	   <span className="delete-user-box" >
+																			<i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(player.simulation_data[0]['user_data']) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
+																		</span>
+																	</>
+                                                                : null
+																}
                                                                 </td>
                                                             </React.Fragment>
                                                         }
@@ -931,9 +940,14 @@ class CommanderTeamView extends React.Component {
                                                                     {this.getUrl(r_player)}
                                                                 </td>
                                                                 <td>
-                                                                   <span className="delete-user-box">
-                                                                    <i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(r_player) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
-                                                                </span>
+																{this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
+                                                                  <>
+																	  <span className="delete-user-box" style={{ 'display': 'none' }}>
+																			<i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(r_player) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
+																		</span>
+																	</>
+                                                                : null 
+																}
                                                                 </td>
                                                             </React.Fragment>
                                                         }
@@ -967,7 +981,7 @@ class CommanderTeamView extends React.Component {
                                                 <th scope="col">Email</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="player-table">
+                                        <tbody className="player-table">										
                                             {this.state.staffList &&
                                                 this.state.staffList.map(function (staff, index) {
                                                     return <tr className="player-data-table-row" key={index}
@@ -1053,7 +1067,7 @@ class CommanderTeamView extends React.Component {
             var team_name = [];
             team_name[0] = this.state.team;
             return <Redirect push to={{
-                pathname: '/TeamStats',
+                pathname: '/TeamStats/'+this.state.organization+'/'+team_name+'/'+this.state.brand+'/Players/'+this.state.user_cognito_id,
                 state: {
                     user_cognito_id: this.state.user_cognito_id,
                     for: 'Players',

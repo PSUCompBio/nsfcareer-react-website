@@ -914,7 +914,7 @@ class TeamnAdmin extends React.Component {
                 team_name.push(this.state.sensorOrgTeamList[i].team_name);
             }
             return <Redirect push to={{
-                pathname: '/TeamStats',
+                pathname: '/TeamStats/'+this.state.organization+'/'+team_name+'/'+this.state.brand+'/Teams/'+this.state.user_cognito_id,
                 state: {
                     user_cognito_id: this.state.user_cognito_id,
                     for: 'Teams',

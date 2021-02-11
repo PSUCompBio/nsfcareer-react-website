@@ -414,7 +414,17 @@ class BrainSubmitPortal extends React.Component {
                                                     { !Sensor || Sensor === undefined || Sensor === null 
                                                         ?
                                                         loadingSensorList ?
-                                                            "Loading sensor list ..."
+															<div>
+                                                            <i className="fa fa-spinner fa-spin" 
+															style ={{
+																"font-size": "34px",
+																"padding": "10px", 
+																"color": "rgb(15, 129, 220)"
+																}}
+															>
+															</i>
+																<p>Loading sensor list ...</p>
+															   </div>
                                                         :
                                                             <div class="input-group">
                                                                 <Select
