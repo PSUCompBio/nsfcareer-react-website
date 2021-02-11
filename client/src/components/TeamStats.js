@@ -32,9 +32,9 @@ class TeamStats extends React.Component {
             'principal-max-strain': 'principal-max-strain',
             brainPosition: 'principal-max-strain',
             teamData: {
-                brand: this.props.location.state.team.brand,
-                organization: this.props.location.state.team.organization,
-                team: this.props.location.state.team.team_name
+                brand: this.props.match.params.brand,
+                organization: this.props.match.params.org,
+                team: this.props.match.params.team
             }
         };
 
@@ -44,11 +44,18 @@ class TeamStats extends React.Component {
     componentDidMount() {
         console.log('req----', this.props)
         // Scrolling winddow to top when user clicks on about us page
+		var team = this.props.match.params.team;
+		if (this.props.match.params.type == "Players"){
+			var temarray = [];	
+			temarray.push(team);
+		}else{
+			var temarray = team.split(",");
+		}
         window.scrollTo(0, 0);
         isAuthenticated(JSON.stringify({}))
             .then((value) => {
                 if (value.data.message === 'success') {
-                    getTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name })
+                    getTeamSpheres({ brand: this.props.match.params.brand, organization: this.props.match.params.org, team: temarray })
                         .then(response => {
                             console.log('response', response.data);
                             this.setState({
@@ -81,7 +88,7 @@ class TeamStats extends React.Component {
                 this.setState({ isAuthenticated: false, isCheckingAuth: false });
             })
         this.setState({
-            for: this.props.location.state.for,
+            for: this.props.match.params.type,
         })
     }
 
@@ -95,8 +102,14 @@ class TeamStats extends React.Component {
     handleRunReport = (e) => {
         e.preventDefault();
         this.setState({ isfetching: true })
-
-        getFilterdTeamSpheres({ brand: this.props.location.state.team.brand, organization: this.props.location.state.team.organization, team: this.props.location.state.team.team_name, filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain'] })
+		var team = this.props.match.params.team;
+		if (this.props.match.params.type == "Players"){
+			var temarray = [];	
+			temarray.push(team);
+		}else{
+			var temarray = team.split(",");
+		}
+        getFilterdTeamSpheres({ brand: this.props.match.params.brand, organization: this.props.match.params.org, team: temarray, filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain'] })
             .then(response => {
                 console.log('response', response.data);
                 this.setState({
@@ -201,7 +214,7 @@ class TeamStats extends React.Component {
         console.log('prosps',this.props)
         //imported Modules ...
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
-            return <Redirect to="/Login" />;
+           // return <Redirect to="/Login" />;
         }
         if (this.state.isLoading) return <Spinners />;
 
@@ -391,12 +404,12 @@ class TeamStats extends React.Component {
                                 <button className="btn btn-primary">
                                     {this.state.for === "Teams" ?
                                         <Link to={{
-                                            pathname: '/TeamAdmin/' + this.props.location.state.team.organization + '/' + this.props.location.state.team.brand,
+                                            pathname: '/TeamAdmin/' + this.props.match.params.org + '/' + this.props.match.params.brand,
                                             state: {
                                                 brand: {
-                                                    brand: this.props.location.state.team.brand,
-                                                    organization: this.props.location.state.team.organization,
-                                                    user_cognito_id: this.props.location.state.user_cognito_id
+                                                    brand: this.props.match.params.brand,
+                                                    organization: this.props.match.params.org,
+                                                    user_cognito_id: this.props.match.params.id
                                                 }
                                             }
                                         }}
@@ -408,14 +421,14 @@ class TeamStats extends React.Component {
                                         >&lt; Back To Organization</Link>
                                         :
                                         <Link to={{
-                                            pathname: '/TeamAdmin/team/players/' + this.props.location.state.team.organization + '/' + this.props.location.state.team.team_name + '?brand=' + this.props.location.state.team.brand,
+                                            pathname: '/TeamAdmin/team/players/' + this.props.match.params.org + '/' + this.props.match.params.team + '?brand=' + this.props.match.params.brand,
                                             state: {
                                                 team: {
-                                                    brand: this.props.location.state.team.brand,
-                                                    organization: this.props.location.state.team.organization,
-                                                    team_name: this.props.location.state.team.team_name,
-                                                    user_cognito_id: this.props.location.state.user_cognito_id,
-                                                    staff: this.props.location.state.team.staff
+                                                    brand: this.props.match.params.brand,
+                                                    organization: this.props.match.params.org,
+                                                    team_name: this.props.match.params.team,
+                                                    user_cognito_id: this.props.match.params.id,
+                                                    staff: []
                                                 }
                                             }
                                         }}
@@ -434,14 +447,14 @@ class TeamStats extends React.Component {
                                     }}>
                                         Note: Team members must be activated on the Team Dashboard for their data to show up here. <br />
                                         <Link to={{
-                                            pathname: '/TeamAdmin/team/players/' + this.props.location.state.team.organization + '/' + this.props.location.state.team.team_name + '?brand=' + this.props.location.state.team.brand,
+                                            pathname: '/TeamAdmin/team/players/' + this.props.match.params.org + '/' + this.props.match.params.team + '?brand=' + this.props.match.params.brand,
                                             state: {
                                                 team: {
-                                                    brand: this.props.location.state.team.brand,
-                                                    organization: this.props.location.state.team.organization,
-                                                    team_name: this.props.location.state.team.team_name,
-                                                    user_cognito_id: this.props.location.state.user_cognito_id,
-                                                    staff: this.props.location.state.team.staff
+                                                    brand: this.props.match.params.brand,
+                                                    organization: this.props.match.params.org,
+                                                    team_name: this.props.match.params.team,
+                                                    user_cognito_id: this.props.match.params.id,
+                                                    staff: []
                                                 }
                                             }
                                         }}
