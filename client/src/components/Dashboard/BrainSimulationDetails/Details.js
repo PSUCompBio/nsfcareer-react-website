@@ -4,9 +4,9 @@ import { Redirect, Link } from 'react-router-dom';
 // import CumulativeEventsAccelerationEvents from '../../DashboardEventsChart/CumulativeEventsAccelerationEvents';
 // import HeadAccelerationEvents from '../../DashboardEventsChart/HeadAccelerationEvents';
 import { svgToInline } from '../../../config/InlineSvgFromImg';
+import Rankedmpschart from '../../DashboardEventsChart/Rankedmpschart';
 import HeadLinearAccelerationAllEvents from '../../DashboardEventsChart/HeadLinearAccelerationAllEvents';
 import HeadAngularAccelerationAllEvents from '../../DashboardEventsChart/HeadAngularAccelerationAllEvents';
-//import Rankedmpschart from '../../DashboardEventsChart/Rankedmpschart';
 import Dropzone from 'react-dropzone';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
@@ -114,7 +114,7 @@ class Details extends React.Component {
       player_id: this.props.match.params.player_id,
       cognito_user_id: this.props.match.params.cognito_user_id,
       simulation_data: '',
-      PMSarray1: [],
+      PMSarray1: '',
       simulationData: '',
       lock_video_3: false,
       isCommonControl: false,
@@ -1166,14 +1166,16 @@ class Details extends React.Component {
                             <button className="btn gray">MPS</button>
                             <button className="btn gray">CSDM</button>
                             <button className="btn gray">MASxSR<sub>15</sub></button>
-                           <button className="btn btn-primary" style={{'margin-top':'10px',"display":"none"}} onClick={this.showPMS} >Principal Max Strain</button>
+                            <button className="btn btn-primary" style={{'margin-top':'10px'}} onClick={this.showPMS} >Principal Max Strain</button>
                           </div>
                           <div className="col-md-12" style={{'display': this.state.showinjury}} >
                             <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.simulationStatus !== 'pending' ?  'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="img" />
                             
                           </div>
                           <div className="col-md-12" style={{'display': this.state.showPMS}}>
-                          
+                            {this.state.PMSarray1 &&
+							  <Rankedmpschart data={this.state.PMSarray1}/>
+							}
                             
                           </div>
                       </div>
@@ -1281,6 +1283,7 @@ class Details extends React.Component {
 							}
 					  });
 					  PMSarray1["labels"]= [0,0.1,0.2,0.3,0.4,0.5,0.6];
+						  console.log(PMSarray1);
                       if(res.data.message !== "failure"){
                         console.log('success')
                         this.setState({
@@ -1290,6 +1293,8 @@ class Details extends React.Component {
                           isAuthenticated: true,
                           isCheckingAuth: true
                         })
+						  console.log(PMSarray1);
+                        console.log('PMSarray1',this.state.PMSarray1);
                       }else{
                         console.log('error')
                          this.setState({

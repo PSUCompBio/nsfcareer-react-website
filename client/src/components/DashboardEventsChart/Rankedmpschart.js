@@ -24,7 +24,9 @@ const options = {
             },
             id: 'A',
             position: 'left',
+			labels: [0, 0.1,0.2,0.3],
             ticks: {
+				min: 0,
                 max: 0.3
             }
         }],
@@ -43,11 +45,11 @@ class Rankedmpschart extends React.Component {
         super(props);
         this.state = {
             data: {
-				labels: [0, 0.1,0.2,0.3,0.4,0.5],
+				labels: [0, 0.1,0.2,0.3],
                 fill: false,
 				datasets: [{
 					lineTension: 0.1,
-					label: 'MAE',
+					label: 'MPS',
 					backgroundColor: '#88DD88',
 					borderColor: '#88DD88',
 					pointRadius: 0,
@@ -57,15 +59,16 @@ class Rankedmpschart extends React.Component {
 
             },
         };
+		console.log("this.state.data",props);
     }
 
-    static getDerivedStateFromProps (props, state) {     
+  /*  static getDerivedStateFromProps (props, state) {     
         
         return {
 			
-            data: this.props.data.datasets,
+            data: this.state.data,
         };
-    }
+    }*/
 
     render() {
 		

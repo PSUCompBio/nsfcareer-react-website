@@ -931,25 +931,22 @@ class CommanderTeamView extends React.Component {
                                                     let lineHeight = r_player.player_status === 'pending' ? '20px' : '30px'
                                                     return <tr key={r_index} style={{ lineHeight: lineHeight }}  id={r_player.user_cognito_id}>
                                                         <td>-</td>
+                                                        {this.state.editablestate &&
                                                         <td>
-                                                             {this.state.editablestate  ?
-                                                                <>
+                                                            
                                                                     <input type="text"
-                                                                        onBlur={this.updateSensorId(r_player)}
+                                                                        onBlur={this.updateSensorId}
                                                                         onKeyDown={this.updateSensorIdOnEnter}
                                                                         onChange={this.handleChange}
+																		onFocus={() => this.editable(r_player)}
                                                                         name="sensor_id"
                                                                         value= {this.state.sensor_id}
                                                                         className="update-sensorid-input"                                                                        
                                                                     />
                                                                     {this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px', 'margin-left': '2px' }}></i>}
-                                                                </>
-                                                                :
-                                                                <span onClick={() => { this.editable(r_player) }} className="edit-sensor-box">
-                                                                    <i class="fa fa-pencil" aria-hidden="true" style={{ 'color': '#0e7dd59e', 'padding-left': '6px', 'float': 'right', 'margin-top': '10%' }}></i>
-                                                                </span>
-                                                            }
+                                                           
                                                         </td>
+                                                            }
                                                         {this.state.userDetails.level > 300 &&
                                                             <td style={{ 'max-width': '162px' }} className="wrap-cell">{r_player.first_name + ' ' + r_player.last_name}</td>
                                                         }
@@ -985,7 +982,7 @@ class CommanderTeamView extends React.Component {
                                                                 <td>
 															 {this.state.editablestate  ?
                                                                   <>
-																	  <span className="delete-user-box" style={{ 'display': 'none' }}>
+																	  <span className="delete-user-box" >
 																			<i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(r_player) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
 																		</span>
 																	</>
