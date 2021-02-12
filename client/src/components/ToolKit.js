@@ -34,7 +34,7 @@ class ToolKit extends React.Component {
         if (this.state.isLoading) return <Spinners />;
        return (
             <React.Fragment>                 
-                <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
+                <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px',minHeight:'600px'}}>
                     <div className="container">
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate nav-p">{this.props.location.state.brand.brand}</p>
                         <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>ToolKit</h1>
@@ -49,7 +49,7 @@ class ToolKit extends React.Component {
 								</ul>
 							</div>
                         </div>											
-                        <div className="row training_data"  style={{ display: showtable?"block":"none" }} >
+                        <div className="row training_data"  style={{ display: showtable?"block":"none",overflowY :"auto"}} >
 							 <table style={{whiteSpace:"nowrap",width:"40%"}} className="table ">
 							  <thead style={{background:"#0a4f86",color:"#ffffff"}} >
 								<tr>
@@ -76,7 +76,7 @@ class ToolKit extends React.Component {
                     </div>
                 </div>
                 <div style={{
-                                position: "absolute",
+                                position: "relative",
                                 width: "100%",
                                 bottom: '0'
                             }}>

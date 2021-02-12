@@ -684,6 +684,7 @@ class OrganizationAdmin extends React.Component {
                         }
                         {this.props.location.state.brand.brand}
 						<div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
+							{level === 1000  || level === 300 || level === 400 ?
 							<Link style={{ fontWeight: "400",backgroundColor:"#0a5087",color:"#fff",padding:"10px 19px",borderRadius:"10px",fontSize:"22px",textDecoration:"none"}} to={{
                                 pathname: '/toolkit',
                                 state: {
@@ -692,7 +693,9 @@ class OrganizationAdmin extends React.Component {
                                         user_cognito_id: this.props.location.state.brand.user_cognito_id
                                     }
                                 }
-                            }} >ToolKit</Link>
+                            }} >ToolKit	</Link>
+							:null
+						  }
 						</div>
                     </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">

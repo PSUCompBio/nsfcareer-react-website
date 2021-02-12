@@ -40,6 +40,7 @@ const options = {
 
 class HeadAngularAccelerationAllEvents extends React.Component {
     constructor(props) {
+		console.log("HeadAngularAccelerationAllEvents",props)
         super(props);
         this.state = {
             data: {
