@@ -27,6 +27,7 @@ import socketIOClient from 'socket.io-client'
 import Spinner from './Spinner/Spinner';
 import Switch from "react-switch";
 import team_state_icon from './team_state_icon.svg'
+import DeletePopup from './Popup/DeletePopup';
 
 class CommanderTeamView extends React.Component {
     constructor(props) {
@@ -70,11 +71,16 @@ class CommanderTeamView extends React.Component {
             simulation_failed: 0,
             checked: true,
             isSensorIdUpdating: false,
+            editablestate: false,
             isMobile: true,
             organization: this.props.match.params.org,
             team: this.props.match.params.team ? this.props.match.params.team.split('?')[0] : '',
             isbrainSubmitPortal: false,
-            loadingRequestedUser: true
+            loadingRequestedUser: true,			
+            isDisplay: { display: 'none' },
+            isDelete: false,
+            data: '',
+            DelData: '',
         };
     }
     activateTab = (value) => {
@@ -447,16 +453,37 @@ class CommanderTeamView extends React.Component {
     }
 
     editable = (obj) => {
-		if(obj.player_id){
-			var PlayerID = obj.player_id.split('-')[0];
-		}else{ 
-			var PlayerID =  obj.user_cognito_id
-		}
-		console.log(PlayerID);
+		console.log("check",obj);
         this.setState({
             editableId: obj ? obj.user_cognito_id : '',
-            sensor_id: obj ? obj.sensor_id_number : ''
+            sensor_id: obj ? obj.sensor_id_number : '',
         });
+    }
+    editstate = () => {
+        this.setState({
+            editablestate: true,
+        });
+    }
+    cancleable = (obj) => {
+        this.setState({
+			 editablestate: false
+        });
+    }
+	 makeVisible = (data) => {
+        this.setState({ isDisplay: data });
+    }
+	 isDeleteData = (isDelete) => {
+        console.log('isDelete', this.state.DelData)
+		deleteuserfromteam({ PlayerID: this.state.DelData.data, organization: this.state.organization, Team: this.state.team })
+        .then(response=>{
+           if(response.data.message == "success"){
+			console.log(this.state.DelData.data);
+			    document.getElementById(this.state.DelData.data).style.display = 'none';
+		   }          
+        })
+        this.setState({ isDelete: isDelete });
+        this.setState({ isDisplay: { display: 'none' } });
+        this.setState({ editablestate: false, });
     }
     deleteuser = (obj) => {
 		if(obj.player_id){
@@ -464,24 +491,24 @@ class CommanderTeamView extends React.Component {
 		}else{ 
 			var PlayerID =  obj.user_cognito_id
 		}
-       deleteuserfromteam({ PlayerID: PlayerID, organization: this.state.organization, Team: this.state.team })
-        .then(response=>{
-           if(response.data.message == "success"){
-			console.log(PlayerID);
-			    document.getElementById(PlayerID).style.display = 'none';
-		   }          
-        })
+		 this.setState({ DelData: { type: 'Player', data: PlayerID } })
+        if (this.state.isDisplay.display === 'none') {
+            this.setState({ isDisplay: { display: 'flex' } });
+        } else {
+            this.setState({ isDisplay: { display: 'none' } });
+        }
     }
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    updateSensorId = (e) => {
+    updateSensorId = () => {
         this.updateSensor();
     }
 
-    updateSensorIdOnEnter = (e) => {
+    updateSensorIdOnEnter = (e) => {	
+	console.log(e);
         if (e.key === 'Enter') {
             this.updateSensor();
         }
@@ -521,11 +548,15 @@ class CommanderTeamView extends React.Component {
     }
 
     renderSwitch = (player) => {
-        if (player.simulation_data[0]['user_data']) {
-            return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
-        } else {
-            return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
-        }
+		 if(this.state.editablestate){
+			if (player.simulation_data[0]['user_data']) {
+				return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
+			} else {
+				return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+			}
+		 }else{ 
+			return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+		 }
     }
 
     tConvert = (time) => {
@@ -707,7 +738,15 @@ class CommanderTeamView extends React.Component {
                                         <button className="btn team-page-edit-button" onClick={() => { this.teamStats() }}><img src={team_state_icon} style={{ 'width': '32px' }} /> Team Stats</button>
                                     </div>
                                     <div className="col-md-6 no-padding" style={{ 'display': 'contents' }}>
-                                        <button className="btn team-page-edit-button plyar-button-edit" style={{ 'margin-left': '10px' }}>Edit</button>
+									 {this.state.editablestate  ?
+										<>
+                                        <button onClick={() => { this.cancleable() }} className="btn team-page-edit-button plyar-button-edit" style={{ 'margin-left': '10px' }}>Cancle</button>
+										  </>
+										:
+										<>
+                                        <button onClick={() => { this.editstate() }} className="btn team-page-edit-button plyar-button-edit" style={{ 'margin-left': '10px' }}>Edit</button>
+										</>
+									 }
                                     </div>
                                 </div>
                             </div>
@@ -739,8 +778,10 @@ class CommanderTeamView extends React.Component {
                                         <thead>
                                             <tr>
 
-                                                <th scope="col">Player ID</th>
-                                                <th scope="col" style={{ 'text-align': 'center' }}>Sensor ID</th>
+                                                <th scope="col">Player ID</th>												
+                                                {this.state.editablestate  &&
+													<th scope="col" style={{ 'text-align': 'center' }}>Sensor ID</th>
+												}
                                                 {this.state.userDetails.level > 300 &&
                                                     <th scope="col">Player Name</th>
                                                 }
@@ -753,7 +794,12 @@ class CommanderTeamView extends React.Component {
                                                     <React.Fragment>
                                                         <th scope="col" ><span style={{ display: 'block' }}>Team</span>Status</th>
                                                         <th scope="col" ><span style={{ display: 'block' }}>Profile</span>Settings</th>
-                                                        <th scope="col" ><span style={{ display: 'block' }}>Delete</span>Player</th>
+                                                      {this.state.editablestate  ?
+														<> 
+															<th scope="col" ><span style={{ display: 'block' }}>Delete</span>Player</th>
+														</>
+													  : null
+													  }
                                                     </React.Fragment>
                                                 }
                                             </tr>
@@ -805,29 +851,21 @@ class CommanderTeamView extends React.Component {
                                                         <th style={{ verticalAlign: "middle" }} scope="row" onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                             {
                                                                 player.simulation_data[0].player_id.split('$')[0]
-
                                                             }</th>
-                                                        <td>
-                                                            {this.state.editableId && this.state.editableId === player.simulation_data[0]['user_data'].user_cognito_id ?
-                                                                <>
-                                                                    <input type="text"
-                                                                        onBlur={this.updateSensorId}
-                                                                        onKeyDown={this.updateSensorIdOnEnter}
-                                                                        onChange={this.handleChange}
-                                                                        name="sensor_id"
-                                                                        value={this.state.sensor_id}
-                                                                        className="update-sensorid-input"
-                                                                        autoFocus
-                                                                    />
-                                                                    {this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px' }}></i>}
-                                                                </>
-                                                                :
-                                                                <span onClick={() => { this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
-                                                                    {player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number.substr(-8) + ' ' : 'Sensor ID  '}<i class="fa fa-pencil" aria-hidden="true" style={{ 'color': '#0e7dd59e', 'float': 'right', 'margin-top': '10%' }}></i>
-                                                                </span>
-                                                            }
-
-                                                        </td>
+                                                        {this.state.editablestate &&
+                                                        <td>  
+															<input type="text"
+																onBlur={this.updateSensorId}
+																onKeyDown={this.updateSensorIdOnEnter}
+																onChange={this.handleChange}
+																onFocus={() => this.editable(player.simulation_data[0]['user_data'])}
+																name="sensor_id"
+																value={this.state.sensor_id}
+																className="update-sensorid-input"                      
+															/>
+															{this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px' }}></i>}                            
+                                                        </td> 
+														}
                                                         {this.state.userDetails.level > 300 &&
                                                             <td style={{ 'max-width': '162px' }} className="wrap-cell" onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].user_data ? player.simulation_data[0].user_data.first_name + ' ' + player.simulation_data[0].user_data.last_name : player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         }
@@ -858,7 +896,7 @@ class CommanderTeamView extends React.Component {
                                                                     {this.getUrl(player.simulation_data[0]['user_data'])}
                                                                 </td>
                                                                 <td>
-																{this.state.editableId && this.state.editableId === player.simulation_data[0]['user_data'].user_cognito_id ?
+																 {this.state.editablestate  ?
 																	<>
 																	   <span className="delete-user-box" >
 																			<i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(player.simulation_data[0]['user_data']) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
@@ -894,22 +932,21 @@ class CommanderTeamView extends React.Component {
                                                     return <tr key={r_index} style={{ lineHeight: lineHeight }}  id={r_player.user_cognito_id}>
                                                         <td>-</td>
                                                         <td>
-                                                            {this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
+                                                             {this.state.editablestate  ?
                                                                 <>
                                                                     <input type="text"
-                                                                        onBlur={this.updateSensorId}
+                                                                        onBlur={this.updateSensorId(r_player)}
                                                                         onKeyDown={this.updateSensorIdOnEnter}
                                                                         onChange={this.handleChange}
                                                                         name="sensor_id"
-                                                                        value={this.state.sensor_id}
-                                                                        className="update-sensorid-input"
-                                                                        autoFocus
+                                                                        value= {this.state.sensor_id}
+                                                                        className="update-sensorid-input"                                                                        
                                                                     />
                                                                     {this.state.isSensorIdUpdating && <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px', 'margin-left': '2px' }}></i>}
                                                                 </>
                                                                 :
                                                                 <span onClick={() => { this.editable(r_player) }} className="edit-sensor-box">
-                                                                    {r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID  '} <i class="fa fa-pencil" aria-hidden="true" style={{ 'color': '#0e7dd59e', 'padding-left': '6px', 'float': 'right', 'margin-top': '10%' }}></i>
+                                                                    <i class="fa fa-pencil" aria-hidden="true" style={{ 'color': '#0e7dd59e', 'padding-left': '6px', 'float': 'right', 'margin-top': '10%' }}></i>
                                                                 </span>
                                                             }
                                                         </td>
@@ -932,15 +969,21 @@ class CommanderTeamView extends React.Component {
                                                                                 role="status"
                                                                             ></div>
                                                                         </div>
-                                                                        :
-                                                                        <Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+                                                                        : 
+																		<>
+																			{this.state.editablestate  ?
+																			<Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+																		: 
+																			<Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+																		}
+																		</>
                                                                     }
                                                                 </td>
                                                                 <td>
                                                                     {this.getUrl(r_player)}
                                                                 </td>
                                                                 <td>
-																{this.state.editableId && this.state.editableId === r_player.user_cognito_id ?
+															 {this.state.editablestate  ?
                                                                   <>
 																	  <span className="delete-user-box" style={{ 'display': 'none' }}>
 																			<i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(r_player) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
@@ -1084,6 +1127,7 @@ class CommanderTeamView extends React.Component {
 
         return (
             <React.Fragment>
+			    <DeletePopup isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible) ? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData) ? this.props.isDeleteData : this.isDeleteData} />
                 {this.props.isMilitaryVersionActive === true ? (
                     <div className="militay-view">
                         <div className="military-sidebar">

@@ -40,6 +40,7 @@ const options = {
 
 class HeadLinearAccelerationAllEvents extends React.Component {
     constructor(props) {
+		console.log("HeadLinearAccelerationAllEvents",props)
         super(props);
         this.state = {
             data: {

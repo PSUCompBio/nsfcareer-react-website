@@ -325,12 +325,14 @@ class TeamStats extends React.Component {
         console.log(labels_sports, data_sports);
         // for position ...
         if (count_positions && count_positions_val) {
-
             Object.entries(count_positions).forEach(([key, value], index) => {
                 let impactLen = value;
                 let totalPostionVal = count_positions_val[key];
                 totalPostionVal = totalPostionVal ? totalPostionVal.toFixed(2) : 0;
                 let mpsAvg = (totalPostionVal) / impactLen;
+                //let mpsAvg = impactLen;
+				/* console.log("totalPostionVal",totalPostionVal);
+				console.log("impactLen",impactLen);*/
                 mpsAvg = mpsAvg.toFixed(2);
                 let position = key;
 

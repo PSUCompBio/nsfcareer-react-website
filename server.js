@@ -7800,6 +7800,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
             // let frontal_Lobe = [];
             let brainRegions = {};
             let principal_max_strain = {};
+            let PMSarray = [];
             let principal_min_strain = {};
             let axonal_strain_max = {};
             let csdm_max = {};
@@ -7808,6 +7809,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
 
             if (data.length === 0){
                 brainRegions['principal-max-strain'] = {};
+                brainRegions['PMSarray'] = {};
                 brainRegions['principal-min-strain'] = {};
                 brainRegions['axonal-strain-max'] = {};
                 brainRegions['csdm-max'] = {};
@@ -7915,6 +7917,12 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         principal_max_strain[region].push(coordinate);
                                     }
                                 }
+                                if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
+                                    let coordinate = {};
+									coordinate = Number(summary_data['principal-max-strain']['value'].toFixed(2));
+									PMSarray.push(coordinate);
+                                    
+                                }
                                 if (summary_data['principal-min-strain']  && summary_data['principal-min-strain'].location) {
                                     let coordinate = {};
                                     coordinate.x = summary_data['principal-min-strain'].location[0];
@@ -7962,8 +7970,9 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                             })
                         }
                     }
-
+					PMSarray.sort();
                     brainRegions['principal-max-strain'] = principal_max_strain;
+                  //  brainRegions['PMSarray'] = PMSarray;  
                     brainRegions['principal-min-strain'] = principal_min_strain;
                     brainRegions['axonal-strain-max'] = axonal_strain_max;
                     brainRegions['csdm-max'] = csdm_max;
@@ -7979,11 +7988,13 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                             if (keyA > keyB) return 1;
                             return 0;
                         });
+					console.log("principal_max_strain1",PMSarray);
                         res.send({
                             message: "success",
                             data: acceleration_data_list,
+                            brainRegions: brainRegions,
+                            PMSarray: PMSarray,
                             // frontal_Lobe: frontal_Lobe,
-                            brainRegions: brainRegions
                         })
                     }
 

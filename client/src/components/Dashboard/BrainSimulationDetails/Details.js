@@ -6,6 +6,7 @@ import { Redirect, Link } from 'react-router-dom';
 import { svgToInline } from '../../../config/InlineSvgFromImg';
 import HeadLinearAccelerationAllEvents from '../../DashboardEventsChart/HeadLinearAccelerationAllEvents';
 import HeadAngularAccelerationAllEvents from '../../DashboardEventsChart/HeadAngularAccelerationAllEvents';
+//import Rankedmpschart from '../../DashboardEventsChart/Rankedmpschart';
 import Dropzone from 'react-dropzone';
 import InputRange from 'react-input-range';
 import 'react-input-range/lib/css/index.css';
@@ -113,6 +114,7 @@ class Details extends React.Component {
       player_id: this.props.match.params.player_id,
       cognito_user_id: this.props.match.params.cognito_user_id,
       simulation_data: '',
+      PMSarray1: [],
       simulationData: '',
       lock_video_3: false,
       isCommonControl: false,
@@ -123,6 +125,8 @@ class Details extends React.Component {
       simulationStatus: 'pending',
       label_resetVideo: 'Reset',
       label_TrimVideo: 'Trim',
+      showinjury: 'block',
+      showPMS: 'none',
 
       isTriming: false,
       account_id: '',
@@ -236,6 +240,12 @@ class Details extends React.Component {
 
   gotoTop = () => {
     window.scrollTo({ top: '0', behavior: 'smooth' });
+  };
+  showPMS = () => {
+    this.setState({showPMS : "block",showinjury : "none", })
+  };
+  showinjury = () => {
+    this.setState({showPMS : "none",showinjury : "block", })
   };
   setRangeValue =(value) =>{
     if(_isFirstUpdate === ''){
@@ -1152,13 +1162,18 @@ class Details extends React.Component {
                     <div className="col-md-12">
                       <div className="metrics">
                           <div className="col-md-12">
-                            <button className="btn btn-primary">Injury Metrics</button><br/>
+                            <button className="btn btn-primary" onClick={this.showinjury} >Injury Metrics</button><br/>
                             <button className="btn gray">MPS</button>
                             <button className="btn gray">CSDM</button>
                             <button className="btn gray">MASxSR<sub>15</sub></button>
+                           <button className="btn btn-primary" style={{'margin-top':'10px',"display":"none"}} onClick={this.showPMS} >Principal Max Strain</button>
                           </div>
-                          <div className="col-md-12">
+                          <div className="col-md-12" style={{'display': this.state.showinjury}} >
                             <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.simulationStatus !== 'pending' ?  'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="img" />
+                            
+                          </div>
+                          <div className="col-md-12" style={{'display': this.state.showPMS}}>
+                          
                             
                           </div>
                       </div>
@@ -1225,7 +1240,7 @@ class Details extends React.Component {
           if (value.data.message === 'success') {
             getUserDBDetails()
               .then((response) => {
-                  console.log('response.data.data',response.data.data)
+                  console.log('response',response.data.data)
                   this.setState({
                       user: true,
                       userDetails: response.data.data,
@@ -1257,12 +1272,20 @@ class Details extends React.Component {
                     this.getSimlationImage();
                     getCumulativeAccelerationTimeRecords({  organization: organization, player_id: this.state.player_id, team: team })
                     .then(res=>{
-                      console.log('res',res);
+					  var PMSarray = res.data.PMSarray;
+					  var PMSarray1 = [];
+						PMSarray1["datasets"] = [];
+					  PMSarray.forEach(async (i) => {	
+							if(typeof i == "number"){
+								PMSarray1["datasets"].push(i);
+							}
+					  });
+					  PMSarray1["labels"]= [0,0.1,0.2,0.3,0.4,0.5,0.6];
                       if(res.data.message !== "failure"){
                         console.log('success')
-                        console.log('res',res);
                         this.setState({
                           simulation_data: res.data.data[0],
+                          PMSarray1: PMSarray1,
                           isLoaded: true,
                           isAuthenticated: true,
                           isCheckingAuth: true
