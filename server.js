@@ -30,6 +30,7 @@ const { exec } = require('child_process')
 var nodemailer = require('nodemailer');
 let ejs = require("ejs");
 let pdf = require("html-pdf");
+let csvjson = require('csvjson');
 
 app.use(express.static(path.resolve('./public')));
 // var transporter = nodemailer.createTransport({
@@ -464,7 +465,7 @@ function getImageFromS3Buffer(image_data){
 }
 
 function getFileFromS3(url, bucket_name) {
-    // console.log('url', url)
+    console.log('url ---------------', url)
     return new Promise((resolve, reject) => {
         var params = {
             Bucket: bucket_name ? bucket_name : config_env.usersbucket,
@@ -473,7 +474,7 @@ function getFileFromS3(url, bucket_name) {
         s3.getObject(params, function (err, data) {
             if (err) {
                 // reject(err)
-                resolve(null);
+                reject(err);
             }
             else {
                 resolve(data);
@@ -10036,6 +10037,53 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
         }) 
     })
         
+});
+
+app.post(`${apiPrefix}getMLplatformfiles`, (req, res) => {
+    console.log('getting history.csv file -------------------------\n')
+    let file_path = 'models/base_model/history.csv';
+    let MLcsvData = '';
+    getFileFromS3(file_path, BUCKET_NAME)
+    .then(output_file => {
+        if (output_file) {
+            var outputFile = output_file.Body.toString('utf-8');
+            var options = {
+                delimiter : ';', // optional
+                quote     : '"' // optional
+            };
+            MLcsvData = csvjson.toObject(outputFile, options);
+            var result_file_path =  'models/base_model/test_result.json';
+            return getFileFromS3(result_file_path, BUCKET_NAME);
+        }else{
+            res.send({
+                message: 'failure',
+                error: 'history.csv file not found.'
+            })
+        }
+    })
+    .then(output_file => {
+        if(output_file){
+           var  outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+           res.send({
+                message: 'success',
+                MLcsvData: MLcsvData,
+                resultFile: outputFile
+            })
+        }else{
+            res.send({
+                message: 'failure',
+                error: 'result.json file not found.'
+            })
+        }
+
+    })
+    .catch(err=>{
+        res.send({
+            message: 'failure',
+            error: err
+        })
+        console.log('err csv ----------------',err)
+    })
 });
  
 app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
