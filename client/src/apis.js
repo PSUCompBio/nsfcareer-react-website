@@ -1053,6 +1053,18 @@ export const getTeamSpheres = (request) =>{
   })
 }
 
+export const getMLplatformfiles = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getMLplatformfiles`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getFilterdTeamSpheres = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getFilterdTeamSpheres`, request,{withCredentials: true})

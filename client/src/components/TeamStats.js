@@ -8,19 +8,18 @@ import { Spinner } from 'react-bootstrap';
 import {
     isAuthenticated,
     getTeamSpheres,
-    getFilterdTeamSpheres
+    getFilterdTeamSpheres,
+    getMLplatformfiles
 } from './../apis';
 import TeamStateScatterChart from './Charts/TeamStateScatterChart';
-import TeamStateScatterChartVolacity from './Charts/TeamStateScatterChartVolacity';
-
+// import TeamStateScatterChartVolacity from './Charts/TeamStateScatterChartVolacity';
 import BarChart from './Charts/BarChart';
-
+import MLTab from './MachineLearningComponent/Tab';
 import { Card, Row, Col } from 'react-bootstrap';
 
 class TeamStats extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             isAuthenticated: false,
             isCheckingAuth: true,
@@ -35,14 +34,36 @@ class TeamStats extends React.Component {
                 brand: this.props.match.params.brand,
                 organization: this.props.match.params.org,
                 team: this.props.match.params.team
-            }
+            },
+            MLcsvData: '',
+            MLjsonData: '',
+            isMldataLoaded: false
         };
-
         this.child = React.createRef();
     }
 
     componentDidMount() {
-        console.log('req----', this.props)
+        getMLplatformfiles(JSON.stringify({}))
+        .then(res => {
+            console.log('res ----------- getMLplatformfiles\n',res);
+            if(res.data.message === 'success'){
+                this.setState({
+                    MLcsvData: res.data.MLcsvData,
+                    MLjsonData: res.data.resultFile,
+                    isMldataLoaded: true
+                })
+            }else{
+                this.setState({
+                    isMldataLoaded: res.data.error
+                })
+            }
+        }).catch(err=>{
+            console.log('err --------------\n',err)
+            this.setState({
+                isMldataLoaded: err
+            })
+        })
+        console.log('working----', this.props)
         // Scrolling winddow to top when user clicks on about us page
 		var team = this.props.match.params.team;
 		if (this.props.match.params.type == "Players"){
@@ -304,24 +325,23 @@ class TeamStats extends React.Component {
         
         // for sport ...
         if (count_sports && count_sports_val) {
-
             Object.entries(count_sports).forEach(([key, value], index) => {
                 let impactLen = value;
                 let totalSportVal = count_sports_val[key];
                 totalSportVal = totalSportVal ? totalSportVal.toFixed(2) : 0;
+                totalSportVal = parseFloat(totalSportVal);
+                console.log('totalsportval = ',totalSportVal,', totalImpact = ',impactLen)
+
                 let mpsAvg = (totalSportVal) / impactLen;
                 mpsAvg = mpsAvg.toFixed(2);
                 let sport = key;
-
-                // if (key !== 'Unknown') {
-                //     sport = capitalizePosition(key);
-                // }
                 console.log('sport', sport)
                 data_sports.push(mpsAvg);
                 labels_sports.push(sport);
             })
 
         }
+
         console.log(labels_sports, data_sports);
         // for position ...
         if (count_positions && count_positions_val) {
@@ -579,7 +599,11 @@ class TeamStats extends React.Component {
                                         <div className="col-md-12 no-padding">
                                             <p className="video-lebel text-center"
                                             >Machine Learning</p>
-                                            <div style={{ 'padding': '80px' }}></div>
+                                            {this.state.MLjsonData ? 
+                                                <MLTab MLcsvData={this.state.MLcsvData} MLjsonData={this.state.MLjsonData}  />
+                                                : this.state.isMldataLoaded ? this.tate.isMldataLoaded : 'Loading...'
+                                            }
+                                            
                                         </div>
                                     </div>
                                 </Card>

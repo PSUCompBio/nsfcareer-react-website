@@ -1589,7 +1589,7 @@ button.btn.button-yes {
 }
 .uploading-simulation-list thead{
   background: #e1e1e1;
-    color: #007bff;
+  color: #007bff;
 }
 .simulation-image-upload-icon img{
   width: 30px;
@@ -1604,14 +1604,14 @@ button.btn.button-yes {
   padding: 6px;
 }
 .btn-download-custom-report{
-    background: #4060ca!important;
-    color: white!important;
-    font-size: 21px!important;
-    padding: 11px!important;
-    top: 50%!important;
-    left: 50%!important;
-    transform: translate(-50%, -50%)!important;
-    position: relative!important;
+  background: #4060ca!important;
+  color: white!important;
+  font-size: 21px!important;
+  padding: 11px!important;
+  top: 50%!important;
+  left: 50%!important;
+  transform: translate(-50%, -50%)!important;
+  position: relative!important;
 }
 .download-custom-report-box{
     background: #F2F2F2!important;
@@ -1696,4 +1696,25 @@ button.btn.button-yes {
   border-top-left-radius: inherit;
   font-size: 15px;
   letter-spacing: 1px;
+}
+
+.button-ml-metrics{
+  background: none!important;
+  color: black!important;
+  padding: 2px 9px!important;
+  border: 1px solid!important;
+  margin: 0px 5px!important;
+  border-radius: 15px!important;
+}
+.button-ml-metrics-metric{
+  border: inherit!important;
+  margin-left: 11px!important;
+  font-weight: 500;
+}
+.LOSS{
+  background-color: #25CFF9!important;
+}
+
+.MAE{
+  background-color: #88DD88!important;
 }
