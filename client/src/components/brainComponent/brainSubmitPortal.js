@@ -39,6 +39,7 @@ class BrainSubmitPortal extends React.Component {
             sensors: [],
             sensor: Sensor,
             loadingSensorList: true,
+            organization: this.props.organization,
             team: this.props.team
         };
     }
@@ -293,7 +294,7 @@ class BrainSubmitPortal extends React.Component {
         let userData = localStorage.getItem("state");
         userData = JSON.parse(userData);
 
-        const { files, list ,meshType, sensor, team} = this.state; 
+        const { files, list ,meshType, sensor, team, organization} = this.state; 
         const user = userData['userInfo']['email'];
         const reloadPage = () => {
             setInterval(()=>{
@@ -314,6 +315,7 @@ class BrainSubmitPortal extends React.Component {
                 formdata.append("fileNum", i);
                 formdata.append("mesh", meshType);
                 formdata.append("sensor", sensor);
+                formdata.append("organization", organization);
                 formdata.append("team", team);
 
 
