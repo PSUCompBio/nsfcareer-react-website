@@ -474,7 +474,7 @@ function getFileFromS3(url, bucket_name) {
         s3.getObject(params, function (err, data) {
             if (err) {
                 // reject(err)
-                reject(err);
+                resolve(null);
             }
             else {
                 resolve(data);
@@ -9304,13 +9304,13 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{name: "filename", 
                         }
                        
                         req.body["level"] = user_details.Item["level"];
-                        
-                        req.body["organization"] = user_details.Item["organization"];
-                        
+                        if (user_details.Item["level"] === 300) {
+                            req.body["organization"] = user_details.Item["organization"];
+                        }
+                                                
                         if(req.body["team"] == '' || req.body["team"] ==  undefined || req.body["team"] == null){
                             req.body["team"] = user_details.Item["team"];
                         }
-
                         
                         req.body["upload_file"] = base64File;
                         req.body["data_filename"] = data_filename;
