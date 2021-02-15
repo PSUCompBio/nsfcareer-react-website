@@ -852,7 +852,7 @@ function addPlayerToTeamOfOrganization(sensor, user_cognito_id, org, team, playe
                                 },
                                 UpdateExpression: "set #list = list_append(#list, :newItem)",
                                 ExpressionAttributeNames: {
-                                    "#list": "player_list",
+                                    "#list": "requested_player_list",
                                 },
                                 ExpressionAttributeValues: {
                                     ":newItem": [player_id],
@@ -880,7 +880,7 @@ function addPlayerToTeamOfOrganization(sensor, user_cognito_id, org, team, playe
                                 user_cognito_id: user_cognito_id,
                                 organization: org,
                                 team_name: team,
-                                player_list: [player_id]
+                                requested_player_list: [player_id]
                             },
                         };
                         docClient.put(dbInsert, function (err, data) {
@@ -901,7 +901,7 @@ function addPlayerToTeamOfOrganization(sensor, user_cognito_id, org, team, playe
                             user_cognito_id: user_cognito_id,
                             organization: org,
                             team_name: team,
-                            player_list: [player_id]
+                            requested_player_list: [player_id]
                         },
                     };
                     docClient.put(dbInsert, function (err, data) {
@@ -1713,7 +1713,7 @@ function getSimulationImageRecord(image_id){
 function createUserDbEntry(event, callback) {
     
     if (event.organization && event.team) {
-        addPlayerToTeamOfOrganization(event.organization, event.team, event.user_name)
+        addPlayerToTeamOfOrganization('', '', event.organization, event.team, event.user_name)
         .then(result => {
             var dbInsert = {};
             // adding key with name user_cognito_id

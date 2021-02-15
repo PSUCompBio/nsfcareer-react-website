@@ -2454,14 +2454,16 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                                     getAllTeamsOfOrganizationsOfSensorBrand({organization: mergedObject.organization, brand: ''})
                                     .then(orgData => {
                                         console.log('orgData -------------\n',orgData)
-                                        InsertUserIntoOrg(mergedObject.user_cognito_id,orgData[0].organization_id, orgData[0].requested_player_list)
-                                        .then(sensor_data => {
-                                        
-                                            console.log('sensor_data',sensor_data)
-                                        })
-                                        .catch(err => {
-                                            console.log('err',err)
-                                        })
+                                        if(!mergedObject.team){
+                                            InsertUserIntoOrg(mergedObject.user_cognito_id,orgData[0].organization_id, orgData[0].requested_player_list)
+                                            .then(sensor_data => {
+                                            
+                                                console.log('sensor_data',sensor_data)
+                                            })
+                                            .catch(err => {
+                                                console.log('err',err)
+                                            })
+                                        }
                                     }).catch(err => {
                                         console.log('err',err)
                                     })
@@ -8181,7 +8183,7 @@ app.post(`${apiPrefix}getImpactSummary`, (req,res) =>{
 
 
 app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
-    console.log('getplayer data --------------------------------\n')
+    console.log('getplayer data --------------------------------\n',req.body)
     getPlayersListFromTeamsDB_2(req.body)
         .then(data => {
             console.log('PlayerList -------------------\n')
@@ -8276,51 +8278,58 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
 
                                 let k = 0;
                                 console.log('playerlist executed -----------------------\n',p_data)
+                                if(p_data.length > 0){
+                                    p_data.forEach(function (record, index) {
+                                        console.log('record.simulation_data[0]',record.simulation_data[0].image_id)
+                                        getPlayerSimulationFile(record.simulation_data[0])
+                                            .then(simulation => {
+                                                p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
+                                                p_data[index]['simulation_data'][0]['image_id_2'] = simulation ? simulation.image_id : '';
 
-                                p_data.forEach(function (record, index) {
-                                    console.log('record.simulation_data[0]',record.simulation_data[0].image_id)
-                                    getPlayerSimulationFile(record.simulation_data[0])
-                                        .then(simulation => {
-                                            p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
-                                            p_data[index]['simulation_data'][0]['image_id_2'] = simulation ? simulation.image_id : '';
-
-                                            p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-                                            getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
-                                                .then (u_detail => {                                                   
-                                                    k++;
-                                                    // console.log('user details ', u_detail[0]['first_name'])
-                                                    p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
-                                                    if (k == p_data.length) {
-                                                        let requested_players = []
-                                                        if (requested_player_list.length > 100) {
-                                                            let p_cnt = 0;
-                                                            requested_player_list.forEach(function (p_record) {
-                                                               // console.log('p_record--------------------\n',p_record)
-                                                                getUserDetails(p_record) 
-                                                                    .then (user_detail => {
-                                                                        p_cnt++; 
-                                                                        requested_players.push(user_detail.Item);    
-                                                                        if (p_cnt === requested_player_list.length) {
-                                                                            res.send({
-                                                                                message: "success",
-                                                                                data: p_data,
-                                                                                requested_players: requested_players
-                                                                            })
-                                                                        }
-                                                                    })
-                                                            })           
-                                                        } else {
-                                                            res.send({
-                                                                message: "success",
-                                                                data: p_data,
-                                                                requested_players: requested_players
-                                                            })
+                                                p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
+                                                getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
+                                                    .then (u_detail => {                                                   
+                                                        k++;
+                                                        // console.log('user details ', u_detail[0]['first_name'])
+                                                        p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
+                                                        if (k == p_data.length) {
+                                                            let requested_players = []
+                                                            if (requested_player_list.length > 100) {
+                                                                let p_cnt = 0;
+                                                                requested_player_list.forEach(function (p_record) {
+                                                                // console.log('p_record--------------------\n',p_record)
+                                                                    getUserDetails(p_record) 
+                                                                        .then (user_detail => {
+                                                                            p_cnt++; 
+                                                                            requested_players.push(user_detail.Item);    
+                                                                            if (p_cnt === requested_player_list.length) {
+                                                                                res.send({
+                                                                                    message: "success",
+                                                                                    data: p_data,
+                                                                                    requested_players: requested_players
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                })           
+                                                            } else {
+                                                                res.send({
+                                                                    message: "success",
+                                                                    data: p_data,
+                                                                    requested_players: requested_players
+                                                                })
+                                                            }
                                                         }
-                                                    }
 
-                                                })
-                                        })
-                                })
+                                                    })
+                                            })
+                                    });
+                                }else{
+                                    res.send({
+                                        message: "success",
+                                        data: [],
+                                        requested_players: []
+                                    })
+                                }
                             }
                         })
                         .catch(err => {
