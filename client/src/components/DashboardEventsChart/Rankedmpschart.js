@@ -8,7 +8,7 @@ const options = {
     maintainAspectRatio: false,
     fill: false,
     legend: {
-        display: true
+        display: false
     },
     plugins: {
         datalabels: {
@@ -24,10 +24,11 @@ const options = {
             },
             id: 'A',
             position: 'left',
-			labels: [0, 0.1,0.2,0.3],
             ticks: {
+				beginAtZero: true,
 				min: 0,
-                max: 0.3
+				stepSize: 0.10,
+				max: 0.4
             }
         }],
         xAxes: [{
@@ -45,7 +46,7 @@ class Rankedmpschart extends React.Component {
         super(props);
         this.state = {
             data: {
-				labels: [0, 0.1,0.2,0.3],
+				labels: [0, 0.1,0.2,0.3,0.4],
                 fill: false,
 				datasets: [{
 					lineTension: 0.1,

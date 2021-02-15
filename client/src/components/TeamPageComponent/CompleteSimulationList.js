@@ -25,7 +25,8 @@ class CompleteSimulationList extends React.Component {
         organization:this.props.match.params.org,
         team:this.props.match.params.team,
         brand:this.props.match.params.brand,
-        simulationList:{}
+        simulationList:{},
+		board1 : this.props.match.params.brand?this.props.match.params.brand:""
       }
   }
   test=()=>{
@@ -114,8 +115,10 @@ class CompleteSimulationList extends React.Component {
         <div className="container-fluid pl-0 pr-0 overflow-hidden bottom-margin">
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <Container>
+			
+				<a className="btn btn-primary"  href={'/TeamAdmin/team/players/' + this.props.match.params.org + '/' + this.props.match.params.team + '?brand=' +this.state.board1 }>&lt; Back</a>
               <Row className="model-validation-head">
-                <Col sm={12}>
+                <Col sm={12}>                
                   <h1>Simulations Statistics</h1>
                 </Col>
               </Row>

@@ -126,7 +126,9 @@ class Details extends React.Component {
       label_resetVideo: 'Reset',
       label_TrimVideo: 'Trim',
       showinjury: 'block',
+      showinjury1: true,
       showPMS: 'none',
+      showPMS1: false,
 
       isTriming: false,
       account_id: '',
@@ -242,10 +244,10 @@ class Details extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
   showPMS = () => {
-    this.setState({showPMS : "block",showinjury : "none", })
+    this.setState({showPMS : "block",showinjury : "none",showPMS1 : true,showinjury1 : false, })
   };
   showinjury = () => {
-    this.setState({showPMS : "none",showinjury : "block", })
+    this.setState({showPMS : "none",showinjury : "block",showPMS1 : false,showinjury1 : true, })
   };
   setRangeValue =(value) =>{
     if(_isFirstUpdate === ''){
@@ -1162,11 +1164,27 @@ class Details extends React.Component {
                     <div className="col-md-12">
                       <div className="metrics">
                           <div className="col-md-12">
-                            <button className="btn btn-primary" onClick={this.showinjury} >Injury Metrics</button><br/>
+						  {this.state.showinjury1 ?
+							<>
+								<button className="btn btn-primary" onClick={this.showinjury} >Injury Metrics</button><br/>
+							</>
+							:
+							<>
+								<button className="btn gray" onClick={this.showinjury} >Injury Metrics</button><br/>
+							</>
+							}
                             <button className="btn gray">MPS</button>
                             <button className="btn gray">CSDM</button>
                             <button className="btn gray">MASxSR<sub>15</sub></button>
-                            <button className="btn btn-primary" style={{'margin-top':'10px'}} onClick={this.showPMS} >Principal Max Strain</button>
+							{this.state.showPMS1 ?
+							<>
+								<button className="btn btn-primary" style={{'margin-top':'10px'}} onClick={this.showPMS} >Principal Max Strain</button>
+							</>
+							:
+							<>
+								<button className="btn gray" style={{'margin-top':'10px'}} onClick={this.showPMS} >Principal Max Strain</button>
+							</>
+							}
                           </div>
                           <div className="col-md-12" style={{'display': this.state.showinjury}} >
                             <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.simulationStatus !== 'pending' ?  'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="img" />
