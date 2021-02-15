@@ -6,9 +6,13 @@ import { Line } from 'react-chartjs-2';
 class Tab extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            plot : 'MAE'
+        }
     }
     render() {
         const { MLcsvData, MLjsonData } = this.props;
+        const { plot } = this.state;
         var maeData = [];
         var lossData = [];
         var labels = []
@@ -18,27 +22,30 @@ class Tab extends React.Component {
             labels.push(MLcsvData[i].epoch);
         }
         console.log('maeData', maeData)
+        let mae_datasets = {
+            lineTension: 0.1,
+            label: 'MAE',
+            backgroundColor: '#88DD88',
+            borderColor: '#88DD88',
+            pointRadius: 0,
+            fill: false,
+            data: maeData,
+        }
 
+        var loss_datasets = {
+            lineTension: 0.1,
+            label: 'LOSS',
+            backgroundColor: '#25CFF9',
+            borderColor: '#25CFF9',
+            pointRadius: 0,
+            fill: false,
+            data: lossData,
+        }
+        var datasets = plot  === 'MAE' ? mae_datasets : loss_datasets;
         let data = {
             labels: labels,
             fill: false,
-            datasets: [{
-                lineTension: 0.1,
-                label: 'MAE',
-                backgroundColor: '#88DD88',
-                borderColor: '#88DD88',
-                pointRadius: 0,
-                fill: false,
-                data: maeData,
-            }, {
-                lineTension: 0.1,
-                label: 'LOSS',
-                backgroundColor: '#25CFF9',
-                borderColor: '#25CFF9',
-                pointRadius: 0,
-                fill: false,
-                data: lossData,
-            }]
+            datasets: [datasets]
         }
 
         const options = {
@@ -90,6 +97,8 @@ class Tab extends React.Component {
 
         };
 
+        // ...
+        const { mae, mae_95, r2} = MLjsonData;
 
         return (
             <div>
@@ -98,12 +107,12 @@ class Tab extends React.Component {
                     textAlign: 'center'
                 }}>
                     <Row style={{
-                        'font-size': '15px',
+                        'font-size': '14px',
                         'font-weight': '600',
                         'color': '#0c68b2'
                     }}>
-                        <Col>88.78%</Col>
-                        <Col>0.78</Col>
+                        <Col>{mae_95.toFixed(2)}%</Col>
+                        <Col>{mae.toFixed(2)}</Col>
                         <Col>1.283</Col>
                     </Row>
 
@@ -111,11 +120,11 @@ class Tab extends React.Component {
                         style={{
                             'color': 'black',
                             'font-weight': '800',
-                            'font-size': '14px'
+                            'font-size': '12px'
                         }}
                     >
                         <Col>ACCURACY</Col>
-                        <Col>F1 SCORE</Col>
+                        <Col>Mean Absolute Error</Col>
                         <Col>LOSS</Col>
                     </Row>
                 </Container>
@@ -126,12 +135,12 @@ class Tab extends React.Component {
 
                 }}>
                     <Row style={{
-                        'font-size': '15px',
+                        'font-size': '14px',
                         'font-weight': '600',
                         'color': '#0c68b2'
                     }}>
                         <Col>0.94</Col>
-                        <Col>0.83</Col>
+                        <Col>{r2.toFixed(2)}</Col>
                         <Col>1.85</Col>
                     </Row>
 
@@ -139,12 +148,12 @@ class Tab extends React.Component {
                         style={{
                             'color': 'black',
                             'font-weight': '800',
-                            'font-size': '14px'
+                            'font-size': '12px'
 
                         }}
                     >
                         <Col>SENSITIVITY</Col>
-                        <Col>PRECISION</Col>
+                        <Col>Coefficient of Determination (R<sup>2</sup>)</Col>
                         <Col>ROCAUC</Col>
                     </Row>
                 </Container>
@@ -159,7 +168,7 @@ class Tab extends React.Component {
                         <p style={{
                                 'width': '100%',
                                 'font-size': '22px',
-                                'padding': '14px'
+                                'padding': '0px'
                         }}>Metric vs. Epoch #</p>
                     </Row>
                     <Row style={{
@@ -167,11 +176,11 @@ class Tab extends React.Component {
                     }}>
                         <Col>
                             <Button className="button-ml-metrics button-ml-metrics-metric">Metrics</Button>
-                            <Button className="button-ml-metrics">PRECISION</Button>
-                            <Button className="button-ml-metrics">SENSITIVITY</Button>
-                            <Button className="button-ml-metrics">F1</Button>
-                            <Button className="button-ml-metrics MAE">MAE</Button>
-                            <Button className="button-ml-metrics LOSS">LOSS</Button>
+                            <Button className="button-ml-metrics" style={{'cursor': 'no-drop'}} disabled>PRECISION</Button>
+                            <Button className="button-ml-metrics" style={{'cursor': 'no-drop'}} disabled>SENSITIVITY</Button>
+                            <Button className="button-ml-metrics" style={{'cursor': 'no-drop'}} disabled>F1</Button>
+                            <Button className={plot === 'MAE' ? "button-ml-metrics MAE" : "button-ml-metrics"} onClick={()=>this.setState({plot: 'MAE'})}>MAE</Button>
+                            <Button className={plot === 'LOSS' ? "button-ml-metrics LOSS" : "button-ml-metrics"} onClick={()=>this.setState({plot: 'LOSS'})}>LOSS</Button>
                         </Col>
                     </Row>
                 </Container>

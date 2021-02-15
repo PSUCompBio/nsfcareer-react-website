@@ -266,7 +266,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/TeamStats/:org/:team/:brand/:type/:id?"
+          path="/TeamStats/:type/:org/:team/:brand?"
           render={(props) => <TeamStats {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route

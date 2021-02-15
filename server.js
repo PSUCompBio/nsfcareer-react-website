@@ -9936,7 +9936,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                 .then(userData => {
                                     
                                     // console.log('userData',userData)
-                                    var player_status = userData[0]  ? userData[0].player_status : '';
+                                    var player_status = userData[0]  ? userData[0].player_status : 'approved';
                                     // var player_status = userData[0].player_status
                                     if(userData[0]){
 										if(userData[0].player_position){
@@ -10126,7 +10126,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
             count_sp++;
             if(count_sp == req.body.team.length){
                 data = spharesData;
-                console.log('data of team sphares -----\n',data)
+                console.log('data of team sphares -----\n',data.length)
 
                 let brainRegions = {};
                 let principal_max_strain = {};
@@ -10176,7 +10176,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                 console.log('player_id',newPlayerId)
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
-                                    var player_status = userData[0] ? userData[0].player_status : 'pending';
+                                    var player_status = userData[0] ? userData[0].player_status : 'approved';
                                     getPlayerSimulationStatus(acc_data.image_id)
                                     .then(imageData => {
                                         if (imageData && imageData.player_name && imageData.player_name != 'null') {
@@ -10186,6 +10186,9 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                         }
                                     })
                                     .then(output_file => {
+                                        console.log('output file exucuted --------------------\n')
+
+                                        console.log('player_status',player_status)
                                         if (output_file && player_status == 'approved') {
                                             outputFile = JSON.parse(output_file.Body.toString('utf-8'));
                                             if (outputFile.Insults) {
@@ -10308,6 +10311,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                 });
 
                 const pushdata = (summary_data)=>{
+                    console.log('pusing data ---------------------\n')
                     if (summary_data['principal-max-strain'] && summary_data['principal-max-strain']['brain-region']) {
                         let coordinate = {};
                         coordinate.x = summary_data['principal-max-strain'].location[0];
@@ -11057,6 +11061,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                 });
             }
         }).catch(err => {
+            console.log('err   ----------------1\n',err)
             res.send({
                 message : "failure",
                 error : err

@@ -431,7 +431,7 @@ class TeamStats extends React.Component {
                                                 brand: {
                                                     brand: this.props.match.params.brand,
                                                     organization: this.props.match.params.org,
-                                                    user_cognito_id: this.props.match.params.id
+                                                    user_cognito_id: ''
                                                 }
                                             }
                                         }}
@@ -449,7 +449,7 @@ class TeamStats extends React.Component {
                                                     brand: this.props.match.params.brand,
                                                     organization: this.props.match.params.org,
                                                     team_name: this.props.match.params.team,
-                                                    user_cognito_id: this.props.match.params.id,
+                                                    user_cognito_id: '',
                                                     staff: []
                                                 }
                                             }
@@ -475,7 +475,7 @@ class TeamStats extends React.Component {
                                                     brand: this.props.match.params.brand,
                                                     organization: this.props.match.params.org,
                                                     team_name: this.props.match.params.team,
-                                                    user_cognito_id: this.props.match.params.id,
+                                                    user_cognito_id: '',
                                                     staff: []
                                                 }
                                             }
@@ -608,8 +608,8 @@ class TeamStats extends React.Component {
                                     </div>
                                 </Card>
                             </Col>
-                            <Col md={6} className="team-state-cart-left" style={{ marginTop: '50px' }}>
-                                <Card style={{ 'border': '1px solid rgb(10, 84, 143)' }} >
+                            <Col md={6} className="team-state-cart-left" style={{ marginTop: '50px', display: 'flex' }}>
+                                <Card style={{ 'border': '1px solid rgb(10, 84, 143)',width: '100%' }} >
                                     <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }} >
                                         {this.state.for !== "Teams" ?
                                             <div className="col-md-12 no-padding">
@@ -634,7 +634,7 @@ class TeamStats extends React.Component {
                                                         <option value="principal-min-strain">Min Principal Strain</option>
                                                     </select>
                                                 </div>
-                                                <div>
+                                                <div style={{'margin-top': '100px'}}>
                                                     <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
                                                 </div>
                                             </div>
@@ -661,7 +661,7 @@ class TeamStats extends React.Component {
                                                         <option value="principal-min-strain">Min Principal Strain</option>
                                                     </select>
                                                 </div>
-                                                <div>
+                                                <div style={{'margin-top': '100px'}}>
                                                     <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
                                                 </div>
                                             </div>
