@@ -1077,7 +1077,7 @@ class CommanderTeamView extends React.Component {
         }
 
         if (this.state.isbrainSubmitPortal) {
-            return <BrainSubmitPortal makeVisible={(this.props.makeVisible) ? this.props.makeVisible : this.makeVisible} team={this.state.team} />;
+            return <BrainSubmitPortal makeVisible={(this.props.makeVisible) ? this.props.makeVisible : this.makeVisible} team={this.state.team} organization={this.state.organization} />;
         }
 
         // impactHistoryBarData.labels = this.state.impactHistoryData.force;

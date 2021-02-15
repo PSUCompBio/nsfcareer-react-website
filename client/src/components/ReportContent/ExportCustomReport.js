@@ -185,7 +185,7 @@ class ExportCustomReport extends React.Component {
                 var num5 =  "0.0000";
                 var num6 = "0.0000";
                 if (num1 !== undefined) {
-                    mps = this.state.jsonData['principal-max-strain'].value[0] ? this.state.jsonData['principal-max-strain'].value[0].toFixed(2) : 0;
+                    mps = this.state.jsonData['principal-max-strain'].value ? this.state.jsonData['principal-max-strain'].value[0].toFixed(2) : 0;
                     let mps_val1 = num1;
                     let mps_val2 = num2;
                     let mps_val3 = num3;
