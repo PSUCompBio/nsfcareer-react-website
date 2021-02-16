@@ -7923,8 +7923,9 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                                 if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
                                     let coordinate = {};
 									coordinate = Number(summary_data['principal-max-strain']['value'].toFixed(2));
-									PMSarray.push(coordinate);
-                                    
+									if(coordinate){
+										PMSarray.push(coordinate);
+                                    }
                                 }
                                 if (summary_data['principal-min-strain']  && summary_data['principal-min-strain'].location) {
                                     let coordinate = {};

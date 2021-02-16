@@ -399,15 +399,12 @@ class TeamStats extends React.Component {
                         display: true,
                         fontSize: 18,
                         fontWeight: 800,
-
                         labelString: 'Average MPS'
                     },
-                    // ticks: {
-                    //     suggestedMin: 0,
-
-                    //     suggestedMax: 50,
-                    //      stepSize: 5,
-                    // }
+                     ticks: {                    
+						beginAtZero: true,
+						min: 0,
+					 }
                 }]
             }
         };

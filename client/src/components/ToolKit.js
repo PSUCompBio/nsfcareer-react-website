@@ -23,6 +23,11 @@ class ToolKit extends React.Component {
     }	
 	handleTrainingFor =(e)=>{
         e.preventDefault();  
+		var selectedvalue = e.target.value;
+		if(selectedvalue == "individuals" ){
+			
+		}
+		console.log(e.target.value);
 			this.setState({
 			  radiovalue: e.target.value,
 			  showtable: true,
@@ -42,10 +47,10 @@ class ToolKit extends React.Component {
 							<h3 style={{textAlign: 'left', color: 'black',fontWeight:"700",fontSize:"22px",paddingTop:"50px"}}>Initiate Machine Learning Model Training</h3>
 							<div className="Training_option">
 								<ul style={{listStyle: 'none', color: 'black',fontWeight:"700",fontSize:"16px",paddingTop:"20px"}}>
-								<li><label><input type="radio" value="sensor_company" name="training_for" checked={radiovalue === 'sensor_company'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire sensor company</label></li>
-								<li><label><input type="radio" value="Organization" name="training_for"  checked={radiovalue === 'Organization'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire sensor Organization</label></li>
-								<li><label><input type="radio" value="team" name="training_for" checked={radiovalue === 'team'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire sensor team</label></li>
-								<li><label><input type="radio" value="individuals" name="training_for" checked={radiovalue === 'individuals'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire sensor individuals</label></li>
+								<li><label><input type="radio" value="Organization" name="training_for" checked={radiovalue === 'Organization'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire Organization</label></li>
+								<li><label><input type="radio" value="Institutions" name="training_for"  checked={radiovalue === 'Institutions'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire Institutions</label></li>
+								<li><label><input type="radio" value="team" name="training_for" checked={radiovalue === 'team'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire team</label></li>
+								<li><label><input type="radio" value="individuals" name="training_for" checked={radiovalue === 'individuals'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire individuals</label></li>
 								</ul>
 							</div>
                         </div>											
@@ -55,7 +60,7 @@ class ToolKit extends React.Component {
 								<tr>
 								  <th style={{border:"1px solid #ffffff"}} scope="col">Available Teams</th>
 								  <th style={{border:"1px solid #ffffff"}} scope="col">Total Events</th>
-								  <th style={{border:"1px solid #ffffff"}} scope="col">Include? <input type="checkbox" value="0" name="include"/></th>
+								  <th style={{border:"1px solid #ffffff"}} scope="col">Include? </th>
 								</tr>
 							  </thead>
 							  <tbody className="player-table">
@@ -71,6 +76,7 @@ class ToolKit extends React.Component {
 								</tr>
 							  </tbody>
 							</table>
+							<button className="btn  btn-primary">Submit</button>
                         </div>
 
                     </div>
