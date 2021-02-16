@@ -58,12 +58,11 @@ class TeamStats extends React.Component {
                 })
             }
         }).catch(err=>{
-            console.log('err --------------\n',err)
+            // console.log('err --------------\n',err)
             this.setState({
                 isMldataLoaded: err
             })
         })
-        console.log('working----', this.props)
         // Scrolling winddow to top when user clicks on about us page
 		var team = this.props.match.params.team;
 		if (this.props.match.params.type == "Players"){
@@ -78,7 +77,7 @@ class TeamStats extends React.Component {
                 if (value.data.message === 'success') {
                     getTeamSpheres({ brand: this.props.match.params.brand, organization: this.props.match.params.org, team: temarray })
                         .then(response => {
-                            console.log('response', response.data);
+                            console.log('getTeamSpheres ---------------------\n', response.data);
                             this.setState({
                                 isAuthenticated: true,
                                 isLoading: false,
@@ -114,7 +113,6 @@ class TeamStats extends React.Component {
     }
 
     handleChange = (e) => {
-        console.log('wrk')
         this.setState({ [e.target.name]: e.target.value });
         if (e.target.name === 'principal-max-strain' && e.target.value !== 'resultant-linear-acceleration' && e.target.value !== 'resultant-Angular-acceleration' && this.state.brainRegions) {
             this.child.current.handleBrainStrain(e.target.value);
@@ -132,7 +130,7 @@ class TeamStats extends React.Component {
 		}
         getFilterdTeamSpheres({ brand: this.props.match.params.brand, organization: this.props.match.params.org, team: temarray, filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain'] })
             .then(response => {
-                console.log('response', response.data);
+                console.log('getFilterdTeamSpheres ----------------------\n', response.data);
                 this.setState({
                     brainRegions: ''
                 })
@@ -223,7 +221,6 @@ class TeamStats extends React.Component {
     }
 
     handleHover =(e)=>{
-        // console.log(e.target);
         var tooltipEl = document.getElementById('chartjs-tooltip');
         if (tooltipEl) {  
             tooltipEl.style.opacity = 0;
@@ -232,7 +229,6 @@ class TeamStats extends React.Component {
     }
 
     render() {
-        console.log('prosps',this.props)
         //imported Modules ...
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
            // return <Redirect to="/Login" />;
@@ -249,12 +245,11 @@ class TeamStats extends React.Component {
 
         if (PLAYERS_POSITIONS) {
             PLAYERS_POSITIONS.forEach(async (i) => {
-                console.log('position',count_positions[i]);
+                // console.log('position',count_positions[i]);
                 if(count_positions[i] !== null){
-                    count_positions[i] = (count_positions[i] || 0) + 1;
+                    count_positions[i] = (count_positions[i] || 0);
                 }
             });
-            console.log('count_positions', count_positions)
         }
 
         //count sports ..
@@ -262,12 +257,12 @@ class TeamStats extends React.Component {
             PLAYERS_SPORT.forEach(async (i) => {
                 // console.log('position',count_sports[i]);
                 if(count_sports[i] !== null){
-                    count_sports[i] = (count_sports[i] || 0) + 1;
+                    count_sports[i] = (count_sports[i] || 0);
                 }
             });
             
         }
-        console.log('count_sports',count_sports)
+       
 
         //# Addition of player mps by positions
         var count_positions_val = {};
@@ -276,7 +271,10 @@ class TeamStats extends React.Component {
             BRAIN_POSITIONS[brainPosition].forEach(async (res) => {
                 Object.entries(res).forEach(([key, value]) => {
                     // console.log('res',key, value)
-                    if(key !== 'null') count_positions_val[key] = (count_positions_val[key] || 0) + value;
+                    if(key !== 'null'){
+                        count_positions_val[key] = (count_positions_val[key] || 0) + value;
+                        count_positions[key] = (count_positions[key] || 0) + 1;
+                    } 
                 })
 
             });
@@ -285,12 +283,17 @@ class TeamStats extends React.Component {
         if (BRAIN_SPORTS[brainPosition]) {
             BRAIN_SPORTS[brainPosition].forEach(async (res) => {
                 Object.entries(res).forEach(([key, value]) => {
-                    // console.log('res',key, value)
-                    if(key !== 'null') count_sports_val[key] = (count_sports_val[key] || 0) + value;
+                    if(key !== 'null') {
+                        count_sports_val[key] = (count_sports_val[key] || 0) + value;
+                        count_sports[key] =  (count_sports[key] || 0) + 1;
+                    }
                 })
 
             });
         }
+
+        console.log('count_sports',count_sports);
+        console.log('count_positions', count_positions)
 
         /*
         * Bar chart data for brain  positons ...
@@ -303,11 +306,9 @@ class TeamStats extends React.Component {
 
         // # Take first latter of postions ...
         const capitalizePosition = (words) => {
-            console.log('words',words)
             var separateWord = words.toLowerCase().split(' ');
             for (var i = 0; i < separateWord.length; i++) {
                 if (i == 0) {
-                    console.log('separateWord[i]',separateWord[i])
                     if (separateWord[0].split('-').length > 1) {
                         var char = separateWord[0].split('-')[1]
                         separateWord[i] = separateWord[i].charAt(0).toUpperCase();
@@ -330,12 +331,11 @@ class TeamStats extends React.Component {
                 let totalSportVal = count_sports_val[key];
                 totalSportVal = totalSportVal ? totalSportVal.toFixed(2) : 0;
                 totalSportVal = parseFloat(totalSportVal);
-                console.log('totalsportval = ',totalSportVal,', totalImpact = ',impactLen)
+                console.log('totalsportval = ',totalSportVal,', totalImpact = ',impactLen, 'sport -', key)
 
                 let mpsAvg = (totalSportVal) / impactLen;
                 mpsAvg = mpsAvg.toFixed(2);
                 let sport = key;
-                console.log('sport', sport)
                 data_sports.push(mpsAvg);
                 labels_sports.push(sport);
             })
@@ -349,6 +349,8 @@ class TeamStats extends React.Component {
                 let impactLen = value;
                 let totalPostionVal = count_positions_val[key];
                 totalPostionVal = totalPostionVal ? totalPostionVal.toFixed(2) : 0;
+                // console.log('totalPostionVal = ',totalPostionVal,', totalImpact = ',impactLen)
+                
                 let mpsAvg = (totalPostionVal) / impactLen;
                 //let mpsAvg = impactLen;
 				/* console.log("totalPostionVal",totalPostionVal);
@@ -402,19 +404,14 @@ class TeamStats extends React.Component {
 
                         labelString: 'Average MPS'
                     },
-                    // ticks: {
-                    //     suggestedMin: 0,
-
-                    //     suggestedMax: 50,
-                    //      stepSize: 5,
-                    // }
+                    
                 }]
             }
         };
         
 
         //  Brain position chart data closed ...
-
+        let brand = this.props.match.params.brand && this.props.match.params.brand !== undefined ? this.props.match.params.brand : ''
         return (
             <React.Fragment>
 
@@ -426,7 +423,7 @@ class TeamStats extends React.Component {
                                 <button className="btn btn-primary">
                                     {this.state.for === "Teams" ?
                                         <Link to={{
-                                            pathname: '/TeamAdmin/' + this.props.match.params.org + '/' + this.props.match.params.brand,
+                                            pathname: '/TeamAdmin/' + this.props.match.params.org + '/' + brand,
                                             state: {
                                                 brand: {
                                                     brand: this.props.match.params.brand,
@@ -443,7 +440,7 @@ class TeamStats extends React.Component {
                                         >&lt; Back To Organization</Link>
                                         :
                                         <Link to={{
-                                            pathname: '/TeamAdmin/team/players/' + this.props.match.params.org + '/' + this.props.match.params.team + '?brand=' + this.props.match.params.brand,
+                                            pathname: '/TeamAdmin/team/players/' + this.props.match.params.org + '/' + this.props.match.params.team + '?brand=' + brand,
                                             state: {
                                                 team: {
                                                     brand: this.props.match.params.brand,

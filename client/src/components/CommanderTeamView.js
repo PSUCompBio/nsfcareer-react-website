@@ -81,6 +81,7 @@ class CommanderTeamView extends React.Component {
             isDelete: false,
             data: '',
             DelData: '',
+            isbrainSubmitPortalDisplay: false 
         };
     }
     activateTab = (value) => {
@@ -200,7 +201,9 @@ class CommanderTeamView extends React.Component {
         else this.setState({ visibilityRosterValueSelector: { display: 'none' } });
     };
 
-
+    isbrainSubmitPortalDisplay = (data) =>{
+        this.setState({isbrainSubmitPortalDisplay: data})
+    }
 
     makeVisible = (data) => {
         console.log('data', data)
@@ -297,6 +300,7 @@ class CommanderTeamView extends React.Component {
                                                     simulations_completed: response.data.data.completed,
                                                     simulation_failed: response.data.data.failed,
                                                     simulations_pending: response.data.data.pending,
+                                                    isLoaded: true
                                                 });
                                             })
 
@@ -470,6 +474,7 @@ class CommanderTeamView extends React.Component {
         });
     }
 	 makeVisible = (data) => {
+         console.log('data',data)
         this.setState({ isDisplay: data });
     }
 	 isDeleteData = (isDelete) => {
@@ -728,7 +733,7 @@ class CommanderTeamView extends React.Component {
                         <div className="col-md-12 Admintitle2" >
                             <div className="row">
                                 <div className="col-md-4 no-padding">
-                                    <button className="btn team-page-edit-button" onClick={() => this.setState({ isbrainSubmitPortal: true })} >Submit Brain Simulations</button>
+                                    <button className="btn team-page-edit-button" onClick={() => this.setState({ isbrainSubmitPortalDisplay: true })} >Submit Brain Simulations</button>
                                 </div>
                                 <div className="col-md-4 no-padding">
                                     <h2 className="team-dashboard-heading">Team Dashboard</h2>
@@ -1086,8 +1091,8 @@ class CommanderTeamView extends React.Component {
             return <Spinner />;
         }
 
-        if (this.state.isbrainSubmitPortal) {
-            return <BrainSubmitPortal makeVisible={(this.props.makeVisible) ? this.props.makeVisible : this.makeVisible} team={this.state.team} organization={this.state.organization} />;
+        if (this.state.isbrainSubmitPortalDisplay) {
+            return <BrainSubmitPortal isbrainSubmitPortalDisplay={(this.props.isbrainSubmitPortalDisplay) ? this.props.isbrainSubmitPortalDisplay : this.isbrainSubmitPortalDisplay} team={this.state.team} organization={this.state.organization} />;
         }
 
         // impactHistoryBarData.labels = this.state.impactHistoryData.force;

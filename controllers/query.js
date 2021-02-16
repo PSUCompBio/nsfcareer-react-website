@@ -3222,6 +3222,7 @@ function getAllOrganizationsOfSensorBrand(obj) {
 }
 
 function getTeamSpheres(obj) {
+    console.log('obj---------------\n',obj)
     return new Promise((resolve, reject) => {
         let params;
 

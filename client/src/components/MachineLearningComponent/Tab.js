@@ -21,7 +21,7 @@ class Tab extends React.Component {
             lossData.push({ x: MLcsvData[i].val_loss, y: MLcsvData[i].loss });
             labels.push(MLcsvData[i].epoch);
         }
-        console.log('maeData', maeData)
+        // console.log('maeData', maeData)
         let mae_datasets = {
             lineTension: 0.1,
             label: 'MAE',

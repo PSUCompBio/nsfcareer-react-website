@@ -6324,6 +6324,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     /*
     *    Creating directory...
     */
+    var sideLineVideoDuration = req.body.sideLineVideoDuration;
     var d = new Date();
     let month = d.getMonth() + 1;
     let datetoday = month+'-'+d.getFullYear();
@@ -6358,11 +6359,13 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
          
         
     });
-
+    
     const writeTextfile = (list)=>{
         console.log('list',list);
-        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime}  -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
-          
+        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
+            /*exec(`ffmpeg -i ${outputFilePath} -filter:v "setpts=(7/2)*N/TB" -r 2/7 -an  public/uploads/test.mp4`, (error, stdout, stderr) => {
+                console.log(`error: ${error.message}`);
+            })*/
             if (error) {
                 console.log(`error: ${error.message}`);
                 list.forEach(file => {
@@ -9866,13 +9869,13 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
     let count_sp = 0;
     let sensor = req.body.brand;
     req.body.team.forEach(function (team_name, index) {
-        getTeamSpheres({brand:req.body.brand, organization: req.body.organization, team: team_name})
-        .then(data => {
-            spharesData = spharesData.concat(data);
+        getTeamSpheres({brand: sensor ? sensor : '', organization: req.body.organization, team: team_name})
+        .then(result => {
+            spharesData = spharesData.concat(result);
             count_sp++;
             if(count_sp == req.body.team.length){
-                data = spharesData;
-                // console.log('data of team sphares -----\n',data)
+                var data = spharesData;
+                console.log('data of team sphares -----\n',data.length)
 
                 let brainRegions = {};
                 let principal_max_strain = {};
@@ -9890,12 +9893,12 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let MPS_95_VEL_DATA = [];
                 let MAX_ANGULAR_VEL_EXLARATION = [];
                 let PLAYERS_POSITIONS = [];
-                let P_MAX_S_POSITIONS = [];
-                let P_MIN_S_POSITIONS = [];
+                let P_MAX_S_POSITIONS = []; //for principal-max-strain-position
+                let P_MIN_S_POSITIONS = []; // for principal-min-strain-poistion
 
                 let PLAYERS_SPORT = [];
-                let S_MAX_S_POSITIONS = [];
-                let S_MIN_S_POSITIONS = [];
+                let S_MAX_S_POSITIONS = []; // for principal-max-strain-sport
+                let S_MIN_S_POSITIONS = []; // for principal-min-strain-sport
             
 
                 if (data.length === 0){
@@ -9928,34 +9931,34 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
                         let player_id = acc_data.player_id.split('$')[0];
-                      //  console.log('acc_data',acc_data.player);
-						//PLAYERS_POSITIONS = [];
-                       // PLAYERS_POSITIONS.push(acc_data.player['player_position']);// Adding player positions
                         if (!players.includes(player_id)) {
                             // console.log('player_id',player_id)
                             players.push(player_id);
-                            var newPlayerId = player_id+'-'+sensor;
+                            if(sensor && sensor != null && sensor != undefined){
+                                var newPlayerId = player_id+'-'+sensor;
+                            }else{
+                                var newPlayerId = player_id;
+                            }
+                            console.log('newPlayerId -------------------',newPlayerId)
                             if(newPlayerId){
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
-                                    
-                                    // console.log('userData',userData)
+                                
                                     var player_status = userData[0]  ? userData[0].player_status : 'approved';
-                                    // var player_status = userData[0].player_status
-                                    if(userData[0]){
-										if(userData[0].player_position){
-											console.log("player_position",userData[0].player_position)
-											PLAYERS_POSITIONS.push(userData[0].player_position);
-										}
-                                        PLAYERS_SPORT.push(userData[0].sport);
-                                    }
-								
+                                    player_status = player_status != undefined && player_status != null ? player_status : 'approved';   
+                               
                                 //   console.log('userData 1',userData)
                                     if (userData[0] && player_status == 'approved') {
+                                        // player position ...
+                                        if(userData[0].player_position)
+										PLAYERS_POSITIONS.push(userData[0].player_position);
+                                        // player sport ...
+                                        if(userData[0].sport && userData[0].sport != null)
+                                        PLAYERS_SPORT.push(userData[0].sport);
+
                                         getPlayerSimulationStatus(acc_data.image_id)
                                         .then(imageData => {
                                             if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                               // console.log(imageData.player_name + '/simulation/summary.json');
                                                 let file_path = imageData.player_name + '/simulation/summary.json';
                                                 return getFileFromS3(file_path, imageData.bucket_name);
                                             }
@@ -9971,11 +9974,9 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                     })
                                                 }
                                             }
-                                            //console.log('return')
                                             resolve(null);
                                         })
                                         .catch(err => {
-                                           // console.log('err - 1',err)
                                             reject(err);
                                         })
                                     }else{
@@ -9993,14 +9994,15 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 });
 
                 pushPostionData = (summary_data, position, sport)=>{
-                    sport = sport ? sport : 'Unknown'
-                     if (summary_data['principal-max-strain']) {
+                    sport = sport ? sport : 'Unknown';
+                    position = position ? position : 'Unknown';
+                    if (summary_data['principal-max-strain']) {
                         if(summary_data['principal-max-strain']['value']){
                             // console.log('position values',summary_data['principal-max-strain']['value'])
                             P_MAX_S_POSITIONS.push({[position]: summary_data['principal-max-strain']['value']});
                             S_MAX_S_POSITIONS.push({[sport]: summary_data['principal-max-strain']['value']});
                         }
-                     }
+                    }
 
                      if (summary_data['principal-min-strain']) {
                         if(summary_data['principal-min-strain']['value']){

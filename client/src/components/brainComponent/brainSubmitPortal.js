@@ -72,7 +72,7 @@ class BrainSubmitPortal extends React.Component {
         for(var i =0; i < files.length; i++){
             let file = this.getUploadFileExtension3(files[i].path);
             // console.log('file',file)
-            if(file === 'json' || file === 'csv'){
+            if(file === 'json' || file === 'csv' || file === 'NAP1transf'){
                 this.setState(prevState => ({
                     files: prevState.files.concat(files[i])
                 }))
@@ -111,6 +111,8 @@ class BrainSubmitPortal extends React.Component {
             return "json";
         }else if(new RegExp(".csv").test(url)){
             return "csv";
+        }else if(new RegExp(".NAP1transf").test(url)){
+            return "NAP1transf";
         }else{
             return `${url.split('.').pop()} file not supported`;
         }
@@ -170,6 +172,10 @@ class BrainSubmitPortal extends React.Component {
                     }else if(sensor === 'Athlete Intelligence'){
                         var impact_id = filename.split("-").slice(2, 7).join(" ").split(' ')[0];
                         the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': '1','key':key});
+                    }else if(sensor.toLowerCase() === 'hybrid3'){
+                        var impact_id = filename.split("_")[1];
+                        console.log('impact_id',impact_id)
+                        the.checkSimulationExists({'impact_id': impact_id, 'sensor_id': filename.split("_")[0],'key':key});
                     }else{
                         the.checkSimulationExists({'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1],'key':key});
                     } 
@@ -386,7 +392,7 @@ class BrainSubmitPortal extends React.Component {
                                 <Row>
                                     <Col md={2}>
                                         {/*-- Back button --*/}
-                                        <Button onClick={() => this.props.makeVisible(false)} >&lt; Back</Button>
+                                        <Button onClick={() => this.props.isbrainSubmitPortalDisplay(false)} >&lt; Back</Button>
                                         {/*-- Back button end --*/}
                                     </Col>
                                     <Col md={8} className="simulation-portal-subheading">

@@ -72,6 +72,8 @@ let max = 100;
 let _isFirstUpdate = '';
 let _min = 0;
 let _max = 100;
+let _simulation_video_duration = 0;
+
 class Details extends React.Component {
   constructor(props) {
     super(props);
@@ -518,6 +520,7 @@ class Details extends React.Component {
       Onload: () => {
         // setTimeout(()=>{
         var frameRate = Math.floor(video.duration * 29.7);
+        _simulation_video_duration = video.duration;
         the.setState({ framesofSimulationVideo: frameRate, framesRateSimulationVideo: 29.7 })
         the.setState({ lengthofSimulationVideo: the.getVideoTime(video.duration) })
         // },1000)
@@ -685,7 +688,7 @@ class Details extends React.Component {
 
   trimVideo = () => {
     this.setState({ isTriming: true })
-    trimVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time })
+    trimVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time, sideLineVideoDuration: _simulation_video_duration })
       .then(response => {
         console.log('response trim video ---\n', response);
         if (response.data.message === "success") {

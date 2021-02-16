@@ -43,7 +43,7 @@ class SimulationCountForList extends React.Component {
 
 
   render() {
-    console.log("Props are - ", this.props);
+    // console.log("Props are - ", this.props);
     const {count} = this.props;
     const { simulationCount } = this.state;
     return (
