@@ -53,7 +53,7 @@ class Rankedmpschart extends React.Component {
 					label: 'MPS',
 					backgroundColor: '#88DD88',
 					borderColor: '#88DD88',
-					pointRadius: 0,
+					pointRadius: 5,
 					fill: false,
 					data: this.props.data.datasets,
 				}]

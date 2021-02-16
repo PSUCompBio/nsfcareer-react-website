@@ -401,7 +401,6 @@ class TeamStats extends React.Component {
                         display: true,
                         fontSize: 18,
                         fontWeight: 800,
-
                         labelString: 'Average MPS'
                     },
                     

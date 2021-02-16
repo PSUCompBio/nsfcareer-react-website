@@ -1356,3 +1356,15 @@ export const filterStrainMetric = (request) =>{
       });
   })
 }
+//# getFailedSimulationList
+export const getalluseroforgnation = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getalluseroforgnation`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
