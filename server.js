@@ -9126,10 +9126,12 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
 
     let data_filename = null;
     let base64File = null;
+    
     if (req.files.filename) {
         let file_data = req.files.filename[0].buffer
         base64File = file_data.toString('base64');
         data_filename = req.files.filename[0].originalname
+        console.log('file name -------------------\n',data_filename)
     }
 
     let selfie = null;
@@ -9189,6 +9191,8 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{name: "filename", maxC
                                     req.body["data_filename"] = data_filename;
                                     req.body["selfie"] = base64Selfie;
                                     req.body["filename"] = selfie; 
+                                    console.log('config.ComputeInstanceEndpoint',config.ComputeInstanceEndpoint)
+
                                     request.post({
                                         url: config.ComputeInstanceEndpoint + "generateSimulationForSensorData",
                                         json: req.body

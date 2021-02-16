@@ -60,7 +60,7 @@ class Rankedmpschart extends React.Component {
 
             },
         };
-		console.log("this.state.data",props);
+		
     }
 
   /*  static getDerivedStateFromProps (props, state) {     
@@ -72,6 +72,7 @@ class Rankedmpschart extends React.Component {
     }*/
 
     render() {
+        console.log("this.state.data ------------------------\n",this.props.data);
 		
         return (
             <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">

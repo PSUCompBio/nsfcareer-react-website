@@ -116,7 +116,7 @@ class CompleteSimulationList extends React.Component {
           <div style={{ padding : "4% 0% 5% 0%"}} className="row singup">
             <Container>
 			
-				<a className="btn btn-primary"  href={'/TeamAdmin/team/players/' + this.props.match.params.org + '/' + this.props.match.params.team + '?brand=' +this.state.board1 }>&lt; Back</a>
+				<Link className="btn btn-primary"  to={'/TeamAdmin/team/players/' + this.props.match.params.org + '/' + this.props.match.params.team + '?brand=' +this.state.board1 }>&lt; Back</Link>
               <Row className="model-validation-head">
                 <Col sm={12}>                
                   <h1>Simulations Statistics</h1>
