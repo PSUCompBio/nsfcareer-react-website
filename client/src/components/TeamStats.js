@@ -89,8 +89,8 @@ class TeamStats extends React.Component {
                                 MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
                                 PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS,
                                 PLAYERS_SPORT: response.data.PLAYERS_SPORT,
-                                BRAIN_POSITIONS: { 'principal-max-strain': response.data.P_MAX_S_POSITIONS, 'principal-min-strain': response.data.P_MIN_S_POSITIONS },
-                                BRAIN_SPORTS: { 'principal-max-strain': response.data.S_MAX_S_POSITIONS, 'principal-min-strain': response.data.S_MIN_S_POSITIONS }
+                                BRAIN_POSITIONS: { 'principal-max-strain': response.data.P_MAX_S_POSITIONS, 'principal-min-strain': response.data.P_MIN_S_POSITIONS, 'csdm-15': response.data.P_CSDM_15},
+                                BRAIN_SPORTS: { 'principal-max-strain': response.data.S_MAX_S_POSITIONS, 'principal-min-strain': response.data.S_MIN_S_POSITIONS, 'csdm-15': response.data.S_CSDM_15}
 
                             });
                         })
@@ -533,7 +533,7 @@ class TeamStats extends React.Component {
                                             {!this.state.brainRegions && !this.state.isfetching &&
                                                 <h4 className="team-state-text-center">
                                                     Run a Report to Generate Brain Simulation Results.
-                                                    </h4>
+                                                </h4>
                                             }
                                             {/*---! 3d page end---*/}
                                         </>
@@ -628,6 +628,8 @@ class TeamStats extends React.Component {
                                                     >
                                                         <option value="principal-max-strain">Max Principal Strain</option>
                                                         <option value="principal-min-strain">Min Principal Strain</option>
+                                                        <option value="csdm-15">CSDM 15</option>
+
                                                     </select>
                                                 </div>
                                                 <div style={{'margin-top': '100px'}}>
@@ -655,6 +657,7 @@ class TeamStats extends React.Component {
                                                     >
                                                         <option value="principal-max-strain">Max Principal Strain</option>
                                                         <option value="principal-min-strain">Min Principal Strain</option>
+                                                        <option value="csdm-15">CSDM 15</option>
                                                     </select>
                                                 </div>
                                                 <div style={{'margin-top': '100px'}}>

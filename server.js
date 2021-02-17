@@ -6363,9 +6363,15 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     const writeTextfile = (list)=>{
         console.log('list',list);
         exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
-            /*exec(`ffmpeg -i ${outputFilePath} -filter:v "setpts=(7/2)*N/TB" -r 2/7 -an  public/uploads/test.mp4`, (error, stdout, stderr) => {
-                console.log(`error: ${error.message}`);
-            })*/
+            // exec(`ffmpeg -i ${outputFilePath} -vf  "setpts=2*PTS"  public/uploads/test.mp4`, (error, stdout, stderr) => {
+            //     if(error){
+            //         console.log(`error: ${error.message}`);
+            //     }else{
+            //         console.log('video generated successfully....')
+            //     }
+            //     fs.unlinkSync(outputFilePath)
+
+            // })
             if (error) {
                 console.log(`error: ${error.message}`);
                 list.forEach(file => {
@@ -9896,10 +9902,12 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                 let PLAYERS_POSITIONS = [];
                 let P_MAX_S_POSITIONS = []; //for principal-max-strain-position
                 let P_MIN_S_POSITIONS = []; // for principal-min-strain-poistion
+                let P_CSDM_15 = [];  // for csdm-15 -poistion
 
                 let PLAYERS_SPORT = [];
                 let S_MAX_S_POSITIONS = []; // for principal-max-strain-sport
                 let S_MIN_S_POSITIONS = []; // for principal-min-strain-sport
+                let S_CSDM_15 = [];  // for csdm-15 -poistion
             
 
                 if (data.length === 0){
@@ -9925,13 +9933,16 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         P_MIN_S_POSITIONS: P_MIN_S_POSITIONS,
                         PLAYERS_SPORT: PLAYERS_SPORT,
                         S_MAX_S_POSITIONS: S_MAX_S_POSITIONS,
-                        S_MIN_S_POSITIONS: S_MIN_S_POSITIONS
+                        S_MIN_S_POSITIONS: S_MIN_S_POSITIONS,
+                        P_CSDM_15: P_CSDM_15,
+                        S_CSDM_15: S_CSDM_15
                     })
                 }  
                 let players = [];
                 const processData = data.map(acc_data => {
                     return new Promise((resolve, reject) => {
                         let player_id = acc_data.player_id.split('$')[0];
+                        let team = acc_data.team;
                         if (!players.includes(player_id)) {
                             // console.log('player_id',player_id)
                             players.push(player_id);
@@ -9969,7 +9980,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                 outputFile = JSON.parse(output_file.Body.toString('utf-8'));
                                                 if (outputFile.Insults) {
                                                     outputFile.Insults.forEach(function (summary_data, index) {
-                                                        pushdata(summary_data, player_id);
+                                                        pushdata(summary_data, player_id, team);
                                                         pushPostionData(summary_data,acc_data.player['position'], acc_data.player['sport']);
 
                                                     })
@@ -10013,18 +10024,27 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
 
                         }
                      }
+
+                     if (summary_data['CSDM-15']) {
+                        if(summary_data['CSDM-15']['value']){
+                            // console.log('position values',summary_data['principal-max-strain']['value'])
+                            P_CSDM_15.push({[position]: summary_data['CSDM-15']['value']});
+                            S_CSDM_15.push({[sport]: summary_data['CSDM-15']['value']});
+
+                        }
+                     }
                 }
 
-                const pushdata = (summary_data, player_id)=>{
+                const pushdata = (summary_data, player_id, team)=>{
                     if (summary_data['MPS-95']) {
                                                    
                         if(summary_data['MPS-95']['value'] && summary_data['max-angular-acc-rads2']){
                             MPS_95_DATA.push(summary_data['MPS-95']['value']);
-                            MAX_ANGULAR_EXLARATION.push({player_id: player_id, val: summary_data['max-angular-acc-rads2']});
+                            MAX_ANGULAR_EXLARATION.push({player_id: player_id, val: summary_data['max-angular-acc-rads2'], team: team});
                         }
                         if(summary_data['MPS-95']['value'] && summary_data['max-angular-vel-rads']){
                             MPS_95_VEL_DATA.push(summary_data['MPS-95']['value']);
-                            MAX_ANGULAR_VEL_EXLARATION.push({player_id: player_id,val:summary_data['max-angular-vel-rads']});
+                            MAX_ANGULAR_VEL_EXLARATION.push({player_id: player_id,val:summary_data['max-angular-vel-rads'], team: team});
                         }
                     }
                 }
@@ -10052,7 +10072,9 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                         P_MIN_S_POSITIONS: P_MIN_S_POSITIONS,
                         PLAYERS_SPORT: PLAYERS_SPORT,
                         S_MAX_S_POSITIONS: S_MAX_S_POSITIONS,
-                        S_MIN_S_POSITIONS: S_MIN_S_POSITIONS
+                        S_MIN_S_POSITIONS: S_MIN_S_POSITIONS,
+                        P_CSDM_15: P_CSDM_15,
+                        S_CSDM_15: S_CSDM_15
                     });
                 });
             }
@@ -11510,25 +11532,22 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
                         let player_id = acc_data.player_id.split('$')[0];
                         if (!players.includes(player_id)) {
                             players.push(player_id);
-                            var newPlayerId = player_id+'-'+sensor;
+                            if(sensor){
+                                var newPlayerId = player_id+'-Prevent Biometrics';
+
+                            }else{
+                                var newPlayerId = player_id+'-Prevent Biometrics';
+
+                            }
 							playerids.push(newPlayerId);
                             if(newPlayerId){
                                // console.log('player_id',newPlayerId)
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
-                                    var player_status = userData[0].player_status
-                                    getPlayerSimulationStatus(acc_data.image_id)
-                                    .then(imageData => {
-										
-                                      /* if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                            // console.log('imageData',imageData);
-                                            let file_path = imageData.player_name + '/simulation/summary.json';
-                                            return getFileFromS3(file_path, imageData.bucket_name);
-                                        }*/										
-                                    })
+                                    var player_status = "approved"
 									getPlayerSummariesData(newPlayerId)
                                     .then(outputFile => {
-												//console.log("dbplayer",outputFile);
+												// console.log("dbplayer --------",outputFile);
                                         if (outputFile && player_status == 'approved') {										
                                             if (outputFile) {
                                                 outputFile.forEach(function (summary_data, index) {

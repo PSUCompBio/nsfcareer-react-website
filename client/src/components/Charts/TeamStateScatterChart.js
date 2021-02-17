@@ -96,12 +96,14 @@ class TeamStateScatterChart extends React.Component {
                     var angAcc = newbody.split(',')[0];
                     let player_id = max_axlation.filter((value)=>filterPlayerId(value,angAcc));
                     // console.log('player_id',player_id)
+                    let team_name =  player_id[0] ?  player_id[0].team : team[0];
                     player_id =  player_id[0] ?  player_id[0].player_id : '';
                     angAcc = parseFloat(angAcc);
                     // console.log('angAcc',angAcc)
+                    var sensor = brand  && brand !== undefined && brand !== null ? brand : '';
                     var mps = parseFloat(newbody.split(',')[1]);
                     var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
-                    innerHtml += '<tr><td>PlayerID:</td><td><a href="/TeamAdmin/user/dashboard/1/'+player_id+'?team='+team[0]+'&org='+organization+'&brand='+brand+'" target="_blank">'+player_id+'</a></td></tr>';
+                    innerHtml += '<tr><td>PlayerID:</td><td><a href="/TeamAdmin/user/dashboard/1/'+player_id+'?team='+team_name+'&org='+organization+'&brand='+sensor+'" target="_blank">'+player_id+'</a></td></tr>';
                     innerHtml += '<tr><td>Ang.Acc:</td><td>' + span + angAcc.toFixed(2) + '</td></tr>';
                     innerHtml += '<tr><td>95%MPS:</td><td>' + span + mps.toFixed(2) + '</td></tr>';
                 });
