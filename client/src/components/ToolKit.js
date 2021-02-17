@@ -6,8 +6,7 @@ import Spinners from './Spinner/Spinner';
 import {Spinner } from 'react-bootstrap';
 import {
     isAuthenticated,
-    getFilterdTeamSpheres_demo,
-    getTeamSpheres_Demo
+    getplayerlistoforg,
   } from './../apis';
 import TeamStateScatterChart from './Charts/TeamStateScatterChart';
 
@@ -17,7 +16,10 @@ class ToolKit extends React.Component {
         
         this.state = {
 			showtable:false,
+			loader:false,
 			radiovalue:'',
+			playerlist: [],
+			rplayerlist: [],
 		};
         this.child = React.createRef();
     }	
@@ -25,12 +27,21 @@ class ToolKit extends React.Component {
         e.preventDefault();  
 		var selectedvalue = e.target.value;
 		if(selectedvalue == "individuals" ){
-			
+			getplayerlistoforg({ brand: this.props.location.state.brand})
+            .then(response => {
+                console.log('getFilterdTeamSpheres ----------------------\n', response.data);
+               this.setState({
+				  playerlist:response.data.data,
+				  rplayerlist:response.data.rPlayerData,
+				  showtable: true,
+				  loader:false,
+				});			   
+            })
 		}
 		console.log(e.target.value);
 			this.setState({
-			  radiovalue: e.target.value,
-			  showtable: true,
+			  radiovalue: e.target.value,	
+			loader:true,			  
 			});			   
     }
     render() {
@@ -47,10 +58,10 @@ class ToolKit extends React.Component {
 							<h3 style={{textAlign: 'left', color: 'black',fontWeight:"700",fontSize:"22px",paddingTop:"50px"}}>Initiate Machine Learning Model Training</h3>
 							<div className="Training_option">
 								<ul style={{listStyle: 'none', color: 'black',fontWeight:"700",fontSize:"16px",paddingTop:"20px"}}>
-								<li><label><input type="radio" value="Organization" name="training_for" checked={radiovalue === 'Organization'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire Organization</label></li>
-								<li><label><input type="radio" value="Institutions" name="training_for"  checked={radiovalue === 'Institutions'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire Institutions</label></li>
-								<li><label><input type="radio" value="team" name="training_for" checked={radiovalue === 'team'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire team</label></li>
-								<li><label><input type="radio" value="individuals" name="training_for" checked={radiovalue === 'individuals'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire individuals</label></li>
+									<li><label><input type="radio" value="Organization" name="training_for" checked={radiovalue === 'Organization'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire Organization</label></li>
+									<li><label><input type="radio" value="Institutions" name="training_for"  checked={radiovalue === 'Institutions'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire Institutions</label></li>
+									<li><label><input type="radio" value="team" name="training_for" checked={radiovalue === 'team'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire team</label></li>
+									<li><label><input type="radio" value="individuals" name="training_for" checked={radiovalue === 'individuals'} onChange={this.handleTrainingFor}/>&nbsp;&nbsp;For entire individuals</label></li>
 								</ul>
 							</div>
                         </div>											
@@ -64,21 +75,27 @@ class ToolKit extends React.Component {
 								</tr>
 							  </thead>
 							  <tbody className="player-table">
-								<tr style={{background:"#ccc3c3c3",color:"#000000"}} >
-								<td style={{border:"1px solid #ffffff"}}>Team 1</td>
-								<td style={{border:"1px solid #ffffff"}}>200</td>
+							  {this.state.playerlist.map(function (player, index) {
+								console.log('checkign status', player)
+								return <tr style={{background:"#ccc3c3c3",color:"#000000"}} >
+							  <td style={{border:"1px solid #ffffff"}}>{ player["player"]["first-name"] } { player["player"]["last-name"] }</td>
+							  <td style={{border:"1px solid #ffffff"}}>{ player.simulation }</td>
 								<td style={{textAlign:"center",border:"1px solid #ffffff"}}><input type="checkbox" value="1" name="include"/></td>
-								</tr>
-								<tr style={{background:"#eeeeee",color:"#000000"}} >
-								<td style={{border:"1px solid #ffffff"}}>Team 2</td>
-								<td style={{border:"1px solid #ffffff"}}>400</td>
-								<td style={{textAlign:"center",border:"1px solid #ffffff"}}><input type="checkbox" value="2" name="include"/></td>
-								</tr>
+								</tr>;
+								}, this)}
+							  {this.state.rplayerlist.map(function (r_player, r_index) {
+								console.log('checkign status', r_player["player"][0])
+								return <tr style={{background:"#ccc3c3c3",color:"#000000"}} >
+								<td style={{border:"1px solid #ffffff"}}>{ r_player["player"][0]["first_name"] } { r_player["player"][0]["last_name"] }</td>
+								<td style={{border:"1px solid #ffffff"}}>{ r_player.simulation }</td>
+								<td style={{textAlign:"center",border:"1px solid #ffffff"}}><input type="checkbox" value="1" name="include"/></td>
+								</tr>;
+								}, this)}
 							  </tbody>
 							</table>
 							<button className="btn  btn-primary">Submit</button>
                         </div>
-
+						{this.state.loader && <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px', 'margin-left': '2px' }}></i>}
                     </div>
                 </div>
                 <div style={{

@@ -35,7 +35,7 @@ const options = {
 
             scaleLabel: {
                 display: true,
-                labelString: 'Value'
+                labelString: 'Element ID'
             }
         }]
     }
