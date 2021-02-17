@@ -225,6 +225,9 @@ const {
         downloadLogFileFromS3,
 		removePlayerFromTeam,
 		removePlayerFromTeam1,
+		getAllOrganizationsOfSensorBrand1,
+		getOrgpPlayerFromSensorDetails,
+		getOrgpPlayerFromUser,
       
     } = require('./controllers/query');
 
@@ -11465,7 +11468,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
             count_sp++;
             if(count_sp == req.body.team.length){
                 data = spharesData;
-                // console.log('data of team sphares -----\n',data)
+                 console.log('data of team sphares -----\n',data)
 
                 let brainRegions = {};
                 let principal_max_strain = {};
@@ -11513,7 +11516,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheresTest`, (req, res) => {
                             var newPlayerId = player_id+'-'+sensor;
 							playerids.push(newPlayerId);
                             if(newPlayerId){
-                               // console.log('player_id',newPlayerId)
+                                console.log('player_id',newPlayerId)
                                 getUserDetailByPlayerId(newPlayerId)
                                 .then(userData => {
                                     var player_status = userData[0].player_status
@@ -13157,6 +13160,97 @@ app.post(`${apiPrefix}deleteuserfromteam`, (req, res) => {
             res.send({
                 message : "failure",
                 error : err
+            })
+        })  
+})
+app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
+	var data = req.body;
+	var brand = data.brand.brand;
+	var user_cognito_id = data.brand.user_cognito_id;
+	getAllOrganizationsOfSensorBrand1(brand)
+    .then(list => {
+		var playerData = [];
+		var rPlayerData = [];
+		var listlength = list.length - 1;
+		var pstatus = false;
+		var rpstatus = false;
+         list.forEach(function (data, index) {
+			 var i = index
+			 var playerList = data.player_list;	
+			 var rPlayerList = data.requested_player_list;
+			 var org_id = data.organization_id;				 
+			 if(playerList.length > 0){
+				 var playerListlength =playerList.length - 1;				  
+				playerList.forEach(function (pdata, index) {
+					getOrgpPlayerFromSensorDetails(pdata,org_id)
+					.then(playerdata => {
+						playerData.push({
+							simulation: playerdata.length, 
+							player:  playerdata[0].player
+						})	
+						if(listlength == i && playerListlength == index){
+							if(rPlayerList.length > 0){
+								 var rPlayerlength =rPlayerList.length - 1;
+								 rPlayerList.forEach(function (rpdata, index) {
+								console.log(rpdata);
+									getOrgpPlayerFromUser(rpdata)
+									.then(playerdata1 => {						
+										rPlayerData.push({
+											simulation: 0, 
+											player:  playerdata1
+										})	
+										if(listlength == i && rPlayerlength == index){
+											res.send({
+												message: "success",
+												data: playerData,
+												rPlayerData: rPlayerData
+											})	
+										}
+									})
+								})
+							 }	else{
+								 res.send({
+									message: "success",
+									data: playerData,
+									rPlayerData: []
+								})	
+							 }
+						 }		
+					})			 
+				})
+			 }else{
+				 if(rPlayerList.length > 0){
+					 var rPlayerlength =rPlayerList.length - 1;
+					 rPlayerList.forEach(function (rpdata, index) {
+					console.log(rpdata);
+						getOrgpPlayerFromUser(rpdata)
+						.then(playerdata1 => {						
+							rPlayerData.push({
+								simulation: 0, 
+								player:  playerdata1
+							})	
+							if(listlength == i && rPlayerlength == index){
+								res.send({
+									message: "success",
+									data: [],
+									rPlayerData: rPlayerData
+								})	
+							}								
+						})	
+					})
+				 }	else{
+					 res.send({
+						message: "success",
+						data: [],
+						rPlayerData: []
+					})	
+				 }
+			 }	 
+		})			
+    }).catch(err => {
+            res.send({
+                message : "failure",
+                error : "error"
             })
         })  
 })

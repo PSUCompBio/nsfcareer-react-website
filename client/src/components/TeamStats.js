@@ -619,11 +619,9 @@ class TeamStats extends React.Component {
                                                     }}
                                                 >Player positions can be set in their profile pages.</p>
                                                 <div style={{
-                                                    'padding': '8px'
+                                                    'padding': '8px','text-align': 'center'
                                                 }}>
-                                                    <select style={{
-                                                        'float': 'right'
-                                                    }}
+                                                    <select 
                                                         onChange={this.handlePostionMetric}
                                                     >
                                                         <option value="principal-max-strain">Max Principal Strain</option>

@@ -3271,6 +3271,7 @@ function getTeamSpheres(obj) {
             if (data == null) {
                 resolve(concatArrays(item));
             } else {
+
                 item.push(data.Items);
             }
             done();
@@ -3591,7 +3592,80 @@ function removePlayerFromTeam1(PlayerId,organization_id,player_list,requested_pl
         });
     });
 }
-
+function getAllOrganizationsOfSensorBrand1(board) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "organizations",
+            FilterExpression: "sensor = :sensor",
+            ExpressionAttributeValues: {
+               ":sensor": board
+            },
+            ProjectionExpression: "player_list, requested_player_list,  team_name,  organization,  sensor, organization_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }           
+			if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getOrgpPlayerFromSensorDetails(playerid,org_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            FilterExpression: "org_id = :org_id and begins_with(player_id,:player_id) ",
+            ExpressionAttributeValues: {
+               ":player_id": playerid,
+               ":org_id": org_id
+            },
+            ProjectionExpression: "org_id,player_id,player"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getOrgpPlayerFromUser(user_cognito_id) { 
+return new Promise((resolve, reject) => {
+   let params = {
+        TableName: 'users',
+		FilterExpression: "user_cognito_id = :user_cognito_id",
+            ExpressionAttributeValues: {
+               ":user_cognito_id": user_cognito_id
+            },
+		ProjectionExpression: "user_cognito_id,first_name,last_name"
+		
+    };
+     var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 module.exports = {
     getUserDetails,
     getUserDetailBySensorId,
@@ -3698,4 +3772,7 @@ module.exports = {
     InsertUserIntoOrg,
 	removePlayerFromTeam,
 	removePlayerFromTeam1,
+	getAllOrganizationsOfSensorBrand1,
+	getOrgpPlayerFromSensorDetails,
+	getOrgpPlayerFromUser,
 };

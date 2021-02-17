@@ -1357,9 +1357,9 @@ export const filterStrainMetric = (request) =>{
   })
 }
 //# getFailedSimulationList
-export const getalluseroforgnation = (request) =>{
+export const getplayerlistoforg = (request) =>{
   return new Promise((resolve,reject)=>{
-      axios.post(`/getalluseroforgnation`, request, {withCredentials: true})
+      axios.post(`/getplayerlistoforg`, request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
