@@ -6379,8 +6379,10 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     const writeTextfile = (list)=>{
         console.log('list',list);
         exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
-           
-           
+        let fps_of_simulation_video = 0;  
+        simulationVideoDuration = simulationVideoDuration;
+        let duration_of_trim_video = 0;
+        let fps_of_trim_video = 29;
             exec(`ffmpeg -i ${outputFilePath} 2>&1 | find "Duration"`, (error, stdout, stderr) => {
                 if(error){
                     console.log(`error: ${error.message}`);
@@ -6401,8 +6403,8 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                     console.log('video generated successfully....',time,'sec - ', duration);
                     duration = parseInt(duration);
                     duration = duration.toFixed(3);
-                    let trimLength = simulationVideoDuration - duration;
-                    console.log('trimLength', trimLength);
+                    duration_of_trim_video = duration;
+                   
                     exec(`ffmpeg -i ${simulationVideoPath} 2>&1 | find "fps"`, (error, stdout, stderr) => {
                         if(error){
                             console.log(`error fps: ${error.message}`);
@@ -6413,10 +6415,14 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                         }else{
                             let videofps = stdout.split("kb/s,")[1];
                             videofps = videofps.split('fps,')[0];
-                            let fps = parseInt(videofps);
-                            console.log('fps', fps);
+                            fps_of_simulation_video = parseInt(videofps);
+                            console.log('fps', fps_of_simulation_video);
+
+                            // set fps for trim video
+                            fps_of_trim_video = (fps_of_simulation_video / simulationVideoDuration) * duration_of_trim_video;
+                            console.log('fps_of_trim_video -----------------\n',fps_of_trim_video)
                             
-                            exec(`ffmpeg -i ${outputFilePath} -filter:v fps=${fps} ${fpsChangedVideoOutput}`, (error, stdout, stderr) => {
+                            exec(`ffmpeg -i ${outputFilePath} -filter:v fps=${fps_of_trim_video} ${fpsChangedVideoOutput}`, (error, stdout, stderr) => {
                                 if(error){
                                     console.log(`error new output: ${error.message}`);
                                     res.send({
@@ -9166,7 +9172,17 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                                     // mpsTranglePostion.mpsTrangle = this.getTrangle(mps);
                                                 }
                                             }
-                                        console.log('jsonData.value',jsonData['CSDM-15'].value)
+                                        let valueCsdm15 = jsonData['CSDM-15'].value;
+                                        if(valueCsdm15){
+                                            valueCsdm15 =   valueCsdm15.sort(function(a, b){return b-a});
+                                        }
+                                        let valueMps = jsonData['MPS-95'].value;
+                                        if(valueMps){
+                                            valueMps =   valueMps.sort(function(a, b){return b-a});
+                                        }
+                                        console.log('valueCsdm15',valueCsdm15)
+                                        console.log('valueMps',valueMps)
+
                                         let reportData = {
                                             reportDate: getDateInFormat(),
                                             csdm15: csdm15 == 'true' ?  '': 'display: none',
@@ -9178,8 +9194,8 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                             impact_date: acceleration_data_list[0].sensor_data['impact-date'] ? getDate(acceleration_data_list[0].sensor_data['impact-date'].replace(/:|-/g, "/")) : acceleration_data_list[0].sensor_data['date'] ? getDate(acceleration_data_list[0].sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
                                             scdmTranglePostion: scdmTranglePostion,
                                             mpsTranglePostion: mpsTranglePostion,
-                                            valueCsdm15: jsonData['CSDM-15'].value,
-                                            valueMps: jsonData['MPS-95'].value,
+                                            valueCsdm15: valueCsdm15,
+                                            valueMps: valueMps,
                                         }
 
                                         // Modyfying pdf template using ejs ...
@@ -13402,16 +13418,19 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 			 var org_id = data.organization_id;				 
 			 if(type == "Individuals"){
 				 var playerList = data.player_list;	
+                 console.log('playerList',playerList)
 				 var rPlayerList = data.requested_player_list;
 				 if(playerList && playerList.length > 0){
 					 var playerListlength =playerList.length - 1;				  
 					playerList.forEach(function (pdata, index) {
 						getOrgpPlayerFromSensorDetails(pdata,org_id)
 						.then(playerdata => {
-							playerData.push({
-								simulation: playerdata.length, 
-								player:  playerdata[0].player
-							})	
+                            if(playerdata[0]){
+                                playerData.push({
+                                    simulation: playerdata.length, 
+                                    player:  playerdata[0].player
+                                })	
+                            }
 							if(listlength == i && playerListlength == index){
 								if(rPlayerList && rPlayerList.length > 0){
 									 var rPlayerlength =rPlayerList.length - 1;

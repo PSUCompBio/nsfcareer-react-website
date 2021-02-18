@@ -145,6 +145,10 @@ class ExportCustomReport extends React.Component {
         if (this.state.jsonData) {
             if (this.state.jsonData['CSDM-15']) {
                 csdm15Values = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value : '';
+                if(csdm15Values){
+                    csdm15Values =   csdm15Values.sort(function(a, b){return b-a});
+                }
+                
                 var num1 = this.state.jsonData['CSDM-15'].cerebellum ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
                 var num2 = this.state.jsonData['CSDM-15'].frontal ? this.state.jsonData['CSDM-15'].frontal.value : "0.0000";
                 var num3 = this.state.jsonData['CSDM-15'].occipital ? this.state.jsonData['CSDM-15'].occipital.value : "0.0000";
@@ -178,6 +182,10 @@ class ExportCustomReport extends React.Component {
             if (this.state.jsonData['principal-max-strain']) {
                 //eslint-disable-next-line
                 mpsValues = this.state.jsonData['principal-max-strain'].value ? this.state.jsonData['principal-max-strain'].value : '';
+                if(mpsValues){
+                    mpsValues =   mpsValues.sort(function(a, b){return b-a});
+                }
+                
                 var num1 = "0.0000";
                 var num2 =  "0.0000";
                 var num3 =  "0.0000";

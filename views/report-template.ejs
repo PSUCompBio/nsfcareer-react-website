@@ -549,7 +549,7 @@
             <!-- top -->
             <div class="body-top">
                 <h3>0% of brain tissue has exceeded MPS-15</h3>
-                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.                    
+                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% strain.                    
                 </p>
             </div>
 
@@ -674,7 +674,7 @@
          <div class="containder" style="<%= iscmps%>">
             <div class="body-top">
                 <h3>0% of brain tissue has exceeded MPS-15</h3>
-                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is  compressed. This reports the volume of tissue above 15% strain.
+                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is  compressed. This reports the volume of tissue above 15% strain.
                 </p>
             </div>
             <!-- heading -->
@@ -801,10 +801,10 @@
                     <div class="col-3">MPS Value</div>
                 </div>
                 <% for(var i=0; i<valueMps.length; i++) { %>
-                    <% if(valueMps[i] != '0.00'){ %>
+                    <% if(valueMps[i] != '0.00' && i < 5){ %>
                         <div class="row-3">
                             <div class="col-1"><%= i+1 %></div>
-                            <div class="col-2">-</div>
+                            <div class="col-2"><%= reportDate %></div>
                             <div class="col-3"><%= valueMps[i] %></div>
                         </div>
                     <% } %>
@@ -825,10 +825,10 @@
                     <div class="col-3">CSDM-15 Value</div>
                 </div>
                 <% for(var i=0; i < valueCsdm15.length; i++) { %>
-                    <% if(valueCsdm15[i] != '0.00'){ %>
+                    <% if(valueCsdm15[i] != '0.00' && i < 5 ){ %>
                         <div class="row-3">
                             <div class="col-1"><%= i+1 %></div>
-                            <div class="col-2">-</div>
+                            <div class="col-2"><%= reportDate %></div>
                             <div class="col-3"><%= valueCsdm15[i] %></div>
                         </div>
                     <% } %>
