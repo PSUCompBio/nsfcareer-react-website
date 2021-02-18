@@ -356,8 +356,10 @@ class ExportCustomReport extends React.Component {
                 width: '100%',
             },
             trangle: {
-                textAlign: 'center',
-                width: '22%',
+                textAlign:'center',
+                width: '22%',				
+                padding: 7,		
+                paddingTop: 0,		
                 marginLeft: '31%'
             },
             trangle_scale: {
@@ -777,6 +779,7 @@ class ExportCustomReport extends React.Component {
             brainimage_2: {
                 width: '100%',
                 marginTop: '20px',
+				height:'400px',
             },
             FooterImg: {
                 width: '100%',
@@ -940,6 +943,7 @@ class ExportCustomReport extends React.Component {
             brainimage_2: {
                 width: '100%',
                 marginTop: '20px',
+				height:'400px',	
             },
             FooterImg: {
                 width: '100%',
@@ -1282,7 +1286,7 @@ class ExportCustomReport extends React.Component {
                                             <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                             <Text style={styles.tableColLeft4}></Text>
                                         </View>
-                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.</Text>
+                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% strain.</Text>
                                     </View>
                                 </View>
                                 <View style={styles.col12}>
@@ -1584,12 +1588,14 @@ class ExportCustomReport extends React.Component {
 
                         {csdm15Values && this.state.metric.csdm_15 === 'on'  ?
                             csdm15Values.map((val,index)=>{
-                                if(val !== '0.00'){
-                                    return <View style={stylepage3.tableRowBody}>
-                                        <Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
-                                        <Text style={[stylepage3.tableColLeft1]}></Text>
-                                        <Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
-                                    </View>
+                                if(val !== '0.00' ){
+									if(index < 5){
+										return <View style={stylepage3.tableRowBody}>
+											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
+											<Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
+											<Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
+										</View>
+									}
                                 }else{
                                     return null
                                 }
@@ -1614,11 +1620,13 @@ class ExportCustomReport extends React.Component {
                         {mpsValues && this.state.metric.mps_95 === 'on'  ?
                             mpsValues.map((val,index)=>{
                                 if(val !== '0.00'){
-                                    return <View style={stylepage3.tableRowBody}>
-                                        <Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
-                                        <Text style={[stylepage3.tableColLeft1]}></Text>
-                                        <Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
-                                    </View>
+									if(index < 5){									
+										return <View style={stylepage3.tableRowBody}>
+											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
+											<Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
+											<Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
+										</View>
+									}
                                 }else{
                                     return null
                                 }
