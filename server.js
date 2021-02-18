@@ -8300,7 +8300,9 @@ app.post(`${apiPrefix}getPlayersData`, (req,res) =>{
                                                 p_data[index]['simulation_data'][0]['image_id_2'] = simulation ? simulation.image_id : '';
 
                                                 p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-                                                getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0]+'-'+record.simulation_data[0]['sensor'])
+                                               
+                                                var player_id = record.simulation_data[0].player_id.split('$')[0];
+                                                getUserDetailByPlayerId(player_id)
                                                     .then (u_detail => {                                                   
                                                         k++;
                                                         // console.log('user details ', u_detail[0]['first_name'])
@@ -13198,7 +13200,7 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 			 var playerList = data.player_list;	
 			 var rPlayerList = data.requested_player_list;
 			 var org_id = data.organization_id;				 
-			 if(playerList.length > 0){
+			 if(playerList && playerList.length > 0){
 				 var playerListlength =playerList.length - 1;				  
 				playerList.forEach(function (pdata, index) {
 					getOrgpPlayerFromSensorDetails(pdata,org_id)
@@ -13208,7 +13210,7 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 							player:  playerdata[0].player
 						})	
 						if(listlength == i && playerListlength == index){
-							if(rPlayerList.length > 0){
+							if(rPlayerList && rPlayerList.length > 0){
 								 var rPlayerlength =rPlayerList.length - 1;
 								 rPlayerList.forEach(function (rpdata, index) {
 								console.log(rpdata);
@@ -13238,7 +13240,7 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 					})			 
 				})
 			 }else{
-				 if(rPlayerList.length > 0){
+				 if(rPlayerList && rPlayerList.length > 0){
 					 var rPlayerlength =rPlayerList.length - 1;
 					 rPlayerList.forEach(function (rpdata, index) {
 					console.log(rpdata);

@@ -94,6 +94,33 @@ function getUserDetailByPlayerId(sensor_id_number) {
         });
     });
 }
+
+function getUserDetailByAccountId(account_id) {
+    return new Promise((resolve, reject) => {
+        let params;
+       
+        params = {
+            TableName: "users",
+            FilterExpression: "contains(account_id, :account_id)",
+            ExpressionAttributeValues: {
+                ":account_id": account_id
+            }
+        };
+        
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 function updateSimulationFileStatusInDB(obj) {
     return new Promise((resolve, reject) => {
         var userParams = {
@@ -3775,4 +3802,5 @@ module.exports = {
 	getAllOrganizationsOfSensorBrand1,
 	getOrgpPlayerFromSensorDetails,
 	getOrgpPlayerFromUser,
+    getUserDetailByAccountId
 };

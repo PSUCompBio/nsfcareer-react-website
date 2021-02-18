@@ -809,7 +809,7 @@ class CommanderTeamView extends React.Component {
                                         </thead>
                                         <tbody className="player-table">
                                             {this.state.users.map(function (player, index) {
-                                                console.log('checkign status', player.simulation_data)
+                                                console.log('checkign status', player.simulation_data.length)
                                                 if (player.simulation_data.length > 0) {
                                                     let impact_time = '';
                                                     let time = '';
@@ -872,7 +872,7 @@ class CommanderTeamView extends React.Component {
 															}      
 															</>															
 														 : 
-                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="">
+                                                                <span onClick={() => {this.editable(player.simulation_data[0]['user_data']) }} className="edit-sensor-box">
                                                                     { player.simulation_data[0]['user_data'].sensor_id_number ? player.simulation_data[0]['user_data'].sensor_id_number.substr(-8) + ' ' : 'Sensor ID  '}
                                                                 </span>
                                                             }
@@ -957,7 +957,7 @@ class CommanderTeamView extends React.Component {
                                                                     {this.state.isSensorIdUpdating && this.state.editableId === r_player.user_cognito_id && <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px', 'margin-left': '2px' }}></i>}
                                                               </>
                                                                 : 
-                                                                    <span onClick={() => {this.editable(r_player) }} className="">
+                                                                    <span onClick={() => {this.editable(r_player) }} className="edit-sensor-box">
                                                                         { r_player.sensor_id_number ? r_player.sensor_id_number + ' ' : 'Sensor ID'}
                                                                     </span>
                                                                 }
