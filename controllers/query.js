@@ -3668,6 +3668,55 @@ function getOrgpPlayerFromSensorDetails(playerid,org_id) {
         });
     });
 }
+function getOrgpTeamFromSensorDetailsr(teamname,org_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            FilterExpression: "org_id = :org_id and team = :team ",
+            ExpressionAttributeValues: {
+               ":team": teamname,
+               ":org_id": org_id
+            },
+            ProjectionExpression: "org_id,team,player_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
+function getOrgFromSensorDetailsr(sensor) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            FilterExpression: "sensor = :sensor  ",
+            ExpressionAttributeValues: {
+               ":sensor": sensor,
+            },
+            ProjectionExpression: "org_id,team,organization"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 function getOrgpPlayerFromUser(user_cognito_id) { 
 return new Promise((resolve, reject) => {
    let params = {
@@ -3687,6 +3736,7 @@ return new Promise((resolve, reject) => {
             if (data == null) {
                 resolve(concatArrays(item));
             } else {
+				console.log(data.Items),
                 item.push(data.Items);
             }
             done();
@@ -3802,5 +3852,7 @@ module.exports = {
 	getAllOrganizationsOfSensorBrand1,
 	getOrgpPlayerFromSensorDetails,
 	getOrgpPlayerFromUser,
-    getUserDetailByAccountId
+    getUserDetailByAccountId,
+	getOrgpTeamFromSensorDetailsr,
+	getOrgFromSensorDetailsr,
 };

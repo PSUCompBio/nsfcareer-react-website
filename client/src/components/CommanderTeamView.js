@@ -973,23 +973,25 @@ class CommanderTeamView extends React.Component {
                                                         {this.state.userDetails.level > 200 &&
                                                             <React.Fragment>
                                                                 <td style={{ alignItems: "center" }}>
-                                                                    {this.getStatus(r_player.player_status)}
-                                                                    {this.state.isUpdating && this.state.isUpdating === r_player.user_cognito_id ?
-                                                                        <div className="d-flex justify-content-center center-spinner">
-                                                                            <div
-                                                                                className="spinner-border text-primary"
-                                                                                role="status"
-                                                                            ></div>
-                                                                        </div>
-                                                                        : 
+																	{this.state.editablestate  ?
 																		<>
-																			{this.state.editablestate  ?
-																			<Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+																		{this.getStatus(r_player.player_status)}
+																		{this.state.isUpdating && this.state.isUpdating === r_player.user_cognito_id ?
+																			<div className="d-flex justify-content-center center-spinner">
+																				<div
+																					className="spinner-border text-primary"
+																					role="status"
+																				></div>
+																			</div>
 																		: 
-																			<Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+																		<>
+																			<Switch id={r_player.user_cognito_id} onChange={this.handleCheck} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
+																		</>
 																		}
 																		</>
-                                                                    }
+																	: 
+																		<Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+																	}
                                                                 </td>
                                                                 <td>
                                                                     {this.getUrl(r_player)}

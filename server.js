@@ -228,6 +228,8 @@ const {
 		getAllOrganizationsOfSensorBrand1,
 		getOrgpPlayerFromSensorDetails,
 		getOrgpPlayerFromUser,
+		getOrgpTeamFromSensorDetailsr,
+		getOrgFromSensorDetailsr,
       
     } = require('./controllers/query');
 
@@ -13369,88 +13371,124 @@ app.post(`${apiPrefix}deleteuserfromteam`, (req, res) => {
 })
 app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 	var data = req.body;
-	var brand = data.brand.brand;
-	var user_cognito_id = data.brand.user_cognito_id;
+	var brand = data.brand;
+	var type = data.type;
+	var simulation = 0;
 	getAllOrganizationsOfSensorBrand1(brand)
     .then(list => {
 		var playerData = [];
 		var rPlayerData = [];
+		var teamData = [];
+		var orgData = [];
 		var listlength = list.length - 1;
 		var pstatus = false;
-		var rpstatus = false;
+		var rpstatus = false;		
+		console.log(list);
+		 if(type == "Organization"){			 	
+			getOrgFromSensorDetailsr(brand)
+			.then(orgdata => {	
+				orgData.push({
+					simulation: orgdata.length, 
+					org_name:  orgdata[0].organization
+				})	
+					res.send({
+						message: "success",
+						data: orgData,
+					})
+			})	
+		 }else{
          list.forEach(function (data, index) {
 			 var i = index
-			 var playerList = data.player_list;	
-			 var rPlayerList = data.requested_player_list;
 			 var org_id = data.organization_id;				 
-			 if(playerList && playerList.length > 0){
-				 var playerListlength =playerList.length - 1;				  
-				playerList.forEach(function (pdata, index) {
-					getOrgpPlayerFromSensorDetails(pdata,org_id)
-					.then(playerdata => {
-						playerData.push({
-							simulation: playerdata.length, 
-							player:  playerdata[0].player
-						})	
-						if(listlength == i && playerListlength == index){
-							if(rPlayerList && rPlayerList.length > 0){
-								 var rPlayerlength =rPlayerList.length - 1;
-								 rPlayerList.forEach(function (rpdata, index) {
-								console.log(rpdata);
-									getOrgpPlayerFromUser(rpdata)
-									.then(playerdata1 => {						
-										rPlayerData.push({
-											simulation: 0, 
-											player:  playerdata1
-										})	
-										if(listlength == i && rPlayerlength == index){
-											res.send({
-												message: "success",
-												data: playerData,
-												rPlayerData: rPlayerData
-											})	
-										}
-									})
-								})
-							 }	else{
-								 res.send({
-									message: "success",
-									data: playerData,
-									rPlayerData: []
-								})	
-							 }
-						 }		
-					})			 
-				})
-			 }else{
-				 if(rPlayerList && rPlayerList.length > 0){
-					 var rPlayerlength =rPlayerList.length - 1;
-					 rPlayerList.forEach(function (rpdata, index) {
-					console.log(rpdata);
-						getOrgpPlayerFromUser(rpdata)
-						.then(playerdata1 => {						
-							rPlayerData.push({
-								simulation: 0, 
-								player:  playerdata1
+			 if(type == "Individuals"){
+				 var playerList = data.player_list;	
+				 var rPlayerList = data.requested_player_list;
+				 if(playerList && playerList.length > 0){
+					 var playerListlength =playerList.length - 1;				  
+					playerList.forEach(function (pdata, index) {
+						getOrgpPlayerFromSensorDetails(pdata,org_id)
+						.then(playerdata => {
+							playerData.push({
+								simulation: playerdata.length, 
+								player:  playerdata[0].player
 							})	
-							if(listlength == i && rPlayerlength == index){
-								res.send({
-									message: "success",
-									data: [],
-									rPlayerData: rPlayerData
-								})	
-							}								
-						})	
+							if(listlength == i && playerListlength == index){
+								if(rPlayerList && rPlayerList.length > 0){
+									 var rPlayerlength =rPlayerList.length - 1;
+									 rPlayerList.forEach(function (rpdata, index) {
+									console.log(rpdata);
+										getOrgpPlayerFromUser(rpdata)
+										.then(playerdata1 => {						
+											rPlayerData.push({
+												simulation: 0, 
+												player:  playerdata1
+											})	
+											if(listlength == i && rPlayerlength == index){
+												res.send({
+													message: "success",
+													data: playerData,
+													rPlayerData: rPlayerData
+												})	
+											}
+										})
+									})
+								 }	else{
+									 res.send({
+										message: "success",
+										data: playerData,
+										rPlayerData: []
+									})	
+								 }
+							 }		
+						})			 
 					})
-				 }	else{
-					 res.send({
-						message: "success",
-						data: [],
-						rPlayerData: []
+				 }else{
+					 if(rPlayerList && rPlayerList.length > 0){
+						 var rPlayerlength =rPlayerList.length - 1;
+						 rPlayerList.forEach(function (rpdata, index) {
+						console.log(rpdata);
+							getOrgpPlayerFromUser(rpdata)
+							.then(playerdata1 => {						
+								rPlayerData.push({
+									simulation: 0, 
+									player:  playerdata1
+								})	
+								if(listlength == i && rPlayerlength == index){
+									res.send({
+										message: "success",
+										data: [],
+										rPlayerData: rPlayerData
+									})	
+								}								
+							})	
+						})
+					 }	else{
+						 res.send({
+							message: "success",
+							data: [],
+							rPlayerData: []
+						})	
+					 }
+				 }	 
+			}
+			 if(type == "Team"){
+				var teamname = data.team_name;
+				getOrgpTeamFromSensorDetailsr(teamname,org_id)
+				.then(teamdata => {						
+					teamData.push({
+						simulation: teamdata.length, 
+						team_name:  teamdata[0].team
 					})	
-				 }
-			 }	 
-		})			
+					if(listlength == i){
+						res.send({
+							message: "success",
+							data: teamData,
+						})	
+					}								
+				})	
+			 }
+		})		
+	}		
     }).catch(err => {
             res.send({
                 message : "failure",

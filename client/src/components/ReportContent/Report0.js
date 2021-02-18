@@ -1067,7 +1067,7 @@ class Report extends React.Component {
                                                 <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                                 <Text style={styles.tableColLeft4}></Text>
                                             </View>
-                                            <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.</Text>
+                                            <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% strain.</Text>
                                         </View>
                                     </View>
                                     <View style={styles.col12}>
@@ -1394,7 +1394,7 @@ class Report extends React.Component {
 						 {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 !== 'on' ? 
                             <View style={stylepage3.tableRowBody}>
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
-                                <Text style={[stylepage3.tableColLeft1]}></Text>
+                                <Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
 								<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value }</Text>
                             </View>
 							 : null
@@ -1402,7 +1402,7 @@ class Report extends React.Component {
 						  {this.state.metric.csdm_15 !== 'on' && this.state.metric.mps_95 === 'on' ? 
                             <View style={stylepage3.tableRowBody}>
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
-                                <Text style={[stylepage3.tableColLeft1]}></Text>
+                                <Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
                                 <Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value }</Text>
                             </View>
 							 : null
@@ -1412,12 +1412,12 @@ class Report extends React.Component {
 							<>
 							   <View style={[stylepage3.tableRowBody]}>
 									<Text style={[stylepage3.tableColLeft1]}>1</Text>
-									<Text style={[stylepage3.tableColLeft1]}></Text>
+									<Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
 									<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value}</Text>
 								</View>
 								<View style={stylepage3.tableRowBody}>
 									<Text style={[stylepage3.tableColLeft1]}>2</Text>
-									<Text style={[stylepage3.tableColLeft1]}></Text>
+									<Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
 									<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value }</Text>
 								</View>
 							</>
