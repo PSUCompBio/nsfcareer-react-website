@@ -14,6 +14,7 @@ import google_icon from './google_icon.png';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
 import axios from 'axios';
+import ResendMail from './ResendMail'
 
 let search = window.location.search;
 let params = new URLSearchParams(search);
@@ -36,7 +37,7 @@ class LoginComponentHidden extends React.Component {
       signUpStatus: false,
       IRBProcessMessage: '',
       signupData: '',
-      isSingup:false
+      isSingup: false
     };
     if (this.props.location.state && this.props.location.state.message) {
       this.state.IRBProcessMessage = this.props.location.state.message;
@@ -155,11 +156,20 @@ class LoginComponentHidden extends React.Component {
 
             }
           } else {
-            this.setState({
-              isLoginError: true,
-              isLoading: false,
-              loginError: response.data.error
-            });
+            if (response.data.error === 'your email is not verified, Check your mail to verify your account') {
+              this.setState({
+                isLoginError: true,
+                isLoading: false,
+                loginError: response.data.error,
+                resendEmail: true
+              });
+            } else {
+              this.setState({
+                isLoginError: true,
+                isLoading: false,
+                loginError: response.data.error
+              });
+            }
           }
 
           // Now update the state with data that we added
@@ -176,34 +186,34 @@ class LoginComponentHidden extends React.Component {
         });
     }
   }
-  responseFacebook=(response)=> {
-    console.log('fb rs',response);
-    if(response.email){
-       var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name,email: response.email,type:'facebook'}
+  responseFacebook = (response) => {
+    console.log('fb rs', response);
+    if (response.email) {
+      var formJsonData = { userID: response.userID, first_name: response.first_name, last_name: response.last_name, email: response.email, type: 'facebook' }
       this.setState({
-        signupData:{
+        signupData: {
           userID: response.userID,
           first_name: response.first_name,
           last_name: response.last_name,
           email: response.email,
-          type:'facebook'
+          type: 'facebook'
         }
       })
       this.LoginWithoutEmail(formJsonData);
-    }else{
-      console.log(response.first_name,response.userID);
+    } else {
+      console.log(response.first_name, response.userID);
       // eslint-disable-next-line
-      var formJsonData = {userID : response.userID,first_name: response.first_name,last_name: response.last_name,email: '',type:'facebook'}
+      var formJsonData = { userID: response.userID, first_name: response.first_name, last_name: response.last_name, email: '', type: 'facebook' }
       this.setState({
-        signupData:{
+        signupData: {
           userID: response.userID,
           first_name: response.first_name,
           last_name: response.last_name,
           email: '',
-          type:'facebook'
+          type: 'facebook'
         }
       })
-      if(response.status !== "unknown"){
+      if (response.status !== "unknown") {
         this.LoginWithoutEmail(formJsonData);
       }
     }
@@ -211,87 +221,87 @@ class LoginComponentHidden extends React.Component {
   //google response
   responseGoogle = (response) => {
     console.log(response);
-    if(response.profileObj){
-      var formJsonData = {userID : response.profileObj.googleId,first_name: response.profileObj.familyName,last_name: response.profileObj.givenName,email: response.profileObj.email,type:'google'}
+    if (response.profileObj) {
+      var formJsonData = { userID: response.profileObj.googleId, first_name: response.profileObj.familyName, last_name: response.profileObj.givenName, email: response.profileObj.email, type: 'google' }
       this.setState({
-        signupData:{
+        signupData: {
           userID: response.profileObj.googleId,
           first_name: response.profileObj.familyName,
           last_name: response.profileObj.givenName,
           email: response.profileObj.email,
-          type:'google'
+          type: 'google'
         }
       })
       this.LoginWithoutEmail(formJsonData);
     }
   }
 
-  LoginWithoutEmail =(formJsonData)=>{
-    this.setState({isLoading: true})
+  LoginWithoutEmail = (formJsonData) => {
+    this.setState({ isLoading: true })
     loginWithoutEmail(formJsonData)
-    .then(res=>{
-      console.log('res',res);
-      if(res.data.message === 'notExists'){
-        this.setState({
-          isSingup: true,
-          isLoading: false
-        })
-      }else if(res.data.message === 'success'){
-        if (res.data.status === 'FORCE_CHANGE_PASSWORD') {
-          formJsonData['user_name'] = res.data.user_name;
-          formJsonData['password'] = formJsonData.userID;
-          formJsonData['new_password'] = formJsonData.userID;
-          this.handleChangePassword(formJsonData);
-        }else{
-          var u_details = res.data.user_details;
-          console.log("Cognito ", u_details);
+      .then(res => {
+        console.log('res', res);
+        if (res.data.message === 'notExists') {
+          this.setState({
+            isSingup: true,
+            isLoading: false
+          })
+        } else if (res.data.message === 'success') {
+          if (res.data.status === 'FORCE_CHANGE_PASSWORD') {
+            formJsonData['user_name'] = res.data.user_name;
+            formJsonData['password'] = formJsonData.userID;
+            formJsonData['new_password'] = formJsonData.userID;
+            this.handleChangePassword(formJsonData);
+          } else {
+            var u_details = res.data.user_details;
+            console.log("Cognito ", u_details);
 
-          checkIfPlayerExists({ name: res.data.user_details.first_name + " " + res.data.user_details.last_name })
-            .then(res => {
+            checkIfPlayerExists({ name: res.data.user_details.first_name + " " + res.data.user_details.last_name })
+              .then(res => {
 
-              this.setState({
-                isValidPlayer: res.data.flag,
-                isLoading: false,
-                isSignInSuccessed: true,
-                userType: u_details.user_type,
-                userDetails: u_details,
-                name: u_details.first_name + " " + u_details.last_name,
-                cognito_user_id: u_details.user_cognito_id
+                this.setState({
+                  isValidPlayer: res.data.flag,
+                  isLoading: false,
+                  isSignInSuccessed: true,
+                  userType: u_details.user_type,
+                  userDetails: u_details,
+                  name: u_details.first_name + " " + u_details.last_name,
+                  cognito_user_id: u_details.user_cognito_id
+                })
+                console.log("USER DETAILS ", u_details);
+                store.dispatch(setIsSignedInSucceeded());
+                store.dispatch(userDetails(u_details));
+
+                this.props.isAuthenticated(true);
               })
-              console.log("USER DETAILS ", u_details);
-              store.dispatch(setIsSignedInSucceeded());
-              store.dispatch(userDetails(u_details));
-
-              this.props.isAuthenticated(true);
-            })
-            .catch(err => {
-              this.setState({
-                isLoginError: true,
-                isLoading: false,
-                loginError: res.data.error
-              });
-            })
+              .catch(err => {
+                this.setState({
+                  isLoginError: true,
+                  isLoading: false,
+                  loginError: res.data.error
+                });
+              })
+          }
+        } else {
+          this.setState({
+            isLoginError: true,
+            isLoading: false,
+            loginError: res.data.error
+          });
         }
-      }else {
-        this.setState({
-          isLoginError: true,
-          isLoading: false,
-          loginError: res.data.error
-        });
-      }
-    }).catch(err=>{
-      console.log('err',err);
-    })
+      }).catch(err => {
+        console.log('err', err);
+      })
   }
-  logIn =()=>{
+  logIn = () => {
 
   }
-  handleChangePassword=(formJsonData)=>{
-     axios.post(`/logInFirstTime`, formJsonData,{withCredentials: true})
+  handleChangePassword = (formJsonData) => {
+    axios.post(`/logInFirstTime`, formJsonData, { withCredentials: true })
       .then((response) => {
-        console.log('logInFirstTime',response)
+        console.log('logInFirstTime', response)
         if (response.data.message === 'success') {
-         var u_details = response.data.user_details;
+          var u_details = response.data.user_details;
           this.setState({
             isLoading: false,
             isSignInSuccessed: true
@@ -313,18 +323,35 @@ class LoginComponentHidden extends React.Component {
       });
   }
 
+  handleChange =(e)=>{
+    this.setState({user_name: e.target.value})
+  }
+  resendVerficationMail = ()=>{
+    const {user_name} = this.state;
+    // console.log('user_name',user_name)
+    this.setState({isResendMail: true});
+  }
+
+  statusVerficationMail = ()=>{
+    this.setState({isResendMail : false})
+  }
+
   render() {
 
-  if (this.state.isSignInSuccessed) {
+    if (this.state.isSignInSuccessed) {
 
-    return <Redirect to="/Dashboard" />;
-  }
-  if(this.state.isSingup){
-    return <Redirect to={{
-      pathname : '/User/SignUp/',
-      state : { data : this.state.signupData }
-    }} />
-  }
+      return <Redirect to="/Dashboard" />;
+    }
+    if(this.state.isResendMail){
+      return <ResendMail user_name={this.state.user_name} statusVerficationMail={this.statusVerficationMail}/>
+    }
+
+    if (this.state.isSingup) {
+      return <Redirect to={{
+        pathname: '/User/SignUp/',
+        state: { data: this.state.signupData }
+      }} />
+    }
     return (
       <React.Fragment>
         <div className="dynamic__height">
@@ -376,7 +403,7 @@ class LoginComponentHidden extends React.Component {
                         role="alert"
                       >
                         <strong >Failed! </strong> {params.get('error')}
-                      </div> 
+                      </div>
                     ) : null}
                     {params.get('success') ? (
                       <div
@@ -384,7 +411,7 @@ class LoginComponentHidden extends React.Component {
                         role="alert"
                       >
                         <strong >Success! </strong> Your account has been verified successfully.
-                      </div> 
+                      </div>
                     ) : null}
                     {this.state.IRBProcessMessage.length > 0 ? (
                       <div
@@ -416,6 +443,7 @@ class LoginComponentHidden extends React.Component {
                           placeholder="E-mail"
                           aria-label="Username"
                           aria-describedby="basic-addon1"
+                          onChange={this.handleChange}
                         />
                       </div>
                       <div className="input-group mb-1">
@@ -470,8 +498,8 @@ class LoginComponentHidden extends React.Component {
                         LOG IN
                       </button>
                     </form>
-                    
-                     <FacebookLogin
+
+                    <FacebookLogin
                       appId="372593693091338"
                       autoLoad={false}
                       fields="first_name, last_name,email,picture,gender"
@@ -479,7 +507,7 @@ class LoginComponentHidden extends React.Component {
                       render={renderProps => (
                         <>
                           <div className="tab_login_buttons" onClick={renderProps.onClick}>
-                            <img src={facebook_icon} alt="img"/> <p>Sign in using Facebook </p>
+                            <img src={facebook_icon} alt="img" /> <p>Sign in using Facebook </p>
                           </div>
                         </>
                       )}
@@ -489,7 +517,7 @@ class LoginComponentHidden extends React.Component {
                       render={renderProps => (
                         <>
                           <div className="tab_login_buttons2" onClick={renderProps.onClick} disabled={renderProps.disabled}>
-                            <img src={google_icon} alt="img"/> <p>Sign in using Google</p>
+                            <img src={google_icon} alt="img" /> <p>Sign in using Google</p>
                           </div>
                         </>
                       )}
@@ -498,28 +526,54 @@ class LoginComponentHidden extends React.Component {
                       onFailure={this.responseGoogle}
                       cookiePolicy={'single_host_origin'}
                     />
-                    <div style={{'float':'left','width': '100%'}}>
-                    {this.state.isLoading ? (
-                      <div className="d-flex justify-content-center center-spinner">
-                        <div
-                          className="spinner-border text-primary"
-                          role="status"
-                        >
-                          <span className="sr-only">Loading...</span>
+                    <div style={{ 'float': 'left', 'width': '100%' }}>
+                      {this.state.isLoading ? (
+                        <div className="d-flex justify-content-center center-spinner">
+                          <div
+                            className="spinner-border text-primary"
+                            role="status"
+                          >
+                            <span className="sr-only">Loading...</span>
+                          </div>
                         </div>
-                      </div>
-                    ) : null}
-                    {this.state.isLoginError ? (
-                      <div
-                        className="alert alert-info api-response-alert"
-                        role="alert"
+                      ) : null}
+                      {this.state.isLoginError ?
+                        this.state.resendEmail ?
+                          (
+                            <div
+                              className="alert alert-info api-response-alert"
+                              role="alert"
 
-                      >
-                      <>
-                        <strong >Failed! </strong><p dangerouslySetInnerHTML={{__html: this.state.loginError}} style={{'display': 'contents'}}></p>.
-                      </>
-                      </div>
-                    ) : null}
+                            >
+                              <>
+
+                                <strong >Failed! </strong><p dangerouslySetInnerHTML={{ __html: this.state.loginError }} style={{ 'display': 'contents' }}></p>.<br/> <span onClick={this.resendVerficationMail}
+                                  style={{
+                                    'font-size': '18px',
+                                    'color': '#ffffff',
+                                    'font-weight': '600',
+                                    'text-decoration': 'underline',
+                                    'cursor': 'pointer'
+                                  }}
+                                >Resend Email</span>
+                              </>
+                            </div>
+                          )
+                          :
+                          (
+                            <div
+                              className="alert alert-info api-response-alert"
+                              role="alert"
+
+                            >
+                              <>
+
+                                <strong >Failed! </strong><p dangerouslySetInnerHTML={{ __html: this.state.loginError }} style={{ 'display': 'contents' }}></p>.
+                              </>
+                            </div>
+                          )
+
+                        : null}
                     </div>
                     <div className="text-center">
                       <p ref="p1" className="mt-4 sign-up-link">

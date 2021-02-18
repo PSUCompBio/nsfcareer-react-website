@@ -6327,7 +6327,8 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     /*
     *    Creating directory...
     */
-    var sideLineVideoDuration = req.body.sideLineVideoDuration;
+    var simulationVideoDuration = req.body.sideLineVideoDuration;
+    var movie_link = req.body.movie_link;
     var d = new Date();
     let month = d.getMonth() + 1;
     let datetoday = month+'-'+d.getFullYear();
@@ -6342,173 +6343,355 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     var file_path = '/uploads/'+datetoday+'/'+Date.now() + '_trim.mp4';
     var outputFilePath = 'public'+file_path;
     let list = []
-
     
 
     //uploading files.             
     var name = Date.now();
+    let simulationVideoPath = `public/uploads/${name}_simulation.mp4`;
     var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+    let fpsChangedVideoOutput = `public/uploads/${name}_changed_fps.mp4`;
+    
     list.push(`public/uploads/${name}_movie.mp4`);
     https.get(req.body.impact_video_url , function(response ,error) { 
         const file = fs.createWriteStream(file_store_path);
         response.pipe(file);
+
+        //upload simulation video in local folder
         file.on('finish',() => {
-        console.log('finished -------------------------');
-        setTimeout(()=>{
-                writeTextfile(list);
-            },6000)
+            console.log('finished ------------------------- 1');
+
+            https.get(req.body.movie_link , function(response ,error) { 
+                const file2 = fs.createWriteStream(simulationVideoPath);
+                response.pipe(file2);
+                file2.on('finish',() => {
+                    console.log('finished ------------------------- 2');
+                    setTimeout(()=>{
+                        writeTextfile(list);
+                    },6000)
+                })
+                        
+            })
         })
-                
-         
-        
     });
     
     const writeTextfile = (list)=>{
         console.log('list',list);
         exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
-            // exec(`ffmpeg -i ${outputFilePath} -vf  "setpts=2*PTS"  public/uploads/test.mp4`, (error, stdout, stderr) => {
-            //     if(error){
-            //         console.log(`error: ${error.message}`);
-            //     }else{
-            //         console.log('video generated successfully....')
-            //     }
-            //     fs.unlinkSync(outputFilePath)
+           
+           
+            exec(`ffmpeg -i ${outputFilePath} 2>&1 | find "Duration"`, (error, stdout, stderr) => {
+                if(error){
+                    console.log(`error: ${error.message}`);
+                    res.send({
+                        message: 'faiure',
+                        error: error.message
+                    });
+                }else{
+                    var time = stdout.slice(11);
+                    time = time.split(',')[0];
 
-            // })
-            if (error) {
-                console.log(`error: ${error.message}`);
-                list.forEach(file => {
-                    fs.unlinkSync(file)                    
-                });
-                res.send({
-                    message: 'faiure',
-                    error: error.message
-                });
-            }
-            else{
-                console.log("videos are successfully merged");
-                /*-- Delete all generated files --*/
-                list.forEach(file => {
-                    fs.unlinkSync(file)                    
-                });
-                var bufs = [];
-                var readableStream = fs.createReadStream(outputFilePath);
-                readableStream.on('data', function(chunk) {
-                    bufs.push(chunk); 
-                });
-                readableStream.on('end', function(){
-                    var buf = Buffer.concat(bufs);
-                    console.log('stream end', buf)
-                    var uploadParams = {
-                        Bucket: config.usersbucket,
-                        Key: '', // pass key
-                        Body: null, // pass file body
-                    };
-                    getSimulationImageRecord(image_id)
-                    .then(data => {
+                    let hr = time.split(':')[0];
+                    let mint = time.split(':')[1];
+                    let sec = time.split(':')[2];
 
-                        /*
-                        * Remove trim video from s3 if already exists before trim...
-                        */
-                        removes3Object(data.trim_video_path)
-                        .then(response =>{
-                            console.log('Trim video removed successfully =================================')
-                        })
-                        /*--end--*/
+                    // console.log(hr+'-'+mint+'-'+sec);
+                    let duration = mint * 60 + sec;
+                    console.log('video generated successfully....',time,'sec - ', duration);
+                    duration = parseInt(duration);
+                    duration = duration.toFixed(3);
+                    let trimLength = simulationVideoDuration - duration;
+                    console.log('trimLength', trimLength);
+                    exec(`ffmpeg -i ${simulationVideoPath} 2>&1 | find "fps"`, (error, stdout, stderr) => {
+                        if(error){
+                            console.log(`error fps: ${error.message}`);
+                            res.send({
+                                message: 'faiure',
+                                error: error.message
+                            });
+                        }else{
+                            let videofps = stdout.split("kb/s,")[1];
+                            videofps = videofps.split('fps,')[0];
+                            let fps = parseInt(videofps);
+                            console.log('fps', fps);
+                            
+                            exec(`ffmpeg -i ${outputFilePath} -filter:v fps=${fps} ${fpsChangedVideoOutput}`, (error, stdout, stderr) => {
+                                if(error){
+                                    console.log(`error new output: ${error.message}`);
+                                    res.send({
+                                        message: 'faiure',
+                                        error: error.message
+                                    });
+                                }else{
+                                    console.log('fps changes successfully... ', stdout);
+                            //    ====================================================
+                                    /*-- Delete all generated files --*/
+                                    list.forEach(file => {
+                                        fs.unlinkSync(file)                    
+                                    });
+                                    var bufs = [];
+                                    var readableStream = fs.createReadStream(fpsChangedVideoOutput);
+                                    readableStream.on('data', function(chunk) {
+                                        bufs.push(chunk); 
+                                    });
+                                    readableStream.on('end', function(){
+                                        var buf = Buffer.concat(bufs);
+                                        console.log('stream end', buf)
+                                        var uploadParams = {
+                                            Bucket: config.usersbucket,
+                                            Key: '', // pass key
+                                            Body: null, // pass file body
+                                        };
+                                        getSimulationImageRecord(image_id)
+                                        .then(data => {
 
-                        // File Extensions
-                        let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
-                        var d = new Date();
-                        console.log(d.toLocaleDateString('pt-PT'));
-                        d = d.toLocaleDateString('pt-PT');
-                        var date = d.replace("/", "-");
-                        date = date.replace("/", "-");
-                        console.log('date',date);
-                        // Setting Attributes for file upload on S3
-                        uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
-                        // console.log('req.file.buffer', req.file.buffer)
-                        uploadParams.Body = buf;
-                        
-                        s3.upload(uploadParams, (err, data) => {
-                            if (err) {
-                                console.log('======errr \n',err)
-                                res.send({
-                                    message: "failure",
-                                    data: err
-                                });
-                               
-                            }else{
-                                /*-- Unlink trimed video from directory --*/
-                                fs.unlinkSync(outputFilePath)
+                                            /*
+                                            * Remove trim video from s3 if already exists before trim...
+                                            */
+                                            removes3Object(data.trim_video_path)
+                                            .then(response =>{
+                                                console.log('Trim video removed successfully =================================')
+                                            })
+                                            /*--end--*/
 
-                                /*
-                                * Insert s3 video path in simulation_image table...
-                                */
-                                InsertTrimVideoKey(req.body.image_id,uploadParams.Key).
-                                then(sensor_data => {
-                                    const  image_id  = req.body.image_id;
-                                    let imageData = '';
+                                            // File Extensions
+                                            let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
+                                            var d = new Date();
+                                            console.log(d.toLocaleDateString('pt-PT'));
+                                            d = d.toLocaleDateString('pt-PT');
+                                            var date = d.replace("/", "-");
+                                            date = date.replace("/", "-");
+                                            console.log('date',date);
+                                            // Setting Attributes for file upload on S3
+                                            uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
+                                            // console.log('req.file.buffer', req.file.buffer)
+                                            uploadParams.Body = buf;
+                                            
+                                            s3.upload(uploadParams, (err, data) => {
+                                                if (err) {
+                                                    console.log('======errr \n',err)
+                                                    res.send({
+                                                        message: "failure",
+                                                        data: err
+                                                    });
+                                                
+                                                }else{
+                                                    /*-- Unlink trimed video from directory --*/
+                                                    fs.unlinkSync(outputFilePath);
+                                                    fs.unlinkSync(fpsChangedVideoOutput);
+                                                    fs.unlinkSync(simulationVideoPath);
+                                                    /*
+                                                    * Insert s3 video path in simulation_image table...
+                                                    */
+                                                    InsertTrimVideoKey(req.body.image_id,uploadParams.Key).
+                                                    then(sensor_data => {
+                                                        const  image_id  = req.body.image_id;
+                                                        let imageData = '';
 
-                                    /*
-                                    * Getting image simulation image record from simulation_image table...
-                                    */
-                                    getSimulationImageRecord(image_id)
-                                    .then(image_data => {
-                                        console.log('image_data -----------------------------------\n',image_data)
-                                        imageData = image_data;
-                                        return verifyImageToken(imageData['token'], image_data);
-                                    })
-                                    .then(decoded_token => {
-                                        // console.log('decoded_token',decoded_token)
-                                        return getPlayerCgValues(imageData.player_name);
-                                    })
-                                    .then(cg_coordinates => {
-                                        // Setting cg values
-                                        // console.log("cg_coordinates",cg_coordinates)
-                                        if(cg_coordinates) {
-                                          imageData["cg_coordinates"] = cg_coordinates;
-                                        }
-                                        return trimVideoUrl(imageData);
-                                    })
-                                    .then(movie_link => {
-                                        // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
-                                        console.log('movie_link',movie_link);
-                                        res.send({
-                                            message : "success",
-                                            trim_video_path : movie_link
-                                        })
-                                        
-                                    })
-                                    .catch(err => {
-                                        console.log(err);
-                                        // res.removeHeader('X-Frame-Options');
-                                        // if(err.message == 'The provided key element does not match the schema'){
+                                                        /*
+                                                        * Getting image simulation image record from simulation_image table...
+                                                        */
+                                                        getSimulationImageRecord(image_id)
+                                                        .then(image_data => {
+                                                            console.log('image_data -----------------------------------\n',image_data)
+                                                            imageData = image_data;
+                                                            return verifyImageToken(imageData['token'], image_data);
+                                                        })
+                                                        .then(decoded_token => {
+                                                            // console.log('decoded_token',decoded_token)
+                                                            return getPlayerCgValues(imageData.player_name);
+                                                        })
+                                                        .then(cg_coordinates => {
+                                                            // Setting cg values
+                                                            // console.log("cg_coordinates",cg_coordinates)
+                                                            if(cg_coordinates) {
+                                                            imageData["cg_coordinates"] = cg_coordinates;
+                                                            }
+                                                            return trimVideoUrl(imageData);
+                                                        })
+                                                        .then(movie_link => {
+                                                            // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                                            console.log('movie_link',movie_link);
+                                                            res.send({
+                                                                message : "success",
+                                                                trim_video_path : movie_link
+                                                            })
+                                                            
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                            // res.removeHeader('X-Frame-Options');
+                                                            // if(err.message == 'The provided key element does not match the schema'){
+                                                                res.send({
+                                                                    message: "failure",
+                                                                    data: err
+                                                                });
+                                                            // }
+                                                        })
+                                                    })
+                                                    .catch(err => {
+                                                    console.log('err',err)
+                                                        res.send({
+                                                            message: "failure",
+                                                            data: err
+                                                        });
+                                                    })
+                                                }
+                                            })
+                                        }).catch(err => {
+                                        console.log('err',err)
                                             res.send({
                                                 message: "failure",
                                                 data: err
                                             });
-                                        // }
-                                    })
-                                })
-                                .catch(err => {
-                                   console.log('err',err)
-                                    res.send({
-                                        message: "failure",
-                                        data: err
-                                    });
-                                })
-                            }
-                        })
-                    }).catch(err => {
-                       console.log('err',err)
-                        res.send({
-                            message: "failure",
-                            data: err
-                        });
-                    })
+                                        })
 
-                })
-            }
+                                    })
+
+                            // =======================================================
+
+                                }
+                            })
+                        }
+                    })
+                }
+                
+            })
+
+            // })
+            // if (error) {
+            //     console.log(`error: ${error.message}`);
+            //     list.forEach(file => {
+            //         fs.unlinkSync(file)                    
+            //     });
+            //     res.send({
+            //         message: 'faiure',
+            //         error: error.message
+            //     });
+            // }
+            // else{
+            //     console.log("videos are successfully merged");
+            //     /*-- Delete all generated files --*/
+            //     list.forEach(file => {
+            //         fs.unlinkSync(file)                    
+            //     });
+            //     var bufs = [];
+            //     var readableStream = fs.createReadStream(outputFilePath);
+            //     readableStream.on('data', function(chunk) {
+            //         bufs.push(chunk); 
+            //     });
+            //     readableStream.on('end', function(){
+            //         var buf = Buffer.concat(bufs);
+            //         console.log('stream end', buf)
+            //         var uploadParams = {
+            //             Bucket: config.usersbucket,
+            //             Key: '', // pass key
+            //             Body: null, // pass file body
+            //         };
+            //         getSimulationImageRecord(image_id)
+            //         .then(data => {
+
+            //             /*
+            //             * Remove trim video from s3 if already exists before trim...
+            //             */
+            //             removes3Object(data.trim_video_path)
+            //             .then(response =>{
+            //                 console.log('Trim video removed successfully =================================')
+            //             })
+            //             /*--end--*/
+
+            //             // File Extensions
+            //             let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
+            //             var d = new Date();
+            //             console.log(d.toLocaleDateString('pt-PT'));
+            //             d = d.toLocaleDateString('pt-PT');
+            //             var date = d.replace("/", "-");
+            //             date = date.replace("/", "-");
+            //             console.log('date',date);
+            //             // Setting Attributes for file upload on S3
+            //             uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
+            //             // console.log('req.file.buffer', req.file.buffer)
+            //             uploadParams.Body = buf;
+                        
+            //             s3.upload(uploadParams, (err, data) => {
+            //                 if (err) {
+            //                     console.log('======errr \n',err)
+            //                     res.send({
+            //                         message: "failure",
+            //                         data: err
+            //                     });
+                               
+            //                 }else{
+            //                     /*-- Unlink trimed video from directory --*/
+            //                     fs.unlinkSync(outputFilePath)
+
+            //                     /*
+            //                     * Insert s3 video path in simulation_image table...
+            //                     */
+            //                     InsertTrimVideoKey(req.body.image_id,uploadParams.Key).
+            //                     then(sensor_data => {
+            //                         const  image_id  = req.body.image_id;
+            //                         let imageData = '';
+
+            //                         /*
+            //                         * Getting image simulation image record from simulation_image table...
+            //                         */
+            //                         getSimulationImageRecord(image_id)
+            //                         .then(image_data => {
+            //                             console.log('image_data -----------------------------------\n',image_data)
+            //                             imageData = image_data;
+            //                             return verifyImageToken(imageData['token'], image_data);
+            //                         })
+            //                         .then(decoded_token => {
+            //                             // console.log('decoded_token',decoded_token)
+            //                             return getPlayerCgValues(imageData.player_name);
+            //                         })
+            //                         .then(cg_coordinates => {
+            //                             // Setting cg values
+            //                             // console.log("cg_coordinates",cg_coordinates)
+            //                             if(cg_coordinates) {
+            //                               imageData["cg_coordinates"] = cg_coordinates;
+            //                             }
+            //                             return trimVideoUrl(imageData);
+            //                         })
+            //                         .then(movie_link => {
+            //                             // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+            //                             console.log('movie_link',movie_link);
+            //                             res.send({
+            //                                 message : "success",
+            //                                 trim_video_path : movie_link
+            //                             })
+                                        
+            //                         })
+            //                         .catch(err => {
+            //                             console.log(err);
+            //                             // res.removeHeader('X-Frame-Options');
+            //                             // if(err.message == 'The provided key element does not match the schema'){
+            //                                 res.send({
+            //                                     message: "failure",
+            //                                     data: err
+            //                                 });
+            //                             // }
+            //                         })
+            //                     })
+            //                     .catch(err => {
+            //                        console.log('err',err)
+            //                         res.send({
+            //                             message: "failure",
+            //                             data: err
+            //                         });
+            //                     })
+            //                 }
+            //             })
+            //         }).catch(err => {
+            //            console.log('err',err)
+            //             res.send({
+            //                 message: "failure",
+            //                 data: err
+            //             });
+            //         })
+
+            //     })
+            // }
             
         })
     }

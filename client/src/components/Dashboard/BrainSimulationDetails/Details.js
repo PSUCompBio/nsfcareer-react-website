@@ -333,6 +333,8 @@ class Details extends React.Component {
     let controls = {
       //Updating scroller to video time
       handleProgress: () => {
+        // console.log(' video.duration  ========================\n ', video.duration - (video.currentTime) )
+
         const percent = (video.currentTime / video.duration) * 100;
 
         lock_percent = percent;
@@ -437,6 +439,7 @@ class Details extends React.Component {
 
         frameRate = Math.floor(video.duration * 29.7);
         total_video_duration = the.getVideoTime(video.duration);
+
         right_lock_time = video.duration;
         the.setState({ value: { min: 0, max: 100 } });
 
@@ -688,7 +691,7 @@ class Details extends React.Component {
 
   trimVideo = () => {
     this.setState({ isTriming: true })
-    trimVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time, sideLineVideoDuration: _simulation_video_duration })
+    trimVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time, sideLineVideoDuration: _simulation_video_duration, movie_link: this.state.movie_link })
       .then(response => {
         console.log('response trim video ---\n', response);
         if (response.data.message === "success") {
