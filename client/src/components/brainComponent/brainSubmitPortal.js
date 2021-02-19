@@ -37,7 +37,7 @@ class BrainSubmitPortal extends React.Component {
             countDown: 5,
             selectedOption: null,
             sensors: [],
-            sensor: Sensor,
+            sensor: '',
             loadingSensorList: true,
             organization: this.props.organization,
             team: this.props.team
