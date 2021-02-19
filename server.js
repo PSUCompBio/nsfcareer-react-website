@@ -228,7 +228,7 @@ const {
 		getAllOrganizationsOfSensorBrand1,
 		getOrgpPlayerFromSensorDetails,
 		getOrgpPlayerFromUser,
-		getOrgpTeamFromSensorDetailsr,
+		getOrgpTeamFromSensorDetails,
 		getOrgFromSensorDetailsr,
       
     } = require('./controllers/query');
@@ -13191,55 +13191,83 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 	var brand = data.brand;
 	var type = data.type;
 	var simulation = 0;
+	 if(type == "Organization"){		 
+		var orgData = [];
+			  getAllOrganizationsOfSensorBrand(req.body)
+				.then(list1 => {
+					let uniqueList = [];
+					var orgList = [];
+					orgList = list1.filter(function (organization) {
+						if (uniqueList.indexOf(organization.organization) === -1) {
+							uniqueList.push(organization.organization);
+							return organization;
+						}
+					});
+					var list1length = orgList.length;
+					var i =0;
+					orgList.forEach(function (data, index) {
+						
+						getOrgFromSensorDetailsr(data.organization)
+						.then(orgdata => {
+						i++;				
+						console.log(orgdata.length);
+						console.log(index);
+							orgData.push({
+								simulation: orgdata.length, 
+								org_name:  data.organization
+							})	
+							if(list1length == i){
+								res.send({
+									message: "success",
+									data: orgData,
+								})	
+							}								
+						})						
+					}) 
+				})    
+		 }else{
 	getAllOrganizationsOfSensorBrand1(brand)
     .then(list => {
 		var playerData = [];
 		var rPlayerData = [];
 		var teamData = [];
-		var orgData = [];
-		var listlength = list.length - 1;
+		var listlength = list.length-1;
+		var listlength1 = list.length;
 		var pstatus = false;
-		var rpstatus = false;		
-		console.log(list);
-		 if(type == "Organization"){			 	
-			getOrgFromSensorDetailsr(brand)
-			.then(orgdata => {	
-				orgData.push({
-					simulation: orgdata.length, 
-					org_name:  orgdata[0].organization
-				})	
-					res.send({
-						message: "success",
-						data: orgData,
-					})
-			})	
-		 }else{
+		var rpstatus = false;	
+		var i =0;
+		var j = 0;
          list.forEach(function (data, index) {
-			 var i = index
 			 var org_id = data.organization_id;				 
 			 if(type == "Individuals"){
-				 var playerList = data.player_list;	
-				 var rPlayerList = data.requested_player_list;
-				 if(playerList && playerList.length > 0){
+			 
+			 i = index;	
+				 var playerList = data.player_list;					
+				 var rPlayerList = data.requested_player_list;								
+				 if(playerList && playerList != undefined ){
 					 var playerListlength =playerList.length - 1;				  
 					playerList.forEach(function (pdata, index) {
 						getOrgpPlayerFromSensorDetails(pdata,org_id)
 						.then(playerdata => {
-							playerData.push({
-								simulation: playerdata.length, 
-								player:  playerdata[0].player
-							})	
-							if(listlength == i && playerListlength == index){
-								if(rPlayerList && rPlayerList.length > 0){
+							if(playerdata && playerdata.length >0 ){
+								playerData.push({
+									simulation: playerdata.length, 
+									player:  playerdata[0].player
+								})	
+							}
+							if(listlength == i && playerListlength == index){							
+								if(rPlayerList && rPlayerList != undefined){
 									 var rPlayerlength =rPlayerList.length - 1;
 									 rPlayerList.forEach(function (rpdata, index) {
 									console.log(rpdata);
 										getOrgpPlayerFromUser(rpdata)
-										.then(playerdata1 => {						
+										.then(playerdata1 => {		
+										if(playerdata1 && playerdata1.length >0 ){										
 											rPlayerData.push({
 												simulation: 0, 
 												player:  playerdata1
 											})	
+										}											
 											if(listlength == i && rPlayerlength == index){
 												res.send({
 													message: "success",
@@ -13249,7 +13277,7 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 											}
 										})
 									})
-								 }	else{
+								 }else{
 									 res.send({
 										message: "success",
 										data: playerData,
@@ -13260,16 +13288,18 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 						})			 
 					})
 				 }else{
-					 if(rPlayerList && rPlayerList.length > 0){
+					 if(rPlayerList && rPlayerList != undefined){
 						 var rPlayerlength =rPlayerList.length - 1;
 						 rPlayerList.forEach(function (rpdata, index) {
 						console.log(rpdata);
 							getOrgpPlayerFromUser(rpdata)
-							.then(playerdata1 => {						
-								rPlayerData.push({
-									simulation: 0, 
-									player:  playerdata1
-								})	
+							.then(playerdata1 => {					
+								if(playerdata1 && playerdata1.length >0 ){									
+											rPlayerData.push({
+												simulation: 0, 
+												player:  playerdata1
+											})	
+										}								
 								if(listlength == i && rPlayerlength == index){
 									res.send({
 										message: "success",
@@ -13286,17 +13316,27 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 							rPlayerData: []
 						})	
 					 }
-				 }	 
+				 }			 
 			}
 			 if(type == "Team"){
 				var teamname = data.team_name;
-				getOrgpTeamFromSensorDetailsr(teamname,org_id)
-				.then(teamdata => {						
+				getOrgpTeamFromSensorDetails(teamname,org_id)
+				.then(teamdata => {	
+					j++;
+				 if(teamdata && teamdata.length >0 ){
 					teamData.push({
 						simulation: teamdata.length, 
-						team_name:  teamdata[0].team
+						team_name:  teamname
 					})	
-					if(listlength == i){
+				 }else{					 
+					teamData.push({
+						simulation: 0, 
+						team_name:  teamname
+					})	
+				 }
+				 console.log(j);
+				 console.log(listlength1);
+					if(listlength1 == j){
 						res.send({
 							message: "success",
 							data: teamData,
@@ -13305,13 +13345,14 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 				})	
 			 }
 		})		
-	}		
+		
     }).catch(err => {
             res.send({
                 message : "failure",
                 error : "error"
             })
         })  
+		}	
 })
 
 

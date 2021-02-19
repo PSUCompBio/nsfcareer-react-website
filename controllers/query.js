@@ -3668,7 +3668,7 @@ function getOrgpPlayerFromSensorDetails(playerid,org_id) {
         });
     });
 }
-function getOrgpTeamFromSensorDetailsr(teamname,org_id) {
+function getOrgpTeamFromSensorDetails(teamname,org_id) {
     return new Promise((resolve, reject) => {
         let params = {
             TableName: "sensor_details",
@@ -3693,13 +3693,13 @@ function getOrgpTeamFromSensorDetailsr(teamname,org_id) {
         });
     });
 }
-function getOrgFromSensorDetailsr(sensor) {
+function getOrgFromSensorDetailsr(organization) {
     return new Promise((resolve, reject) => {
         let params = {
             TableName: "sensor_details",
-            FilterExpression: "sensor = :sensor  ",
+            FilterExpression: "organization = :organization  ",
             ExpressionAttributeValues: {
-               ":sensor": sensor,
+               ":organization": organization,
             },
             ProjectionExpression: "org_id,team,organization"
         };
@@ -3853,6 +3853,6 @@ module.exports = {
 	getOrgpPlayerFromSensorDetails,
 	getOrgpPlayerFromUser,
     getUserDetailByAccountId,
-	getOrgpTeamFromSensorDetailsr,
+	getOrgpTeamFromSensorDetails,
 	getOrgFromSensorDetailsr,
 };
