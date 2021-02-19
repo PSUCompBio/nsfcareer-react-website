@@ -7,6 +7,7 @@ import {  Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/rende
 // import header2 from '../header2.jpg';
 // import footer2 from '../footer2.jpg';
 // import trangle from './trangle.png';
+import trangle_gray from './trangle_gray.png';
 import trangle_green from './trangle_green.png';
 import trangle_orange from './trangle_orange.png';
 import trangle_red from './trangle_red.png';
@@ -30,9 +31,10 @@ class Report extends React.Component {
     constructor(props) {
         super(props);
         console.log('innerWidth ------------------------\n',styleOfpage3 )
-        console.log('Rports props are csdm-15', this.props);
+        console.log('Rports props are report', this.props);
         console.log('metric ', this.props.Metric);
-
+		
+		
         if(this.props.jsonData){
             this.state = {
                 jsonData : this.props.jsonData[0].jsonOutputFile,
@@ -118,7 +120,9 @@ class Report extends React.Component {
       return `${month}/${date}/${year}`
     }
     getTrangle =(strain_Val)=>{
-        if(strain_Val <= 15){
+         if (strain_Val <= 0.75) {
+            return trangle_gray;
+        } else if (strain_Val > 0.75 && strain_Val <= 15) {
             return trangle_green;
         }else if(strain_Val > 15 && strain_Val <= 25){
             return trangle_orange;
@@ -145,8 +149,18 @@ class Report extends React.Component {
         let csdmTemporaltrangleScale = "0px";
         let csdmCerebellumtrangleScale = "0px";
         let csdmMotortrangleScale = "0px";
-        let mpsTrangle = trangle_green;
-        let csdmTrangle = trangle_green;
+        let mpsTrangle1 = trangle_gray;
+        let mpsTrangle2 = trangle_gray;
+        let mpsTrangle3 = trangle_gray;
+        let mpsTrangle4 = trangle_gray;
+        let mpsTrangle5 = trangle_gray;
+        let mpsTrangle6 = trangle_gray;
+        let csdmTrangle1 = trangle_gray;
+        let csdmTrangle2 = trangle_gray;
+        let csdmTrangle3 = trangle_gray;
+        let csdmTrangle4 = trangle_gray;
+        let csdmTrangle5 = trangle_gray;
+        let csdmTrangle6 = trangle_gray;
         if(this.state.jsonData){
             if(this.state.jsonData['CSDM-15']){
                 var num1 = this.state.jsonData['CSDM-15'].cerebellum ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
@@ -176,7 +190,12 @@ class Report extends React.Component {
 					csdmParietaltrangleScale = ''+left4.toFixed(0)+'px';
 					csdmTemporaltrangleScale = ''+left5.toFixed(0)+'px';
 					csdmMotortrangleScale = ''+left6.toFixed(0)+'px';
-					csdmTrangle = this.getTrangle(csdm);
+                    csdmTrangle1 = this.getTrangle(csdm_val1);
+                    csdmTrangle2 = this.getTrangle(csdm_val2);
+                    csdmTrangle3 = this.getTrangle(csdm_val3);
+                    csdmTrangle4 = this.getTrangle(csdm_val4);
+                    csdmTrangle5 = this.getTrangle(csdm_val5);
+                    csdmTrangle6 = this.getTrangle(csdm_val6);
 				}
             }
             if(this.state.jsonData['MPS-95']){               
@@ -208,7 +227,12 @@ class Report extends React.Component {
 					mpsParietaltrangleScale = ''+left4.toFixed(0)+'px';
 					mpsTemporaltrangleScale = ''+left5.toFixed(0)+'px';
 					mpsMotortrangleScale = ''+left6.toFixed(0)+'px';
-					mpsTrangle = this.getTrangle(mps);
+                    mpsTrangle1 = this.getTrangle(mps_val1);
+                    mpsTrangle2 = this.getTrangle(mps_val2);
+                    mpsTrangle3 = this.getTrangle(mps_val3);
+                    mpsTrangle4 = this.getTrangle(mps_val4);
+                    mpsTrangle5 = this.getTrangle(mps_val5);
+                    mpsTrangle6 = this.getTrangle(mps_val6);
 				}
             }
         }
@@ -923,12 +947,12 @@ class Report extends React.Component {
                         </Text>
 
                         <View style={styles.tableRow}>
-                            <Text style={styles.tableColLeft}> DOB : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
+                            <Text style={styles.tableColLeft}> DOB : <Text style={{color:'#2d549a'}}>{this.state.jsonData['playerdata'].dob?this.state.jsonData['playerdata'].dob:"N/A"} </Text></Text>
                             <Text style={styles.tableColLeftfull}> Impact Date: <Text style={{color:'#2d549a'}}>{this.state.impact_date}</Text></Text>
                         </View>
                         <View style={styles.tableRow}>
 
-                            <Text style={styles.tableColLeft}> Sex : <Text style={{color:'#2d549a'}}>{"N/A"} </Text></Text>
+                            <Text style={styles.tableColLeft}> Sex : <Text style={{color:'#2d549a'}}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"} </Text></Text>
                             <Text style={styles.tableColLeft}> Impact Time : <Text style={{color:'#2d549a'}}> {this.state.impact_time} </Text> </Text>
                             <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{this.props.data.sensor_data ? this.props.data.sensor_data.organization : 'Unknown'}</Text></Text>
 
@@ -975,7 +999,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Frontal Lobe</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmFrontal_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle1} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -984,7 +1008,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Parietal Lobe</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmParietal_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle2} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -993,7 +1017,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Occipital Lobe</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmOccipital_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle3} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1002,7 +1026,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Temporal Lobe</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmTemporal_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle4} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1011,7 +1035,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
                                          <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmCerebellum_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle5} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1020,7 +1044,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmMotor_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle6} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1099,7 +1123,7 @@ class Report extends React.Component {
                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsFrontal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle1} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1109,7 +1133,7 @@ class Report extends React.Component {
                                          {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsParietal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle2} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1119,7 +1143,7 @@ class Report extends React.Component {
                                          {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsOccipi_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle3} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1129,7 +1153,7 @@ class Report extends React.Component {
                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsTemporal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle4} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1138,7 +1162,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsCerebelluml_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle5} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1147,7 +1171,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsMotor_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle6} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1245,7 +1269,7 @@ class Report extends React.Component {
                                          {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsFrontal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle1} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1255,7 +1279,7 @@ class Report extends React.Component {
                                          {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsParietal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle2} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1265,7 +1289,7 @@ class Report extends React.Component {
                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsOccipi_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle3} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1275,7 +1299,7 @@ class Report extends React.Component {
                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsTemporal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle4} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1284,7 +1308,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsCerebelluml_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle5} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1293,7 +1317,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsMotor_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle6} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1330,34 +1354,6 @@ class Report extends React.Component {
                                     {/*====================Footer heading end ==============================*/}
                                 </>
                                  
-
-                                {/*<>
-                                    <View style= {styles.tableRowHead}>
-
-                                        <Text style={styles.tableColRightHead}>{'                   PAGE 2 of 2'} </Text>
-                                    </View>
-                                    <Text style = {{
-                                        fontSize : 15,
-                                        textAlign : 'center',
-                                        color : "#0E263D",
-                                        marginTop : '2%',
-                                        marginBottom : '2%'
-                                    }}>NSFCAREER OVERVIEW</Text>
-                                    <View >
-                                        <View style={styles.tableRow}>
-                                            <Text style={styles.tableColLeft}> DOB :  {"N/A"} </Text>
-                                            <Text style={styles.tableColRight}> Referring physician : Dr. Jane Doctor </Text>
-
-                                        </View>
-                                        <View style={styles.tableRow}>
-
-                                            <Text style={styles.tableColLeft}> Sex : { "N/A"} </Text>
-
-                                            <Text style={styles.tableColRight}> Organization : {"N/A" } </Text>
-
-                                        </View>
-                                    </View>    
-                                </>*/}
                         </View>
                     </Page>
                     : null
@@ -1380,35 +1376,49 @@ class Report extends React.Component {
 							{/*<View style={stylepage3.blueLine}></View>*/}
 						
                          {/*-- Table start --*/}
-                        <View style={[stylepage3.tableRow,stylepage3.tableHead]}>
+                       
+						{this.state.metric.csdm_15 === 'on' ?
+                             <View style={[stylepage3.tableRow,stylepage3.tableHead]}>
                             {/*-- Table head --*/}
                               <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-                              <Text style={[stylepage3.tableColLeft1]}>Date</Text>
-                              <Text style={[stylepage3.tableColLeft2]}>MASxSR Value</Text>
+                              <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
+                              <Text style={[stylepage3.tableColLeft2]}>CSDM-15 Value</Text>
                             {/*-- Table head end--*/}
 
                         </View>
-
+                            : null
+                        }
                         {/*-- Table body start --*/}
 						
-						 {this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 !== 'on' ? 
+						 {this.state.metric.csdm_15 === 'on' ? 
                             <View style={stylepage3.tableRowBody}>
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
-								<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value }</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
+								<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value.toFixed(3) }</Text>
                             </View>
 							 : null
 						 }
-						  {this.state.metric.csdm_15 !== 'on' && this.state.metric.mps_95 === 'on' ? 
+						 {this.state.metric.mps_95 === 'on' ? 
+                             <View style={[stylepage3.tableRow,stylepage3.tableHead]}>
+                            {/*-- Table head --*/}
+                              <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
+                              <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
+                              <Text style={[stylepage3.tableColLeft2]}>MPS-15 Value</Text>
+                            {/*-- Table head end--*/}
+
+                        </View>
+                            : null
+                        }
+						{this.state.metric.mps_95 === 'on' ? 
                             <View style={stylepage3.tableRowBody}>
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
-                                <Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value }</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
+                                <Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value.toFixed(3) }</Text>
                             </View>
 							 : null
 						  }
 						  
-						{this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ? 
+						{/*this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on' ? 
 							<>
 							   <View style={[stylepage3.tableRowBody]}>
 									<Text style={[stylepage3.tableColLeft1]}>1</Text>
@@ -1422,7 +1432,7 @@ class Report extends React.Component {
 								</View>
 							</>
 							 : null
-						  }
+						   */}
 						  
                         {/*=========== Customer details ===============*/}
                         <View style={stylepage3.col12}>

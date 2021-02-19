@@ -46,7 +46,7 @@ class BrainSubmitPortal extends React.Component {
     componentDidMount=()=>{
         console.log('Sensor -------------------------\n',Sensor)
         var values = [];
-        if(!Sensor || Sensor === undefined || Sensor === null){
+       /* if(!Sensor || Sensor === undefined || Sensor === null){*/
             getAllSensorBrands()
             .then(data =>{
                 console.log('Sensor',data)
@@ -62,7 +62,7 @@ class BrainSubmitPortal extends React.Component {
                     })
                 console.log('err',err)
             })
-        }
+       /* }*/
     }
 
     handleUpLoadedFiles = (files)=>{
@@ -419,9 +419,8 @@ class BrainSubmitPortal extends React.Component {
                                                         'padding': '19px'
                                                     }}
                                                 >
-                                                    { !Sensor || Sensor === undefined || Sensor === null 
-                                                        ?
-                                                        loadingSensorList ?
+                                                  
+                                                       { loadingSensorList ?
 															<div>
                                                             <i className="fa fa-spinner fa-spin" 
 															style ={{
@@ -446,8 +445,7 @@ class BrainSubmitPortal extends React.Component {
                                                                     isClearable={true}
                                                                 />
                                                             </div>
-                                                        : null
-                                                    }
+                                                        }
                                                 </Col>
                                                     <Button onClick={this.enableDragmode}>Upload Sensor Data</Button>   
                                             </Col>
