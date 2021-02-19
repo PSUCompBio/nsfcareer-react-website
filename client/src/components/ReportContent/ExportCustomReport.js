@@ -1,6 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 
+import trangle_gray from './trangle_gray.png';
 import trangle_green from './trangle_green.png';
 import trangle_orange from './trangle_orange.png';
 import trangle_red from './trangle_red.png';
@@ -20,18 +21,19 @@ import styleOfpage3 from './sub_component/styleOfpage3.json'
 
 // let innerWidth = window.innerWidth;
 
-
 class ExportCustomReport extends React.Component {
     constructor(props) {
         super(props);
         console.log('innerWidth ------------------------\n', styleOfpage3)
         console.log('Rports props are csdm-15', this.props);
         console.log('metric ', this.props.Metric);
-
+		
+				
         if (this.props.jsonData) {
             this.state = {
                 jsonData: this.props.jsonData[0].jsonOutputFile,
                 data: this.props.data.player,
+				impact_date : this.props.data['impact-date'] ? this.getDate(this.props.data['impact-date'].replace(/:|-/g, "/")) : this.props.data['date'] ? this.getDate(this.props.data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
                 metric: ''
             }
         } else if (this.props.data) {
@@ -111,7 +113,9 @@ class ExportCustomReport extends React.Component {
         return `${month}/${date}/${year}`
     }
     getTrangle = (strain_Val) => {
-        if (strain_Val <= 15) {
+        if (strain_Val <= 0.75) {
+            return trangle_gray;
+        } else if (strain_Val > 0.75 && strain_Val <= 15) {
             return trangle_green;
         } else if (strain_Val > 15 && strain_Val <= 25) {
             return trangle_orange;
@@ -138,8 +142,18 @@ class ExportCustomReport extends React.Component {
         let csdmTemporaltrangleScale = "0px";
         let csdmCerebellumtrangleScale = "0px";
         let csdmMotortrangleScale = "0px";
-        let mpsTrangle = trangle_green;
-        let csdmTrangle = trangle_green;
+        let mpsTrangle1 = trangle_gray;
+        let mpsTrangle2 = trangle_gray;
+        let mpsTrangle3 = trangle_gray;
+        let mpsTrangle4 = trangle_gray;
+        let mpsTrangle5 = trangle_gray;
+        let mpsTrangle6 = trangle_gray;
+        let csdmTrangle1 = trangle_gray;
+        let csdmTrangle2 = trangle_gray;
+        let csdmTrangle3 = trangle_gray;
+        let csdmTrangle4 = trangle_gray;
+        let csdmTrangle5 = trangle_gray;
+        let csdmTrangle6 = trangle_gray;
         let csdm15Values = '';
         let mpsValues = '';
         if (this.state.jsonData) {
@@ -149,20 +163,26 @@ class ExportCustomReport extends React.Component {
                     csdm15Values =   csdm15Values.sort(function(a, b){return b-a});
                 }
                 
-                var num1 = this.state.jsonData['CSDM-15'].cerebellum ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
-                var num2 = this.state.jsonData['CSDM-15'].frontal ? this.state.jsonData['CSDM-15'].frontal.value : "0.0000";
-                var num3 = this.state.jsonData['CSDM-15'].occipital ? this.state.jsonData['CSDM-15'].occipital.value : "0.0000";
-                var num4 = this.state.jsonData['CSDM-15'].parietal ? this.state.jsonData['CSDM-15'].parietal.value : "0.0000";
-                var num5 = this.state.jsonData['CSDM-15'].temporal ? this.state.jsonData['CSDM-15'].temporal.value : "0.0000";
-                var num6 = this.state.jsonData['CSDM-15'].msc ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";
-                if (num1 !== undefined) {
-                    csdm = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value[0].toFixed(2) : 0
-                    let csdm_val1 = num1;
-                    let csdm_val2 = num2;
-                    let csdm_val3 = num3;
-                    let csdm_val4 = num4;
-                    let csdm_val5 = num5;
-                    let csdm_val6 = num6;
+                var num1 = this.state.jsonData['CSDM-15'].cerebellum !== undefined ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
+                var num2 = this.state.jsonData['CSDM-15'].frontal !== undefined ? this.state.jsonData['CSDM-15'].frontal.value : "0.0000";
+                var num3 = this.state.jsonData['CSDM-15'].occipital !== undefined ? this.state.jsonData['CSDM-15'].occipital.value : "0.0000";
+                var num4 = this.state.jsonData['CSDM-15'].parietal !== undefined ? this.state.jsonData['CSDM-15'].parietal.value : "0.0000";
+                var num5 = this.state.jsonData['CSDM-15'].temporal !== undefined ? this.state.jsonData['CSDM-15'].temporal.value : "0.0000";
+                var num6 = this.state.jsonData['CSDM-15'].msc !== undefined ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";			
+					
+                    csdm = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value[0].toFixed(2) : 0; 
+					let csdm_val1 = "0.0000";
+					let csdm_val2 = "0.0000";
+					let csdm_val3 = "0.0000";
+					let csdm_val4 = "0.0000";
+					let csdm_val5 = "0.0000";
+					let csdm_val6 = "0.0000";
+					if (num1 !== undefined) {let csdm_val1 = num1;}else{let csdm_val1 = "0.0000";}
+					if (num2 !== undefined) {let csdm_val2 = num2;}else{let csdm_val2 = "0.0000";}
+					if (num3 !== undefined) {let csdm_val3 = num3;}else{let csdm_val3 = "0.0000";}
+					if (num4 !== undefined) {let csdm_val4 = num4;}else{let csdm_val4 = "0.0000";}
+					if (num5 !== undefined) {let csdm_val5 = num5;}else{let csdm_val5 = "0.0000";}
+					if (num6 !== undefined) {let csdm_val6 = num6;}else{let csdm_val6 = "0.0000";}
                     var left1 = csdm_val1 * ScaleWidth / 38;
                     var left2 = csdm_val2 * ScaleWidth / 38;
                     var left3 = csdm_val3 * ScaleWidth / 38;
@@ -170,14 +190,19 @@ class ExportCustomReport extends React.Component {
                     var left5 = csdm_val5 * ScaleWidth / 38;
                     var left6 = csdm_val6 * ScaleWidth / 38;
                     //**Round up the value....
-                    csdmCerebellumtrangleScale = '' + left1.toFixed(0) + 'px';
-                    csdmFrontaltrangleScale = '' + left2.toFixed(0) + 'px';
-                    csdmOccipitaltrangleScale = '' + left3.toFixed(0) + 'px';
-                    csdmParietaltrangleScale = '' + left4.toFixed(0) + 'px';
-                    csdmTemporaltrangleScale = '' + left5.toFixed(0) + 'px';
-                    csdmMotortrangleScale = '' + left6.toFixed(0) + 'px';
-                    csdmTrangle = this.getTrangle(csdm);
-                }
+                    csdmCerebellumtrangleScale = '' + left1.toFixed(0) ? left1.toFixed(0) :0 + 'px';
+                    csdmFrontaltrangleScale = '' + left2.toFixed(0) ?left2.toFixed(0):0 + 'px';
+                    csdmOccipitaltrangleScale = '' + left3.toFixed(0) ?left3.toFixed(0):0 + 'px';
+                    csdmParietaltrangleScale = '' + left4.toFixed(0) ?left4.toFixed(0):0 + 'px';
+                    csdmTemporaltrangleScale = '' + left5.toFixed(0) ?left5.toFixed(0):0 + 'px';
+                    csdmMotortrangleScale = '' + left6.toFixed(0) ?left6.toFixed(0):0 + 'px';
+                    csdmTrangle1 = this.getTrangle(csdm_val1);
+                    csdmTrangle2 = this.getTrangle(csdm_val2);
+                    csdmTrangle3 = this.getTrangle(csdm_val3);
+                    csdmTrangle4 = this.getTrangle(csdm_val4);
+                    csdmTrangle5 = this.getTrangle(csdm_val5);
+                    csdmTrangle6 = this.getTrangle(csdm_val6);
+               
             }
             if (this.state.jsonData['principal-max-strain']) {
                 //eslint-disable-next-line
@@ -207,13 +232,18 @@ class ExportCustomReport extends React.Component {
                     var left5 = mps_val5 * ScaleWidth / 38;
                     var left6 = mps_val6 * ScaleWidth / 38;
                     //**Round up the value....
-                    mpsCerebellumtrangleScale = '' + left1.toFixed(0) + 'px';
-                    mpsFrontaltrangleScale = '' + left2.toFixed(0) + 'px';
-                    mpsOccipitaltrangleScale = '' + left3.toFixed(0) + 'px';
-                    mpsParietaltrangleScale = '' + left4.toFixed(0) + 'px';
-                    mpsTemporaltrangleScale = '' + left5.toFixed(0) + 'px';
-                    mpsMotortrangleScale = '' + left6.toFixed(0) + 'px';
-                    mpsTrangle = this.getTrangle(mps);
+                    mpsCerebellumtrangleScale = '' + left1.toFixed(0)?left1.toFixed(0):0 + 'px';
+                    mpsFrontaltrangleScale = '' + left2.toFixed(0)?left2.toFixed(0):0 + 'px';
+                    mpsOccipitaltrangleScale = '' + left3.toFixed(0)?left3.toFixed(0):0 + 'px';
+                    mpsParietaltrangleScale = '' + left4.toFixed(0)?left4.toFixed(0):0 + 'px';
+                    mpsTemporaltrangleScale = '' + left5.toFixed(0)?left5.toFixed(0):0 + 'px';
+                    mpsMotortrangleScale = '' + left6.toFixed(0)?left6.toFixed(0):0 + 'px';
+                    mpsTrangle1 = this.getTrangle(mps_val1);
+                    mpsTrangle2 = this.getTrangle(mps_val2);
+                    mpsTrangle3 = this.getTrangle(mps_val3);
+                    mpsTrangle4 = this.getTrangle(mps_val4);
+                    mpsTrangle5 = this.getTrangle(mps_val5);
+                    mpsTrangle6 = this.getTrangle(mps_val6);
                 }
             }
         }
@@ -283,6 +313,19 @@ class ExportCustomReport extends React.Component {
                 marginTop: '0px',
                 padding: '6px',
                 flexDirection: 'row'
+            },			
+            tableColLeftfull: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display : 'inline-block',
+                width : '50%',
+                float : 'left',
+                flexDirection : 'column',
+                color : 'grey',
+                fontSize : 10,
+                textAlign : 'left'
             },
             rowHead2Text: {
                 marginTop: '5px',
@@ -366,7 +409,7 @@ class ExportCustomReport extends React.Component {
             trangle: {
                 textAlign:'center',
                 width: '22%',				
-                padding: 7,		
+                padding: 0,		
                 paddingTop: 0,		
                 marginLeft: '31%'
             },
@@ -633,13 +676,13 @@ class ExportCustomReport extends React.Component {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '390px'
+                marginTop: '66%'
             },
             taxture3_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '172px'
+                marginTop: '27%'
             },
             taxture1: {
                 width: '100%',
@@ -1141,12 +1184,11 @@ class ExportCustomReport extends React.Component {
                         </Text>
 
                         <View style={styles.tableRow}>
-                            <Text style={styles.tableColLeft}> DOB : <Text style={{ color: '#2d549a' }}>{"N/A"} </Text></Text>
-                            <Text style={styles.tableColLeft}> Report Date Range : <Text style={{ color: '#2d549a' }}>All Time</Text> </Text>
+                            <Text style={styles.tableColLeft}> DOB : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].dob?this.state.jsonData['playerdata'].dob:"N/A"}</Text></Text>
+                            <Text style={styles.tableColLeftfull}> Report Date Range : <Text style={{ color: '#2d549a' }}> {this.state.impact_date}</Text> - <Text style={{ color: '#2d549a' }}> {this.getDateInFormat()} </Text> </Text>
                         </View>
                         <View style={styles.tableRow}>
-
-                            <Text style={styles.tableColLeft}> Sex : <Text style={{ color: '#2d549a' }}>{"N/A"} </Text></Text>
+                            <Text style={styles.tableColLeft}> Sex : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"}  </Text></Text>
                             <Text style={styles.tableColLeft}> Team : <Text style={{ color: '#2d549a' }}> {this.state.data['team']} </Text> </Text>
                             <Text style={styles.tableColRight}> Organization : <Text style={{ color: '#2d549a' }}>{this.state.data['organization']} </Text></Text>
 
@@ -1199,7 +1241,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Frontal Lobe</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.csdmFrontal_point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle1} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1208,7 +1250,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Parietal Lobe</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.csdmParietal_point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle2} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1217,7 +1259,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Occipital Lobe</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.csdmOccipital_point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle3} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1226,7 +1268,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Temporal Lobe</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.csdmTemporal_point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle4} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1235,7 +1277,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Cerebellum</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.csdmCerebellum_point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle5} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1244,7 +1286,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.csdmMotor_point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle6} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1326,7 +1368,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle1} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1336,7 +1378,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle2} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1346,7 +1388,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle3} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1356,7 +1398,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle4} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1365,7 +1407,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Cerebellum</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={mpsTrangle5} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1374,7 +1416,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={mpsTrangle6} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1472,7 +1514,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle1} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1482,7 +1524,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle2} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1492,7 +1534,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle3} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1502,7 +1544,7 @@ class ExportCustomReport extends React.Component {
                                     {/*=== 0-7.5 ===*/}
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styles.trangle_scale} src={mpsTrangle} alt="trangle" />
+                                            <Image style={styles.trangle_scale} src={mpsTrangle4} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1511,7 +1553,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Cerebellum</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={mpsTrangle5} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1520,7 +1562,7 @@ class ExportCustomReport extends React.Component {
                                     <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
-                                            <Image style={styleCsdm.trangle_scale} src={csdmTrangle} alt="trangle" />
+                                            <Image style={styleCsdm.trangle_scale} src={mpsTrangle6} alt="trangle" />
                                         </View>
                                     </View>
                                     <Text style={styles.tableColRight2_2}></Text>
@@ -1586,7 +1628,7 @@ class ExportCustomReport extends React.Component {
                             <View style={[stylepage3.tableRow, stylepage3.tableHead]}>
                                 {/*-- Table head --*/}
                                 <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>Date</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
                                 <Text style={[stylepage3.tableColLeft2]}>CSDM-15 Value</Text>
                                 {/*-- Table head end--*/}
 
@@ -1600,7 +1642,7 @@ class ExportCustomReport extends React.Component {
 									if(index < 5){
 										return <View style={stylepage3.tableRowBody}>
 											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
-											<Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
+											<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
 											<Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
 										</View>
 									}
@@ -1617,8 +1659,8 @@ class ExportCustomReport extends React.Component {
                             <View style={[stylepage3.tableRow, stylepage3.tableHead]}>
                                 {/*-- Table head --*/}
                                 <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>Date</Text>
-                                <Text style={[stylepage3.tableColLeft2]}>MASxSR Value</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
+                                <Text style={[stylepage3.tableColLeft2]}>MPS-15 Value</Text>
                                 {/*-- Table head end--*/}
 
                             </View>
@@ -1631,7 +1673,7 @@ class ExportCustomReport extends React.Component {
 									if(index < 5){									
 										return <View style={stylepage3.tableRowBody}>
 											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
-											<Text style={[stylepage3.tableColLeft1]}>{this.getDateInFormat()}</Text>
+											<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
 											<Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
 										</View>
 									}
@@ -1682,7 +1724,11 @@ class ExportCustomReport extends React.Component {
                         <View style={[stylepage4.tableRow]}>
                             {/*-- Table head --*/}
                             <Text style={[stylepage4.tableColLeft1]}>WARNINGS</Text>
-                            <Text style={[stylepage4.tableColLeft2]}>MASxSR ERROR</Text>
+							{this.state.metric.csdm_15 === 'on'  ?
+								<Text style={[stylepage4.tableColLeft2]}>CSDM-15 ERROR</Text>
+							:											
+								<Text style={[stylepage4.tableColLeft2]}>MPS-15 ERROR</Text>
+							}
                             {/*-- Table head end--*/}
 
                         </View>
@@ -1706,8 +1752,12 @@ class ExportCustomReport extends React.Component {
                         </View>
 
                         <View style={[stylepage4.tableRow]}>
-                            {/*-- Table head --*/}
+                            {/*-- Table head --*/}                
+							{this.state.metric.csdm_15 === 'on' && this.state.metric.mps_95 === 'on'  ?							
+                            <Text style={[stylepage4.tableColLeft1]}>MPS-15 ERROR</Text>
+							:							
                             <Text style={[stylepage4.tableColLeft3]}></Text>
+							}
                             <Text style={[stylepage4.tableColLeft2]}>REFERENCES</Text>
                             {/*-- Table head end--*/}
                         </View>

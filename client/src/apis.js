@@ -360,6 +360,17 @@ export const getUserDBDetails = (request) =>{
       });
   })
 }
+export const getUserDataByPlayerID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUserDataByPlayerID`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const getUserTokenDBDetails = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getUserTokenDBDetails`, request,{withCredentials: true})

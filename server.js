@@ -4785,6 +4785,7 @@ app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
     });
 });
 
+
 app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
     // If request comes to get detail of specific player
     console.log(req.body);
@@ -13221,10 +13222,13 @@ app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
     }
     getModalValidationDB(image_id)
     .then(response =>{
-        console.log('response',response.Items[0]['file_path'])
         if(staticPath){
-            let file_path = response.Items[0]['file_path']+image_id+'_output.json';
+            /*let file_path = response.Items[0]['file_path']+image_id+'_output.json';*/
+            let file_path = "7293129892/simulation/11-19-2020/"+image_id+'_output.json';
+			
             let file_pathHardyExperimentalData = staticPath+'HardyExperimentalData_C288T3.json';
+        console.log('response',file_pathHardyExperimentalData)
+        console.log('response1',file_path)
             getFileFromS3(file_pathHardyExperimentalData, config_env.usersbucket)
             .then(buffData=>{
                 json_data = JSON.parse(buffData.Body.toString('utf-8'));
@@ -13235,7 +13239,7 @@ app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
                 if(json_data){
                     for (var i = 0; i < json_data.length  ; i++) {
                         // json_data[i]
-                         console.log(i)
+                        // console.log(i)
                         for (var j = 0; j < 14; j++) {
                             if(json_data[i] && json_data[i]['dis_x_'+j] != null){
                                // console.log(json_data[i]['time_x_'+j] )
@@ -13257,7 +13261,10 @@ app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
                         }
                     }
                 }
-                if(data.Body){
+                if(!data && data == null){
+					console.log("data",data);
+				}
+                if(data && data != null){
                     var file = JSON.parse(data.Body.toString('utf-8'));
                     // console.log('data',file);
                     res.send({
@@ -13597,7 +13604,29 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 	}	
 })
 
-
+//getting only user db details
+app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
+    // If request comes to get detail of specific player
+    if(req.body.playerid){
+        req.playerid = req.body.playerid ;
+    }
+	getUserDetailByPlayerId(req.playerid)
+				.then(userData => {	
+    console.log("req.body",userData);
+				 if(userData && userData.length >0 ){
+					res.send({
+							message: "success",
+							data: userData,
+						})		
+				 }else{					 
+					res.send({
+							message: "success",
+							data: [],
+						})	
+				 }
+				 console.log(userData);							
+				})	
+});
 
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {

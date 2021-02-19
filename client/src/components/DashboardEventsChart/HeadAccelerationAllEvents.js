@@ -6,7 +6,7 @@ import simulationLoading from '../simulationLoading.png';
 import DownloadReportPopup from '.././Popup/DownloadReportPopup';
 // import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import {
-    getSimulationDetail,
+    getSimulationDetail,getUserDataByPlayerID,
   } from '../../apis';
 const options = {
     responsive: true,
@@ -139,9 +139,17 @@ class HeadAccelerationAllEvents extends React.Component {
     componentDidMount() {
         getSimulationDetail({image_id: this.props.data.sensor_data.image_id})
         .then(response => {
-            this.setState({
-                simulationData: response.data.data,
-            });
+			var playerid = this.props.data.sensor_data.player_id;
+			playerid = playerid.split("$");
+			getUserDataByPlayerID({ playerid: playerid[0]})
+			.then(response1 => {
+				response.data.data.jsonOutputFile["playerdata"] =  response1.data.data[0];
+				console.log('playerdata ----\n', response.data.data)
+				 this.setState({
+					simulationData: response.data.data,
+				});
+			})
+            
         })
     }
 
