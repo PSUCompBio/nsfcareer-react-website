@@ -144,6 +144,8 @@ class ToolKit extends React.Component {
 										</tr>
 									</thead>
 									<tbody className="player-table">
+										{this.state.playerlist &&
+										<>
 										{this.state.playerlist.map(function (player, index) {
 											console.log('checkign status', player)
 											return <tr style={{ background: "#ccc3c3c3", color: "#000000" }} >
@@ -152,6 +154,10 @@ class ToolKit extends React.Component {
 												<td style={{ textAlign: "center", border: "1px solid #ffffff" }}><input type="checkbox" value="1" name="include" /></td>
 											</tr>;
 										}, this)}
+										</>
+										}
+										{this.state.rplayerlist &&
+										<>
 										{this.state.rplayerlist.map(function (r_player, r_index) {
 											console.log('checkign status', r_player["player"][0])
 											return <tr style={{ background: "#ccc3c3c3", color: "#000000" }} >
@@ -160,6 +166,10 @@ class ToolKit extends React.Component {
 												<td style={{ textAlign: "center", border: "1px solid #ffffff" }}><input type="checkbox" value="1" name="include" /></td>
 											</tr>;
 										}, this)}
+										</>
+										}
+										{this.state.teamlist &&
+										<>
 										{this.state.teamlist.map(function (team, t_index) {
 											return <tr style={{ background: "#ccc3c3c3", color: "#000000" }} >
 												<td style={{ border: "1px solid #ffffff" }}>{team.team_name }</td>
@@ -167,6 +177,10 @@ class ToolKit extends React.Component {
 												<td style={{ textAlign: "center", border: "1px solid #ffffff" }}><input type="checkbox" value="1" name="include" /></td>
 											</tr>;
 										}, this)}
+										</>
+										}
+										{this.state.orglist &&
+										<>
 										{this.state.orglist.map(function (org, t_index) {
 											return <tr style={{ background: "#ccc3c3c3", color: "#000000" }} >
 												<td style={{ border: "1px solid #ffffff" }}>{org.org_name }</td>
@@ -174,6 +188,8 @@ class ToolKit extends React.Component {
 												<td style={{ textAlign: "center", border: "1px solid #ffffff" }}><input type="checkbox" value="1" name="include" /></td>
 											</tr>;
 										}, this)}
+										</>
+										}
 									</tbody>
 								</table>
 								<button className="btn  btn-primary">Submit</button>

@@ -990,7 +990,7 @@ class CommanderTeamView extends React.Component {
 																		}
 																		</>
 																	: 
-																		<Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+																		<Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={r_player.player_status === 'approved' ? true : false} />
 																	}
                                                                 </td>
                                                                 <td>
