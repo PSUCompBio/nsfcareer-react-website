@@ -317,7 +317,7 @@ class Details extends React.Component {
     let len = 0;
     const setVideoFrameRate = (leftTime, rightTime) => {
       var total_video_duration = rightTime - leftTime;
-      var frameRate = Math.floor(total_video_duration * 29.7);
+      var frameRate = Math.floor(total_video_duration * the.state.framesRateSidelineVideo);
       total_video_duration = the.getVideoTime(total_video_duration);
       the.setState({ framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration });
 
@@ -437,7 +437,7 @@ class Details extends React.Component {
         let total_video_duration = 0;
         let frameRate = 0;
 
-        frameRate = Math.floor(video.duration * 29.7);
+        frameRate = Math.floor(video.duration * the.state.framesRateSidelineVideo);
         total_video_duration = the.getVideoTime(video.duration);
 
         right_lock_time = video.duration;
@@ -450,7 +450,7 @@ class Details extends React.Component {
 
         //Get video frames
 
-        the.setState({ framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration, framesRateSidelineVideo: 29.7 })
+        the.setState({ framesofSidelineVideo: frameRate, lengthofSidelineVideo: total_video_duration})
       }
     }
 
@@ -699,6 +699,7 @@ class Details extends React.Component {
             trim_video_url: response.data.trim_video_path,
             left_lock_time: 0,
             right_lock_time: 0,
+            framesRateSidelineVideo: response.data.fps_of_trim_video.toFixed(2),
             isTriming: false,
             label_TrimVideo: 'Success'
           })
@@ -1288,6 +1289,7 @@ class Details extends React.Component {
                   trim_video_url: response.data.trim_video_url,
                   simulationStatus: response.data.status,
                   log_stream_name: response.data.log_stream_name,
+                  framesRateSidelineVideo: response.data.fps_of_trim_video.toFixed(2)
                 });
 
                 if (response.data.account_id) {

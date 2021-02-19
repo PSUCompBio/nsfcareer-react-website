@@ -2069,7 +2069,7 @@ function InsertImpactVideoKey(video_id,impact_video_path) {
     });
 }
 
-function InsertTrimVideoKey(video_id,trim_video_path) {
+function InsertTrimVideoKey(video_id, trim_video_path, fps_of_trim_video) {
     console.log('user_name',video_id,trim_video_path)
     return new Promise((resolve, reject) => {
        var userParams = {
@@ -2078,11 +2078,12 @@ function InsertTrimVideoKey(video_id,trim_video_path) {
                 image_id: video_id,
             },
             UpdateExpression:
-                "set trim_video_path = :trim_video_path, left_lock_time= :left_lock_time, right_lock_time = :right_lock_time",
+                "set trim_video_path = :trim_video_path, left_lock_time= :left_lock_time, right_lock_time = :right_lock_time, fps_of_trim_video = :fps_of_trim_video",
             ExpressionAttributeValues: {
                 ":trim_video_path": trim_video_path,
                 ":left_lock_time": 0,
                 ":right_lock_time": 0,
+                ":fps_of_trim_video": fps_of_trim_video
             },
             ReturnValues: "UPDATED_NEW",
         };
@@ -2107,11 +2108,12 @@ function updateTrimVideoKey(video_id,trim_video_path) {
                 image_id: video_id,
             },
             UpdateExpression:
-                "set trim_video_path = :trim_video_path, left_lock_time= :left_lock_time, right_lock_time = :right_lock_time",
+                "set trim_video_path = :trim_video_path, left_lock_time= :left_lock_time, right_lock_time = :right_lock_time, fps_of_trim_video = :fps_of_trim_video",
             ExpressionAttributeValues: {
                 ":trim_video_path": trim_video_path,
                 ":left_lock_time": 0,
                 ":right_lock_time": 0,
+                ":fps_of_trim_video": 27.9,
             },
             ReturnValues: "UPDATED_NEW",
         };

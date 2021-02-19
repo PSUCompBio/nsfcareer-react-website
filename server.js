@@ -1608,7 +1608,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     var movie_link_url = '';
     var motion_movie_link_url = '';
     var trim_video_url = '';
-
+    var fps_of_trim_video = 29.7;
     let status = 'pending';
 
     getSimulationImageRecord(image_id)
@@ -1659,6 +1659,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
             log_stream_name: imageData.log_stream_name,
             video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : '',
             account_id: imageData.account_id ? imageData.account_id : '',
+            fps_of_trim_video: imageData.fps_of_trim_video.toFixed(2) ? imageData.fps_of_trim_video : fps_of_trim_video
         })
     })
     .catch(err => {
@@ -5662,7 +5663,6 @@ app.post(`${apiPrefix}resetToOriginal`, (req, res)=> {
     .then(image_data =>{
         console.log('image_data',image_data);
         imageData = image_data;
-       
         if (imageData.trim_video_path && imageData.trim_video_path != 'null') {
             removes3Object(imageData.trim_video_path)
             .then(response =>{
@@ -6379,10 +6379,11 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     const writeTextfile = (list)=>{
         console.log('list',list);
         exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
-        let fps_of_simulation_video = 0;  
-        simulationVideoDuration = simulationVideoDuration;
-        let duration_of_trim_video = 0;
-        let fps_of_trim_video = 29;
+            console.log('video trimed done 1 ---------------------------')
+            let fps_of_simulation_video = 0;  
+            simulationVideoDuration = simulationVideoDuration;
+            let duration_of_trim_video = 0;
+            let fps_of_trim_video = 29;
             exec(`ffmpeg -i ${outputFilePath} 2>&1 | find "Duration"`, (error, stdout, stderr) => {
                 if(error){
                     console.log(`error: ${error.message}`);
@@ -6416,7 +6417,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                             let videofps = stdout.split("kb/s,")[1];
                             videofps = videofps.split('fps,')[0];
                             fps_of_simulation_video = parseInt(videofps);
-                            console.log('fps', fps_of_simulation_video);
+                            console.log('fps -----------------------\n', fps_of_simulation_video);
 
                             // set fps for trim video
                             fps_of_trim_video = (fps_of_simulation_video / simulationVideoDuration) * duration_of_trim_video;
@@ -6490,7 +6491,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                                                     /*
                                                     * Insert s3 video path in simulation_image table...
                                                     */
-                                                    InsertTrimVideoKey(req.body.image_id,uploadParams.Key).
+                                                    InsertTrimVideoKey(req.body.image_id,uploadParams.Key, fps_of_trim_video).
                                                     then(sensor_data => {
                                                         const  image_id  = req.body.image_id;
                                                         let imageData = '';
@@ -6521,7 +6522,8 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                                                             console.log('movie_link',movie_link);
                                                             res.send({
                                                                 message : "success",
-                                                                trim_video_path : movie_link
+                                                                trim_video_path : movie_link,
+                                                                fps_of_trim_video: fps_of_trim_video
                                                             })
                                                             
                                                         })
@@ -9781,54 +9783,56 @@ app.post(`${apiPrefix}getAllOrganizationsOfSensorBrand`, (req,res) =>{
                     data: []
                 })
             } else {
+                var totalSimulation = 0;
                 orgList.forEach(function (org, index) {
                     let data = org;
-                    let i = index;
                     getBrandOrganizationData2({ sensor: data.sensor, organization: data.organization })
                         .then(simulation_records => {
+                            console.log('simulation_records.length',simulation_records.length)
+                            totalSimulation += Number(simulation_records.length);
                             
-                            org["simulation_count"] = Number(simulation_records.length).toString();
-                            org["simulation_status"] = '';
-                            org["computed_time"] = '';
-                            org["simulation_timestamp"] = '';
-
-                            simulation_records.forEach(function (simulation_record, index) {
-                                simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
-                            })
-
-                            simulation_records.sort(function (b, a) {
-                                var keyA = a.date_time,
-                                    keyB = b.date_time;
-                                if (keyA < keyB) return -1;
-                                if (keyA > keyB) return 1;
-                                return 0;
-                            });
-                            
-                            if (simulation_records.length > 0) {
-                                getPlayerSimulationStatus(simulation_records[0].image_id)
-                                    .then(simulation => {
-                                        org["simulation_status"] = simulation ? simulation.status : '';
-                                        org["computed_time"] = simulation ? simulation.computed_time : '';
-                                        org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
-                                        counter++;
-                                        if (counter == orgList.length) {
-                                            res.send({
-                                                message: "success",
-                                                data: orgList
-                                            })
-                                        }
-                                    }).catch(err => {
-                                        console.log('err',err);
-                                    })
-                            } else {
-                                counter++;
-                                if (counter == orgList.length) {
-                                    res.send({
-                                        message: "success",
-                                        data: orgList
-                                    })
-                                }
+                            counter++;
+                            if (counter == orgList.length) {
+                                res.send({
+                                    message: "success",
+                                    totalSimulation: totalSimulation
+                                })
                             }
+                            // org["simulation_status"] = '';
+                            // org["computed_time"] = '';
+                            // org["simulation_timestamp"] = '';
+
+                            // simulation_records.forEach(function (simulation_record, index) {
+                            //     simulation_record['date_time'] = simulation_record.player_id.split('$')[1];
+                            // })
+
+                            // simulation_records.sort(function (b, a) {
+                            //     var keyA = a.date_time,
+                            //         keyB = b.date_time;
+                            //     if (keyA < keyB) return -1;
+                            //     if (keyA > keyB) return 1;
+                            //     return 0;
+                            // });
+                            
+                            // if (simulation_records.length > 0) {
+                                // getPlayerSimulationStatus(simulation_records[0].image_id)
+                                //     .then(simulation => {
+                                //         org["simulation_status"] = simulation ? simulation.status : '';
+                                //         org["computed_time"] = simulation ? simulation.computed_time : '';
+                                //         org["simulation_timestamp"] = simulation_records[0].player_id.split('$')[1];
+                                //         
+                                //     }).catch(err => {
+                                //         console.log('err',err);
+                                //     })
+                            // } else {
+                            //     counter++;
+                            //     if (counter == orgList.length) {
+                            //         res.send({
+                            //             message: "success",
+                            //             data: orgList
+                            //         })
+                            //     }
+                            // }
                         })
                         .catch(err => {
                             counter++
@@ -13390,6 +13394,7 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 	var brand = data.brand;
 	var type = data.type;
 	var simulation = 0;
+    console.log('res.body ------------',req.body)
 	 if(type == "Organization"){		 
 		var orgData = [];
 			  getAllOrganizationsOfSensorBrand(req.body)
@@ -13424,9 +13429,10 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 						})						
 					}) 
 				})    
-		 }else{
+	}else{
 	getAllOrganizationsOfSensorBrand1(brand)
     .then(list => {
+        console.log('list',list)
 		var playerData = [];
 		var rPlayerData = [];
 		var teamData = [];
@@ -13434,90 +13440,126 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 		var listlength1 = list.length;
 		var pstatus = false;
 		var rpstatus = false;	
+        var playerList = [];
+        var rPlayerList = [];
 		var i =0;
 		var j = 0;
          list.forEach(function (data, index) {
 			 var org_id = data.organization_id;				 
 			 if(type == "Individuals"){
-			 
-			    i = index;	
-				 var playerList = data.player_list;					
-				 var rPlayerList = data.requested_player_list;								
-				 if(playerList && playerList != undefined ){
-					 var playerListlength =playerList.length - 1;				  
-					playerList.forEach(function (pdata, index) {
-						getOrgpPlayerFromSensorDetails(pdata,org_id)
-						.then(playerdata => {
-							if(playerdata && playerdata.length >0 ){
-								playerData.push({
-									simulation: playerdata.length, 
-									player:  playerdata[0].player
-								})	
-							}
-							if(listlength == i && playerListlength == index){							
-								if(rPlayerList && rPlayerList != undefined){
-									 var rPlayerlength =rPlayerList.length - 1;
-									 rPlayerList.forEach(function (rpdata, index) {
-									console.log(rpdata);
-										getOrgpPlayerFromUser(rpdata)
-										.then(playerdata1 => {		
-										if(playerdata1 && playerdata1.length >0 ){										
-											rPlayerData.push({
-												simulation: 0, 
-												player:  playerdata1
-											})	
-										}											
-											if(listlength == i && rPlayerlength == index){
-												res.send({
-													message: "success",
-													data: playerData,
-													rPlayerData: rPlayerData
-												})	
-											}
-										})
-									})
-								 }else{
-									 res.send({
-										message: "success",
-										data: playerData,
-										rPlayerData: []
-									})	
-								 }
-							 }		
-						})			 
-					})
-				 }else{
-					 if(rPlayerList && rPlayerList != undefined){
-						 var rPlayerlength =rPlayerList.length - 1;
-						 rPlayerList.forEach(function (rpdata, index) {
-						console.log(rpdata);
-							getOrgpPlayerFromUser(rpdata)
-							.then(playerdata1 => {					
-								if(playerdata1 && playerdata1.length >0 ){									
-											rPlayerData.push({
-												simulation: 0, 
-												player:  playerdata1
-											})	
-										}								
-								if(listlength == i && rPlayerlength == index){
-									res.send({
-										message: "success",
-										data: [],
-										rPlayerData: rPlayerData
-									})	
-								}								
-							})	
-						})
-					 }	else{
-						 res.send({
-							message: "success",
-							data: [],
-							rPlayerData: []
-						})	
-					 }
-				 }			 
+                
+                if(data.player_list){
+                    for(var k =0; k < data.player_list.length; k++){
+                        playerList.push({player_id : data.player_list[k],org_id: org_id});
+                    }
+                }
+
+                if(data.requested_player_list){
+                    for(var k =0; k < data.requested_player_list.length; k++){
+                        rPlayerList.push(data.requested_player_list[k]);
+                    } 	
+                }				
+                console.log(i, listlength)
+                if(listlength == i){
+                    console.log('playerList',playerList)
+                    console.log('requested_player_list',rPlayerList)
+
+                    if(playerList && playerList != undefined && playerList.length > 0){
+                        var playerListlength =playerList.length - 1;	
+                        var p = 0;			  
+                       playerList.forEach(function (pdata, index) {
+                           getOrgpPlayerFromSensorDetails(pdata.player_id, pdata.org_id)
+                           .then(playerdata => {
+                            //    console.log('playerdata',playerdata)
+                               if(playerdata && playerdata.length >0 ){
+                                   playerData.push({
+                                       simulation: playerdata.length, 
+                                       player:  playerdata[0].player
+                                   })	
+                               }
+                               if( playerListlength == p){	
+                                   console.log('player list exucuted ................');						
+                                   if(rPlayerList && rPlayerList != undefined){
+                                        var rPlayerlength =rPlayerList.length - 1;
+                                        var r = 0;
+                                        rPlayerList.forEach(function (rpdata, index) {
+                                            console.log(rpdata);
+                                            getOrgpPlayerFromUser(rpdata)
+                                            .then(playerdata1 => {		
+                                                if(playerdata1 && playerdata1.length >0 ){										
+                                                    rPlayerData.push({
+                                                        simulation: 0, 
+                                                        player:  playerdata1
+                                                    })	
+                                                }											
+                                                if(rPlayerlength == r){
+                                                    console.log('Request player list exucuted ................');
+                                                    res.send({
+                                                        message: "success",
+                                                        data: playerData,
+                                                        rPlayerData: rPlayerData
+                                                    })	
+                                                }
+                                                r++;
+                                            }).catch(err=>{
+                                                console.log('err request player -----------------\n',err);
+                                                r++;
+                                            })
+                                        })
+                                    }else{
+                                        res.send({
+                                           message: "success",
+                                           data: playerData,
+                                           rPlayerData: []
+                                       })	
+                                    }
+                                }	
+                                p++;	
+                           }).catch(err=>{
+                                p++;
+                               console.log('err player data -----------------------------\n',err)
+                           })			 
+                       })
+                    }else{
+                        if(rPlayerList && rPlayerList != undefined){
+                            var rPlayerlength =rPlayerList.length - 1;
+                            var r = 0;
+                            rPlayerList.forEach(function (rpdata, index) {
+                               getOrgpPlayerFromUser(rpdata)
+                               .then(playerdata1 => {					
+                                   if(playerdata1 && playerdata1.length >0 ){									
+                                        rPlayerData.push({
+                                            simulation: 0, 
+                                            player:  playerdata1
+                                        })	
+                                    }								
+                                   if(rPlayerlength == i && rPlayerlength == index){
+                                       res.send({
+                                           message: "success",
+                                           data: [],
+                                           rPlayerData: rPlayerData
+                                       })	
+                                   }
+                                   r++;							
+                               }).catch(err=>{
+                                   r++
+                               })
+                           })
+                        }	else{
+                            res.send({
+                               message: "success",
+                               data: [],
+                               rPlayerData: []
+                           })	
+                        }
+                    }	
+
+                }
+                i ++;							
+						 
 			}
-			 if(type == "Team"){
+            // for team ...
+			if(type == "Team"){
 				var teamname = data.team_name;
 				getOrgpTeamFromSensorDetails(teamname,org_id)
 				.then(teamdata => {	
@@ -13542,16 +13584,17 @@ app.post(`${apiPrefix}getplayerlistoforg`, (req, res) => {
 						})	
 					}								
 				})	
-			 }
+			}
 		})		
 		
     }).catch(err => {
+        console.log('err -------------- listorg \n',err)
             res.send({
                 message : "failure",
-                error : "error"
+                error : err
             })
         })  
-		}	
+	}	
 })
 
 
