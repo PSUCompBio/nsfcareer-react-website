@@ -1610,7 +1610,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     var trim_video_url = '';
     var fps_of_trim_video = 29.7;
     let status = 'pending';
-
+    console.log('getBrainSimulationMovie --------------',req.body)
     getSimulationImageRecord(image_id)
     .then(image_data => {
         imageData = image_data;
@@ -1659,11 +1659,11 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
             log_stream_name: imageData.log_stream_name,
             video_lock_time_2: imageData.video_lock_time_2 ? imageData.video_lock_time_2 : '',
             account_id: imageData.account_id ? imageData.account_id : '',
-            fps_of_trim_video: imageData.fps_of_trim_video.toFixed(2) ? imageData.fps_of_trim_video : fps_of_trim_video
+            fps_of_trim_video: imageData.fps_of_trim_video ? imageData.fps_of_trim_video : fps_of_trim_video
         })
     })
     .catch(err => {
-        console.log(err);
+        console.log('getSimulationImageRecord -----------------\n',err);
         if("authorized" in err){
             res.send({
                 message : "failure",
