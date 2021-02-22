@@ -906,16 +906,16 @@ class CommanderTeamView extends React.Component {
                                                                 <td>
                                                                     {this.getUrl(player.simulation_data[0]['user_data'])}
                                                                 </td>
-                                                                <td>
 																 {this.state.editablestate  ?
 																	<>
+                                                                <td>
 																	   <span className="delete-user-box" >
 																			<i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(player.simulation_data[0]['user_data']) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
 																		</span>
+                                                                </td>
 																	</>
                                                                 : null
 																}
-                                                                </td>
                                                             </React.Fragment>
                                                         }
                                                     </tr>;
@@ -996,16 +996,16 @@ class CommanderTeamView extends React.Component {
                                                                 <td>
                                                                     {this.getUrl(r_player)}
                                                                 </td>
-                                                                <td>
 															 {this.state.editablestate  ?
                                                                   <>
+                                                                <td>
 																	  <span className="delete-user-box" >
 																			<i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(r_player) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
 																		</span>
+                                                                </td>
 																	</>
                                                                 : null 
 																}
-                                                                </td>
                                                             </React.Fragment>
                                                         }
                                                     </tr>

@@ -170,6 +170,19 @@ class ToolKit extends React.Component {
 				<div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{ marginBottom: '50px', minHeight: '600px' }}>
 					<div className="container">
 						<p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate nav-p">{this.props.location.state.brand.brand}</p>
+						<button className="btn  btn-primary" style={{ margin: '10px 14px'}}
+							onClick={(e) => {
+								this.props.history.push({
+									pathname: '/OrganizationAdmin',
+									state: {
+										brand: {
+										brand: this.props.location.state.brand.brand,
+										user_cognito_id: this.props.location.state.brand.user_cognito_id
+									}
+									}
+								})
+							}}>&lt; Back 
+						</button>
 						<h1 className="top-heading__login" style={{ textAlign: 'center', color: 'black' }}>Brain Strain Machine Learning ToolKit</h1>
 						<div className="backbutton11" style={{ position: 'relative' }}>
 							<h3 style={{ textAlign: 'left', color: 'black', fontWeight: "700", fontSize: "22px", paddingTop: "50px" }}>Initiate Machine Learning Model Training</h3>
@@ -204,6 +217,10 @@ class ToolKit extends React.Component {
 								<thead style={{ background: "#0a4f86", color: "#ffffff" }} >
 									<tr>
 										<th style={{ border: "1px solid #ffffff" }} scope="col">Available {this.state.selectedvalue}</th>
+										{this.state.isplayerlist && this.state.playerlist ?
+										<th style={{ border: "1px solid #ffffff" }} scope="col">Sensor ID</th>
+										: null
+										}
 										<th style={{ border: "1px solid #ffffff" }} scope="col">Total Events</th>
 										<th style={{ border: "1px solid #ffffff" }} scope="col">Include? </th>
 									</tr>
@@ -215,6 +232,7 @@ class ToolKit extends React.Component {
 											console.log('checkign status', player)
 											return <tr style={{ background: "#ccc3c3c3", color: "#000000" }} >
 												<td style={{ border: "1px solid #ffffff" }}>{player["player"]["first-name"]} {player["player"]["last-name"]}</td>
+												<td style={{ border: "1px solid #ffffff" }}>{player["player"]["sensor-id"]} </td>
 												<td style={{ border: "1px solid #ffffff" }}>{player.simulation}</td>
 												<td style={{ textAlign: "center", border: "1px solid #ffffff" }}><input type="checkbox" value="1" name="include" /></td>
 											</tr>;
@@ -223,6 +241,7 @@ class ToolKit extends React.Component {
 											console.log('checkign status', r_player["player"][0])
 											return <tr style={{ background: "#ccc3c3c3", color: "#000000" }} >
 												<td style={{ border: "1px solid #ffffff" }}>{r_player["player"][0]["first_name"]} {r_player["player"][0]["last_name"]}</td>
+												<td style={{ border: "1px solid #ffffff" }}>{r_player["player"][0]["sensor_id_number"]}</td>
 												<td style={{ border: "1px solid #ffffff" }}>{r_player.simulation}</td>
 												<td style={{ textAlign: "center", border: "1px solid #ffffff" }}><input type="checkbox" value="1" name="include" /></td>
 											</tr>;

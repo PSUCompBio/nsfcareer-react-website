@@ -9183,48 +9183,56 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                         if(valueMps){
                                             valueMps =   valueMps.sort(function(a, b){return b-a});
                                         }
-                                        console.log('valueCsdm15',valueCsdm15)
-                                        console.log('valueMps',valueMps)
-
-                                        let reportData = {
-                                            reportDate: getDateInFormat(),
-                                            csdm15: csdm15 == 'true' ?  '': 'display: none',
-                                            mps: mps == 'true' ?  '': 'display: none',
-                                            iscsdm: csdm15 == 'true' ?  '': 'display: none',
-                                            iscmps: mps == 'true'   ? csdm15 != 'true' ? 'display: none' : '': 'display: none',
-                                            iscmps1:  csdm15 != 'true' ?  '': 'display: none',
-                                            player: acceleration_data_list[0].sensor_data.player,
-                                            impact_date: acceleration_data_list[0].sensor_data['impact-date'] ? getDate(acceleration_data_list[0].sensor_data['impact-date'].replace(/:|-/g, "/")) : acceleration_data_list[0].sensor_data['date'] ? getDate(acceleration_data_list[0].sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
-                                            scdmTranglePostion: scdmTranglePostion,
-                                            mpsTranglePostion: mpsTranglePostion,
-                                            valueCsdm15: valueCsdm15,
-                                            valueMps: valueMps,
-                                        }
-
-                                        // Modyfying pdf template using ejs ...
-                                        ejs.renderFile(path.join(__dirname, './views/', "report-template.ejs"), reportData, (err, data) => {
-                                            if (err) {
-                                                res.send(err);
-                                            } else {
-                                                let options = {
-                                                    "format": "Letter",
-                                                };
-                                                pdf.create(data, options).toBuffer(function(err, buffer){
-                                                    if (err) {
-                                                        res.send(err);
-                                                    } else {
-                                                        var jsfile = buffer.toString('base64');
-                                                        res.writeHead(200, {
-                                                            'Content-Type': 'application/pdf',
-                                                            'Content-Disposition': 'attachment; filename="filename.pdf"'
-                                                        });
-                                                        // res.header('content-type', 'application/pdf');
-                                                        const download = Buffer.from(jsfile.toString('utf-8'), 'base64');
-                                                        res.end(download);
-                                                    }
-                                                });
-                                            }
-                                        })
+										var player_id = acceleration_data_list[0].sensor_data.player_id;
+										var player_id = player_id.split("$");
+                                        console.log('player',player_id);
+										getUserDetailByPlayerId(player_id[0])
+										.then(userData => {	
+											 if(userData && userData.length >0 ){
+													let reportData = {
+													reportDate: getDateInFormat(),
+													csdm15: csdm15 == 'true' ?  '': 'display: none',
+													mps: mps == 'true' ?  '': 'display: none',
+													iscsdm: csdm15 == 'true' ?  '': 'display: none',
+													iscmps: mps == 'true'   ? csdm15 != 'true' ? 'display: none' : '': 'display: none',
+													iscmps1:  csdm15 != 'true' ?  '': 'display: none',
+													player: acceleration_data_list[0].sensor_data.player,
+													impact_date: acceleration_data_list[0].sensor_data['impact-date'] ? getDate(acceleration_data_list[0].sensor_data['impact-date'].replace(/:|-/g, "/")) : acceleration_data_list[0].sensor_data['date'] ? getDate(acceleration_data_list[0].sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
+													scdmTranglePostion: scdmTranglePostion,
+													mpsTranglePostion: mpsTranglePostion,
+													valueCsdm15: valueCsdm15,
+													valueMps: valueMps,
+													userData: userData[0],
+												}
+												// Modyfying pdf template using ejs ...
+												ejs.renderFile(path.join(__dirname, './views/', "report-template.ejs"), reportData, (err, data) => {
+													if (err) {
+														res.send(err);
+													} else {
+												console.log('reportData',reportData.userData.sensor_id_number)
+												console.log('data',data)
+														let options = {
+															"format": "Letter",
+														};
+														pdf.create(data, options).toBuffer(function(err, buffer){
+															if (err) {
+																res.send(err);
+															} else {
+																var jsfile = buffer.toString('base64');
+																res.writeHead(200, {
+																	'Content-Type': 'application/pdf',
+																	'Content-Disposition': 'attachment; filename="filename.pdf"'
+																});
+																// res.header('content-type', 'application/pdf');
+																const download = Buffer.from(jsfile.toString('utf-8'), 'base64');
+																res.end(download);
+															}
+														});
+													}
+												})
+											 }						
+										})	
+                                        
                                         
                                     }
 
