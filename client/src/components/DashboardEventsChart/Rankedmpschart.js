@@ -24,19 +24,16 @@ const options = {
             },
             id: 'A',
             position: 'left',
-            ticks: {
-				beginAtZero: true,
-				min: 0,
-				stepSize: 0.10,
-				max: 0.4
-            }
+         
         }],
         xAxes: [{
 
             scaleLabel: {
                 display: true,
                 labelString: 'Element ID'
-            }
+            },
+       
+
         }]
     }
 };
@@ -44,6 +41,8 @@ const options = {
 class Rankedmpschart extends React.Component {
     constructor(props) {
         super(props);
+        var points =  this.props.data;
+        points.sort(function(a, b){return a- b})
         this.state = {
             data: {
 				labels: [0, 0.1,0.2,0.3,0.4],
@@ -55,7 +54,7 @@ class Rankedmpschart extends React.Component {
 					borderColor: '#88DD88',
 					pointRadius: 5,
 					fill: false,
-					data: this.props.data.datasets,
+					data: points,
 				}]
 
             },
@@ -71,9 +70,10 @@ class Rankedmpschart extends React.Component {
         };
     }*/
 
+    
     render() {
         console.log("this.state.data ------------------------\n",this.props.data);
-		
+
         return (
             <div className="brain-card-pt-2-5 row pl-4 pr-4 pb-4 dark-bg text-center ">
                 <div className="bran-smiulation-dash-chart">

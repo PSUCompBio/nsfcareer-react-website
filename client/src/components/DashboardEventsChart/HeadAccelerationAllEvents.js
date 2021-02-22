@@ -143,11 +143,13 @@ class HeadAccelerationAllEvents extends React.Component {
 			playerid = playerid.split("$");
 			getUserDataByPlayerID({ playerid: playerid[0]})
 			.then(response1 => {
-				response.data.data.jsonOutputFile["playerdata"] =  response1.data.data[0];
-				console.log('playerdata ----\n', response.data.data)
-				 this.setState({
-					simulationData: response.data.data,
-				});
+                if(response.data.data.jsonOutputFile && response.data.data.jsonOutputFile != undefined){
+                    response.data.data.jsonOutputFile["playerdata"] =  response1.data.data[0];
+                    console.log('playerdata ----\n', response.data.data)
+                    this.setState({
+                        simulationData: response.data.data,
+                    });
+                }
 			})
             
         })

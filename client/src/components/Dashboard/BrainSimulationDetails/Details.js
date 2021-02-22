@@ -138,6 +138,7 @@ class Details extends React.Component {
       isLoading: true,
       framesRateSimulationVideo: '',
       framesRateSidelineVideo: '',
+      msp_dat_data: ''
     };
   }
 
@@ -1202,8 +1203,8 @@ class Details extends React.Component {
 
                     </div>
                     <div className="col-md-12" style={{ 'display': this.state.showPMS }}>
-                      {this.state.PMSarray1 &&
-                        <Rankedmpschart data={this.state.PMSarray1} />
+                      {this.state.msp_dat_data &&
+                        <Rankedmpschart data={this.state.msp_dat_data} />
                       }
 
                     </div>
@@ -1278,19 +1279,21 @@ class Details extends React.Component {
               })
               getBrainSimulationMovie(this.state.image_id).then((response) => {
                 console.log('movie_link', response)
-                this.setState({
-                  movie_link: response.data.movie_link,
-                  simulation_id: response.data.simulation_id && response.data.simulation_id !== null ? response.data.simulation_id.split("/")[2] : 'NA',
-                  impact_video_url: response.data.impact_video_url,
-                  motion_link_url: response.data.motion_link_url,
-                  left_lock_time: response.data.left_lock_time,
-                  right_lock_time: response.data.right_lock_time,
-                  video_lock_time_2: response.data.video_lock_time_2,
-                  trim_video_url: response.data.trim_video_url,
-                  simulationStatus: response.data.status,
-                  log_stream_name: response.data.log_stream_name,
-                  framesRateSidelineVideo: response.data.fps_of_trim_video.toFixed(2)
-                });
+                if(response.data){
+                  this.setState({
+                    movie_link: response.data.movie_link,
+                    simulation_id: response.data.simulation_id && response.data.simulation_id !== null ? response.data.simulation_id.split("/")[2] : 'NA',
+                    impact_video_url: response.data.impact_video_url,
+                    motion_link_url: response.data.motion_link_url,
+                    left_lock_time: response.data.left_lock_time,
+                    right_lock_time: response.data.right_lock_time,
+                    video_lock_time_2: response.data.video_lock_time_2,
+                    trim_video_url: response.data.trim_video_url,
+                    simulationStatus: response.data.status,
+                    log_stream_name: response.data.log_stream_name,
+                    framesRateSidelineVideo: response.data.fps_of_trim_video && response.data.fps_of_trim_video !== null ? response.data.fps_of_trim_video.toFixed(2) : 27.9
+                  });
+                }
 
                 if (response.data.account_id) {
                   this.setState({
@@ -1305,6 +1308,7 @@ class Details extends React.Component {
                 getCumulativeAccelerationTimeRecords({ organization: organization, player_id: this.state.player_id, team: team })
                   .then(res => {
                     var PMSarray = res.data.PMSarray;
+                    var msp_dat_data = res.data.msp_dat_data;
                     var PMSarray1 = [];
                     PMSarray1["datasets"] = [];
                     PMSarray.forEach(async (i) => {
@@ -1312,8 +1316,6 @@ class Details extends React.Component {
                         PMSarray1["datasets"].push(i);
                       }
                     });
-                    PMSarray1["labels"] = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6];
-                    console.log(PMSarray1);
                     if (res.data.message !== "failure") {
                       console.log('success')
                       this.setState({
@@ -1321,7 +1323,8 @@ class Details extends React.Component {
                         PMSarray1: PMSarray1,
                         isLoaded: true,
                         isAuthenticated: true,
-                        isCheckingAuth: true
+                        isCheckingAuth: true,
+                        msp_dat_data: msp_dat_data
                       })
                       console.log(PMSarray1);
                       console.log('PMSarray1', this.state.PMSarray1);
@@ -1342,11 +1345,12 @@ class Details extends React.Component {
                     });
                   })
               }).catch((error) => {
-                this.setState({
-                  isLoaded: true,
-                  userDetails: {},
-                  isCheckingAuth: false
-                });
+                console.log('error --------------------',error)
+                // this.setState({
+                //   isLoaded: true,
+                //   userDetails: {},
+                //   isCheckingAuth: false
+                // });
               });
             }).catch((error) => {
               this.setState({

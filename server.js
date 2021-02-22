@@ -31,6 +31,8 @@ var nodemailer = require('nodemailer');
 let ejs = require("ejs");
 let pdf = require("html-pdf");
 let csvjson = require('csvjson');
+const csvparser = require("csvtojson");
+
 
 app.use(express.static(path.resolve('./public')));
 // var transporter = nodemailer.createTransport({
@@ -1608,9 +1610,9 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
     var movie_link_url = '';
     var motion_movie_link_url = '';
     var trim_video_url = '';
-    var fps_of_trim_video = 29.7;
+    var fps_of_trim_video = '';
     let status = 'pending';
-    console.log('getBrainSimulationMovie --------------',req.body)
+    console.log('getBrainSimulationMovie --------------', req.params)
     getSimulationImageRecord(image_id)
     .then(image_data => {
         imageData = image_data;
@@ -6376,15 +6378,19 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
             })
         })
     });
-    
-    const writeTextfile = (list)=>{
+    function timeout(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    async function writeTextfile (list) {
         console.log('list',list);
-        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, (error, stdout, stderr) => {
+        exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, async  (error, stdout, stderr) => {
             console.log('video trimed done 1 ---------------------------')
             let fps_of_simulation_video = 0;  
             simulationVideoDuration = simulationVideoDuration;
             let duration_of_trim_video = 0;
             let fps_of_trim_video = 29;
+            await timeout(4000);
+            console.log('simulationVideoDuration --------------------------\n',simulationVideoDuration)
             exec(`ffmpeg -i ${outputFilePath} 2>&1 | find "Duration"`, (error, stdout, stderr) => {
                 if(error){
                     console.log(`error: ${error.message}`);
@@ -6566,144 +6572,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                     })
                 }
                 
-            })
-
-            // })
-            // if (error) {
-            //     console.log(`error: ${error.message}`);
-            //     list.forEach(file => {
-            //         fs.unlinkSync(file)                    
-            //     });
-            //     res.send({
-            //         message: 'faiure',
-            //         error: error.message
-            //     });
-            // }
-            // else{
-            //     console.log("videos are successfully merged");
-            //     /*-- Delete all generated files --*/
-            //     list.forEach(file => {
-            //         fs.unlinkSync(file)                    
-            //     });
-            //     var bufs = [];
-            //     var readableStream = fs.createReadStream(outputFilePath);
-            //     readableStream.on('data', function(chunk) {
-            //         bufs.push(chunk); 
-            //     });
-            //     readableStream.on('end', function(){
-            //         var buf = Buffer.concat(bufs);
-            //         console.log('stream end', buf)
-            //         var uploadParams = {
-            //             Bucket: config.usersbucket,
-            //             Key: '', // pass key
-            //             Body: null, // pass file body
-            //         };
-            //         getSimulationImageRecord(image_id)
-            //         .then(data => {
-
-            //             /*
-            //             * Remove trim video from s3 if already exists before trim...
-            //             */
-            //             removes3Object(data.trim_video_path)
-            //             .then(response =>{
-            //                 console.log('Trim video removed successfully =================================')
-            //             })
-            //             /*--end--*/
-
-            //             // File Extensions
-            //             let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
-            //             var d = new Date();
-            //             console.log(d.toLocaleDateString('pt-PT'));
-            //             d = d.toLocaleDateString('pt-PT');
-            //             var date = d.replace("/", "-");
-            //             date = date.replace("/", "-");
-            //             console.log('date',date);
-            //             // Setting Attributes for file upload on S3
-            //             uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
-            //             // console.log('req.file.buffer', req.file.buffer)
-            //             uploadParams.Body = buf;
-                        
-            //             s3.upload(uploadParams, (err, data) => {
-            //                 if (err) {
-            //                     console.log('======errr \n',err)
-            //                     res.send({
-            //                         message: "failure",
-            //                         data: err
-            //                     });
-                               
-            //                 }else{
-            //                     /*-- Unlink trimed video from directory --*/
-            //                     fs.unlinkSync(outputFilePath)
-
-            //                     /*
-            //                     * Insert s3 video path in simulation_image table...
-            //                     */
-            //                     InsertTrimVideoKey(req.body.image_id,uploadParams.Key).
-            //                     then(sensor_data => {
-            //                         const  image_id  = req.body.image_id;
-            //                         let imageData = '';
-
-            //                         /*
-            //                         * Getting image simulation image record from simulation_image table...
-            //                         */
-            //                         getSimulationImageRecord(image_id)
-            //                         .then(image_data => {
-            //                             console.log('image_data -----------------------------------\n',image_data)
-            //                             imageData = image_data;
-            //                             return verifyImageToken(imageData['token'], image_data);
-            //                         })
-            //                         .then(decoded_token => {
-            //                             // console.log('decoded_token',decoded_token)
-            //                             return getPlayerCgValues(imageData.player_name);
-            //                         })
-            //                         .then(cg_coordinates => {
-            //                             // Setting cg values
-            //                             // console.log("cg_coordinates",cg_coordinates)
-            //                             if(cg_coordinates) {
-            //                               imageData["cg_coordinates"] = cg_coordinates;
-            //                             }
-            //                             return trimVideoUrl(imageData);
-            //                         })
-            //                         .then(movie_link => {
-            //                             // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
-            //                             console.log('movie_link',movie_link);
-            //                             res.send({
-            //                                 message : "success",
-            //                                 trim_video_path : movie_link
-            //                             })
-                                        
-            //                         })
-            //                         .catch(err => {
-            //                             console.log(err);
-            //                             // res.removeHeader('X-Frame-Options');
-            //                             // if(err.message == 'The provided key element does not match the schema'){
-            //                                 res.send({
-            //                                     message: "failure",
-            //                                     data: err
-            //                                 });
-            //                             // }
-            //                         })
-            //                     })
-            //                     .catch(err => {
-            //                        console.log('err',err)
-            //                         res.send({
-            //                             message: "failure",
-            //                             data: err
-            //                         });
-            //                     })
-            //                 }
-            //             })
-            //         }).catch(err => {
-            //            console.log('err',err)
-            //             res.send({
-            //                 message: "failure",
-            //                 data: err
-            //             });
-            //         })
-
-            //     })
-            // }
-            
+            });  
         })
     }
 })
@@ -8036,54 +7905,52 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                 let accData = acc_data;
                 let imageData = '';
                 let outputFile = '';
-                let jsonOutputFile = '';
-                let simulationImage = '';
+                let mpsRankedDataObj = [];
                 getPlayerSimulationFile(acc_data)
                 .then(image_data => {
                     imageData = image_data;
                     console.log(acc_index, imageData.player_name);
                     if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
-                        console.log(imageData.player_name + '/simulation/summary.json');
                         let file_path = imageData.player_name + '/simulation/summary.json';
                         return getFileFromS3(file_path, imageData.bucket_name);
                     }
                 })
                .then(output_file => {
-                    if (output_file)
+                    if (output_file){
                         outputFile = output_file;
-                    // if (imageData.path && imageData.path != 'null') {
-                    //     return getFileFromS3(imageData.path, imageData.bucket_name);
-                    // } else {
-                    //     if (imageData.root_path && imageData.root_path != 'null') {
-                    //         let image_path = imageData.root_path + imageData.image_id + '.png';
-                    //         return getFileFromS3(image_path, imageData.bucket_name);
-                    //     }
-                    // }
-                })
-                .then(image_s3 => {
-                    // if (image_s3) {
-                    //     return getImageFromS3Buffer(image_s3);
-                    // }
-                })
-                .then(image => {
-                    simulationImage = image;
-
-                    // if (imageData.ouput_file_path && imageData.ouput_file_path != 'null') {
-                    //     let file_path = imageData.ouput_file_path;
-                    //     file_path = file_path.replace(/'/g, "");
-                    //     return getFileFromS3(file_path, imageData.bucket_name);
-                    // } else {
-                    //     if (imageData.root_path && imageData.root_path != 'null') {
-                    //         let summary_path = imageData.root_path + imageData.image_id + '_output.json';
-                    //         summary_path = summary_path.replace(/'/g, "");
-                    //         console.log('summary_path',summary_path)
-                    //         return getFileFromS3(summary_path, imageData.bucket_name);
-                    //     }
-                    // }
-                }).then(json_output_file => {
-                    if (json_output_file){
-                        jsonOutputFile = JSON.parse(json_output_file.Body.toString('utf-8'));
                     }
+
+                    if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
+                        let pathMpsDatfile = imageData.player_name + '/simulation/'+imageData.image_id+'/MPSfile.dat';
+                        return getFileFromS3(pathMpsDatfile, imageData.bucket_name);
+                    }
+                })
+                .then(mps_dat_output => {
+                    let msp_dat_data = [];
+                    if(mps_dat_output){
+                    // var mps_dat_output_data = JSON.parse(mps_dat_output.Body.toString('base64'));
+                        var enc = new TextDecoder("utf-8");
+                        var arr = new Uint8Array(mps_dat_output.Body);
+                        var objdata = enc.decode(arr);
+                        mpsRankedDataObj = objdata.split("\n");
+                        console.log('data exucuted');
+                        for(var i = 0; i < mpsRankedDataObj.length; i++){
+                            let val = mpsRankedDataObj[i].split(",");
+                            val = parseFloat(val[1]);
+                            if(val.toFixed(2) !== '0.00') msp_dat_data.push(val.toFixed(2));
+                        }
+                    }
+                        // var buffer = buffer = Buffer.from(mps_dat_output.body, 'base64');;
+                    // console.log('buffer --',buffer)
+                  
+                //     var buffer = newBuffer('Hello world');
+                // var string = buffer.toString('base64');
+                    // csvparser()
+                    // .fromString(mps_dat_output.body.toString())
+                    // .then(data => {
+                    //     console.log('data ---------------------------------\n',data)
+                    // })
+                    console.log('wrking for other')
                     // X- Axis Linear Acceleration
                     let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
                     // X- Axis Angular Acceleration
@@ -8102,9 +7969,6 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                         linear_acceleration: linear_acceleration,
                         angular_acceleration: angular_acceleration,
                         time: time,
-                        simulation_image: simulationImage ? simulationImage : '',
-                        jsonOutputFile: jsonOutputFile ? jsonOutputFile : '',
-                        //simulation_output_data: outputFile ? JSON.parse(outputFile.Body.toString('utf-8')) : '',
                         timestamp: accData.date,
                         record_time: accData.time,
                         sensor_data: accData,
@@ -8204,6 +8068,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                             data: acceleration_data_list,
                             brainRegions: brainRegions,
                             PMSarray: PMSarray,
+                            msp_dat_data: msp_dat_data
                             // frontal_Lobe: frontal_Lobe,
                         })
                     }
