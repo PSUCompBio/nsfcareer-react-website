@@ -320,7 +320,7 @@ class ExportCustomReport extends React.Component {
                 borderLeftWidth: 0,
                 borderTopWidth: 0,
                 display : 'inline-block',
-                width : '50%',
+                width : '40%',
                 float : 'left',
                 flexDirection : 'column',
                 color : 'grey',
@@ -503,6 +503,19 @@ class ExportCustomReport extends React.Component {
                 borderTopWidth: 0,
                 display: 'inline-block',
                 width: '30%',
+                float: 'left',
+                flexDirection: 'column',
+                color: 'grey',
+                fontSize: 10,
+                textAlign: 'left'
+            },
+            tableColLeft20: {
+                borderStyle: "solid",
+                borderWidth: 0,
+                borderLeftWidth: 0,
+                borderTopWidth: 0,
+                display: 'inline-block',
+                width: '20%',
                 float: 'left',
                 flexDirection: 'column',
                 color: 'grey',
@@ -1184,12 +1197,25 @@ class ExportCustomReport extends React.Component {
                         </Text>
 
                         <View style={styles.tableRow}>
-                            <Text style={styles.tableColLeft}> DOB : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].dob?this.state.jsonData['playerdata'].dob:"N/A"}</Text></Text>
                             <Text style={styles.tableColLeftfull}> Report Date Range : <Text style={{ color: '#2d549a' }}> {this.state.impact_date}</Text> - <Text style={{ color: '#2d549a' }}> {this.getDateInFormat()} </Text> </Text>
+                            <Text style={styles.tableColLeft20}> DOB : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].dob?this.state.jsonData['playerdata'].dob:"N/A"}</Text></Text>
+                            <Text style={styles.tableColRight}> Sensor ID : 
+								{this.state.jsonData['playerdata'].sensor_id_number ?
+									<>
+										<Text style={{ color: '#2d549a' }}>
+											{this.state.jsonData['playerdata'].sensor_id_number} ( {this.state.jsonData['playerdata'].sensor} )
+										</Text>
+									</>
+								: 
+									<>
+										<Text style={{ color: '#2d549a' }}>{ "N/A"}</Text>
+									</>
+								} 
+							</Text>
                         </View>
                         <View style={styles.tableRow}>
-                            <Text style={styles.tableColLeft}> Sex : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"}  </Text></Text>
-                            <Text style={styles.tableColLeft}> Team : <Text style={{ color: '#2d549a' }}> {this.state.data['team']} </Text> </Text>
+                            <Text style={styles.tableColLeftfull}> Team : <Text style={{ color: '#2d549a' }}> {this.state.data['team']} </Text> </Text>
+                            <Text style={styles.tableColLeft20}> Sex : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"}  </Text></Text>
                             <Text style={styles.tableColRight}> Organization : <Text style={{ color: '#2d549a' }}>{this.state.data['organization']} </Text></Text>
 
                         </View>
@@ -1336,7 +1362,7 @@ class ExportCustomReport extends React.Component {
                                             <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                             <Text style={styles.tableColLeft4}></Text>
                                         </View>
-                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% strain.</Text>
+                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% MPS-15 strain.</Text>
                                     </View>
                                 </View>
                                 <View style={styles.col12}>
@@ -1482,7 +1508,7 @@ class ExportCustomReport extends React.Component {
                                             <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                             {/*<Text style={styles.tableColLeft4}>95</Text>*/}
                                         </View>
-                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15% strain.</Text>
+                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15%  MPS-15 strain.</Text>
                                     </View>
                                 </View>
                                 <View style={styles.col12}>

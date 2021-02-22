@@ -66,6 +66,30 @@
             font-weight: 600;
         }
 
+        .impact-deatils1 {
+            width: 40%;
+            float: left;
+            margin-top: 6px;
+            color: gray;
+            font-family: sans-serif;
+            font-size: 15px;
+        }
+        .impact-deatils2 {
+            width: 20%;
+            float: left;
+            margin-top: 6px;
+            color: gray;
+            font-family: sans-serif;
+            font-size: 15px;
+        }
+        .impact-deatils3 {
+            width: 30%;
+            float: left;
+            margin-top: 6px;
+            color: gray;
+            font-family: sans-serif;
+            font-size: 15px;
+        }
         .impact-deatils {
             width: 33%;
             float: left;
@@ -368,16 +392,16 @@
                 <%= player['first-name'] %> <%= player['last-name'] %>
             </div>
             <!-- impact deatils -->
-            <div class="impact-deatils">
-                DOB: N/A<br />
-                Sex: N/A
-            </div>
-            <div class="impact-deatils">
-                Report Date Range: All Time<br />
+            <div class="impact-deatils1">
+                Report Date Range: <%= impact_date %> - <%= reportDate %><br />
                 Team: <%= player.team %>
             </div>
+            <div class="impact-deatils2">
+                DOB:<%= userData.dob?userData.dob:"N/A" %><br />
+                Sex: <%= userData.gender?userData.gender:"N/A"; %>
+            </div>
             <div class="impact-deatils">
-                <br />
+                Sensor ID: <%= userData.sensor_id_number %> (<%= userData.sensor %>)<br />
                 Organization: <%= player.organization %>
             </div>
             <!-- impact deatils end-->
@@ -549,7 +573,7 @@
             <!-- top -->
             <div class="body-top">
                 <h3>0% of brain tissue has exceeded MPS-15</h3>
-                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% strain.                    
+                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% MPS-15 strain.                    
                 </p>
             </div>
 
@@ -674,7 +698,7 @@
          <div class="containder" style="<%= iscmps%>">
             <div class="body-top">
                 <h3>0% of brain tissue has exceeded MPS-15</h3>
-                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is  compressed. This reports the volume of tissue above 15% strain.
+                <p>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is  compressed. This reports the volume of tissue above 15% MPS-15 strain.
                 </p>
             </div>
             <!-- heading -->

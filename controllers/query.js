@@ -3727,7 +3727,7 @@ return new Promise((resolve, reject) => {
             ExpressionAttributeValues: {
                ":user_cognito_id": user_cognito_id
             },
-		ProjectionExpression: "user_cognito_id,first_name,last_name"
+		ProjectionExpression: "user_cognito_id,first_name,last_name,sensor_id_number"
 		
     };
      var item = [];
