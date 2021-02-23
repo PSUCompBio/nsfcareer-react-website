@@ -41,7 +41,8 @@ import {
   getSimulationDetail,
   mergeVideos,
   trimVideo,
-  resetToOriginal
+  resetToOriginal,
+  getUserDataByPlayerID,
 } from '../../../apis';
 import axios from 'axios';
 
@@ -116,6 +117,7 @@ class Details extends React.Component {
       player_id: this.props.match.params.player_id,
       cognito_user_id: this.props.match.params.cognito_user_id,
       simulation_data: '',
+      player_data: '',
       PMSarray1: '',
       simulationData: '',
       lock_video_3: false,
@@ -199,7 +201,7 @@ class Details extends React.Component {
           alert(res.data.err);
         }
       }).catch(err => {
-        console.log(err)
+        //console.log(err)
       })
   }
 
@@ -239,7 +241,7 @@ class Details extends React.Component {
         }
       })
       .catch(function (error) {
-        console.log(error)
+       // console.log(error)
       });
   }
 
@@ -258,24 +260,24 @@ class Details extends React.Component {
       _min = value.min;
       _max = value.max;
       if (min !== value.min) {
-        console.log('updating min =', value.min, min, 'max value = ', value.max, max);
+       // console.log('updating min =', value.min, min, 'max value = ', value.max, max);
         this.setState({ value: { min: value.min, max: max } })
       }
       if (max !== value.max) {
-        console.log('updating max =', value.max, max, 'min value = ', value.min, min)
+       // console.log('updating max =', value.max, max, 'min value = ', value.min, min)
 
         this.setState({ value: { min: min, max: value.max } })
       }
     } else {
-      console.log('not fist update');
+   //   console.log('not fist update');
       if (_min !== value.min) {
         _min = value.min
-        console.log('updating min =', value.min, _min, 'max value = ', value.max, _max);
+       // console.log('updating min =', value.min, _min, 'max value = ', value.max, _max);
         this.setState({ value: { min: value.min, max: _max } })
       }
       if (_max !== value.max) {
         _max = value.max;
-        console.log('updating max =', value.max, _max, 'min value = ', value.min, _min)
+        //console.log('updating max =', value.max, _max, 'min value = ', value.min, _min)
 
         this.setState({ value: { min: _min, max: value.max } })
       }
@@ -407,7 +409,7 @@ class Details extends React.Component {
           min = the.state.value['min'];
           var off_X = progressBar_2.offsetWidth * the.state.value['min'] / 100;
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
-          console.log('updating min', scrubTime);
+        //  console.log('updating min', scrubTime);
 
           if (scrubTime) {
             video.currentTime = scrubTime;
@@ -418,7 +420,7 @@ class Details extends React.Component {
           // eslint-disable-next-line
           var off_X = progressBar_2.offsetWidth * the.state.value['max'] / 100;
           const scrubTime = (off_X / progressBar_2.offsetWidth) * video.duration;
-          console.log('updating max', scrubTime);
+       //   console.log('updating max', scrubTime);
 
           if (scrubTime) {
             video.currentTime = scrubTime;
@@ -433,7 +435,7 @@ class Details extends React.Component {
         lock_percent = percent2;
       },
       setvideoTime: () => {
-        console.log('setting lock time')
+       // console.log('setting lock time')
         video.currentTime = 0;
         let total_video_duration = 0;
         let frameRate = 0;
@@ -509,7 +511,7 @@ class Details extends React.Component {
         }
       },
       lockVideo: () => {
-        console.log('clicked');
+       // console.log('clicked');
         lock_time_2 = video.currentTime;
         const percent2 = (video.currentTime / video.duration) * 100;
         lock_percent_2 = percent2;
@@ -517,7 +519,7 @@ class Details extends React.Component {
 
       },
       setvideoTime: (time) => {
-        console.log('time', time)
+       // console.log('time', time)
         video.currentTime = time
 
       },
@@ -528,6 +530,9 @@ class Details extends React.Component {
         the.setState({ framesofSimulationVideo: frameRate, framesRateSimulationVideo: 29.7 })
         the.setState({ lengthofSimulationVideo: the.getVideoTime(video.duration) })
         // },1000)
+		console.log("Video Length",this.state.lengthofSimulationVideo);
+		console.log("Video frames",this.state.framesofSimulationVideo);
+		console.log("Video Rate",this.state.framesRateSimulationVideo);
       }
     }
     if (video && this.state.video_lock_time_2) {
@@ -574,14 +579,14 @@ class Details extends React.Component {
 
     const custom_controls = {
       play: () => {
-        console.log('play');
+       // console.log('play');
         // if(the.state.controlPlayVideo){
         //   console.log('videos paused')
         //   if(video_1) video_1.pause();
         //   if(video_2) video_2.pause();
         //   the.setState({controlPlayVideo: false});
         // }else{
-        console.log('videos played')
+        //console.log('videos played')
         if (video_1) video_1.play();
         if (video_2) video_2.play();
         the.setState({ controlPlayVideo: true, controlPouseVideo: false });
@@ -627,7 +632,7 @@ class Details extends React.Component {
       // const lockButton = document.querySelector('.lock_video_3');
       let video_duration_1 = video_1.duration;
       let video_duration_2 = video_2.duration;
-      console.log('videos \n', video_1, video_2)
+     // console.log('videos \n', video_1, video_2)
       let controls = {
 
         scrub: (e) => {
@@ -646,7 +651,7 @@ class Details extends React.Component {
           if (video_duration_2 >= scrubTime) video_2.currentTime = scrubTime;
           // lock_time = video_1.currentTime;
           // lock_time_2 = video_2.currentTime;
-          console.log(video_duration_1, video_duration_2);
+          //console.log(video_duration_1, video_duration_2);
           // const scrubTime = (e.offsetX / progressBar.offsetWidth) * video.duration;
           // if(scrubTime && !the.state.video_lock_time_2){
           //   video.currentTime = scrubTime;
@@ -665,7 +670,7 @@ class Details extends React.Component {
   }
 
   repeatVideo = () => {
-    console.log('repeatVideo')
+   // console.log('repeatVideo')
     this.setState({ isRepeatVideo: this.state.isRepeatVideo ? false : true });
   }
 
@@ -694,7 +699,7 @@ class Details extends React.Component {
     this.setState({ isTriming: true })
     trimVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url, startTime: left_lock_time, endTime: right_lock_time, sideLineVideoDuration: _simulation_video_duration, movie_link: this.state.movie_link })
       .then(response => {
-        console.log('response trim video ---\n', response);
+    //    console.log('response trim video ---\n', response);
         if (response.data.message === "success") {
           this.setState({
             trim_video_url: response.data.trim_video_path,
@@ -717,7 +722,7 @@ class Details extends React.Component {
           })
         }
       }).catch(err => {
-        console.log('triming err -------\n', err)
+       // console.log('triming err -------\n', err)
         this.setState({
           label_TrimVideo: 'Failed',
           isTriming: false
@@ -741,7 +746,7 @@ class Details extends React.Component {
           left_lock_time: 0,
           right_lock_time: 0,
         })
-        console.log('res', res);
+     //   console.log('res', res);
         var the = this;
         setTimeout(() => {
           the.setState({
@@ -749,7 +754,7 @@ class Details extends React.Component {
           })
         }, 2000)
       }).catch(err => {
-        console.log('err', err)
+     //   console.log('err', err)
         this.setState({
           label_resetVideo: 'Failed',
         })
@@ -769,7 +774,7 @@ class Details extends React.Component {
   =================================*/
 
   handleExportVideo = () => {
-    console.log('wer')
+   // console.log('wer')
     this.setState({ exporting: true })
     mergeVideos({ movie_link: this.state.movie_link, impact_video_url: this.state.trim_video_url ? this.state.trim_video_url : this.state.impact_video_url })
       .then(res => {
@@ -908,12 +913,15 @@ class Details extends React.Component {
                     <>
                       <p>Name: {this.state.simulation_data ? this.state.simulation_data.sensor_data.player['first-name'] + ' ' + this.state.simulation_data.sensor_data.player['last-name'] : ''}</p>
                       <p >
-                        Account ID: {this.state.account_id}
+                        Account ID: <a target='_blank'	href={'/profile?id='+this.state.player_data.user_cognito_id}>
+							{this.state.account_id}
+							</a>
                       </p>
                       <p>
                         Simulation ID: {this.state.log_stream_name ? this.state.log_stream_name.split('/')[2] : ''}
                       </p>
                       <p>Impact ID: {this.state.simulation_data ? this.state.simulation_data.sensor_data.player['impact-id'] ? this.state.simulation_data.sensor_data.player['impact-id'] : '' : ''}</p>
+                      <p>Event ID: {this.state.image_id ? this.state.image_id : ''}</p>
                       <p>Position: {this.state.simulation_data ? this.state.simulation_data.sensor_data.player['position'] : ''}</p>
                     </>
                   }
@@ -1234,10 +1242,10 @@ class Details extends React.Component {
   }
   getPlayerUserDetails = (player_id, brand) => {
     let congito_id = player_id.split('$')[0] + '-' + brand
-    console.log('congito_id', congito_id)
+    //console.log('congito_id', congito_id)
     getUserDetails({ user_cognito_id: congito_id })
       .then(response => {
-        console.log('user details =================================\n', response)
+       // console.log('user details =================================\n', response)
         if (response.data.message === "success") {
           this.setState({
             account_id: response.data.data.account_id,
@@ -1249,7 +1257,7 @@ class Details extends React.Component {
           })
         }
       }).catch(err => {
-        console.log('err ', err)
+      //  console.log('err ', err)
         this.setState({
           isLoading: false
         })
@@ -1259,7 +1267,7 @@ class Details extends React.Component {
   componentDidMount() {
 
     const params = new URLSearchParams(window.location.search)
-    console.log('this.props.match.params.player_id', params.get('org'))
+   // console.log('this.props.match.params.player_id', params.get('org'))
     let organization = params.get('org');
     let team = params.get('t');
     let brand = params.get('brand');
@@ -1272,13 +1280,13 @@ class Details extends React.Component {
         if (value.data.message === 'success') {
           getUserDBDetails()
             .then((response) => {
-              console.log('response', response.data.data)
+             // console.log('response', response.data.data)
               this.setState({
                 user: true,
                 userDetails: response.data.data,
               })
               getBrainSimulationMovie(this.state.image_id).then((response) => {
-                console.log('movie_link', response)
+                //console.log('movie_link', response)
                 if(response.data){
                   this.setState({
                     movie_link: response.data.movie_link,
@@ -1307,6 +1315,7 @@ class Details extends React.Component {
                 this.getSimlationImage();
                 getCumulativeAccelerationTimeRecords({ organization: organization, player_id: this.state.player_id, team: team })
                   .then(res => {
+					  //console.log("simulation_data",res.data.data[0].sensor_data.player_id);
                     var PMSarray = res.data.PMSarray;
                     var msp_dat_data = res.data.msp_dat_data;
                     var PMSarray1 = [];
@@ -1317,26 +1326,33 @@ class Details extends React.Component {
                       }
                     });
                     if (res.data.message !== "failure") {
-                      console.log('success')
-                      this.setState({
-                        simulation_data: res.data.data[0],
-                        PMSarray1: PMSarray1,
-                        isLoaded: true,
-                        isAuthenticated: true,
-                        isCheckingAuth: true,
-                        msp_dat_data: msp_dat_data
-                      })
-                      console.log(PMSarray1);
-                      console.log('PMSarray1', this.state.PMSarray1);
+                      //console.log('success')
+					  var player_id = res.data.data[0].sensor_data.player_id;
+					  var player_id = player_id.split('$');
+					  getUserDataByPlayerID({ playerid: player_id[0]})
+                  .then(result => {
+					  //console.log("player_data",result.data.data[0]);
+						  this.setState({
+							simulation_data: res.data.data[0],
+							player_data: result.data.data[0],
+							PMSarray1: PMSarray1,
+							isLoaded: true,
+							isAuthenticated: true,
+							isCheckingAuth: true,
+							msp_dat_data: msp_dat_data
+						  })
+						 // console.log(PMSarray1);
+						 // console.log('PMSarray1', this.state.PMSarray1);
+						})
                     } else {
-                      console.log('error')
+                      //console.log('error')
                       this.setState({
                         isAuthenticated: false,
                         isCheckingAuth: false
                       });
                     }
                   }).catch(err => {
-                    console.log('err', err);
+                    //console.log('err', err);
                     this.setState({
                       isLoaded: true,
                       userDetails: {},
@@ -1345,7 +1361,7 @@ class Details extends React.Component {
                     });
                   })
               }).catch((error) => {
-                console.log('error --------------------',error)
+                //console.log('error --------------------',error)
                 // this.setState({
                 //   isLoaded: true,
                 //   userDetails: {},

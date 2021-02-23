@@ -9009,14 +9009,14 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                             }
                                         }
 
-                                        if(jsonData['MPS-95']){               
+                                        if(jsonData['CSDM-15']){               
                                             //eslint-disable-next-line
-                                                var num1 = jsonData['MPS-95'].cerebellum ? jsonData['MPS-95'].cerebellum.value : "0.0000";
-                                                var num2 = jsonData['MPS-95'].frontal ? jsonData['MPS-95'].frontal.value : "0.0000";
-                                                var num3 = jsonData['MPS-95'].occipital ? jsonData['MPS-95'].occipital.value : "0.0000";
-                                                var num4 = jsonData['MPS-95'].parietal ? jsonData['MPS-95'].parietal.value : "0.0000";
-                                                var num5 = jsonData['MPS-95'].temporal ? jsonData['MPS-95'].temporal.value : "0.0000";
-                                                var num6 = jsonData['MPS-95'].msc ? jsonData['MPS-95'].msc.value : "0.0000";
+                                                var num1 = jsonData['CSDM-15'].cerebellum ? jsonData['CSDM-15'].cerebellum.value : "0.0000";
+                                            var num2 = jsonData['CSDM-15'].frontal ? jsonData['CSDM-15'].frontal.value : "0.0000";
+                                            var num3 = jsonData['CSDM-15'].occipital ? jsonData['CSDM-15'].occipital.value : "0.0000";
+                                            var num4 = jsonData['CSDM-15'].parietal ? jsonData['CSDM-15'].parietal.value : "0.0000";
+                                            var num5 = jsonData['CSDM-15'].temporal ? jsonData['CSDM-15'].temporal.value : "0.0000";
+                                            var num6 = jsonData['CSDM-15'].msc ? jsonData['CSDM-15'].msc.value : "0.0000";
                                                 if(num1 !== undefined){
                                                     let mps_val1 = num1;
                                                     let mps_val2 = num2;
@@ -9044,7 +9044,7 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]),  setConnectionTimeo
                                         if(valueCsdm15){
                                             valueCsdm15 =   valueCsdm15.sort(function(a, b){return b-a});
                                         }
-                                        let valueMps = jsonData['MPS-95'].value;
+                                        let valueMps = jsonData['CSDM-15'].value;
                                         if(valueMps){
                                             valueMps =   valueMps.sort(function(a, b){return b-a});
                                         }

@@ -204,21 +204,20 @@ class ExportCustomReport extends React.Component {
                     csdmTrangle6 = this.getTrangle(csdm_val6);
                
             }
-            if (this.state.jsonData['principal-max-strain']) {
-                //eslint-disable-next-line
-                mpsValues = this.state.jsonData['principal-max-strain'].value ? this.state.jsonData['principal-max-strain'].value : '';
+            if (this.state.jsonData['CSDM-15']) {
+                //eslint-disable-next-line                
+                mpsValues = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value : '';
                 if(mpsValues){
                     mpsValues =   mpsValues.sort(function(a, b){return b-a});
                 }
-                
-                var num1 = "0.0000";
-                var num2 =  "0.0000";
-                var num3 =  "0.0000";
-                var num4 =  "0.0000";
-                var num5 =  "0.0000";
-                var num6 = "0.0000";
+                var num1 = this.state.jsonData['CSDM-15'].cerebellum !== undefined ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
+                var num2 = this.state.jsonData['CSDM-15'].frontal !== undefined ? this.state.jsonData['CSDM-15'].frontal.value : "0.0000";
+                var num3 = this.state.jsonData['CSDM-15'].occipital !== undefined ? this.state.jsonData['CSDM-15'].occipital.value : "0.0000";
+                var num4 = this.state.jsonData['CSDM-15'].parietal !== undefined ? this.state.jsonData['CSDM-15'].parietal.value : "0.0000";
+                var num5 = this.state.jsonData['CSDM-15'].temporal !== undefined ? this.state.jsonData['CSDM-15'].temporal.value : "0.0000";
+                var num6 = this.state.jsonData['CSDM-15'].msc !== undefined ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";			
                 if (num1 !== undefined) {
-                    mps = this.state.jsonData['principal-max-strain'].value ? this.state.jsonData['principal-max-strain'].value[0].toFixed(2) : 0;
+                    mps = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value[0].toFixed(2) : 0;
                     let mps_val1 = num1;
                     let mps_val2 = num2;
                     let mps_val3 = num3;

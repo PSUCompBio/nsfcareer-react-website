@@ -198,16 +198,16 @@ class Report extends React.Component {
                     csdmTrangle6 = this.getTrangle(csdm_val6);
 				}
             }
-            if(this.state.jsonData['MPS-95']){               
+            if(this.state.jsonData['CSDM-15']){               
 			//eslint-disable-next-line
-				var num1 = this.state.jsonData['MPS-95'].cerebellum ? this.state.jsonData['MPS-95'].cerebellum.value : "0.0000";
-                var num2 = this.state.jsonData['MPS-95'].frontal ? this.state.jsonData['MPS-95'].frontal.value : "0.0000";
-                var num3 = this.state.jsonData['MPS-95'].occipital ? this.state.jsonData['MPS-95'].occipital.value : "0.0000";
-                var num4 = this.state.jsonData['MPS-95'].parietal ? this.state.jsonData['MPS-95'].parietal.value : "0.0000";
-                var num5 = this.state.jsonData['MPS-95'].temporal ? this.state.jsonData['MPS-95'].temporal.value : "0.0000";
-                var num6 = this.state.jsonData['MPS-95'].msc ? this.state.jsonData['MPS-95'].msc.value : "0.0000";
+				var num1 = this.state.jsonData['CSDM-15'].cerebellum ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
+                var num2 = this.state.jsonData['CSDM-15'].frontal ? this.state.jsonData['CSDM-15'].frontal.value : "0.0000";
+                var num3 = this.state.jsonData['CSDM-15'].occipital ? this.state.jsonData['CSDM-15'].occipital.value : "0.0000";
+                var num4 = this.state.jsonData['CSDM-15'].parietal ? this.state.jsonData['CSDM-15'].parietal.value : "0.0000";
+                var num5 = this.state.jsonData['CSDM-15'].temporal ? this.state.jsonData['CSDM-15'].temporal.value : "0.0000";
+                var num6 = this.state.jsonData['CSDM-15'].msc ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";
 				if(num1 !== undefined){
-					mps =  this.state.jsonData['MPS-95'].value ? this.state.jsonData['MPS-95'].value.toFixed(2) : 0.00;
+					mps =  this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value.toFixed(2) : 0.00;
 					let mps_val1 = num1;
 					let mps_val2 = num2;
 					let mps_val3 = num3;
