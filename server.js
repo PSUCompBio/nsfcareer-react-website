@@ -7878,7 +7878,6 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
             // let frontal_Lobe = [];
             let brainRegions = {};
             let principal_max_strain = {};
-            let PMSarray = [];
             let principal_min_strain = {};
             let axonal_strain_max = {};
             let csdm_max = {};
@@ -7887,7 +7886,6 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
 
             if (data.length === 0){
                 brainRegions['principal-max-strain'] = {};
-                brainRegions['PMSarray'] = {};
                 brainRegions['principal-min-strain'] = {};
                 brainRegions['axonal-strain-max'] = {};
                 brainRegions['csdm-max'] = {};
@@ -7896,8 +7894,8 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                 res.send({
                     message: "success",
                     data: acceleration_data_list,
-                    // frontal_Lobe: frontal_Lobe,
-                    brainRegions: brainRegions
+                    brainRegions: brainRegions,
+                    msp_dat_data: [],
                 })
             }
 
@@ -7935,21 +7933,12 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                         mpsRankedDataObj = objdata.split("\n");
                         console.log('data exucuted');
                         for(var i = 0; i < mpsRankedDataObj.length; i++){
-                            let val = mpsRankedDataObj[i].split(",");
-                            val = parseFloat(val[1]);
-                            if(val.toFixed(2) !== '0.00') msp_dat_data.push(val.toFixed(2));
+                            let mpsval = mpsRankedDataObj[i].split(",");
+                            let val = parseFloat(mpsval[1]);
+                            if(val.toFixed(4) !== '0.0000') msp_dat_data.push({id: mpsval[0],val: val});
                         }
                     }
-                        // var buffer = buffer = Buffer.from(mps_dat_output.body, 'base64');;
-                    // console.log('buffer --',buffer)
-                  
-                //     var buffer = newBuffer('Hello world');
-                // var string = buffer.toString('base64');
-                    // csvparser()
-                    // .fromString(mps_dat_output.body.toString())
-                    // .then(data => {
-                    //     console.log('data ---------------------------------\n',data)
-                    // })
+             
                     console.log('wrking for other')
                     // X- Axis Linear Acceleration
                     let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
@@ -7988,13 +7977,6 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                                         region = summary_data['principal-max-strain']['brain-region'].toLowerCase();
                                         principal_max_strain[region] = principal_max_strain[region] || [];
                                         principal_max_strain[region].push(coordinate);
-                                    }
-                                }
-                                if (summary_data['principal-max-strain'] && summary_data['principal-max-strain'].location) {
-                                    let coordinate = {};
-									coordinate = Number(summary_data['principal-max-strain']['value'].toFixed(2));
-									if(coordinate){
-										PMSarray.push(coordinate);
                                     }
                                 }
                                 if (summary_data['principal-min-strain']  && summary_data['principal-min-strain'].location) {
@@ -8044,15 +8026,12 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                             })
                         }
                     }
-					PMSarray.sort();
+				
                     brainRegions['principal-max-strain'] = principal_max_strain;
-                  //  brainRegions['PMSarray'] = PMSarray;  
                     brainRegions['principal-min-strain'] = principal_min_strain;
                     brainRegions['axonal-strain-max'] = axonal_strain_max;
                     brainRegions['csdm-max'] = csdm_max;
                     brainRegions['masXsr-15-max'] = masXsr_15_max;
-
-                    // console.log('brainRegions', JSON.stringify(brainRegions));
 
                     if (data.length === cnt) {
                         acceleration_data_list.sort(function(b, a) {
@@ -8062,12 +8041,10 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                             if (keyA > keyB) return 1;
                             return 0;
                         });
-					console.log("principal_max_strain1",PMSarray);
                         res.send({
                             message: "success",
                             data: acceleration_data_list,
                             brainRegions: brainRegions,
-                            PMSarray: PMSarray,
                             msp_dat_data: msp_dat_data
                             // frontal_Lobe: frontal_Lobe,
                         })
@@ -8100,6 +8077,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                 message: "failure",
                 data: acceleration_data_list,
                 brainRegions: brainRegions,
+                msp_dat_data: [],
                 error: err
             })
         })

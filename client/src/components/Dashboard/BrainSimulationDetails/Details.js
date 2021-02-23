@@ -138,7 +138,7 @@ class Details extends React.Component {
       isLoading: true,
       framesRateSimulationVideo: '',
       framesRateSidelineVideo: '',
-      msp_dat_data: ''
+      msp_dat_data: '',
     };
   }
 
@@ -1308,26 +1308,17 @@ class Details extends React.Component {
                 getCumulativeAccelerationTimeRecords({ organization: organization, player_id: this.state.player_id, team: team })
                   .then(res => {
                     var PMSarray = res.data.PMSarray;
-                    var msp_dat_data = res.data.msp_dat_data;
-                    var PMSarray1 = [];
-                    PMSarray1["datasets"] = [];
-                    PMSarray.forEach(async (i) => {
-                      if (typeof i == "number") {
-                        PMSarray1["datasets"].push(i);
-                      }
-                    });
+                    var msp_dat_data = res.data.msp_dat_data ? res.data.msp_dat_data : [];
+                 
                     if (res.data.message !== "failure") {
-                      console.log('success')
+                      console.log('success',msp_dat_data)
                       this.setState({
                         simulation_data: res.data.data[0],
-                        PMSarray1: PMSarray1,
                         isLoaded: true,
                         isAuthenticated: true,
                         isCheckingAuth: true,
                         msp_dat_data: msp_dat_data
                       })
-                      console.log(PMSarray1);
-                      console.log('PMSarray1', this.state.PMSarray1);
                     } else {
                       console.log('error')
                       this.setState({
@@ -1339,23 +1330,23 @@ class Details extends React.Component {
                     console.log('err', err);
                     this.setState({
                       isLoaded: true,
-                      userDetails: {},
-                      isAuthenticated: false,
-                      isCheckingAuth: false
+                      // userDetails: {},
+                      // isAuthenticated: false,
+                      // isCheckingAuth: false
                     });
                   })
               }).catch((error) => {
                 console.log('error --------------------',error)
-                // this.setState({
-                //   isLoaded: true,
-                //   userDetails: {},
-                //   isCheckingAuth: false
-                // });
+                this.setState({
+                  isLoaded: true,
+                  // userDetails: {},
+                  // isCheckingAuth: false
+                });
               });
             }).catch((error) => {
               this.setState({
-                userDetails: {},
-                isCheckingAuth: false
+                // userDetails: {},
+                // isCheckingAuth: false
               });
             });
         }
