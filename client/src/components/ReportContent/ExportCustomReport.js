@@ -33,6 +33,7 @@ class ExportCustomReport extends React.Component {
             this.state = {
                 jsonData: this.props.jsonData[0].jsonOutputFile,
                 data: this.props.data.player,
+				data1: this.props.data ? this.props.data: '',
 				impact_date : this.props.data['impact-date'] ? this.getDate(this.props.data['impact-date'].replace(/:|-/g, "/")) : this.props.data['date'] ? this.getDate(this.props.data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
                 metric: ''
             }
@@ -56,6 +57,7 @@ class ExportCustomReport extends React.Component {
             this.state = {
                 jsonData: this.props.jsonfile,
                 data: this.props.data.player ? this.props.data.player : '',
+                data1: this.props.data ? this.props.data: '',
                 metric: this.props.Metric,
                 impact_time: impact_time ? this.tConvert(impact_time) : this.tConvert(time),
                 impact_date: sensor_data['impact-date'] ? this.getDate(sensor_data['impact-date'].replace(/:|-/g, "/")) : sensor_data['date'] ? this.getDate(sensor_data['date'].replace(/:|-/g, "/")) : 'Unknown Date',
@@ -64,6 +66,7 @@ class ExportCustomReport extends React.Component {
             this.state = {
                 jsonData: '',
                 data: '',
+                data1: '',
                 metric: ''
             }
         }
@@ -113,9 +116,9 @@ class ExportCustomReport extends React.Component {
         return `${month}/${date}/${year}`
     }
     getTrangle = (strain_Val) => {
-        if (strain_Val <= 0.75) {
+        if (strain_Val <= 0) {
             return trangle_gray;
-        } else if (strain_Val > 0.75 && strain_Val <= 15) {
+        } else if (strain_Val > 0 && strain_Val <= 15) {
             return trangle_green;
         } else if (strain_Val > 15 && strain_Val <= 25) {
             return trangle_orange;
@@ -405,13 +408,6 @@ class ExportCustomReport extends React.Component {
                 textAlign: 'center',
                 width: '100%',
             },
-            trangle: {
-                textAlign:'center',
-                width: '22%',				
-                padding: 0,		
-                paddingTop: 0,		
-                marginLeft: '31%'
-            },
             trangle_scale: {
                 width: '100%',
                 zIndex: 4
@@ -677,24 +673,32 @@ class ExportCustomReport extends React.Component {
                 backgroundColor: 'grey',
                 height: '11px',
                 marginTop: '18px'
+            },			
+            trangle: {
+                textAlign:'center',
+                width: '22%',				
+                padding: 0,		
+                paddingTop: 0,		
+                marginLeft: '31%',
+				height: '183.5px'
             },
             taxture1_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '65%'
+                marginTop: '377px'
             },
             taxture2_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '66%'
+                marginTop: '383px'
             },
             taxture3_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '27%'
+                marginTop: '154px'
             },
             taxture1: {
                 width: '100%',
@@ -1215,7 +1219,7 @@ class ExportCustomReport extends React.Component {
                         <View style={styles.tableRow}>
                             <Text style={styles.tableColLeftfull}> Team : <Text style={{ color: '#2d549a' }}> {this.state.data['team']} </Text> </Text>
                             <Text style={styles.tableColLeft20}> Sex : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"}  </Text></Text>
-                            <Text style={styles.tableColRight}> Organization : <Text style={{ color: '#2d549a' }}>{this.state.data['organization']} </Text></Text>
+                            <Text style={styles.tableColRight}> Organization : <Text style={{ color: '#2d549a' }}>{this.state.data['organization']?this.state.data['organization']:this.state.data1.organization} </Text></Text>
 
                         </View>
                         {/*-- Analysis duration --*/}
@@ -1361,13 +1365,13 @@ class ExportCustomReport extends React.Component {
                                             <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                             <Text style={styles.tableColLeft4}></Text>
                                         </View>
-                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue above 15% MPS-15 strain.</Text>
+                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue with MPS value above 15% strain. In other words the issue is stretched 15%</Text>
                                     </View>
                                 </View>
                                 <View style={styles.col12}>
                                     <View style={styles.rowHead2subHead}>
                                         <Text style={styles.rowHead2Text2subHead_center}>
-                                            Maximum Principal Strain
+                                            Maximum Principal Strain In Each Region
                                             </Text>
                                         {/*<Text style={styles.tableColLeft4_2}></Text>
                                             <Text  style={styles.rowHead2Text2subHead_2}>
@@ -1507,13 +1511,13 @@ class ExportCustomReport extends React.Component {
                                             <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
                                             {/*<Text style={styles.tableColLeft4}>95</Text>*/}
                                         </View>
-                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue above 15%  MPS-15 strain.</Text>
+                                        <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue with MPS value above 15% strain. In other words the issue is stretched 15%.</Text>
                                     </View>
                                 </View>
                                 <View style={styles.col12}>
                                     <View style={styles.rowHead2subHead}>
                                         <Text style={styles.rowHead2Text2subHead_center}>
-                                            Maximum Principal Strain
+                                            Maximum Principal Strain In Each Region
                                             </Text>
                                         {/*<Text style={styles.tableColLeft4_2}></Text>
                                             <Text  style={styles.rowHead2Text2subHead_2}>

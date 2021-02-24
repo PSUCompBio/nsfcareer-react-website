@@ -7,11 +7,17 @@ class Footer extends React.Component {
     super(props);
     console.log("Footer props", props);
     this.state = {
-      isDisplay: { display: 'none' }
+      isDisplay: { display: 'none' },
+      showcookies: 'flex',
     };
+	
   }
   makeVisible = (data) => {
     this.setState({ isDisplay: data });
+  }
+  hidecookies = () => {
+    this.setState({ showcookies:'none'});
+	localStorage.setItem('hidecookies', "yes");
   }
   redirectToOther = () => {
     window.location.href = 'https://psucompbio.org/';
@@ -49,6 +55,15 @@ class Footer extends React.Component {
       window.location.href = 'https://psucompbio.org/';
     };
     var d = new Date();
+	var hidecookies1 = true;
+	const hidecookiesstate = localStorage.getItem('hidecookies');
+	if(hidecookiesstate === "yes"){
+		 hidecookies1 = false;
+	}else{
+		 hidecookies1 = true;
+	}
+	console.log("hidecookiesstate",hidecookiesstate);
+	console.log("hidecookies",hidecookies1);
     return (
       <div style={(this.props.screenWidth && this.props.screenWidth < 765) ? {position : "relative"} : {position : "relative", height : "inherit"}} className={`footer ${this.addFooterClass()}`}>
 
@@ -88,7 +103,14 @@ class Footer extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+		{hidecookies1 == true &&
+          <div className="row text-center" style={{'color':'white','position': 'fixed','text-align': 'center','width': '100%','bottom': '0','background': '#000','padding': '13px 0 0 0','opacity':'0.7','margin': '0','display':this.state.showcookies}}>
+            <div className="col-md-12 pb-3">
+              <p>This website uses cookies to ensure you get the best experience on our website <i style={{ 'float': 'right','cursor': 'pointer'}} onClick={this.hidecookies}>&#10005;</i></p>
+            </div>
+          </div>
+		}
+		   </div>
     );
   }
 }
