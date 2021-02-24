@@ -50,6 +50,7 @@ import TeamStatsDemo from '../../components/TeamStatsDemo';
 import FailedSimulationList from '../../components/TeamPageComponent/FailedSimulationList';
 import CompleteSimulationList from '../../components/TeamPageComponent/CompleteSimulationList';
 import ToolKit from '../../components/ToolKit';
+import ImgPreview from '../../imgPreview';
 
 
 
@@ -139,7 +140,7 @@ class Routing extends React.Component {
   };
 
   render() {
-      console.log("RENDERING COMPONENT");
+      console.log("RENDERING COMPONENT",this.props.location.pathname);
     return (
       <React.Fragment>
         {this.props.location.pathname === '/Home' ||
@@ -152,15 +153,18 @@ class Routing extends React.Component {
         ) : (
           ''
         )}
-        <Nav
+        {this.props.location.pathname !== '/img/' ? 
+          <Nav
 
-          isNavbarTransparent={this.state.isNavbarTransparent}
-          screenWidth={this.state.windowWidth}
-          isAuthenticated={this.state.isLoggedIn}
-          currentPage={this.state.currentPage}
-          setIsAuth={(value) => this.settingAuthentication(value)}
-          userDetails={this.state.udetails}
-        />
+            isNavbarTransparent={this.state.isNavbarTransparent}
+            screenWidth={this.state.windowWidth}
+            isAuthenticated={this.state.isLoggedIn}
+            currentPage={this.state.currentPage}
+            setIsAuth={(value) => this.settingAuthentication(value)}
+            userDetails={this.state.udetails}
+          />
+        : null
+        }
         <GetUpdates
           isVisible={this.state.isDisplay}
           makeVisible={this.makeVisible}
@@ -222,6 +226,12 @@ class Routing extends React.Component {
 
             />
           }
+        />
+
+        <Route
+          exact
+          path="/img"
+          render={(props) => <ImgPreview {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact

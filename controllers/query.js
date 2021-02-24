@@ -3450,7 +3450,7 @@ function getPlayerImageDetailsByaccoutId(account_id) {
             ExpressionAttributeValues: {
                 ":account_id": account_id,
             },
-            ProjectionExpression: "org_id, image_id, team, player_id"
+            // ProjectionExpression: "org_id, image_id, team, player_id"
         };
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
