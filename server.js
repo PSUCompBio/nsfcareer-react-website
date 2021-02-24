@@ -7925,7 +7925,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                 })
                 .then(mps_dat_output => {
                     let msp_dat_data = [];
-                    if(mps_dat_output){
+                   /* if(mps_dat_output){
                     // var mps_dat_output_data = JSON.parse(mps_dat_output.Body.toString('base64'));
                         var enc = new TextDecoder("utf-8");
                         var arr = new Uint8Array(mps_dat_output.Body);
@@ -7937,7 +7937,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req,res) =>{
                             let val = parseFloat(mpsval[1]);
                             if(val.toFixed(4) !== '0.0000') msp_dat_data.push({id: mpsval[0],val: val});
                         }
-                    }
+                    }*/
              
                     console.log('wrking for other')
                     // X- Axis Linear Acceleration

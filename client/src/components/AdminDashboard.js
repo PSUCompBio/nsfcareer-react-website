@@ -521,7 +521,7 @@ class AdminDashboard extends React.Component {
     filterText = () => {
         var the = this;
         if($("#myInput") && $("#myInput") !== null){
-            var value = $("#myInput").val().toLowerCase();
+            var value = $("#myInput").val(); //.toLowerCase();
             // console.log('keyup', value)
             the.handleLoadmorePlayers();
             $("#myTable tr").filter(function () {
