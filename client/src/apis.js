@@ -755,6 +755,18 @@ export const getCumulativeAccelerationTimeRecords = (request) =>{
   })
 }
 
+export const getMpsRankedData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getMpsRankedData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const AllCumulativeAccelerationTimeRecords = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/AllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})

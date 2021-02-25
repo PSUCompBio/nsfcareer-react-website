@@ -43,6 +43,7 @@ import {
   trimVideo,
   resetToOriginal,
   getUserDataByPlayerID,
+  getMpsRankedData
 } from '../../../apis';
 import axios from 'axios';
 
@@ -1313,7 +1314,7 @@ class Details extends React.Component {
                 }
 
                 this.getSimlationImage();
-                getCumulativeAccelerationTimeRecords({ organization: organization, player_id: this.state.player_id, team: team })
+                getMpsRankedData({ organization: organization, player_id: this.state.player_id, team: team })
                   .then(res => {
                     var msp_dat_data = res.data.msp_dat_data ? res.data.msp_dat_data : [];
 
@@ -1321,7 +1322,7 @@ class Details extends React.Component {
                       //console.log('success')
                       var player_id = res.data.data[0].sensor_data.player_id;
                       var player_id = player_id.split('$');
-                      getUserDataByPlayerID({ playerid: player_id[0] })
+                      getUserDataByPlayerID({ playerid: player_id[0]})
                         .then(result => {
                           //console.log("player_data",result.data.data[0]);
                           this.setState({

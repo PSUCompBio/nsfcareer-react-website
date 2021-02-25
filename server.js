@@ -5778,6 +5778,11 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
                 removes3Object(imageData.trim_video_path)
                     .then(response => {
                         console.log('trim video removed ===============')
+                    }).catch(err=>{
+                        res.send({
+                            message: "failure",
+                            data: err
+                        });
                     })
             }
 
@@ -7917,6 +7922,109 @@ function getbrainRegions_V1(summary_data, dataFor) {
         resolve(MPS_95);
     })
 }
+
+app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
+    getCumulativeAccelerationRecords(req.body)
+        .then(data => {
+            let acceleration_data_list = [];
+            let cnt = 1;
+            if (data.length === 0) {
+                res.send({
+                    message: "success",
+                    acceleration_data_list: acceleration_data_list,
+                    msp_dat_data: [],
+                })
+            }
+
+            data.forEach(function (acc_data, acc_index) {
+                let accData = acc_data;
+                let imageData = '';
+                let mpsRankedDataObj = [];
+                getPlayerSimulationFile(acc_data)
+                    .then(image_data => {
+                        imageData = image_data;
+                        if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
+                            let pathMpsDatfile = imageData.player_name + '/simulation/' + imageData.image_id + '/MPSfile.dat';
+                            return getFileFromS3(pathMpsDatfile, imageData.bucket_name);
+                        }
+                    })
+                    .then(mps_dat_output => {
+                        let msp_dat_data = [];
+                        if (mps_dat_output) {
+                            var enc = new TextDecoder("utf-8");
+                            var arr = new Uint8Array(mps_dat_output.Body);
+                            var objdata = enc.decode(arr);
+                            mpsRankedDataObj = objdata.split("\n");
+                            console.log('data exucuted');
+                            for (var i = 0; i < mpsRankedDataObj.length; i++) {
+                                let mpsval = mpsRankedDataObj[i].split(",");
+                                let val = parseFloat(mpsval[1]);
+                                if (val.toFixed(4) !== '0.0000') msp_dat_data.push({ id: mpsval[0], val: val });
+                            }
+                        }
+
+                        // X- Axis Linear Acceleration
+                        let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
+                        // X- Axis Angular Acceleration
+                        let angular_acceleration = accData['impact-date'] ? accData.simulation['angular-acceleration'] : accData['angular-acceleration'];
+                        // Y Axis timestamp
+                        let time = accData['impact-date'] ? accData.simulation['linear-acceleration']['xt'] : accData['linear-acceleration']['xt'];
+                        time = time ? time : [];
+
+                        time.forEach((t, i) => {
+                            var _temp_time = parseFloat(t).toFixed(1);
+                            time[i] = _temp_time;
+                        })
+
+                        acceleration_data_list.push({
+                            linear_acceleration: linear_acceleration,
+                            angular_acceleration: angular_acceleration,
+                            time: time,
+                            timestamp: accData.date,
+                            record_time: accData.time,
+                            sensor_data: accData,
+                            date_time: accData.player_id.split('$')[1]
+                        })
+                        if (data.length === cnt) {
+                            acceleration_data_list.sort(function (b, a) {
+                                var keyA = a.date_time,
+                                    keyB = b.date_time;
+                                if (keyA < keyB) return -1;
+                                if (keyA > keyB) return 1;
+                                return 0;
+                            });
+                            res.send({
+                                message: "success",
+                                data: acceleration_data_list,
+                                msp_dat_data: msp_dat_data
+                            })
+                        }
+
+                        cnt++;
+                    })
+            })
+
+        })
+        .catch(err => {
+            var acceleration_data_list = [];
+            acceleration_data_list.push({
+                linear_acceleration: [],
+                angular_acceleration: [],
+                time: '',
+                simulation_image: '',
+                timestamp: '',
+                record_time: '',
+                sensor_data: ''
+            })
+            res.send({
+                message: "failure",
+                data: acceleration_data_list,
+                msp_dat_data: [],
+                error: err
+            })
+        })
+})
+
 
 app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
     getCumulativeAccelerationRecords(req.body)
