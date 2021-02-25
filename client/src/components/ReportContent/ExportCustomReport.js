@@ -116,7 +116,7 @@ class ExportCustomReport extends React.Component {
         return `${month}/${date}/${year}`
     }
     getTrangle = (strain_Val) => {
-        if (strain_Val <= 0) {
+        if (strain_Val < 0) {
             return trangle_gray;
         } else if (strain_Val > 0 && strain_Val <= 15) {
             return trangle_green;
@@ -174,12 +174,12 @@ class ExportCustomReport extends React.Component {
                 var num6 = this.state.jsonData['CSDM-15'].msc !== undefined ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";			
 					
                     csdm = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value[0].toFixed(2) : 0; 
-					let csdm_val1 = "0.0000";
-					let csdm_val2 = "0.0000";
-					let csdm_val3 = "0.0000";
-					let csdm_val4 = "0.0000";
-					let csdm_val5 = "0.0000";
-					let csdm_val6 = "0.0000";
+                    let csdm_val1 = num1;
+					let csdm_val2 = num2;
+					let csdm_val3 = num3;
+					let csdm_val4 = num4;
+					let csdm_val5 = num5;
+					let csdm_val6 = num6;
 					if (num1 !== undefined) {let csdm_val1 = num1;}else{let csdm_val1 = "0.0000";}
 					if (num2 !== undefined) {let csdm_val2 = num2;}else{let csdm_val2 = "0.0000";}
 					if (num3 !== undefined) {let csdm_val3 = num3;}else{let csdm_val3 = "0.0000";}
@@ -199,6 +199,12 @@ class ExportCustomReport extends React.Component {
                     csdmParietaltrangleScale = '' + left4.toFixed(0) ?left4.toFixed(0):0 + 'px';
                     csdmTemporaltrangleScale = '' + left5.toFixed(0) ?left5.toFixed(0):0 + 'px';
                     csdmMotortrangleScale = '' + left6.toFixed(0) ?left6.toFixed(0):0 + 'px';
+                    console.log("csdm_val1",num1);
+                    console.log("csdm_val2",num2);
+                    console.log("csdm_val3",num3);
+                    console.log("csdm_val4",num4);
+                    console.log("csdm_val5",num5);
+                    console.log("csdm_val6",num6);
                     csdmTrangle1 = this.getTrangle(csdm_val1);
                     csdmTrangle2 = this.getTrangle(csdm_val2);
                     csdmTrangle3 = this.getTrangle(csdm_val3);
@@ -240,6 +246,12 @@ class ExportCustomReport extends React.Component {
                     mpsParietaltrangleScale = '' + left4.toFixed(0)?left4.toFixed(0):0 + 'px';
                     mpsTemporaltrangleScale = '' + left5.toFixed(0)?left5.toFixed(0):0 + 'px';
                     mpsMotortrangleScale = '' + left6.toFixed(0)?left6.toFixed(0):0 + 'px';
+                    console.log("mps_val1",num1);
+                    console.log("mps_val2",num2);
+                    console.log("mps_val3",num3);
+                    console.log("mps_val4",num4);
+                    console.log("mps_val5",num5);
+                    console.log("mps_val6",num6);
                     mpsTrangle1 = this.getTrangle(mps_val1);
                     mpsTrangle2 = this.getTrangle(mps_val2);
                     mpsTrangle3 = this.getTrangle(mps_val3);
@@ -275,10 +287,11 @@ class ExportCustomReport extends React.Component {
                 objectFit: 'cover'
             },
             tableRow: {
-                flex: 1,
+                flex: 1, 
                 marginLeft: '5%',
                 flexDirection: 'row',
-                marginBottom: '6px'
+                marginBottom: '6px',
+                marginTop: '0px'
             },
             tableRowCenter: {
                 flex: 1,
@@ -386,6 +399,8 @@ class ExportCustomReport extends React.Component {
                 textAlign: 'center',
                 float: 'left',
                 flexDirection: 'column',
+                marginBottom:'0px',
+                padding:'0px'
             },
             rowHead2Text2subHead_2: {
                 marginTop: '7px',
@@ -605,7 +620,7 @@ class ExportCustomReport extends React.Component {
                 fontSize: 12,
                 textAlign: 'left',
                 marginRight: '15px',
-                marginTop: '18px'
+                marginTop: '6px'
             },
             tableTd1: {
                 display: 'inline-block',
@@ -627,7 +642,7 @@ class ExportCustomReport extends React.Component {
                 flexDirection: 'column',
                 color: 'grey',
                 fontSize: 12,
-                marginTop: '18px',
+                marginTop: '6px',
                 textAlign: 'center'
             },
             tableColRight2_2: {
@@ -652,7 +667,7 @@ class ExportCustomReport extends React.Component {
                 color: 'grey',
                 fontSize: 12,
                 marginLeft: '10px',
-                marginTop: '18px',
+                marginTop: '6px',
                 textAlign: 'center'
             },
             footer_ST_1: {
@@ -672,7 +687,7 @@ class ExportCustomReport extends React.Component {
                 flexDirection: 'column',
                 backgroundColor: 'grey',
                 height: '11px',
-                marginTop: '18px'
+                marginTop: '6px'
             },			
             trangle: {
                 textAlign:'center',
@@ -680,25 +695,25 @@ class ExportCustomReport extends React.Component {
                 padding: 0,		
                 paddingTop: 0,		
                 marginLeft: '31%',
-				height: '183.5px'
+				height: '184.5px'
             },
             taxture1_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '377px'
+                marginTop: '365px'
             },
             taxture2_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '383px'
+                marginTop: '372px'
             },
             taxture3_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '154px'
+                marginTop: '142px'
             },
             taxture1: {
                 width: '100%',
@@ -1343,7 +1358,7 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-                                    <Image style={styles.trangle_scale} src={this.state.metric.merticsImage ? this.state.metric.merticsImage : branImages_1} alt="trangle" />
+                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15 ? this.state.jsonData['imagedata'].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
                                 </View>
                             </>
                             :
@@ -1362,7 +1377,7 @@ class ExportCustomReport extends React.Component {
                                     <View style={styles.rowHeadBorder}><Text style={styles.rowHead2Text}></Text></View>
                                     <View style={styles.rowHead2}>
                                         <View style={styles.tableRowCenter}>
-                                            <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
+                                            <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded 15% MPS</Text>
                                             <Text style={styles.tableColLeft4}></Text>
                                         </View>
                                         <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue with MPS value above 15% strain. In other words the issue is stretched 15%</Text>
@@ -1373,10 +1388,6 @@ class ExportCustomReport extends React.Component {
                                         <Text style={styles.rowHead2Text2subHead_center}>
                                             Maximum Principal Strain In Each Region
                                             </Text>
-                                        {/*<Text style={styles.tableColLeft4_2}></Text>
-                                            <Text  style={styles.rowHead2Text2subHead_2}>
-                                               
-                                            </Text>*/}
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
@@ -1473,7 +1484,7 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-                                    <Image style={styles.trangle_scale} src={this.state.metric.merticsImage ? this.state.metric.merticsImage : branImages_1} alt="trangle" />
+                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15 ? this.state.jsonData['imagedata'].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
                                 </View>
                             </>
                             : null
@@ -1508,7 +1519,7 @@ class ExportCustomReport extends React.Component {
                                     <View style={styles.rowHeadBorder}><Text style={styles.rowHead2Text}></Text></View>
                                     <View style={styles.rowHead2}>
                                         <View style={styles.tableRowCenter}>
-                                            <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
+                                            <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded  15% MPS</Text>
                                             {/*<Text style={styles.tableColLeft4}>95</Text>*/}
                                         </View>
                                         <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue with MPS value above 15% strain. In other words the issue is stretched 15%.</Text>
@@ -1516,13 +1527,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.col12}>
                                     <View style={styles.rowHead2subHead}>
-                                        <Text style={styles.rowHead2Text2subHead_center}>
-                                            Maximum Principal Strain In Each Region
-                                            </Text>
-                                        {/*<Text style={styles.tableColLeft4_2}></Text>
-                                            <Text  style={styles.rowHead2Text2subHead_2}>
-                                               
-                                            </Text>*/}
+                                        <Text style={styles.rowHead2Text2subHead_center}>Maximum Principal Strain In Each Region</Text>
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
@@ -1619,7 +1624,7 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-                                    <Image style={styles.trangle_scale} src={this.state.metric.merticsImage ? this.state.metric.merticsImage : branImages_1} alt="trangle" />
+                                <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15 ? this.state.jsonData['imagedata'].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
                                 </View>
                                 {/*====================Footer heading ==============================*/}
                                 <View style={styles.bottomView}>

@@ -6253,120 +6253,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
 })
 
-app.post(`${apiPrefix}merge-video`, (req, res) => {
-    console.log(req.body);
-    removeYesterdayFolder(); // Remove yesterday directory ...
-    /*
-        Creating directory
-    */
-    var d = new Date();
-    let datetoday = d.getMonth() + '-' + d.getFullYear();
-    var dir = 'public/uploads/' + datetoday;
 
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
-
-    //** 
-    //files name ..........
-    var file_path = '/uploads/' + datetoday + '/' + Date.now() + 'output.mp4';
-    var outputFilePath = 'public' + file_path;
-    let list = []
-
-    //uploading files.             
-    var name = Date.now();
-    var file_store_path = 'public/uploads/' + name + '_movie.mp4';
-    list.push(`public/uploads/${name}_movie.mp4`);
-    https.get(req.body.movie_link, function (response, error) {
-
-        const file = fs.createWriteStream(file_store_path);
-        response.pipe(file);
-        file.on('finish', () => {
-
-            // ===================
-            // uploading file 2
-            //====================
-            https.get(req.body.impact_video_url, function (response, error) {
-                var name = Date.now();
-                var file_store_path = 'public/uploads/' + name + '_movie.mp4';
-                const file = fs.createWriteStream(file_store_path);
-                list.push(`public/uploads/${name}_movie.mp4`);
-                response.pipe(file);
-                file.on('finish', () => {
-                    console.log('finished -------------------------');
-                    setTimeout(() => {
-                        writeTextfile(list);
-                    }, 6000)
-                })
-
-            });
-        })
-    });
-    /**
-    *
-        Creating video frame.
-        ** Exicuting ffmpeg cmd...
-    */
-    const writeTextfile = (list) => {
-        console.log('list', list);
-        exec(`ffmpeg -i ${list[0]} -i ${list[1]}  -filter_complex  "[0:v]pad=iw*2:ih[int]; [int][1:v]overlay=W/2:0[vid]" -map "[vid]" -c:v libx264 -crf 23  ${outputFilePath}`, (error, stdout, stderr) => {
-
-            if (error) {
-                console.log(`error: ${error.message}`);
-                list.forEach(file => {
-                    fs.unlinkSync(file)
-                });
-                res.send({
-                    message: 'faiure',
-                    error: error.message
-                });
-            }
-            else {
-                console.log("videos are successfully merged");
-                list.forEach(file => {
-                    fs.unlinkSync(file)
-                });
-                res.send({
-                    message: 'success',
-                    file_path: file_path,
-                });
-
-            }
-
-        })
-    }
-
-
-    // const request = https.get("https://nsfcareer-users-data.s3-accelerate.amazonaws.com/35317-Prevent-Biometrics/simulation/07-22-2019/qIYe2mOoS/movie/qIYe2mOoS.mp4?AWSAccessKeyId=AKIA5UBJSELBEIFVBRCC&Expires=1603439485&Signature=%2FhX5ww3Eie9BH18D4jlW53hnRY0%3D", function(response ,error) {
-
-    //     response.pipe(file);
-    // })
-    /*exec(`ffmpeg -safe 0 -f concat -i ${listFilePath} -c copy ${outputFilePath}`, (error, stdout, stderr) => {
-         
-           if (error) {
-               console.log(`error: ${error.message}`);
-               return;
-           }
-           else{
-               console.log("videos are successfully merged")
-           res.download(outputFilePath,(err) => {
-               if(err) throw err
-
-               // req.files.forEach(file => {
-               //     fs.unlinkSync(file.path)                    
-               // });
-
-               // fs.unlinkSync(listFilePath)
-               // fs.unlinkSync(outputFilePath)
-
-             
-
-           })
-       }
-           
-       })*/
-
-})
 /*=======================merge video end ======================*/
 
 /*=======================================
@@ -13620,6 +13507,35 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
             }
             console.log(userData);
         })
+});app.post(`${apiPrefix}getBrainImageByAccountID`, VerifyToken, (req, res) => {
+    // If request comes to get detail of specific player
+
+        var account_id = req.body.accountid;
+				imagedata = [];
+                getFileFromS3(account_id+'/BrainImages/CSDM-15.png','') 
+				.then(fileData => {
+					if(fileData){
+						var CSDM15Data = fileData.Body.toString('base64');
+					}else{
+						CSDM15Data = "";
+						
+					}
+					imagedata.push({
+						CSDM15: CSDM15Data
+					})
+					res.send({
+						message: "success",
+						data: imagedata,
+					})
+				}).catch(err => {
+                console.log('err -------------- listorg \n', err)
+                res.send({
+                    message: "failure",
+                    error: err
+                })
+            })
+            
+
 });
 
 // Clearing the cookies

@@ -368,6 +368,8 @@ class Report extends React.Component {
                 textAlign: 'center',
                 float : 'left',
                 flexDirection : 'column',
+                marginBottom:'0',
+                padding:'0'
             },
             rowHead2Text2subHead_2:{
                 marginTop: '7px',
@@ -614,7 +616,7 @@ class Report extends React.Component {
                 fontSize : 12,
                 textAlign : 'left',
                 marginRight: '15px',
-                marginTop: '25px'
+                marginTop: '5px'
             },
             tableTd1: {
                 display : 'inline-block',
@@ -636,7 +638,7 @@ class Report extends React.Component {
                 flexDirection : 'column',
                 color : 'grey',
                 fontSize : 12,
-                marginTop: '25px',
+                marginTop: '5px',
                 textAlign : 'center'
             },
             tableColRight2_2: {
@@ -661,7 +663,7 @@ class Report extends React.Component {
                 color : 'grey',
                 fontSize : 12,
                 marginLeft: '10px',
-                marginTop: '25px',
+                marginTop: '5px',
                 textAlign : 'center'
             },
             footer_ST_1:{
@@ -681,7 +683,7 @@ class Report extends React.Component {
                 flexDirection : 'column',
                 backgroundColor: 'grey',
                 height: '11px',
-                marginTop: '25px'
+                marginTop: '5px'
             },
              trangle: {
                 textAlign:'center',
@@ -689,25 +691,25 @@ class Report extends React.Component {
                 padding: 0,		
                 paddingTop: 0,		
                 marginLeft: '31%',
-				height: '183.5px'
+				height: '184.5px'
             },
             taxture1_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '392px'
+                marginTop: '372px'
             },
             taxture2_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '400px'
+                marginTop: '380px'
             },
             taxture3_div: {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '171'
+                marginTop: '151px'
             },
             taxture1: {
                 width: '100%',
@@ -1092,7 +1094,7 @@ class Report extends React.Component {
                                         <View style={styles.rowHeadBorder}><Text  style={styles.rowHead2Text}></Text></View>
                                         <View style={styles.rowHead2}>
                                              <View style={styles.tableRowCenter}>
-                                                <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded MPS-15</Text>
+                                                <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded  15% MPS</Text>
                                                 <Text style={styles.tableColLeft4}></Text>
                                             </View>
                                             <Text  style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue with MPS value above 15% strain. In other words the issue is stretched 15%.</Text>
@@ -1103,10 +1105,6 @@ class Report extends React.Component {
                                             <Text  style={styles.rowHead2Text2subHead_center}>
                                                Maximum Principal Strain In Each Region
                                             </Text>
-                                            {/*<Text style={styles.tableColLeft4_2}></Text>
-                                            <Text  style={styles.rowHead2Text2subHead_2}>
-                                               
-                                            </Text>*/}
                                         </View>
                                     </View>
                                     <View style={styles.tableRow}>
@@ -1249,10 +1247,6 @@ class Report extends React.Component {
                                             <Text  style={styles.rowHead2Text2subHead_center}>
                                                 Maximum Principal Strain In Each Region
                                             </Text>
-                                            {/*<Text style={styles.tableColLeft4_2}></Text>
-                                            <Text  style={styles.rowHead2Text2subHead_2}>
-                                               
-                                            </Text>*/}
                                         </View>
                                     </View>
                                     <View style={styles.tableRow}>

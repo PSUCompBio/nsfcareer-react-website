@@ -14,7 +14,8 @@ import {
   getSimulationFilesOfPlayer,
   AllCumulativeAccelerationTimeRecords,
   getCumulativeAccelerationTimeRecords,
-  getUserDataByPlayerID
+  getUserDataByPlayerID,
+  getBrainImageByAccountID
 } from '../../apis';
 
 import { Button, Accordion, Card } from 'react-bootstrap';
@@ -484,9 +485,13 @@ class UserDashboarForAdmin extends React.Component {
                 .then(response => {
 					var playerid = this.state.player_name;
 					getUserDataByPlayerID({ playerid: playerid})
-							.then(response1 => {
+							.then(response1 => {					
 								response.data.brainRegions["playerdata"] =  response1.data.data[0];
-								console.log('jsondata 2 ----\n', response.data.brainRegions)
+								var accountid = response1.data.data[0].account_id;
+								getBrainImageByAccountID({ accountid: accountid})
+								.then(imageresponse1 => {
+								console.log('jsondata 2 ----\n', imageresponse1.data.data)
+								response.data.brainRegions["imagedata"] =  imageresponse1.data.data;
 								  this.setState({
 									cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
 									brainRegions: response.data.brainRegions,
@@ -494,6 +499,7 @@ class UserDashboarForAdmin extends React.Component {
 									jsonData: response.data.data,
 									isLoading: false,
 								  });
+								  })
 							})
                   
                 })
