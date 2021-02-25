@@ -139,6 +139,7 @@ class Details extends React.Component {
       account_id: '',
       simulation_id: '',
       isLoading: true,
+      isLoadingUserDetails: true,
       framesRateSimulationVideo: '',
       framesRateSidelineVideo: '',
       msp_dat_data: '',
@@ -906,7 +907,7 @@ class Details extends React.Component {
               </div>
               <div className="col-md-12" >
                 <div className="user-simlation-details">
-                  {this.state.isLoading ?
+                  {this.state.isLoadingUserDetails ?
                     <span style={{ 'width': '100%', 'text-align': 'center', 'padding': '54px' }}>
                       <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px' }}></i>
                     </span>
@@ -1250,17 +1251,17 @@ class Details extends React.Component {
         if (response.data.message === "success") {
           this.setState({
             account_id: response.data.data.account_id,
-            isLoading: false
+            isLoadingUserDetails: false
           })
         } else {
           this.setState({
-            isLoading: false
+            isLoadingUserDetails: false
           })
         }
       }).catch(err => {
         //  console.log('err ', err)
         this.setState({
-          isLoading: false
+          isLoadingUserDetails: false
         })
       })
   }
@@ -1307,7 +1308,8 @@ class Details extends React.Component {
                 if (response.data.account_id) {
                   this.setState({
                     account_id: response.data.account_id,
-                    isLoading: false
+                    isLoading: false,
+                    isLoadingUserDetails: false
                   });
                 } else {
                   this.getPlayerUserDetails(this.props.match.params.player_id.split('$')[0], brand);
