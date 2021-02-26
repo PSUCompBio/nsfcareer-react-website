@@ -1415,3 +1415,63 @@ export const getBrainImageByAccountID = (request) =>{
       });
   })
 }
+//# deleteOrgTeam
+export const deleteOrgTeam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam1
+export const deleteOrgTeam1 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam1`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam2
+export const deleteOrgTeam2 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam2`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam3
+export const deleteOrgTeam3 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam3`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam4
+export const deleteOrgTeam4 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam4`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

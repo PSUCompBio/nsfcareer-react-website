@@ -2660,7 +2660,7 @@ function addOrganization(OrganizationName, sensor) {
                 organization_id: 'org-'+Date.now(),
                 player_list: [],
                 sensor: sensor,
-                team_name: ' ',
+                team_name:  null,
                 user_cognito_id: ' '
             }
         }
