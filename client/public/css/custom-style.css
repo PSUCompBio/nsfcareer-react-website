@@ -467,7 +467,7 @@ input#MyrangeSlider3:focus {
 .Replace-video div label {
   background: #4472c4;
     color: white;
-    padding: 3px 12px;
+    padding: 3px 6px;
     margin-bottom: 9px !important;
     margin-top: 5px;
     border-radius: 6px;
@@ -475,7 +475,7 @@ input#MyrangeSlider3:focus {
     margin: 3px;
 }
 .Replace-video div label img {
-  width: 28px;
+  width: 20px;
 }
 .Replace-video div #uploadFile {
   display: none;

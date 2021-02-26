@@ -6143,9 +6143,63 @@ function removeYesterdayFolder() {
     // }
 }
 
+function getVideoResolution(file_path){
+    return new Promise((resolve, reject)=>{
+        exec(`ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 ${file_path}`, (error, stdout, stderr) => {
+            if(error){
+                console.log('Video get resolution err -------------------\n',error);
+                resolve(false);
+            }else{
+                console.log('output -------------\n',stdout);
+                resolve(stdout);
+            }
+        })
+    })
+}
+
+function uploadSidelineVideoToDir(impact_video_url){
+    return new Promise((resolve, reject)=>{
+        https.get(impact_video_url, async  (response, error) => {
+            if(error){
+                console.log('error',error);
+                resolve(false);
+            }else{
+                var name = Date.now();
+                var file_store_path = 'public/uploads/' + name + '_sidelineVideo.mp4';
+                const file = fs.createWriteStream(file_store_path);
+                response.pipe(file);
+                file.on('finish', () => {
+                    console.log('finished ------------------------- 2');
+                    resolve(file_store_path);
+                })
+
+                file.on('error', function(err) {
+                    console.log("ERROR:" + err);
+                    file.read();
+                });
+            }
+        });
+    })
+}
+
+function changeResolutionOfVideo(videoPath, videoOutputPath, resolution){
+    console.log('sidelineReso --------------------------- =',resolution)
+    return new Promise((resolve, reject)=>{
+        exec(`ffmpeg -i ${videoPath} -vf scale=${resolution}  ${videoOutputPath}`, (error, stdout, stderr) => {
+            if(error){
+                console.log('changeResolutionOfVideo err -------------------\n',error);
+                resolve(false);
+            }else{
+                console.log('changeResolutionOfVideo output -------------\n',stdout);
+                resolve(true);
+            }
+        })
+    })
+}
+
 app.post(`${apiPrefix}merge-video`, (req, res) => {
     console.log(req.body);
-    removeYesterdayFolder(); // Remove yesterday directory ...
+    // removeYesterdayFolder(); // Remove yesterday directory ...
     /*
         Creating directory
     */
@@ -6167,31 +6221,42 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
     var name = Date.now();
     var file_store_path = 'public/uploads/' + name + '_movie.mp4';
     list.push(`public/uploads/${name}_movie.mp4`);
-    https.get(req.body.movie_link, function (response, error) {
+    https.get(req.body.movie_link, async (response, error) => {
 
         const file = fs.createWriteStream(file_store_path);
         response.pipe(file);
-        file.on('finish', () => {
-
+        file.on('finish',async () => {
+            console.log('finished ------------------------- 1');
             // ===================
             // uploading file 2
             //====================
-            https.get(req.body.impact_video_url, function (response, error) {
-                var name = Date.now();
-                var file_store_path = 'public/uploads/' + name + '_movie.mp4';
-                const file = fs.createWriteStream(file_store_path);
-                list.push(`public/uploads/${name}_movie.mp4`);
-                response.pipe(file);
-                file.on('finish', () => {
-                    console.log('finished -------------------------');
-                    setTimeout(() => {
-                        writeTextfile(list);
-                    }, 6000)
-                })
+            await timeout(2000);
+            let sidelineReso = await getVideoResolution(list[0]); //Getting resolution of sidelinevideo
+            let sidelineVideo = await uploadSidelineVideoToDir(req.body.impact_video_url); // Uploading sideline videot to local dir
+            console.log('sidelineVideo===============  ', sidelineVideo);
+            await timeout(1000);
 
-            });
+            //  Changing resolution of sideline video ...
+            var name = Date.now();
+            var sidelien_video_path = 'public/uploads/' + name + '_movie.mp4';
+            list.push(sidelien_video_path);
+            sidelineReso = sidelineReso.trim();
+            var isChangedResulotion =  await changeResolutionOfVideo(sidelineVideo, sidelien_video_path, sidelineReso);
+            await timeout(1000);
+            
+            // Called mereged video ...
+            if(isChangedResulotion){
+                writeTextfile(list);
+            }else{
+                res.send({
+                    message: 'faiure',
+                    error: 'Failed to resize sideline video.'
+                });
+            }
         })
     });
+
+
     /**
     *
         Creating video frame.
@@ -6226,38 +6291,11 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
         })
     }
 
-
-    // const request = https.get("https://nsfcareer-users-data.s3-accelerate.amazonaws.com/35317-Prevent-Biometrics/simulation/07-22-2019/qIYe2mOoS/movie/qIYe2mOoS.mp4?AWSAccessKeyId=AKIA5UBJSELBEIFVBRCC&Expires=1603439485&Signature=%2FhX5ww3Eie9BH18D4jlW53hnRY0%3D", function(response ,error) {
-
-    //     response.pipe(file);
-    // })
-    /*exec(`ffmpeg -safe 0 -f concat -i ${listFilePath} -c copy ${outputFilePath}`, (error, stdout, stderr) => {
-         
-           if (error) {
-               console.log(`error: ${error.message}`);
-               return;
-           }
-           else{
-               console.log("videos are successfully merged")
-           res.download(outputFilePath,(err) => {
-               if(err) throw err
-
-               // req.files.forEach(file => {
-               //     fs.unlinkSync(file.path)                    
-               // });
-
-               // fs.unlinkSync(listFilePath)
-               // fs.unlinkSync(outputFilePath)
-
-             
-
-           })
-       }
-           
-       })*/
-
 })
 
+function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /*=======================merge video end ======================*/
 
@@ -6317,9 +6355,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
             })
         })
     });
-    function timeout(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+   
     async function writeTextfile(list) {
         console.log('list', list);
         exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, async (error, stdout, stderr) => {
@@ -6514,16 +6550,199 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
             });
         })
     }
-})
-// var file_name = Date.now();
-//         var image_id = req.body.image_id;
-//         var uploadParams = {
-//             Bucket: config.usersbucket,
-//             Key: '', // pass key
-//             Body: null, // pass file body
-//         };
-//        
+})       
 /*-- trim function end --*/
+
+/*=============================
+    Flip vidoe start
+===============================*/
+
+app.post(`${apiPrefix}api/v1/flipVideo`, (req, res) => {
+    console.log(req.body);
+    let image_id = req.body.image_id;
+    /*
+    *    Creating directory...
+    */
+    var d = new Date();
+    let month = d.getMonth() + 1;
+    let datetoday = month+'-'+d.getFullYear();
+    var dir = 'public/uploads/'+datetoday;
+
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
+
+    //** 
+    //files name ..........
+    var file_path = '/uploads/'+datetoday+'/'+Date.now() + '_flip.mp4';
+    var outputFilePath = 'public'+file_path;
+    let list = []
+
+    
+
+    //uploading files.             
+    var name = Date.now();
+    var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+    list.push(`public/uploads/${name}_movie.mp4`);
+    https.get(req.body.impact_video_url , function(response ,error) { 
+        const file = fs.createWriteStream(file_store_path);
+        response.pipe(file);
+        file.on('finish',() => {
+        console.log('finished -------------------------');
+        setTimeout(()=>{
+                writeTextfile(list);
+            },6000)
+        });
+        
+    });
+
+    const writeTextfile = (list)=>{
+        console.log('list',list);
+        exec(`ffmpeg -i ${list[0]}  -vf hflip -c:a copy  ${outputFilePath}`, (error, stdout, stderr) => {
+          
+            if (error) {
+                console.log(`error: ${error.message}`);
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                res.send({
+                    message: 'faiure',
+                    error: error.message
+                });
+            }
+            else{
+                console.log("videos are successfully fliped");
+                /*-- Delete all generated files --*/
+                list.forEach(file => {
+                    fs.unlinkSync(file)                    
+                });
+                var bufs = [];
+                var readableStream = fs.createReadStream(outputFilePath);
+                readableStream.on('data', function(chunk) {
+                    bufs.push(chunk); 
+                });
+                readableStream.on('end', function(){
+                    var buf = Buffer.concat(bufs);
+                    console.log('stream end', buf)
+                    var uploadParams = {
+                        Bucket: config.usersbucket,
+                        Key: '', // pass key
+                        Body: null, // pass file body
+                    };
+                    getSimulationImageRecord(image_id)
+                    .then(data => {
+
+                        /*
+                        * Remove trim video from s3 if already exists before trim...
+                        */
+                        removes3Object(data.trim_video_path)
+                        .then(response =>{
+                            console.log('Trim video removed successfully =================================')
+                        })
+                        /*--end--*/
+
+                        // File Extensions
+                        let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
+                        var d = new Date();
+                        console.log(d.toLocaleDateString('pt-PT'));
+                        d = d.toLocaleDateString('pt-PT');
+                        var date = d.replace("/", "-");
+                        date = date.replace("/", "-");
+                        console.log('date',date);
+                        // Setting Attributes for file upload on S3
+                        uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
+                        // console.log('req.file.buffer', req.file.buffer)
+                        uploadParams.Body = buf;
+                        
+                        s3.upload(uploadParams, (err, data) => {
+                            if (err) {
+                                console.log('======errr \n',err)
+                                res.send({
+                                    message: "failure",
+                                    data: err
+                                });
+                               
+                            }else{
+                                /*-- Unlink trimed video from directory --*/
+                                fs.unlinkSync(outputFilePath)
+
+                                /*
+                                * Insert s3 video path in simulation_image table...
+                                */
+                                InsertTrimVideoKey(req.body.image_id,uploadParams.Key,'').
+                                then(sensor_data => {
+                                    const  image_id  = req.body.image_id;
+                                    let imageData = '';
+
+                                    /*
+                                    * Getting image simulation image record from simulation_image table...
+                                    */
+                                    getSimulationImageRecord(image_id)
+                                    .then(image_data => {
+                                        console.log('image_data -----------------------------------\n',image_data)
+                                        imageData = image_data;
+                                        return verifyImageToken(imageData['token'], image_data);
+                                    })
+                                    .then(decoded_token => {
+                                        // console.log('decoded_token',decoded_token)
+                                        return getPlayerCgValues(imageData.player_name);
+                                    })
+                                    .then(cg_coordinates => {
+                                        // Setting cg values
+                                        // console.log("cg_coordinates",cg_coordinates)
+                                        if(cg_coordinates) {
+                                          imageData["cg_coordinates"] = cg_coordinates;
+                                        }
+                                        return trimVideoUrl(imageData);
+                                    })
+                                    .then(movie_link => {
+                                        // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                        console.log('movie_link',movie_link);
+                                        res.send({
+                                            message : "success",
+                                            trim_video_path : movie_link
+                                        })
+                                        
+                                    })
+                                    .catch(err => {
+                                        console.log(err);
+                                        // res.removeHeader('X-Frame-Options');
+                                        // if(err.message == 'The provided key element does not match the schema'){
+                                            res.send({
+                                                message: "failure",
+                                                data: err
+                                            });
+                                        // }
+                                    })
+                                })
+                                .catch(err => {
+                                   console.log('err',err)
+                                    res.send({
+                                        message: "failure",
+                                        data: err
+                                    });
+                                })
+                            }
+                        })
+                    }).catch(err => {
+                       console.log('err',err)
+                        res.send({
+                            message: "failure",
+                            data: err
+                        });
+                    })
+
+                })
+            }
+            
+        })
+    }
+})
+
+/* --end-- */ 
+
+
+
 
 
 /*
@@ -6546,7 +6765,7 @@ app.post(`${apiPrefix}getSimulationStatusCount`, (req, res) => {
                 sensor_data.forEach(function (record, index) {
                     getPlayerSimulationFile(record)
                         .then(simulation => {
-                            console.log('simulation.status', simulation.status, 'image id -', simulation.image_id)
+                            // console.log('simulation.status', simulation.status, 'image id -', simulation.image_id)
                             k++;
                             if (simulation && simulation.status === 'pending') {
                                 pending++;

@@ -26,6 +26,7 @@ import video_loop_bl from '../../icons/video_loop_bl.png';
 import video_pause_b from '../../icons/video_pause_b.png';
 import video_play_bl from '../../icons/video_play_bl.png';
 import icon_download_white from '../../icons/icon_download_white.png';
+import button_mirror_horizontal from './button_mirror_horizontal.png'
 import uploadicon from './upload-icon.png'
 import 'jquery';
 import '../../Buttons/Buttons.css';
@@ -41,6 +42,7 @@ import {
   getSimulationDetail,
   mergeVideos,
   trimVideo,
+  flipVideo,
   resetToOriginal,
   getUserDataByPlayerID,
   getMpsRankedData
@@ -143,6 +145,7 @@ class Details extends React.Component {
       framesRateSimulationVideo: '',
       framesRateSidelineVideo: '',
       msp_dat_data: '',
+      label_flipVideo: 'Mirror'
     };
   }
 
@@ -306,6 +309,7 @@ class Details extends React.Component {
   vidocontrol = () => {
     const player = document.querySelector('.player');
     const video = player.querySelector('.viewer');
+    video.msHorizontalMirror = true;
 
     // const progressBar = document.querySelector('.progress__filled');
     const lockButton = document.querySelector('.lock_video');
@@ -733,6 +737,41 @@ class Details extends React.Component {
       })
   }
 
+  flipVideo = ()=>{
+    this.setState({label_flipVideo: 'Mirroring...'})
+    flipVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url})
+    .then(response => {
+      //    console.log('response trim video ---\n', response);
+      if (response.data.message === "success") {
+        this.setState({
+          trim_video_url: response.data.trim_video_path,
+          left_lock_time: 0,
+          right_lock_time: 0,
+          isTriming: false,
+          label_flipVideo: 'Success'
+        })
+        var the = this;
+        setTimeout(() => {
+          the.setState({
+            label_flipVideo: 'Mirror',
+          })
+        }, 2000)
+      } else {
+        this.setState({
+          isTriming: false,
+          label_flipVideo: 'Failed'
+        })
+      }
+    }).catch(err => {
+      // console.log('triming err -------\n', err)
+      this.setState({
+        label_flipVideo: 'Failed',
+        isTriming: false
+      })
+
+    })
+  }
+
   /*
   * Reset trim video to original...
   */
@@ -1001,6 +1040,7 @@ class Details extends React.Component {
                             <label onClick={this.handalRemoveVideo}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                             <label onClick={this.trimVideo} ><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</label>
                             <label onClick={this.resetToOriginal} ><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
+                            <label onClick={this.flipVideo} ><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
                           </React.Fragment>
                           :
                           <React.Fragment>
@@ -1008,6 +1048,8 @@ class Details extends React.Component {
                             <label style={{ 'background': '#b7cce2' }}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                             <label style={{ 'background': '#b7cce2' }}><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</label>
                             <label style={{ 'background': '#b7cce2' }}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
+                            <label style={{ 'background': '#b7cce2' }}><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
+
                           </React.Fragment>
                         }
                         {/*!-- Video controls end --*/}
@@ -1060,6 +1102,7 @@ class Details extends React.Component {
                                 <label onClick={this.handalRemoveVideo}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                                 <label onClick={this.trimVideo} > {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px' }}></i> : <><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</>} </label>
                                 <label onClick={this.resetToOriginal}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
+                                <label onClick={this.flipVideo} ><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
 
                               </React.Fragment>
                               :
@@ -1068,6 +1111,8 @@ class Details extends React.Component {
                                 <label style={{ 'background': '#b7cce2' }}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                                 <label style={{ 'background': '#b7cce2' }}> {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px' }}></i> : <><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</>} </label>
                                 <label style={{ 'background': '#b7cce2' }}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
+                                 <label style={{ 'background': '#b7cce2' }}><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
+
                               </React.Fragment>
                             }
                             {/*!-- Video controls end --*/}
