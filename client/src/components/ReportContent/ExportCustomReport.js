@@ -116,7 +116,7 @@ class ExportCustomReport extends React.Component {
         return `${month}/${date}/${year}`
     }
     getTrangle = (strain_Val) => {
-        if (strain_Val < 0) {
+        if (strain_Val <= 0) {
             return trangle_gray;
         } else if (strain_Val > 0 && strain_Val <= 15) {
             return trangle_green;
@@ -171,21 +171,20 @@ class ExportCustomReport extends React.Component {
                 var num3 = this.state.jsonData['CSDM-15'].occipital !== undefined ? this.state.jsonData['CSDM-15'].occipital.value : "0.0000";
                 var num4 = this.state.jsonData['CSDM-15'].parietal !== undefined ? this.state.jsonData['CSDM-15'].parietal.value : "0.0000";
                 var num5 = this.state.jsonData['CSDM-15'].temporal !== undefined ? this.state.jsonData['CSDM-15'].temporal.value : "0.0000";
-                var num6 = this.state.jsonData['CSDM-15'].msc !== undefined ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";			
-					
-                    csdm = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value[0].toFixed(2) : 0; 
-                    let csdm_val1 = num1;
-					let csdm_val2 = num2;
-					let csdm_val3 = num3;
-					let csdm_val4 = num4;
-					let csdm_val5 = num5;
-					let csdm_val6 = num6;
-					if (num1 !== undefined) {let csdm_val1 = num1;}else{let csdm_val1 = "0.0000";}
-					if (num2 !== undefined) {let csdm_val2 = num2;}else{let csdm_val2 = "0.0000";}
-					if (num3 !== undefined) {let csdm_val3 = num3;}else{let csdm_val3 = "0.0000";}
-					if (num4 !== undefined) {let csdm_val4 = num4;}else{let csdm_val4 = "0.0000";}
-					if (num5 !== undefined) {let csdm_val5 = num5;}else{let csdm_val5 = "0.0000";}
-					if (num6 !== undefined) {let csdm_val6 = num6;}else{let csdm_val6 = "0.0000";}
+                var num6 = this.state.jsonData['CSDM-15'].msc !== undefined ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";	
+					var csdm_val1 = "0.0000";
+					var csdm_val2 = "0.0000";
+					var csdm_val3 = "0.0000";
+					var csdm_val4 = "0.0000";
+					var csdm_val5 = "0.0000";
+					var csdm_val6 = "0.0000";
+				
+					if (num1 === undefined) {csdm_val1 = "0.0000";}else{csdm_val1 = num1; }
+					if (num2 === undefined) {csdm_val2 = "0.0000";}else{csdm_val2 = num2; }
+					if (num3 === undefined) {csdm_val3 = "0.0000";}else{csdm_val3 = num3; }
+					if (num4 === undefined) {csdm_val4 = "0.0000";}else{csdm_val4 = num4; }
+					if (num5 === undefined) {csdm_val5 = "0.0000";}else{csdm_val5 = num5; }
+					if (num6 === undefined) {csdm_val6 = "0.0000";}else{csdm_val6 = num6; }
                     var left1 = csdm_val1 * ScaleWidth / 38;
                     var left2 = csdm_val2 * ScaleWidth / 38;
                     var left3 = csdm_val3 * ScaleWidth / 38;
@@ -199,12 +198,7 @@ class ExportCustomReport extends React.Component {
                     csdmParietaltrangleScale = '' + left4.toFixed(0) ?left4.toFixed(0):0 + 'px';
                     csdmTemporaltrangleScale = '' + left5.toFixed(0) ?left5.toFixed(0):0 + 'px';
                     csdmMotortrangleScale = '' + left6.toFixed(0) ?left6.toFixed(0):0 + 'px';
-                    console.log("csdm_val1",num1);
-                    console.log("csdm_val2",num2);
-                    console.log("csdm_val3",num3);
-                    console.log("csdm_val4",num4);
-                    console.log("csdm_val5",num5);
-                    console.log("csdm_val6",num6);
+                    
                     csdmTrangle1 = this.getTrangle(csdm_val1);
                     csdmTrangle2 = this.getTrangle(csdm_val2);
                     csdmTrangle3 = this.getTrangle(csdm_val3);
@@ -213,26 +207,37 @@ class ExportCustomReport extends React.Component {
                     csdmTrangle6 = this.getTrangle(csdm_val6);
                
             }
-            if (this.state.jsonData['CSDM-15']) {
+            if (this.state.jsonData['principal-max-strain']) {
                 //eslint-disable-next-line                
-                mpsValues = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value : '';
+                mpsValues = this.state.jsonData['principal-max-strain'].value ? this.state.jsonData['principal-max-strain'].value : '';
                 if(mpsValues){
                     mpsValues =   mpsValues.sort(function(a, b){return b-a});
                 }
-                var num1 = this.state.jsonData['CSDM-15'].cerebellum !== undefined ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
-                var num2 = this.state.jsonData['CSDM-15'].frontal !== undefined ? this.state.jsonData['CSDM-15'].frontal.value : "0.0000";
-                var num3 = this.state.jsonData['CSDM-15'].occipital !== undefined ? this.state.jsonData['CSDM-15'].occipital.value : "0.0000";
-                var num4 = this.state.jsonData['CSDM-15'].parietal !== undefined ? this.state.jsonData['CSDM-15'].parietal.value : "0.0000";
-                var num5 = this.state.jsonData['CSDM-15'].temporal !== undefined ? this.state.jsonData['CSDM-15'].temporal.value : "0.0000";
-                var num6 = this.state.jsonData['CSDM-15'].msc !== undefined ? this.state.jsonData['CSDM-15'].msc.value : "0.0000";			
-                if (num1 !== undefined) {
-                    mps = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value[0].toFixed(2) : 0;
-                    let mps_val1 = num1;
-                    let mps_val2 = num2;
-                    let mps_val3 = num3;
-                    let mps_val4 = num4;
-                    let mps_val5 = num5;
-                    let mps_val6 = num6;
+                var num1 = this.state.jsonData['principal-max-strain'].cerebellum !== undefined ? this.state.jsonData['principal-max-strain'].cerebellum.value : "0.0000";
+                var num2 = this.state.jsonData['principal-max-strain'].frontal !== undefined ? this.state.jsonData['principal-max-strain'].frontal.value : "0.0000";
+                var num3 = this.state.jsonData['principal-max-strain'].occipital !== undefined ? this.state.jsonData['principal-max-strain'].occipital.value : "0.0000";
+                var num4 = this.state.jsonData['principal-max-strain'].parietal !== undefined ? this.state.jsonData['principal-max-strain'].parietal.value : "0.0000";
+                var num5 = this.state.jsonData['principal-max-strain'].temporal !== undefined ? this.state.jsonData['principal-max-strain'].temporal.value : "0.0000";
+                var num6 = this.state.jsonData['principal-max-strain'].msc !== undefined ? this.state.jsonData['principal-max-strain'].msc.value : "0.0000";	
+			var mps_val1 = "0.0000";
+			var mps_val2 = "0.0000";
+			var mps_val3 = "0.0000";
+			var mps_val4 = "0.0000";
+			var mps_val6 = "0.0000";
+			var mps_val5 = "0.0000";
+			
+					if (num1 === undefined) { mps_val1 = "0.0000";}else{ mps_val1 = num1;}
+					if (num2 === undefined) { mps_val2 = "0.0000";}else{ mps_val2 = num2;}
+					if (num3 === undefined) { mps_val3 = "0.0000";}else{ mps_val3 = num3;}
+					if (num4 === undefined) { mps_val4 = "0.0000";}else{ mps_val4 = num4;}
+					if (num6 === undefined) { mps_val6 = "0.0000";}else{ mps_val6 = num6;}
+					if (num5 === undefined) { mps_val5 = "0.0000";}else{ mps_val5 = num5;}
+					console.log("csdm_val1",mps_val1);
+                    console.log("csdm_val2",mps_val2);
+                    console.log("csdm_val3",mps_val3);
+                    console.log("csdm_val4",mps_val4);
+                    console.log("csdm_val5",mps_val5);
+                    console.log("csdm_val6",mps_val6);
                     var left1 = mps_val1 * ScaleWidth / 38;
                     var left2 = mps_val2 * ScaleWidth / 38;
                     var left3 = mps_val3 * ScaleWidth / 38;
@@ -246,19 +251,12 @@ class ExportCustomReport extends React.Component {
                     mpsParietaltrangleScale = '' + left4.toFixed(0)?left4.toFixed(0):0 + 'px';
                     mpsTemporaltrangleScale = '' + left5.toFixed(0)?left5.toFixed(0):0 + 'px';
                     mpsMotortrangleScale = '' + left6.toFixed(0)?left6.toFixed(0):0 + 'px';
-                    console.log("mps_val1",num1);
-                    console.log("mps_val2",num2);
-                    console.log("mps_val3",num3);
-                    console.log("mps_val4",num4);
-                    console.log("mps_val5",num5);
-                    console.log("mps_val6",num6);
                     mpsTrangle1 = this.getTrangle(mps_val1);
                     mpsTrangle2 = this.getTrangle(mps_val2);
                     mpsTrangle3 = this.getTrangle(mps_val3);
                     mpsTrangle4 = this.getTrangle(mps_val4);
                     mpsTrangle5 = this.getTrangle(mps_val5);
-                    mpsTrangle6 = this.getTrangle(mps_val6);
-                }
+                    mpsTrangle6 = this.getTrangle(mps_val6);               
             }
         }
         console.log('csdm15Values',csdm15Values)
@@ -1484,7 +1482,7 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15 ? this.state.jsonData['imagedata'].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
+                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS ? this.state.jsonData['imagedata'].PMS : this.state.metric.merticsImage} alt="trangle" />
                                 </View>
                             </>
                             : null
@@ -1624,7 +1622,7 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-                                <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15 ? this.state.jsonData['imagedata'].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
+                                <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS ? this.state.jsonData['imagedata'].PMS : this.state.metric.merticsImage} alt="trangle" />
                                 </View>
                                 {/*====================Footer heading ==============================*/}
                                 <View style={styles.bottomView}>

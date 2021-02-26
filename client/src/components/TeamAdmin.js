@@ -20,7 +20,12 @@ import {
     addorgTeam,
     deleteItem,
     renameTeam,
-    MergeTeam
+    MergeTeam,
+	deleteOrgTeam,
+	deleteOrgTeam1,
+	deleteOrgTeam2,
+	deleteOrgTeam3,
+	deleteOrgTeam4
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -79,7 +84,9 @@ class TeamnAdmin extends React.Component {
             user_cognito_id: '',
             brand: this.props.match.params.brand && this.props.match.params.brand !== 'undefined' ? this.props.match.params.brand : '',
             organization: this.props.match.params.org ? this.props.match.params.org : 'PSU',
-            team_name: []
+            team_name: [],
+			processing : '',
+			
         };
     }
     toggleTab = (value) => {
@@ -294,13 +301,13 @@ class TeamnAdmin extends React.Component {
             isMerge: false
         })
     }
-    handleChangeSave = () => {
+    /*handleChangeSave = () => {
         this.setState({ isUploading: true });
         if (this.state.isDelete) {
             console.log('deleting', this.state.DelData)
-            deleteItem(this.state.DelData)
+            deleteOrgTeam(this.state.DelData)
                 .then(res => {
-                    console.log('res', res);
+                    console.log('res', res.data.data);
                     if (res.data.message === 'success') {
                         this.setState(prevState => ({
                             isUpdated: false,
@@ -312,6 +319,115 @@ class TeamnAdmin extends React.Component {
                             Error: 'Somthing went wrong when deleting data.'
                         })
                     }
+
+                }).catch(err => {
+                    console.log(err)
+                    this.setState({
+                        isUploading: false,
+                        isUpdated: false,
+                        Error: 'Somthing went wrong when deleting data.'
+                    })
+                })
+        } else {
+            this.handleRenmaeTeam();
+        }
+
+    }*/
+	setProcessingState = (msg) => {
+		this.setState({	processing: msg})
+	}
+    handleChangeSave = () => {
+        this.setState({ isUploading: true });
+		this.setProcessingState('Deleting Team Players...');
+        if (this.state.isDelete) {
+            console.log('deleting', this.state.DelData)			
+            deleteOrgTeam(this.state.DelData)
+                .then(res1 => {
+                    console.log('res', res1.data.data);
+					if (res1.data.message === 'success') {
+						if (res1.data.data.length > 0) {
+							this.setProcessingState('Deleting Team Players...');
+							var result = res1.data;
+							 deleteOrgTeam2(result)
+							.then(res3 => {
+								if (res3.data.message === 'success') {
+									this.setProcessingState('Players Deleted successfully');
+									setTimeout(() =>{ this.setProcessingState('Deleting Simulation Records...'); }, 2000);
+									deleteOrgTeam3(result)
+									.then(res4 => {
+										if (res4.data.message === 'success') {
+											this.setProcessingState('Simulation Records Deleted successfully');
+											setTimeout(() =>{ this.setProcessingState('Deleting Event Data...'); }, 2000);
+											deleteOrgTeam4(result)
+											.then(res5 => {
+												if (res4.data.message === 'success') {
+													this.setProcessingState('Event Data Deleted successfully');
+													setTimeout(() =>{ this.setProcessingState('Deleting Team Data...'); }, 2000);
+													deleteOrgTeam1(this.state.DelData)
+													.then(res6 => {
+														if (res6.data.message === 'success') {
+															this.setProcessingState('Team Deleted successfully');
+															this.setState({	isUploading: false,	})
+															this.handleRenmaeTeam();
+														}else{
+															this.setState({
+																isUploading: false,
+																Error: 'Somthing went wrong when deleting Simulation Records.'
+															})
+															this.handleRenmaeTeam();
+														}
+													})
+												}else{
+													this.setState({
+														isUploading: false,
+														Error: 'Somthing went wrong when deleting Simulation Records.'
+													})
+													this.handleRenmaeTeam();
+												}
+											})
+										}else{
+											this.setState({
+												isUploading: false,
+												Error: 'Somthing went wrong when deleting Simulation Records.'
+											})
+											this.handleRenmaeTeam();
+										}
+										
+									})
+								}else{
+									this.setState({
+										isUploading: false,
+										Error: 'Somthing went wrong when deleting Players.'
+									})
+									this.handleRenmaeTeam();
+								}
+								
+							})
+							
+						} else {
+							this.setProcessingState('Team Player List Empty...');
+							this.setProcessingState('Deleting Team Data...');
+							 deleteOrgTeam1(this.state.DelData)
+							.then(res2 => {
+								if (res2.data.message === 'success') {
+									this.setState({	isUploading: false,	})
+									this.setProcessingState('Team Deleted successfully');
+									this.handleRenmaeTeam();
+								} else {
+									this.setState({
+										isUploading: false,
+										Error: 'Somthing went wrong when deleting Team.'
+									})
+								}
+							 })
+						}
+					} else {
+							this.setState({
+								isUploading: false,
+								Error: 'Somthing went wrong when deleting data.'
+							})
+							this.handleRenmaeTeam();
+						}
 
                 }).catch(err => {
                     console.log(err)
@@ -859,10 +975,10 @@ class TeamnAdmin extends React.Component {
                                                 className="spinner-border text-primary"
                                                 role="status"
                                             >
-                                                <span className="sr-only">Uploading...</span>
                                             </div>
+                                             <p>{ this.state.processing}</p>
                                         </div>
-                                    ) : null}
+                                    ) : null }
 
                                     {this.state.isUpdated ? (
                                         <UncontrolledAlert
