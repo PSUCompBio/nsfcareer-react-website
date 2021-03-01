@@ -545,7 +545,10 @@ class OrganizationAdmin extends React.Component {
                         }
                     }
 
-                    return <tr className={cls}  key={index} onClick={() => {
+                    return <tr className={cls}  key={index} 
+                    >
+                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                        <td onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin/'+organization.organization+'/'+organization.sensor,
                             state: {
@@ -556,12 +559,19 @@ class OrganizationAdmin extends React.Component {
                                 }
                             }
                         })
-                    }}
-                    >
-                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
-                        <td>{organization.organization}</td>
+                    }}>{organization.organization}</td>
                         <td>{organization.sensor ? organization.sensor : 'NA'}</td>
                         <td><SimulationCountForList count={organization.simulation_count } sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount}/></td>
+						{this.state.isEdit ?	
+						<>	
+						<td>
+							<span><img  style={{width :'32px'}} src={pencil} alt="edit" onClick={e => this.editRecord( {brand: organization.sensor,organization: organization.organization,user_cognito_id: this.state.userDetails.user_cognito_id,organization_id: organization.organization_id,type: 'rename'})}/></span>
+							<span><img  style={{width :'32px'}} src={merge} alt="merge" onClick={e => this.editRecord( {brand: organization.sensor, organization_id: organization.organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} /></span>
+							<span><img  style={{width :'32px'}} src={delicon} alt="delete" onClick={e => this.deleteRecord( {brand: organization.sensor,organization: organization.organization,user_cognito_id: this.state.userDetails.user_cognito_id,organization_id: organization.organization_id})} /></span>
+						</td>
+							</>
+					: null
+					}
                     </tr>;
                 }else{
                     return '';
@@ -834,6 +844,11 @@ class OrganizationAdmin extends React.Component {
                                                             <th scope="col">Organization</th>
                                                             <th scope="col">Sensor</th>
                                                             <th scope="col">Simulations</th>
+															{this.state.isEdit ?	
+															<>	
+                                                            <th scope="col">Action</th>
+															</>
+															:null }
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">

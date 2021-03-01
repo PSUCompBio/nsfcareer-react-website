@@ -131,20 +131,20 @@ class ExportCustomReport extends React.Component {
         var csdm;
         var mps;
         let ScaleWidth = 295;
-        let mpstrangleScale = "0px";
-        let csdmtrangleScale = "0px";
-        let mpsFrontaltrangleScale = "0px";
-        let mpsParietaltrangleScale = "0px";
-        let mpsOccipitaltrangleScale = "0px";
-        let mpsTemporaltrangleScale = "0px";
-        let mpsCerebellumtrangleScale = "0px";
-        let mpsMotortrangleScale = "0px";
-        let csdmFrontaltrangleScale = "0px";
-        let csdmParietaltrangleScale = "0px";
-        let csdmOccipitaltrangleScale = "0px";
-        let csdmTemporaltrangleScale = "0px";
-        let csdmCerebellumtrangleScale = "0px";
-        let csdmMotortrangleScale = "0px";
+        let mpstrangleScale = "0";
+        let csdmtrangleScale = "0";
+        let mpsFrontaltrangleScale = "0";
+        let mpsParietaltrangleScale = "0";
+        let mpsOccipitaltrangleScale = "0";
+        let mpsTemporaltrangleScale = "0";
+        let mpsCerebellumtrangleScale = "0";
+        let mpsMotortrangleScale = "0";
+        let csdmFrontaltrangleScale = "0";
+        let csdmParietaltrangleScale = "0";
+        let csdmOccipitaltrangleScale = "0";
+        let csdmTemporaltrangleScale = "0";
+        let csdmCerebellumtrangleScale = "0";
+        let csdmMotortrangleScale = "0";
         let mpsTrangle1 = trangle_gray;
         let mpsTrangle2 = trangle_gray;
         let mpsTrangle3 = trangle_gray;
@@ -192,13 +192,19 @@ class ExportCustomReport extends React.Component {
                     var left5 = csdm_val5 * ScaleWidth / 38;
                     var left6 = csdm_val6 * ScaleWidth / 38;
                     //**Round up the value....
-                    csdmCerebellumtrangleScale = '' + left1.toFixed(0) ? left1.toFixed(0) :0 + 'px';
-                    csdmFrontaltrangleScale = '' + left2.toFixed(0) ?left2.toFixed(0):0 + 'px';
-                    csdmOccipitaltrangleScale = '' + left3.toFixed(0) ?left3.toFixed(0):0 + 'px';
-                    csdmParietaltrangleScale = '' + left4.toFixed(0) ?left4.toFixed(0):0 + 'px';
-                    csdmTemporaltrangleScale = '' + left5.toFixed(0) ?left5.toFixed(0):0 + 'px';
-                    csdmMotortrangleScale = '' + left6.toFixed(0) ?left6.toFixed(0):0 + 'px';
+                    csdmCerebellumtrangleScale = left1.toFixed(1)? left1.toFixed(1):0;
+                    csdmFrontaltrangleScale = left2.toFixed(1)?left2.toFixed(1):0;
+                    csdmOccipitaltrangleScale = left3.toFixed(1)?left3.toFixed(1):0;
+                    csdmParietaltrangleScale = left4.toFixed(1)?left4.toFixed(1):0;
+                    csdmTemporaltrangleScale = left5.toFixed(1)?left5.toFixed(1):0;
+                    csdmMotortrangleScale = left6.toFixed(1)?left6.toFixed(1):0;
                     
+                    console.log("Mcsdm_val3",csdmOccipitaltrangleScale);
+                    console.log("Mcsdm_val2",csdmFrontaltrangleScale);
+					console.log("Mcsdm_val1",csdmCerebellumtrangleScale);
+                    console.log("Mcsdm_val4",csdmParietaltrangleScale);
+                    console.log("Mcsdm_val5",csdmTemporaltrangleScale);
+                    console.log("Mcsdm_val6",csdmMotortrangleScale);	
                     csdmTrangle1 = this.getTrangle(csdm_val1);
                     csdmTrangle2 = this.getTrangle(csdm_val2);
                     csdmTrangle3 = this.getTrangle(csdm_val3);
@@ -231,13 +237,7 @@ class ExportCustomReport extends React.Component {
 					if (num3 === undefined) { mps_val3 = "0.0000";}else{ mps_val3 = num3;}
 					if (num4 === undefined) { mps_val4 = "0.0000";}else{ mps_val4 = num4;}
 					if (num6 === undefined) { mps_val6 = "0.0000";}else{ mps_val6 = num6;}
-					if (num5 === undefined) { mps_val5 = "0.0000";}else{ mps_val5 = num5;}
-					console.log("csdm_val1",mps_val1);
-                    console.log("csdm_val2",mps_val2);
-                    console.log("csdm_val3",mps_val3);
-                    console.log("csdm_val4",mps_val4);
-                    console.log("csdm_val5",mps_val5);
-                    console.log("csdm_val6",mps_val6);
+					if (num5 === undefined) { mps_val5 = "0.0000";}else{ mps_val5 = num5;}					
                     var left1 = mps_val1 * ScaleWidth / 38;
                     var left2 = mps_val2 * ScaleWidth / 38;
                     var left3 = mps_val3 * ScaleWidth / 38;
@@ -245,18 +245,24 @@ class ExportCustomReport extends React.Component {
                     var left5 = mps_val5 * ScaleWidth / 38;
                     var left6 = mps_val6 * ScaleWidth / 38;
                     //**Round up the value....
-                    mpsCerebellumtrangleScale = '' + left1.toFixed(0)?left1.toFixed(0):0 + 'px';
-                    mpsFrontaltrangleScale = '' + left2.toFixed(0)?left2.toFixed(0):0 + 'px';
-                    mpsOccipitaltrangleScale = '' + left3.toFixed(0)?left3.toFixed(0):0 + 'px';
-                    mpsParietaltrangleScale = '' + left4.toFixed(0)?left4.toFixed(0):0 + 'px';
-                    mpsTemporaltrangleScale = '' + left5.toFixed(0)?left5.toFixed(0):0 + 'px';
-                    mpsMotortrangleScale = '' + left6.toFixed(0)?left6.toFixed(0):0 + 'px';
+                    mpsCerebellumtrangleScale = left1.toFixed(1)?left1.toFixed(1):0;
+                    mpsFrontaltrangleScale = left2.toFixed(1)?left2.toFixed(1):0;
+                    mpsOccipitaltrangleScale = left3.toFixed(1)?left3.toFixed(1):0;
+                    mpsParietaltrangleScale = left4.toFixed(1)?left4.toFixed(1):0;
+                    mpsTemporaltrangleScale = left5.toFixed(1)?left5.toFixed(1):0;
+                    mpsMotortrangleScale = left6.toFixed(1)?left6.toFixed(1):0;
                     mpsTrangle1 = this.getTrangle(mps_val1);
                     mpsTrangle2 = this.getTrangle(mps_val2);
                     mpsTrangle3 = this.getTrangle(mps_val3);
                     mpsTrangle4 = this.getTrangle(mps_val4);
                     mpsTrangle5 = this.getTrangle(mps_val5);
-                    mpsTrangle6 = this.getTrangle(mps_val6);               
+                    mpsTrangle6 = this.getTrangle(mps_val6);  
+					console.log("csdm_val1",mpsCerebellumtrangleScale);
+                    console.log("csdm_val2",mpsFrontaltrangleScale);
+                    console.log("csdm_val3",mpsOccipitaltrangleScale);
+                    console.log("csdm_val4",mpsParietaltrangleScale);
+                    console.log("csdm_val5",mpsTemporaltrangleScale);
+                    console.log("csdm_val6",mpsMotortrangleScale);					
             }
         }
         console.log('csdm15Values',csdm15Values)
@@ -378,6 +384,13 @@ class ExportCustomReport extends React.Component {
                 color: '#686868',
                 fontSize: 9
             },
+            rowHead2Text21: {
+                marginTop: '14px',
+				marginRight: '14px',
+                color: '#000000',
+                fontSize: 16,
+                textAlign: 'center',
+            },
             rowHead2Text2subHead: {
                 marginTop: '7px',
                 color: '#686868',
@@ -427,55 +440,55 @@ class ExportCustomReport extends React.Component {
             },
             point_scale: {
                 width: '14px',
-                marginLeft: mpstrangleScale
+                marginLeft: mpstrangleScale+'px'
             },
             csdmFrontal_point_scale: {
                 width: '14px',
-                marginLeft: csdmFrontaltrangleScale
+                marginLeft: csdmFrontaltrangleScale+'px'
             },
             csdmParietal_point_scale: {
                 width: '14px',
-                marginLeft: csdmParietaltrangleScale
+                marginLeft: csdmParietaltrangleScale+'px'
             },
             csdmOccipital_point_scale: {
                 width: '14px',
-                marginLeft: csdmOccipitaltrangleScale
+                marginLeft: csdmOccipitaltrangleScale+'px'
             },
             csdmTemporal_point_scale: {
                 width: '14px',
-                marginLeft: csdmTemporaltrangleScale
+                marginLeft: csdmTemporaltrangleScale+'px'
             },
             csdmCerebellum_point_scale: {
                 width: '14px',
-                marginLeft: csdmCerebellumtrangleScale
+                marginLeft: csdmCerebellumtrangleScale+'px'
             },
             csdmMotor_point_scale: {
                 width: '14px',
-                marginLeft: csdmMotortrangleScale
+                marginLeft: csdmMotortrangleScale+'px'
             },
             mpsFrontal_point_scale: {
                 width: '14px',
-                marginLeft: mpsFrontaltrangleScale
+                marginLeft: mpsFrontaltrangleScale+'px'
             },
             mpsParietal_point_scale: {
                 width: '14px',
-                marginLeft: mpsParietaltrangleScale
+                marginLeft: mpsParietaltrangleScale+'px'
             },
             mpsOccipi_point_scale: {
                 width: '14px',
-                marginLeft: mpsOccipitaltrangleScale
+                marginLeft: mpsOccipitaltrangleScale+'px'
             },
             mpsTemporal_point_scale: {
                 width: '14px',
-                marginLeft: mpsTemporaltrangleScale
+                marginLeft: mpsTemporaltrangleScale+'px'
             },
             mpsCerebelluml_point_scale: {
                 width: '14px',
-                marginLeft: mpsCerebellumtrangleScale
+                marginLeft: mpsCerebellumtrangleScale+'px'
             },
             mpsMotor_point_scale: {
                 width: '14px',
-                marginLeft: mpsMotortrangleScale
+                marginLeft: mpsMotortrangleScale+'px'
             },
             tableColRight_scale: {
                 display: 'inline-block',
@@ -705,7 +718,7 @@ class ExportCustomReport extends React.Component {
                 width: '79%',
                 marginLeft: '22%',
                 position: 'absolute',
-                marginTop: '372px'
+                marginTop: '371.5px'
             },
             taxture3_div: {
                 width: '79%',
@@ -1356,7 +1369,11 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
+									{this.state.jsonData['imagedata'].CSDM15 ?
                                     <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15 ? this.state.jsonData['imagedata'].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
+									:
+									<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+								}
                                 </View>
                             </>
                             :
@@ -1482,7 +1499,11 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
+								{this.state.jsonData['imagedata'].PMS ?
                                     <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS ? this.state.jsonData['imagedata'].PMS : this.state.metric.merticsImage} alt="trangle" />
+									:
+									<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+								}
                                 </View>
                             </>
                             : null
@@ -1622,7 +1643,11 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-                                <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS ? this.state.jsonData['imagedata'].PMS : this.state.metric.merticsImage} alt="trangle" />
+								{this.state.jsonData['imagedata'].PMS ?
+                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS ? this.state.jsonData['imagedata'].PMS : this.state.metric.merticsImage} alt="trangle" />
+									:
+									<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+								}
                                 </View>
                                 {/*====================Footer heading ==============================*/}
                                 <View style={styles.bottomView}>
