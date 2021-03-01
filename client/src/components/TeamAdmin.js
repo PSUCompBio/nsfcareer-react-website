@@ -36,6 +36,7 @@ import gridView from './girdView.png';
 import listView from './listView.png';
 import $ from 'jquery';
 import delicon from './icons/delete.png';
+import delicon1 from './icons/delete1.png';
 import merge from './icons/merge.png';
 import pencil from './icons/pencil.png';
 import DeletePopup from './Popup/DeletePopup';
@@ -86,6 +87,8 @@ class TeamnAdmin extends React.Component {
             organization: this.props.match.params.org ? this.props.match.params.org : 'PSU',
             team_name: [],
 			processing : '',
+			delete_id:'',
+			highlight_id: '',
 			
         };
     }
@@ -243,6 +246,7 @@ class TeamnAdmin extends React.Component {
         this.setState({ DelData: { type: 'orgTeam', data: e } })
         if (this.state.isDisplay.display === 'none') {
             this.setState({ isDisplay: { display: 'flex' } });
+            this.setState({ delete_id:  e.TeamName});
         } else {
             this.setState({ isDisplay: { display: 'none' } });
         }
@@ -261,6 +265,8 @@ class TeamnAdmin extends React.Component {
     }
     makeVisible = (data) => {
         this.setState({ isDisplay: data });
+		this.setState({ delete_id: '' });
+		this.setState({ highlight_id: '' });
     }
     makeVisible2 = (data) => {
         this.setState({ isDisplay2: data });
@@ -281,6 +287,7 @@ class TeamnAdmin extends React.Component {
     isDeleteData = (isDelete) => {
         console.log('isDelete', isDelete)
         this.setState({ isDelete: isDelete });
+		this.setState({ highlight_id : this.state.delete_id })
         this.setState({ isDisplay: { display: 'none' } });
     }
     handleCencel = () => {
@@ -298,7 +305,9 @@ class TeamnAdmin extends React.Component {
             isAddOrganization: false,
             addTeamData: '',
             mergeData: '',
-            isMerge: false
+            isMerge: false,			
+			delete_id:'',
+			highlight_id: '',
         })
     }
     /*handleChangeSave = () => {
@@ -338,8 +347,8 @@ class TeamnAdmin extends React.Component {
 	}
     handleChangeSave = () => {
         this.setState({ isUploading: true });
-		this.setProcessingState('Deleting Team Players...');
         if (this.state.isDelete) {
+		this.setProcessingState('Deleting Team Players...');
             console.log('deleting', this.state.DelData)			
             deleteOrgTeam(this.state.DelData)
                 .then(res1 => {
@@ -360,7 +369,7 @@ class TeamnAdmin extends React.Component {
 											setTimeout(() =>{ this.setProcessingState('Deleting Event Data...'); }, 2000);
 											deleteOrgTeam4(result)
 											.then(res5 => {
-												if (res4.data.message === 'success') {
+												if (res5.data.message === 'success') {
 													this.setProcessingState('Event Data Deleted successfully');
 													setTimeout(() =>{ this.setProcessingState('Deleting Team Data...'); }, 2000);
 													deleteOrgTeam1(this.state.DelData)
@@ -622,7 +631,12 @@ class TeamnAdmin extends React.Component {
                 <ul className="organization-edit-icons isEdit">
                     <li><span><img src={pencil} alt="Edit" onClick={e => this.editRecord({ TeamName: team, brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id, type: 'renameTeam' })} />Rename</span></li>
                     <li><span><img src={merge} alt="Merge" onClick={e => this.editRecord({ TeamName: team, brand: brand, organization_id: organization_id, type: 'mergeTeam', sensorOrgList: this.state.sensorOrgTeamList, selectOrg: organization })} />Merge</span></li>
-                    <li><span><img src={delicon} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team, brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id })} />Delete</span></li>
+					{team == this.state.highlight_id ?
+                    <li><span><img id ={team} src={delicon1} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team, brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id })} />Delete</span></li>
+					: 
+                    <li><span><img id ={team} src={delicon} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team, brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id })} />Delete</span></li>
+					}
+					
                 </ul>
                 <div
                     ref={reference[0]}
@@ -734,7 +748,9 @@ class TeamnAdmin extends React.Component {
                         cls = 'completedSimulation tech-football m-3';
                     }
                 }
-                return <tr className={cls} key={index} onClick={() => {
+                return <tr className={cls} key={index}   >
+                    <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                    <td><span onClick={() => {
                     this.props.history.push({
                         pathname: '/TeamAdmin/team/players/' + team.organization + '/' + team.team_name + '?brand=' + team.sensor,
                         state: {
@@ -748,13 +764,24 @@ class TeamnAdmin extends React.Component {
                         }
                     })
 
-                }}
-                >
-                    <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
-                    <td>{team.team_name ? team.team_name : 'NA'}</td>
+                }} >{team.team_name ? team.team_name : 'NA'} </span> </td>
                     
                     <td><TeamSimulationCountForList count={team.simulation_count} sensor={team.sensor} organization={team.organization} team={team.team_name} setSimulationCount={this.setTeamSimulationCount}/></td>
                     <td>{team.organization}</td>
+                    {this.state.isEdit ?	
+						<>
+						<td>
+						<span><img style={{width :'32px'}} src={pencil} alt="Edit" onClick={e => this.editRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id, type: 'renameTeam' })} /></span>
+						<span><img style={{width :'32px'}} src={merge} alt="Merge" onClick={e => this.editRecord({ TeamName: team.team_name, brand: team.sensor, organization_id: this.state.sensorOrgTeamList[index].organization_id, type: 'mergeTeam', sensorOrgList: this.state.sensorOrgTeamList, selectOrg: team.organization })} /></span>
+						{team.team_name == this.state.highlight_id ?
+							<span><img style={{width :'32px'}} id ={team.team_name} src={delicon1} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id })} /></span>	
+						: 
+							<span><img style={{width :'32px'}} id ={team.team_name} src={delicon} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id })} /></span>
+						}
+						</td>
+						</>
+					: null
+					}
                 </tr>;
             }
         }, this)
@@ -961,6 +988,11 @@ class TeamnAdmin extends React.Component {
                                                             <th scope="col">Team Name</th>
                                                             <th scope="col">Simulations</th>
                                                             <th scope="col">Organization</th>
+															{this.state.isEdit ?	
+															<>	
+                                                            <th scope="col">Action</th>
+															</>
+															:null }
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">

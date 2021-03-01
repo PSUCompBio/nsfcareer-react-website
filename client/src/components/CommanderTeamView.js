@@ -553,15 +553,15 @@ class CommanderTeamView extends React.Component {
     }
 
     renderSwitch = (player) => {
-        if (this.state.editablestate) {
-            if (player.simulation_data[0]['user_data']) {
-                return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
-            } else {
-                return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
-            }
-        } else {
-            return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
-        }
+		 if(this.state.editablestate){
+			if (player.simulation_data[0]['user_data']) {
+				return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
+			} else {
+				return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+			}
+		 }else{ 
+			return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
+		 }
     }
 
     tConvert = (time) => {
