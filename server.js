@@ -6145,13 +6145,19 @@ function removeYesterdayFolder() {
 
 function getVideoResolution(file_path){
     return new Promise((resolve, reject)=>{
-        exec(`ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 ${file_path}`, (error, stdout, stderr) => {
+        exec(`ffmpeg -i ${file_path} 2>&1 | find "Stream"`, (error, stdout, stderr) => {
             if(error){
                 console.log('Video get resolution err -------------------\n',error);
                 resolve(false);
             }else{
-                console.log('output -------------\n',stdout);
-                resolve(stdout);
+                let output = stdout;
+                var reso = output.split(",");
+                reso = reso[2];
+                var newRes = reso.split("[");
+                newRes = newRes[0];
+                newRes = newRes.trim();
+                console.log('getVideoResolution output -------------\n',newRes);
+                resolve(newRes);
             }
         })
     })

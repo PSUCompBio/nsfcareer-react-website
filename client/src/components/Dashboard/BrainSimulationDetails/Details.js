@@ -1039,17 +1039,17 @@ class Details extends React.Component {
                             <input type="file" id="uploadFile" onChange={this.uploadFile} />
                             <label onClick={this.handalRemoveVideo}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                             <label onClick={this.trimVideo} ><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</label>
-                            <label onClick={this.resetToOriginal} ><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
                             <label onClick={this.flipVideo} ><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
+                            <label onClick={this.resetToOriginal} ><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
+                            
                           </React.Fragment>
                           :
                           <React.Fragment>
                             <label style={{ 'background': '#b7cce2' }}><img src={upload} alt="img" />  Replace</label>
                             <label style={{ 'background': '#b7cce2' }}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                             <label style={{ 'background': '#b7cce2' }}><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</label>
-                            <label style={{ 'background': '#b7cce2' }}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
                             <label style={{ 'background': '#b7cce2' }}><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
-
+                            <label style={{ 'background': '#b7cce2' }}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
                           </React.Fragment>
                         }
                         {/*!-- Video controls end --*/}
@@ -1101,8 +1101,9 @@ class Details extends React.Component {
                                 <input type="file" id="uploadFile" onChange={this.uploadFile} />
                                 <label onClick={this.handalRemoveVideo}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                                 <label onClick={this.trimVideo} > {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px' }}></i> : <><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</>} </label>
-                                <label onClick={this.resetToOriginal}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
                                 <label onClick={this.flipVideo} ><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
+                                <label onClick={this.resetToOriginal}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
+                                
 
                               </React.Fragment>
                               :
@@ -1110,8 +1111,8 @@ class Details extends React.Component {
                                 <label style={{ 'background': '#b7cce2' }}><img src={upload} alt="img" />  Replace</label>
                                 <label style={{ 'background': '#b7cce2' }}><img src={remove} alt="img" />  {this.state.label_remove_video}</label>
                                 <label style={{ 'background': '#b7cce2' }}> {this.state.isTriming ? <i className="fa fa-spinner fa-spin" style={{ 'font-size': '24px' }}></i> : <><img src={trim_icon} alt="img" />  {this.state.label_TrimVideo}</>} </label>
+                                <label style={{ 'background': '#b7cce2' }}><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
                                 <label style={{ 'background': '#b7cce2' }}><img src={reset_icon} alt="img" />  {this.state.label_resetVideo}</label>
-                                 <label style={{ 'background': '#b7cce2' }}><img src={button_mirror_horizontal} alt="img" />  {this.state.label_flipVideo}</label>
 
                               </React.Fragment>
                             }
