@@ -6,7 +6,7 @@ import simulationLoading from '../simulationLoading.png';
 import DownloadReportPopup from '.././Popup/DownloadReportPopup';
 // import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import {
-    getSimulationDetail,getUserDataByPlayerID,
+    getSimulationDetail,getUserDataByPlayerID,getBrainImageByimageID,
   } from '../../apis';
 const options = {
     responsive: true,
@@ -145,10 +145,18 @@ class HeadAccelerationAllEvents extends React.Component {
 			.then(response1 => {
                 if(response.data.data.jsonOutputFile && response.data.data.jsonOutputFile != undefined){
                     response.data.data.jsonOutputFile["playerdata"] =  response1.data.data[0];
-                    console.log('playerdata ----\n', response.data.data)
-                    this.setState({
-                        simulationData: response.data.data,
-                    });
+                    console.log('playerdata ----\n', response1.data.data[0])
+					var imageid = this.props.data.sensor_data.image_id;
+					var accountid = response1.data.data[0].account_id;
+					getBrainImageByimageID({ accountid: accountid, imageid: imageid})
+					.then(imageresponse1 => {
+						response.data.data.jsonOutputFile["imagedata"] =  imageresponse1.data.data;
+						console.log('jsondata image data ----\n', response.data.data)
+						this.setState({
+							simulationData: response.data.data,
+						});
+					}) 
+                    
                 }
 			})
             

@@ -619,7 +619,7 @@ class CommanderTeamView extends React.Component {
                                     }
                                 }} >{'Admin > '}</Link>
                                 : null}
-                            {this.state.brand && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
+                            {this.state.brand && this.state.brand !== "null" && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?						
                                 <Link style={{ fontWeight: "400" }} to={{
                                     pathname: '/OrganizationAdmin',
                                     state: {
@@ -628,7 +628,7 @@ class CommanderTeamView extends React.Component {
                                             user_cognito_id: this.state.user_cognito_id
                                         }
                                     }
-                                }} >{this.state.brand + ' > '}</Link>
+                                }} >{this.state.brand + ' > '}</Link>	
                                 : null}
                             {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
                                 <Link style={{ fontWeight: "400" }} to={{

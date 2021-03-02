@@ -2558,6 +2558,7 @@ function getOrganizatonBynameSensor(organization, sensor){
 
 function getOrganizatonByTeam(organization, team_name,sensor){
     return new Promise((resolve, reject) =>{
+		if(sensor){
         var   params = {
                 TableName: "organizations",
                 FilterExpression: "team_name = :team_name and organization = :organization and sensor = :sensor ",
@@ -2567,6 +2568,17 @@ function getOrganizatonByTeam(organization, team_name,sensor){
                 ":sensor": sensor,
                 },
             };
+		}else{
+			  var   params = {
+                TableName: "organizations",
+                FilterExpression: "team_name = :team_name and organization = :organization ",
+                ExpressionAttributeValues: {
+                ":team_name": team_name,
+                ":organization": organization,
+                },
+            };
+		} 
+		console.log("params",params)
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {

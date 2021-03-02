@@ -361,6 +361,13 @@ class Report extends React.Component {
                 color:'#686868',
                 fontSize: 9
             },
+            rowHead2Text21:{
+                marginTop: '12px',
+				marginRight: '14px',
+                color: '#000000',
+                fontSize: 14,
+                textAlign: 'center',
+            },
             rowHead2Text2subHead:{
                 marginTop: '7px',
                 color:'#686868',
@@ -1089,6 +1096,13 @@ class Report extends React.Component {
                                             <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                         </View>
                                     </View>
+									<View style={styles.tableRow}>
+										{this.state.jsonData['imagedata'].CSDM15 ?
+											<Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15} alt="trangle" />
+											:
+											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+										}
+									</View>
                                 </>
                                 :
                                 null
@@ -1211,7 +1225,14 @@ class Report extends React.Component {
                                         <View style={styles.p1_footer_arrow_left}>
                                             <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                         </View>
-                                    </View>
+                                    </View>									
+									<View style={styles.tableRow}>
+										{this.state.jsonData['imagedata'].PMS ?
+											<Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS} alt="trangle" />
+											:
+											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+										}
+									</View>
                                     <View style={styles.tableRow}>                          
                                         <Image  style={styles.trangle_scale} src={branImages_1} alt="trangle"/>
                                     </View>
@@ -1353,7 +1374,14 @@ class Report extends React.Component {
                                         <View style={styles.p1_footer_arrow_left}>
                                             <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                         </View>
-                                    </View>
+                                    </View>																		
+									<View style={styles.tableRow}>
+										{this.state.jsonData['imagedata'].PMS ?
+											<Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS} alt="trangle" />
+											:
+											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+										}
+									</View>
                                     <View style={styles.tableRow}>                          
                                         <Image  style={styles.trangle_scale} src={branImages_1} alt="trangle"/>
                                     </View>

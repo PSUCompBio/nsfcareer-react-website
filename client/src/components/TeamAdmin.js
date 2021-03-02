@@ -770,14 +770,14 @@ class TeamnAdmin extends React.Component {
                     <td>{team.organization}</td>
                     {this.state.isEdit ?	
 						<>
-						<td>
-						<span><img style={{width :'32px'}} src={pencil} alt="Edit" onClick={e => this.editRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id, type: 'renameTeam' })} /></span>
-						<span><img style={{width :'32px'}} src={merge} alt="Merge" onClick={e => this.editRecord({ TeamName: team.team_name, brand: team.sensor, organization_id: this.state.sensorOrgTeamList[index].organization_id, type: 'mergeTeam', sensorOrgList: this.state.sensorOrgTeamList, selectOrg: team.organization })} /></span>
+						<td style={{width :'20%'}}>
+						<span style={{width :'33%',float:'left'}}>Rename<br/> <img style={{width :'24px'}} src={pencil} alt="Edit" onClick={e => this.editRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id, type: 'renameTeam' })} /></span>
 						{team.team_name == this.state.highlight_id ?
-							<span><img style={{width :'32px'}} id ={team.team_name} src={delicon1} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id })} /></span>	
+							<span style={{width :'33%',float:'left'}}>Delete<br/><img style={{width :'32px'}} id ={team.team_name} src={delicon1} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id })} /></span>	
 						: 
-							<span><img style={{width :'32px'}} id ={team.team_name} src={delicon} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id })} /></span>
-						}
+							<span style={{width :'33%',float:'left'}}>Delete<br/><img style={{width :'32px'}} id ={team.team_name} src={delicon} alt="Delete" onClick={e => this.deleteRecord({ TeamName: team.team_name, brand: team.sensor, organization: team.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: this.state.sensorOrgTeamList[index].organization_id })} /></span>
+						}						
+						<span style={{width :'33%',float:'left'}}>Merge<br/><img style={{width :'32px'}} src={merge} alt="Merge" onClick={e => this.editRecord({ TeamName: team.team_name, brand: team.sensor, organization_id: this.state.sensorOrgTeamList[index].organization_id, type: 'mergeTeam', sensorOrgList: this.state.sensorOrgTeamList, selectOrg: team.organization })} /></span>
 						</td>
 						</>
 					: null

@@ -30,6 +30,7 @@ import gridView from './girdView.png';
 import listView from './listView.png';
 import $ from "jquery";
 import delicon from './icons/delete.png';
+import delicon1 from './icons/delete1.png';
 // import merge from './icons/merge.png';
 import pencil from './icons/pencil.png';
 import plus from './icons/plus.png'
@@ -87,7 +88,9 @@ class AdminDashboard extends React.Component {
             isAddOrganization: false,
             mergeData: '',
             isMerge: false,
-            requestedUsers: ''
+            requestedUsers: '',			
+			delete_id:'',
+			highlight_id: '',
         };
     }
     toggleTab = (value) => {
@@ -261,7 +264,9 @@ class AdminDashboard extends React.Component {
             isAddOrganization: false,
             addOrganizationData: '',
             mergeData: '',
-            isMerge: false
+            isMerge: false,			
+			delete_id:'',
+			highlight_id: '',
         })
     }
 
@@ -277,6 +282,8 @@ class AdminDashboard extends React.Component {
 
     makeVisible = (data) => {
         this.setState({ isDisplay: data });
+		this.setState({ delete_id: '' });
+		this.setState({ highlight_id: '' });
     }
     makeVisible2 = (data) => {
         this.setState({ isDisplay2: data });
@@ -286,7 +293,8 @@ class AdminDashboard extends React.Component {
         console.log('delete', e)
         this.setState({ DelData: { type: 'team', data: e } })
         if (this.state.isDisplay.display === 'none') {
-            this.setState({ isDisplay: { display: 'flex' } });
+            this.setState({ isDisplay: { display: 'flex' } });			
+            this.setState({ delete_id:  e.organization});
         } else {
             this.setState({ isDisplay: { display: 'none' } });
         }
@@ -295,7 +303,8 @@ class AdminDashboard extends React.Component {
     isDeleteData = (isDelete) => {
         console.log('isDelete', isDelete)
         this.setState({ isDelete: isDelete });
-        this.setState({ isDisplay: { display: 'none' } });
+        this.setState({ isDisplay: { display: 'none' } });		
+		this.setState({ highlight_id : this.state.delete_id })
     }
 
     isUpdateData = (data) => {
@@ -751,8 +760,11 @@ class AdminDashboard extends React.Component {
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <ul className="organization-edit-icons isEdit">
                     <li><span><img src={pencil} alt="Edit" onClick={e => this.editRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id, type: 'rename' })} />Rename</span></li>
-
-                    <li><span><img src={delicon} alt="Delete" onClick={e => this.deleteRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id })} />Delete</span></li>
+					{organization == this.state.highlight_id ?
+						<li><span><img src={delicon1} alt="Delete" onClick={e => this.deleteRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id })} />Delete</span></li>
+					: 
+						<li><span><img src={delicon} alt="Delete" onClick={e => this.deleteRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, organization_id: organization_id })} />Delete</span></li>
+					}
                 </ul>
                 <div
                     ref={reference[0]}
@@ -1139,9 +1151,14 @@ class AdminDashboard extends React.Component {
                     <td><SimulationCountForList count={organization.simulation_count} sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount} /></td>
 						{this.state.isEdit ?	
 						<>					
-					<td>
-							<span><img style={{width :'32px'}} src={pencil} alt="Edit" onClick={e => this.editRecord({ brand: organization.sensor, organization: organization.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: organization.organization_id, type: 'rename' })} /></span>
-							<span><img style={{width :'32px'}} src={delicon} alt="Delete" onClick={e => this.deleteRecord({ brand: organization.sensor, organization: organization.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: organization.organization_id })} /></span>
+					<td style={{width :'20%'}}>
+							<span  style={{width :'33%',float:'left'}}>Rename<br/><img style={{width :'24px'}} src={pencil} alt="Edit" onClick={e => this.editRecord({ brand: organization.sensor, organization: organization.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: organization.organization_id, type: 'rename' })} /></span>
+							{organization.organization == this.state.highlight_id ?
+								<span style={{width :'33%',float:'left'}}>Delete<br/><img style={{width :'24px'}} src={delicon1} alt="Delete" onClick={e => this.deleteRecord({ brand: organization.sensor, organization: organization.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: organization.organization_id })} /></span>
+							: 
+								<span style={{width :'33%',float:'left'}}>Delete<br/><img style={{width :'24px'}} src={delicon} alt="Delete" onClick={e => this.deleteRecord({ brand: organization.sensor, organization: organization.organization, user_cognito_id: this.state.userDetails.user_cognito_id, organization_id: organization.organization_id })} /></span>
+							}
+							
 							
 					</td>
 						</>
