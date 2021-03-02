@@ -14,7 +14,6 @@ import {
     isAuthenticated,
     // getUserDetails,
     getUserDBDetails,
-    getAllOrganizationsOfSensorBrand,
     fetchStaffMembers,
     deleteItem,
     renameOrganization,
@@ -44,8 +43,7 @@ class OrganizationAdmin extends React.Component {
         super();
         this.state = {
             isAuthenticated: false,
-            isCheckingAuth: true,
-         
+            isCheckingAuth: true, 
             tabActive: 0,
             targetBtn: '',
             totalTeam: 0,
@@ -300,7 +298,7 @@ class OrganizationAdmin extends React.Component {
             .then(response =>{
                  console.log('response',response)
                 if(response.data.message === "success"){
-                    getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+                    getAllOrganizationsOfSensorBrandList({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
                     .then(orgs => {
                         $('.isEdit').css({'display':'none'});
                         $('.button-edit').removeClass('button-edit-active');
@@ -352,7 +350,7 @@ class OrganizationAdmin extends React.Component {
                 })
             })
         }else{
-            getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+            getAllOrganizationsOfSensorBrandList({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
             .then(orgs => {
                 $('.isEdit').css({'display':'none'});
                 $('.button-edit').removeClass('button-edit-active');

@@ -133,6 +133,7 @@ export const flipVideo = (request) =>{
   })
 }
 
+
 export const setUserPassword = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/setUserPassword`, request,{withCredentials: true})
@@ -1327,6 +1328,18 @@ export const submitBrainsimulationJobs = (request) =>{
   })
 }
 
+
+export const createJoblogs = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/api/v1/jobs/insertlogs`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 
 //# ...
 export const checkSensorDataExistsSimulationjsonData = (request) =>{
