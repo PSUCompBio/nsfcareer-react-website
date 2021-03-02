@@ -232,6 +232,7 @@ const {
     getOrgpPlayerFromUser,
     getOrgpTeamFromSensorDetails,
     getOrgFromSensorDetailsr,
+    addJobslog
 
 } = require('./controllers/query');
 
@@ -5778,7 +5779,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
                 removes3Object(imageData.trim_video_path)
                     .then(response => {
                         console.log('trim video removed ===============')
-                    }).catch(err=>{
+                    }).catch(err => {
                         res.send({
                             message: "failure",
                             data: err
@@ -6143,33 +6144,38 @@ function removeYesterdayFolder() {
     // }
 }
 
-function getVideoResolution(file_path){
-    return new Promise((resolve, reject)=>{
-        exec(`ffmpeg -i ${file_path} 2>&1 | find "Stream"`, (error, stdout, stderr) => {
-            if(error){
-                console.log('Video get resolution err -------------------\n',error);
+function getVideoResolution(file_path) {
+    return new Promise((resolve, reject) => {
+        exec(`ffmpeg -i ${file_path} -f null -`, (error, stdout, stderr) => {
+            if (error) {
+                console.log('Video get resolution err -------------------\n', error);
                 resolve(false);
-            }else{
-                let output = stdout;
-                var reso = output.split(",");
-                reso = reso[2];
-                var newRes = reso.split("[");
-                newRes = newRes[0];
-                newRes = newRes.trim();
-                console.log('getVideoResolution output -------------\n',newRes);
-                resolve(newRes);
+            } else {
+                let output = stderr;
+                if(output){
+                    output = output.split('Stream');
+                    var reso = output[1].split(",");
+                    reso = reso[2];
+                    var newRes = reso.split("[");
+                    newRes = newRes[0];
+                    newRes = newRes.trim();
+                    console.log('getVideoResolution output -------------\n',newRes);
+                    resolve(newRes);
+                }else{
+                    resolve(false);
+                }
             }
         })
     })
 }
 
-function uploadSidelineVideoToDir(impact_video_url){
-    return new Promise((resolve, reject)=>{
-        https.get(impact_video_url, async  (response, error) => {
-            if(error){
-                console.log('error',error);
+function uploadSidelineVideoToDir(impact_video_url) {
+    return new Promise((resolve, reject) => {
+        https.get(impact_video_url, async (response, error) => {
+            if (error) {
+                console.log('error', error);
                 resolve(false);
-            }else{
+            } else {
                 var name = Date.now();
                 var file_store_path = 'public/uploads/' + name + '_sidelineVideo.mp4';
                 const file = fs.createWriteStream(file_store_path);
@@ -6179,7 +6185,7 @@ function uploadSidelineVideoToDir(impact_video_url){
                     resolve(file_store_path);
                 })
 
-                file.on('error', function(err) {
+                file.on('error', function (err) {
                     console.log("ERROR:" + err);
                     file.read();
                 });
@@ -6188,15 +6194,15 @@ function uploadSidelineVideoToDir(impact_video_url){
     })
 }
 
-function changeResolutionOfVideo(videoPath, videoOutputPath, resolution){
-    console.log('sidelineReso --------------------------- =',resolution)
-    return new Promise((resolve, reject)=>{
+function changeResolutionOfVideo(videoPath, videoOutputPath, resolution) {
+    console.log('sidelineReso --------------------------- =', resolution)
+    return new Promise((resolve, reject) => {
         exec(`ffmpeg -i ${videoPath} -vf scale=${resolution}  ${videoOutputPath}`, (error, stdout, stderr) => {
-            if(error){
-                console.log('changeResolutionOfVideo err -------------------\n',error);
+            if (error) {
+                console.log('changeResolutionOfVideo err -------------------\n', error);
                 resolve(false);
-            }else{
-                console.log('changeResolutionOfVideo output -------------\n',stdout);
+            } else {
+                console.log('changeResolutionOfVideo output -------------\n', stdout);
                 resolve(true);
             }
         })
@@ -6231,7 +6237,7 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
 
         const file = fs.createWriteStream(file_store_path);
         response.pipe(file);
-        file.on('finish',async () => {
+        file.on('finish', async () => {
             console.log('finished ------------------------- 1');
             // ===================
             // uploading file 2
@@ -6247,13 +6253,13 @@ app.post(`${apiPrefix}merge-video`, (req, res) => {
             var sidelien_video_path = 'public/uploads/' + name + '_movie.mp4';
             list.push(sidelien_video_path);
             sidelineReso = sidelineReso.trim();
-            var isChangedResulotion =  await changeResolutionOfVideo(sidelineVideo, sidelien_video_path, sidelineReso);
+            var isChangedResulotion = await changeResolutionOfVideo(sidelineVideo, sidelien_video_path, sidelineReso);
             await timeout(1000);
-            
+
             // Called mereged video ...
-            if(isChangedResulotion){
+            if (isChangedResulotion) {
                 writeTextfile(list);
-            }else{
+            } else {
                 res.send({
                     message: 'faiure',
                     error: 'Failed to resize sideline video.'
@@ -6361,7 +6367,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
             })
         })
     });
-   
+
     async function writeTextfile(list) {
         console.log('list', list);
         exec(`ffmpeg -i ${list[0]} -ss ${req.body.startTime} -to ${req.body.endTime} -c copy  ${outputFilePath}`, async (error, stdout, stderr) => {
@@ -6372,7 +6378,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
             let fps_of_trim_video = 29;
             await timeout(4000);
             console.log('simulationVideoDuration --------------------------\n', simulationVideoDuration)
-            exec(`ffmpeg -i ${outputFilePath} 2>&1 | find "Duration"`, (error, stdout, stderr) => {
+            exec(`ffmpeg -i ${outputFilePath} -f null -`, (error, stdout, stderr) => {
                 if (error) {
                     console.log(`error: ${error.message}`);
                     res.send({
@@ -6380,8 +6386,14 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                         error: error.message
                     });
                 } else {
-                    var time = stdout.slice(11);
-                    time = time.split(',')[0];
+                    // console.log( 'stderr ----------------------', stderr)
+                    var outputDuration = stderr.split('Duration');
+                    outputDuration = outputDuration[1];
+                    var time = outputDuration.split(',')[0];
+                    time = time.slice(2);
+                    time = time.trim();
+                    console.log( 'stderr ----------------------', time)
+
 
                     let hr = time.split(':')[0];
                     let mint = time.split(':')[1];
@@ -6394,7 +6406,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                     duration = duration.toFixed(3);
                     duration_of_trim_video = duration;
 
-                    exec(`ffmpeg -i ${simulationVideoPath} 2>&1 | find "fps"`, (error, stdout, stderr) => {
+                    exec(`ffmpeg -i ${simulationVideoPath} -f null -`, (error, stdout, stderr) => {
                         if (error) {
                             console.log(`error fps: ${error.message}`);
                             res.send({
@@ -6402,8 +6414,12 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                                 error: error.message
                             });
                         } else {
-                            let videofps = stdout.split("kb/s,")[1];
+                            let videofps = stderr.split('kb/s,');
+                            videofps = videofps[1];
+                            // let videofps = stdout.split("kb/s,")[1];
                             videofps = videofps.split('fps,')[0];
+                            videofps = videofps.trim();
+                            console.log('fps rate stderr ----------------',videofps);
                             fps_of_simulation_video = parseInt(videofps);
                             console.log('fps -----------------------\n', fps_of_simulation_video);
 
@@ -6556,7 +6572,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
             });
         })
     }
-})       
+})
 /*-- trim function end --*/
 
 /*=============================
@@ -6571,63 +6587,63 @@ app.post(`${apiPrefix}api/v1/flipVideo`, (req, res) => {
     */
     var d = new Date();
     let month = d.getMonth() + 1;
-    let datetoday = month+'-'+d.getFullYear();
-    var dir = 'public/uploads/'+datetoday;
+    let datetoday = month + '-' + d.getFullYear();
+    var dir = 'public/uploads/' + datetoday;
 
-    if (!fs.existsSync(dir)){
+    if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
 
     //** 
     //files name ..........
-    var file_path = '/uploads/'+datetoday+'/'+Date.now() + '_flip.mp4';
-    var outputFilePath = 'public'+file_path;
+    var file_path = '/uploads/' + datetoday + '/' + Date.now() + '_flip.mp4';
+    var outputFilePath = 'public' + file_path;
     let list = []
 
-    
+
 
     //uploading files.             
     var name = Date.now();
-    var file_store_path =  'public/uploads/'+ name +'_movie.mp4';
+    var file_store_path = 'public/uploads/' + name + '_movie.mp4';
     list.push(`public/uploads/${name}_movie.mp4`);
-    https.get(req.body.impact_video_url , function(response ,error) { 
+    https.get(req.body.impact_video_url, function (response, error) {
         const file = fs.createWriteStream(file_store_path);
         response.pipe(file);
-        file.on('finish',() => {
-        console.log('finished -------------------------');
-        setTimeout(()=>{
+        file.on('finish', () => {
+            console.log('finished -------------------------');
+            setTimeout(() => {
                 writeTextfile(list);
-            },6000)
+            }, 6000)
         });
-        
+
     });
 
-    const writeTextfile = (list)=>{
-        console.log('list',list);
+    const writeTextfile = (list) => {
+        console.log('list', list);
         exec(`ffmpeg -i ${list[0]}  -vf hflip -c:a copy  ${outputFilePath}`, (error, stdout, stderr) => {
-          
+
             if (error) {
                 console.log(`error: ${error.message}`);
                 list.forEach(file => {
-                    fs.unlinkSync(file)                    
+                    fs.unlinkSync(file)
                 });
                 res.send({
                     message: 'faiure',
                     error: error.message
                 });
             }
-            else{
+            else {
                 console.log("videos are successfully fliped");
                 /*-- Delete all generated files --*/
                 list.forEach(file => {
-                    fs.unlinkSync(file)                    
+                    fs.unlinkSync(file)
                 });
                 var bufs = [];
                 var readableStream = fs.createReadStream(outputFilePath);
-                readableStream.on('data', function(chunk) {
-                    bufs.push(chunk); 
+                readableStream.on('data', function (chunk) {
+                    bufs.push(chunk);
                 });
-                readableStream.on('end', function(){
+                readableStream.on('end', function () {
                     var buf = Buffer.concat(bufs);
                     console.log('stream end', buf)
                     var uploadParams = {
@@ -6636,116 +6652,116 @@ app.post(`${apiPrefix}api/v1/flipVideo`, (req, res) => {
                         Body: null, // pass file body
                     };
                     getSimulationImageRecord(image_id)
-                    .then(data => {
+                        .then(data => {
 
-                        /*
-                        * Remove trim video from s3 if already exists before trim...
-                        */
-                        removes3Object(data.trim_video_path)
-                        .then(response =>{
-                            console.log('Trim video removed successfully =================================')
-                        })
-                        /*--end--*/
-
-                        // File Extensions
-                        let file_name = Date.now()+'_'+image_id+'_trimed.mp4'
-                        var d = new Date();
-                        console.log(d.toLocaleDateString('pt-PT'));
-                        d = d.toLocaleDateString('pt-PT');
-                        var date = d.replace("/", "-");
-                        date = date.replace("/", "-");
-                        console.log('date',date);
-                        // Setting Attributes for file upload on S3
-                        uploadParams.Key =  data['player_name']+"/simulation/"+date+"/impact-video/"+image_id+"/"+file_name;
-                        // console.log('req.file.buffer', req.file.buffer)
-                        uploadParams.Body = buf;
-                        
-                        s3.upload(uploadParams, (err, data) => {
-                            if (err) {
-                                console.log('======errr \n',err)
-                                res.send({
-                                    message: "failure",
-                                    data: err
-                                });
-                               
-                            }else{
-                                /*-- Unlink trimed video from directory --*/
-                                fs.unlinkSync(outputFilePath)
-
-                                /*
-                                * Insert s3 video path in simulation_image table...
-                                */
-                                InsertTrimVideoKey(req.body.image_id,uploadParams.Key,'').
-                                then(sensor_data => {
-                                    const  image_id  = req.body.image_id;
-                                    let imageData = '';
-
-                                    /*
-                                    * Getting image simulation image record from simulation_image table...
-                                    */
-                                    getSimulationImageRecord(image_id)
-                                    .then(image_data => {
-                                        console.log('image_data -----------------------------------\n',image_data)
-                                        imageData = image_data;
-                                        return verifyImageToken(imageData['token'], image_data);
-                                    })
-                                    .then(decoded_token => {
-                                        // console.log('decoded_token',decoded_token)
-                                        return getPlayerCgValues(imageData.player_name);
-                                    })
-                                    .then(cg_coordinates => {
-                                        // Setting cg values
-                                        // console.log("cg_coordinates",cg_coordinates)
-                                        if(cg_coordinates) {
-                                          imageData["cg_coordinates"] = cg_coordinates;
-                                        }
-                                        return trimVideoUrl(imageData);
-                                    })
-                                    .then(movie_link => {
-                                        // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
-                                        console.log('movie_link',movie_link);
-                                        res.send({
-                                            message : "success",
-                                            trim_video_path : movie_link
-                                        })
-                                        
-                                    })
-                                    .catch(err => {
-                                        console.log(err);
-                                        // res.removeHeader('X-Frame-Options');
-                                        // if(err.message == 'The provided key element does not match the schema'){
-                                            res.send({
-                                                message: "failure",
-                                                data: err
-                                            });
-                                        // }
-                                    })
+                            /*
+                            * Remove trim video from s3 if already exists before trim...
+                            */
+                            removes3Object(data.trim_video_path)
+                                .then(response => {
+                                    console.log('Trim video removed successfully =================================')
                                 })
-                                .catch(err => {
-                                   console.log('err',err)
+                            /*--end--*/
+
+                            // File Extensions
+                            let file_name = Date.now() + '_' + image_id + '_trimed.mp4'
+                            var d = new Date();
+                            console.log(d.toLocaleDateString('pt-PT'));
+                            d = d.toLocaleDateString('pt-PT');
+                            var date = d.replace("/", "-");
+                            date = date.replace("/", "-");
+                            console.log('date', date);
+                            // Setting Attributes for file upload on S3
+                            uploadParams.Key = data['player_name'] + "/simulation/" + date + "/impact-video/" + image_id + "/" + file_name;
+                            // console.log('req.file.buffer', req.file.buffer)
+                            uploadParams.Body = buf;
+
+                            s3.upload(uploadParams, (err, data) => {
+                                if (err) {
+                                    console.log('======errr \n', err)
                                     res.send({
                                         message: "failure",
                                         data: err
                                     });
-                                })
-                            }
+
+                                } else {
+                                    /*-- Unlink trimed video from directory --*/
+                                    fs.unlinkSync(outputFilePath)
+
+                                    /*
+                                    * Insert s3 video path in simulation_image table...
+                                    */
+                                    InsertTrimVideoKey(req.body.image_id, uploadParams.Key, '').
+                                        then(sensor_data => {
+                                            const image_id = req.body.image_id;
+                                            let imageData = '';
+
+                                            /*
+                                            * Getting image simulation image record from simulation_image table...
+                                            */
+                                            getSimulationImageRecord(image_id)
+                                                .then(image_data => {
+                                                    console.log('image_data -----------------------------------\n', image_data)
+                                                    imageData = image_data;
+                                                    return verifyImageToken(imageData['token'], image_data);
+                                                })
+                                                .then(decoded_token => {
+                                                    // console.log('decoded_token',decoded_token)
+                                                    return getPlayerCgValues(imageData.player_name);
+                                                })
+                                                .then(cg_coordinates => {
+                                                    // Setting cg values
+                                                    // console.log("cg_coordinates",cg_coordinates)
+                                                    if (cg_coordinates) {
+                                                        imageData["cg_coordinates"] = cg_coordinates;
+                                                    }
+                                                    return trimVideoUrl(imageData);
+                                                })
+                                                .then(movie_link => {
+                                                    // let computed_time = imageData.computed_time ? timeConversion(imageData.computed_time) : ''
+                                                    console.log('movie_link', movie_link);
+                                                    res.send({
+                                                        message: "success",
+                                                        trim_video_path: movie_link
+                                                    })
+
+                                                })
+                                                .catch(err => {
+                                                    console.log(err);
+                                                    // res.removeHeader('X-Frame-Options');
+                                                    // if(err.message == 'The provided key element does not match the schema'){
+                                                    res.send({
+                                                        message: "failure",
+                                                        data: err
+                                                    });
+                                                    // }
+                                                })
+                                        })
+                                        .catch(err => {
+                                            console.log('err', err)
+                                            res.send({
+                                                message: "failure",
+                                                data: err
+                                            });
+                                        })
+                                }
+                            })
+                        }).catch(err => {
+                            console.log('err', err)
+                            res.send({
+                                message: "failure",
+                                data: err
+                            });
                         })
-                    }).catch(err => {
-                       console.log('err',err)
-                        res.send({
-                            message: "failure",
-                            data: err
-                        });
-                    })
 
                 })
             }
-            
+
         })
     }
 })
 
-/* --end-- */ 
+/* --end-- */
 
 
 
@@ -8062,7 +8078,7 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                     })
                     .then(mps_dat_output => {
                         let msp_dat_data = [];
-                        /* if (mps_dat_output) {
+                         if (mps_dat_output) {
                             var enc = new TextDecoder("utf-8");
                             var arr = new Uint8Array(mps_dat_output.Body);
                             var objdata = enc.decode(arr);
@@ -8073,7 +8089,7 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                                 let val = parseFloat(mpsval[1]);
                                 if (val.toFixed(4) !== '0.0000') msp_dat_data.push({ id: mpsval[0], val: val });
                             }
-                        } */
+                        } 
 
                         // X- Axis Linear Acceleration
                         let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
@@ -8192,7 +8208,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                     })
                     .then(mps_dat_output => {
                         let msp_dat_data = [];
-                       /* if (mps_dat_output) {
+                        if (mps_dat_output) {
                             // var mps_dat_output_data = JSON.parse(mps_dat_output.Body.toString('base64'));
                             var enc = new TextDecoder("utf-8");
                             var arr = new Uint8Array(mps_dat_output.Body);
@@ -8204,7 +8220,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                                 let val = parseFloat(mpsval[1]);
                                 if (val.toFixed(4) !== '0.0000') msp_dat_data.push({ id: mpsval[0], val: val });
                             }
-                        }*/
+                        }
 
                         console.log('wrking for other')
                         // X- Axis Linear Acceleration
@@ -9822,7 +9838,29 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{ name: "filename",
 
 })
 
-
+app.post(`${apiPrefix}api/v1/jobs/insertlogs`, (req, res) => {
+    console.log('insertlogs --------', req.body);
+    const { email, listJobs } = req.body;
+    if (email) {
+        addJobslog({
+            email: email,
+            listJobs: listJobs,
+            created: '#' + Date.now(),
+            status: 'pending'
+        }).then(result => {
+            res.send({
+                status: 'success',
+                message: 'Log created successfully.'
+            })
+        }).catch(err => {
+            console.log('err ----------------- logs\n', err)
+            res.send({
+                status: 'failiure',
+                error: err
+            })
+        })
+    }
+})
 
 app.post(`${apiPrefix}api/v2/checkSensorDataExists/json/`, VerifyToken, (req, res) => {
     console.log('req.query', req.body)
@@ -13879,6 +13917,11 @@ app.post(`${apiPrefix}getBrainImageByAccountID`, VerifyToken, (req, res) => {
                     message: "failure",
                     error: err
                 })
+        }).catch(err => {
+            console.log('err -------------- listorg \n', err)
+            res.send({
+                message: "failure",
+                error: err
             })
  });
 app.post(`${apiPrefix}getBrainImageByimageID`, VerifyToken, (req, res) => {
@@ -13929,34 +13972,34 @@ app.post(`${apiPrefix}getBrainImageByimageID`, VerifyToken, (req, res) => {
 app.post(`${apiPrefix}deleteOrgTeam`, (req, res) => { 
 	let type = req.body.type;
     let data = req.body.data;
-	if (type == 'orgTeam') {
+    if (type == 'orgTeam') {
         getOrganizationTeamData({ sensor: data.brand, organization: data.organization, team: data.TeamName })
             .then(result => {
-              //  console.log('result ----------------', result)
+                //  console.log('result ----------------', result)
                 let sensorlen = result.length;
                 let count1 = 0;
                 let count3 = 0;
-              //  console.log(sensorlen)
+                //  console.log(sensorlen)
                 if (sensorlen > 0) {
-						res.send({
-							message: 'success',
-							status: 200,
-							data: result
-						})
+                    res.send({
+                        message: 'success',
+                        status: 200,
+                        data: result
+                    })
                 } else {
-					res.send({
-							message: 'success',
-							status: 200,
-							data: ""
-					})
-                   
+                    res.send({
+                        message: 'success',
+                        status: 200,
+                        data: ""
+                    })
+
                 }
             })
 
     }
 });
 app.post(`${apiPrefix}deleteOrgTeam1`, (req, res) => {
-	let type = req.body.type;
+    let type = req.body.type;
     let data = req.body.data;
 					console.log('data', data);
 					console.log('type', type);
@@ -14009,96 +14052,96 @@ app.post(`${apiPrefix}deleteOrgTeam1`, (req, res) => {
 });
 app.post(`${apiPrefix}deleteOrgTeam2`, (req, res) => {
     var data = req.body.data;
-	let sensorlen = data.length;
-	let count1 = 0;
-	data.forEach(async function (record, index) {
-		count1++;
-//console.log('record.player_id', record.org_id, record.player_id)
-		if (record.org_id && record.player_id) {
-			deleteSensorData(record.org_id, record.player_id)
-			.then(deldata => {
-				//console.log('deldata', deldata)
-				if (count1 == sensorlen) {
-					res.send({
-						message: 'success',
-						status: 200
-					})
-				}
-			}).catch(err => {
-				res.send({
-					message: 'faled',
-					status: 300
-				}) 
-			})
-		}
-		//console.log('image_id ----', record.image_id)
-	})
+    let sensorlen = data.length;
+    let count1 = 0;
+    data.forEach(async function (record, index) {
+        count1++;
+        //console.log('record.player_id', record.org_id, record.player_id)
+        if (record.org_id && record.player_id) {
+            deleteSensorData(record.org_id, record.player_id)
+                .then(deldata => {
+                    //console.log('deldata', deldata)
+                    if (count1 == sensorlen) {
+                        res.send({
+                            message: 'success',
+                            status: 200
+                        })
+                    }
+                }).catch(err => {
+                    res.send({
+                        message: 'faled',
+                        status: 300
+                    })
+                })
+        }
+        //console.log('image_id ----', record.image_id)
+    })
 });
 app.post(`${apiPrefix}deleteOrgTeam3`, (req, res) => {
     var data = req.body.data;
-	let sensorlen = data.length;
-	let count1 = 0;
-	 data.forEach(async function (record, index) {
-		getPlayerSimulationFile({ image_id: record.image_id })
-		.then(image_Data => {
-			count1++;
-			//console.log('image_Data root_path', image_Data.root_path)
-			//*** delete simulation file from s3
-			if (image_Data.root_path && image_Data.root_path != 'undefined') {
-				emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.root_path }, function (err, data) {
-					//console.log('data', data)
-					if (count1 == sensorlen) {
-						res.send({
-							message: 'success',
-							status: 200
-						})
-					}
-				})
-				
-			} else{
-				if (count1 == sensorlen) {
-					res.send({
-						message: 'success',
-						status: 200
-					})
-				}
-			}                             
-		}).catch(err => {
-			res.send({
-				message: 'faled',
-				status: 300
-			})
-		})
-	})
+    let sensorlen = data.length;
+    let count1 = 0;
+    data.forEach(async function (record, index) {
+        getPlayerSimulationFile({ image_id: record.image_id })
+            .then(image_Data => {
+                count1++;
+                //console.log('image_Data root_path', image_Data.root_path)
+                //*** delete simulation file from s3
+                if (image_Data.root_path && image_Data.root_path != 'undefined') {
+                    emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.root_path }, function (err, data) {
+                        //console.log('data', data)
+                        if (count1 == sensorlen) {
+                            res.send({
+                                message: 'success',
+                                status: 200
+                            })
+                        }
+                    })
+
+                } else {
+                    if (count1 == sensorlen) {
+                        res.send({
+                            message: 'success',
+                            status: 200
+                        })
+                    }
+                }
+            }).catch(err => {
+                res.send({
+                    message: 'faled',
+                    status: 300
+                })
+            })
+    })
 });
 app.post(`${apiPrefix}deleteOrgTeam4`, (req, res) => {
     var data = req.body.data;
-	//console.log('data', data);
-	let sensorlen = data.length;
-	console.log('data.sensorlen', sensorlen);
-	let count1 = 0;
-	if(sensorlen > 0){
-	data.forEach(async function (record, index) {
-		count1++;
-		deleteSimulation_imagesData(record.image_id)
-		.then(deldata => {
-			//console.log('deldata  org', deldata)
-		}).catch(err => {
-			//console.log('deldata  err', err)
-		})
-		if (count1 == sensorlen) {
-			res.send({
-				message: 'success',
-				status: 200
-			}) 
-		}
-	})	 
-	}else{
-		res.send({
-				message: 'success',
-				status: 200
-			}) 
-	}
+    //console.log('data', data);
+    let sensorlen = data.length;
+    console.log('data.sensorlen', sensorlen);
+    let count1 = 0;
+    if (sensorlen > 0) {
+        data.forEach(async function (record, index) {
+            count1++;
+            deleteSimulation_imagesData(record.image_id)
+                .then(deldata => {
+                    //console.log('deldata  org', deldata)
+                }).catch(err => {
+                    //console.log('deldata  err', err)
+                })
+            if (count1 == sensorlen) {
+                res.send({
+                    message: 'success',
+                    status: 200
+                })
+            }
+        })
+    } else {
+        res.send({
+            message: 'success',
+            status: 200
+        })
+    }
 });
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {
@@ -14107,6 +14150,7 @@ app.post(`${apiPrefix}logOut`, (req, res) => {
         message: "success"
     });
 })
+
 const port = process.env.PORT || 3001;
 // Configuring port for APP
 server.listen(port, () => console.log(`Listening on port ${port}`))

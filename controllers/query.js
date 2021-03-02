@@ -3774,6 +3774,26 @@ return new Promise((resolve, reject) => {
         });
     });
 }
+
+function addJobslog(obj) {
+    return new Promise((resolve, reject) => {
+        var dbInsert = {
+            TableName: "jobs_log",
+            Item: obj,
+        };
+        docClient.put(dbInsert, function (err, data) {
+            if (err) {
+                console.log(err);
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
+
+
+
 module.exports = {
     getUserDetails,
     getUserDetailBySensorId,
@@ -3886,4 +3906,5 @@ module.exports = {
     getUserDetailByAccountId,
 	getOrgpTeamFromSensorDetails,
 	getOrgFromSensorDetailsr,
+    addJobslog
 };

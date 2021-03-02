@@ -31,3 +31,16 @@ const userSensor = () =>{
 
 
 export const Sensor = userSensor();
+
+const userEmail = () =>{
+	let userdata = userData();
+	if(userdata){
+		return userdata['userInfo']['email'];
+	}else{
+		return false;
+	};
+}
+
+
+
+export const Email = userEmail();
