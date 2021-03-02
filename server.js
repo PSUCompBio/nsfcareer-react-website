@@ -8078,7 +8078,7 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                     })
                     .then(mps_dat_output => {
                         let msp_dat_data = [];
-                         if (mps_dat_output) {
+                        if (mps_dat_output) {
                             var enc = new TextDecoder("utf-8");
                             var arr = new Uint8Array(mps_dat_output.Body);
                             var objdata = enc.decode(arr);
@@ -8089,7 +8089,7 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                                 let val = parseFloat(mpsval[1]);
                                 if (val.toFixed(4) !== '0.0000') msp_dat_data.push({ id: mpsval[0], val: val });
                             }
-                        } 
+                        }
 
                         // X- Axis Linear Acceleration
                         let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
@@ -13878,44 +13878,37 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
             }
             console.log(userData);
         })
-});
-
-app.post(`${apiPrefix}getBrainImageByAccountID`, VerifyToken, (req, res) => {
+}); app.post(`${apiPrefix}getBrainImageByAccountID`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
-        var account_id = req.body.accountid;
-				imagedata = [];
-                getFileFromS3(account_id+'/simulation/SummaryBrainImages/CSDM-15.png','') 
-				.then(fileData => {
-					if(fileData){
-						var CSDM15Data = fileData.Body.toString('base64');
-					}else{
-						CSDM15Data = "";
-						
-					}
-					imagedata.push({
-						CSDM15: CSDM15Data
-					})
-					getFileFromS3(account_id+'/simulation/SummaryBrainImages/principal-max-strain.png','') 
-					.then(file1Data => {
-						if(file1Data){
-							var PMSData = file1Data.Body.toString('base64');
-						}else{
-							PMSData = "";
-							
-						}
-						imagedata.push({
-							PMS: PMSData
-						})
-						res.send({
-							message: "success",
-							data: imagedata, 
-						})
-					})
-				}).catch(err => {
-                console.log('err -------------- listorg \n', err)
-                res.send({
-                    message: "failure",
-                    error: err
+
+    var account_id = req.body.accountid;
+    imagedata = [];
+    getFileFromS3(account_id + '/BrainImages/CSDM-15.png', '')
+        .then(fileData => {
+            if (fileData) {
+                var CSDM15Data = fileData.Body.toString('base64');
+            } else {
+                CSDM15Data = "";
+
+            }
+            imagedata.push({
+                CSDM15: CSDM15Data
+            })
+            getFileFromS3(account_id + '/BrainImages/principal-max-strain.png', '')
+                .then(file1Data => {
+                    if (file1Data) {
+                        var PMSData = file1Data.Body.toString('base64');
+                    } else {
+                        PMSData = "";
+
+                    }
+                    imagedata.push({
+                        PMS: PMSData
+                    })
+                    res.send({
+                        message: "success",
+                        data: imagedata,
+                    })
                 })
         }).catch(err => {
             console.log('err -------------- listorg \n', err)
@@ -13923,7 +13916,11 @@ app.post(`${apiPrefix}getBrainImageByAccountID`, VerifyToken, (req, res) => {
                 message: "failure",
                 error: err
             })
- });
+        })
+
+
+});
+
 app.post(`${apiPrefix}getBrainImageByimageID`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
         var account_id = req.body.accountid;
@@ -13969,8 +13966,8 @@ app.post(`${apiPrefix}getBrainImageByimageID`, VerifyToken, (req, res) => {
                 })
             })
  });
-app.post(`${apiPrefix}deleteOrgTeam`, (req, res) => { 
-	let type = req.body.type;
+app.post(`${apiPrefix}deleteOrgTeam`, (req, res) => {
+    let type = req.body.type;
     let data = req.body.data;
     if (type == 'orgTeam') {
         getOrganizationTeamData({ sensor: data.brand, organization: data.organization, team: data.TeamName })
@@ -14001,53 +13998,50 @@ app.post(`${apiPrefix}deleteOrgTeam`, (req, res) => {
 app.post(`${apiPrefix}deleteOrgTeam1`, (req, res) => {
     let type = req.body.type;
     let data = req.body.data;
-					console.log('data', data);
-					console.log('type', type);
-	if (type == 'orgTeam') {
+    if (type == 'orgTeam') {
         getOrganizatonByTeam(data.organization, data.TeamName, data.brand)
-		.then(org => {
-					console.log('org', org);
-			var orglen = org.length;
-			orglen = orglen - 1;
-			if (org) {
-				org.forEach(function (record, index) {
-					console.log('record', record.organization_id);
-					console.log(index, orglen)
-					DeleteOrganization(record.organization_id)
-						.then(data => {
-							//console.log('res', data)
-							if (index == orglen) {
-								res.send({
-									message: 'success',
-									status: 200
-								})
-							}
-						}).catch(err => {
-							console.log('err', err)
-							if (index == orglen) {
-								res.send({
-									message: 'failure',
-									status: 300,
-									err: err
-								})
-							}
-						})
-				})
-			} else {
-				res.send({
-					message: 'failure',
-					status: 300,
-					err: err
-				})
-			}
-		}).catch(err => {
-			console.log('err', err)
-			res.send({
-				message: 'failure',
-				status: 300,
-				err: err
-			})
-		})
+            .then(org => {
+                var orglen = org.length;
+                orglen = orglen - 1;
+                if (org) {
+                    org.forEach(function (record, index) {
+                        //console.log('record', record.organization_id);
+                        //console.log(index, orglen)
+                        DeleteOrganization(record.organization_id)
+                            .then(data => {
+                                //console.log('res', data)
+                                if (index == orglen) {
+                                    res.send({
+                                        message: 'success',
+                                        status: 200
+                                    })
+                                }
+                            }).catch(err => {
+                                //console.log('err', err)
+                                if (index == orglen) {
+                                    res.send({
+                                        message: 'failure',
+                                        status: 300,
+                                        err: err
+                                    })
+                                }
+                            })
+                    })
+                } else {
+                    res.send({
+                        message: 'failure',
+                        status: 300,
+                        err: err
+                    })
+                }
+            }).catch(err => {
+                //console.log('err', err)
+                res.send({
+                    message: 'failure',
+                    status: 300,
+                    err: err
+                })
+            })
     }
 });
 app.post(`${apiPrefix}deleteOrgTeam2`, (req, res) => {
@@ -14150,7 +14144,6 @@ app.post(`${apiPrefix}logOut`, (req, res) => {
         message: "success"
     });
 })
-
 const port = process.env.PORT || 3001;
 // Configuring port for APP
 server.listen(port, () => console.log(`Listening on port ${port}`))
