@@ -491,11 +491,13 @@ class CommanderTeamView extends React.Component {
         this.setState({ editablestate: false, });
     }
     deleteuser = (obj) => {
+		console.log("obj",obj);
         if (obj.player_id) {
-            var PlayerID = obj.player_id.split('-')[0];
+            var PlayerID = obj.player_id.split('$')[0];
         } else {
             var PlayerID = obj.user_cognito_id
         }
+		console.log("PlayerID",PlayerID);
         this.setState({ DelData: { type: 'Player', data: PlayerID } })
         if (this.state.isDisplay.display === 'none') {
             this.setState({ isDisplay: { display: 'flex' } });
@@ -910,7 +912,7 @@ class CommanderTeamView extends React.Component {
                                                                     <>
                                                                         <td>
                                                                             <span className="delete-user-box" >
-                                                                                <i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(player.simulation_data[0]['user_data']) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
+                                                                                <i class="fa fa-trash" aria-hidden="true" onClick={() => { this.deleteuser(player.simulation_data[0]) }} style={{ 'padding': '10px', 'font-size': '27px', 'font-weight': '400', 'padding': '15px' }}></i>
                                                                             </span>
                                                                         </td>
                                                                     </>

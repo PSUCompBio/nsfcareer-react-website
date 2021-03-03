@@ -110,7 +110,7 @@ class Footer extends React.Component {
 		{hidecookies1 == true &&
           <div className="row text-center" style={{'color':'white','position': 'fixed','text-align': 'center','width': '100%','bottom': '0','background': '#000','padding': '13px 0 0 0','opacity':'0.7','margin': '0','display':this.state.isHidecookies }}>
             <div className="col-md-12 pb-3">
-              <p>This website uses cookies to ensure you get the best experience on our website <button type="button"  className="btn btn-primary" style={{ 'cursor': 'pointer','padding': '0 16px','margin': '2px 12px'}} onClick={this.hideCookiesAccept}>Accept</button><button type="button"  className="btn btn-danger" style={{ 'cursor': 'pointer','padding': '0 16px','margin': '2px 12px'}} onClick={this.hideCookiesDecline}>Decline</button></p>
+              <p>This website uses cookies to ensure you get the best experience on our website <button type="button"  className="btn btn-primary" style={{ 'cursor': 'pointer','padding': '0 16px','margin': '2px 12px'}} onClick={this.hideCookiesAccept}>Accept</button></p>
             </div>
           </div>
 		}

@@ -739,7 +739,8 @@ class Details extends React.Component {
 
   flipVideo = ()=>{
     this.setState({label_flipVideo: 'Mirroring...'})
-    flipVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url})
+	console.log('video_url',this.state.impact_video_url);
+    flipVideo({ image_id: this.state.image_id, impact_video_url: this.state.impact_video_url, trim_video_path: this.state.trim_video_url})
     .then(response => {
       //    console.log('response trim video ---\n', response);
       if (response.data.message === "success") {

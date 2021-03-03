@@ -2852,6 +2852,7 @@ function emptyBucket(obj, callback) {
 app.post(`${apiPrefix}deleteItem`, (req, res) => {
     let type = req.body.type;
     let data = req.body.data;
+                console.log('data', data)
     if (type == 'team') {
 
         getBrandDataByorg(data.brand, data.organization)
@@ -2996,7 +2997,14 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                             })
                         })
                 }
-            })
+            }).catch(err => {
+				console.log('err', err)
+				res.send({
+					message: 'failure',
+					status: 300,
+					err: err
+				})
+			})
 
 
     } else if (type == 'orgTeam') {
@@ -6604,9 +6612,12 @@ app.post(`${apiPrefix}api/v1/flipVideo`, (req, res) => {
 
     //uploading files.             
     var name = Date.now();
+	console.log("trim_video_path",req.body.trim_video_path)
+	console.log("impact_video_url",req.body.impact_video_url)
+    var video_path  = req.body.trim_video_path?req.body.trim_video_path:req.body.impact_video_url;
     var file_store_path = 'public/uploads/' + name + '_movie.mp4';
     list.push(`public/uploads/${name}_movie.mp4`);
-    https.get(req.body.impact_video_url, function (response, error) {
+    https.get(video_path, function (response, error) {
         const file = fs.createWriteStream(file_store_path);
         response.pipe(file);
         file.on('finish', () => {
@@ -6617,7 +6628,7 @@ app.post(`${apiPrefix}api/v1/flipVideo`, (req, res) => {
         });
 
     });
-
+ 
     const writeTextfile = (list) => {
         console.log('list', list);
         exec(`ffmpeg -i ${list[0]}  -vf hflip -c:a copy  ${outputFilePath}`, (error, stdout, stderr) => {
@@ -9969,7 +9980,7 @@ app.post(`${apiPrefix}getAllSensorBrands`, (req, res) => {
                                     res.send({
                                         message: "success",
                                         data: brandList
-                                    })
+                                    }) 
                                 }
                             }
                         })
@@ -10263,7 +10274,7 @@ app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrand`, (req, res) => {
                 })
             }
         })
-})
+}) 
 
 app.post(`${apiPrefix}getTeamSimultionCount`, (req, res) => {
     getOrganizationTeamData({ sensor: req.body.sensor, organization: req.body.organization, team: req.body.team })
@@ -10282,8 +10293,10 @@ app.post(`${apiPrefix}getTeamSimultionCount`, (req, res) => {
             });
 
 
+		console.log("simulation_records.",simulation_records);  
             getPlayerSimulationStatus(simulation_records[0].image_id)
                 .then(simulation => {
+					 
                     var simulation_status = simulation ? simulation.status : '';
                     var computed_time = simulation ? simulation.computed_time : '';
                     var simulation_timestamp = simulation_records[0].player_id.split('$')[1];

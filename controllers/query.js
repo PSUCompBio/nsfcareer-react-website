@@ -1431,15 +1431,28 @@ function getBrandData(obj) {
 
 function getBrandDataByorg(brand,organization) {
     return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "sensor_details",
-            FilterExpression: "sensor = :sensor and organization = :organization",
-            ExpressionAttributeValues: {
-               ":sensor": brand,
-               ":organization": organization
-            },
-            ProjectionExpression: "sensor,player_id,computed_time,image_id,team"
-        };
+		if(brand !== undefined ){
+			console.log("brand",brand)
+			var params = {
+				TableName: "sensor_details",
+				FilterExpression: "sensor = :sensor and organization = :organization",
+				ExpressionAttributeValues: {
+				   ":sensor": brand,
+				   ":organization": organization
+				},
+				ProjectionExpression: "sensor,player_id,computed_time,image_id,team"
+			};
+		}else{
+			console.log("brand1",brand)
+			var params = {
+				TableName: "sensor_details",
+				FilterExpression: "organization = :organization",
+				ExpressionAttributeValues: {
+				   ":organization": organization
+				},
+				ProjectionExpression: "sensor,player_id,computed_time,image_id,team"
+			};
+		}
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -1614,10 +1627,10 @@ function getOrganizationTeamData(obj) {
                         params = {
                             TableName: "sensor_details",
                             // KeyConditionExpression:  "org_id = :org_id",
-                            FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+                            FilterExpression: "organization = :organization and team = :team",
                             ExpressionAttributeValues: {
                                 // ":org_id": org[0].organization_id,
-                                ":sensor": obj.sensor,
+                              //  ":sensor": obj.sensor,
                                 ":organization": obj.organization,
                                 ":team": obj.team
                             },
@@ -1638,7 +1651,6 @@ function getOrganizationTeamData(obj) {
                             ScanIndexForward: false
                         };
                     }
-                    
                     var item = [];
                     docClient.scan(params).eachPage((err, data, done) => {
                         if (err) {
@@ -2533,7 +2545,8 @@ function DeleteOrganization(organization_id) {
 }
 function getOrganizatonBynameSensor(organization, sensor){
     return new Promise((resolve, reject) =>{
-        var   params = {
+		if(sensor !== undefined ){
+			var   params = {
                 TableName: "organizations",
                 FilterExpression: "sensor = :sensor and organization = :organization ",
                 ExpressionAttributeValues: {
@@ -2541,6 +2554,15 @@ function getOrganizatonBynameSensor(organization, sensor){
                 ":organization": organization,
                 },
             };
+		}else{
+			var   params = {
+                TableName: "organizations",
+                FilterExpression: "organization = :organization ",
+                ExpressionAttributeValues: {                
+                ":organization": organization,
+                },
+            };
+		}
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {
             if (err) {
@@ -3221,9 +3243,9 @@ function getBrandOrganizationData2(obj) {
         if(obj.sensor && obj.sensor != null){
             params = {
                 TableName: "sensor_details",
-                FilterExpression: "sensor = :sensor and organization = :organization",
+                FilterExpression: "organization = :organization",
                 ExpressionAttributeValues: {
-                    ":sensor": obj.sensor,
+                  //  ":sensor": obj.sensor,
                     ":organization": obj.organization
                 },
                 ProjectionExpression: "sensor,image_id,player_id,computed_time"
