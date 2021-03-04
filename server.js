@@ -5805,7 +5805,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
             date = date.replace("/", "-");
             console.log('date', date);
             // Setting Attributes for file upload on S3
-            uploadParams.Key = data['player_name'] + "/simulation/" + date + "/impact-video/" + image_id + "/" + file_name + "." + file_extension;
+            uploadParams.Key = data['player_name'] + "/simulation/" + image_id + "/SidelineVideo/"+ file_name + "." + file_extension;
             // console.log('req.file.buffer', req.file.buffer)
             uploadParams.Body = req.file.buffer;
 
@@ -6483,7 +6483,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                                                 date = date.replace("/", "-");
                                                 console.log('date', date);
                                                 // Setting Attributes for file upload on S3
-                                                uploadParams.Key = data['player_name'] + "/simulation/" + date + "/impact-video/" + image_id + "/" + file_name;
+                                                uploadParams.Key = data['player_name'] + "/simulation/" + image_id + "/SidelineVideo/"+ file_name;
                                                 // console.log('req.file.buffer', req.file.buffer)
                                                 uploadParams.Body = buf;
 
@@ -6683,7 +6683,7 @@ app.post(`${apiPrefix}api/v1/flipVideo`, (req, res) => {
                             date = date.replace("/", "-");
                             console.log('date', date);
                             // Setting Attributes for file upload on S3
-                            uploadParams.Key = data['player_name'] + "/simulation/" + date + "/impact-video/" + image_id + "/" + file_name;
+                            uploadParams.Key = data['player_name'] + "/simulation/" + image_id + "/SidelineVideo/"  + file_name;
                             // console.log('req.file.buffer', req.file.buffer)
                             uploadParams.Body = buf;
 
@@ -8597,6 +8597,7 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
                                 playerData = player_data;
                                 console.log('playerData -------------------\n')
                                 counter++;
+                                // var sensor = '';
                                 if (playerData[0]) {
                                     playerData.sort(function (b, a) {
                                         var keyA = a.player_id.split('$')[1],
@@ -8608,6 +8609,7 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
                                     p_data.push({
                                         date_time: playerData[0].player_id.split('$')[1],
                                         simulation_data: playerData,
+                                        used_sensor:  playerData[0].used_sensor &&  playerData[0].used_sensor != undefined ?  playerData[0].used_sensor : ''
                                     });
                                 }
                                 // console.log('p_data length', player_listLen, counter)
@@ -8631,8 +8633,12 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
                                                     p_data[index]['simulation_data'][0]['image_id_2'] = simulation ? simulation.image_id : '';
 
                                                     p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-
-                                                    var player_id = record.simulation_data[0].player_id.split('$')[0];
+                                                    if(record.used_sensor){
+                                                        console.log('record.used_sensor) ---------------- ', record.used_sensor)
+                                                        var player_id = record.simulation_data[0].player_id.split('$')[0]+'-'+record.used_sensor;
+                                                    }else{
+                                                        var player_id = record.simulation_data[0].player_id.split('$')[0];
+                                                    }
                                                     getUserDetailByPlayerId(player_id)
                                                         .then(u_detail => {
                                                             k++;
@@ -14063,7 +14069,7 @@ app.post(`${apiPrefix}deleteOrgTeam2`, (req, res) => {
     let count1 = 0;
     data.forEach(async function (record, index) {
         count1++;
-        //console.log('record.player_id', record.org_id, record.player_id)
+        console.log('record.player_id ----------------------', record.org_id, record.player_id)
         if (record.org_id && record.player_id) {
             deleteSensorData(record.org_id, record.player_id)
                 .then(deldata => {
@@ -14095,8 +14101,8 @@ app.post(`${apiPrefix}deleteOrgTeam3`, (req, res) => {
                 //console.log('image_Data root_path', image_Data.root_path)
                 //*** delete simulation file from s3
                 if (image_Data.root_path && image_Data.root_path != 'undefined') {
-                    emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.root_path }, function (err, data) {
-                        //console.log('data', data)
+                    emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.account_id+'/' }, function (err, data) {
+                        console.log(`------------- ${image_Data.root_path} folder has been deleted from s3`)
                         if (count1 == sensorlen) {
                             res.send({
                                 message: 'success',

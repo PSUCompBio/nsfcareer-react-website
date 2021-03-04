@@ -2580,7 +2580,7 @@ function getOrganizatonBynameSensor(organization, sensor){
 
 function getOrganizatonByTeam(organization, team_name,sensor){
     return new Promise((resolve, reject) =>{
-		if(sensor){
+		if(sensor  && sensor != null && sensor != undefined){
         var   params = {
                 TableName: "organizations",
                 FilterExpression: "team_name = :team_name and organization = :organization and sensor = :sensor ",
@@ -2711,8 +2711,8 @@ function addOrganization(OrganizationName, sensor) {
                 organization_id: 'org-'+Date.now(),
                 player_list: [],
                 sensor: sensor,
-                team_name: ' ',
-                user_cognito_id: ' '
+                team_name: null,
+                user_cognito_id: null
             }
         }
 
@@ -2775,7 +2775,7 @@ function addorgTeam(TeamName, organization,sensor) {
                 player_list: [],
                 sensor: sensor,
                 team_name: TeamName,
-                user_cognito_id: ' '
+                user_cognito_id: null
             }
         }
 
@@ -3194,7 +3194,7 @@ function getTeamDataWithPlayerRecords_2(obj) {
                                 '#Impact_date': 'impact-date',
                                 '#Impact_time': 'impact-time'
                             },
-                            ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
+                            ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id, used_sensor",
                             ScanIndexForward: false
                         };
                     } else {
@@ -3214,7 +3214,7 @@ function getTeamDataWithPlayerRecords_2(obj) {
                                 '#Impact_date': 'impact-date',
                                 '#Impact_time': 'impact-time'
                             },
-                            ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id",
+                            ProjectionExpression: " #time, #date,#Impact_date,#Impact_time, image_id,organization,player,player_id,sensor,simulation_status,team,user_cognito_id, used_sensor",
                             ScanIndexForward: false
                         };
                     }
@@ -3400,6 +3400,24 @@ function updateUserStatus(obj) {
         });
     });
 }
+function deleteUsers(user_cognito_id){
+    console.log(`${user_cognito_id} user deleted from users table ------------`)
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "users",
+            Key: {
+                user_cognito_id: user_cognito_id, 
+            },
+        };
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
 
 function deleteSensorData(org_id, player_id){
     return new Promise((resolve, reject) => {
@@ -3407,15 +3425,23 @@ function deleteSensorData(org_id, player_id){
             TableName: "sensor_details",
             Key: {
                 org_id: org_id,
-                player_id: player_id,
-                
-                
+                player_id: player_id, 
             },
         };
         docClient.delete(params, function (err, data) {
             if (err) {
                 reject(err);
             } else {
+                // delete user from user table ...
+                getUserDetailByPlayerId(player_id.split('$')[0])
+                .then(res=>{
+                    if(res && res.length > 0){
+                        console.log('user list ----\n',res);
+                        res.forEach((user)=>{
+                            deleteUsers(user.user_cognito_id); //...
+                        });
+                    }
+                });
                 resolve(data);
             }
         });
