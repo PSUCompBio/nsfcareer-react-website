@@ -145,7 +145,7 @@ class BrainSubmitPortal extends React.Component {
                         })
                     })
                     );
-                    if (!the.state.isCalledExists) the.checkSimulationExists({ 'impact_id': data.player['impact-id'], 'sensor_id': data.player['sensor-id'], 'key': key });
+                    // if (!the.state.isCalledExists) the.checkSimulationExists({ 'impact_id': data.player['impact-id'], 'sensor_id': data.player['sensor-id'], 'key': key });
                     jobs.push({ sensor_id: data.player['sensor-id'], impact_id: data.player['impact-id'] });
                 } else {
                     alert(`${file.name} file data farmat invalid.`);
@@ -356,7 +356,7 @@ class BrainSubmitPortal extends React.Component {
                             this.setListSimulationStatus('uploaded', res.data.fileNum, 1);
                         } else {
                             this.setListSimulationStatus(0, res.data.fileNum, 1);
-                            this.setState({ isError: res.data.error });
+                            this.setState({ isError: 'Failed to submit jobs. Please try again.' });
                         }
                         count++;
                         if (count === files.length) {

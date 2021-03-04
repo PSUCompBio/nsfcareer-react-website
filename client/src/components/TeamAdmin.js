@@ -625,7 +625,7 @@ class TeamnAdmin extends React.Component {
                 cls = 'completedSimulation tech-football m-3';
             }
         }
-
+        brand = brand && brand !== null ? brand : '';
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
                 <ul className="organization-edit-icons isEdit">
@@ -748,11 +748,12 @@ class TeamnAdmin extends React.Component {
                         cls = 'completedSimulation tech-football m-3';
                     }
                 }
+                var sensor = team.sensor && team.sensor !== null ? team.sensor : ''; 
                 return <tr className={cls} key={index}   >
                     <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                     <td><span onClick={() => {
                     this.props.history.push({
-                        pathname: '/TeamAdmin/team/players/' + team.organization + '/' + team.team_name + '?brand=' + team.sensor,
+                        pathname: '/TeamAdmin/team/players/' + team.organization + '/' + team.team_name + '?brand=' + sensor,
                         state: {
                             team: {
                                 brand: team.sensor,
