@@ -438,6 +438,16 @@ class ExportCustomReport extends React.Component {
                 width: '100%',
                 zIndex: 4
             },
+            trangle_scale1: {
+                width: '70%',
+                zIndex: 4,
+				marginLeft:'15%',
+				marginRight:'15%',
+            },
+            textcenteralign: {				
+                width: '100%',
+				textAlign: 'center',
+            },
             point_scale: {
                 width: '14px',
                 marginLeft: mpstrangleScale+'px'
@@ -783,7 +793,7 @@ class ExportCustomReport extends React.Component {
                 alignItems: 'center',
                 color: 'grey',
                 position: 'absolute', //Here is the trick
-                marginTop: '780',
+                marginTop: '800',
             },
 
             /* 
@@ -1369,11 +1379,13 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-									{this.state.jsonData['imagedata'].CSDM15 ?
-                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15 ? this.state.jsonData['imagedata'].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
-									:
-									<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
-								}
+									 <View style={styles.textcenteralign}>
+										{this.state.jsonData['imagedata'][0].CSDM15 ?
+											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][0].CSDM15 ? this.state.jsonData['imagedata'][0].CSDM15 : this.state.metric.merticsImage} alt="trangle" />
+											:
+											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+										}
+									</View>
                                 </View>
                             </>
                             :
@@ -1499,11 +1511,13 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-								{this.state.jsonData['imagedata'].PMS ?
-                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS ? this.state.jsonData['imagedata'].PMS : this.state.metric.merticsImage} alt="trangle" />
-									:
-									<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
-								}
+									<View style={styles.textcenteralign}>
+										{this.state.jsonData['imagedata'][1].PMS ?
+											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][1].PMS ? this.state.jsonData['imagedata'][1].PMS : this.state.metric.merticsImage} alt="trangle" />
+											:
+											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+										}
+									</View>
                                 </View>
                             </>
                             : null
@@ -1643,11 +1657,13 @@ class ExportCustomReport extends React.Component {
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
-								{this.state.jsonData['imagedata'].PMS ?
-                                    <Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS ? this.state.jsonData['imagedata'].PMS : this.state.metric.merticsImage} alt="trangle" />
-									:
-									<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
-								}
+									<View style={styles.textcenteralign}>
+										{this.state.jsonData['imagedata'][1].PMS ?
+											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][1].PMS ? this.state.jsonData['imagedata'][1].PMS : this.state.metric.merticsImage} alt="trangle" />
+											:
+											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
+										}
+									</View>
                                 </View>
                                 {/*====================Footer heading ==============================*/}
                                 <View style={styles.bottomView}>

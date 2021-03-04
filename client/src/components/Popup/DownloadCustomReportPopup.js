@@ -21,6 +21,7 @@ class DownloadReportPopup extends React.Component {
       axonal_15: '',
       masxsr_15: '',
       ischecked: true,
+      isDownloadenable: false,
       startDate: new Date(),
       endDate: new Date(),
       selectedItem: 'All Time',
@@ -75,17 +76,27 @@ class DownloadReportPopup extends React.Component {
   }
 
 
-  handleChange =(e)=>{
-    this.setState({ischecked: false})
-    this.downFullImage();
-    console.log(e.target.name,!this.state[e.target.name] ? e.target.value :'' );
-    let the = this;
-    setTimeout(()=>{
-      the.setState({ischecked: true});
-    },1000)
-    this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
-
-  }
+	handleChange =(e)=>{
+		this.setState({ischecked: false})
+		this.downFullImage();
+		// console.log("namevalue",e.target.name,!this.state[e.target.name] ? e.target.value :'' );
+		this.setState({[e.target.name]: !this.state[e.target.name] ? e.target.value :'' });
+		let the = this;
+		setTimeout(()=>{    
+		if(the.state['mps_95'] == 'on'){
+			console.log("mps_95", the.state['mps_95']);
+			the.setState({isDownloadenable: true});
+			the.setState({ischecked: true});
+		}else if(the.state['csdm_15'] == 'on'){
+			console.log("csdm_15", the.state['csdm_15']);
+			the.setState({isDownloadenable: true});
+			the.setState({ischecked: true});
+		}else{
+			the.setState({isDownloadenable: false});
+			the.setState({ischecked: true});
+		}
+		},1000)
+	}
 
   filterStrainMetric=()=>{
     const { brand, user_cognito_id, organization, player_id, team } = this.props.data.data;
@@ -238,24 +249,45 @@ class DownloadReportPopup extends React.Component {
                 <button className="Download-button-custom-report " style={{'margin-top': '6px'}}><img src={share_icon} style={{width:'24px'}} alt="share_icon" />  Share</button><br/>
               </Col>
               <Col md={4}>
-                {ischecked &&
-                  <PDFDownloadLink document={<Report Metric={this.state} jsonfile={this.props.data.brainRegions} data={this.props.data.data} />} className="export-cumulative-player" fileName={fileName} style={{
-                    color: 'white'
-                    }}>
-                      <button className="Download-button-custom-report" style={{'margin-top': '6px'}}>Download</button>
-                    {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
-                  </PDFDownloadLink>
-                }
-                {!ischecked ? (
-                      <div className="d-flex justify-content-center center-spinner">
-                        <div
-                          className="spinner-border text-primary"
-                          role="status"
-                        >
-                          <span className="sr-only">Loading...</span>
-                        </div>
-                      </div>
-                    ) : null}
+				  {this.state.isDownloadenable ?
+				  <>
+					{ischecked &&
+					  <PDFDownloadLink document={<Report Metric={this.state} jsonfile={this.props.data.brainRegions} data={this.props.data.data} />} className="export-cumulative-player" fileName={fileName} style={{
+						color: 'white'
+						}}>
+						  <button className="Download-button-custom-report" style={{'margin-top': '6px'}}>Download</button>
+						{({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+					  </PDFDownloadLink>
+					}
+					 {!ischecked ? (
+						  <div className="d-flex justify-content-center center-spinner">
+							<div
+							  className="spinner-border text-primary"
+							  role="status"
+							>
+							  <span className="sr-only">Loading...</span>
+							</div>
+						  </div>
+						) : null}
+					</>
+					:
+					<>
+					{ischecked &&
+					 <button className="Download-button-custom-report" style={{'margin-top': '6px','opacity': '0.7'}}>Download</button>
+					 }
+					  {!ischecked ? (
+						  <div className="d-flex justify-content-center center-spinner">
+							<div
+							  className="spinner-border text-primary"
+							  role="status"
+							>
+							  <span className="sr-only">Loading...</span>
+							</div>
+						  </div>
+						) : null}
+					 </>
+				  }
+               
               </Col>
             </Row>
         </div>

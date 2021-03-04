@@ -91,6 +91,11 @@ class AdminDashboard extends React.Component {
             requestedUsers: '',			
 			delete_id:'',
 			highlight_id: '',
+			isTeamsEdit: false,
+            DelTeamsData: '',
+            isTeamsDelete: false,
+            isTeamsUpdated: false,
+            TeamError: ''
         };
     }
     toggleTab = (value) => {
@@ -247,9 +252,41 @@ class AdminDashboard extends React.Component {
             isUpdated: false,
             Error: ''
         })
+    } 
+	handleTeamsEdit = (e) => {
+        console.log('edit')
+        $('.isTeamsEdit').css({ 'display': 'inherit' });
+        $('.button-edit.Teams').addClass('button-edit-active');
+        this.setState({
+            isTeamsEdit: true,
+            DelTeamsData: '',
+            isTeamsDelete: false,
+            isTeamsUpdated: false,
+            TeamError: ''
+        })
     }
 
-    handleCencel = () => {
+    handleTeamCencel = () => {
+        $('.isTeamsEdit').css({ 'display': 'none' });
+        $('.button-edit.Teams').removeClass('button-edit-active');
+        this.setState({
+            isTeamsEdit: false,
+            DelTeamsData: '',
+            isTeamsDelete: false,
+            isTeamsUpdated: false,
+            TeamError: '',
+            isUploading: false,
+            renameData: '',
+            isRename: false,
+            isAddOrganization: false,
+            addOrganizationData: '',
+            mergeData: '',
+            isMerge: false,			
+			delete_id:'',
+			highlight_id: '',
+        })
+    }
+	handleCencel = () => {
         $('.isEdit').css({ 'display': 'none' });
         $('.button-edit').removeClass('button-edit-active');
         this.setState({
@@ -883,6 +920,14 @@ class AdminDashboard extends React.Component {
         }
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
+			<ul className="organization-edit-icons isTeamsEdit" style={{'display':'none'}}>
+                    <li><span><img src={pencil} alt="Edit" onClick={e => this.editTeamRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, team_name: team, type: 'rename' })} />Rename</span></li>
+					{team == this.state.highlight_id ?
+						<li><span><img src={delicon1} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, team_name: team })} />Delete</span></li>
+					: 
+						<li><span><img src={delicon} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, team_name: team })} />Delete</span></li>
+					}
+                </ul>
                 <div
                     ref={reference[0]}
                     onClick={(e) => {
@@ -1251,19 +1296,38 @@ class AdminDashboard extends React.Component {
                         <p ref="h1" className="col-md-12 organization-admin-table-margin-5-mobile penstate" style={{ textAlign: 'center', fontSize: '30px' }}>Admin Dashboard</p>
                         <div className="col-md-10 organization-admin-table-margin-5-mobile-overview dashboard-custom-button">
                             <button type="button" className={this.state.isSensor ? "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Sensor Companies</button>
-                            <button type="button" className={this.state.isOrganization ? "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Organization</button>
+                            <button type="button" className={this.state.isOrganization ? "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Organizations</button>
                             <button type="button" className={this.state.isTeams ? "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Teams</button>
                             <button type="button" className="btn   custom-button" name="families" style={{ 'margin': '7px' }}>Families</button>
                             <button type="button" className={this.state.isPlayers ? "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Individuals</button>
 
                         </div>
                         <div className="col-md-2 dashboard-custom-button" >
+						 {this.state.isOrganization ?
+							 <div className="View">									
+										{this.state.userDetails.level === 1000  || this.state.userDetails.level === 300 || this.state.userDetails.level === 400 ?
+										<Link style={{ fontWeight: "400",backgroundColor:"#0a5087",color:"#fff",padding:"9px 19px",borderRadius:"4px",fontSize:"15px",textDecoration:"none",display:"block",marginTop:"7px"}} to={{
+											pathname: '/toolkit',
+											state: {
+												brand: {
+													brand: '',
+													user_cognito_id: this.state.user_cognito_id
+												}
+											}
+										}} >ML Toolkit	</Link>
+										:null
+									  }
+							  </div>
+							  :
+							  <>
                             {!this.state.isPlayers &&
                                 <div className="View">
                                     <img src={gridView} alt="gridView" onClick={() => this.handleViewChange('gridView')} />
                                     <img src={listView} alt="listView" onClick={() => this.handleViewChange('listView')} />
                                 </div>
                             }
+							</>
+						 }
                         </div>
                         <div className="col-md-12 individuals-search-input">
                             {this.state.isPlayers &&
@@ -1274,27 +1338,62 @@ class AdminDashboard extends React.Component {
                         </div>
                         <div className="col-md-12  dashboard-custom-button2">
                             <button type="button" className={this.state.isSensor ? "btn   custom-button2" : "btn   custom-button"} name="sensor_companies" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Sensor Companies</button>
-                            <button type="button" className={this.state.isOrganization ? "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Organization</button>
+                            <button type="button" className={this.state.isOrganization ? "btn   custom-button2" : "btn   custom-button"} name="organization" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Organizations</button>
                             <button type="button" className={this.state.isTeams ? "btn   custom-button2" : "btn  custom-button"} name="teams" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Teams</button>
                         </div>
                         <div className="col-md-8 dashboard-custom-button2">
                             <button type="button" className="btn   custom-button" name="families" style={{ 'margin': '7px' }}>Families</button>
                             <button type="button" className={this.state.isPlayers ? "btn   custom-button2" : "btn  custom-button"} name="individuals" onClick={this.handleButtonChanges} style={{ 'margin': '7px' }}>Individuals</button>
+                            {this.state.isOrganization ?
+							 <div className="View">									
+										{this.state.userDetails.level === 1000  || this.state.userDetails.level === 300 || this.state.userDetails.level === 400 ?
+										<Link className={"btn custom-button"} style={{ fontWeight: "400",backgroundColor:"#0a5087",color:"#fff",padding:"9px 19px",borderRadius:"4px",fontSize:"15px",textDecoration:"none",display:"block",marginTop:"7px"}} to={{
+											pathname: '/toolkit',
+											state: {
+												brand: {
+													brand: '',
+													user_cognito_id: this.state.user_cognito_id
+												}
+											}
+										}} >ML Toolkit	</Link>
+										:null
+									  }
+							  </div>
+							  :
+							  <>
                             {!this.state.isPlayers &&
                                 <div className="View">
                                     <img src={gridView} alt="gridView" onClick={() => this.handleViewChange('gridView')} />
                                     <img src={listView} alt="listView" onClick={() => this.handleViewChange('listView')} />
                                 </div>
                             }
+							</>
+						 }
                         </div>
                         {this.state.isOrganization &&
-                            <div className="col-md-12 Admintitle" >
-                                <div className="col-md-2 org-edit-button" >
-                                    <button className="btn  button-edit" style={this.state.isEdit ? { 'display': 'none' } : { 'display': 'inherit' }} onClick={this.handleEdit}>Edit</button>
-
+                            <div className="col-md-12 Admintitle" style={{'margin-bottom': '31px'}} >
+                                <div className="col-md-3 org-edit-button" >	
+									{!this.state.isPlayers ?
+											<div className="">
+												<button className="btn button-edit" style={this.state.isEdit ? { 'display': 'none','float':'left' } : { 'display': 'inline-block','float':'left','position':'unset !important' }} onClick={this.handleEdit}>Edit</button>
+												<img src={gridView} alt="gridView" style={{'width':'42px','margin-left':'10px'}} onClick={() => this.handleViewChange('gridView')} />
+												<img src={listView} alt="listView"  style={{'width':'42px','margin-left':'10px'}}  onClick={() => this.handleViewChange('listView')} />
+											</div>
+											:
+											<div className="View">
+												<button className="btn button-edit" style={this.state.isEdit ? { 'display': 'none' } : { 'display': 'inline-block' }} onClick={this.handleEdit}>Edit</button>
+											</div>
+									}
                                 </div>
                             </div>
                         }
+						 {this.state.isTeams &&
+								<div className="col-md-12 Admintitle" style={{'display':'none'}}>
+									<div className="col-md-3 org-edit-button" >	
+										<button className="btn button-edit Teams" style={this.state.isTeamsEdit ? { 'display': 'none' } : { 'display': 'inline-block' }} onClick={this.handleTeamsEdit}>Edit</button>
+								 </div>
+                            </div>
+						 }
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
                                 <div
@@ -1713,6 +1812,12 @@ class AdminDashboard extends React.Component {
                                         <div className="delete-confirmation-button isEdit">
                                             <button className="btn button-back " onClick={this.handleCencel}>Cancel</button>
                                             <button className="btn button-yes " onClick={this.handleChangeSave} >Save</button>
+                                        </div>
+                                    }
+                                    {this.state.isTeams &&
+                                        <div className="delete-confirmation-button isTeamsEdit">
+                                            <button className="btn button-back " onClick={this.handleTeamCencel}>Cancel</button>
+                                            <button className="btn button-yes " onClick={this.handleTeamsChangeSave} >Save</button>
                                         </div>
                                     }
                                 </div>

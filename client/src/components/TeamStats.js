@@ -292,8 +292,8 @@ class TeamStats extends React.Component {
             });
         }
 
-        console.log('count_sports',count_sports);
-        console.log('count_positions', count_positions)
+        //console.log('count_sports',count_sports);
+       // console.log('count_positions', count_positions)
 
         /*
         * Bar chart data for brain  positons ...
@@ -331,7 +331,7 @@ class TeamStats extends React.Component {
                 let totalSportVal = count_sports_val[key];
                 totalSportVal = totalSportVal ? totalSportVal.toFixed(2) : 0;
                 totalSportVal = parseFloat(totalSportVal);
-                console.log('totalsportval = ',totalSportVal,', totalImpact = ',impactLen, 'sport -', key)
+               // console.log('totalsportval = ',totalSportVal,', totalImpact = ',impactLen, 'sport -', key)
 
                 let mpsAvg = (totalSportVal) / impactLen;
                 mpsAvg = mpsAvg.toFixed(2);
@@ -342,7 +342,7 @@ class TeamStats extends React.Component {
 
         }
 
-        console.log(labels_sports, data_sports);
+       // console.log(labels_sports, data_sports);
         // for position ...
         if (count_positions && count_positions_val) {
             Object.entries(count_positions).forEach(([key, value], index) => {
@@ -361,7 +361,6 @@ class TeamStats extends React.Component {
                 if (key !== 'Unknown') {
                     position = capitalizePosition(key);
                 }
-                console.log('position', position)
                 data.push(mpsAvg);
                 labels.push(position);
             })
@@ -382,6 +381,22 @@ class TeamStats extends React.Component {
         };
 
         // # Brain postion graph options ...
+		var yval = data_sports.sort(function(a, b){return a - b});
+		var maxval = 0.0200
+		if (parseFloat(yval[0]) > 0.0) {
+			 var yval2 = data_sports.sort(function(a, b){return a - b});
+			 maxval = parseFloat(yval2[0]);
+			console.log("maxval",maxval);
+		}else if (parseFloat(yval[0]) < 0.0) {
+			 var yval1 = data_sports.sort(function(a, b){return a - b});
+			 maxval = parseFloat(yval1[0]);			
+			console.log("maxval1",maxval);
+		}else{		
+			maxval = 0.0200
+			console.log("maxval3",maxval);
+		}
+			console.log("final",maxval);
+		
         const BrainPositionChartoptions = {
             legend: {
                 display: false
@@ -404,7 +419,14 @@ class TeamStats extends React.Component {
                         labelString: 'Average MPS'
                     },
                     
-                }]
+                }],
+                yAxes: [{
+					ticks: {
+						beginAtZero:true,
+						min: 0,
+						max: maxval,
+					}
+				}],
             }
         };
         
@@ -548,7 +570,7 @@ class TeamStats extends React.Component {
                                     <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
                                         <div className="col-md-12 no-padding">
                                             <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
-                                            {< TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_VEL_EXLARATION} MPS_95_DATA={this.state.MPS_95_VEL_DATA} teamData={this.state.teamData}/>}
+                                            {< TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_VEL_EXLARATION} MPS_95_DATA={this.state.MPS_95_VEL_DATA} teamData={this.state.teamData} chartType= 'Ang Vel' />}
                                             <p
                                                 style={{
                                                     'text-align': 'center',
@@ -570,7 +592,7 @@ class TeamStats extends React.Component {
                                     <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
                                         <div className="col-md-12 no-padding">
                                             <p className="video-lebel text-center">95 Percentile MPS Maximum Angular Acceleration </p>
-                                            < TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_EXLARATION} MPS_95_DATA={this.state.MPS_95_DATA} teamData={this.state.teamData}/>
+                                            < TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_EXLARATION} MPS_95_DATA={this.state.MPS_95_DATA} teamData={this.state.teamData} chartType= 'Ang Acc'/>
                                             <p
                                                 style={{
                                                     'text-align': 'center',

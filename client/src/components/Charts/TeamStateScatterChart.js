@@ -25,6 +25,7 @@ class TeamStateScatterChart extends React.Component {
         let values = []
         let max_axlation = this.props.MAX_ANGULAR_EXLARATION
         let mps_95 = this.props.MPS_95_DATA
+        var chartType  = this.props.chartType
         for (var i = 0; i < max_axlation.length; i++) {
             values.push({ 'x': max_axlation[i].val, 'y': mps_95[i] });
         }
@@ -104,7 +105,7 @@ class TeamStateScatterChart extends React.Component {
                     var mps = parseFloat(newbody.split(',')[1]);
                     var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
                     innerHtml += '<tr><td>PlayerID:</td><td><a href="/TeamAdmin/user/dashboard/1/'+player_id+'?team='+team_name+'&org='+organization+'&brand='+sensor+'" target="_blank">'+player_id+'</a></td></tr>';
-                    innerHtml += '<tr><td>Ang.Acc:</td><td>' + span + angAcc.toFixed(2) + '</td></tr>';
+                    innerHtml += '<tr><td>'+chartType+':</td><td>' + span + angAcc.toFixed(2) + '</td></tr>';
                     innerHtml += '<tr><td>95%MPS:</td><td>' + span + mps.toFixed(2) + '</td></tr>';
                 });
                 innerHtml += '</tbody>';

@@ -3246,7 +3246,7 @@ app.post(`${apiPrefix}addorgTeam`, (req, res) => {
 });
 
 app.post(`${apiPrefix}renameTeam`, (req, res) => {
-    // console.log('body',req.body);
+     console.log('body',req.body);
     let organization_id = req.body.organization_id;
     let team_name = req.body.TeamName;
     let data = req.body.data;
@@ -3257,6 +3257,7 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
         .then(sensor_data => {
             console.log('sensor_data ', sensor_data);
             let sensor_cnt = 0;
+			if(sensor_data.length > 0){
             sensor_data.forEach(function (record, index) {
                 const params = {
                     TableName: "sensor_details",
@@ -3309,7 +3310,7 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
                                 } else {
                                     res.send({
                                         message: 'success',
-                                        status: 200
+                                        status: 200 
                                     })
                                 }
                             })
@@ -3324,6 +3325,13 @@ app.post(`${apiPrefix}renameTeam`, (req, res) => {
                     }
                 });
             })
+			}else{
+				console.log('sensor_data 1', sensor_data);
+				res.send({
+					message: 'success', 
+					status: 200 
+				}) 
+			}
         })
 });
 
@@ -8089,7 +8097,7 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                     })
                     .then(mps_dat_output => {
                         let msp_dat_data = [];
-                        if (mps_dat_output) {
+                       /* if (mps_dat_output) {
                             var enc = new TextDecoder("utf-8");
                             var arr = new Uint8Array(mps_dat_output.Body);
                             var objdata = enc.decode(arr);
@@ -8100,7 +8108,7 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                                 let val = parseFloat(mpsval[1]);
                                 if (val.toFixed(4) !== '0.0000') msp_dat_data.push({ id: mpsval[0], val: val });
                             }
-                        }
+                        }*/
 
                         // X- Axis Linear Acceleration
                         let linear_acceleration = accData['impact-date'] ? accData.simulation['linear-acceleration'] : accData['linear-acceleration'];
@@ -8219,7 +8227,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                     })
                     .then(mps_dat_output => {
                         let msp_dat_data = [];
-                        if (mps_dat_output) {
+                      /*  if (mps_dat_output) {
                             // var mps_dat_output_data = JSON.parse(mps_dat_output.Body.toString('base64'));
                             var enc = new TextDecoder("utf-8");
                             var arr = new Uint8Array(mps_dat_output.Body);
@@ -8231,7 +8239,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                                 let val = parseFloat(mpsval[1]);
                                 if (val.toFixed(4) !== '0.0000') msp_dat_data.push({ id: mpsval[0], val: val });
                             }
-                        }
+                        }*/
 
                         console.log('wrking for other')
                         // X- Axis Linear Acceleration
@@ -13896,10 +13904,10 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
 
     var account_id = req.body.accountid;
     imagedata = [];
-    getFileFromS3(account_id + '/BrainImages/CSDM-15.png', '')
+    getFileFromS3(account_id + '/simulation/SummaryBrainImages/CSDM-15.png', '')
         .then(fileData => {
             if (fileData) {
-                var CSDM15Data = fileData.Body.toString('base64');
+                var CSDM15Data = "data:image/png;base64,"+fileData.Body.toString('base64');
             } else {
                 CSDM15Data = "";
 
@@ -13907,10 +13915,10 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
             imagedata.push({
                 CSDM15: CSDM15Data
             })
-            getFileFromS3(account_id + '/BrainImages/principal-max-strain.png', '')
+            getFileFromS3(account_id + '/simulation/SummaryBrainImages/principal-max-strain.png', '')
                 .then(file1Data => {
                     if (file1Data) {
-                        var PMSData = file1Data.Body.toString('base64');
+                        var PMSData = "data:image/png;base64,"+file1Data.Body.toString('base64');
                     } else {
                         PMSData = "";
 
@@ -13942,11 +13950,11 @@ app.post(`${apiPrefix}getBrainImageByimageID`, VerifyToken, (req, res) => {
 				//  8709318680/simulation/TAgIdBbOD/BrainImages/CSDM-15.png
 				
 				console.log(account_id, account_id+'/simulation/'+image_id+'/BrainImages/CSDM-15.png')
-                getFileFromS3(account_id+'/simulation/'+image_id+'/BrainImages/ CSDM-15.png','') 
+                getFileFromS3(account_id+'/simulation/'+image_id+'/BrainImages/CSDM-15.png','') 
 				.then(fileData => {
 					console.log("fileData",fileData)
 					if(fileData){
-						var CSDM15Data = fileData.Body.toString('base64');
+						var CSDM15Data = "data:image/png;base64,"+fileData.Body.toString('base64');
 					}else{
 						CSDM15Data = "";
 						
@@ -13954,11 +13962,11 @@ app.post(`${apiPrefix}getBrainImageByimageID`, VerifyToken, (req, res) => {
 					imagedata.push({
 						CSDM15: CSDM15Data
 					})
-					getFileFromS3(account_id+'/simulation/'+image_id+'/BrainImages/ principal-max-strain.png','') 
+					getFileFromS3(account_id+'/simulation/'+image_id+'/BrainImages/principal-max-strain.png','') 
 					.then(file1Data => {
 					console.log("file1Data",file1Data)
 						if(file1Data){
-							var PMSData = file1Data.Body.toString('base64');
+							var PMSData = "data:image/png;base64,"+file1Data.Body.toString('base64');
 						}else{
 							PMSData = "";
 							

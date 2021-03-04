@@ -32,7 +32,6 @@ class Report extends React.Component {
         super(props);
         console.log('innerWidth ------------------------\n',styleOfpage3 )
         console.log('Rports props are report', this.props);
-        console.log('metric ', this.props.Metric);
 		
 		
         if(this.props.jsonData){
@@ -75,6 +74,9 @@ class Report extends React.Component {
                 metric: ''
             } 
         }
+        console.log('imagedata CSDM15', this.state.jsonData['imagedata'][0].CSDM15);
+        console.log('imagedata PMS', this.state.jsonData['imagedata'][1].PMS);
+		
     }
     tConvert = (time) => {
         console.log(time)
@@ -414,6 +416,12 @@ class Report extends React.Component {
             trangle_scale : {
                 width: '100%',
                 zIndex: 4
+            },			
+            trangle_scale1: {
+                width: '70%',
+                zIndex: 4,
+				marginLeft:'15%',
+				marginRight:'15%',
             },
             point_scale: {
                 width: '14px',
@@ -787,7 +795,7 @@ class Report extends React.Component {
               alignItems: 'center',
               color : 'grey',
               position: 'absolute', //Here is the trick
-              marginTop : '780',
+              marginTop : '800',
             }
         });
         const styleCsdm = StyleSheet.create({
@@ -1097,8 +1105,8 @@ class Report extends React.Component {
                                         </View>
                                     </View>
 									<View style={styles.tableRow}>
-										{this.state.jsonData['imagedata'].CSDM15 ?
-											<Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].CSDM15} alt="trangle" />
+										{this.state.jsonData['imagedata'][0].CSDM15 ?
+											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][0].CSDM15} alt="trangle" />
 											:
 											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
 										}
@@ -1227,8 +1235,8 @@ class Report extends React.Component {
                                         </View>
                                     </View>									
 									<View style={styles.tableRow}>
-										{this.state.jsonData['imagedata'].PMS ?
-											<Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS} alt="trangle" />
+										{this.state.jsonData['imagedata'][1].PMS ?
+											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][1].PMS} alt="trangle" />
 											:
 											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
 										}
@@ -1376,8 +1384,8 @@ class Report extends React.Component {
                                         </View>
                                     </View>																		
 									<View style={styles.tableRow}>
-										{this.state.jsonData['imagedata'].PMS ?
-											<Image style={styles.trangle_scale} src={this.state.jsonData['imagedata'].PMS} alt="trangle" />
+										{this.state.jsonData['imagedata'][1].PMS ?
+											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][1].PMS} alt="trangle" />
 											:
 											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
 										}

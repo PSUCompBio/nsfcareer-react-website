@@ -582,7 +582,6 @@
   }
   .org-edit-button .button-edit{
     left: 37%!important ;
-    position: absolute!important;
   }
   .team-edit-button .org-edit-button .button-edit{
     position: initial!important;
