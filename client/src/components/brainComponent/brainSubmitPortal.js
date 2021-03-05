@@ -151,6 +151,7 @@ class BrainSubmitPortal extends React.Component {
                     alert(`${file.name} file data farmat invalid.`);
                 }
             } else {
+            
                 the.setState(prevState =>
                 ({
                     list: prevState.list.concat({
@@ -183,13 +184,22 @@ class BrainSubmitPortal extends React.Component {
                         console.log('impact_id', impact_id)
                         // the.checkSimulationExists({ 'impact_id': impact_id, 'sensor_id': filename.split("_")[0], 'key': key });
                         jobs.push({sensor_id: filename.split("_")[0], impact_id: impact_id });
-                    } else {
+                    }  else if (sensor.toLowerCase() === "swa") {
+                        var data = e.target.result;
+                        data = data.split(',');
+                        // console.log('file',)
+                        var impact_id = data[23];
+                        console.log('impact_id', impact_id)
+                        // the.checkSimulationExists({ 'impact_id': impact_id, 'sensor_id': filename.split("_")[0], 'key': key });
+                        jobs.push({sensor_id: data[20], impact_id: impact_id });
+                    }else {
                         // the.checkSimulationExists({ 'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1], 'key': key });
                         jobs.push({sensor_id: filename.split("-")[0].split("MG")[1], impact_id: filename.split("-")[1] });
                     }
                 }
 
             }
+            console.log('jobs',jobs)
             the.setState(prevState =>
                 ({
                     listJobs: prevState.listJobs.concat(jobs)
@@ -314,14 +324,15 @@ class BrainSubmitPortal extends React.Component {
         userData = JSON.parse(userData);
         const { files, list, meshType, sensor, team, organization, listJobs } = this.state;
         // Create jobs log and send mail to user ...
-        createJoblogs({email: Email, listJobs: listJobs })
+       
+        const user = userData['userInfo']['email'];
+        createJoblogs({email: user, listJobs: listJobs })
         .then(res=>{
             console.log('res',res);
         }).catch(err=>{
             console.log('err',err)
         })
 
-        const user = userData['userInfo']['email'];
         const reloadPage = () => {
             setInterval(() => {
                 this.setState(prevState => ({

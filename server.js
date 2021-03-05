@@ -1775,7 +1775,7 @@ app.post(`${apiPrefix}reSendVerficationEmail`, (req, res) => {
 })
 
 function getBrainimagesPath(account_id, file) {
-    var fielPath = `${account_id}/BrainImages/${file}`
+    var fielPath = `${account_id}/simulation/SummaryBrainImages/${file}`
 
     return new Promise((resolve, reject) => {
         if (fielPath) {
@@ -9625,8 +9625,9 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{ name: "filename", max
         })
 })
 
-app.post(`${apiPrefix}api/v1/image/brainPlots/`, (req, res) => {
-    if (!req.body.account_id) {
+app.post(`${apiPrefix}api/v1/image/brainPlots/`, upload.fields(),(req, res) => {
+    console.log(res.body)
+    /*if (!req.body.account_id) {
         res.send('Url must contains account Id.')
     } else {
         const { account_id } = req.body;
@@ -9716,7 +9717,7 @@ app.post(`${apiPrefix}api/v1/image/brainPlots/`, (req, res) => {
 
                 }
             });
-    }
+    }*/
 })
 
 
