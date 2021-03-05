@@ -2129,7 +2129,7 @@ setProcessingState = (msg) => {
                                         </div>
                                     }
                                     {this.state.isTeams &&
-                                        <div className="delete-confirmation-button isTeamsEdit">
+                                        <div className="delete-confirmation-button isTeamsEdit" style= {{'display' : 'none'}}>
                                             <button className="btn button-back " onClick={this.handleTeamCencel}>Cancel</button>
                                             <button className="btn button-yes " onClick={this.handleTeamChangeSave} >Save</button>
                                         </div>

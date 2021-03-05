@@ -400,9 +400,9 @@ class TeamStats extends React.Component {
 		if(this.state.brainPosition == 'principal-max-strain' ){
 			ylabel = 'Max Principal Strain';
 		}else if(this.state.brainPosition == 'principal-min-strain' ){
-			ylabel = '';			
+			ylabel = 'Min Principal Strain';			
 		}else if(this.state.brainPosition == 'csdm-15' ){
-			ylabel = '';			
+			ylabel = 'CSDM 15';			
 		}
         const BrainPositionChartoptions = {
             legend: {

@@ -418,10 +418,16 @@ class Report extends React.Component {
                 zIndex: 4
             },			
             trangle_scale1: {
-                width: '50%',
+                width: '40%',
                 zIndex: 4,
-				marginLeft:'25%',
-				marginRight:'25%',
+				marginLeft:'30%',
+				marginRight:'30%',
+            },		
+            trangle_scale12: {
+                width: '20%',
+                zIndex: 4,
+				marginLeft:'30%',
+				marginRight:'30%',
             },
             point_scale: {
                 width: '14px',
@@ -1111,6 +1117,7 @@ class Report extends React.Component {
 											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
 										}
 									</View>
+									
                                 </>
                                 :
                                 null
@@ -1233,15 +1240,14 @@ class Report extends React.Component {
                                         <View style={styles.p1_footer_arrow_left}>
                                             <Image  style={styles.arrow_left} src={arrow_left} alt="arrow_right"/>
                                         </View>
-                                    </View>									
-									<View style={styles.tableRow}>
+                                    </View>
+                                    <View style={styles.tableRow}>       
 										{this.state.jsonData['imagedata'][1].PMS ?
 											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][1].PMS} alt="trangle" />
 											:
 											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
-										}
-									</View>
-                                    <View style={styles.tableRow}>                          
+										}		
+										<Text style={styles.footer_ST_1}></Text>									
                                         <Image  style={styles.trangle_scale} src={branImages_1} alt="trangle"/>
                                     </View>
                                 </>
