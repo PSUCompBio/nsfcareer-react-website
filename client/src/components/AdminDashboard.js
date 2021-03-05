@@ -19,7 +19,17 @@ import {
     addOrganization,
     MergeOrganization,
     getAllSensorBrandsList,
-    loadMorePlayerList
+    loadMorePlayerList,
+    renameTeam,
+    MergeTeam,
+	deleteOrgTeam,
+	deleteOrgTeam1,
+	deleteOrgTeam2,
+	deleteOrgTeam3,
+	deleteOrgTeam4,
+	addorgTeam,	
+    getAllteamsOfOrganizationOfSensorBrand,
+    getAllteamsOfOrganizationOfSensorBrandList,
 } from '../apis';
 
 import SideBar from './SideBar';
@@ -84,6 +94,7 @@ class AdminDashboard extends React.Component {
             Error: '',
             data: '',
             isRename: false,
+            addTeamData: '',
             addOrganizationData: '',
             isAddOrganization: false,
             mergeData: '',
@@ -95,7 +106,8 @@ class AdminDashboard extends React.Component {
             DelTeamsData: '',
             isTeamsDelete: false,
             isTeamsUpdated: false,
-            TeamError: ''
+            TeamError: '',
+			processing:''
         };
     }
     toggleTab = (value) => {
@@ -259,10 +271,10 @@ class AdminDashboard extends React.Component {
         $('.button-edit.Teams').addClass('button-edit-active');
         this.setState({
             isTeamsEdit: true,
-            DelTeamsData: '',
-            isTeamsDelete: false,
-            isTeamsUpdated: false,
-            TeamError: ''
+            DelData: '',
+            isDelete: false,
+            isUpdated: false,
+            Error: ''
         })
     }
 
@@ -271,10 +283,10 @@ class AdminDashboard extends React.Component {
         $('.button-edit.Teams').removeClass('button-edit-active');
         this.setState({
             isTeamsEdit: false,
-            DelTeamsData: '',
-            isTeamsDelete: false,
-            isTeamsUpdated: false,
-            TeamError: '',
+            DelData: '',
+            isDelete: false,
+            isUpdated: false,
+            Error: '',
             isUploading: false,
             renameData: '',
             isRename: false,
@@ -316,6 +328,15 @@ class AdminDashboard extends React.Component {
             this.setState({ isDisplay2: { display: 'none' } });
         }
     }
+	editTeamRecord = (e) => {
+        this.setState({ data: e })
+        console.log('data', this.state.data)
+        if (this.state.isDisplay2.display === 'none') {
+            this.setState({ isDisplay2: { display: 'flex' } });
+        } else {
+            this.setState({ isDisplay2: { display: 'none' } });
+        }
+    }
 
     makeVisible = (data) => {
         this.setState({ isDisplay: data });
@@ -336,7 +357,17 @@ class AdminDashboard extends React.Component {
             this.setState({ isDisplay: { display: 'none' } });
         }
     }
-
+	
+	deleteTeamRecord = (e) => {
+        console.log('delete', e)
+        this.setState({ DelData: { type: 'orgTeam', data: e } })
+        if (this.state.isDisplay.display === 'none') {
+            this.setState({ isDisplay: { display: 'flex' } });
+            this.setState({ delete_id:  e.TeamName+e.organization});
+        } else {
+            this.setState({ isDisplay: { display: 'none' } });
+        }
+    }
     isDeleteData = (isDelete) => {
         console.log('isDelete', isDelete)
         this.setState({ isDelete: isDelete });
@@ -354,6 +385,16 @@ class AdminDashboard extends React.Component {
         }
         if (data.data.type === "merge") {
             this.setState({ mergeData: { OrganizationName: data.OrganizationName, organization_id: data.data.organization_id, data: data.data }, isMerge: true })
+        }
+		console.log('isUpdateData', data);
+        if (data.data.type === "renameTeam") {
+            this.setState({ renameData: { TeamName: data.TeamName, organization_id: data.data.organization_id, data: data.data }, isRename: true })
+        }
+        if (data.data.type === "addTeam") {
+            this.setState({ addTeamData: { TeamName: data.TeamName, sensor: this.state.brand, organization: this.state.organization }, isAddOrganization: true })
+        }
+        if (data.data.type === "mergeTeam") {
+            this.setState({ mergeData: { TeamName: data.TeamName, organization_id: data.data.organization_id, data: data.data }, isMerge: true })
         }
         this.setState({ isDisplay2: { display: 'none' } });
     }
@@ -533,7 +574,261 @@ class AdminDashboard extends React.Component {
     /**
     * Load more plyers function start here ...
     */
+setProcessingState = (msg) => {
+		this.setState({	processing: msg})
+	}
+ handleTeamChangeSave = () => {
+        this.setState({ isUploading: true });
+        if (this.state.isDelete) {
+		this.setProcessingState('Deleting Team Players...');
+            console.log('deleting', this.state.DelData)			
+            deleteOrgTeam(this.state.DelData)
+                .then(res1 => {
+                    console.log('res', res1.data.data);
+					if (res1.data.message === 'success') {
+						if (res1.data.data.length > 0) {
+							this.setProcessingState('Deleting Team Players...');
+							var result = res1.data;
+							 deleteOrgTeam2(result)
+							.then(res3 => {
+								if (res3.data.message === 'success') {
+									this.setProcessingState('Players Deleted successfully');
+									setTimeout(() =>{ this.setProcessingState('Deleting Simulation Records...'); }, 2000);
+									deleteOrgTeam3(result)
+									.then(res4 => {
+										if (res4.data.message === 'success') {
+											this.setProcessingState('Simulation Records Deleted successfully');
+											setTimeout(() =>{ this.setProcessingState('Deleting Event Data...'); }, 2000);
+											deleteOrgTeam4(result)
+											.then(res5 => {
+												if (res5.data.message === 'success') {
+													this.setProcessingState('Event Data Deleted successfully');
+													setTimeout(() =>{ this.setProcessingState('Deleting Team Data...'); }, 2000);
+													deleteOrgTeam1(this.state.DelData)
+													.then(res6 => {
+														if (res6.data.message === 'success') {
+															this.setProcessingState('Team Deleted successfully');
+															this.setState({	isUploading: false,	})
+															this.handleRenmaeTeam();
+														}else{
+															this.setState({
+																isUploading: false,
+																Error: 'Somthing went wrong when deleting Simulation Records.'
+															})
+															this.handleRenmaeTeam();
+														}
+													})
+												}else{
+													this.setState({
+														isUploading: false,
+														Error: 'Somthing went wrong when deleting Simulation Records.'
+													})
+													this.handleRenmaeTeam();
+												}
+											})
+										}else{
+											this.setState({
+												isUploading: false,
+												Error: 'Somthing went wrong when deleting Simulation Records.'
+											})
+											this.handleRenmaeTeam();
+										}
+										
+									})
+								}else{
+									this.setState({
+										isUploading: false,
+										Error: 'Somthing went wrong when deleting Players.'
+									})
+									this.handleRenmaeTeam();
+								}
+								
+							})
+							
+						} else {
+							this.setProcessingState('Team Player List Empty...');
+							this.setProcessingState('Deleting Team Data...');
+							 deleteOrgTeam1(this.state.DelData)
+							.then(res2 => {
+								if (res2.data.message === 'success') {
+									this.setState({	isUploading: false,	})
+									this.setProcessingState('Team Deleted successfully');
+									this.handleRenmaeTeam();
+								} else {
+									this.setState({
+										isUploading: false,
+										Error: 'Somthing went wrong when deleting Team.'
+									})
+								}
+							 })
+						}
+					} else {
+							this.setState({
+								isUploading: false,
+								Error: 'Somthing went wrong when deleting data.'
+							})
+							this.handleRenmaeTeam();
+						}
 
+                }).catch(err => {
+                    console.log(err)
+                    this.setState({
+                        isUploading: false,
+                        isUpdated: false,
+                        Error: 'Somthing went wrong when deleting data.'
+                    })
+                })
+        } else {
+            this.handleRenmaeTeam();
+        }
+
+    }
+    handleRenmaeTeam = () => {
+        console.log('rename', this.state.renameData)
+        if (this.state.isRename) {
+            renameTeam(this.state.renameData)
+                .then(response => {
+                    console.log('response', response)
+                    if (response.data.message === "success") {
+                        this.handleMergeTeam();
+                    } else {
+                        this.setState({
+                            isUpdated: false,
+                            isUploading: false,
+                            Error: 'Somthing went wrong when renaming organization.'
+                        })
+                    }
+
+                }).catch(err => {
+                    console.log('errRename', err);
+                    this.setState({
+                        isUploading: false,
+                        Error: 'Somthing went wrong when renaming organization.'
+                    })
+                })
+        } else {
+            this.handleMergeTeam();
+        }
+    }
+	  handleMergeTeam = () => {
+        console.log('isMerge', this.state.mergeData)
+        if (this.state.isMerge) {
+            MergeTeam(this.state.mergeData)
+                .then(response => {
+                    console.log('response', response)
+                    if (response.data.message === "success") {
+                        this.handleAddTeam();
+                    } else {
+                        this.setState({
+                            isUpdated: false,
+                            isUploading: false,
+                            Error: 'Somthing went wrong when merging Team.'
+                        })
+                    }
+
+                }).catch(err => {
+                    console.log('errRename', err);
+                    this.setState({
+                        isUploading: false,
+                        Error: 'Somthing went wrong when merging Team.'
+                    })
+                })
+        } else {
+            this.handleAddTeam();
+        }
+    }
+    handleAddTeam = () => {
+        console.log('addOrganization', this.state.addTeamData);
+        if (this.state.isAddOrganization) {
+            addorgTeam(this.state.addTeamData)
+                .then(response => {
+                    console.log('response', response)
+                    if (response.data.message === "success") {
+                         getTeamNameList({ type: "team" }).then(teams => {
+							console.log('teams', teams)
+							$('.isTeamsEdit').css({ 'display': 'none' });
+							$('.button-edit.Teams').removeClass('button-edit-active');
+							this.setState({
+								teamList: teams.data.data,
+								totalTeam: teams.data.data.length,
+								isFetching: false,
+								isSensor: false,
+								isTeams: true,
+								isOrganization: false,
+								isPlayers: false,
+								isTeamsEdit: false,
+								isUpdated: true,
+								isUploading: false,
+								isDelete: false,
+								DelData: '',
+								isRename: false,
+								renameData: '',
+								isMerge: false,
+								mergeData: '',
+								isAddOrganization: false,
+								addTeamData: ''
+							})
+						})
+                    } else {
+                        this.setState({
+                            isUpdated: false,
+                            isUploading: false,
+                            Error: 'Somthing went wrong when adding Team.',
+                            isDelete: false,
+                            DelData: '',
+                            isRename: false,
+                            renameData: '',
+                            isMerge: false,
+                            mergeData: '',
+                            isAddOrganization: false,
+                            addOrganizationData: ''
+                        })
+                    }
+                }).catch(err => {
+                    console.log('erradd', err);
+                    this.setState({
+                        isUploading: false,
+                        isUpdated: false,
+                        Error: 'Somthing went wrong when adding Team.',
+                        isDelete: false,
+                        DelData: '',
+                        isRename: false,
+                        renameData: '',
+                        isMerge: false,
+                        mergeData: '',
+                        isAddOrganization: false,
+                        addOrganizationData: ''
+                    })
+                })
+        } else {
+             getTeamNameList({ type: "team" }).then(teams => {
+				console.log('teams', teams)
+				$('.isTeamsEdit').css({ 'display': 'none' });
+				$('.button-edit.Teams').removeClass('button-edit-active');
+				this.setState({
+					teamList: teams.data.data,
+					totalTeam: teams.data.data.length,
+					isFetching: false,
+					isSensor: false,
+					isTeams: true,
+					isOrganization: false,
+					isPlayers: false,
+					isTeamsEdit: false,
+					isUpdated: true,
+					isUploading: false,
+					isDelete: false,
+					DelData: '',
+					isRename: false,
+					renameData: '',
+					isMerge: false,
+					mergeData: '',
+					isAddOrganization: false,
+					addTeamData: ''
+				})
+			})
+        }
+
+    }
     handleLoadmorePlayers = () => {
        
         if(!this.state.loadingplayers){
@@ -901,7 +1196,7 @@ class AdminDashboard extends React.Component {
     }
 
 
-    smallCards3 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, team, user_cognito_id, noOfSimulation, key) => {
+    smallCards3 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, organization_id, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status === 'completed') {
@@ -921,11 +1216,11 @@ class AdminDashboard extends React.Component {
         return (
             <div key={key} ref={''} className={this.state.editTeamClass}>
 			<ul className="organization-edit-icons isTeamsEdit" style={{'display':'none'}}>
-                    <li><span><img src={pencil} alt="Edit" onClick={e => this.editTeamRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, team_name: team, type: 'rename' })} />Rename</span></li>
-					{team == this.state.highlight_id ?
-						<li><span><img src={delicon1} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, team_name: team })} />Delete</span></li>
+                    <li><span><img src={pencil} alt="Edit" onClick={e => this.editTeamRecord({ brand: brand, organization: organization, organization_id: organization_id, user_cognito_id: user_cognito_id, TeamName: team, type: 'renameTeam' })} />Rename</span></li>
+					{team+organization == this.state.highlight_id ?
+						<li><span><img src={delicon1} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: brand, organization: organization, organization_id: organization_id, user_cognito_id: user_cognito_id, TeamName: team })} />Delete</span></li>
 					: 
-						<li><span><img src={delicon} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: brand, organization: organization, user_cognito_id: user_cognito_id, team_name: team })} />Delete</span></li>
+						<li><span><img src={delicon} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: brand, organization: organization, organization_id: organization_id, user_cognito_id: user_cognito_id, TeamName: team })} />Delete</span></li>
 					}
                 </ul>
                 <div
@@ -989,6 +1284,7 @@ class AdminDashboard extends React.Component {
                 ],
                 this.state.teamList[i].sensor,
                 this.state.teamList[i].organization,
+                this.state.teamList[i].organization_id,
                 this.state.teamList[i].team_name,
                 this.state.userDetails.user_cognito_id,
                 Number(this.state.teamList[i].simulation_count),
@@ -1129,7 +1425,7 @@ class AdminDashboard extends React.Component {
                     console.log('minutes', minutes);
                     minutes = minutes - computed_time;
                     if (minutes <= 30) {
-                        cls = 'completedSimulation tech-football m-3';
+                        cls = 'completedSimulation player-data-table-row';
                     }
                 }
 
@@ -1174,7 +1470,7 @@ class AdminDashboard extends React.Component {
                     console.log('minutes', minutes);
                     minutes = minutes - computed_time;
                     if (minutes <= 30) {
-                        cls = 'completedSimulation tech-football m-3';
+                        cls = 'completedSimulation player-data-table-row';
                     }
                 }
 
@@ -1250,10 +1546,12 @@ class AdminDashboard extends React.Component {
                     console.log('minutes', minutes);
                     minutes = minutes - computed_time;
                     if (minutes <= 30) {
-                        cls = 'completedSimulation tech-football m-3';
+                        cls = 'completedSimulation player-data-table-row';
                     }
                 }
-                return <tr className={cls} key={index} onClick={() => {
+                return <tr className={cls} key={index} >
+                    <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                    <td onClick={() => {
                     this.props.history.push({
                         pathname: '/TeamAdmin/team/players/' + team.organization + '/' + team.team_name + '?brand=' + team.sensor,
                         state: {
@@ -1267,12 +1565,22 @@ class AdminDashboard extends React.Component {
                         }
                     })
 
-                }}
-                >
-                    <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
-                    <td>{team.team_name ? team.team_name : 'NA'}</td>
+                }}>{team.team_name ? team.team_name : 'NA'}</td>
                     <td><TeamSimulationCountForList count={team.simulation_count} sensor={team.sensor} organization={team.organization} team={team.team_name} setSimulationCount={this.setTeamSimulationCount}/></td>
                     <td>{team.organization}</td>
+                    {this.state.isTeamsEdit ?	
+						<>					
+					<td style={{width :'20%'}}>							
+							<span style={{width :'33%',float:'left'}}>Rename<br/><img style={{width :'24px'}} src={pencil} alt="Edit" onClick={e => this.editTeamRecord({ brand: team.sensor, organization: team.organization, organization_id: team.organization_id, user_cognito_id: this.state.userDetails.user_cognito_id, TeamName: team.team_name, type: 'renameTeam' })} /></span>
+							{team.team_name+team.organization == this.state.highlight_id ?
+								<span style={{width :'33%',float:'left'}}>Delete<br/><img style={{width :'24px'}} src={delicon1} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: team.sensor, organization: team.organization, organization_id: team.organization_id, user_cognito_id: this.state.userDetails.user_cognito_id, TeamName: team.team_name })} /></span>
+							: 
+								<span style={{width :'33%',float:'left'}}>Delete<br/><img style={{width :'24px'}} src={delicon} alt="Delete" onClick={e => this.deleteTeamRecord({ brand: team.sensor, organization: team.organization, organization_id: team.organization_id, user_cognito_id: this.state.userDetails.user_cognito_id, TeamName: team.team_name })} /></span>
+							}
+					</td>
+						</>
+					: null
+					}
                 </tr>;
             } else {
                 return false;
@@ -1388,7 +1696,7 @@ class AdminDashboard extends React.Component {
                             </div>
                         }
 						 {this.state.isTeams &&
-								<div className="col-md-12 Admintitle" style={{'display':'none'}}>
+								<div className="col-md-12 Admintitle">
 									<div className="col-md-3 org-edit-button" >	
 										<button className="btn button-edit Teams" style={this.state.isTeamsEdit ? { 'display': 'none' } : { 'display': 'inline-block' }} onClick={this.handleTeamsEdit}>Edit</button>
 								 </div>
@@ -1770,6 +2078,11 @@ class AdminDashboard extends React.Component {
                                                                     <th scope="col">Team Name</th>
                                                                     <th scope="col">Simulations</th>
                                                                     <th scope="col">Organization</th>
+																	{this.state.isTeamsEdit ?	
+																	<>	
+																	<th scope="col">Action</th>
+																	</>
+																	:null }
                                                                 </tr>
                                                             </thead>
                                                             <tbody className="player-table">
@@ -1787,6 +2100,7 @@ class AdminDashboard extends React.Component {
                                             >
                                                 <span className="sr-only">Uploading ...</span>
                                             </div>
+											 <p>{ this.state.processing}</p>
                                         </div>
                                     ) : null}
 
@@ -1817,7 +2131,7 @@ class AdminDashboard extends React.Component {
                                     {this.state.isTeams &&
                                         <div className="delete-confirmation-button isTeamsEdit">
                                             <button className="btn button-back " onClick={this.handleTeamCencel}>Cancel</button>
-                                            <button className="btn button-yes " onClick={this.handleTeamsChangeSave} >Save</button>
+                                            <button className="btn button-yes " onClick={this.handleTeamChangeSave} >Save</button>
                                         </div>
                                     }
                                 </div>

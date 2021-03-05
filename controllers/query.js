@@ -2983,7 +2983,7 @@ function getTeamList() {
     return new Promise((resolve, reject) => {
         var params = {
             TableName: 'organizations',
-            ProjectionExpression: "sensor, organization, team_name"
+            ProjectionExpression: "sensor, organization, organization_id, team_name"
         };
         var item = [];
         docClient.scan(params).eachPage((err, data, done) => {

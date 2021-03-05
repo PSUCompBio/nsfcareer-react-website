@@ -396,7 +396,14 @@ class TeamStats extends React.Component {
 			console.log("maxval3",maxval);
 		}
 			console.log("final",maxval);
-		
+		var ylabel = '';
+		if(this.state.brainPosition == 'principal-max-strain' ){
+			ylabel = 'Max Principal Strain';
+		}else if(this.state.brainPosition == 'principal-min-strain' ){
+			ylabel = '';			
+		}else if(this.state.brainPosition == 'csdm-15' ){
+			ylabel = '';			
+		}
         const BrainPositionChartoptions = {
             legend: {
                 display: false
@@ -416,17 +423,15 @@ class TeamStats extends React.Component {
                         display: true,
                         fontSize: 18,
                         fontWeight: 800,
-                        labelString: 'Average MPS'
+                        labelString: ylabel
                     },
-                    
-                }],
-                yAxes: [{
 					ticks: {
 						beginAtZero:true,
 						min: 0,
 						max: maxval,
 					}
-				}],
+                    
+                }],
             }
         };
         

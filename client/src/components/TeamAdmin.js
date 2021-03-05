@@ -745,7 +745,7 @@ class TeamnAdmin extends React.Component {
                     console.log('minutes', minutes);
                     minutes = minutes - computed_time;
                     if (minutes <= 30) {
-                        cls = 'completedSimulation tech-football m-3';
+                        cls = 'completedSimulation player-data-table-row';
                     }
                 }
                 var sensor = team.sensor && team.sensor !== null ? team.sensor : ''; 

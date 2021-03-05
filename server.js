@@ -10181,6 +10181,7 @@ app.post(`${apiPrefix}getAllOrganizationsSimultionCount`, (req, res) => {
 })
 
 app.post(`${apiPrefix}getAllteamsOfOrganizationOfSensorBrandList`, (req, res) => {
+	console.log("req.body",req.body);
     getAllTeamsOfOrganizationsOfSensorBrand(req.body)
         .then(list => {
             let uniqueList = [];
@@ -13910,6 +13911,8 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
 
     var account_id = req.body.accountid;
     imagedata = [];
+	console.log(account_id + '/simulation/SummaryBrainImages/CSDM-15.png');
+	console.log(account_id + '/simulation/SummaryBrainImages/principal-max-strain.png'); 
     getFileFromS3(account_id + '/simulation/SummaryBrainImages/CSDM-15.png', '')
         .then(fileData => {
             if (fileData) {

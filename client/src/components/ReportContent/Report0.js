@@ -418,10 +418,10 @@ class Report extends React.Component {
                 zIndex: 4
             },			
             trangle_scale1: {
-                width: '70%',
+                width: '50%',
                 zIndex: 4,
-				marginLeft:'15%',
-				marginRight:'15%',
+				marginLeft:'25%',
+				marginRight:'25%',
             },
             point_scale: {
                 width: '14px',
