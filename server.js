@@ -9625,9 +9625,9 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{ name: "filename", max
         })
 })
 
-app.post(`${apiPrefix}api/v1/image/brainPlots/`, upload.fields(),(req, res) => {
-    console.log(res.body)
-    /*if (!req.body.account_id) {
+app.post(`${apiPrefix}api/v1/image/brainPlots/`,upload.fields([]) ,(req, res) => {
+    // console.log('req ---------------\n',req.body);
+    if (!req.body.account_id) {
         res.send('Url must contains account Id.')
     } else {
         const { account_id } = req.body;
@@ -9690,12 +9690,21 @@ app.post(`${apiPrefix}api/v1/image/brainPlots/`, upload.fields(),(req, res) => {
                                                     maximum_PSxSR: maximum_PSxSR ? `${config_env.FrontendUrl}img/?url=${maximum_PSxSR}` : 'Image not found',
                                                     principal_min_strain: principal_min_strain ? `${config_env.FrontendUrl}img/?url=${principal_min_strain}` : 'Image not found'
                                                 };
-                                                res.send({
-                                                    status: 200,
-                                                    message: 'Successfully fetched brain images. Please copy the url for image preview.',
-                                                    data: data
-                                                });
-                                                res.end();
+                                                
+                                                var json = JSON.stringify(data); // so let's encode it
+
+                                                var filename = 'result.json'; // or whatever
+                                                var mimetype = 'application/json';
+                                        
+                                                res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+                                                res.setHeader('Content-type', mimetype);
+                                                res.write(json);
+                                                // res.send({
+                                                //     status: 200,
+                                                //     message: 'Successfully fetched brain images. Please copy the url for image preview.',
+                                                //     data: data
+                                                // });
+                                                // res.end();
                                             } else {
                                                 res.status(500).send({
                                                     status: 'failure',
@@ -9717,7 +9726,7 @@ app.post(`${apiPrefix}api/v1/image/brainPlots/`, upload.fields(),(req, res) => {
 
                 }
             });
-    }*/
+    }
 })
 
 

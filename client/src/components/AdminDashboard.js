@@ -1073,6 +1073,7 @@ setProcessingState = (msg) => {
 
     smallCards2 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, user_cognito_id, noOfSimulation, key, organization_id) => {
         // console.log(reference);
+        brand = brand ?  brand.trim() : '';
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status === 'completed') {
             let computed_time1 = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
@@ -1198,6 +1199,7 @@ setProcessingState = (msg) => {
 
     smallCards3 = (simulation_status, computed_time, simulation_timestamp, reference, brand, organization, organization_id, team, user_cognito_id, noOfSimulation, key) => {
         // console.log(reference);
+        brand = brand ? brand.trim() : '';
         let cls = simulation_status === 'pending' ? 'pendingSimulation tech-football m-3' : 'tech-football m-3';
         if (simulation_status === 'completed') {
             let computed_time1 = computed_time ? parseFloat(computed_time) / (1000 * 60) : 0;
@@ -1473,13 +1475,14 @@ setProcessingState = (msg) => {
                         cls = 'completedSimulation player-data-table-row';
                     }
                 }
+                var sensor = organization.sensor ? organization.sensor.trim() : '';
 
                 return <tr className={cls} key={index} 
                 >
                     <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
                     <td onClick={() => {
                     this.props.history.push({
-                        pathname: organization.sensor && organization.sensor !== undefined ? '/TeamAdmin/' + organization.organization + '/' + organization.sensor : '/TeamAdmin/' + organization.organization,
+                        pathname: organization.sensor && organization.sensor !== undefined ? '/TeamAdmin/' + organization.organization + '/' + sensor : '/TeamAdmin/' + organization.organization,
                         state: {
                             brand: {
                                 brand: organization.sensor,
@@ -1489,7 +1492,7 @@ setProcessingState = (msg) => {
                         }
                     })
                 }} >{organization.organization}</td>
-                    <td><SimulationCountForList count={organization.simulation_count} sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount} /></td>
+                    <td><SimulationCountForList count={organization.simulation_count} sensor={sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount} /></td>
 						{this.state.isEdit ?	
 						<>					
 					<td style={{width :'20%'}}>
