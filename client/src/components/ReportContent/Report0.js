@@ -490,11 +490,17 @@ class Report extends React.Component {
                 fontSize : 12,
                 marginTop: '5px',
             },
-            tableRowHeadtitle: {
+             tableRowHeadtitle: {
                 flex: 1,
-                width : '100%',
-                flexDirection : 'row',
-                marginTop : '75px',
+                width: '100%',
+                flexDirection: 'row',
+                marginTop: '47px',
+                textAlign: 'center',
+            },
+            tableRowHeadtitle1: {
+                flex: 1,
+                width: '100%',
+                flexDirection: 'row',
                 textAlign: 'center',
             },
             title:{
@@ -964,7 +970,10 @@ class Report extends React.Component {
                         <View style= {styles.tableHead}>
                             <Image  style={styles.logo} src={ClinicalReportHeader} alt="head"/>
                         </View>
-                        <View style= {styles.tableRowHeadtitle}>
+                        <View style={styles.tableRowHeadtitle}>
+                            <Text style={styles.title}>Cumulative</Text>
+                        </View>
+                        <View style={styles.tableRowHeadtitle1}>
                             <Text style={styles.title}>Prediction Overview</Text>
                         </View>
                         <View style= {styles.tableRowHead}>
@@ -1434,7 +1443,8 @@ class Report extends React.Component {
                             {/*-- Table head --*/}
                               <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
                               <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-                              <Text style={[stylepage3.tableColLeft2]}>CSDM-15 Value</Text>
+                              <Text style={[stylepage3.tableColLeft1]}>CSDM-15 Value</Text>
+							  <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
                             {/*-- Table head end--*/}
 
                         </View>
@@ -1446,7 +1456,8 @@ class Report extends React.Component {
                             <View style={stylepage3.tableRowBody}>
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
                                 <Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
-								<Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['CSDM-15'].value.toFixed(3) }</Text>
+								<Text style={[stylepage3.tableColLeft1]}>{this.state.jsonData['CSDM-15'].value.toFixed(3) }</Text>
+								<Text style={[stylepage3.tableColLeft2]}></Text>
                             </View>
 							 : null
 						 }
@@ -1455,7 +1466,8 @@ class Report extends React.Component {
                             {/*-- Table head --*/}
                               <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
                               <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-                              <Text style={[stylepage3.tableColLeft2]}>MPS-15 Value</Text>
+							  <Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
+							  <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
                             {/*-- Table head end--*/}
 
                         </View>
@@ -1465,7 +1477,8 @@ class Report extends React.Component {
                             <View style={stylepage3.tableRowBody}>
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
                                 <Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
-                                <Text style={[stylepage3.tableColLeft2]}>{this.state.jsonData['principal-max-strain'].value.toFixed(3) }</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>{this.state.jsonData['principal-max-strain'].value.toFixed(3) }</Text>
+                                <Text style={[stylepage3.tableColLeft2]}></Text>
                             </View>
 							 : null
 						  }

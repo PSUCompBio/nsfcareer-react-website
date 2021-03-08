@@ -439,10 +439,10 @@ class ExportCustomReport extends React.Component {
                 zIndex: 4
             },
             trangle_scale1: {
-                width: '70%',
+                width: '45%',
                 zIndex: 4,
-				marginLeft:'15%',
-				marginRight:'15%',
+				marginLeft:'30%',
+				marginRight:'30%',
             },
             textcenteralign: {				
                 width: '100%',
@@ -513,13 +513,19 @@ class ExportCustomReport extends React.Component {
                 flex: 1,
                 width: '100%',
                 flexDirection: 'row',
-                marginTop: '75px',
+                marginTop: '47px',
+                textAlign: 'center',
+            },
+            tableRowHeadtitle1: {
+                flex: 1,
+                width: '100%',
+                flexDirection: 'row',
                 textAlign: 'center',
             },
             title: {
                 fontSize: 25,
                 display: 'inline-block',
-                color: 'white'
+                color: 'white',
             },
             tableRowHead: {
                 flex: 1,
@@ -1215,6 +1221,9 @@ class ExportCustomReport extends React.Component {
                             <Image style={styles.logo} src={ClinicalReportHeader} alt="head" />
                         </View>
                         <View style={styles.tableRowHeadtitle}>
+                            <Text style={styles.title}>Cumulative</Text>
+                        </View>
+                        <View style={styles.tableRowHeadtitle1}>
                             <Text style={styles.title}>Prediction Overview</Text>
                         </View>
                         <View style={styles.tableRowHead}>
@@ -1702,7 +1711,8 @@ class ExportCustomReport extends React.Component {
                                 {/*-- Table head --*/}
                                 <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
                                 <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-                                <Text style={[stylepage3.tableColLeft2]}>CSDM-15 Value</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>CSDM-15 Value</Text>
+                                <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
                                 {/*-- Table head end--*/}
 
                             </View>
@@ -1716,7 +1726,8 @@ class ExportCustomReport extends React.Component {
 										return <View style={stylepage3.tableRowBody}>
 											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
 											<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
-											<Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
+											<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
+											<Text style={[stylepage3.tableColLeft2]}></Text>
 										</View>
 									}
                                 }else{
@@ -1733,7 +1744,8 @@ class ExportCustomReport extends React.Component {
                                 {/*-- Table head --*/}
                                 <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
                                 <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-                                <Text style={[stylepage3.tableColLeft2]}>MPS-15 Value</Text>
+                                <Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
+                                <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
                                 {/*-- Table head end--*/}
 
                             </View>
@@ -1747,7 +1759,8 @@ class ExportCustomReport extends React.Component {
 										return <View style={stylepage3.tableRowBody}>
 											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
 											<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
-											<Text style={[stylepage3.tableColLeft2]}>{val.toFixed(2)}</Text>
+											<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
+											<Text style={[stylepage3.tableColLeft2]}></Text>
 										</View>
 									}
                                 }else{

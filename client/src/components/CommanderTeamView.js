@@ -568,6 +568,8 @@ class CommanderTeamView extends React.Component {
 
     tConvert = (time) => {
         // Check correct time format and split into components
+		 console.log("time",time);
+		if(time !== undefined){
         time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 
         if (time.length > 1) { // If time format correct
@@ -576,7 +578,10 @@ class CommanderTeamView extends React.Component {
             time[0] = +time[0] % 12 || 12; // Adjust hours
         }
         return time.join(''); // return adjusted time or original string
-    }
+		}else{
+			return "";
+		}
+	}
 
     getStatus = (status) => {
         if (status === 'pending') {
@@ -747,7 +752,8 @@ class CommanderTeamView extends React.Component {
                                     <div className="col-md-6 no-padding" style={{ 'display': 'contents' }}>
                                         {this.state.editablestate ?
                                             <>
-                                                <button onClick={() => { this.cancleable() }} className="btn team-page-edit-button plyar-button-edit" style={{ 'margin-left': '10px' }}>Cancel</button>
+                                                <button onClick={() => { this.cancleable() }} className="btn  plyar-button-edit" style={{ 'margin-left': '10px','background-color': '#00b050','padding': '7px 15px','border': '1px solid ','font-weight': '700'}}>Save</button>
+                                                <button onClick={() => { this.cancleable() }} className="btn  plyar-button-edit" style={{ 'margin-left': '10px','background-color': '#ff0000','padding': '7px 15px','border': '1px solid ','font-weight': '700' }}>Cancel</button>
                                             </>
                                             :
                                             <>
@@ -883,9 +889,12 @@ class CommanderTeamView extends React.Component {
                                                             <td style={{ 'max-width': '162px' }} className="wrap-cell" onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].user_data ? player.simulation_data[0].user_data.first_name + ' ' + player.simulation_data[0].user_data.last_name : player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         }
                                                         <td onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
+														
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                             {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date'} </td>
+															
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} > {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : this.tConvert(player.simulation_data[0]['time'].split(' ')[1]) ? this.tConvert(time.split(' ')[1]) : 'Unknown Time' } </td>
+														
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{dateTime.split(' ')[0]}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{this.tConvert(dateTime.split(' ')[1])}</td>
                                                         {this.state.userDetails.level > 200 &&

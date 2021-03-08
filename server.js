@@ -8600,7 +8600,7 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
                         let i = index;
                         let playerData = '';
                         getTeamDataWithPlayerRecords_2({ player_id: p, team: req.body.team_name, sensor: req.body.brand, organization: req.body.organization })
-                            .then(player_data => {
+                            .then(player_data => { 
 
                                 playerData = player_data;
                                 console.log('playerData -------------------\n')
@@ -14114,17 +14114,27 @@ app.post(`${apiPrefix}deleteOrgTeam3`, (req, res) => {
                 //*** delete simulation file from s3
                 if (image_Data.root_path && image_Data.root_path != 'undefined') {
                     emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.account_id+'/' }, function (err, data) {
-                        console.log(`------------- ${image_Data.root_path} folder has been deleted from s3`)
+                       // console.log(`------------- ${image_Data.root_path} folder has been deleted from s3`)
                         if (count1 == sensorlen) {
+							console.log("respose 1");
                             res.send({
                                 message: 'success',
                                 status: 200
                             })
                         }
-                    })
+                    }).catch(err => {
+						if (count1 == sensorlen) {
+							console.log("respose 2");
+							res.send({
+								message: 'success',
+								status: 200
+							})
+						}
+					})
 
                 } else {
                     if (count1 == sensorlen) {
+						console.log("respose 3");
                         res.send({
                             message: 'success',
                             status: 200
@@ -14132,6 +14142,7 @@ app.post(`${apiPrefix}deleteOrgTeam3`, (req, res) => {
                     }
                 }
             }).catch(err => {
+				console.log("respose 4");
                 res.send({
                     message: 'faled',
                     status: 300
@@ -14150,9 +14161,9 @@ app.post(`${apiPrefix}deleteOrgTeam4`, (req, res) => {
             count1++;
             deleteSimulation_imagesData(record.image_id)
                 .then(deldata => {
-                    //console.log('deldata  org', deldata)
+                    console.log('deldata  org', deldata)
                 }).catch(err => {
-                    //console.log('deldata  err', err)
+                    console.log('deldata  err', err)
                 })
             if (count1 == sensorlen) {
                 res.send({
@@ -14160,10 +14171,10 @@ app.post(`${apiPrefix}deleteOrgTeam4`, (req, res) => {
                     status: 200
                 })
             }
-        })
+        }) 
     } else {
         res.send({
-            message: 'success',
+            message: 'success',  
             status: 200
         })
     }
