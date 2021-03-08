@@ -38,6 +38,7 @@ class table extends React.Component {
                 <Table bordered hover className="uploading-simulation-list">
                     <thead>
                         <tr>
+                          <th>File Name</th>
                           <th>Name</th>
                           <th>Organization</th>
                           <th>Team</th>
@@ -51,6 +52,7 @@ class table extends React.Component {
                         list.map((res)=>{
                             return (
                                 <tr>
+                                    <td>{res.filename}</td>
                                     <td>{res.name}</td>
                                     <td>{res.position}</td>
                                     <td>{res.team}</td>

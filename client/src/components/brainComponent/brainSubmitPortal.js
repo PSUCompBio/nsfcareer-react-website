@@ -33,6 +33,7 @@ class BrainSubmitPortal extends React.Component {
             list: [],
             meshType: 'coarse',
             isUploaded: false,
+            uploadingJobs: false,
             isCalledExists: false,
             isError: false,
             countDown: 5,
@@ -121,7 +122,7 @@ class BrainSubmitPortal extends React.Component {
     }
 
     handleFileSelect = (file, fileType, key) => {
-        const { sensor } = this.state;
+        const { sensor, organization, team } = this.state;
         let reader = new FileReader();
         let the = this;
         let jobs = [];
@@ -142,6 +143,7 @@ class BrainSubmitPortal extends React.Component {
                             imageFile: '',
                             isExists: false,
                             isfetched: true,
+                            filename: file.name
                         })
                     })
                     );
@@ -151,18 +153,19 @@ class BrainSubmitPortal extends React.Component {
                     alert(`${file.name} file data farmat invalid.`);
                 }
             } else {
-            
+
                 the.setState(prevState =>
                 ({
                     list: prevState.list.concat({
                         key: key,
                         name: 'unknown',
-                        position: 'unknown',
-                        team: 'unknown',
+                        position: organization,
+                        team: team,
                         image: '',
                         imageFile: '',
                         isExists: false,
                         isfetched: true,
+                        filename: file.name
                     })
                 })
                 );
@@ -174,36 +177,36 @@ class BrainSubmitPortal extends React.Component {
                         impact_id = impact_id.replace(/-/g, '');
                         console.log('impact_id', impact_id)
                         // the.checkSimulationExists({ 'impact_id': impact_id, 'sensor_id': filename.split("-")[0], 'key': key });
-                        jobs.push({sensor_id:  filename.split("-")[0],impact_id: impact_id });
+                        jobs.push({ sensor_id: filename.split("-")[0], impact_id: impact_id });
                     } else if (sensor === 'Athlete Intelligence') {
                         var impact_id = filename.split("-").slice(2, 7).join(" ").split(' ')[0];
                         // the.checkSimulationExists({ 'impact_id': impact_id, 'sensor_id': '1', 'key': key });
-                        jobs.push({sensor_id:  '1', impact_id: impact_id });
+                        jobs.push({ sensor_id: '1', impact_id: impact_id });
                     } else if (sensor.toLowerCase() === 'hybrid3') {
                         var impact_id = filename.split("_")[1];
                         console.log('impact_id', impact_id)
                         // the.checkSimulationExists({ 'impact_id': impact_id, 'sensor_id': filename.split("_")[0], 'key': key });
-                        jobs.push({sensor_id: filename.split("_")[0], impact_id: impact_id });
-                    }  else if (sensor.toLowerCase() === "swa") {
+                        jobs.push({ sensor_id: filename.split("_")[0], impact_id: impact_id });
+                    } else if (sensor.toLowerCase() === "swa") {
                         var data = e.target.result;
                         data = data.split(',');
                         // console.log('file',)
                         var impact_id = data[23];
                         console.log('impact_id', impact_id)
                         // the.checkSimulationExists({ 'impact_id': impact_id, 'sensor_id': filename.split("_")[0], 'key': key });
-                        jobs.push({sensor_id: data[20], impact_id: impact_id });
-                    }else {
+                        jobs.push({ sensor_id: data[20], impact_id: impact_id });
+                    } else {
                         // the.checkSimulationExists({ 'impact_id': filename.split("-")[1], 'sensor_id': filename.split("-")[0].split("MG")[1], 'key': key });
-                        jobs.push({sensor_id: filename.split("-")[0].split("MG")[1], impact_id: filename.split("-")[1] });
+                        jobs.push({ sensor_id: filename.split("-")[0].split("MG")[1], impact_id: filename.split("-")[1] });
                     }
                 }
 
             }
-            console.log('jobs',jobs)
+            console.log('jobs', jobs)
             the.setState(prevState =>
-                ({
-                    listJobs: prevState.listJobs.concat(jobs)
-                })
+            ({
+                listJobs: prevState.listJobs.concat(jobs)
+            })
             )
 
             // that.displayData(e.target.result);
@@ -324,14 +327,14 @@ class BrainSubmitPortal extends React.Component {
         userData = JSON.parse(userData);
         const { files, list, meshType, sensor, team, organization, listJobs } = this.state;
         // Create jobs log and send mail to user ...
-       
+
         const user = userData['userInfo']['email'];
-        createJoblogs({email: user, listJobs: listJobs })
-        .then(res=>{
-            console.log('res',res);
-        }).catch(err=>{
-            console.log('err',err)
-        })
+        createJoblogs({ email: user, listJobs: listJobs })
+            .then(res => {
+                console.log('res', res);
+            }).catch(err => {
+                console.log('err', err)
+            })
 
         const reloadPage = () => {
             setInterval(() => {
@@ -340,6 +343,7 @@ class BrainSubmitPortal extends React.Component {
                 }))
             }, 1000)
         }
+        this.setState({ uploadingJobs: true })
         // console.log('listJobs',Email, listJobs);
         let count = 0;
         if (files[0]) {
@@ -367,7 +371,7 @@ class BrainSubmitPortal extends React.Component {
                             this.setListSimulationStatus('uploaded', res.data.fileNum, 1);
                         } else {
                             this.setListSimulationStatus(0, res.data.fileNum, 1);
-                            this.setState({ isError: 'Failed to submit jobs. Please try again.' });
+                            this.setState({ isError: 'Failed to submit jobs. Please try again.',uploadingJobs: false });
                         }
                         count++;
                         if (count === files.length) {
@@ -375,12 +379,14 @@ class BrainSubmitPortal extends React.Component {
                                 reloadPage();
                                 this.setState({
                                     isUploaded: true,
+                                    uploadingJobs: false
                                 })
                             }
 
                         }
                     }).catch(err => {
                         alert('failed to create jobs');
+                        this.setState({uploadingJobs: false});
                     });
             }
         }
@@ -388,7 +394,7 @@ class BrainSubmitPortal extends React.Component {
     }
     render() {
         console.log('team =---------------------', this.props.team)
-        const { isDragMod, list, files, meshType, isUploaded, isError, countDown, loadingSensorList } = this.state;
+        const { isDragMod, list, files, meshType, isUploaded, isError, countDown, loadingSensorList, uploadingJobs } = this.state;
         let estimatedCost = 0;
         if (countDown < 1) {
             window.location.reload();
@@ -523,9 +529,24 @@ class BrainSubmitPortal extends React.Component {
                                                 <h3 style={{ 'text-align': 'center' }}>Remove any unwanted simulations</h3>
                                                 <TableMod list={list} handleRemoveFile={this.props.handleRemoveFile ? this.props.handleRemoveFile : this.handleRemoveFile} handleSimulationImageUpload={this.props.handleSimulationImageUpload ? this.props.handleSimulationImageUpload : this.handleSimulationImageUpload} />
                                             </div>
-                                            <div style={{ 'text-align': 'center' }}>
-                                                <Button id="submit" variant="success" onClick={this.handelSubmit}> Submit </Button>
-                                            </div>
+                                            {!uploadingJobs ?
+                                                <div style={{ 'text-align': 'center' }}>
+                                                    <Button id="submit" variant="success" onClick={this.handelSubmit}> Submit </Button>
+                                                </div>
+                                                :
+                                                <>
+                                                    <div style={{ 'text-align': 'center' }}>
+                                                        <Button id="submit" style={{'background': 'orange', 'border-color': '#b97905'}}>Pending....</Button>
+                                                    </div>
+                                                    <p 
+                                                        style={{
+                                                            'font-size': '17px',
+                                                            'margin-top': '11px',
+                                                            'font-weight': '600'
+                                                        }}
+                                                    >Please be patient as we prepare your simulations. You will be redirected to the Team Dashboard when simulations are submitted.</p>
+                                                </>
+                                            }
                                         </div>
                                     }
                                     {/*-- File List end --*/}

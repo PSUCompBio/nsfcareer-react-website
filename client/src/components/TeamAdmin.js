@@ -381,7 +381,7 @@ class TeamnAdmin extends React.Component {
 														}else{
 															this.setState({
 																isUploading: false,
-																Error: 'Somthing went wrong when deleting Simulation Records.'
+																Error: 'Somthing went wrong when deleting Team.'
 															})
 															this.handleRenmaeTeam();
 														}
@@ -389,7 +389,7 @@ class TeamnAdmin extends React.Component {
 												}else{
 													this.setState({
 														isUploading: false,
-														Error: 'Somthing went wrong when deleting Simulation Records.'
+														Error: 'Somthing went wrong when deleting Event Data Records.'
 													})
 													this.handleRenmaeTeam();
 												}
