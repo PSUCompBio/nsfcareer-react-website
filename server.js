@@ -1421,7 +1421,7 @@ app.get(`${apiPrefix}simulation/results/:token/:image_id`, (req, res) => {
             <tr>
               <th>Player Id</th>
               <th>:</th>
-              <td>${imageData.player_name}</td>
+              <td>${imageData.account_id}</td>
             </tr>
             ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
             ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>` : `<p></p>`}
@@ -1462,7 +1462,7 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
             return verifyImageToken(token, image_data);
         })
         .then(decoded_token => {
-            return getPlayerCgValues(imageData.player_name);
+            return getPlayerCgValues(imageData.account_id);
         })
         .then(cg_coordinates => {
             // Setting cg values
@@ -1485,7 +1485,7 @@ app.get(`${apiPrefix}getSimulationMovie/:token/:image_id`, (req, res) => {
             <tr>
               <th>Player Id</th>
               <th>:</th>
-              <td>${imageData.player_name}</td>
+              <td>${imageData.account_id}</td>
             </tr>
             ${imageData.cg_coordinates && imageData.cg_coordinates.length > 0 ? `<tr><th>CG</th><th>:</th><td>${imageData.cg_coordinates}</td></tr>` : `<p></p>`}
             ${imageData.impact_number && imageData.impact_number != "null" ? `<tr><th>Impact</th><th>:</th><td>${imageData.impact_number}</td></tr>` : `<p></p>`}
@@ -1621,7 +1621,7 @@ app.get(`${apiPrefix}getBrainSimulationMovie/:image_id`, (req, res) => {
             return verifyImageToken(imageData['token'], image_data);
         })
         .then(decoded_token => {
-            return getPlayerCgValues(imageData.player_name);
+            return getPlayerCgValues(imageData.account_id);
         })
         .then(cg_coordinates => {
             if (!imageData.movie_path) {
@@ -5804,6 +5804,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
             }
 
             // File Extensions
+            console.log('uploading --------',data)
             var file_extension = req.file.originalname.split(".");
             file_extension = file_extension[file_extension.length - 1];
             var d = new Date();
@@ -5813,7 +5814,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
             date = date.replace("/", "-");
             console.log('date', date);
             // Setting Attributes for file upload on S3
-            uploadParams.Key = data['player_name'] + "/simulation/" + image_id + "/SidelineVideo/"+ file_name + "." + file_extension;
+            uploadParams.Key = data['account_id'] + "/simulation/" + image_id + "_SidelineVideo/"+ file_name + "." + file_extension;
             // console.log('req.file.buffer', req.file.buffer)
             uploadParams.Body = req.file.buffer;
 
@@ -5840,12 +5841,12 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
                                     return verifyImageToken(imageData['token'], image_data);
                                 })
                                 .then(decoded_token => {
-                                    // console.log('decoded_token',decoded_token)
-                                    return getPlayerCgValues(imageData.player_name);
+                                    console.log('decoded_token',decoded_token)
+                                    return getPlayerCgValues(imageData.account_id);
                                 })
                                 .then(cg_coordinates => {
                                     // Setting cg values
-                                    // console.log("cg_coordinates",cg_coordinates)
+                                    console.log("cg_coordinates",cg_coordinates)
                                     if (cg_coordinates) {
                                         imageData["cg_coordinates"] = cg_coordinates;
                                     }
@@ -6527,7 +6528,7 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
                                                                     })
                                                                     .then(decoded_token => {
                                                                         // console.log('decoded_token',decoded_token)
-                                                                        return getPlayerCgValues(imageData.player_name);
+                                                                        return getPlayerCgValues(imageData.account_id);
                                                                     })
                                                                     .then(cg_coordinates => {
                                                                         // Setting cg values
@@ -6726,7 +6727,7 @@ app.post(`${apiPrefix}api/v1/flipVideo`, (req, res) => {
                                                 })
                                                 .then(decoded_token => {
                                                     // console.log('decoded_token',decoded_token)
-                                                    return getPlayerCgValues(imageData.player_name);
+                                                    return getPlayerCgValues(imageData.account_id);
                                                 })
                                                 .then(cg_coordinates => {
                                                     // Setting cg values
@@ -6980,6 +6981,7 @@ app.post(`${apiPrefix}getCompleteSimulationList`, (req, res) => {
 })
 
 app.post(`${apiPrefix}getCumulativeAccelerationData`, (req, res) => {
+    console.log('getCumulativeAccelerationData ----------\n',req.body);
     getCumulativeAccelerationData(req.body)
         .then(data => {
             res.send({
@@ -7036,9 +7038,9 @@ app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req, res) => {
                     .then(image_data => {
                         imageData = image_data;
                         // console.log(acc_index, imageData.player_name);
-                        if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
-                            console.log('summary json url ----------------------------\n', imageData.player_name + '/simulation/summary.json');
-                            let file_path = imageData.player_name + '/simulation/summary.json';
+                        if (acc_index === 0 && imageData.account_id && imageData.account_id != 'null') {
+                            console.log('summary json url ----------------------------\n', imageData.account_id + '/simulation/summary.json');
+                            let file_path = imageData.account_id + '/simulation/summary.json';
                             return getFileFromS3(file_path, imageData.bucket_name);
                         }
                     })
@@ -7282,11 +7284,11 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                 getPlayerSimulationFile(acc_data)
                     .then(image_data => {
                         imageData = image_data;
-                        if (imageData.player_name && imageData.player_name != 'null') {
+                        if (imageData.account_id && imageData.account_id != 'null') {
                             if (file_count < 1) {
                                 file_count++;
                                 index_file = acc_index;
-                                let file_path = imageData.player_name + '/simulation/summary.json';
+                                let file_path = imageData.account_id + '/simulation/summary.json';
                                 console.log('file_path ------------------', file_path)
                                 return getFileFromS3(file_path, imageData.bucket_name);
                             }
@@ -7841,11 +7843,11 @@ app.patch(`${apiPrefix}filterStrainMetric`, (req, res) => {
                 getPlayerSimulationFile(acc_data)
                     .then(image_data => {
                         imageData = image_data;
-                        if (imageData.player_name && imageData.player_name != 'null') {
+                        if (imageData.account_id && imageData.account_id != 'null') {
                             if (file_count < 1) {
                                 file_count++;
                                 index_file = acc_index;
-                                let file_path = imageData.player_name + '/simulation/summary.json';
+                                let file_path = imageData.account_id + '/simulation/summary.json';
                                 return getFileFromS3(file_path, imageData.bucket_name);
                             }
                         }
@@ -8102,8 +8104,8 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                 getPlayerSimulationFile(acc_data)
                     .then(image_data => {
                         imageData = image_data;
-                        if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
-                            let pathMpsDatfile = imageData.player_name + '/simulation/' + imageData.image_id + '/MPSfile.dat';
+                        if (acc_index === 0 && imageData.account_id && imageData.account_id != 'null') {
+                            let pathMpsDatfile = imageData.account_id + '/simulation/' + imageData.image_id + '/MPSfile.dat';
                             return getFileFromS3(pathMpsDatfile, imageData.bucket_name);
                         }
                     })
@@ -8221,9 +8223,9 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                 getPlayerSimulationFile(acc_data)
                     .then(image_data => {
                         imageData = image_data;
-                        console.log(acc_index, imageData.player_name);
-                        if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
-                            let file_path = imageData.player_name + '/simulation/summary.json';
+                        console.log(acc_index, imageData.account_id);
+                        if (acc_index === 0 && imageData.account_id && imageData.account_id != 'null') {
+                            let file_path = imageData.account_id + '/simulation/summary.json';
                             return getFileFromS3(file_path, imageData.bucket_name);
                         }
                     })
@@ -8232,8 +8234,8 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                             outputFile = output_file;
                         }
 
-                        if (acc_index === 0 && imageData.player_name && imageData.player_name != 'null') {
-                            let pathMpsDatfile = imageData.player_name + '/simulation/' + imageData.image_id + '/MPSfile.dat';
+                        if (acc_index === 0 && imageData.account_id && imageData.account_id != 'null') {
+                            let pathMpsDatfile = imageData.account_id + '/simulation/' + imageData.image_id + '/MPSfile.dat';
                             return getFileFromS3(pathMpsDatfile, imageData.bucket_name);
                         }
                     })
@@ -8550,12 +8552,12 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
     console.log('getplayer data --------------------------------\n', req.body)
     getPlayersListFromTeamsDB_2(req.body)
         .then(data => {
-            console.log('PlayerList -------------------\n')
+            console.log('PlayerList -------------------\n', data)
 
             let player_list = [];
             let requested_player_list = [];
             data.forEach(function (u) {
-                // console.log('------------------u ', u)
+                console.log('------------------u ',u.player_list)
                 if (u.player_list) {
                     if (req.body.brand && u.sensor === req.body.brand) {
                         player_list = player_list.concat(u.player_list);
@@ -8615,7 +8617,7 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
                             .then(player_data => { 
 
                                 playerData = player_data;
-                                console.log('playerData -------------------\n')
+                                console.log('playerData -------------------\n', playerData)
                                 counter++;
                                 // var sensor = '';
                                 if (playerData[0]) {
@@ -9119,11 +9121,11 @@ app.post(`${apiPrefix}api/player/report`, upload.fields([]), setConnectionTimeou
                                         getPlayerSimulationFile(acc_data)
                                             .then(image_data => {
                                                 imageData = image_data;
-                                                if (imageData.player_name && imageData.player_name != 'null') {
+                                                if (imageData.account_id && imageData.account_id != 'null') {
                                                     if (file_count < 1) {
                                                         file_count++;
                                                         index_file = acc_index;
-                                                        let file_path = imageData.player_name + '/simulation/summary.json';
+                                                        let file_path = imageData.account_id + '/simulation/summary.json';
                                                         return getFileFromS3(file_path, imageData.bucket_name);
                                                     }
                                                 }
@@ -9688,29 +9690,38 @@ app.post(`${apiPrefix}api/v1/image/brainPlots/`,upload.fields([]) ,(req, res) =>
                                                 var maximum_PSxSR = await getBrainimagesPath(account_id, 'maximum-PSxSR.png');
                                                 var principal_min_strain = await getBrainimagesPath(account_id, 'principal-min-strain.png');
                                                 var data = {
-                                                    principal_max_strain: principal_max_strain ? `${config_env.FrontendUrl}img/?url=${principal_max_strain}` : 'Image not found',
-                                                    CSDM_5: CSDM_5 ? `${config_env.FrontendUrl}img/?url=${CSDM_5}` : 'Image not found',
-                                                    CSDM_10: CSDM_10 ? `${config_env.FrontendUrl}img/?url=${CSDM_10}` : 'Image not found',
-                                                    CSDM_15: CSDM_15 ? `${config_env.FrontendUrl}img/?url=${CSDM_15}` : 'Image not found',
-                                                    CSDM_30: CSDM_30 ? `${config_env.FrontendUrl}img/?url=${CSDM_30}` : 'Image not found',
-                                                    MPS_95: MPS_95 ? `${config_env.FrontendUrl}img/?url=${MPS_95}` : 'Image not found',
-                                                    MPSR_120: MPSR_120 ? `${config_env.FrontendUrl}img/?url=${MPSR_120}` : 'Image not found',
-                                                    MPSxSR_28: MPSxSR_28 ? `${config_env.FrontendUrl}img/?url=${MPSxSR_28}` : 'Image not found',
-                                                    MPSxSR_95: MPSxSR_95 ? `${config_env.FrontendUrl}img/?url=${MPSxSR_95}` : 'Image not found',
-                                                    axonal_strain_max: axonal_strain_max ? `${config_env.FrontendUrl}img/?url=${axonal_strain_max}` : 'Image not found',
-                                                    masXsr_15_max: masXsr_15_max ? `${config_env.FrontendUrl}img/?url=${masXsr_15_max}` : 'Image not found',
-                                                    maximum_PSxSR: maximum_PSxSR ? `${config_env.FrontendUrl}img/?url=${maximum_PSxSR}` : 'Image not found',
-                                                    principal_min_strain: principal_min_strain ? `${config_env.FrontendUrl}img/?url=${principal_min_strain}` : 'Image not found'
+                                                    principal_max_strain: principal_max_strain ? `${principal_max_strain}` : 'Image not found',
+                                                    CSDM_5: CSDM_5 ? `${CSDM_5}` : 'Image not found',
+                                                    CSDM_10: CSDM_10 ? `${CSDM_10}` : 'Image not found',
+                                                    CSDM_15: CSDM_15 ? `${CSDM_15}` : 'Image not found',
+                                                    CSDM_30: CSDM_30 ? `${CSDM_30}` : 'Image not found',
+                                                    MPS_95: MPS_95 ? `${MPS_95}` : 'Image not found',
+                                                    MPSR_120: MPSR_120 ? `${MPSR_120}` : 'Image not found',
+                                                    MPSxSR_28: MPSxSR_28 ? `${MPSxSR_28}` : 'Image not found',
+                                                    MPSxSR_95: MPSxSR_95 ? `${MPSxSR_95}` : 'Image not found',
+                                                    axonal_strain_max: axonal_strain_max ? `${axonal_strain_max}` : 'Image not found',
+                                                    masXsr_15_max: masXsr_15_max ? `${masXsr_15_max}` : 'Image not found',
+                                                    maximum_PSxSR: maximum_PSxSR ? `${maximum_PSxSR}` : 'Image not found',
+                                                    principal_min_strain: principal_min_strain ? `${principal_min_strain}` : 'Image not found'
                                                 };
                                                 
                                                 var json = JSON.stringify(data); // so let's encode it
 
                                                 var filename = 'result.json'; // or whatever
                                                 var mimetype = 'application/json';
-                                        
-                                                res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-                                                res.setHeader('Content-type', mimetype);
-                                                res.write(json);
+                                                console.log('all executed')
+                                                // res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+                                                // res.setHeader('Content-type', mimetype);
+                                                // res.write(json);
+                                                res.writeHead(200, {
+                                                    'Content-Type': 'application/json',
+                                                    'Content-Disposition': 'attachment; filename="filename.pdf"'
+                                                });
+                                                // res.header('content-type', 'application/pdf');
+
+                                                const download = Buffer.from(json);
+                                                console.log('download ------------\n',download)
+                                                res.end(download);
                                                 // res.send({
                                                 //     status: 200,
                                                 //     message: 'Successfully fetched brain images. Please copy the url for image preview.',
@@ -10459,8 +10470,9 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                             if (!players.includes(player_id)) {
                                 // console.log('player_id',player_id)
                                 players.push(player_id);
-                                if (sensor && sensor != null && sensor != undefined) {
-                                    var newPlayerId = player_id + '-' + sensor;
+                                var newSensor = acc_data.used_sensor ? acc_data.used_sensor : '';
+                                if (newSensor && newSensor != null && newSensor != undefined) {
+                                    var newPlayerId = player_id + '-' + newSensor;
                                 } else {
                                     var newPlayerId = player_id;
                                 }
@@ -10473,6 +10485,7 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                             player_status = player_status != undefined && player_status != null ? player_status : 'approved';
 
                                             //   console.log('userData 1',userData)
+                                            console.log('player_status =====',player_status, userData[0])
                                             if (userData[0] && player_status == 'approved') {
                                                 // player position ...
                                                 if (userData[0].player_position)
@@ -10481,10 +10494,11 @@ app.post(`${apiPrefix}getTeamSpheres`, (req, res) => {
                                                 if (userData[0].sport && userData[0].sport != null)
                                                     PLAYERS_SPORT.push(userData[0].sport);
 
+                                                console.log('acc_data.image_id ------------\n',acc_data.image_id)
                                                 getPlayerSimulationStatus(acc_data.image_id)
                                                     .then(imageData => {
-                                                        if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                                            let file_path = imageData.player_name + '/simulation/summary.json';
+                                                        if (imageData && imageData.account_id && imageData.account_id != 'null') {
+                                                            let file_path = imageData.account_id + '/simulation/summary.json';
                                                             return getFileFromS3(file_path, imageData.bucket_name);
                                                         }
                                                     })
@@ -10713,7 +10727,12 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                             let player_id = acc_data.player_id.split('$')[0];
                             if (!players.includes(player_id)) {
                                 players.push(player_id);
-                                var newPlayerId = player_id + '-' + sensor;
+                                var newSensor = acc_data.used_sensor ? acc_data.used_sensor : '';
+                                if (newSensor && newSensor != null && newSensor != undefined) {
+                                    var newPlayerId = player_id + '-' + newSensor;
+                                } else {
+                                    var newPlayerId = player_id;
+                                }
                                 if (newPlayerId) {
                                     console.log('player_id', newPlayerId)
                                     getUserDetailByPlayerId(newPlayerId)
@@ -10721,9 +10740,9 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                                             var player_status = userData[0] ? userData[0].player_status : 'approved';
                                             getPlayerSimulationStatus(acc_data.image_id)
                                                 .then(imageData => {
-                                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                                    if (imageData && imageData.account_id && imageData.account_id != 'null') {
                                                         // console.log('imageData',imageData);
-                                                        let file_path = imageData.player_name + '/simulation/summary.json';
+                                                        let file_path = imageData.account_id + '/simulation/summary.json';
                                                         return getFileFromS3(file_path, imageData.bucket_name);
                                                     }
                                                 })

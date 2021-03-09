@@ -477,31 +477,31 @@ class UserDashboarForAdmin extends React.Component {
                     user_cognito_id: user_cognito_id,
                     cumulativeAccelerationEventData: { ...this.state.cumulativeAccelerationEventData, ...response.data.data, brand: brand, team: team, user_cognito_id: user_cognito_id, organization: organization, staff: [], player_id: this.state.player_name, simulationCount: response.data.simulationCount }
                   });
-                   console.log('player_name ----\n', this.state.player_name)
+                  console.log('player_name ----\n', this.state.player_name)
                   image_id = response.data.data.image_id;
                   return AllCumulativeAccelerationTimeRecords({ brand: brand, user_cognito_id: user_cognito_id, organization: organization, player_id: this.state.player_name, team: team })
                 })
 
                 .then(response => {
-					var playerid = this.state.player_name;
-					getUserDataByPlayerID({ playerid: playerid})
-							.then(response1 => {					
-								response.data.brainRegions["playerdata"] =  response1.data.data[0];
-								var accountid = response1.data.data[0].account_id;
-								getBrainImageByAccountID({ accountid: accountid})
-								.then(imageresponse1 => {
-								console.log('jsondata 2 ----\n', imageresponse1.data.data)
-								response.data.brainRegions["imagedata"] =  imageresponse1.data.data;
-								  this.setState({
-									cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
-									brainRegions: response.data.brainRegions,
-									log_stream_name: response.data.data ? response.data.data[0].log_stream_name : '',
-									jsonData: response.data.data,
-									isLoading: false,
-								  });
-								  })
-							})
-                  
+                  var playerid = this.state.player_name;
+                  getUserDataByPlayerID({ playerid: playerid })
+                    .then(response1 => {
+                      response.data.brainRegions["playerdata"] = response1.data.data[0];
+                      var accountid = response1.data.data[0].account_id;
+                      getBrainImageByAccountID({ accountid: accountid })
+                        .then(imageresponse1 => {
+                          console.log('jsondata 2 ----\n', imageresponse1.data.data)
+                          response.data.brainRegions["imagedata"] = imageresponse1.data.data;
+                          this.setState({
+                            cumulativeAccelerationTimeAllRecords: this.state.cumulativeAccelerationTimeAllRecords.concat(response.data.data),
+                            brainRegions: response.data.brainRegions,
+                            log_stream_name: response.data.data ? response.data.data[0].log_stream_name : '',
+                            jsonData: response.data.data,
+                            isLoading: false,
+                          });
+                        })
+                    })
+
                 })
 
 
@@ -531,11 +531,11 @@ class UserDashboarForAdmin extends React.Component {
               })
             }
           } else {
-            this.setState({ isAuthenticated: false, isCheckingAuth: false });
+            this.setState({ isCheckingAuth: false });
           }
         })
         .catch((err) => {
-          this.setState({ isAuthenticated: false, isCheckingAuth: false });
+          this.setState({ isAuthenticated: false });
         })
       /*-- end --*/
       if (getStatusOfDarkmode().status) {

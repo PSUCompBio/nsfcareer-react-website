@@ -372,10 +372,10 @@ function getCumulativeAccelerationData(obj) {
                         params = {
                             TableName: "sensor_details",
                             KeyConditionExpression:  "org_id = :org_id and begins_with(player_id,:player_id)",
-                            FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+                            FilterExpression: "organization = :organization and team = :team",
                             ExpressionAttributeValues: {
                                 ":org_id": org[0].organization_id,
-                                ":sensor": obj.brand,
+                                // ":sensor": obj.brand,
                                 ":organization": obj.organization,
                                 ":team": obj.team,
                                 ":player_id": obj.player_id + '$',
@@ -3172,6 +3172,7 @@ function getTeamDataWithPlayerRecords_2(obj) {
         if (obj.sensor) {
             player_obj.sensor = obj.sensor;
         }
+        console.log(obj.sensor, obj.organization, obj.team, obj.player_id)
         getOrganizationData(player_obj)
             .then (org => {
                 if (org.length > 0) {
@@ -3180,10 +3181,10 @@ function getTeamDataWithPlayerRecords_2(obj) {
                         params = {
                             TableName: "sensor_details",
                             // KeyConditionExpression:  "org_id = :org_id and begins_with(player_id,:player_id)",
-                            FilterExpression: "sensor = :sensor and organization = :organization and team = :team and begins_with(player_id,:player_id)",
+                            FilterExpression: "organization = :organization and team = :team and begins_with(player_id,:player_id)",
                             ExpressionAttributeValues: {
                                 // ":org_id": org[0].organization_id, 
-                                ":sensor": obj.sensor,
+                                // ":sensor": obj.sensor,
                                 ":organization": obj.organization,
                                 ":team": obj.team,
                                 ":player_id": obj.player_id + '$',
@@ -3309,9 +3310,9 @@ function getTeamSpheres(obj) {
         if (obj.brand && obj.brand != undefined && obj.brand != null) {
             params = {
                 TableName: "sensor_details",
-                FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+                FilterExpression: "organization = :organization and team = :team",
                 ExpressionAttributeValues: {
-                   ":sensor": obj.brand,
+                //    ":sensor": obj.brand,
                    ":organization": obj.organization,
                    ":team": obj.team,
                 },
