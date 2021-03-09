@@ -208,7 +208,8 @@ const {
         deleteSimulation_imagesData,
         InsertTrimVideoKey,
         updateTrimVideoKey,
-        getSernsorDataByOrgTeam
+        getSernsorDataByOrgTeam,
+        getModalValidationDB
     } = require('./controllers/query');
 
 // Multer Configuration
@@ -2455,15 +2456,15 @@ function updateCognitoUser(body, user_cognito_id) {
             ],
             UserPoolId: cognito.userPoolId, /* required */
             Username: user_cognito_id, /* required */
-          };
-          COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
+        };
+        COGNITO_CLIENT.adminUpdateUserAttributes(params, function(err, data) {
             if (err) {
                 reject(err);
             } // an error occurred
             else {
                 resolve(data);
             }             // successful response
-          });
+        });
     })
 }
 /*=========== Set user default login password =============*/
@@ -2830,20 +2831,22 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
             let sensorlen = result.length;
             let count1 = 0; 
             let count3 = 0;
+            console.log(sensorlen)
             if(sensorlen > 0){
                 result.forEach(async function (record, index) {
 
                     count1++;
                     /*========== Delete data from sensor data table ==============*/
-                    if( record.team && record.player_id){
-                        deleteSensorData(record.team, record.player_id)
+                    console.log('record.player_id', record.org_id,  record.player_id)
+                    if(  record.org_id && record.player_id){
+                        deleteSensorData(record.org_id, record.player_id)
                         .then(deldata => {
                             console.log('deldata',deldata)
                         }).catch(err=>{
-
+                            console.log('deleteSensorData error \n', err)
                         })
                     }
-
+                    console.log('image_id ----',record.image_id)
                     /*=========== Get simulation data and root path of folder ==========*/
                     getPlayerSimulationFile({image_id: record.image_id})
                     .then(image_Data =>{
@@ -2914,7 +2917,7 @@ app.post(`${apiPrefix}deleteItem`, (req, res) => {
                     });
                 })
             }else{
-                 getOrganizatonByTeam(data.organization, data.TeamName)
+                getOrganizatonByTeam(data.organization, data.TeamName)
                 .then(org =>{
                     var orglen = org.length;
                     orglen = orglen-1;
@@ -6129,7 +6132,8 @@ app.post(`${apiPrefix}trimVideo`, (req, res) => {
     *    Creating directory...
     */
     var d = new Date();
-    let datetoday = d.getMonth()+'-'+d.getFullYear();
+    let month = d.getMonth() + 1;
+    let datetoday = month+'-'+d.getFullYear();
     var dir = 'public/uploads/'+datetoday;
 
     if (!fs.existsSync(dir)){
@@ -8666,6 +8670,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
     let filter = req.body.filter;
     let gs = parseInt(req.body.gs);
     let type = req.body.type;
+    let sensor = req.body.brand;
     console.log('req body -------------------------------\n',req.body)
     /**
     * Get sphares of each team 
@@ -8680,7 +8685,7 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
             count_sp++;
             if(count_sp == req.body.team.length){
                 data = spharesData;
-                console.log('data of team sphares -----\n',data)
+                // console.log('data of team sphares -----\n',data)
 
                 let brainRegions = {};
                 let principal_max_strain = {};
@@ -8716,112 +8721,123 @@ app.post(`${apiPrefix}getFilterdTeamSpheres`, (req, res) => {
                         let player_id = acc_data.player_id.split('$')[0];
                         if (!players.includes(player_id)) {
                             players.push(player_id);
-                            getPlayerSimulationStatus(acc_data.image_id)
-                                .then(imageData => {
-                                    if (imageData && imageData.player_name && imageData.player_name != 'null') {
-                                        console.log(imageData.player_name + '/simulation/summary.json');
-                                        let file_path = imageData.player_name + '/simulation/summary.json';
-                                        return getFileFromS3(file_path, imageData.bucket_name);
-                                    }
-                                })
-                                .then(output_file => {
-                                    if (output_file) {
-                                        outputFile = JSON.parse(output_file.Body.toString('utf-8'));
-                                        if (outputFile.Insults) {
-                                            outputFile.Insults.forEach(function (summary_data, index) {
-                                                //** 
-                                                //Fetch value is less then....
-                                                if(filter == 'less'){
-                                                    if(type == 'resultant-Angular-acceleration'){
-                                                        if(summary_data['max-angular-acc-rads2'] <= gs){
-                                                            pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'resultant-linear-acceleration'){
-                                                        if(summary_data['max-linear-acc-g'] <= gs){
-                                                            pushdata(summary_data);
-                                                        }  
-                                                    }else if(type == 'principal-max-strain'){
-                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'principal-min-strain'){
-                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'csdm-max'){
-                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'axonal-strain-max'){
-                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'masXsr-15-max'){
-                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-5'){
-                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-10'){
-                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }
-                                                //** 
-                                                //Fetch value is greater then.....   
-                                                }else{
-                                                    if(type == 'resultant-Angular-acceleration'){
-                                                        if(summary_data['max-angular-acc-rads2'] >= gs){
-                                                           pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'resultant-linear-acceleration'){
-                                                        if(summary_data['max-linear-acc-g'] >= gs){
-                                                            pushdata(summary_data);
-                                                        }
-                                                    }else if(type == 'principal-max-strain'){
-                                                        if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'principal-min-strain'){
-                                                        if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'csdm-max'){
-                                                        if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'axonal-strain-max'){
-                                                        if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'masXsr-15-max'){
-                                                        if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-5'){
-                                                        if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'CSDM-10'){
-                                                        if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }else if(type == 'MPS-95'){
-                                                        if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
-                                                            pushdata(summary_data);
-                                                        } 
-                                                    }
-                                                }
-                                            })
+                            var newPlayerId = player_id+'-'+sensor;
+                            if(newPlayerId){
+                                console.log('player_id',newPlayerId)
+                                getUserDetailByPlayerId(newPlayerId)
+                                .then(userData => {
+                                    var player_status = userData[0].player_status
+                                    getPlayerSimulationStatus(acc_data.image_id)
+                                    .then(imageData => {
+                                        if (imageData && imageData.player_name && imageData.player_name != 'null') {
+                                            // console.log('imageData',imageData);
+                                            let file_path = imageData.player_name + '/simulation/summary.json';
+                                            return getFileFromS3(file_path, imageData.bucket_name);
                                         }
-                                    }
-                                    resolve(null);
-                                })
-                                .catch(err => {
+                                    })
+                                    .then(output_file => {
+                                        if (output_file && player_status == 'approved') {
+                                            outputFile = JSON.parse(output_file.Body.toString('utf-8'));
+                                            if (outputFile.Insults) {
+                                                outputFile.Insults.forEach(function (summary_data, index) {
+                                                    //** 
+                                                    //Fetch value is less then....
+                                                    if(filter == 'less'){
+                                                        if(type == 'resultant-Angular-acceleration'){
+                                                            if(summary_data['max-angular-acc-rads2'] <= gs){
+                                                                pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'resultant-linear-acceleration'){
+                                                            if(summary_data['max-linear-acc-g'] <= gs){
+                                                                pushdata(summary_data);
+                                                            }  
+                                                        }else if(type == 'principal-max-strain'){
+                                                            if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'principal-min-strain'){
+                                                            if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'csdm-max'){
+                                                            if(summary_data['csdm-max'] && summary_data['csdm-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'axonal-strain-max'){
+                                                            if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'masXsr-15-max'){
+                                                            if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-5'){
+                                                            if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-10'){
+                                                            if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value <= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }
+                                                    //** 
+                                                    //Fetch value is greater then.....   
+                                                    }else{
+                                                        if(type == 'resultant-Angular-acceleration'){
+                                                            if(summary_data['max-angular-acc-rads2'] >= gs){
+                                                               pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'resultant-linear-acceleration'){
+                                                            if(summary_data['max-linear-acc-g'] >= gs){
+                                                                pushdata(summary_data);
+                                                            }
+                                                        }else if(type == 'principal-max-strain'){
+                                                            if(summary_data['principal-max-strain'] && summary_data['principal-max-strain'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'principal-min-strain'){
+                                                            if(summary_data['principal-min-strain'] && summary_data['principal-min-strain'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'csdm-max'){
+                                                            if(summary_data['csdm-max'] && summary_data['csdm-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'axonal-strain-max'){
+                                                            if(summary_data['axonal-strain-max'] && summary_data['axonal-strain-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'masXsr-15-max'){
+                                                            if(summary_data['masXsr-15-max'] && summary_data['masXsr-15-max'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-5'){
+                                                            if(summary_data['CSDM-5'] && summary_data['CSDM-5'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'CSDM-10'){
+                                                            if(summary_data['CSDM-10'] && summary_data['CSDM-10'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }else if(type == 'MPS-95'){
+                                                            if(summary_data['MPS-95'] && summary_data['MPS-95'].value >= gs){
+                                                                pushdata(summary_data);
+                                                            } 
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                        resolve(null);
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    })
+                                    
+                                }).catch(err => {
                                     reject(err);
                                 })
+                            }
                         } else {
                             resolve(null);
                         }
@@ -9963,6 +9979,183 @@ app.post(`${apiPrefix}getTeamSpheres_Demo`, (req, res) => {
         
 });
 
+/**
+*Getting modal validation output...
+*/
+app.post(`${apiPrefix}modalValidationOutput`, (req, res) => {
+    console.log('modalValidationOutput')
+    let image_id = "ngkCxmTbR";
+    let staticPath = 'HardyExperimentalData_C288T3/';
+    let json_data = '';
+    let newDisplacementData = {
+        time_x_0: [],
+        dis_x_0: [],
+        time_y_0: [],
+        dis_y_0: [],
+        time_z_0: [],
+        dis_z_0: [],
+
+        time_x_1: [],
+        dis_x_1: [],
+        time_y_1: [],
+        dis_y_1: [],
+        time_z_1: [],
+        dis_z_1: [],
+
+        time_x_2: [],
+        dis_x_2: [],
+        time_y_2: [],
+        dis_y_2: [],
+        time_z_2: [],
+        dis_z_2: [],
+
+        time_x_3: [],
+        dis_x_3: [],
+        time_y_3: [],
+        dis_y_3: [],
+        time_z_3: [],
+        dis_z_3: [],
+
+        time_x_4: [],
+        dis_x_4: [],
+        time_y_4: [],
+        dis_y_4: [],
+        time_z_4: [],
+        dis_z_4: [],
+
+        time_x_5: [],
+        dis_x_5: [],
+        time_y_5: [],
+        dis_y_5: [],
+        time_z_5: [],
+        dis_z_5: [],
+
+        time_x_6: [],
+        dis_x_6: [],
+        time_y_6: [],
+        dis_y_6: [],
+        time_z_6: [],
+        dis_z_6: [],
+
+        time_x_7: [],
+        dis_x_7: [],
+        time_y_7: [],
+        dis_y_7: [],
+        time_z_7: [],
+        dis_z_7: [],
+
+        time_x_8: [],
+        dis_x_8: [],
+        time_y_8: [],
+        dis_y_8: [],
+        time_z_8: [],
+        dis_z_8: [],
+
+        time_x_9: [],
+        dis_x_9: [],
+        time_y_9: [],
+        dis_y_9: [],
+        time_z_9: [],
+        dis_z_9: [],
+
+        time_x_10: [],
+        dis_x_10: [],
+        time_y_10: [],
+        dis_y_10: [],
+        time_z_10: [],
+        dis_z_10: [],
+
+        time_x_11: [],
+        dis_x_11: [],
+        time_y_11: [],
+        dis_y_11: [],
+        time_z_11: [],
+        dis_z_11: [],
+
+        time_x_12: [],
+        dis_x_12: [],
+        time_y_12: [],
+        dis_y_12: [],
+        time_z_12: [],
+        dis_z_12: [],
+
+        time_x_13: [],
+        dis_x_13: [],
+        time_y_13: [],
+        dis_y_13: [],
+        time_z_13: [],
+        dis_z_13: [],
+    }
+    getModalValidationDB(image_id)
+    .then(response =>{
+        console.log('response',staticPath)
+        if(staticPath){
+            let file_path = staticPath+image_id+'_output.json';
+            let file_pathHardyExperimentalData = staticPath+'HardyExperimentalData_C288T3.json';
+            getFileFromS3(file_pathHardyExperimentalData, config_env.usersbucket)
+            .then(buffData=>{
+                json_data = JSON.parse(buffData.Body.toString('utf-8'));
+                // console.log('buffData',json_data)
+                return getFileFromS3(file_path, config_env.usersbucket);
+            })
+            .then(data=>{
+                if(json_data){
+                    for (var i = 0; i < json_data.length  ; i++) {
+                        // json_data[i]
+                         console.log(i)
+                        for (var j = 0; j < 14; j++) {
+                            if(json_data[i] && json_data[i]['dis_x_'+j] != null){
+                               // console.log(json_data[i]['time_x_'+j] )
+                                newDisplacementData['time_x_'+j].push(json_data[i]['time_x_'+j]);
+                                newDisplacementData['dis_x_'+j].push(json_data[i]['dis_x_'+j]);
+                            }
+
+                            if(json_data[i] && json_data[i]['dis_y_'+j] != null){
+                               // console.log(json_data[i]['time_x_'+j] )
+                                newDisplacementData['time_y_'+j].push(json_data[i]['time_y_'+j]);
+                                newDisplacementData['dis_y_'+j].push(json_data[i]['dis_y_'+j]);
+                            }
+
+                            if(json_data[i] && json_data[i]['dis_z_'+j] != null){
+                               // console.log(json_data[i]['time_x_'+j] )
+                                newDisplacementData['time_z_'+j].push(json_data[i]['time_z_'+j]);
+                                newDisplacementData['dis_z_'+j].push(json_data[i]['dis_z_'+j]);
+                            }
+                        }
+                    }
+                }
+                if(data.Body){
+                    var file = JSON.parse(data.Body.toString('utf-8'));
+                    // console.log('data',file);
+                    res.send({
+                        status: 'success',
+                        data: file.plot,
+                        data_2: newDisplacementData
+                    })
+                }else{
+                    res.send({
+                        status: 'faiure',
+                        message: 'File not found.',
+                    })
+                }
+                
+            }).catch(error=>{
+                console.log('error froms s3',error)
+                res.send({
+                    status: 'faiure',
+                    message: 'Failed to fetch output file.',
+                })
+            })
+
+        }
+    }).catch(err=>{
+        res.send({
+            status: 'faiure',
+            message: 'Failed to fetch output file.',
+        })
+        console.log('error when fetching -\n',err)
+    })
+})
 
 /*-- Demo api end --*/
 
@@ -9970,6 +10163,7 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
     let jsonOutputFile = '';
     let simulationImage = '';
     let simulationData = '';
+    let machinLearningImage = '';
     getSimulationImageRecord(req.body.image_id)
         .then(simulation_data => {
             simulationData = simulation_data;
@@ -9989,6 +10183,22 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
         })
         .then(image => {
             simulationImage = image;
+
+            if (simulationData.root_path && simulationData.root_path != 'null') {
+                let image_path = simulationData.root_path + simulationData.image_id + '_ML.png';
+                return getFileFromS3(image_path, simulationData.bucket_name);
+            }else{
+                return false;
+            }
+            
+        }).then(image_s3 => {
+            if (image_s3) {
+                return getImageFromS3Buffer(image_s3);
+            }else{
+                return false;
+            }
+        }).then(ml_image => {
+            machinLearningImage = ml_image || '';
             if (simulationData.ouput_file_path && simulationData.ouput_file_path != 'null') {
                 let file_path = simulationData.ouput_file_path;
                 file_path = file_path.replace(/'/g, "");
@@ -10009,7 +10219,7 @@ app.post(`${apiPrefix}getSimulationDetail`, (req, res) => {
 
             res.send({
                 message: "success",
-                data: {simulationImage: simulationImage, jsonOutputFile: jsonOutputFile},
+                data: {simulationImage: simulationImage, jsonOutputFile: jsonOutputFile, machinLearningImage: machinLearningImage},
             })
         }) 
         .catch(err => {

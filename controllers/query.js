@@ -1585,7 +1585,7 @@ function getOrganizationTeamData(obj) {
                                 ":organization": obj.organization,
                                 ":team": obj.team
                             },
-                            ProjectionExpression: "sensor,player_id,computed_time,image_id,team",
+                            ProjectionExpression: "sensor,player_id,computed_time,image_id,team, org_id",
                             ScanIndexForward: false
                         };
                     } else {
@@ -1598,7 +1598,7 @@ function getOrganizationTeamData(obj) {
                                 ":organization": obj.organization,
                                 ":team": obj.team
                             },
-                            ProjectionExpression: "sensor,image_id,computed_time,player_id",
+                            ProjectionExpression: "sensor,image_id,computed_time,player_id, org_id",
                             ScanIndexForward: false
                         };
                     }
@@ -3247,13 +3247,15 @@ function updateUserStatus(obj) {
     });
 }
 
-function deleteSensorData(team, player_id){
+function deleteSensorData(org_id, player_id){
     return new Promise((resolve, reject) => {
         let params = {
             TableName: "sensor_details",
             Key: {
-                team: team,
+                org_id: org_id,
                 player_id: player_id,
+                
+                
             },
         };
         docClient.delete(params, function (err, data) {
@@ -3278,6 +3280,27 @@ function deleteSimulation_imagesData(image_id){
             if (err) {
                 reject(err);
             } else {
+                resolve(data);
+            }
+        });
+    });
+}
+
+function getModalValidationDB(image_id){
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "modelValidation",
+            FilterExpression: "image_id = :image_id",
+            ExpressionAttributeValues: {
+               ":image_id": image_id
+            },
+            // ProjectionExpression: "organization, sensor, organization_id"
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data) => {
+            if (err) {
+                reject(err);
+            }else{
                 resolve(data);
             }
         });
@@ -3380,5 +3403,6 @@ module.exports = {
     deleteSimulation_imagesData,
     InsertTrimVideoKey,
     updateTrimVideoKey,
-    getSernsorDataByOrgTeam
+    getSernsorDataByOrgTeam,
+    getModalValidationDB
 };

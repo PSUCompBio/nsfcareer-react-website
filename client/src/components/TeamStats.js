@@ -11,6 +11,7 @@ import {
     getFilterdTeamSpheres
   } from './../apis';
 import TeamStateScatterChart from './Charts/TeamStateScatterChart';
+import { Card , Row, Col } from 'react-bootstrap';
 
 class TeamStats extends React.Component {
     constructor(props) {
@@ -173,89 +174,130 @@ class TeamStats extends React.Component {
                  
                 <div className="container dashboard teamstats_header UserDashboarForAdmin-page-navigation brain-simlation-details" style={{marginBottom : '50px'}}>
                     <div className="container">
-                        <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>{this.state.for === 'Teams' ? 'Organization Stats' : 'Team Stats'}</h1>
+                        <h1 className="top-heading__login" style={{textAlign: 'center', color: 'black'}}>{this.state.for === 'Teams' ? 'Organization Analytics' : 'Team Analytics'}</h1>
                         <div className="backbutton11" style={{position : 'relative'}}>
-                        {this.state.for === "Teams" ? 
-                            <Link to={{
-                               pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
-                                state: {
-                                    brand: {
+                            {this.state.for === "Teams" ? 
+                                <Link to={{
+                                   pathname: '/TeamAdmin/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.brand,
+                                    state: {
+                                        brand: {
+                                            brand: this.props.location.state.team.brand,
+                                            organization: this.props.location.state.team.organization,
+                                            user_cognito_id: this.props.location.state.user_cognito_id
+                                        }
+                                    }
+                                 }}>&lt; Back To Organization</Link>
+                                :
+                                <Link to={{
+                                    pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
+                                    state: {
+                                    team: {
                                         brand: this.props.location.state.team.brand,
                                         organization: this.props.location.state.team.organization,
-                                        user_cognito_id: this.props.location.state.user_cognito_id
+                                        team_name: this.props.location.state.team.team_name,
+                                        user_cognito_id: this.props.location.state.user_cognito_id,
+                                        staff: this.props.location.state.team.staff
                                     }
-                                }
-                             }}>&lt; Back To Organization</Link>
-                            :
-                            <Link to={{
-                                pathname: '/TeamAdmin/team/players/'+this.props.location.state.team.organization+'/'+this.props.location.state.team.team_name+'?brand='+this.props.location.state.team.brand,
-                                state: {
-                                team: {
-                                    brand: this.props.location.state.team.brand,
-                                    organization: this.props.location.state.team.organization,
-                                    team_name: this.props.location.state.team.team_name,
-                                    user_cognito_id: this.props.location.state.user_cognito_id,
-                                    staff: this.props.location.state.team.staff
-                                }
-                            } }}>&lt; Back To Team</Link>
-                        }
+                                } }}>&lt; Back To Team</Link>
+                            }
                         </div>
-                        <div style={{textAlign: 'center'}}>
-                            <label style={{fontSize: '20px'}}>Display all member data with</label>
-                            <select style={{marginLeft: '20px'}} onChange={this.handleChange} name={this.state.insult}>
-                                <option value="principal-max-strain">Max Principal Strain</option>
-                                <option value="principal-min-strain">Min Principal Strain</option>
-                                <option value="resultant-linear-acceleration">Resultant Linear Acceleration</option>
-                                <option value="resultant-Angular-acceleration">Resultant Angular Acceleration</option>
-                                <option value="axonal-strain-max">Axonal Strain 15</option>
-                                <option value="masXsr-15-max">MASxSR 15</option>
-                                <option value="CSDM-5">CSDM 5</option>
-                                <option value="CSDM-10">CSDM 10</option>
-                                <option value="csdm-max">CSDM 15</option>
-                                <option value="MPS-95">MPS 95</option>
+                            <Col md={12} className="no-padding">
+                                <Card  className="card-team-state-page">
+                                    <div style={{textAlign: 'center'}}>
+                                        <label style={{fontSize: '20px'}}>Display all member data with</label>
+                                        <select style={{marginLeft: '20px'}} onChange={this.handleChange} name={this.state.insult}>
+                                            <option value="principal-max-strain">Max Principal Strain</option>
+                                            <option value="principal-min-strain">Min Principal Strain</option>
+                                            {/*<option value="resultant-linear-acceleration">Resultant Linear Acceleration</option>
+                                            <option value="resultant-Angular-acceleration">Resultant Angular Acceleration</option>*/}
+                                            <option value="axonal-strain-max">Axonal Strain 15</option>
+                                            <option value="masXsr-15-max">MASxSR 15</option>
+                                            <option value="CSDM-5">CSDM 5</option>
+                                            <option value="CSDM-10">CSDM 10</option>
+                                            <option value="csdm-max">CSDM 15</option>
+                                            <option value="MPS-95">MPS 95</option>
 
 
-                            </select>
-                            <select style={{marginLeft: '20px'}} name="filter" onChange={this.handleChange}>
-                                <option value='greater'>Greater or Equal to</option>
-                                <option value='less'>Less or Equal to</option>
-                            </select>
-                            <select style={{marginLeft: '20px'}} name="gs" onChange={this.handleChange}>
-                                {this.selectOption()}
-                                
-                            </select>
-                        </div>
-                        <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>
-                            <button style={{padding: '5px 15px 5px 15px', background : '#007bff', fontWeight: '800'}} onClick={this.handleRunReport}>Run Report</button>
-                        </div>
-                        <div className="row team-state-3dmodel">
-                            <div className="col-md-12 col-lg-12">
-                                <>
-                                    {this.state.isfetching && 
-                                        <div  className="col-md-12 glow-spinner">
-                                            <div className="spinner-center">
-                                                <p>Gathering the data...</p>
-                                                <Spinner animation="grow" variant="primary" />
+                                        </select>
+                                        <select style={{marginLeft: '20px'}} name="filter" onChange={this.handleChange}>
+                                            <option value='greater'>Greater or Equal to</option>
+                                            <option value='less'>Less or Equal to</option>
+                                        </select>
+                                        <select style={{marginLeft: '20px'}} name="gs" onChange={this.handleChange}>
+                                            {this.selectOption()}
+                                            
+                                        </select>
+                                    </div>
+                                    <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '20px'}}>
+                                        <button style={{padding: '5px 15px 5px 15px', background : '#007bff', fontWeight: '800'}} onClick={this.handleRunReport}>Run Report</button>
+                                    </div>
+                                    <div className="row team-state-3dmodel">
+                                        <div className="col-md-12 col-lg-12">
+                                            <>
+                                                {this.state.isfetching && 
+                                                    <div  className="col-md-12 glow-spinner">
+                                                        <div className="spinner-center">
+                                                            <p>Gathering the data...</p>
+                                                            <Spinner animation="grow" variant="primary" />
+                                                        </div>
+                                                    </div>
+                                                }
+                                            {/*---! Call 3d page ---*/}
+                                                {this.state.brainRegions && <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />}
+                                                {!this.state.brainRegions && !this.state.isfetching && 
+                                                    <h4 className="team-state-text-center"> 
+                                                        Run a Report to Generate Brain Simulation Results.
+                                                    </h4>
+                                                }
+                                            {/*---! 3d page end---*/}
+                                            </>
+                                        </div>
+                                    </div>
+                                </Card >
+                            </Col>
+                            <Row className="no-padding" style={{'display':'flex'}}>
+                                <Col md={6}  className="team-state-cart-left" style={{marginTop:'50px','display':'flex'}}>
+                                    <Card style={{'border': '1px solid rgb(10, 84, 143)','width':'100%'}} >
+                                        {/*!-- MPS_95 chart start --*/}
+                                        <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}}>
+                                            <div className="col-md-12 no-padding">
+                                                <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
+                                                {/*< TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />*/}
+                                            </div>
+                                            <div className="col-md-6">
                                             </div>
                                         </div>
-                                    }
-                                {/*---! Call 3d page ---*/}
-                                    {this.state.brainRegions && <ExportPlayerReport brainRegions={this.state.brainRegions} ref={this.child} />}
-                                {/*---! 3d page end---*/}
-                                </>
-                            </div>
-                        </div>
+                                        {/*!-- MPS_95 chart end --*/}
+                                    </Card>
+                                </Col>
+                                <Col md={6}  className="team-state-cart-right" style={{marginTop:'50px'}}> 
+                                    <Card style={{'border': '1px solid rgb(10, 84, 143)','height': '100%'}}>
+                                        {/*!-- MPS_95 chart start --*/}
+                                        <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}}>
+                                            <div className="col-md-12 no-padding">
+                                                <p className="video-lebel text-center">95 Percentile MPS Maximum Angular Acceleration </p>
+                                                < TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />
+                                            </div>
+                                            <div className="col-md-6">
+                                            </div>
+                                        </div>
+                                        {/*!-- MPS_95 chart end --*/}
+                                    </Card>
+                                </Col>
+                            </Row>
 
-                        {/*!-- MPS_95 chart start --*/}
-                        <div className="col-sm-12 no-padding" style={{'margin-top': '54px'}}>
-                            <div className="col-md-12 no-padding">
-                                <p className="video-lebel text-center">95% MPS Angular Acceleration </p>
-                                < TeamStateScatterChart MAX_ANGULAR_EXLARATION ={this.state.MAX_ANGULAR_EXLARATION}  MPS_95_DATA ={this.state.MPS_95_DATA} />
-                            </div>
-                            <div className="col-md-6">
-                            </div>
-                        </div>
-                        {/*!-- MPS_95 chart end --*/}
+                             <Row className="no-padding" style={{'display':'flex'}}>
+                                <Col md={6}  className="team-state-cart-left" style={{marginTop:'50px'}}>
+                                    <Card style={{'border': '1px solid rgb(10, 84, 143)'}} >
+                                        <div className="col-sm-12 no-padding" style={{'margin-top': '20px'}} >
+                                            <div className="col-md-12 no-padding">
+                                                <p className="video-lebel text-center">Machine Learning</p>
+                                                <div style={{'padding':'80px'}}></div>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </Col>
+                            </Row>
                     </div>
                 </div>
                 

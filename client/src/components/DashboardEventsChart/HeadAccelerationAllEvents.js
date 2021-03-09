@@ -131,7 +131,8 @@ class HeadAccelerationAllEvents extends React.Component {
 
             },
             is_selfie_simulation_file_uploaded: props.is_selfie_simulation_file_uploaded,
-            imageUrl: props.imageUrl
+            imageUrl: props.imageUrl,
+            buttonType: 'Finite'
         };
     }
 
@@ -246,8 +247,16 @@ class HeadAccelerationAllEvents extends React.Component {
                                             <p>Brain Simulation <br/> Pending...</p>
                                         </div>
                                     */}
-                                   
-                                   <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status !== 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
+                                   <div style={{'display': 'inline-flex','width': '100%'}}>
+                                    <button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button>
+                                    <button className={this.state.buttonType === "Finite" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
+                                   </div>
+                                    {this.state.buttonType === "Finite" ?
+                                        <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status !== 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
+                                        :
+                                        <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.machinLearningImage ? 'data:image/png;base64,' + this.state.simulationData.machinLearningImage :  "/img/machine_learning_img.png"} alt="" />
+
+                                    }
                                      {
                                     !this.props.data.sensor_data ?
                                        null

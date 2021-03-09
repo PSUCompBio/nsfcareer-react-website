@@ -224,7 +224,13 @@ class SignUpComponent extends React.Component {
 
   getCountryName = (e) => {};
   handleSubmitTokenForm =( e ) =>{
-      e.preventDefault();
+    e.preventDefault();
+    const {password, confirm_password } = this.state;
+    if(password !== confirm_password){
+      this.setState({
+        confirmPassError: 'Confirm Password does not match with password.'
+      })
+    }else{
       const formData = new FormData(e.target);
       console.log(formData);
       const formJsonData = formDataToJson(formData);
@@ -233,26 +239,52 @@ class SignUpComponent extends React.Component {
           pathname : '/IRB',
           state : { formData : formJsonData }
       });
+    }
   }
   handleSubmit(e) {
     e.preventDefault();
+    const {password, confirm_password } = this.state;
+    if(password !== confirm_password){
+      this.setState({
+        confirmPassError: 'Confirm Password does not match with password.'
+      })
+    }else{
+      const formData = new FormData(e.target);
+      console.log(formData);
+      this.setState({
+        isSignUpError: false,
+        isSignUpConfirmed: false,
+        isLoading: true,
+        isSignUpInProgress : true
+      });
+      // converting formData to JSON
+      const formJsonData = formDataToJson(formData);
+      console.log(formJsonData);
+      this.props.history.push({
+          pathname : '/IRB',
+          state : { formData : formJsonData }
+      });
+    }
+  }
 
-    const formData = new FormData(e.target);
-    console.log(formData);
-    this.setState({
-      isSignUpError: false,
-      isSignUpConfirmed: false,
-      isLoading: true,
-      isSignUpInProgress : true
-    });
-    // converting formData to JSON
-    const formJsonData = formDataToJson(formData);
-    console.log(formJsonData);
-    this.props.history.push({
-        pathname : '/IRB',
-        state : { formData : formJsonData }
-    });
+  /**
+  * Match password with confirm password
+  */
+  handlePasswordChange = (e)=>{
+    e.preventDefault();
+    const {value , name }= e.target;
+    this.setState({[name] : value});
+  }
 
+  handleConfirmPassword =(e)=>{
+    e.preventDefault();
+    const {value , name }= e.target;
+    this.setState({[name] : value});
+    if(value === this.state.password){
+      this.setState({
+        confirmPassError: '',
+      })
+    }
   }
 
   forJsx = (imgSrc, placeholder, name) => {
@@ -313,10 +345,36 @@ class SignUpComponent extends React.Component {
           id={name}
           placeholder={placeholder}
           name={name}
+          onChange={this.handlePasswordChange}
           aria-label={name}
           aria-describedby="basic-addon1"
           required
         />
+      </div>
+    );
+  };
+
+  forJsxConfirmPassowrd = (imgSrc, placeholder, name) => {
+    return (
+      <div className="input-group mb-5">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="basic-addon1">
+            <img src={imgSrc} alt="" />
+          </span>
+        </div>
+        <input
+          type="password"
+          autocomplete="new-password" 
+          className="form-control"
+          id={name}
+          placeholder={placeholder}
+          name={name}
+          aria-label={name}
+          onChange={this.handleConfirmPassword}
+          aria-describedby="basic-addon1"
+          required
+        />
+        {this.state.confirmPassError && <p style={{'color':'red'}}>{this.state.confirmPassError}</p>}
       </div>
     );
   };
@@ -523,6 +581,9 @@ class SignUpComponent extends React.Component {
         }
 
         {this.forJsxPassowrd(`${this.state.baseUrl}/img/icon/lock.svg`, 'Password', 'password')}
+
+        {this.forJsxConfirmPassowrd(`${this.state.baseUrl}/img/icon/lock.svg`, 'Confirm Password', 'confirm_password')}
+
 
         <div className="form-row mb-3">
           <div className="input-group mb-3">
@@ -758,6 +819,8 @@ class SignUpComponent extends React.Component {
         }
 
         {this.forJsxPassowrd(`${this.state.baseUrl}/img/icon/lock.svg`, 'Password', 'password',this.state.password)}
+
+        {this.forJsxConfirmPassowrd(`${this.state.baseUrl}/img/icon/lock.svg`, 'Confirm Password', 'confirm_password')}
 
         <div className="form-row">
           <div className="input-group mb-3">

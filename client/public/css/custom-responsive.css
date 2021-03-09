@@ -601,6 +601,16 @@
   .sideliene-video-sliders .col-sm-10{
     width: 80%!important;
   }
+  .card-team-state-page{
+    padding: 12px 12px 0px!important;
+  }
+  .team-state-cart-left{
+    padding-left: 15px!important;
+  }
+
+  .team-state-cart-right{
+    padding-right: : 15px!important;
+  }
 }
 
 @media screen and (max-width: 414px) {

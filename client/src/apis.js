@@ -1194,3 +1194,15 @@ export const getTeamSpheres_Demo = (request) =>{
       });
   })
 }
+
+export const modalValidationOutput = () =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/modalValidationOutput`,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}

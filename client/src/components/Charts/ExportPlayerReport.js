@@ -13,6 +13,7 @@ let brainModel;
 let isClicked = false;
 let aspectRatio, width, height, currentSubCamera, initialRatio, prevCanvasWidth;
 let previousClicked = null;
+let title = 'Maximum Principal Strain'
 const defaultTransparency = 0.3;
 const highlightTransparency = 0.4;
 const defaultColor = 0x7a5a16;
@@ -74,7 +75,7 @@ let defaultBarColors = [
 ];
 
 let stem_json = [];
-// let csf_json = [];
+let csf_json = [];
 let frontal_lobe_json = [];
 let cerebellum_lobe_json = [];
 let middle_part_of_the_brain_json = [];
@@ -97,7 +98,7 @@ class ExportPlayerReport extends React.Component {
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
-					name: "Motor/Sensor Cortex",
+					name: "Motor and Sensor Cortex",
 					shortenName: "Motor& Sensor Cortex"
 				},
 				{
@@ -137,6 +138,8 @@ class ExportPlayerReport extends React.Component {
 				{ name: 'Maximum Principal Strain', value: 'max-ps' },
 				{ name: 'Minimum Principal Strain', value: 'min-ps' },
 				{ name: 'CSDM-15', value: 'csdm_15' },
+				{ name: 'CSDM-5', value: 'csdm_5' },
+				{ name: 'CSDM-10', value: 'csdm_10' },
 			]
 		};
 
@@ -146,7 +149,7 @@ class ExportPlayerReport extends React.Component {
 					if (this.state.loadedActionButtons) return;
 
 					if (chart.canvas && chart.canvas != null) {
-						setTimeout(() => this.afterDrawChart(chart), 100);
+						setTimeout(() => this.afterDrawChart(chart), 1000);
 					}
 				}
 			}
@@ -216,6 +219,16 @@ class ExportPlayerReport extends React.Component {
 					me.onMouseClick(
 						event,
 						"Cerebral_hemispheres_R_node_Cerebral_hemispheres_R"
+					);
+				},
+				false
+			);
+			document.getElementById("occipital_btn").addEventListener(
+				"mouseover",
+				function (event) {
+					me.onMouseHover(
+						event,
+						"node_Mesh_16"
 					);
 				},
 				false
@@ -320,7 +333,7 @@ class ExportPlayerReport extends React.Component {
 	afterDrawChart = (chart) => {
 		var ctx = chart.chart.ctx;
 
-		// const rect = chart.canvas.getBoundingClientRect();
+		const rect = chart.canvas.getBoundingClientRect();
 		ctx.save();
 		var xAxis = chart.scales["x-axis-0"];
 		var yAxis = chart.scales["y-axis-0"];
@@ -440,7 +453,7 @@ class ExportPlayerReport extends React.Component {
 			case "Frontal_Lobe_node_Frontal_Lobe":
 
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "front_btn")
+					if (ele.id == "front_btn")
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -457,7 +470,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "pariental_btn") {
+					if (ele.id == "pariental_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -475,7 +488,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "node_Mesh_16":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "occipital_btn") {
+					if (ele.id == "occipital_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -493,7 +506,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Temporal_Lobe_node_Temporal_Lobe":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "temporal_btn") {
+					if (ele.id == "temporal_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -511,7 +524,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Cerebellum_node_Cerebellum":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "cerebellum_btn") {
+					if (ele.id == "cerebellum_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -530,7 +543,7 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "stem_btn") {
+					if (ele.id == "stem_btn") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -550,7 +563,7 @@ class ExportPlayerReport extends React.Component {
 			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
 
 				this.state.actionButtons.forEach((ele) => {
-					if (ele.id === "motor_and_sensor_cortex") {
+					if (ele.id == "motor_and_sensor_cortex") {
 						if (isClicked) {
 							document.getElementById(ele.id).style.backgroundColor = "#ffff66";
 							document.getElementById(ele.id + "a").style.color = "#007bff"
@@ -828,7 +841,7 @@ class ExportPlayerReport extends React.Component {
 
 	// download canvas image
 	// creat new canvas, set width, height, draw current content of canvas on new one
-	downImage = () => {
+	downBrainImage = () => {
 		const c = document.createElement('canvas');
 		c.width = 400;
 		c.height = 300;
@@ -836,6 +849,24 @@ class ExportPlayerReport extends React.Component {
 		let dc = c.toDataURL();
 		var link = document.createElement("a");
 		link.download = "demo.png";
+		link.href = dc;
+		link.target = "_blank";
+		link.click();
+		return dc;
+	}
+	downFullImage = () => {
+		const c = document.createElement('canvas');
+		c.width = 900;
+		c.height = 350;
+		const plotCanvas = document.querySelector(".chartjs-render-monitor");
+		console.log("plotcanvas", plotCanvas)
+		c.getContext('2d').font = "20px Arial";
+		c.getContext('2d').fillText('Location of ' + title, 300, 37);
+		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 50, 400, 300);
+		c.getContext('2d').drawImage(plotCanvas, 0, 0, plotCanvas.width, plotCanvas.height, 400, 50, 500, 300);
+		let dc = c.toDataURL();
+		var link = document.createElement("a");
+		link.download = "full_image.png";
 		link.href = dc;
 		link.target = "_blank";
 		link.click();
@@ -874,7 +905,7 @@ class ExportPlayerReport extends React.Component {
 		scene.add(bg3);
 		scene.add(bg4);
 
-		// let me = this;
+		let me = this;
 
 		this.setState({
 			isLoading: true
@@ -887,7 +918,7 @@ class ExportPlayerReport extends React.Component {
 				root = gltf.scene;
 
 				const box = new THREE.Box3().setFromObject(root);
-				// const boxSize = box.getSize(new THREE.Vector3()).length();
+				const boxSize = box.getSize(new THREE.Vector3()).length();
 				const boxCenter = box.getCenter(new THREE.Vector3());
 
 				sphereContainer = new THREE.Object3D();
@@ -1153,6 +1184,23 @@ class ExportPlayerReport extends React.Component {
 		}, () => {
 			me.removeSpheres();
 			me.showUpdatedRegion();
+			switch (val) {
+				case "principal-max-strain":
+					title = "Maximum Principal Strain"
+					break;
+				case "principal-min-strain":
+					title = "Minimum Principal Strain"
+					break;
+				case "CSDM-15":
+					title = "CSDM-15"
+					break;
+				case "CSDM-10":
+					title = "CSDM-10"
+					break;
+				case "CSDM-5":
+					title = "CSDM-5"
+					break;
+			}
 		});
 	}
 
@@ -1185,7 +1233,6 @@ class ExportPlayerReport extends React.Component {
 	}
 
 	strainMetric = (e, v) => {
-		// eslint-disable-next-line
 		switch (v.value) {
 			case "max-ps":
 				this.handleBrainStrain('principal-max-strain')
@@ -1195,6 +1242,13 @@ class ExportPlayerReport extends React.Component {
 				break;
 			case "csdm_15":
 				this.handleBrainStrain("CSDM-15")
+				break;
+			case "csdm_10":
+				this.handleBrainStrain("CSDM-10")
+				break;
+			case "csdm_5":
+				this.handleBrainStrain("CSDM-5")
+				break;
 		}
 	}
 
@@ -1203,7 +1257,7 @@ class ExportPlayerReport extends React.Component {
 		let me = this;
 
 		const data = {
-			labels: [0, 0, 0, 0, 0, 0, 0],
+			labels: ["Frontal", "Parietal", "Occipital", "Temporal", "Cerebellum", "Stem", ["Motor/", "Sensory", "Cortex"]],
 			datasets: [
 				{
 					label: "Events",
@@ -1228,6 +1282,13 @@ class ExportPlayerReport extends React.Component {
 		const options = {
 			animation: false,
 			responsive: true,
+			// title: {
+			// 	display: true,
+			// 	text: title,
+			// 	fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+			// 	fontSize: 14,
+			// 	lineHeight: 1.5
+			// },
 			plugins: {
 				datalabels: {
 					color: "#007bff",
@@ -1242,31 +1303,24 @@ class ExportPlayerReport extends React.Component {
 						switch (context.dataIndex) {
 							case 0:
 								return frontal_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 1:
 								return pariental_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 2:
 								return occipital_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 3:
 								return temporal_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 4:
 								return cerebellum_lobe_json.length;
-								// eslint-disable-next-line
 								break;
 							case 5:
 								return stem_json.length;
-								// eslint-disable-next-line
 								break;
 							case 6:
 								return middle_part_of_the_brain_json.length;
-								// eslint-disable-next-line
 								break;
 							default:
 								break;
@@ -1297,7 +1351,8 @@ class ExportPlayerReport extends React.Component {
 							labelString: "Angular Acceleration"
 						},
 						ticks: {
-							display: false //this will remove only the label
+							display: true, // like location of Maximum principal strain
+							fontSize: labelSize / 2.3,
 						}
 					}
 				]
@@ -1308,7 +1363,7 @@ class ExportPlayerReport extends React.Component {
 			tooltips: {
 				callbacks: {
 					title: function (tooltipItem, data) {
-						//return data['labels'][tooltipItem[0]['index']];
+						// return data['labels'][tooltipItem[0]['index']];
 					},
 					label: function (tooltipItem, data) {
 						let event = data["datasets"][0]["data"][tooltipItem["index"]];
@@ -1438,8 +1493,10 @@ class ExportPlayerReport extends React.Component {
 					</div>
 
 				</div>
-				<div>
-					<button className="btn btn-primary d-flex justify-content-center download_btn" onClick={this.downImage}> Download Image</button>
+				<div className="row">
+					<div className="col-md-5"><button className="btn btn-primary download_btn brain_btn" onClick={this.downBrainImage}> Download Brain Image </button></div>
+					<div className="col-md-5"><button className="btn btn-primary download_btn plot_btn" onClick={this.downFullImage}> Download Full Image </button></div>
+
 				</div>
 
 			</React.Fragment>

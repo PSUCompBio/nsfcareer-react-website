@@ -156,6 +156,7 @@ class ProfileImageUpload extends React.Component {
               }
           })
     }
+
     return (
       <React.Fragment>
         {this.state.isCamera &&
@@ -169,6 +170,15 @@ class ProfileImageUpload extends React.Component {
                   fontWeight: "900"}} className="top-heading__login animated fadeInUp">
                  Thanks for registering!
                 </p>
+                  {this.props.location.state && this.props.location.state.message.message_details && 
+                      <div
+                        className="alert alert-info api-response-alert-success"
+                        role="alert"
+                      >
+                        <strong > Success !</strong> {this.props.location.state.message.message_details}.
+                      </div>
+
+                  }
                 <p className="h4 p_h4" style={{'padding': '13px 0px'}}>
                   We create custom computer models of each person.
                 </p>
