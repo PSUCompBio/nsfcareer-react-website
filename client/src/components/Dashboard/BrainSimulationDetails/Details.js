@@ -545,21 +545,22 @@ class Details extends React.Component {
       controls.setvideoTime(this.state.video_lock_time_2);
     }
     //controls ....
-
-    video.addEventListener('loadeddata', () => {
-      setTimeout(() => {
-        controls.Onload();
-        the.vidocontrol3();
-      }, 1000)
-    });
-    video.addEventListener('timeupdate', controls.handleProgress);
-    progressBar.addEventListener('click', controls.scrub);
-    // lockButton.addEventListener('click', controls.lockVideo); #lock video event ...
-    let mousedown = false;
-    progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
-    progressBar.addEventListener('mousedown', () => mousedown = true);
-    progressBar.addEventListener('mouseup', () => mousedown = false);
-  }
+    if(video && video !== null && video !== undefined){
+      video.addEventListener('loadeddata', () => {
+        setTimeout(() => {
+          controls.Onload();
+          the.vidocontrol3();
+        }, 1000)
+      });
+      video.addEventListener('timeupdate', controls.handleProgress);
+      progressBar.addEventListener('click', controls.scrub);
+      // lockButton.addEventListener('click', controls.lockVideo); #lock video event ...
+      let mousedown = false;
+      progressBar.addEventListener('mousemove', (e) => mousedown && controls.scrub(e));
+      progressBar.addEventListener('mousedown', () => mousedown = true);
+      progressBar.addEventListener('mouseup', () => mousedown = false);
+    }
+    }
 
   /*====================================
     Video controls of both movies start
