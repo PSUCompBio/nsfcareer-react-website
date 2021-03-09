@@ -1440,6 +1440,18 @@ export const getBrainImageByimageID = (request) =>{
       });
   })
 }
+//# getAllBrainImageByimageID
+export const getAllBrainImageByimageID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllBrainImageByimageID`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 //# deleteOrgTeam
 export const deleteOrgTeam = (request) =>{
   return new Promise((resolve,reject)=>{

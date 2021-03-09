@@ -158,12 +158,16 @@ class ExportCustomReport extends React.Component {
         let csdmTrangle5 = trangle_gray;
         let csdmTrangle6 = trangle_gray;
         let csdm15Values = '';
+        let csdm15brainstate = '';
         let mpsValues = '';
+        let mpsbrainstate = '';
         if (this.state.jsonData) {
             if (this.state.jsonData['CSDM-15']) {
                 csdm15Values = this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value : '';
+                csdm15brainstate = this.state.jsonData['CSDM-15']['brain-region'] ? this.state.jsonData['CSDM-15']['brain-region'] : [];
                 if(csdm15Values){
-                    csdm15Values =   csdm15Values.sort(function(a, b){return b-a});
+                    csdm15Values =   csdm15Values.reverse();
+                    csdm15brainstate =   csdm15brainstate.reverse();
                 }
                 
                 var num1 = this.state.jsonData['CSDM-15'].cerebellum !== undefined ? this.state.jsonData['CSDM-15'].cerebellum.value : "0.0000";
@@ -198,13 +202,6 @@ class ExportCustomReport extends React.Component {
                     csdmParietaltrangleScale = left4.toFixed(1)?left4.toFixed(1):0;
                     csdmTemporaltrangleScale = left5.toFixed(1)?left5.toFixed(1):0;
                     csdmMotortrangleScale = left6.toFixed(1)?left6.toFixed(1):0;
-                    
-                    console.log("Mcsdm_val3",csdmOccipitaltrangleScale);
-                    console.log("Mcsdm_val2",csdmFrontaltrangleScale);
-					console.log("Mcsdm_val1",csdmCerebellumtrangleScale);
-                    console.log("Mcsdm_val4",csdmParietaltrangleScale);
-                    console.log("Mcsdm_val5",csdmTemporaltrangleScale);
-                    console.log("Mcsdm_val6",csdmMotortrangleScale);	
                     csdmTrangle1 = this.getTrangle(csdm_val1);
                     csdmTrangle2 = this.getTrangle(csdm_val2);
                     csdmTrangle3 = this.getTrangle(csdm_val3);
@@ -216,8 +213,10 @@ class ExportCustomReport extends React.Component {
             if (this.state.jsonData['principal-max-strain']) {
                 //eslint-disable-next-line                
                 mpsValues = this.state.jsonData['principal-max-strain'].value ? this.state.jsonData['principal-max-strain'].value : '';
+				mpsbrainstate = this.state.jsonData['principal-max-strain']['brain-region'] ? this.state.jsonData['principal-max-strain'].['brain-region'] : [];
                 if(mpsValues){
-                    mpsValues =   mpsValues.sort(function(a, b){return b-a});
+                    mpsValues =   mpsValues.reverse();					
+                    mpsbrainstate =   mpsbrainstate.reverse();
                 }
                 var num1 = this.state.jsonData['principal-max-strain'].cerebellum !== undefined ? this.state.jsonData['principal-max-strain'].cerebellum.value : "0.0000";
                 var num2 = this.state.jsonData['principal-max-strain'].frontal !== undefined ? this.state.jsonData['principal-max-strain'].frontal.value : "0.0000";
@@ -257,12 +256,6 @@ class ExportCustomReport extends React.Component {
                     mpsTrangle4 = this.getTrangle(mps_val4);
                     mpsTrangle5 = this.getTrangle(mps_val5);
                     mpsTrangle6 = this.getTrangle(mps_val6);  
-					console.log("csdm_val1",mpsCerebellumtrangleScale);
-                    console.log("csdm_val2",mpsFrontaltrangleScale);
-                    console.log("csdm_val3",mpsOccipitaltrangleScale);
-                    console.log("csdm_val4",mpsParietaltrangleScale);
-                    console.log("csdm_val5",mpsTemporaltrangleScale);
-                    console.log("csdm_val6",mpsMotortrangleScale);					
             }
         }
         console.log('csdm15Values',csdm15Values)
@@ -439,10 +432,10 @@ class ExportCustomReport extends React.Component {
                 zIndex: 4
             },
             trangle_scale1: {
-                width: '45%',
+                width: '70%',
                 zIndex: 4,
-				marginLeft:'30%',
-				marginRight:'30%',
+				marginLeft:'15%',
+				marginRight:'15%',
             },
             textcenteralign: {				
                 width: '100%',
@@ -1277,16 +1270,7 @@ class ExportCustomReport extends React.Component {
                         {/*============= For CSDM 15 data ====================*/}
                         {this.state.metric.csdm_15 === 'on' ?
                             <>
-                                <View style={styles.col12}>
-                                    <View style={styles.rowHeadBorder}><Text style={styles.rowHead2Text}></Text></View>
-                                    <View style={styles.rowHead2}>
-                                        <View style={styles.tableRowCenter}>
-                                            <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
-                                            <Text style={styles.tableColLeft4}>15</Text>
-                                        </View>
-                                        <Text style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
-                                    </View>
-                                </View>
+							
                                 <View style={styles.col12}>
                                     <View style={styles.rowHead2subHead}>
                                         <Text style={styles.rowHead2Text2subHead}>
@@ -1296,6 +1280,16 @@ class ExportCustomReport extends React.Component {
                                         <Text style={styles.rowHead2Text2subHead_2}>
                                             in Each Brain Region
                                             </Text>
+                                    </View>
+                                </View>
+							{ /*  <View style={styles.col12}>
+                                    <View style={styles.rowHeadBorder}><Text style={styles.rowHead2Text}></Text></View>
+                                    <View style={styles.rowHead2}>
+                                        <View style={styles.tableRowCenter}>
+                                            <Text style={styles.tableColRight4}>{csdm ? csdm : '0'}% of brain tissue has exceeded CSDM</Text>
+                                            <Text style={styles.tableColLeft4}>15</Text>
+                                        </View>
+                                        <Text style={styles.rowHead2Text2}>(Cumulative Strain Damage Measure is the volume of tissue that experiences tensile strains over 15%)</Text>
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
@@ -1371,7 +1365,7 @@ class ExportCustomReport extends React.Component {
                                 <View style={styles.taxture1_div}>
                                     <Image style={styles.trangle} src={taxture1} alt="region" />
                                 </View>
-                                {/*=============== page 1 footer sections start ===============*/}
+                                
                                 <View style={styles.tableRow}>
 
                                     <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
@@ -1386,7 +1380,7 @@ class ExportCustomReport extends React.Component {
                                     <View style={styles.p1_footer_arrow_left}>
                                         <Image style={styles.arrow_left} src={arrow_left} alt="arrow_right" />
                                     </View>
-                                </View>
+						</View> */}
                                 <View style={styles.tableRow}>
 									 <View style={styles.textcenteralign}>
 										{this.state.jsonData['imagedata'][0].CSDM15 ?
@@ -1395,6 +1389,38 @@ class ExportCustomReport extends React.Component {
 											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
 										}
 									</View>
+                                </View>
+								<View style={styles.col12}>
+								 {this.state.metric.csdm_15 === 'on' ?
+									<View style={[stylepage3.tableRow, stylepage3.tableHead]}>
+										{/*-- Table head --*/}
+										<Text style={[stylepage3.tableColLeft1]}>Rank</Text>
+										<Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
+										<Text style={[stylepage3.tableColLeft1]}>CSDM-15 Value</Text>
+										<Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
+										{/*-- Table head end--*/}
+
+									</View>
+									: null
+								}
+
+								{csdm15Values && this.state.metric.csdm_15 === 'on'  ?
+									csdm15Values.map((val,index)=>{
+										if(val !== '0.00' ){
+											if(index < 5){
+												return <View style={stylepage3.tableRowBody}>
+													<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
+													<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
+													<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
+													<Text style={[stylepage3.tableColLeft2]}>{csdm15brainstate[index] ? csdm15brainstate[index] : "NA"}</Text>
+												</View>
+											}
+										}else{
+											return null
+										}
+									})
+									: null								   
+								}
                                 </View>
                             </>
                             :
@@ -1409,7 +1435,15 @@ class ExportCustomReport extends React.Component {
 
                         {this.state.metric.csdm_15 !== 'on' && this.state.metric.mps_95 === 'on' ?
                             <>
+							
                                 <View style={styles.col12}>
+                                    <View style={styles.rowHead2subHead}>
+                                        <Text style={styles.rowHead2Text2subHead_center}>
+                                            Maximum Principal Strain In Each Region
+                                            </Text>
+                                    </View>
+                                </View>
+							{ /*  <View style={styles.col12}>
                                     <View style={styles.rowHeadBorder}><Text style={styles.rowHead2Text}></Text></View>
                                     <View style={styles.rowHead2}>
                                         <View style={styles.tableRowCenter}>
@@ -1417,13 +1451,6 @@ class ExportCustomReport extends React.Component {
                                             <Text style={styles.tableColLeft4}></Text>
                                         </View>
                                         <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue stretches or is compressed. This reports the volume of tissue with MPS value above 15% strain. In other words the issue is stretched 15%</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.col12}>
-                                    <View style={styles.rowHead2subHead}>
-                                        <Text style={styles.rowHead2Text2subHead_center}>
-                                            Maximum Principal Strain In Each Region
-                                            </Text>
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
@@ -1441,7 +1468,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Frontal Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+                
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle1} alt="trangle" />
@@ -1451,7 +1478,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+                                  
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle2} alt="trangle" />
@@ -1461,7 +1488,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Occipital Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+                                    
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle3} alt="trangle" />
@@ -1471,7 +1498,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+                                   
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle4} alt="trangle" />
@@ -1503,7 +1530,7 @@ class ExportCustomReport extends React.Component {
                                 <View style={styles.taxture2_div}>
                                     <Image style={styles.trangle} src={taxture1} alt="trangle" />
                                 </View>
-                                {/*=============== page 1 footer sections start ===============*/}
+                                
                                 <View style={styles.tableRow}>
 
                                     <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
@@ -1518,7 +1545,7 @@ class ExportCustomReport extends React.Component {
                                     <View style={styles.p1_footer_arrow_left}>
                                         <Image style={styles.arrow_left} src={arrow_left} alt="arrow_right" />
                                     </View>
-                                </View>
+								</View> */ }
                                 <View style={styles.tableRow}>
 									<View style={styles.textcenteralign}>
 										{this.state.jsonData['imagedata'][1].PMS ?
@@ -1527,6 +1554,38 @@ class ExportCustomReport extends React.Component {
 											<Text style={styles.rowHead2Text21}>No summary brain strain maps available yet. Please contact an administrator at support@nsfcareer.io</Text>
 										}
 									</View>
+                                </View>
+								<View style={styles.col12}>
+								 {this.state.metric.mps_95 === 'on' ?
+									<View style={[stylepage3.tableRow, stylepage3.tableHead]}>
+										{/*-- Table head --*/}
+										<Text style={[stylepage3.tableColLeft1]}>Rank</Text>
+										<Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
+										<Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
+										<Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
+										{/*-- Table head end--*/}
+
+									</View>
+									: null
+								}
+
+								{mpsValues && this.state.metric.mps_95 === 'on'  ?
+									mpsValues.map((val,index)=>{
+										if(val !== '0.00'){
+											if(index < 5){									
+												return <View style={stylepage3.tableRowBody}>
+													<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
+													<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
+													<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
+													<Text style={[stylepage3.tableColLeft2]}>{mpsbrainstate[index] ? mpsbrainstate[index] : "NA"}</Text>
+												</View>
+											}
+										}else{
+											return null
+										}
+									})
+									: null								   
+								}
                                 </View>
                             </>
                             : null
@@ -1557,19 +1616,19 @@ class ExportCustomReport extends React.Component {
                         <View>
 
                             <>
+							
                                 <View style={styles.col12}>
+                                    <View style={styles.rowHead2subHead}>
+                                        <Text style={styles.rowHead2Text2subHead_center}>Maximum Principal Strain In Each Region</Text>
+                                    </View>
+                                </View>
+							{ /*  <View style={styles.col12}>
                                     <View style={styles.rowHeadBorder}><Text style={styles.rowHead2Text}></Text></View>
                                     <View style={styles.rowHead2}>
                                         <View style={styles.tableRowCenter}>
                                             <Text style={styles.tableColRight4}>{mps ? mps : '0'}% of brain tissue has exceeded  15% MPS</Text>
-                                            {/*<Text style={styles.tableColLeft4}>95</Text>*/}
                                         </View>
                                         <Text style={styles.rowHead2Text2}>Maximum Principal Strain (MPS) is a measurement of how much the brain tissue strethes or is compressed. This reports the volume of tissue with MPS value above 15% strain. In other words the issue is stretched 15%.</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.col12}>
-                                    <View style={styles.rowHead2subHead}>
-                                        <Text style={styles.rowHead2Text2subHead_center}>Maximum Principal Strain In Each Region</Text>
                                     </View>
                                 </View>
                                 <View style={styles.tableRow}>
@@ -1587,7 +1646,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Frontal Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle1} alt="trangle" />
@@ -1597,7 +1656,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Parietal Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle2} alt="trangle" />
@@ -1607,7 +1666,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Occipital Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle3} alt="trangle" />
@@ -1617,7 +1676,7 @@ class ExportCustomReport extends React.Component {
                                 </View>
                                 <View style={styles.tableRow}>
                                     <Text style={styles.tableTd1}>Temporal Lobe</Text>
-                                    {/*=== 0-7.5 ===*/}
+
                                     <View style={styles.tableColRight_scale}>
                                         <View style={styles.point_scale}>
                                             <Image style={styles.trangle_scale} src={mpsTrangle4} alt="trangle" />
@@ -1649,7 +1708,6 @@ class ExportCustomReport extends React.Component {
                                 <View style={styles.taxture3_div}>
                                     <Image style={styles.trangle} src={taxture1} alt="trangle" />
                                 </View>
-                                {/*=============== page 1 footer sections start ===============*/}
                                 <View style={styles.tableRow}>
 
                                     <Text style={styles.footer_ST_1}>MAY BE FUNTIONALLY</Text>
@@ -1664,8 +1722,8 @@ class ExportCustomReport extends React.Component {
                                     <View style={styles.p1_footer_arrow_left}>
                                         <Image style={styles.arrow_left} src={arrow_left} alt="arrow_right" />
                                     </View>
-                                </View>
-                                <View style={styles.tableRow}>
+								</View> */ }
+								<View style={styles.tableRow}>
 									<View style={styles.textcenteralign}>
 										{this.state.jsonData['imagedata'][1].PMS ?
 											<Image style={styles.trangle_scale1} src={this.state.jsonData['imagedata'][1].PMS ? this.state.jsonData['imagedata'][1].PMS : this.state.metric.merticsImage} alt="trangle" />
@@ -1674,6 +1732,38 @@ class ExportCustomReport extends React.Component {
 										}
 									</View>
                                 </View>
+								<View style={styles.col12}>
+								 {this.state.metric.mps_95 === 'on' ?
+									<View style={[stylepage3.tableRow, stylepage3.tableHead]}>
+										{/*-- Table head --*/}
+										<Text style={[stylepage3.tableColLeft1]}>Rank</Text>
+										<Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
+										<Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
+										<Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
+										{/*-- Table head end--*/}
+
+									</View>
+									: null
+								}
+
+								{mpsValues && this.state.metric.mps_95 === 'on'  ?
+									mpsValues.map((val,index)=>{
+										if(val !== '0.00'){
+											if(index < 5){									
+												return <View style={stylepage3.tableRowBody}>
+													<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
+													<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
+													<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
+													<Text style={[stylepage3.tableColLeft2]}>{mpsbrainstate[index] ? mpsbrainstate[index] : "NA"}</Text>
+												</View>
+											}
+										}else{
+											return null
+										}
+									})
+									: null
+								}
+								   </View>
                                 {/*====================Footer heading ==============================*/}
                                 <View style={styles.bottomView}>
                                     <Text>NOT FOR CLINICAL USE</Text>
@@ -1706,70 +1796,10 @@ class ExportCustomReport extends React.Component {
                         {/*<View style={stylepage3.blueLine}></View>*/}
 
                         {/*-- Table start --*/}
-                        {this.state.metric.csdm_15 === 'on' ?
-                            <View style={[stylepage3.tableRow, stylepage3.tableHead]}>
-                                {/*-- Table head --*/}
-                                <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>CSDM-15 Value</Text>
-                                <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
-                                {/*-- Table head end--*/}
-
-                            </View>
-                            : null
-                        }
-
-                        {csdm15Values && this.state.metric.csdm_15 === 'on'  ?
-                            csdm15Values.map((val,index)=>{
-                                if(val !== '0.00' ){
-									if(index < 5){
-										return <View style={stylepage3.tableRowBody}>
-											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
-											<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
-											<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
-											<Text style={[stylepage3.tableColLeft2]}></Text>
-										</View>
-									}
-                                }else{
-                                    return null
-                                }
-                            })
-                            : null
-                           
-                        }
+                       
 
                         {/* for mps */}
-                        {this.state.metric.mps_95 === 'on' ?
-                            <View style={[stylepage3.tableRow, stylepage3.tableHead]}>
-                                {/*-- Table head --*/}
-                                <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-                                <Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
-                                <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
-                                {/*-- Table head end--*/}
-
-                            </View>
-                            : null
-                        }
-
-                        {mpsValues && this.state.metric.mps_95 === 'on'  ?
-                            mpsValues.map((val,index)=>{
-                                if(val !== '0.00'){
-									if(index < 5){									
-										return <View style={stylepage3.tableRowBody}>
-											<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
-											<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
-											<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
-											<Text style={[stylepage3.tableColLeft2]}></Text>
-										</View>
-									}
-                                }else{
-                                    return null
-                                }
-                            })
-                            : null
-                           
-                        }
+                       
 
                        
                         {/*-- Table body end --*/}

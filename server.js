@@ -7318,6 +7318,8 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             console.log('summary_datavalue', summary_data['principal-max-strain'].value)
                                             principal_max_strain['value'] = principal_max_strain['value'] || [];
                                             principal_max_strain['value'].push(summary_data['principal-max-strain'].value);
+                                            principal_max_strain['brain-region'] = principal_max_strain['brain-region'] || [];
+                                            principal_max_strain['brain-region'].push(summary_data['principal-max-strain']['brain-region']);
 
                                         }
                                     }
@@ -7332,6 +7334,8 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             principal_min_strain[region].push(coordinate);
                                             principal_min_strain['value'] = principal_min_strain['value'] || [];
                                             principal_min_strain['value'].push(summary_data['principal-min-strain'].value);
+                                            principal_min_strain['brain-region'] = principal_min_strain['brain-region'] || [];
+                                            principal_min_strain['brain-region'].push(summary_data['principal-min-strain']['brain-region']);
 
                                         }
                                     }
@@ -7372,6 +7376,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                     //-- For CSDM-15--
                                     if (summary_data['CSDM-15']) {
                                         CSDM_15['value'] = CSDM_15['value'] || [];
+										 CSDM_15['brain-region'] = CSDM_15['brain-region'] || [];
                                         CSDM_15['value'].push(summary_data['CSDM-15'].value);
                                         if (summary_data['CSDM-15']['stem']) {
                                             let newCordinates = summary_data['CSDM-15']['stem'].map(function (data, index) {
@@ -7379,6 +7384,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             })
                                             newCordinates.forEach(function (summary_data, index) {
                                                 var region = 'stem';
+												CSDM_15['brain-region'].push(region);
                                                 CSDM_15[region] = CSDM_15[region] || [];
                                                 CSDM_15[region].push(summary_data);
                                             })
@@ -7389,6 +7395,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             })
                                             newCordinates.forEach(function (summary_data, index) {
                                                 var region = 'frontal';
+												CSDM_15['brain-region'].push(region);
                                                 CSDM_15[region] = CSDM_15[region] || [];
                                                 CSDM_15[region].push(summary_data);
                                             })
@@ -7399,6 +7406,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             })
                                             newCordinates.forEach(function (summary_data, index) {
                                                 var region = 'parietal';
+												CSDM_15['brain-region'].push(region);
                                                 CSDM_15[region] = CSDM_15[region] || [];
                                                 CSDM_15[region].push(summary_data);
                                             })
@@ -7409,6 +7417,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             })
                                             newCordinates.forEach(function (summary_data, index) {
                                                 var region = 'msc';
+												CSDM_15['brain-region'].push(region);
                                                 CSDM_15[region] = CSDM_15[region] || [];
                                                 CSDM_15[region].push(summary_data);
                                             })
@@ -7419,6 +7428,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             })
                                             newCordinates.forEach(function (summary_data, index) {
                                                 var region = 'cerebellum';
+												CSDM_15['brain-region'].push(region);
                                                 CSDM_15[region] = CSDM_15[region] || [];
                                                 CSDM_15[region].push(summary_data);
                                             })
@@ -7429,6 +7439,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             })
                                             newCordinates.forEach(function (summary_data, index) {
                                                 var region = 'occipital';
+												CSDM_15['brain-region'].push(region);
                                                 CSDM_15[region] = CSDM_15[region] || [];
                                                 CSDM_15[region].push(summary_data);
                                             })
@@ -7439,6 +7450,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                                             })
                                             newCordinates.forEach(function (summary_data, index) {
                                                 var region = 'temporal';
+												CSDM_15['brain-region'].push(region);
                                                 CSDM_15[region] = CSDM_15[region] || [];
                                                 CSDM_15[region].push(summary_data);
                                             })
@@ -8227,7 +8239,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                     })
                     .then(mps_dat_output => {
                         let msp_dat_data = [];
-                      /*  if (mps_dat_output) {
+                       /* if (mps_dat_output) { 
                             // var mps_dat_output_data = JSON.parse(mps_dat_output.Body.toString('base64'));
                             var enc = new TextDecoder("utf-8");
                             var arr = new Uint8Array(mps_dat_output.Body);
@@ -13921,8 +13933,6 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
 
     var account_id = req.body.accountid;
     imagedata = [];
-	console.log(account_id + '/simulation/SummaryBrainImages/CSDM-15.png');
-	console.log(account_id + '/simulation/SummaryBrainImages/principal-max-strain.png'); 
     getFileFromS3(account_id + '/simulation/SummaryBrainImages/CSDM-15.png', '')
         .then(fileData => {
             if (fileData) {
@@ -13961,6 +13971,81 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
 
 });
 
+function getBrainImageLink(account_id,image_id,file){
+	 var fielPath = `${account_id}/simulation/${image_id}/BrainImages/${file}`
+
+    return new Promise((resolve, reject) => {
+        if (fielPath) {
+            var params = {
+                Bucket: BUCKET_NAME,
+                Key: fielPath,
+                Expires: 1800
+            };
+            s3.getSignedUrl('getObject', params, function (err, url) {
+                if (err) {
+				console.log("err1",err);
+                    reject('');
+                } else {
+                    getFileFromS3(fielPath)
+                        .then(res => {
+                            console.log(file, res);
+                            if (res != null) {
+								console.log("url",url);
+                                resolve(url);
+                            } else {
+								console.log("err2",err);
+                                resolve('');
+                            }
+                        })
+
+                }
+            });
+        } else {
+            resolve('');
+        }
+    })
+}
+app.post(`${apiPrefix}getAllBrainImageByimageID`, VerifyToken, async (req, res) => {
+    // If request comes to get detail of specific player
+        var account_id = req.body.accountid;
+        var image_id = req.body.imageid;
+		var CSDM_5 = await getBrainImageLink(account_id, image_id, 'CSDM-5.png');
+		var CSDM_10 = await getBrainImageLink(account_id, image_id, 'CSDM-10.png');
+		var CSDM_15 = await getBrainImageLink(account_id, image_id, 'CSDM-15.png');
+		var CSDM_30 = await getBrainImageLink(account_id, image_id, 'CSDM-30.png');
+		var MPS_95 = await getBrainImageLink(account_id, image_id, 'MPS-95.png');
+		var MPSR_120 = await getBrainImageLink(account_id, image_id,'MPSR-120.png');
+		var MPSxSR_28 = await getBrainImageLink(account_id,image_id, 'MPSxSR-28.png');
+		var MPSxSR_95 = await getBrainImageLink(account_id, image_id,'MPSxSR-95.png');
+		var axonal_strain_max = await getBrainImageLink(account_id, image_id, 'axonal-strain-max.png');
+		var masXsr_15_max = await getBrainImageLink(account_id, image_id,'masXsr-15-max.png');
+		var maximum_PSxSR = await getBrainImageLink(account_id, image_id,'maximum-PSxSR.png');
+		var principal_min_strain = await getBrainImageLink(account_id, image_id,'principal-min-strain.png');	
+		var principal_max_strain = await getBrainImageLink(account_id, image_id, 'principal-max-strain.png');		
+		var data = {
+			principal_max_strain: principal_max_strain ? `${principal_max_strain}` : 'Image not found',
+			CSDM_5: CSDM_5 ? `${CSDM_5}` : 'Image not found',
+			CSDM_10: CSDM_10 ? `${CSDM_10}` : 'Image not found',
+			CSDM_15: CSDM_15 ? `${CSDM_15}` : 'Image not found',
+			CSDM_30: CSDM_30 ? `${CSDM_30}` : 'Image not found',
+			MPS_95: MPS_95 ? `${MPS_95}` : 'Image not found',
+			MPSR_120: MPSR_120 ? `${MPSR_120}` : 'Image not found',
+			MPSxSR_28: MPSxSR_28 ? `${MPSxSR_28}` : 'Image not found',
+			MPSxSR_95: MPSxSR_95 ? `${MPSxSR_95}` : 'Image not found',
+			axonal_strain_max: axonal_strain_max ? `${axonal_strain_max}` : 'Image not found',
+			masXsr_15_max: masXsr_15_max ? `${masXsr_15_max}` : 'Image not found',
+			maximum_PSxSR: maximum_PSxSR ? `${maximum_PSxSR}` : 'Image not found',
+			principal_min_strain: principal_min_strain ? `${principal_min_strain}` : 'Image not found' 
+		};
+		console.log("data",data) 
+		res.send({
+			message: "success",
+			data: data, 
+		})		
+			
+	
+           
+ });
 app.post(`${apiPrefix}getBrainImageByimageID`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
         var account_id = req.body.accountid;

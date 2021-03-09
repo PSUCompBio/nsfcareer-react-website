@@ -568,16 +568,16 @@ class CommanderTeamView extends React.Component {
 
     tConvert = (time) => {
         // Check correct time format and split into components
-		 console.log("time",time);
 		if(time !== undefined){
 		time = time.split(' ')[1] ? time.split(' ')[1] : time;
-        time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-        time = time ?  time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time] : time;
+       // time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+       time = time ?  time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time] : time;
 		if (time.length > 1) { // If time format correct
             time = time.slice(1);  // Remove full string match value
             time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
             time[0] = +time[0] % 12 || 12; // Adjust hours
         }
+		 console.log("time1",time);
         return time.join(''); // return adjusted time or original string
 		}else{
 			return "";
@@ -894,6 +894,7 @@ class CommanderTeamView extends React.Component {
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
                                                             {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date'} </td>											
 														<td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} > {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : this.tConvert(player.simulation_data[0]['time']) ? this.tConvert(time) : 'Unknown Time' } </td>
+														
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{dateTime.split(' ')[0]}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{this.tConvert(dateTime.split(' ')[1])}</td>
                                                         {this.state.userDetails.level > 200 &&
