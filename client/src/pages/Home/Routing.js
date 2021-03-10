@@ -24,6 +24,7 @@ import AddUsers from '../../components/AddUsers';
 // import TeamAdmin from '../../components/CommanderTeamView';
 import TeamAdmin from '../../components/TeamAdmin';
 import TeamStats from '../../components/TeamStats';
+import TeamStatsTest from '../../components/TeamStatsTest';
 import TeamPlayers from '../../components/CommanderTeamView';
 import Military from '../Military/MilitaryPage';
 import GetUpdates from '../../components/GetUpdates';
@@ -46,6 +47,11 @@ import sendEmailVerifation from '../../components/Authentication/pages/sendEmail
 
 //Team state demo page 
 import TeamStatsDemo from '../../components/TeamStatsDemo';
+import FailedSimulationList from '../../components/TeamPageComponent/FailedSimulationList';
+import CompleteSimulationList from '../../components/TeamPageComponent/CompleteSimulationList';
+import ToolKit from '../../components/ToolKit';
+import ImgPreview from '../../imgPreview';
+
 
 
 class Routing extends React.Component {
@@ -134,7 +140,7 @@ class Routing extends React.Component {
   };
 
   render() {
-      console.log("RENDERING COMPONENT");
+      console.log("RENDERING COMPONENT",this.props.location.pathname);
     return (
       <React.Fragment>
         {this.props.location.pathname === '/Home' ||
@@ -147,15 +153,18 @@ class Routing extends React.Component {
         ) : (
           ''
         )}
-        <Nav
+        {this.props.location.pathname !== '/img/' ? 
+          <Nav
 
-          isNavbarTransparent={this.state.isNavbarTransparent}
-          screenWidth={this.state.windowWidth}
-          isAuthenticated={this.state.isLoggedIn}
-          currentPage={this.state.currentPage}
-          setIsAuth={(value) => this.settingAuthentication(value)}
-          userDetails={this.state.udetails}
-        />
+            isNavbarTransparent={this.state.isNavbarTransparent}
+            screenWidth={this.state.windowWidth}
+            isAuthenticated={this.state.isLoggedIn}
+            currentPage={this.state.currentPage}
+            setIsAuth={(value) => this.settingAuthentication(value)}
+            userDetails={this.state.udetails}
+          />
+        : null
+        }
         <GetUpdates
           isVisible={this.state.isDisplay}
           makeVisible={this.makeVisible}
@@ -218,6 +227,12 @@ class Routing extends React.Component {
             />
           }
         />
+
+        <Route
+          exact
+          path="/img"
+          render={(props) => <ImgPreview {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
         <Route
           exact
           path="/Profile"
@@ -261,8 +276,13 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/TeamStats"
+          path="/TeamStats/:type/:org/:team/:brand?"
           render={(props) => <TeamStats {...props} isDarkModeSet={this.checkDarkMode} />}
+        />
+        <Route
+          exact
+          path="/TeamStatsTest"
+          render={(props) => <TeamStatsTest {...props} isDarkModeSet={this.checkDarkMode} />}
         />
         <Route
           exact
@@ -271,7 +291,7 @@ class Routing extends React.Component {
         />
         <Route
           exact
-          path="/TeamAdmin/user/dashboard/:cognito_user_id/:player_name"
+          path="/TeamAdmin/user/dashboard/:cognito_user_id/:player_name?"
           render={(props) => <UserDashboarForAdmin {...props} isDarkModeSet={this.checkDarkMode} />}
         />  
         <Route
@@ -409,6 +429,21 @@ class Routing extends React.Component {
             
             path="/re-sendEmailVerifation"
              component = {sendEmailVerifation}
+        />
+        <Route
+            exact
+            path="/failedSimulation/:org/:team/:brand?"
+            render={(props) => <FailedSimulationList {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+            exact
+            path="/completeSimulation/:org/:team/:brand?"
+            render={(props) => <CompleteSimulationList {...props} screenWidth={this.state.windowWidth} isDarkModeSet={this.checkDarkMode} /> }
+        />
+        <Route
+          exact
+          path="/toolkit"
+          render={(props) => <ToolKit {...props} isDarkModeSet={this.checkDarkMode} />}
         />
       </React.Fragment>
     );

@@ -44,13 +44,13 @@ class ModelValidationDisplacementResponse extends React.Component {
                 <Col sm={6}>
                   <Link to='/Hardy-et-al'>
                     <Card>
-                      <Card.Header>Hardy et al.</Card.Header>
+                      <Card.Header>Validation<br/>Group 1</Card.Header>
                     </Card>
                   </Link>
                 </Col>
                 <Col sm={6}>
                   <Card>
-                    <Card.Header>Panzer et al.</Card.Header>
+                    <Card.Header>Validation<br/>Group 2</Card.Header>
                   </Card>
                 </Col>
               </Row>

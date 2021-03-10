@@ -15,7 +15,7 @@ class DownloadReportCSDM15 extends React.Component {
 
 
   render() {
-    console.log("REPORT DATA", this.props.jsonfile);
+    console.log("REPORT DATA", this.props);
     return (
       <>
       {this.props.jsonfile && 

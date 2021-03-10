@@ -1,12 +1,13 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
+import { Carousel } from 'react-bootstrap';
 import simulationLoading from '../simulationLoading.png';
 // import Report from '../ReportContent/Report0';
 import DownloadReportPopup from '.././Popup/DownloadReportPopup';
 // import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import {
-    getSimulationDetail,
+    getSimulationDetail,getUserDataByPlayerID,getBrainImageByimageID,getAllBrainImageByimageID,
   } from '../../apis';
 const options = {
     responsive: true,
@@ -59,6 +60,7 @@ class HeadAccelerationAllEvents extends React.Component {
         this.state = {
             isDisplay: { display: 'none' },
             simulationData: '',
+            Brainimages: '',
             data: {
                 labels: this.props.data.time,
                 fill: false,
@@ -139,10 +141,43 @@ class HeadAccelerationAllEvents extends React.Component {
     componentDidMount() {
         getSimulationDetail({image_id: this.props.data.sensor_data.image_id})
         .then(response => {
-            this.setState({
-                simulationData: response.data.data,
-            });
+			var playerid = this.props.data.sensor_data.player_id;
+			playerid = playerid.split("$");
+			getUserDataByPlayerID({ playerid: playerid[0]})
+			.then(response1 => {
+                if(response.data.data.jsonOutputFile && response.data.data.jsonOutputFile != undefined){
+                    response.data.data.jsonOutputFile["playerdata"] =  response1.data.data[0];
+                    console.log('playerdata ----\n', response1.data.data[0])
+					var imageid = this.props.data.sensor_data.image_id;
+					var accountid = response1.data.data[0].account_id;
+					getBrainImageByimageID({ accountid: accountid, imageid: imageid})
+					.then(imageresponse1 => {
+						response.data.data.jsonOutputFile["imagedata"] =  imageresponse1.data.data;
+						console.log('jsondata image data ----\n', response.data.data)
+						this.setState({
+							simulationData: response.data.data,
+						});
+						let isPageloaded = false
+					}) 
+                    
+                }
+			})
+            
         })
+		var playerid = this.props.data.sensor_data.player_id;
+		playerid = playerid.split("$");
+		getUserDataByPlayerID({ playerid: playerid[0]})
+		.then(response1 => {
+			var imageid = this.props.data.sensor_data.image_id;
+			var accountid = response1.data.data[0].account_id;
+			getAllBrainImageByimageID({ accountid: accountid, imageid: imageid})
+			.then(imageresponse1 => {
+				console.log('jsondata image data ----\n', imageresponse1.data.data)
+				this.setState({
+					Brainimages: imageresponse1.data.data,
+				});
+			})
+		})
     }
 
     static getDerivedStateFromProps (props, state) {
@@ -200,7 +235,7 @@ class HeadAccelerationAllEvents extends React.Component {
         }
         return time.join (''); // return adjusted time or original string
     }
-    
+   
     render() {
             console.log(isPageloaded,"propsData 1\n", this.props.status);
             if (this.props.data.sensor_data['impact-time']) {
@@ -220,6 +255,7 @@ class HeadAccelerationAllEvents extends React.Component {
             if(!isPageloaded){
               setTimeout(()=>{ isPageloaded = true },1000)  
             }
+			console.log("brainImages 1",this.state.Brainimages);
         return (
             <>
             <DownloadReportPopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} Report={this.props} jsonData={this.state.simulationData.jsonOutputFile} fileName={fileName}/>
@@ -248,15 +284,82 @@ class HeadAccelerationAllEvents extends React.Component {
                                         </div>
                                     */}
                                    <div style={{'display': 'inline-flex','width': '100%'}}>
-                                    <button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button>
-                                    <button className={this.state.buttonType === "Finite" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
-                                   </div>
-                                    {this.state.buttonType === "Finite" ?
-                                        <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status !== 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
-                                        :
-                                        <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.machinLearningImage ? 'data:image/png;base64,' + this.state.simulationData.machinLearningImage :  "/img/machine_learning_img.png"} alt="" />
-
-                                    }
+									   { /*<button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button> */ }
+                                    <button className={this.state.buttonType === "Finite" ? "btn btn-primary  settings-buttons-active" : "btn btn-primary"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
+                                   </div>    
+								   {this.sliderImages1}								   
+										{this.state.Brainimages ?
+										
+											<div class={"branimage"}>
+											<Carousel class={"branimage"}>	
+										{this.state.Brainimages.CSDM_5 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_5} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.CSDM_10 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_10} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.CSDM_15 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_15} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.CSDM_30 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_30} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.MPS_95 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPS_95} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.MPSR_120 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSR_120} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.MPSxSR_28 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSxSR_28} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.MPSxSR_95 != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSxSR_95} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.axonal_strain_max != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.axonal_strain_max} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.masXsr_15_max != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.masXsr_15_max} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.maximum_PSxSR != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.maximum_PSxSR} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.principal_min_strain != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.principal_min_strain} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.principal_max_strain != "Image not found" ?
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.principal_max_strain} alt="" /></Carousel.Item>
+										: null
+										}
+										{this.state.Brainimages.CSDM_5 == "Image not found" && this.state.Brainimages.CSDM_10 == "Image not found" && this.state.Brainimages.CSDM_15 == "Image not found" && this.state.Brainimages.CSDM_30 == "Image not found" && this.state.Brainimages.MPS_95 == "Image not found" && this.state.Brainimages.MPSR_120 == "Image not found" && this.state.Brainimages.MPSxSR_28 == "Image not found" && this.state.Brainimages.MPSxSR_95 == "Image not found" && this.state.Brainimages.axonal_strain_max == "Image not found" && this.state.Brainimages.masXsr_15_max == "Image not found" && this.state.Brainimages.maximum_PSxSR == "Image not found"  && this.state.Brainimages.principal_min_strain == "Image not found"  && this.state.Brainimages.principal_max_strain == "Image not found"  ?
+										
+											<div style={{'width':'100%','height':'200px'}}>
+												<p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p>
+											</div>
+																				
+										:null 
+										
+										}
+											</Carousel>
+											</div>
+											: 
+											<div style={{'width':'100%','height':'200px'}}>
+												<i class={"fa fa-spinner fa-spin"} style={{'font-size': '48px','margin-top': '23%'}}></i>
+											</div>
+										}
                                      {
                                     !this.props.data.sensor_data ?
                                        null

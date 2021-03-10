@@ -26,18 +26,21 @@ class Dashboard extends React.Component {
       if (this.state.userDetails.level === 1000) {
         return <Redirect to="/AdminDashboard" />;
       } else if (this.state.userDetails.level === 400) {  
+        var sensor = this.state.userDetails.sensor && this.state.userDetails.sensor !== null && this.state.userDetails.sensor !== undefined ? this.state.userDetails.sensor : ''; 
+
         return <Redirect to={{
           pathname: '/OrganizationAdmin',
           state: {
             brand: {
-              brand: this.state.userDetails.sensor,
+              brand: sensor,
               user_cognito_id: this.state.userDetails.user_cognito_id
             }
           }
         }} />;
       } else if (this.state.userDetails.level === 300) {
+        var sensor = this.state.userDetails.sensor && this.state.userDetails.sensor !== null && this.state.userDetails.sensor !== undefined ? this.state.userDetails.sensor : ''; 
         return <Redirect to={{
-          pathname: '/TeamAdmin/'+this.state.userDetails.organization,
+          pathname: '/TeamAdmin/'+this.state.userDetails.organization+'/'+sensor,
           state: {
             brand: {
               brand: null,
@@ -47,8 +50,10 @@ class Dashboard extends React.Component {
           }
         }} />;
       } else if (this.state.userDetails.level === 200) {
+        var sensor = this.state.userDetails.sensor && this.state.userDetails.sensor !== null && this.state.userDetails.sensor !== undefined ? this.state.userDetails.sensor : ''; 
+
         return <Redirect to={{
-          pathname: '/TeamAdmin/team/players/'+this.state.userDetails.organization+'/'+this.state.userDetails.team+'?brand='+this.state.userDetails.sensor,
+          pathname: '/TeamAdmin/team/players/'+this.state.userDetails.organization+'/'+this.state.userDetails.team+'?brand='+sensor,
           state: {
             team: {
               brand: this.state.userDetails.sensor,
@@ -59,8 +64,10 @@ class Dashboard extends React.Component {
           }
         }} />;
       } else {
+        var sensor = this.state.userDetails.sensor && this.state.userDetails.sensor !== null && this.state.userDetails.sensor !== undefined ? this.state.userDetails.sensor : ''; 
+        var sensor_id_number =  this.state.userDetails.sensor_id_number && this.state.userDetails.sensor_id_number !== null && this.state.userDetails.sensor_id_number !== undefined ? this.state.userDetails.sensor_id_number : ''; 
         return <Redirect to={{
-          pathname: '/TeamAdmin/user/dashboard/'+ this.state.userDetails.user_cognito_id+'/'+this.state.userDetails.sensor_id_number+'?team='+this.state.userDetails.team+'&org='+this.state.userDetails.organization+'&brand='+this.state.userDetails.sensor,
+          pathname: '/TeamAdmin/user/dashboard/'+ this.state.userDetails.user_cognito_id+'/'+sensor_id_number+'?team='+this.state.userDetails.team+'&org='+this.state.userDetails.organization+'&brand='+sensor,
           state: {
             team: {
               organization: this.state.userDetails.organization,

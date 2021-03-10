@@ -36,7 +36,7 @@ class DownloadReportPopup extends React.Component {
 
   }
   render() {
-    console.log("propsData 2", this.props.jsonData);
+    console.log("propsData 2", this.props.Report);
     return (
       <div style={this.props.isVisible} className="modal__wrapper ">
          {this.props.isVisible ? this.scrollToTop() : null}
@@ -54,7 +54,7 @@ class DownloadReportPopup extends React.Component {
               <tbody>
                 <tr>
                   <td><input name="mps_95" type="checkbox" onChange={this.handleChange}/></td>
-                  <td>MPS-15</td>
+                  <td>MPS</td>
                 </tr>
                 <tr>
                   <td><input name="csdm_15" type="checkbox" onChange={this.handleChange} /></td>

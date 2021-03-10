@@ -356,26 +356,28 @@ class SignUpComponent extends React.Component {
 
   forJsxConfirmPassowrd = (imgSrc, placeholder, name) => {
     return (
-      <div className="input-group mb-5">
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="basic-addon1">
-            <img src={imgSrc} alt="" />
-          </span>
-        </div>
-        <input
-          type="password"
-          autocomplete="new-password" 
-          className="form-control"
-          id={name}
-          placeholder={placeholder}
-          name={name}
-          aria-label={name}
-          onChange={this.handleConfirmPassword}
-          aria-describedby="basic-addon1"
-          required
-        />
-        {this.state.confirmPassError && <p style={{'color':'red'}}>{this.state.confirmPassError}</p>}
-      </div>
+    	<>
+	      <div className="input-group mb-5">
+	        <div className="input-group-prepend">
+	          <span className="input-group-text" id="basic-addon1">
+	            <img src={imgSrc} alt="" />
+	          </span>
+	        </div>
+	        <input
+	          type="password"
+	          autocomplete="new-password" 
+	          className="form-control"
+	          id={name}
+	          placeholder={placeholder}
+	          name={name}
+	          aria-label={name}
+	          onChange={this.handleConfirmPassword}
+	          aria-describedby="basic-addon1"
+	          required
+	        />
+	      </div>
+	      {this.state.confirmPassError && <div style={{'color':'red','margin-top': '-36px','text-align': 'left','margin-bottom': '22px'}}>{this.state.confirmPassError}</div>}
+	    </>
     );
   };
 

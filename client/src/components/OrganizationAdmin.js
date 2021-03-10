@@ -7,12 +7,13 @@ import { Redirect, withRouter, Link } from 'react-router-dom';
 import Spinner from './Spinner/Spinner';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
+import SimulationCount from './PlayerDetails/SimulationCount';
+import SimulationCountForList from './PlayerDetails/SimulationCountForList';
 
 import {
     isAuthenticated,
     // getUserDetails,
     getUserDBDetails,
-    getAllOrganizationsOfSensorBrand,
     fetchStaffMembers,
     deleteItem,
     renameOrganization,
@@ -25,6 +26,7 @@ import {
 } from 'reactstrap';
 
 import delicon from './icons/delete.png';
+import delicon1 from './icons/delete1.png';
 import merge from './icons/merge.png';
 import pencil from './icons/pencil.png';
 import plus from './icons/plus.png'
@@ -42,7 +44,7 @@ class OrganizationAdmin extends React.Component {
         super();
         this.state = {
             isAuthenticated: false,
-            isCheckingAuth: true,
+            isCheckingAuth: true, 
             tabActive: 0,
             targetBtn: '',
             totalTeam: 0,
@@ -70,7 +72,9 @@ class OrganizationAdmin extends React.Component {
             isAddOrganization: false,
             mergeData: '',
             isMerge: false,
-            view: 'gridView'
+            view: 'gridView',
+			delete_id:'',
+			highlight_id: '',
         };
     }
     toggleTab = (value) => {
@@ -149,7 +153,9 @@ class OrganizationAdmin extends React.Component {
             isAddOrganization: false,
             addOrganizationData: '',
             mergeData: '',
-            isMerge: false
+            isMerge: false,
+			delete_id:'',
+			highlight_id: '',
         })
     }
     handleViewChange = (view) =>{
@@ -162,6 +168,7 @@ class OrganizationAdmin extends React.Component {
         this.setState({DelData: {type: 'team',data:e} })
         if (this.state.isDisplay.display === 'none') {
           this.setState({ isDisplay: {display:'flex'} });
+            this.setState({ delete_id:  e.organization});
         } else {
           this.setState({ isDisplay: {display:'none'} });
         }
@@ -177,6 +184,8 @@ class OrganizationAdmin extends React.Component {
     }
     makeVisible = (data) => {
         this.setState({ isDisplay: data });
+		this.setState({ delete_id: '' });
+		this.setState({ highlight_id: '' });
     }
     makeVisible2 = (data) => {
         this.setState({ isDisplay2: data });
@@ -185,6 +194,7 @@ class OrganizationAdmin extends React.Component {
     isDeleteData = (isDelete) => {
         console.log('isDelete',isDelete)
         this.setState({ isDelete: isDelete });
+		this.setState({ highlight_id : this.state.delete_id })
         this.setState({ isDisplay:{ display: 'none' } });
     }
     isUpdateData = (data) =>{
@@ -297,7 +307,7 @@ class OrganizationAdmin extends React.Component {
             .then(response =>{
                  console.log('response',response)
                 if(response.data.message === "success"){
-                    getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+                    getAllOrganizationsOfSensorBrandList({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
                     .then(orgs => {
                         $('.isEdit').css({'display':'none'});
                         $('.button-edit').removeClass('button-edit-active');
@@ -349,7 +359,7 @@ class OrganizationAdmin extends React.Component {
                 })
             })
         }else{
-            getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+            getAllOrganizationsOfSensorBrandList({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
             .then(orgs => {
                 $('.isEdit').css({'display':'none'});
                 $('.button-edit').removeClass('button-edit-active');
@@ -412,13 +422,13 @@ class OrganizationAdmin extends React.Component {
                                         .catch(err => {
                                             alert(err);
                                         })
-                                        getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
-                                        .then(orgList =>{
-                                            this.setState(prevState => ({
-                                                totalOrganization: orgList.data.data.length,
-                                                sensorOrgList: orgList.data.data
-                                            }));
-                                        })
+                                        // getAllOrganizationsOfSensorBrand({ user_cognito_id : this.props.location.state.brand.user_cognito_id, brand: this.props.location.state.brand.brand })
+                                        // .then(orgList =>{
+                                        //     this.setState(prevState => ({
+                                        //         totalOrganization: orgList.data.data.length,
+                                        //         sensorOrgList: orgList.data.data
+                                        //     }));
+                                        // })
                                     }
                                 })
                                 .catch((error) => {
@@ -467,7 +477,11 @@ class OrganizationAdmin extends React.Component {
                 <ul className="organization-edit-icons isEdit">
                     <li><span><img src={pencil} alt="edit" onClick={e => this.editRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id,type: 'rename'})}/>Rename</span></li>
                     <li><span><img src={merge} alt="merge" onClick={e => this.editRecord( {brand: brand, organization_id: organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} />Merge</span></li>
-                    <li><span><img src={delicon} alt="delete" onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
+					{organization == this.state.highlight_id ?
+						<li><span><img src={delicon1} alt="delete" onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
+					: 
+						<li><span><img src={delicon} alt="delete" onClick={e => this.deleteRecord( {brand: brand,organization: organization,user_cognito_id: user_cognito_id,organization_id: organization_id})} />Delete</span></li>
+					}
                 </ul>
                 <div
                     ref={reference[0]}
@@ -496,11 +510,12 @@ class OrganizationAdmin extends React.Component {
                         </div>
                         <div className="football-body d-flex">
                             <div ref={reference[4]} className="body-left-part org-team-team-card" style={{ width: "100%", borderRight: "none" }}>
-                                {noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
+                                <SimulationCount count={noOfSimulation} sensor={brand} organization={organization} setSimulationCount={this.setSimulationCount}/>
+                                {/*noOfSimulation || noOfSimulation === '0' || noOfSimulation === 0 ? 
                                     <p style={{ fontSize: "50px" }}>{noOfSimulation} </p>
                                  : 
                                  <i className="fa fa-spinner fa-spin" style={{"font-size":"34px","padding":'10px','color': '#0f81dc'}}></i>
-                                }
+                */}
                                 <p className="teamImpact" ref={reference[5]}>
                                     Simulations
                                             </p>
@@ -521,7 +536,7 @@ class OrganizationAdmin extends React.Component {
     }
 
      tableOrganization = ()=> {
-        console.log(this.state.sensorOrgList)
+        console.log('sensorOrgList', this.state.sensorOrgList)
         var body =  this.state.sensorOrgList.map(function (organization, index) {
                 if (organization) {
 
@@ -541,7 +556,10 @@ class OrganizationAdmin extends React.Component {
                         }
                     }
 
-                    return <tr className={cls}  key={index} onClick={() => {
+                    return <tr className={cls}  key={index} 
+                    >
+                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
+                        <td onClick={() => {
                         this.props.history.push({
                             pathname: '/TeamAdmin/'+organization.organization+'/'+organization.sensor,
                             state: {
@@ -552,18 +570,46 @@ class OrganizationAdmin extends React.Component {
                                 }
                             }
                         })
-                    }}
-                    >
-                        <th style={{ verticalAlign: "middle" }} scope="row">{Number(index + 1)}</th>
-                        <td>{organization.organization}</td>
+                    }}>{organization.organization}</td>
                         <td>{organization.sensor ? organization.sensor : 'NA'}</td>
-                        <td>{organization.simulation_count || organization.simulation_count === '0' || organization.simulation_count === 0 ? organization.simulation_count : 'Loading...'}</td>
+                        <td><SimulationCountForList count={organization.simulation_count } sensor={organization.sensor} organization={organization.organization} setSimulationCount={this.setSimulationCount}/></td>
+						{this.state.isEdit ?	
+						<>	
+						<td style={{width :'20%'}}>
+							<span style={{width :'33%',float:'left'}}>Rename<br/> <img  style={{width :'24px'}} src={pencil} alt="edit" onClick={e => this.editRecord( {brand: organization.sensor,organization: organization.organization,user_cognito_id: this.state.userDetails.user_cognito_id,organization_id: organization.organization_id,type: 'rename'})}/></span>
+							{organization.organization == this.state.highlight_id ?
+								<span style={{width :'33%',float:'left'}}>Delete<br/> <img  style={{width :'24px'}} src={delicon1} alt="delete" onClick={e => this.deleteRecord( {brand: organization.sensor,organization: organization.organization,user_cognito_id: this.state.userDetails.user_cognito_id,organization_id: organization.organization_id})} /></span>
+							: 
+								<span style={{width :'33%',float:'left'}}>Delete<br/> <img  style={{width :'24px'}} src={delicon} alt="delete" onClick={e => this.deleteRecord( {brand: organization.sensor,organization: organization.organization,user_cognito_id: this.state.userDetails.user_cognito_id,organization_id: organization.organization_id})} /></span>
+							}
+							<span style={{width :'33%',float:'left'}}>Merge<br/> <img  style={{width :'24px'}} src={merge} alt="merge" onClick={e => this.editRecord( {brand: organization.sensor, organization_id: organization.organization_id,type: 'merge',sensorOrgList:this.state.sensorOrgList,selectOrg: organization})} /></span>
+							
+						</td>
+							</>
+					: null
+					}
                     </tr>;
                 }else{
                     return '';
                 }
             }, this)
         return body
+    }
+
+    setSimulationCount= (count, organization, simulation_status, computed_time, simulation_timestamp)=>{
+        let lsitOrg = this.state.sensorOrgList;
+        console.log('count',count, organization)
+        for (let i = 0; i < this.state.totalOrganization; i++) {
+            if(lsitOrg[i].organization === organization){
+                lsitOrg[i].simulation_count =  count;
+                lsitOrg[i].simulation_status = simulation_status; 
+                lsitOrg[i].computed_time = computed_time;
+                lsitOrg[i].simulation_timestamp = simulation_timestamp;
+            }
+
+        }
+
+        this.setState({sensorOrgList: lsitOrg});
     }
 
     iterateTeam = () => {
@@ -663,7 +709,20 @@ class OrganizationAdmin extends React.Component {
                                    
                         }
                         {this.props.location.state.brand.brand}
-
+						<div className="col-md-2 dashboard-custom-button" style={{'display':'inline-block','float': 'right'}}>
+							{level === 1000  || level === 300 || level === 400 ?
+							<Link style={{ fontWeight: "400",backgroundColor:"#0a5087",color:"#fff",padding:"10px 19px",borderRadius:"10px",fontSize:"15px",textDecoration:"none"}} to={{
+                                pathname: '/toolkit',
+                                state: {
+                                    brand: {
+                                        brand: this.props.location.state.brand.brand,
+                                        user_cognito_id: this.props.location.state.brand.user_cognito_id
+                                    }
+                                }
+                            }} >ML Toolkit	</Link>
+							:null
+						  }
+						</div>
                     </p>
                         <div className="col-md-12 organization-admin-table-margin-5-mobile-overview">
                             <div className="row">
@@ -679,8 +738,7 @@ class OrganizationAdmin extends React.Component {
                                 </div>
                                 <div className="col-md-12 Admintitle" >
                                     <div className="col-md-2 org-edit-button" >
-                                        <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button>
-                                       
+                                        <button className="btn  button-edit" style={this.state.isEdit ? {'display':'none'} : {'display': 'inherit'}} onClick={this.handleEdit}>Edit</button> 
                                     </div>
                                 </div>
                                 <div
@@ -738,7 +796,7 @@ class OrganizationAdmin extends React.Component {
                                                 </thead>
                                                 <tbody className="player-table">
                                                 {/* eslint-disable-next-line*/}
-                                                    {staffList && staffList[0].map(function (staff, index) {
+                                                    {staffList[0] && staffList[0].map(function (staff, index) {
                                                         if(staff.data){
                                                             if(staff.data.level === 400){
                                                                 return <tr className="player-data-table-row" key={index}
@@ -802,6 +860,11 @@ class OrganizationAdmin extends React.Component {
                                                             <th scope="col">Organization</th>
                                                             <th scope="col">Sensor</th>
                                                             <th scope="col">Simulations</th>
+															{this.state.isEdit ?	
+															<>	
+                                                            <th scope="col">Action</th>
+															</>
+															:null }
                                                         </tr>
                                                     </thead>
                                                     <tbody className="player-table">

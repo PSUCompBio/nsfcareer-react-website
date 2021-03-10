@@ -9,23 +9,18 @@ class dragModule extends React.Component {
         super(props);
         // console.log('data',this.props)
         this.state = {
-            values: []
+            values: [],
+            files: [],
         };
     }
     componentDidMount=()=>{
         var values = [];
     }
     onDrop=(files)=>{
-        if(files.length > 1){
-            alert('You can upload only one file');
-        }else{
-            console.log('files',files.length);    
-        }
+        this.props.handleUpLoadedFiles(files)
+        // console.log('files',);
     }
-
     render() {
-        
-
         return (
             <>  
                 <Dropzone onDrop={this.onDrop}>

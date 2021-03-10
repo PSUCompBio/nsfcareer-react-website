@@ -121,6 +121,19 @@ export const trimVideo = (request) =>{
   })
 }
 
+export const flipVideo = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/api/v1/flipVideo`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
 export const setUserPassword = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/setUserPassword`, request,{withCredentials: true})
@@ -360,6 +373,17 @@ export const getUserDBDetails = (request) =>{
       });
   })
 }
+export const getUserDataByPlayerID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUserDataByPlayerID`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const getUserTokenDBDetails = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getUserTokenDBDetails`, request,{withCredentials: true})
@@ -537,6 +561,19 @@ export const getPlayersData = (request) =>{
       });
   })
 }
+
+export const getRequestedPlayersData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getRequestedPlayersData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 
 export const getOrganizationAdminData = (request) =>{
   return new Promise((resolve,reject)=>{
@@ -731,6 +768,18 @@ export const getCumulativeAccelerationTimeRecords = (request) =>{
   })
 }
 
+export const getMpsRankedData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getMpsRankedData`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const AllCumulativeAccelerationTimeRecords = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/AllCumulativeAccelerationTimeRecords`, request,{withCredentials: true})
@@ -887,6 +936,31 @@ export const getAllOrganizationsOfSensorBrand = (request) =>{
   })
 }
 
+export const getAllOrganizationsSimultionCount = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllOrganizationsSimultionCount`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+export const getTeamSimultionCount = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getTeamSimultionCount`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
 export const getAllOrganizationsOfSensorBrandList = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getAllOrganizationsOfSensorBrandList`, request,{withCredentials: true})
@@ -936,6 +1010,17 @@ export const getBrainSimulationMovie = (request) =>{
 export const getBrainSimulationLogFile = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.get(`/getBrainSimulationLogFile/`+request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+export const downloadLogFileFromS3 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.get(`/downloadLogFileFromS3/`+request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -1004,9 +1089,32 @@ export const getTeamSpheres = (request) =>{
   })
 }
 
+export const getMLplatformfiles = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getMLplatformfiles`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
 export const getFilterdTeamSpheres = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getFilterdTeamSpheres`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+export const getFilterdTeamSpheresTest = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getFilterdTeamSpheresTest`, request,{withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
@@ -1198,6 +1306,204 @@ export const getTeamSpheres_Demo = (request) =>{
 export const modalValidationOutput = () =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/modalValidationOutput`,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+//# submit jobs api called
+export const submitBrainsimulationJobs = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/api/v2/upload/sensor/`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+
+export const createJoblogs = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/api/v1/jobs/insertlogs`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+//# ...
+export const checkSensorDataExistsSimulationjsonData = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/api/v2/checkSensorDataExists/json/`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+//# getFailedSimulationList
+export const getFailedSimulationList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getFailedSimulationList`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# getCompleteSimulationList
+export const getCompleteSimulationList = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getCompleteSimulationList`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+//# deleteuserfromteam
+export const deleteuserfromteam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteuserfromteam`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+
+//# getFailedSimulationList
+export const filterStrainMetric = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.patch(`/filterStrainMetric`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# getFailedSimulationList
+export const getplayerlistoforg = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getplayerlistoforg`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# getBrainImageByAccountID
+export const getBrainImageByAccountID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getBrainImageByAccountID`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# getBrainImageByAccountID
+export const getBrainImageByimageID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getBrainImageByimageID`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# getAllBrainImageByimageID
+export const getAllBrainImageByimageID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getAllBrainImageByimageID`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam
+export const deleteOrgTeam = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam1
+export const deleteOrgTeam1 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam1`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam2
+export const deleteOrgTeam2 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam2`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam3
+export const deleteOrgTeam3 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam3`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam4
+export const deleteOrgTeam4 = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteOrgTeam4`, request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })
