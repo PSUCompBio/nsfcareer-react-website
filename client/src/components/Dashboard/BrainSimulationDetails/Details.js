@@ -45,7 +45,8 @@ import {
   flipVideo,
   resetToOriginal,
   getUserDataByPlayerID,
-  getMpsRankedData
+  getMpsRankedData,
+  getAllBrainImageByimageID
 } from '../../../apis';
 import axios from 'axios';
 
@@ -134,9 +135,15 @@ class Details extends React.Component {
       label_TrimVideo: 'Trim',
       showinjury: 'block',
       showinjury1: true,
-      showPMS: 'none',
       showPMS1: false,
-
+      showMASxSR1: false,
+      showCSDM1: false,
+      showMPS1: false,
+      showPMS: 'none',
+      showMASxSR: 'none',
+      showCSDM: 'none',
+      showMPS: 'none',
+	  Brainimages: '',
       isTriming: false,
       account_id: '',
       simulation_id: '',
@@ -254,10 +261,21 @@ class Details extends React.Component {
     window.scrollTo({ top: '0', behavior: 'smooth' });
   };
   showPMS = () => {
-    this.setState({ showPMS: "block", showinjury: "none", showPMS1: true, showinjury1: false, })
+		this.setState({ showPMS: "block", showinjury: "none", showMASxSR: "none", showCSDM: "none", showMPS: "none", showPMS1: true, showinjury1: false, showMPS1: false, showCSDM1: false, showMASxSR1: false, })
+  };
+  showMASxSR = () => {
+		this.setState({ showPMS: "none", showinjury: "none", showMASxSR: "block", showCSDM: "none", showMPS: "none", showPMS1: false, showinjury1: false, showMPS1: false, showCSDM1: false, showMASxSR1: true, })
+  };
+  showCSDM = () => {
+		this.setState({ showPMS: "none", showinjury: "none", showMASxSR: "none", showCSDM: "block", showMPS: "none", showPMS1: false, showinjury1: false, showMPS1: false, showCSDM1: true, showMASxSR1: false, })
+  };
+  showMPS = () => {
+		this.setState({ showPMS: "none", showinjury: "none", showMASxSR: "none", showCSDM: "none", showMPS: "block", showPMS1: false, showinjury1: false, showMPS1: true, showCSDM1: false, showMASxSR1: false, })
   };
   showinjury = () => {
-    this.setState({ showPMS: "none", showinjury: "block", showPMS1: false, showinjury1: true, })
+		this.setState({ showPMS: "none", showinjury: "block", showMASxSR: "none", showCSDM: "none", showMPS: "none", showPMS1: false, showinjury1: true, showMPS1: false, showCSDM1: false, showMASxSR1: false, })
+		console.log(this.state.showinjury)
+		console.log(this.state.showinjury1)
   };
   setRangeValue = (value) => {
     if (_isFirstUpdate === '') {
@@ -1243,9 +1261,33 @@ class Details extends React.Component {
                           <button className="btn gray" onClick={this.showinjury} >Injury Metrics</button><br />
                         </>
                       }
-                      <button className="btn gray">MPS</button>
-                      <button className="btn gray">CSDM</button>
-                      <button className="btn gray">MASxSR<sub>15</sub></button>
+					  {this.state.showMPS1 ?
+                        <>
+                          <button className="btn btn-primary" style={{ 'margin-top': '10px' }} onClick={this.showMPS} >MPS</button>
+                        </>
+                        :
+                        <>
+                          <button className="btn gray" style={{ 'margin-top': '10px' }} onClick={this.showMPS} >MPS</button>
+                        </>
+                      }
+					  {this.state.showCSDM1 ?
+                        <>
+                          <button className="btn btn-primary" style={{ 'margin-top': '10px' }} onClick={this.showCSDM} >CSDM</button>
+                        </>
+                        :
+                        <>
+                          <button className="btn gray" style={{ 'margin-top': '10px' }} onClick={this.showCSDM} >CSDM</button>
+                        </>
+                      }
+					  {this.state.showMASxSR1 ?
+                        <>
+                          <button className="btn btn-primary" style={{ 'margin-top': '10px' }} onClick={this.showMASxSR} >MASxSR<sub>15</sub></button>
+                        </>
+                        :
+                        <>
+                          <button className="btn gray" style={{ 'margin-top': '10px' }} onClick={this.showMASxSR} >MASxSR<sub>15</sub></button>
+                        </>
+                      }
                       {this.state.showPMS1 ?
                         <>
                           <button className="btn btn-primary" style={{ 'margin-top': '10px' }} onClick={this.showPMS} >Principal Max Strain</button>
@@ -1258,6 +1300,60 @@ class Details extends React.Component {
                     </div>
                     <div className="col-md-12" style={{ 'display': this.state.showinjury }} >
                       <img class="img-fluid svg" width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.simulationStatus !== 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="img" />
+
+                    </div>
+                    <div className="col-md-12" style={{ 'display': this.state.showMPS }}>
+					{this.state.Brainimages ?
+						<>
+							{this.state.Brainimages.principal_max_strain != "Image not found" ?
+								<img className={`img-fluid ${'svg'}`} width="100%" height="100%" src={this.state.Brainimages.principal_max_strain} alt="" />
+							: 
+								<div style={{'width':'100%','height':'200px'}}>
+									<p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p>
+								</div>
+							}			
+						</>
+					  :
+						<div style={{'width':'100%','height':'200px'}}>
+							<i class={"fa fa-spinner fa-spin"} style={{'font-size': '48px','margin-top': '23%'}}></i>
+						</div>
+					}
+
+                    </div>
+                    <div className="col-md-12" style={{ 'display': this.state.showCSDM }}>
+                     {this.state.Brainimages ?
+						<>
+							{this.state.Brainimages.CSDM_15 != "Image not found" ?
+								<img className={`img-fluid ${'svg'}`} width="100%" height="100%" src={this.state.Brainimages.CSDM_15} alt="" />
+							: 
+								<div style={{'width':'100%','height':'200px'}}>
+									<p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p>
+								</div>
+							}			
+						</>
+					  :
+						<div style={{'width':'100%','height':'200px'}}>
+							<i class={"fa fa-spinner fa-spin"} style={{'font-size': '48px','margin-top': '23%'}}></i>
+						</div>
+					}
+
+                    </div>
+                    <div className="col-md-12" style={{ 'display': this.state.showMASxSR }}>
+                      {this.state.Brainimages ?
+						<>
+							{this.state.Brainimages.MPSxSR_95 != "Image not found" ?
+								<img className={`img-fluid ${'svg'}`} width="100%" height="100%" src={this.state.Brainimages.MPSxSR_95} alt="" />
+							: 
+								<div style={{'width':'100%','height':'200px'}}>
+									<p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p>
+								</div>
+							}			
+						</>
+					  :
+						<div style={{'width':'100%','height':'200px'}}>
+							<i class={"fa fa-spinner fa-spin"} style={{'font-size': '48px','margin-top': '23%'}}></i>
+						</div>
+					}
 
                     </div>
                     <div className="col-md-12" style={{ 'display': this.state.showPMS }}>
@@ -1314,8 +1410,21 @@ class Details extends React.Component {
       })
   }
 
-  componentDidMount() {
-
+  componentDidMount() {	
+	var playerid = this.props.match.params.player_id.split('$')[0];
+	console.log("playerid",playerid);
+	getUserDataByPlayerID({ playerid: playerid})
+	.then(response1 => {
+		var imageid = this.props.match.params.image_id;
+		var accountid = response1.data.data[0].account_id;
+		getAllBrainImageByimageID({ accountid: accountid, imageid: imageid})
+		.then(imageresponse1 => {
+			console.log('jsondata image data ----\n', imageresponse1.data.data)
+			this.setState({
+				Brainimages: imageresponse1.data.data,
+			});
+		})
+	})
     const params = new URLSearchParams(window.location.search)
     // console.log('this.props.match.params.player_id', params.get('org'))
     let organization = params.get('org');

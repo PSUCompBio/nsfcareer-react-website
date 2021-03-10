@@ -32,6 +32,9 @@ const options = {
             ticks: {
                 display: false,
                 stepSize: 20
+            },
+			gridLines: {
+                drawOnChartArea:false
             }
         }]
     }

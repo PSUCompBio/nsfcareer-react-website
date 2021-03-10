@@ -117,13 +117,18 @@ class UserDashboarForAdmin extends React.Component {
       this.setState({ open: e });
       getCumulativeAccelerationTimeRecords({ brand: this.state.brand, user_cognito_id: this.state.user_cognito_id, organization: this.state.organization, player_id: e, team: this.state.team })
         .then(res => {
-          console.log('res' + this.state.user_cognito_id, res);
-          this.setState({
-            cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
-            loading: false,
-
-          });
-          $("#spin_" + res.data.data[0].sensor_data.player_id.split('$')[1]).toggleClass('spin_display');
+			if(res.data.data[0] !== undefined){
+			  console.log('res',res.data.data[0]);
+			  this.setState({
+				cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
+				loading: false,
+			  });
+			  $("#spin_" + res.data.data[0].sensor_data.player_id.split('$')[1]).toggleClass('spin_display');
+			}else{
+				this.setState({
+				loading: false,
+			  });
+			}
         }).catch(err => {
           console.log('err', err)
         })

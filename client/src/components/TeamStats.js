@@ -398,7 +398,7 @@ class TeamStats extends React.Component {
 			console.log("final",maxval);
 		var ylabel = '';
 		if(this.state.brainPosition == 'principal-max-strain' ){
-			ylabel = 'Max Principal Strain';
+			ylabel = 'Average Principal Strain';
 		}else if(this.state.brainPosition == 'principal-min-strain' ){
 			ylabel = 'Min Principal Strain';			
 		}else if(this.state.brainPosition == 'csdm-15' ){
@@ -421,7 +421,7 @@ class TeamStats extends React.Component {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: 800,
                         labelString: ylabel
                     },

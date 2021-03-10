@@ -284,12 +284,14 @@ class HeadAccelerationAllEvents extends React.Component {
                                         </div>
                                     */}
                                    <div style={{'display': 'inline-flex','width': '100%'}}>
-                                    <button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button>
-                                    <button className={this.state.buttonType === "Finite" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
+									   { /*<button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button> */ }
+                                    <button className={this.state.buttonType === "Finite" ? "btn btn-primary  settings-buttons-active" : "btn btn-primary"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
                                    </div>    
 								   {this.sliderImages1}								   
 										{this.state.Brainimages ?
-											<Carousel>	
+										
+											<div class={"branimage"}>
+											<Carousel class={"branimage"}>	
 										{this.state.Brainimages.CSDM_5 != "Image not found" ?
 											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_5} alt="" /></Carousel.Item>
 										: null
@@ -344,13 +346,19 @@ class HeadAccelerationAllEvents extends React.Component {
 										}
 										{this.state.Brainimages.CSDM_5 == "Image not found" && this.state.Brainimages.CSDM_10 == "Image not found" && this.state.Brainimages.CSDM_15 == "Image not found" && this.state.Brainimages.CSDM_30 == "Image not found" && this.state.Brainimages.MPS_95 == "Image not found" && this.state.Brainimages.MPSR_120 == "Image not found" && this.state.Brainimages.MPSxSR_28 == "Image not found" && this.state.Brainimages.MPSxSR_95 == "Image not found" && this.state.Brainimages.axonal_strain_max == "Image not found" && this.state.Brainimages.masXsr_15_max == "Image not found" && this.state.Brainimages.maximum_PSxSR == "Image not found"  && this.state.Brainimages.principal_min_strain == "Image not found"  && this.state.Brainimages.principal_max_strain == "Image not found"  ?
 										
-										<img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status !== 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />												
+											<div style={{'width':'100%','height':'200px'}}>
+												<p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p>
+											</div>
+																				
 										:null 
 										
 										}
 											</Carousel>
+											</div>
 											: 
-											<img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.simulationImage ? this.props.status !== 'pending' ? 'data:image/png;base64,' + this.state.simulationData.simulationImage : simulationLoading : simulationLoading} alt="" />
+											<div style={{'width':'100%','height':'200px'}}>
+												<i class={"fa fa-spinner fa-spin"} style={{'font-size': '48px','margin-top': '23%'}}></i>
+											</div>
 										}
                                      {
                                     !this.props.data.sensor_data ?

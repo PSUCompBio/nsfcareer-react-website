@@ -74,8 +74,6 @@ class Report extends React.Component {
                 metric: ''
             } 
         }
-        console.log('imagedata CSDM15', this.state.jsonData['imagedata'][0].CSDM15);
-        console.log('imagedata PMS', this.state.jsonData['imagedata'][1].PMS);
 		
     }
     tConvert = (time) => {

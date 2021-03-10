@@ -450,16 +450,16 @@ function getCumulativeAccelerationRecords(obj) {
         }
         getOrganizationData(player_obj)
             .then (org => {
+                    console.log("org",org); 
                 if (org.length > 0) {
                     let params;
                     if (obj.brand && obj.brand != 'null') {
                         params = {
                             TableName: "sensor_details",
                             KeyConditionExpression:  "org_id = :org_id and player_id= :player_id",
-                            FilterExpression: "sensor = :sensor and organization = :organization and team = :team",
+                            FilterExpression: "organization = :organization and team = :team",
                             ExpressionAttributeValues: {
                                 ":org_id": org[0].organization_id,
-                                ":sensor": obj.brand,
                                 ":organization": obj.organization,
                                 ":team": obj.team,
                                 ":player_id": obj.player_id,
@@ -480,13 +480,14 @@ function getCumulativeAccelerationRecords(obj) {
                             ScanIndexForward: false
                         };
                     }
-                    
+                    console.log("params",params); 
                     var item = [];
                     docClient.query(params).eachPage((err, data, done) => {
                         if (err) {
                             reject(err);
                         }
                         if (data == null) {
+                    console.log("item",item); 
                             resolve(concatArrays(item));
                         } else {
                             item.push(data.Items);
@@ -1578,11 +1579,11 @@ function getOrganizationData(obj) {
         if (obj.sensor) {
             params = {
                 TableName: "organizations",
-                FilterExpression: "organization = :organization and team_name = :team_name and sensor = :sensor",
+                FilterExpression: "organization = :organization and team_name = :team_name",
                 ExpressionAttributeValues: {
                     ":organization": obj.organization,
                     ":team_name": obj.team_name,
-                    ":sensor": obj.sensor,
+                    // ":sensor": obj.sensor,
                 },
             };
         } else {
