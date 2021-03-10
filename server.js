@@ -331,6 +331,7 @@ var uploadModelRealData = multer({
 
 // AWS S3 & Other Controllers Configuration
 const awsWorker = require('./controllers/aws.controller.js');
+const { resolve, reject } = require('bluebird');
 
 
 var s3 = new AWS.S3({ useAccelerateEndpoint: true });
@@ -5773,11 +5774,40 @@ app.post(`${apiPrefix}resetToOriginal`, (req, res) => {
             console.log('err', err)
         })
 
-})
+});
+var videoStorage = multer.memoryStorage('public/uploads/');
+var uploadSidelineWmvVideo = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'public/uploads/');
+    },
+
+    // By default, multer removes file extensions so let's add them back
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+function changeWmvVideoToMp4(file){
+    console.log('file ------------ changing ',file);
+    return new Promise((resolve, reject)=>{
+        var outputFilePath = `public/uploads/${Date.now()}_mp4.mp4`
+        exec(`ffmpeg -i public/uploads/${file} -c:v libx264 -crf 23 -c:a aac -q:a 100  ${outputFilePath}`, async (error, stdout, stderr) => {
+            if(error){
+                resolve(false);
+            }else{
+                console.log('finihed change')
+                fs.unlinkSync(`public/uploads/${file}`);
+                resolve(outputFilePath);
+            }
+        })
+    })
+    
+}
 
 // Uploading the Sensor Data (CSV) file
-app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), uploadSidelineImpactVideo.single('file'), (req, res) => {
-    console.log('file', req.body);
+app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTimeout('10m'), multer({ storage: uploadSidelineWmvVideo }).single('file'), (req, res) => {
+    console.log('req ------------------', req.body);
+    console.log('file -----------------', req.file);
+
     var file_name = Date.now();
     var image_id = req.body.image_id;
     var uploadParams = {
@@ -5786,7 +5816,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
         Body: null, // pass file body
     };
     getSimulationImageRecord(image_id)
-        .then(data => {
+        .then(async data => {
 
             /**
             * Removing trim video form s3 if exists...
@@ -5807,8 +5837,19 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
             console.log('uploading --------',data)
             var file_extension = req.file.originalname.split(".");
             file_extension = file_extension[file_extension.length - 1];
+            var newfile = ''
+            if(file_extension == 'wmv'){
+                file_extension = 'mp4';
+                newfile = await changeWmvVideoToMp4(req.file.filename);
+                console.log('newfile ---------',newfile)
+                var videobuffer = fs.readFileSync(`${newfile}`);
+            }else{
+                var videobuffer = fs.readFileSync(`public/uploads/${req.file.filename}`)
+
+            }
+            
             var d = new Date();
-            console.log(d.toLocaleDateString('pt-PT'));
+            // console.log(d.toLocaleDateString('pt-PT'));
             d = d.toLocaleDateString('pt-PT');
             var date = d.replace("/", "-");
             date = date.replace("/", "-");
@@ -5816,7 +5857,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
             // Setting Attributes for file upload on S3
             uploadParams.Key = data['account_id'] + "/simulation/" + image_id + "_SidelineVideo/"+ file_name + "." + file_extension;
             // console.log('req.file.buffer', req.file.buffer)
-            uploadParams.Body = req.file.buffer;
+            uploadParams.Body = videobuffer;
 
             // console.log('uploadParams',uploadParams)
             s3.upload(uploadParams, (err, data) => {
@@ -5829,6 +5870,7 @@ app.post(`${apiPrefix}uploadSidelineImpactVideo`, VerifyToken, setConnectionTime
 
                 } else {
                     console.log('data', uploadParams.Key)
+                    if(newfile) fs.unlinkSync(newfile)
                     InsertImpactVideoKey(req.body.image_id, uploadParams.Key).
                         then(sensor_data => {
                             const image_id = req.body.image_id;
@@ -9639,7 +9681,7 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{ name: "filename", max
         })
 })
 
-app.post(`${apiPrefix}api/v1/image/brainPlots/`,upload.fields([]) ,(req, res) => {
+app.post(`${apiPrefix}api/v1/images/SummaryBrainImages/`,upload.fields([]) ,(req, res) => {
     // console.log('req ---------------\n',req.body);
     if (!req.body.account_id) {
         res.send('Url must contains account Id.')
@@ -9752,6 +9794,109 @@ app.post(`${apiPrefix}api/v1/image/brainPlots/`,upload.fields([]) ,(req, res) =>
     }
 })
 
+app.post(`${apiPrefix}api/v1/images/LabledBrainImages/`,upload.fields([]) ,(req, res) => {
+    // console.log('req ---------------\n',req.body);
+    if (!req.body.account_id) {
+        res.send('Url must contains account Id.');
+    }else if(!req.body.event_id){
+        res.send('Url must contains event Id.');
+    } else {
+        const { account_id, event_id } = req.body;
+        var user_type = "standard";
+        hadleAuthanticat(req.body.user, req.body.password)
+            .then(response => {
+                console.log('response===================\n', response)
+                if (response.message == 'failure') {
+                    res.send({
+                        message: "failure",
+                        error: response.error
+                    })
+                } else {
+                    login(req.body.user, response.password, user_type, (err, data) => {
+                        if (err) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                        else {
+                            getUser(req.body.user, function (err, data) {
+                                if (err) {
+                                    console.log(err);
+
+                                    res.send({
+                                        message: "failure",
+                                        error: err
+                                    });
+                                } else {
+                                    getPlayerImageDetailsByaccoutId(account_id)
+                                        .then(async result => {
+                                            // console.log('result ------------\n',result)
+                                            if (result.length > 0) {
+                                                var principal_max_strain = await getBrainImageLink(account_id, event_id, 'principal-max-strain.png');
+                                                var CSDM_5 = await getBrainImageLink(account_id, event_id, 'CSDM-5.png');
+                                                var CSDM_10 = await getBrainImageLink(account_id, event_id, 'CSDM-10.png');
+                                                var CSDM_15 = await getBrainImageLink(account_id, event_id, 'CSDM-15.png');
+                                                var CSDM_30 = await getBrainImageLink(account_id, event_id, 'CSDM-30.png');
+                                                var MPS_95 = await getBrainImageLink(account_id, event_id, 'MPS-95.png');
+                                                var MPSR_120 = await getBrainImageLink(account_id, event_id, 'MPSR-120.png');
+                                                var MPSxSR_28 = await getBrainImageLink(account_id, event_id, 'MPSxSR-28.png');
+                                                var MPSxSR_95 = await getBrainImageLink(account_id, event_id, 'MPSxSR-95.png');
+                                                var axonal_strain_max = await getBrainImageLink(account_id, event_id, 'axonal-strain-max.png');
+                                                var masXsr_15_max = await getBrainImageLink(account_id, event_id, 'masXsr-15-max.png');
+                                                var maximum_PSxSR = await getBrainImageLink(account_id, event_id, 'maximum-PSxSR.png');
+                                                var principal_min_strain = await getBrainImageLink(account_id, event_id, 'principal-min-strain.png');
+                                                var data = {
+                                                    principal_max_strain: principal_max_strain ? `${principal_max_strain}` : 'Image not found',
+                                                    CSDM_5: CSDM_5 ? `${CSDM_5}` : 'Image not found',
+                                                    CSDM_10: CSDM_10 ? `${CSDM_10}` : 'Image not found',
+                                                    CSDM_15: CSDM_15 ? `${CSDM_15}` : 'Image not found',
+                                                    CSDM_30: CSDM_30 ? `${CSDM_30}` : 'Image not found',
+                                                    MPS_95: MPS_95 ? `${MPS_95}` : 'Image not found',
+                                                    MPSR_120: MPSR_120 ? `${MPSR_120}` : 'Image not found',
+                                                    MPSxSR_28: MPSxSR_28 ? `${MPSxSR_28}` : 'Image not found',
+                                                    MPSxSR_95: MPSxSR_95 ? `${MPSxSR_95}` : 'Image not found',
+                                                    axonal_strain_max: axonal_strain_max ? `${axonal_strain_max}` : 'Image not found',
+                                                    masXsr_15_max: masXsr_15_max ? `${masXsr_15_max}` : 'Image not found',
+                                                    maximum_PSxSR: maximum_PSxSR ? `${maximum_PSxSR}` : 'Image not found',
+                                                    principal_min_strain: principal_min_strain ? `${principal_min_strain}` : 'Image not found'
+                                                };
+                                                
+                                                var json = JSON.stringify(data); // so let's encode it
+
+                                                var filename = 'result.json'; // or whatever
+                                                var mimetype = 'application/json';
+                                                console.log('all executed')
+                                               
+                                                res.writeHead(200, {
+                                                    'Content-Type': 'application/json',
+                                                    'Content-Disposition': 'attachment; filename="filename.pdf"'
+                                                });
+                                                const download = Buffer.from(json);
+                                                res.end(download);
+                                            } else {
+                                                res.status(500).send({
+                                                    status: 'failure',
+                                                    message: "No player found for given account Id."
+                                                })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log('err', err);
+                                            res.send({
+                                                status: 'failure',
+                                                error: err
+                                            })
+                                        })
+                                }
+                            })
+                        }
+                    })
+
+                }
+            });
+    }
+})
 
 // Run simulation using cURL command
 app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{ name: "filename", maxCount: 1 }, { name: "selfie", maxCount: 1 }]), VerifyToken, (req, res) => {
@@ -13991,8 +14136,8 @@ app.post(`${apiPrefix}getUserDataByPlayerID`, VerifyToken, (req, res) => {
 });
 
 function getBrainImageLink(account_id,image_id,file){
-	 var fielPath = `${account_id}/simulation/${image_id}/BrainImages/${file}`
-
+	var fielPath = `${account_id}/simulation/${image_id}/BrainImages/${file}`
+    console.log('fielPath ---------', fielPath)
     return new Promise((resolve, reject) => {
         if (fielPath) {
             var params = {
