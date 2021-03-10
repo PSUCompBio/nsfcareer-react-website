@@ -569,7 +569,9 @@ class CommanderTeamView extends React.Component {
     tConvert = (time) => {
         // Check correct time format and split into components
 		if(time !== undefined){
-		time = time.split(' ')[1] ? time.split(' ')[1] : time;
+		console.log("time",time);
+		time = time.toString().split(' ');
+		time = time[1] ? time[1] : time;
        // time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
        time = time ?  time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time] : time;
 		if (time.length > 1) { // If time format correct
