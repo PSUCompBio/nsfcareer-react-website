@@ -1,54 +1,58 @@
 import React from 'react';
 // import SignatureCanvas from 'react-signature-canvas'
-import C288_T3_chart from '../charts/C288_T3_chart';
+import C288_T3_chart from '../charts/C288_T3_chart'
 import Spinner from '../../Spinner/Spinner';
 import { Container, Row, Col, Button } from 'react-bootstrap';
-import { modalValidationOutput } from '../../../apis';
+import {
+  modalValidationOutput,
+} from '../../../apis';
 class C288_T3 extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isLoaded: false,
-      DisplacementData: ''
-    };
+        isLoaded: false,
+        DisplacementData: ''
+    }
   }
+
 
   componentDidMount() {
     // API to get the details of user whose consent is being approves
     modalValidationOutput()
-      .then((res) => {
-        console.log('res', res);
-        if (res.data.status === 'success') {
-          this.setState({
-            isLoaded: true,
-            DisplacementData: res.data.data,
-            DisplacementData_2: res.data.data_2,
-            val_x: res.data.data.time
-          });
-        } else {
-          alert(res.data.message);
-          this.setState({
-            isLoaded: true
-          });
+    .then(res =>{
+        console.log('res',res)
+        if(res.data.status === 'success'){
+            this.setState({
+                isLoaded: true,
+                DisplacementData: res.data.data,
+                DisplacementData_2: res.data.data_2,
+                val_x : res.data.data.time,
+            })
+        }else{
+            alert(res.data.message);
+            this.setState({
+                isLoaded: true,
+            })
         }
-      })
-      .catch((err) => {
-        console.log('err', err);
+    }).catch(err=>{
+        console.log('err',err)
         this.setState({
-          isLoaded: true
-        });
-        alert('Failed to fetch C288_T3 output file.');
-      });
+            isLoaded: true
+        })
+        alert('Failed to fetch C288_T3 output file.')
+    })
   }
 
+
+
   render() {
-    console.log('Props are - ', this.props);
+    console.log("Props are - ", this.props);
     if (!this.state.isLoaded) return <Spinner />;
     const { DisplacementData, DisplacementData_2, val_x } = this.state;
-    let lable_1 = 'X-Disp amd (mm)';
-    let lable_2 = 'Y-Disp and (mm)';
-    let lable_3 = 'Z-Disp and (mm)';
+    let lable_1 = "X-Disp amd (mm)";
+    let lable_2 = "Y-Disp and (mm)";
+    let lable_3 = "Z-Disp and (mm)";
 
     return (
       <React.Fragment>
@@ -57,12 +61,11 @@ class C288_T3 extends React.Component {
             <Col sm={12} className="text-center mt-4">
               <h1>C288-T3</h1>
             </Col>
+
           </Row>
           <Row className=" mt-4">
             <Col sm={3}>
-              <p>
-                <b>Cora</b> (CORrelation and Analysis) <b>Biofidelic Scale:</b>
-              </p>
+              <p><b>Cora</b> (CORrelation and Analysis) <b>Biofidelic Scale:</b></p>
             </Col>
             <Col sm={9} className="Hardy_et_al-buttons">
               <Button variant="danger">Unacceptable</Button>
@@ -135,7 +138,6 @@ class C288_T3 extends React.Component {
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData['nodal-displacement-3'].z : ''}} data_2={{val_x: DisplacementData_2.time_z_3, val_y: DisplacementData_2.dis_z_3}} label={lable_3} title={"NDTx4"}/>
                     </Col>
                 </Col>
-              </Col>
 
                 <Col md={6} style={{'display': 'flex'}} className="no-padding">
                     <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
@@ -195,7 +197,6 @@ class C288_T3 extends React.Component {
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData['nodal-displacement-7'].z : ''}} data_2={{val_x: DisplacementData_2.time_z_7, val_y: DisplacementData_2.dis_z_7}} label={lable_3} title={"NDTx8"}/>
                     </Col>
                 </Col>
-              </Col>
 
                 <Col md={6} style={{'display': 'flex'}} className="no-padding">
                     <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
@@ -225,129 +226,6 @@ class C288_T3 extends React.Component {
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData['nodal-displacement-9'].z : ''}} data_2={{val_x: DisplacementData_2.time_z_9, val_y: DisplacementData_2.dis_z_9}} label={lable_3} title={"NDTx10"}/>
                     </Col>
                 </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-6'].y
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_y_6,
-                      val_y: DisplacementData_2.dis_y_6
-                    }}
-                    label={lable_2}
-                    title={'NDTx7'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-6'].z
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_z_6,
-                      val_y: DisplacementData_2.dis_z_6
-                    }}
-                    label={lable_3}
-                    title={'NDTx7'}
-                  />
-                </Col>
-              </Col>
-              <Col md={6} style={{ display: 'flex' }} className="no-padding">
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-7'].x
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_x_7,
-                      val_y: DisplacementData_2.dis_x_7
-                    }}
-                    label={lable_1}
-                    title={'NDTx8'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-7'].y
-                        : ''
-                    }}
-                    label={lable_2}
-                    data_2={{
-                      val_x: DisplacementData_2.time_y_7,
-                      val_y: DisplacementData_2.dis_y_7
-                    }}
-                    title={'NDTx8'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-7'].z
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_z_7,
-                      val_y: DisplacementData_2.dis_z_7
-                    }}
-                    label={lable_3}
-                    title={'NDTx8'}
-                  />
-                </Col>
-              </Col>
 
                 <Col md={6} style={{'display': 'flex'}} className="no-padding">
                     <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
@@ -376,107 +254,7 @@ class C288_T3 extends React.Component {
                       {/*eslint-disable-next-line*/}
                       <C288_T3_chart data={{val_x: val_x, val_y : DisplacementData ? DisplacementData['nodal-displacement-11'].z : ''}} data_2={{val_x: DisplacementData_2.time_z_11, val_y: DisplacementData_2.dis_z_11}} label={lable_3} title={"NDTx12"}/>
                     </Col>
-
                 </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-8'].z
-                        : ''
-                    }}
-                    label={lable_3}
-                    data_2={{
-                      val_x: DisplacementData_2.time_z_8,
-                      val_y: DisplacementData_2.dis_z_8
-                    }}
-                    title={'NDTx9'}
-                  />
-                </Col>
-              </Col>
-              <Col md={6} style={{ display: 'flex' }} className="no-padding">
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-9'].x
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_x_9,
-                      val_y: DisplacementData_2.dis_x_9
-                    }}
-                    label={lable_1}
-                    title={'NDTx10'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-9'].y
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_y_9,
-                      val_y: DisplacementData_2.dis_y_9
-                    }}
-                    label={lable_2}
-                    title={'NDTx10'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-9'].z
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_z_9,
-                      val_y: DisplacementData_2.dis_z_9
-                    }}
-                    label={lable_3}
-                    title={'NDTx10'}
-                  />
-                </Col>
-              </Col>
 
                 <Col md={6} style={{'display': 'flex'}} className="no-padding">
                     <Col sm={3} style={{'flex': '0 0 33%','max-width': '33%',margin: 'auto'}}>
@@ -509,156 +287,6 @@ class C288_T3 extends React.Component {
                 </>
             }
 
-              <Col md={6} style={{ display: 'flex' }} className="no-padding">
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-12'].x
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_x_12,
-                      val_y: DisplacementData_2.dis_x_12
-                    }}
-                    label={lable_1}
-                    title={'NDTx13'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-12'].y
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_y_12,
-                      val_y: DisplacementData_2.dis_y_12
-                    }}
-                    label={lable_2}
-                    title={'NDTx13'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-12'].z
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_z_12,
-                      val_y: DisplacementData_2.dis_z_12
-                    }}
-                    label={lable_3}
-                    title={'NDTx13'}
-                  />
-                </Col>
-              </Col>
-              <Col md={6} style={{ display: 'flex' }} className="no-padding">
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-13'].x
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_x_13,
-                      val_y: DisplacementData_2.dis_x_13
-                    }}
-                    label={lable_1}
-                    title={'NDTx14'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-13'].y
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_y_13,
-                      val_y: DisplacementData_2.dis_y_13
-                    }}
-                    label={lable_2}
-                    title={'NDTx14'}
-                  />
-                </Col>
-                <Col
-                  sm={3}
-                  style={{
-                    flex: '0 0 33%',
-                    'max-width': '33%',
-                    margin: 'auto'
-                  }}
-                >
-                  {/*eslint-disable-next-line*/}
-                  <C288_T3_chart
-                    data={{
-                      val_x: val_x,
-                      val_y: DisplacementData
-                        ? DisplacementData['nodal-displacement-13'].z
-                        : ''
-                    }}
-                    data_2={{
-                      val_x: DisplacementData_2.time_z_13,
-                      val_y: DisplacementData_2.dis_z_13
-                    }}
-                    label={lable_3}
-                    title={'NDTx14'}
-                  />
-                </Col>
-              </Col>
-            </>
-          )}
         </Row>
         {/*============== Chats section end ===============*/}
       </React.Fragment>
