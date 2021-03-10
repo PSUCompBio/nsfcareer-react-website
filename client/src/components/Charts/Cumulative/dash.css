@@ -29,15 +29,21 @@
   /* margin-top:30px !important; */
   background-color: #2b4fc4e5 !important;
   margin-top: 10px !important;
-  padding-left: 40px !important;
-  padding-right: 40px !important;
+  /* padding-left: 20px !important;
+  padding-right: 20px !important; */
   font-weight: bold !important;
-  font-size: 20px !important;
+  font-size: 15px !important;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   border-radius: 0.3em !important;
-  margin:auto;
+  /* margin:auto; */
+  width:200px !important;
 }
-
+.brain_btn{
+margin-left: 5rem;
+}
+.plot_btn{
+margin-left:5rem
+}
 /* #motor_and_sensor_cortex {
   padding: 6px 0px 6px 0px;
   width: 83px !important;
@@ -221,5 +227,15 @@ span.sphere_count {
     margin-left:0px !important;
    
   }
+  .brain_btn {
+margin:auto !important;
+margin-top: 10px !important;
+display: flex !important;
+  }
+  .plot_btn{
+    margin:auto !important;
+    margin-top: 10px !important;
+    display: flex !important;
+      }
 }
 
