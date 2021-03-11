@@ -9794,7 +9794,7 @@ app.post(`${apiPrefix}api/v1/images/SummaryBrainImages/`,upload.fields([]) ,(req
     }
 })
 
-app.post(`${apiPrefix}api/v1/images/LabledBrainImages/`,upload.fields([]) ,(req, res) => {
+app.post(`${apiPrefix}api/v1/images/BrainImages/`,upload.fields([]) ,(req, res) => {
     // console.log('req ---------------\n',req.body);
     if (!req.body.account_id) {
         res.send('Url must contains account Id.');
@@ -9846,6 +9846,145 @@ app.post(`${apiPrefix}api/v1/images/LabledBrainImages/`,upload.fields([]) ,(req,
                                                 var masXsr_15_max = await getBrainImageLink(account_id, event_id, 'masXsr-15-max.png');
                                                 var maximum_PSxSR = await getBrainImageLink(account_id, event_id, 'maximum-PSxSR.png');
                                                 var principal_min_strain = await getBrainImageLink(account_id, event_id, 'principal-min-strain.png');
+                                                var data = {
+                                                    principal_max_strain: principal_max_strain ? `${principal_max_strain}` : 'Image not found',
+                                                    CSDM_5: CSDM_5 ? `${CSDM_5}` : 'Image not found',
+                                                    CSDM_10: CSDM_10 ? `${CSDM_10}` : 'Image not found',
+                                                    CSDM_15: CSDM_15 ? `${CSDM_15}` : 'Image not found',
+                                                    CSDM_30: CSDM_30 ? `${CSDM_30}` : 'Image not found',
+                                                    MPS_95: MPS_95 ? `${MPS_95}` : 'Image not found',
+                                                    MPSR_120: MPSR_120 ? `${MPSR_120}` : 'Image not found',
+                                                    MPSxSR_28: MPSxSR_28 ? `${MPSxSR_28}` : 'Image not found',
+                                                    MPSxSR_95: MPSxSR_95 ? `${MPSxSR_95}` : 'Image not found',
+                                                    axonal_strain_max: axonal_strain_max ? `${axonal_strain_max}` : 'Image not found',
+                                                    masXsr_15_max: masXsr_15_max ? `${masXsr_15_max}` : 'Image not found',
+                                                    maximum_PSxSR: maximum_PSxSR ? `${maximum_PSxSR}` : 'Image not found',
+                                                    principal_min_strain: principal_min_strain ? `${principal_min_strain}` : 'Image not found'
+                                                };
+                                                
+                                                var json = JSON.stringify(data); // so let's encode it
+
+                                                var filename = 'result.json'; // or whatever
+                                                var mimetype = 'application/json';
+                                                console.log('all executed')
+                                               
+                                                res.writeHead(200, {
+                                                    'Content-Type': 'application/json',
+                                                    'Content-Disposition': 'attachment; filename="filename.pdf"'
+                                                });
+                                                const download = Buffer.from(json);
+                                                res.end(download);
+                                            } else {
+                                                res.status(500).send({
+                                                    status: 'failure',
+                                                    message: "No player found for given account Id."
+                                                })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log('err', err);
+                                            res.send({
+                                                status: 'failure',
+                                                error: err
+                                            })
+                                        })
+                                }
+                            })
+                        }
+                    })
+
+                }
+            });
+    }
+})
+
+function getLabelBrainImageLink(account_id,image_id,file){
+	var fielPath = `${account_id}/simulation/${image_id}/LabeledBrainImages/${file}`
+    console.log('fielPath ---------', fielPath)
+    return new Promise((resolve, reject) => {
+        if (fielPath) {
+            var params = {
+                Bucket: BUCKET_NAME,
+                Key: fielPath,
+                Expires: 1800
+            };
+            s3.getSignedUrl('getObject', params, function (err, url) {
+                if (err) {
+				console.log("err1",err);
+                    reject('');
+                } else {
+                    getFileFromS3(fielPath)
+                        .then(res => {
+                            console.log(file, res);
+                            if (res != null) {
+								console.log("url",url);
+                                resolve(url);
+                            } else {
+								console.log("err2",err);
+                                resolve('');
+                            }
+                        })
+
+                }
+            });
+        } else {
+            resolve('');
+        }
+    })
+}
+
+app.post(`${apiPrefix}api/v1/images/LabledBrainImages/`,upload.fields([]) ,(req, res) => {
+    // console.log('req ---------------\n',req.body);
+    if (!req.body.account_id) {
+        res.send('Url must contains account Id.');
+    }else if(!req.body.event_id){
+        res.send('Url must contains event Id.');
+    } else {
+        const { account_id, event_id } = req.body;
+        var user_type = "standard";
+        hadleAuthanticat(req.body.user, req.body.password)
+            .then(response => {
+                console.log('response===================\n', response)
+                if (response.message == 'failure') {
+                    res.send({
+                        message: "failure",
+                        error: response.error
+                    })
+                } else {
+                    login(req.body.user, response.password, user_type, (err, data) => {
+                        if (err) {
+                            res.send({
+                                message: "failure",
+                                error: err
+                            })
+                        }
+                        else {
+                            getUser(req.body.user, function (err, data) {
+                                if (err) {
+                                    console.log(err);
+
+                                    res.send({
+                                        message: "failure",
+                                        error: err
+                                    });
+                                } else {
+                                    getPlayerImageDetailsByaccoutId(account_id)
+                                        .then(async result => {
+                                            // console.log('result ------------\n',result)
+                                            if (result.length > 0) {
+                                                var principal_max_strain = await getLabelBrainImageLink(account_id, event_id, 'principal-max-strain.png');
+                                                var CSDM_5 = await getLabelBrainImageLink(account_id, event_id, 'CSDM-5.png');
+                                                var CSDM_10 = await getLabelBrainImageLink(account_id, event_id, 'CSDM-10.png');
+                                                var CSDM_15 = await getLabelBrainImageLink(account_id, event_id, 'CSDM-15.png');
+                                                var CSDM_30 = await getLabelBrainImageLink(account_id, event_id, 'CSDM-30.png');
+                                                var MPS_95 = await getLabelBrainImageLink(account_id, event_id, 'MPS-95.png');
+                                                var MPSR_120 = await getLabelBrainImageLink(account_id, event_id, 'MPSR-120.png');
+                                                var MPSxSR_28 = await getLabelBrainImageLink(account_id, event_id, 'MPSxSR-28.png');
+                                                var MPSxSR_95 = await getLabelBrainImageLink(account_id, event_id, 'MPSxSR-95.png');
+                                                var axonal_strain_max = await getLabelBrainImageLink(account_id, event_id, 'axonal-strain-max.png');
+                                                var masXsr_15_max = await getLabelBrainImageLink(account_id, event_id, 'masXsr-15-max.png');
+                                                var maximum_PSxSR = await getLabelBrainImageLink(account_id, event_id, 'maximum-PSxSR.png');
+                                                var principal_min_strain = await getLabelBrainImageLink(account_id, event_id, 'principal-min-strain.png');
                                                 var data = {
                                                     principal_max_strain: principal_max_strain ? `${principal_max_strain}` : 'Image not found',
                                                     CSDM_5: CSDM_5 ? `${CSDM_5}` : 'Image not found',
@@ -9956,6 +10095,8 @@ app.post(`${apiPrefix}api/v2/upload/sensor/`, upload.fields([{ name: "filename",
                                 req.body["sensor"] = 'biocore';
                             } else if (sensor.toLowerCase() == 'athlete intelligence') {
                                 req.body["sensor"] = 'athlete';
+                            } else if (sensor.toLowerCase() == 'linx ias') {
+                                req.body["sensor"] = 'linx_ias';
                             } else {
                                 req.body["sensor"] = sensor;
                             }

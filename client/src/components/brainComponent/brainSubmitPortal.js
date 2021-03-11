@@ -75,7 +75,7 @@ class BrainSubmitPortal extends React.Component {
         for (var i = 0; i < files.length; i++) {
             let file = this.getUploadFileExtension3(files[i].path);
             // console.log('file',file)
-            if (file === 'json' || file === 'csv' || file === 'NAP1transf') {
+            if (file === 'json' || file === 'csv' || file === 'NAP1transf' || file === 'xlsx') {
                 this.setState(prevState => ({
                     files: prevState.files.concat(files[i])
                 }))
@@ -116,7 +116,9 @@ class BrainSubmitPortal extends React.Component {
             return "csv";
         } else if (new RegExp(".NAP1transf").test(url)) {
             return "NAP1transf";
-        } else {
+        } else if (new RegExp(".xlsx").test(url)) {
+            return "xlsx";
+        }else {
             return `${url.split('.').pop()} file not supported`;
         }
     }
@@ -130,7 +132,7 @@ class BrainSubmitPortal extends React.Component {
             if (fileType === 'json') {
                 let data = JSON.parse(e.target.result);
                 data = data[0]
-                console.log('data', data)
+                // console.log('data', data)
                 if (data && data.player) {
                     the.setState(prevState =>
                     ({
@@ -153,7 +155,7 @@ class BrainSubmitPortal extends React.Component {
                     alert(`${file.name} file data farmat invalid.`);
                 }
             } else {
-
+                console.log('data of file ', e.target.result)
                 the.setState(prevState =>
                 ({
                     list: prevState.list.concat({
@@ -329,12 +331,15 @@ class BrainSubmitPortal extends React.Component {
         // Create jobs log and send mail to user ...
 
         const user = userData['userInfo']['email'];
-        createJoblogs({ email: user, listJobs: listJobs })
+        if(sensor !== 'Linx IAS'){
+            createJoblogs({ email: user, listJobs: listJobs })
             .then(res => {
                 console.log('res', res);
             }).catch(err => {
                 console.log('err', err)
             })
+        }
+      
 
         const reloadPage = () => {
             setInterval(() => {
