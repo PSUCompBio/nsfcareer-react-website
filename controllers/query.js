@@ -19,7 +19,7 @@ function getUserDetails(user_name, cb) {
             Key: {
                 user_cognito_id: user_name,
             },
-            ProjectionExpression: "last_name,first_name,team,sensor,organization,sensor_id_number,player_position, user_cognito_id",
+            ProjectionExpression: "account_id,last_name,first_name,team,sensor,organization,sensor_id_number,player_position, user_cognito_id",
 			};
         docClient.get(db_table, function (err, data) {
             if (err) {
@@ -1907,6 +1907,29 @@ function getUserDbData(user_name, cb) {
             cb("", data);
         }
     });
+}
+function getUserDbDataByAccountId(account_id) {
+	return new Promise((resolve, reject) => {
+        var params = {
+			TableName: 'users',
+			FilterExpression: "account_id = :account_id",
+			ExpressionAttributeValues: {
+				":account_id": account_id
+			}
+		};        
+		 var item = [];
+		 docClient.scan(params).eachPage((err, data, done) => {
+			if (err) {
+				reject(err);
+			}
+			if (data == null) {
+				resolve(concatArrays(item));
+			} else {
+				item.push(data.Items);
+			}
+			done();
+		});
+    });   
 }
 function getUserTokenDBDetails(user_name, cb) {
     var db_table = {
@@ -3956,5 +3979,6 @@ module.exports = {
     getUserDetailByAccountId,
 	getOrgpTeamFromSensorDetails,
 	getOrgFromSensorDetailsr,
-    addJobslog
+    addJobslog,
+	getUserDbDataByAccountId
 };

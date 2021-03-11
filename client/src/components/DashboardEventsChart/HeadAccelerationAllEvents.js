@@ -61,6 +61,7 @@ class HeadAccelerationAllEvents extends React.Component {
             isDisplay: { display: 'none' },
             simulationData: '',
             Brainimages: '',
+            showArrow: "hidearrow",
             data: {
                 labels: this.props.data.time,
                 fill: false,
@@ -172,10 +173,19 @@ class HeadAccelerationAllEvents extends React.Component {
 			var accountid = response1.data.data[0].account_id;
 			getAllBrainImageByimageID({ accountid: accountid, imageid: imageid})
 			.then(imageresponse1 => {
-				console.log('jsondata image data ----\n', imageresponse1.data.data)
+				console.log('jsondata image data ----\n', imageresponse1.data.data)											
 				this.setState({
 					Brainimages: imageresponse1.data.data,
 				});
+				if(this.state.Brainimages.CSDM_5 == "Image not found" && this.state.Brainimages.CSDM_10 == "Image not found" && this.state.Brainimages.CSDM_15 == "Image not found" && this.state.Brainimages.CSDM_30 == "Image not found" && this.state.Brainimages.MPS_95 == "Image not found" && this.state.Brainimages.MPSR_120 == "Image not found" && this.state.Brainimages.MPSxSR_28 == "Image not found" && this.state.Brainimages.MPSxSR_95 == "Image not found" && this.state.Brainimages.axonal_strain_max == "Image not found" && this.state.Brainimages.masXsr_15_max == "Image not found" && this.state.Brainimages.maximum_PSxSR == "Image not found"  && this.state.Brainimages.principal_min_strain == "Image not found"  && this.state.Brainimages.principal_max_strain == "Image not found"){
+					this.setState({
+						showArrow: "hidearrow",
+					});
+				}else{
+					this.setState({
+						showArrow: "showarrow",
+					});
+				}
 			})
 		})
     }
@@ -284,13 +294,15 @@ class HeadAccelerationAllEvents extends React.Component {
                                         </div>
                                     */}
                                    <div style={{'display': 'inline-flex','width': '100%'}}>
-									   { /*<button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button> */ }
-                                    <button className={this.state.buttonType === "Finite" ? "btn btn-primary  settings-buttons-active" : "btn btn-primary"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
+									   <button className={this.state.buttonType === "Machine" ? "btn btn-primary player-dashboard-machinelearning-button settings-buttons-active" : "btn btn-primary player-dashboard-machinelearning-button"} onClick={()=>this.setState({buttonType:"Machine" })}>Machine Learning</button> 
+                                    <button className={this.state.buttonType === "Finite" ? "btn btn-primary  settings-buttons-active player-dashboard-machinelearning-button" : "btn btn-primary player-dashboard-machinelearning-button"} style={{'margin-left':'1%'}} onClick={()=>this.setState({buttonType:"Finite" })}>Finite Element Modeling</button>
                                    </div>    
+								   {this.state.buttonType === "Finite" ? 
+								   <>
 								   {this.sliderImages1}								   
 										{this.state.Brainimages ?
 										
-											<div class={"branimage"}>
+											<div class={"branimage "+this.state.showArrow}>
 											<Carousel class={"branimage"}>	
 										{this.state.Brainimages.CSDM_5 != "Image not found" ?
 											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_5} alt="" /></Carousel.Item>
@@ -360,6 +372,11 @@ class HeadAccelerationAllEvents extends React.Component {
 												<i class={"fa fa-spinner fa-spin"} style={{'font-size': '48px','margin-top': '23%'}}></i>
 											</div>
 										}
+										</>
+										 :
+                                        <img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.simulationData.machinLearningImage ? 'data:image/png;base64,' + this.state.simulationData.machinLearningImage :  "/img/machine_learning_img.png"} alt="" />
+
+                                    }
                                      {
                                     !this.props.data.sensor_data ?
                                        null

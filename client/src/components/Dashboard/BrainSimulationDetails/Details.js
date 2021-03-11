@@ -974,7 +974,7 @@ class Details extends React.Component {
                     <>
                       <p>Name: {this.state.simulation_data ? this.state.simulation_data.sensor_data.player['first-name'] + ' ' + this.state.simulation_data.sensor_data.player['last-name'] : ''}</p>
                       <p >
-                        Account ID: <a target='_blank' href={'/profile?id=' + this.state.player_data.user_cognito_id}>
+                        Account ID: <a target='_blank' href={'/profile?id=' + this.state.account_id}>
                           {this.state.account_id}
                         </a>
                       </p>

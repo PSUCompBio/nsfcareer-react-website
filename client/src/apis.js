@@ -373,6 +373,17 @@ export const getUserDBDetails = (request) =>{
       });
   })
 }
+export const getUserDetailsByAccountID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUserDetailsByAccountID`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const getUserDataByPlayerID = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getUserDataByPlayerID`, request,{withCredentials: true})

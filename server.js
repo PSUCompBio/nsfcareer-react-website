@@ -232,7 +232,8 @@ const {
     getOrgpPlayerFromUser,
     getOrgpTeamFromSensorDetails,
     getOrgFromSensorDetailsr,
-    addJobslog
+    addJobslog,
+	getUserDbDataByAccountId,
 
 } = require('./controllers/query');
 
@@ -2370,7 +2371,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
                             .then(success => {
                                 res.send({
                                     message: "success",
-                                    message_details: "Successfully mereged account ! Your manul signUp has been completed successfully, You can update your profile from profile page",
+                                    message_details: "Successfully mereged account! Your manul signUp has been completed successfully, You can update your profile from profile page",
                                     user_cognito_id: user_cognito_id
                                 })
                             }).catch(err => {
@@ -2590,7 +2591,7 @@ app.post(`${apiPrefix}signUp`, (req, res) => {
 
                                                     res.send({
                                                         message: "success",
-                                                        message_details: req.body['isSocialAccount'] == 'yes' ? 'Your account created successfully. Please log In' : "Successfully created account ! Check your mail to verify your account.",
+                                                        message_details: req.body['isSocialAccount'] == 'yes' ? 'Your account created successfully. Please log In' : "Successfully created account! Check your mail to verify your account",
                                                         user_cognito_id: user_cognito_id,
                                                         account_id: req.body["account_id"],
                                                     })
@@ -4433,17 +4434,21 @@ app.post(`${apiPrefix}getPlayerList`, (req, res) => {
                                     if (record.simulation_data[0]) {
                                         getPlayerSimulationStatus(record.simulation_data[0].image_id)
                                             .then(simulation => {
-                                                // console.log('simulation',simulation.status)
-                                                k++;
+                                                // console.log('simulation',simulation.status
                                                 p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
                                                 p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
-
-                                                if (k == p_datalen) {
-                                                    res.send({
-                                                        message: "success",
-                                                        data: p_data
-                                                    })
-                                                }
+												getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0])
+                                                .then(u_detail => {
+                                                    k++;
+                                                    // console.log('user details ', u_detail[0]['first_name'])
+                                                    p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
+                                                    if (k == p_data.length) {                            
+														res.send({
+															message: "success",
+															data: p_data,
+														})
+													} 
+                                                })
                                             })
                                             .catch(err => {
                                                 console.log(err);
@@ -4584,11 +4589,11 @@ app.post(`${apiPrefix}loadMorePlayerList`, (req, res) => {
                                             p_data[index]['simulation_data'][0]['simulation_status'] = simulation ? simulation.status : '';
                                             p_data[index]['simulation_data'][0]['computed_time'] = simulation ? simulation.computed_time : '';
 
-                                            getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0] + '-' + record.simulation_data[0]['sensor'])
+                                            getUserDetailByPlayerId(record.simulation_data[0].player_id.split('$')[0])
                                                 .then(u_detail => {
 
                                                     k++;
-                                                    // console.log('user details ', u_detail[0]['first_name'])
+                                                   // console.log('user details ', u_detail[0]['account_id'])
                                                     p_data[index]['simulation_data'][0]['user_data'] = u_detail.length > 0 ? u_detail[0] : '';
                                                     if (k == p_data.length) {
                                                         let requested_players = []
@@ -4849,6 +4854,8 @@ app.post(`${apiPrefix}getUserDBDetails`, VerifyToken, (req, res) => {
         }
     });
 });
+//getting only user db details
+
 
 
 app.post(`${apiPrefix}getUserTokenDBDetails`, (req, res) => {
@@ -4939,8 +4946,215 @@ app.post(`${apiPrefix}getAvatarInspection`, VerifyToken, (req, res) => {
             error: 'User cognito id is required '
         })
     }
-})
+}) 
 
+app.post(`${apiPrefix}getUserDetailsByAccountID`, VerifyToken, (req, res) => {
+    // If request comes to get detail of specific player
+    console.log(req.body);
+    if (req.body.user_cognito_id) {
+        req.user_cognito_id = req.body.user_cognito_id;
+    }
+    getUserDbDataByAccountId(req.user_cognito_id).then(data => {
+        console.log("userData",data[0])
+            var userData = data[0];
+            if (userData) {
+                if (userData && userData.account_id) {
+                    req.user_cognito_id = userData.account_id;
+                }
+
+                getUploadedImageFileList(req.user_cognito_id, function (err, list) {
+                    if (err) {
+                        console.log(err);
+
+                    }
+                    else {
+                        // Fetches the latest profile pic
+                        var latestProfilePic = list.reduce(function (oldest, profile_pic) {
+                            return oldest.LastModified > profile_pic.LastModified ? oldest : profile_pic;
+                        }, {});
+                        // Now get the signed URL link  from S3
+                        // if no S3 link is found then send empty data link
+                        // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                        // No file is uploaded
+                        var key
+                        if (list.length != 0) {
+                            key = latestProfilePic.Key;
+                        }
+                        else {
+                            key = req.user_cognito_id + "/profile/image/" + req.user_cognito_id;
+                        }
+
+                        getFileSignedUrl(key, function (err, url) {
+                            if (err) {
+                                console.log(err);
+                                userData["profile_picture_url"] = "";
+                                userData["avatar_url"] = "";
+                                res.send({
+                                    message: "success",
+                                    data: userData
+                                })
+                            }
+                            else {
+                                if (list.length == 0) {
+                                    userData["profile_picture_url"] = "";
+                                }
+                                else {
+                                    userData["profile_picture_url"] = url;
+                                }
+
+                                // Getting Avatar URL
+                                getUploadedModelFileList(req.user_cognito_id, function (err, list) {
+
+                                    userData["avatar_url"] = "";
+                                    if (err) {
+                                        console.log(err);
+                                        res.send({
+                                            message: "failure 6",
+                                            data: userData
+                                        })
+
+                                    }
+                                    else {
+
+
+                                        // Fetches the latest profile pic
+                                        var latestModel = list.reduce(function (oldest, latest_model) {
+                                            return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                        }, {});
+                                        // Now get the signed URL link  from S3
+                                        // if no S3 link is found then send empty data link
+                                        // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                        // No file is uploaded
+                                        var model_key
+                                        if (list.length != 0) {
+                                            model_key = latestModel.Key;
+                                        }
+                                        else {
+                                            model_key = req.user_cognito_id + "/profile/model/" + req.user_cognito_id;
+                                        }
+
+
+
+                                        getFileSignedUrl(model_key, function (err, url) {
+                                            if (err) {
+                                                console.log(err);
+                                                userData["avatar_url"] = "";
+                                                res.send({
+                                                    message: "failure 5",
+                                                    data: userData
+                                                })
+                                            }
+                                            else {
+                                                if (list.length == 0) {
+                                                    userData["avatar_url"] = "";
+                                                }
+                                                else {
+                                                    userData["avatar_url"] = url;
+                                                }
+                                                // fetch inf url also here
+                                                getINPFile(req.user_cognito_id).then((url) => {
+                                                    userData["inp_file_url"] = url;
+
+                                                    getVtkFileLink(req.user_cognito_id)
+                                                        .then(url => {
+                                                            userData["vtk_file_url"] = url;
+
+                                                            getSimulationFile(req.user_cognito_id, function (err, list) {
+                                                                userData["simulation_file_url"] = "";
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                    res.send({
+                                                                        message: "failure 4",
+                                                                        data: userData
+                                                                    })
+
+                                                                }
+                                                                else {
+
+                                                                    // Fetches the latest profile pic
+                                                                    var latestModel = list.reduce(function (oldest, latest_model) {
+                                                                        return oldest.LastModified > latest_model.LastModified ? oldest : latest_model;
+                                                                    }, {});
+                                                                    // Now get the signed URL link  from S3
+                                                                    // if no S3 link is found then send empty data link
+                                                                    // KEY : req.user_cognito_id + "/profile/" + req.user_cognito_id ;
+                                                                    // No file is uploaded
+                                                                    var model_key
+                                                                    if (list.length != 0) {
+                                                                        model_key = latestModel.Key;
+                                                                    }
+                                                                    else {
+                                                                        model_key = req.user_cognito_id + "/profile/simulation/" + req.user_cognito_id;
+                                                                    }
+                                                                    getFileSignedUrl(model_key, function (err, url) {
+                                                                        if (err) {
+                                                                            console.log(err);
+                                                                            userData["simulation_file_url"] = "";
+                                                                            res.send({
+                                                                                message: "failure 3",
+                                                                                data: userData
+                                                                            })
+                                                                        }
+                                                                        else {
+                                                                            if (list.length == 0) {
+                                                                                userData["simulation_file_url"] = "";
+                                                                            }
+                                                                            else {
+                                                                                userData["simulation_file_url"] = url;
+                                                                            }
+                                                                            res.send({
+                                                                                message: "success",
+                                                                                data: userData
+                                                                            })
+
+                                                                        }
+                                                                    })
+                                                                }
+                                                            })
+
+
+                                                        })
+                                                        .catch(err => {
+                                                            res.send({
+                                                                message: "failure 2",
+                                                                error: err
+                                                            })
+                                                        })
+
+
+                                                })
+                                                    .catch((err) => {
+                                                        res.send({
+                                                            message: "failure 1"
+                                                        })
+                                                    })
+                                            }
+
+                                        }, 'avatar')
+
+                                    }
+
+                                })
+                            }
+                        });
+                    }
+                })
+            } else {
+                res.send({
+                    message: "failure",
+                    data: {}
+                })
+            }
+
+        
+    }).catch(err => {
+			res.send({
+				message: "failure 7",
+				error: err,
+				data: []
+			})
+		})
+});
 app.post(`${apiPrefix}getUserDetails`, VerifyToken, (req, res) => {
     // If request comes to get detail of specific player
     console.log(req.body);

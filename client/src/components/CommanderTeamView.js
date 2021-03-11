@@ -607,7 +607,8 @@ class CommanderTeamView extends React.Component {
     getUrl = (obj) => {
         if (obj && this.state.userDetails.level > 300) {
             // eslint-disable-next-line
-            return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.user_cognito_id}>Profile</a>;
+			console.log("obj",obj);
+            return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.account_id}>Profile</a>;
         } else {
             return <button className="btn btn-primary" disabled={true}>Profile</button>;
         }

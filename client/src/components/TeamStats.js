@@ -398,9 +398,9 @@ class TeamStats extends React.Component {
 			console.log("final",maxval);
 		var ylabel = '';
 		if(this.state.brainPosition == 'principal-max-strain' ){
-			ylabel = 'Average Principal Strain';
+			ylabel = 'Avg. Maximum Principal Strain';
 		}else if(this.state.brainPosition == 'principal-min-strain' ){
-			ylabel = 'Min Principal Strain';			
+			ylabel = 'Avg. Minimum Principal Strain';			
 		}else if(this.state.brainPosition == 'csdm-15' ){
 			ylabel = 'CSDM 15';			
 		}
@@ -651,8 +651,8 @@ class TeamStats extends React.Component {
                                                     <select 
                                                         onChange={this.handlePostionMetric}
                                                     >
-                                                        <option value="principal-max-strain">Max Principal Strain</option>
-                                                        <option value="principal-min-strain">Min Principal Strain</option>
+                                                        <option value="principal-max-strain">Avg. Maximum Principal Strain</option>
+                                                        <option value="principal-min-strain">Avg. Minimum Principal Strain</option>
                                                         <option value="csdm-15">CSDM 15</option>
 
                                                     </select>
@@ -662,7 +662,7 @@ class TeamStats extends React.Component {
                                                 </div>
                                             </div>
                                             :
-                                            <div className="col-md-12 no-padding">
+                                            <div className="col-md-12 no-padding text-center">
                                                 <p className="video-lebel text-center">Brain Loading by Sport</p>
                                                 <p className="circle-sub-title"
                                                     style={{
@@ -676,12 +676,12 @@ class TeamStats extends React.Component {
                                                     'padding': '8px'
                                                 }}>
                                                     <select style={{
-                                                        'float': 'right'
+                                                        'padding': '8px','text-align': 'center'
                                                     }}
                                                         onChange={this.handlePostionMetric}
                                                     >
-                                                        <option value="principal-max-strain">Max Principal Strain</option>
-                                                        <option value="principal-min-strain">Min Principal Strain</option>
+                                                        <option value="principal-max-strain">Avg. Maximum Principal Strain</option>
+                                                        <option value="principal-min-strain">Avg. Minimum Principal Strain</option>
                                                         <option value="csdm-15">CSDM 15</option>
                                                     </select>
                                                 </div>

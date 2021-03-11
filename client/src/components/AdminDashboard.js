@@ -1874,7 +1874,7 @@ setProcessingState = (msg) => {
                                                                                             */}
                                                                         <td style={{ alignItems: "center" }}>{dateTime.split(' ')[0]}</td>
                                                                         <td style={{ alignItems: "center" }}>{this.tConvert(dateTime.split(' ')[1])}</td>
-                                                                        <td style={{ alignItems: "center" }}><a className="btn btn-primary" target='_blank' href={"/profile?id=" + player.simulation_data[0].user_cognito_id}>Profile</a></td>
+                                                                        <td style={{ alignItems: "center" }}><a className="btn btn-primary" target='_blank' href={"/profile?id=" + player.simulation_data[0].user_data.account_id}>Profile</a></td>
                                                                     </tr>;
                                                                 } else {
                                                                     return false;
@@ -1891,7 +1891,7 @@ setProcessingState = (msg) => {
                                                                         <td>-</td>
                                                                         <td>-</td>
                                                                         <td>-</td>
-                                                                        <td style={{ alignItems: "center" }}><a className="btn btn-primary" target='_blank' href={"/profile?id=" + r_player.user_cognito_id}>Profile</a></td>
+                                                                        <td style={{ alignItems: "center" }}><a className="btn btn-primary" target='_blank' href={"/profile?id=" + r_player.user_data.account_id}>Profile</a></td>
 
                                                                     </tr>
                                                                 } else {
