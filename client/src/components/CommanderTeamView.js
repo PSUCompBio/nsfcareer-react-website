@@ -567,6 +567,7 @@ class CommanderTeamView extends React.Component {
     }
 
     tConvert = (time) => {
+        console.log('tConvert ---- called')
         // Check correct time format and split into components
 		if(time !== undefined){
 		console.log("time",time);
@@ -586,6 +587,7 @@ class CommanderTeamView extends React.Component {
 		}
 	}
     converTime =(time)=>{
+        console.log('converTime ---- called')
         // let time = player.simulation_data[0]['time'].toString();
         time =  time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time] ;
         if (time.length > 1) { // If time format correct
