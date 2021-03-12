@@ -9864,7 +9864,8 @@ app.post(`${apiPrefix}api/upload/sensor`, upload.fields([{ name: "filename", max
                                                                 //res.send(body);
                                                                 res.send({
                                                                     message: "success",
-                                                                    data: body
+                                                                    data: body,
+                                                                    playerDetails: httpResponse.body.playerDetails
                                                                 })
                                                             }
                                                         })
