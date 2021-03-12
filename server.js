@@ -234,6 +234,7 @@ const {
     getOrgFromSensorDetailsr,
     addJobslog,
 	getUserDbDataByAccountId,
+	deleteSensorDataByImageID,
 
 } = require('./controllers/query');
 
@@ -14793,6 +14794,39 @@ app.post(`${apiPrefix}deleteOrgTeam4`, (req, res) => {
             status: 200
         })
     }
+});
+app.post(`${apiPrefix}deleteEventByImageID`, (req, res) => {
+    var data = req.body;
+	 getPlayerSimulationFile({ image_id: data.image_id })
+	.then(image_Data => {
+		 deleteSimulation_imagesData(data.image_id)
+		.then(deldata => {
+			deleteSensorDataByImageID(data.image_id)
+			.then(deldata1 => {
+				if (image_Data.root_path && image_Data.root_path != 'undefined') {
+					emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.root_path+'/' }, function (err, data) {
+							res.send({
+								message: 'success',
+								status: 200
+							})
+					}).catch(err => {
+							console.log("err 2", err);
+					})
+				}else{
+					res.send({
+						message: 'success',
+						status: 200
+					})
+				}
+			}).catch(err => {
+				console.log('deldata  err', err)
+			})
+		}).catch(err => {
+			console.log('deldata1  err', err)
+		})
+	}).catch(err => {
+		console.log('deldata  err', err)
+	}) 
 });
 // Clearing the cookies
 app.post(`${apiPrefix}logOut`, (req, res) => {

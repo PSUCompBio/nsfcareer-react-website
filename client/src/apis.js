@@ -1523,3 +1523,15 @@ export const deleteOrgTeam4 = (request) =>{
       });
   })
 }
+//# deleteOrgTeam4
+export const deleteEventByImageID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteEventByImageID`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
