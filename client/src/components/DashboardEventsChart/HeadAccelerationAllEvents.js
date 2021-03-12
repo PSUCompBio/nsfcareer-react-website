@@ -144,7 +144,7 @@ class HeadAccelerationAllEvents extends React.Component {
         .then(response => {
 			var playerid = this.props.data.sensor_data.player_id;
 			playerid = playerid.split("$");
-			getUserDataByPlayerID({ playerid: playerid[0]})
+			getUserDataByPlayerID({ playerid: playerid[0]+'-'})
 			.then(response1 => {
                 if(response.data.data.jsonOutputFile && response.data.data.jsonOutputFile != undefined){
                     response.data.data.jsonOutputFile["playerdata"] =  response1.data.data[0];
@@ -167,7 +167,7 @@ class HeadAccelerationAllEvents extends React.Component {
         })
 		var playerid = this.props.data.sensor_data.player_id;
 		playerid = playerid.split("$");
-		getUserDataByPlayerID({ playerid: playerid[0]})
+		getUserDataByPlayerID({ playerid: playerid[0]+'-'})
 		.then(response1 => {
 			var imageid = this.props.data.sensor_data.image_id;
 			var accountid = response1.data.data[0].account_id;
@@ -305,66 +305,71 @@ class HeadAccelerationAllEvents extends React.Component {
 											<div class={"branimage "+this.state.showArrow}>
 											<Carousel class={"branimage"}>	
 										{this.state.Brainimages.CSDM_5 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_5} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_5} alt="" /><Carousel.Caption><p>CSDM 5</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>CSDM 5</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.CSDM_10 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_10} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_10} alt="" /><Carousel.Caption><p>CSDM 10</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>CSDM 10</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.CSDM_15 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_15} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_15} alt="" /><Carousel.Caption><p>CSDM 15</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>CSDM 15</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.CSDM_30 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_30} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.CSDM_30} alt="" /><Carousel.Caption><p>CSDM 30</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>CSDM 30</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.MPS_95 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPS_95} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPS_95} alt="" /><Carousel.Caption><p>MPS 95</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>MPS 95</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.MPSR_120 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSR_120} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSR_120} alt="" /><Carousel.Caption><p>MPSR 120</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>MPSR 120</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.MPSxSR_28 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSxSR_28} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSxSR_28} alt="" /><Carousel.Caption><p>MPSxSR 28</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>MPSxSR 28</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.MPSxSR_95 != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSxSR_95} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.MPSxSR_95} alt="" /><Carousel.Caption><p>MPSxSR 95</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>MPSxSR 95</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.axonal_strain_max != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.axonal_strain_max} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.axonal_strain_max} alt="" /><Carousel.Caption><p>Axonal Strain Max</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>Axonal Strain Max</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.masXsr_15_max != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.masXsr_15_max} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.masXsr_15_max} alt="" /><Carousel.Caption><p>MasXsr 15 Max</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>MasXsr 15 Max</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.maximum_PSxSR != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.maximum_PSxSR} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.maximum_PSxSR} alt="" /><Carousel.Caption><p>Maximum PSxSR</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>Maximum PSxSR</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.principal_min_strain != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.principal_min_strain} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.principal_min_strain} alt="" /><Carousel.Caption><p>Principal Min Strain</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p><Carousel.Caption><p>Principal Min Strain</p></Carousel.Caption></Carousel.Item>
 										}
 										{this.state.Brainimages.principal_max_strain != "Image not found" ?
-											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.principal_max_strain} alt="" /></Carousel.Item>
-										: null
+											<Carousel.Item><img className={`img-fluid ${'svg'}`} width="100%" height="60%" src={this.state.Brainimages.principal_max_strain} alt="" /><Carousel.Caption><p>Principal Max Strain</p></Carousel.Caption></Carousel.Item>
+										: 
+											<Carousel.Item><p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p> <Carousel.Caption><p>Principal Max Strain</p></Carousel.Caption></Carousel.Item>
 										}
-										{this.state.Brainimages.CSDM_5 == "Image not found" && this.state.Brainimages.CSDM_10 == "Image not found" && this.state.Brainimages.CSDM_15 == "Image not found" && this.state.Brainimages.CSDM_30 == "Image not found" && this.state.Brainimages.MPS_95 == "Image not found" && this.state.Brainimages.MPSR_120 == "Image not found" && this.state.Brainimages.MPSxSR_28 == "Image not found" && this.state.Brainimages.MPSxSR_95 == "Image not found" && this.state.Brainimages.axonal_strain_max == "Image not found" && this.state.Brainimages.masXsr_15_max == "Image not found" && this.state.Brainimages.maximum_PSxSR == "Image not found"  && this.state.Brainimages.principal_min_strain == "Image not found"  && this.state.Brainimages.principal_max_strain == "Image not found"  ?
 										
-											<div style={{'width':'100%','height':'200px'}}>
-												<p style={{'font-size': '48px','margin-top': '23%'}}> Image not found </p>
-											</div>
-																				
-										:null 
-										
-										}
 											</Carousel>
 											</div>
 											: 

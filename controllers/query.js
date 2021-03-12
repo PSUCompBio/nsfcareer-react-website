@@ -3490,6 +3490,23 @@ function deleteSimulation_imagesData(image_id){
         });
     });
 }
+function deleteSensorDataByImageID(image_id){
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            Key: {
+                image_id: image_id,
+            },
+        };
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
 
 function getModalValidationDB(image_id){
     return new Promise((resolve, reject) => {
@@ -3980,5 +3997,6 @@ module.exports = {
 	getOrgpTeamFromSensorDetails,
 	getOrgFromSensorDetailsr,
     addJobslog,
-	getUserDbDataByAccountId
+	getUserDbDataByAccountId,
+	deleteSensorDataByImageID
 };

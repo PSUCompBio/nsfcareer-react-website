@@ -1411,9 +1411,9 @@ class Details extends React.Component {
   }
 
   componentDidMount() {	
-	var playerid = this.props.match.params.player_id.split('$')[0];
-	console.log("playerid",playerid);
-	getUserDataByPlayerID({ playerid: playerid})
+	var playerid1 = this.props.match.params.player_id.split('$')[0];
+	console.log("playerid1",playerid1+'-');
+	getUserDataByPlayerID({ playerid: playerid1+'-'})
 	.then(response1 => {
 		var imageid = this.props.match.params.image_id;
 		var accountid = response1.data.data[0].account_id;

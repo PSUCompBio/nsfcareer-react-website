@@ -1002,8 +1002,8 @@ class Report extends React.Component {
                         <View style={styles.tableRow}>
 
                             <Text style={styles.tableColLeft}> Sex : <Text style={{color:'#2d549a'}}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"} </Text></Text>
-                            <Text style={styles.tableColLeft}> Impact Time : <Text style={{color:'#2d549a'}}> {this.state.impact_time} </Text> </Text>
-                            <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{this.state.data['organization']?this.state.data['organization']:this.state.data1.organization}</Text></Text>
+                            <Text style={styles.tableColLeft}> Impact Time : <Text style={{color:'#2d549a'}}> {this.state.impact_time?this.state.impact_time:"N/A"} </Text> </Text>
+                            <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{this.state.data['organization']?this.state.data['organization']:this.state.data1.sensor_data.organization}</Text></Text>
 
                         </View>
 
