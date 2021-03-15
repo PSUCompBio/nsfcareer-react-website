@@ -59,6 +59,7 @@ class UserDashboarForAdmin extends React.Component {
       log_stream_name: '',
       DelData: '',
       isDisplay: '',	  
+      delimage_id: '',	  
       isDisplay: { display: 'none' },
       cognito_user_id: this.props.match.params.cognito_user_id,
       player_name: this.props.match.params.player_name ? this.props.match.params.player_name.split('?')[0] : ''
@@ -137,7 +138,8 @@ class UserDashboarForAdmin extends React.Component {
     }
 	handledelete = (e) => {
 		console.log("e",e);
-		this.setState({ DelData: { data: e } })
+		this.setState({ DelData: { data: e } })		
+        this.setState({ delimage_id: e.image_id });
 		this.setState({ isDelData: true })
 		if (this.state.isDisplay.display === 'none') {
             this.setState({ isDisplay: { display: 'flex' } });
@@ -148,6 +150,7 @@ class UserDashboarForAdmin extends React.Component {
 	}
 	makeVisible = (data) => {
         console.log('data', data)
+        this.setState({ delimage_id: '' });
         this.setState({ isDelData: false });
 		this.setState({ DelData: '' })
 		this.setState({ isDisplay: { display: 'none' } });
@@ -199,7 +202,7 @@ class UserDashboarForAdmin extends React.Component {
   }
 
   tConvert = (time) => {
-    console.log(time)
+    console.log(time,"time")
     if (time === 0) {
       return 'Unknown Time'
     } else {
@@ -400,19 +403,19 @@ class UserDashboarForAdmin extends React.Component {
                 }
 				console.log("item",item);
                 return <Card >
-                  <Card.Header className={cls}>
-                    <Accordion as={Button} variant="link" id={item.sensor_data.image_id} eventKey={item.sensor_data.player_id} >
+                  <Card.Header className={cls} id={item.sensor_data.image_id}>
+                    <Accordion as={Button} variant="link"  eventKey={item.sensor_data.player_id} >
                       <span className="title-left" >Event ID: #{impact_id}</span>
                       <span className="title-left">{`${item.sensor_data && item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) + ' ' + this.tConvert(impact_time) : item.sensor_data['date'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/")) + ' ' + this.tConvert(time) : 'Unknown Date and Time'}`}</span>
                       <span className="btn btn-primary  title-right"  onClick={() => this.handleCollapse(item.sensor_data.player_id,)} id={item.sensor_data && 'col_icon' + item.sensor_data.player_id.split('$')[1]}>Expand</span>
                       <span className="btn btn-primary title-right hide"  onClick={() => this.handleCollapse(item.sensor_data.player_id,)}  id={item.sensor_data && 'col_icon1' + item.sensor_data.player_id.split('$')[1]}>Close</span>
-					{/* this.state.isDelData ?
+					{ this.state.isDelData && item.sensor_data.image_id ==  this.state.delimage_id ?
 						<div className="btn btn-danger  title-right" >
 							<i class={"fa fa-spinner fa-spin"} style={{'font-size': '18px'}}></i>
 						</div>
 					:
 						<span className="btn btn-danger  title-right"  onClick={() => this.handledelete({playerid:item.sensor_data.player_id,image_id: item.sensor_data.image_id})} >Delete</span>
-					*/}
+					}
                     </Accordion>
                   </Card.Header>
                   <Accordion.Collapse eventKey={item.sensor_data.player_id} id={item.sensor_data && item.sensor_data.player_id.split('$')[1]}>

@@ -592,7 +592,7 @@ class CommanderTeamView extends React.Component {
     converTime = (time) => {
         console.log('converTime ---- called', time)
         if (time && time !== null && time !== undefined) {
-            var splitTime = time.split(':');
+            var splitTime = time.toString().split(':');
             console.log('splitTime 1',splitTime)
             if (splitTime.length > 3) {
                 
@@ -613,7 +613,7 @@ class CommanderTeamView extends React.Component {
               
                     time = time[1] ? time[1] : time;
                     console.log('splitTime 2', time)
-                    time = time.split('.')[1] ? time.split('.')[0] : time
+                    time = time.toString().split('.')[1] ? time.toString().split('.')[0] : time
                     // time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
                     time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
                     console.log("time", time);

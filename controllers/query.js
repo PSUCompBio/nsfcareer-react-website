@@ -1429,6 +1429,29 @@ function getBrandData(obj) {
         });
     });
 }
+function getSensorDataByPlayerID(player_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            FilterExpression: "begins_with(player_id,:player_id)",
+            ExpressionAttributeValues: {
+               ":player_id": player_id
+            },
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 
 function getBrandDataByorg(brand,organization) {
     return new Promise((resolve, reject) => {
@@ -3481,6 +3504,7 @@ function deleteSimulation_imagesData(image_id){
                 image_id: image_id,
             },
         };
+		console.log(params);
         docClient.delete(params, function (err, data) {
             if (err) {
                 reject(err);
@@ -3490,23 +3514,7 @@ function deleteSimulation_imagesData(image_id){
         });
     });
 }
-function deleteSensorDataByImageID(image_id){
-    return new Promise((resolve, reject) => {
-        let params = {
-            TableName: "sensor_details",
-            Key: {
-                image_id: image_id,
-            },
-        };
-        docClient.delete(params, function (err, data) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
-}
+
 
 function getModalValidationDB(image_id){
     return new Promise((resolve, reject) => {
@@ -3881,7 +3889,45 @@ function addJobslog(obj) {
         });
     });
 }
-
+function DeleteSensorDataByPlayerID(player_id,org_id){ 
+    return new Promise((resolve, reject) => {
+		console.log("org_id",org_id);
+		console.log("player_id",player_id);
+       let params = {
+            TableName: "sensor_details",
+           Key: {
+                org_id: org_id,
+                player_id: player_id, 
+            },
+        };
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+				console.log("data",data);
+                resolve(data);
+            }
+        });
+    });
+}
+function InsertNewSensorDataByPlayerID(obj) {
+    return new Promise((resolve, reject) => {
+        var dbInsert = {
+            TableName: "sensor_details",
+            Item: obj,
+        };
+		console.log("dbInsert",dbInsert);
+        docClient.put(dbInsert, function (err, data) {
+            if (err) {
+                console.log(err);
+                reject(err);
+            } else {
+		console.log("data",data);
+                resolve(data);
+            }
+        });
+    });
+}
 
 
 module.exports = {
@@ -3998,5 +4044,7 @@ module.exports = {
 	getOrgFromSensorDetailsr,
     addJobslog,
 	getUserDbDataByAccountId,
-	deleteSensorDataByImageID
+	getSensorDataByPlayerID,
+	InsertNewSensorDataByPlayerID,
+	DeleteSensorDataByPlayerID,
 };

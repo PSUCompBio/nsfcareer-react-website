@@ -213,7 +213,7 @@ class ExportCustomReport extends React.Component {
             if (this.state.jsonData['principal-max-strain']) {
                 //eslint-disable-next-line                
                 mpsValues = this.state.jsonData['principal-max-strain'].value ? this.state.jsonData['principal-max-strain'].value : '';
-				mpsbrainstate = this.state.jsonData['principal-max-strain']['brain-region'] ? this.state.jsonData['principal-max-strain'].['brain-region'] : [];
+				mpsbrainstate = this.state.jsonData['principal-max-strain']['brain-region'] ? this.state.jsonData['principal-max-strain']['brain-region'] : [];
                 if(mpsValues){
                     mpsValues =   mpsValues.reverse();					
                     mpsbrainstate =   mpsbrainstate.reverse();
@@ -1278,8 +1278,8 @@ class ExportCustomReport extends React.Component {
                                             </Text>
                                         <Text style={styles.tableColLeft4_2}>15</Text>
                                         <Text style={styles.rowHead2Text2subHead_2}>
-                                            in Each Brain Region
-                                            </Text>
+											Over Report Date Range                                         
+										</Text>
                                     </View>
                                 </View>
 							{ /*  <View style={styles.col12}>
@@ -1395,7 +1395,7 @@ class ExportCustomReport extends React.Component {
 									<View style={[stylepage3.tableRow, stylepage3.tableHead]}>
 										{/*-- Table head --*/}
 										<Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-										<Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
+										<Text style={[stylepage3.tableColLeft1]}>Event Date</Text>
 										<Text style={[stylepage3.tableColLeft1]}>CSDM-15 Value</Text>
 										<Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
 										{/*-- Table head end--*/}
@@ -1439,7 +1439,7 @@ class ExportCustomReport extends React.Component {
                                 <View style={styles.col12}>
                                     <View style={styles.rowHead2subHead}>
                                         <Text style={styles.rowHead2Text2subHead_center}>
-                                            Maximum Principal Strain In Each Region
+                                            Maximum Principal Strain Over Report Date Range
                                             </Text>
                                     </View>
                                 </View>
@@ -1560,8 +1560,8 @@ class ExportCustomReport extends React.Component {
 									<View style={[stylepage3.tableRow, stylepage3.tableHead]}>
 										{/*-- Table head --*/}
 										<Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-										<Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-										<Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
+										<Text style={[stylepage3.tableColLeft1]}>Event Date</Text>
+										<Text style={[stylepage3.tableColLeft1]}>MPS Value</Text>
 										<Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
 										{/*-- Table head end--*/}
 
@@ -1577,7 +1577,10 @@ class ExportCustomReport extends React.Component {
 													<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
 													<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
 													<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
-													<Text style={[stylepage3.tableColLeft2]}>{mpsbrainstate[index] ? mpsbrainstate[index] : "NA"}</Text>
+													<Text style={[stylepage3.tableColLeft2]}>
+													{mpsbrainstate[index] ? mpsbrainstate[index] == "msc"? "Motor Sensory Cortex" : mpsbrainstate[index] : "NA"}
+													
+													</Text>
 												</View>
 											}
 										}else{
@@ -1619,7 +1622,7 @@ class ExportCustomReport extends React.Component {
 							
                                 <View style={styles.col12}>
                                     <View style={styles.rowHead2subHead}>
-                                        <Text style={styles.rowHead2Text2subHead_center}>Maximum Principal Strain In Each Region</Text>
+                                        <Text style={styles.rowHead2Text2subHead_center}>Maximum Principal Strain Over Report Date Range</Text>
                                     </View>
                                 </View>
 							{ /*  <View style={styles.col12}>
@@ -1737,8 +1740,8 @@ class ExportCustomReport extends React.Component {
 									<View style={[stylepage3.tableRow, stylepage3.tableHead]}>
 										{/*-- Table head --*/}
 										<Text style={[stylepage3.tableColLeft1]}>Rank</Text>
-										<Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
-										<Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
+										<Text style={[stylepage3.tableColLeft1]}>Event Date</Text>
+										<Text style={[stylepage3.tableColLeft1]}>MPS Value</Text>
 										<Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
 										{/*-- Table head end--*/}
 
@@ -1754,7 +1757,9 @@ class ExportCustomReport extends React.Component {
 													<Text style={[stylepage3.tableColLeft1]}>{index + 1}</Text>
 													<Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
 													<Text style={[stylepage3.tableColLeft1]}>{val.toFixed(2)}</Text>
-													<Text style={[stylepage3.tableColLeft2]}>{mpsbrainstate[index] ? mpsbrainstate[index] : "NA"}</Text>
+													<Text style={[stylepage3.tableColLeft2]}>
+													{mpsbrainstate[index] ? mpsbrainstate[index] == "msc"? "Motor Sensory Cortex" : mpsbrainstate[index] : "NA"}
+													</Text>
 												</View>
 											}
 										}else{

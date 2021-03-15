@@ -234,11 +234,13 @@ const {
     getOrgFromSensorDetailsr,
     addJobslog,
 	getUserDbDataByAccountId,
-	deleteSensorDataByImageID,
+	getSensorDataByPlayerID,	
+	InsertNewSensorDataByPlayerID,
+	DeleteSensorDataByPlayerID,
 
 } = require('./controllers/query');
 
-// Multer Configuration
+// Multer Configuration 
 
 
 var storage = multer.memoryStorage()
@@ -2827,7 +2829,7 @@ function emptyBucket(obj, callback) {
         Bucket: obj.bucket_name,
         Prefix: obj.root_path
     };
-
+console.log("params",params);
     s3.listObjects(params, function (err, data) {
         if (err) return callback(err);
 
@@ -7241,6 +7243,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationData`, (req, res) => {
     console.log('getCumulativeAccelerationData ----------\n',req.body);
     getCumulativeAccelerationData(req.body)
         .then(data => {
+			console.log("getCumulativeAccelerationData",data); 
             res.send({
                 message: "success",
                 data: data[0],
@@ -8498,7 +8501,7 @@ app.post(`${apiPrefix}getCumulativeAccelerationTimeRecords`, (req, res) => {
                     })
                     .then(mps_dat_output => {
                         let msp_dat_data = [];
-                       if (mps_dat_output) { 
+                        if (mps_dat_output) { 
                             // var mps_dat_output_data = JSON.parse(mps_dat_output.Body.toString('base64'));
                             var enc = new TextDecoder("utf-8");
                             var arr = new Uint8Array(mps_dat_output.Body);
@@ -10115,7 +10118,7 @@ app.post(`${apiPrefix}api/v1/images/BrainImages/`,upload.fields([]) ,(req, res) 
 })
 
 function getLabelBrainImageLink(account_id,image_id,file){
-	var fielPath = `${account_id}/simulation/${image_id}/LabeledBrainImages/${file}`
+	var fielPath = `${account_id}/simulation/${image_id}/labledBrainImages/${file}`
     console.log('fielPath ---------', fielPath)
     return new Promise((resolve, reject) => {
         if (fielPath) {
@@ -14796,37 +14799,121 @@ app.post(`${apiPrefix}deleteOrgTeam4`, (req, res) => {
         })
     }
 });
+
+function InsertSensorDataByPlayerID(sensorNewData) { 
+
+    return new Promise((resolve, reject) => {
+        if (sensorNewData) {
+			var datalength = sensorNewData.length;
+			var count = 0;
+			
+			console.log("sensor_Data",datalength);
+			sensorNewData.forEach(function (sensorData, index) {
+				InsertNewSensorDataByPlayerID(sensorData)
+				.then(insertData => {
+					console.log("insertData",insertData);
+					count++
+					if(count == datalength){ 
+						resolve("sucess");
+					}
+				})
+				
+			})
+			} else {
+            resolve('');
+        }
+    })
+}
 app.post(`${apiPrefix}deleteEventByImageID`, (req, res) => {
     var data = req.body;
+    var organization = data.organization;
+    var playerid = data.playerid;
+    var image_id = data.image_id;
+    var account_id = data.account_id;
 	 getPlayerSimulationFile({ image_id: data.image_id })
 	.then(image_Data => {
-		 deleteSimulation_imagesData(data.image_id)
-		.then(deldata => {
-			deleteSensorDataByImageID(data.image_id)
-			.then(deldata1 => {
-				if (image_Data.root_path && image_Data.root_path != 'undefined') {
-					emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.root_path+'/' }, function (err, data) {
-							res.send({
-								message: 'success',
-								status: 200
+		console.log('image_Data',image_Data) 
+		 getSensorDataByPlayerID(playerid.split("$")[0]+"$")
+		.then(sensor_Data => {
+			var datalength = sensor_Data.length;
+			var count = 0;
+			var sensorNewData = [];
+			sensor_Data.forEach( function (sensorData, index) {
+			 count++;
+				var newPlayer_id = sensorData.player_id;
+				var newOrg_id = sensorData.org_id;
+				if(image_id != sensorData.image_id){					
+					sensorNewData.push(sensorData);					
+				}			
+				if(count == datalength){ 
+					DeleteSensorDataByPlayerID(newPlayer_id,newOrg_id)
+					.then( async deleteData => {	
+						if(sensorNewData.length > 0){						
+							var insetdata = await InsertSensorDataByPlayerID(sensorNewData);
+							deleteSimulation_imagesData(data.image_id)
+							.then(deldata => {
+								if (image_Data.root_path && image_Data.root_path != 'undefined') {
+									var rootpath = image_Data.root_path;
+									var lastchar = rootpath.slice(-1);
+									if(lastchar == "/"){
+										rootpath = image_Data.root_path;
+									}else{
+										rootpath = image_Data.root_path+"/";
+									}
+									emptyBucket({ bucket_name: image_Data.bucket_name, root_path: rootpath }, function (err, data1) {
+										console.log(err);
+											res.send({
+												message: 'success',
+												status: 200
+											})
+									})
+								}else{
+									res.send({
+										message: 'success',
+										status: 200
+									})
+								}
+							}).catch(err => {
+								console.log('deldata1  err', err)
 							})
+						}else{
+							deleteSimulation_imagesData(data.image_id) 
+							.then(deldata => {
+								 if (image_Data.root_path && image_Data.root_path != 'undefined') {
+									emptyBucket({ bucket_name: image_Data.bucket_name, root_path: image_Data.root_path }, function (err, data1) {										
+										console.log(err);
+										console.log(data1);
+											res.send({
+												message: 'success',
+												status: 200
+											})
+									})
+								}else{
+									res.send({
+										message: 'success',
+										status: 200
+									})
+								}
+							}).catch(err => {
+								console.log('deldata2  err', err)
+							})
+
+						}
+					
 					}).catch(err => {
-							console.log("err 2", err);
-					})
-				}else{
-					res.send({
-						message: 'success',
-						status: 200
+						console.log('deldata3  err', err)
 					})
 				}
-			}).catch(err => {
-				console.log('deldata  err', err)
-			})
+				
+				 
+			});
+		
+			
 		}).catch(err => {
-			console.log('deldata1  err', err)
-		})
+			console.log('deldata4  err', err)
+		}) 
 	}).catch(err => {
-		console.log('deldata  err', err)
+		console.log('deldata5  err', err)
 	}) 
 });
 // Clearing the cookies

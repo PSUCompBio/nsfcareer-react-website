@@ -133,16 +133,16 @@ class Details extends React.Component {
       simulationStatus: 'pending',
       label_resetVideo: 'Reset',
       label_TrimVideo: 'Trim',
-      showinjury: 'block',
-      showinjury1: true,
+      showinjury: 'none',
+      showinjury1: false,
       showPMS1: false,
       showMASxSR1: false,
       showCSDM1: false,
-      showMPS1: false,
+      showMPS1: true,
       showPMS: 'none',
       showMASxSR: 'none',
       showCSDM: 'none',
-      showMPS: 'none',
+      showMPS: 'block',
 	  Brainimages: '',
       isTriming: false,
       account_id: '',
@@ -1252,15 +1252,15 @@ class Details extends React.Component {
                 <div className="col-md-12">
                   <div className="metrics">
                     <div className="col-md-12">
-                      {this.state.showinjury1 ?
+                      { /*this.state.showinjury1 ?
                         <>
                           <button className="btn btn-primary" onClick={this.showinjury} >Injury Metrics</button><br />
                         </>
                         :
                         <>
                           <button className="btn gray" onClick={this.showinjury} >Injury Metrics</button><br />
-                        </>
-                      }
+                        </>*/
+                      } 
 					  {this.state.showMPS1 ?
                         <>
                           <button className="btn btn-primary" style={{ 'margin-top': '10px' }} onClick={this.showMPS} >MPS</button>

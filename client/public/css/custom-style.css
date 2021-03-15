@@ -38,12 +38,6 @@
 .branimage .carousel-control-prev-icon {
     background-image: url(https://img.icons8.com/ios-glyphs/30/000000/less-than.png) !important;
 }
-.branimage.hidearrow span.carousel-control-next-icon {
-    background-image: none !important;
-}
-.branimage.hidearrow span.carousel-control-prev-icon {
-    background-image: none !important;
-}
 .branimage .carousel-indicators {
     display: none !important;
 }
