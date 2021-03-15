@@ -491,13 +491,13 @@ class CommanderTeamView extends React.Component {
         this.setState({ editablestate: false, });
     }
     deleteuser = (obj) => {
-		console.log("obj",obj);
+        console.log("obj", obj);
         if (obj.player_id) {
             var PlayerID = obj.player_id.split('$')[0];
         } else {
             var PlayerID = obj.user_cognito_id
         }
-		console.log("PlayerID",PlayerID);
+        console.log("PlayerID", PlayerID);
         this.setState({ DelData: { type: 'Player', data: PlayerID } })
         if (this.state.isDisplay.display === 'none') {
             this.setState({ isDisplay: { display: 'flex' } });
@@ -555,48 +555,81 @@ class CommanderTeamView extends React.Component {
     }
 
     renderSwitch = (player) => {
-		 if(this.state.editablestate){
-			if (player.simulation_data[0]['user_data']) {
-				return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
-			} else {
-				return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
-			}
-		 }else{ 
-			return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
-		 }
+        if (this.state.editablestate) {
+            if (player.simulation_data[0]['user_data']) {
+                return <Switch id={player.simulation_data[0]['user_data'].user_cognito_id} onChange={this.handleCheck1} uncheckedIcon={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
+            } else {
+                return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={true} />
+            }
+        } else {
+            return <Switch disabled={true} uncheckedIco-n={false} offColor="#FF0000" onColor="#00B050" onHandleColor="#ffffff" className="react-switch" checkedIcon={false} checked={player.simulation_data[0]['user_data'].player_status === 'approved' ? true : false} />
+        }
     }
 
     tConvert = (time) => {
-        console.log('tConvert ---- called')
+        console.log('tConvert ---- called', time)
         // Check correct time format and split into components
-		if(time !== undefined){
-		console.log("time",time);
-		time = time.toString().split(' ');
-		time = time[1] ? time[1] : time;
-       // time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-       time = time ?  time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time] : time;
-		if (time.length > 1) { // If time format correct
-            time = time.slice(1);  // Remove full string match value
-            time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-            time[0] = +time[0] % 12 || 12; // Adjust hours
+        if (time && time !== null && time !== undefined) {
+
+            time = time.toString().split(' ');
+
+            time = time[1] ? time[1] : time;
+
+            // time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+            time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+            if (time.length > 1) { // If time format correct
+                time = time.slice(1);  // Remove full string match value
+                time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+                time[0] = +time[0] % 12 || 12; // Adjust hours
+            }
+            //  console.log("time1",time.join(''));
+            return time.join(''); // return adjusted time or original string
+
+        } else {
+            return "";
         }
-		 console.log("time1",time.join(''));
-        return time.join(''); // return adjusted time or original string
-		}else{
-			return "";
-		}
-	}
-    converTime =(time)=>{
-        console.log('converTime ---- called')
-        // let time = player.simulation_data[0]['time'].toString();
-        time =  time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time] ;
-        if (time.length > 1) { // If time format correct
-            time = time.slice(1);  // Remove full string match value
-            time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
-            time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    converTime = (time) => {
+        console.log('converTime ---- called', time)
+        if (time && time !== null && time !== undefined) {
+            var splitTime = time.split(':');
+            console.log('splitTime 1',splitTime)
+            if (splitTime.length > 3) {
+                
+                time = splitTime[0] + ':' + splitTime[1] + ':' + splitTime[2];
+                time = time.toString().split(' ');
+                time = time[1] ? time[1] : time;
+                // time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+                time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+                console.log("time", time);
+                if (time.length > 1) { // If time format correct
+                    time = time.slice(1);  // Remove full string match value
+                    time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+                    time[0] = +time[0] % 12 || 12; // Adjust hours
+                }
+                return time.join('');
+            } else {
+                time = time.toString().split(' ');
+              
+                    time = time[1] ? time[1] : time;
+                    console.log('splitTime 2', time)
+                    time = time.split('.')[1] ? time.split('.')[0] : time
+                    // time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+                    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+                    console.log("time", time);
+                    if (time.length > 1) { // If time format correct
+                        time = time.slice(1);  // Remove full string match value
+                        time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
+                        time[0] = +time[0] % 12 || 12; // Adjust hours
+                    }
+              
+                return time.join('');
+            }
+
+             // return adjusted time or original string
+        } else {
+            return "";
         }
-        // console.log("time1",time.join(''));
-        return   time.join('')
     }
     getStatus = (status) => {
         if (status === 'pending') {
@@ -609,7 +642,7 @@ class CommanderTeamView extends React.Component {
     getUrl = (obj) => {
         if (obj && this.state.userDetails.level > 300) {
             // eslint-disable-next-line
-			console.log("obj",obj);
+            console.log("obj", obj);
             return <a className="btn btn-primary" target='_blank' href={"/profile?id=" + obj.account_id}>Profile</a>;
         } else {
             return <button className="btn btn-primary" disabled={true}>Profile</button>;
@@ -642,7 +675,7 @@ class CommanderTeamView extends React.Component {
                                     }
                                 }} >{'Admin > '}</Link>
                                 : null}
-                            {this.state.brand && this.state.brand !== "null" && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?						
+                            {this.state.brand && this.state.brand !== "null" && (this.state.userDetails.level === 1000 || this.state.userDetails.level === 400) ?
                                 <Link style={{ fontWeight: "400" }} to={{
                                     pathname: '/OrganizationAdmin',
                                     state: {
@@ -651,7 +684,7 @@ class CommanderTeamView extends React.Component {
                                             user_cognito_id: this.state.user_cognito_id
                                         }
                                     }
-                                }} >{this.state.brand + ' > '}</Link>	
+                                }} >{this.state.brand + ' > '}</Link>
                                 : null}
                             {this.state.userDetails.level === 1000 || this.state.userDetails.level === 400 ?
                                 <Link style={{ fontWeight: "400" }} to={{
@@ -768,8 +801,8 @@ class CommanderTeamView extends React.Component {
                                     <div className="col-md-6 no-padding" style={{ 'display': 'contents' }}>
                                         {this.state.editablestate ?
                                             <>
-                                                <button onClick={() => { this.cancleable() }} className="btn  plyar-button-edit" style={{ 'margin-left': '10px','background-color': '#00b050','padding': '7px 15px','border': '1px solid ','font-weight': '700'}}>Save</button>
-                                                <button onClick={() => { this.cancleable() }} className="btn  plyar-button-edit" style={{ 'margin-left': '10px','background-color': '#ff0000','padding': '7px 15px','border': '1px solid ','font-weight': '700' }}>Cancel</button>
+                                                <button onClick={() => { this.cancleable() }} className="btn  plyar-button-edit" style={{ 'margin-left': '10px', 'background-color': '#00b050', 'padding': '7px 15px', 'border': '1px solid ', 'font-weight': '700' }}>Save</button>
+                                                <button onClick={() => { this.cancleable() }} className="btn  plyar-button-edit" style={{ 'margin-left': '10px', 'background-color': '#ff0000', 'padding': '7px 15px', 'border': '1px solid ', 'font-weight': '700' }}>Cancel</button>
                                             </>
                                             :
                                             <>
@@ -847,17 +880,17 @@ class CommanderTeamView extends React.Component {
 
                                                     if (player.simulation_data[0]['time']) {
                                                         let time = player.simulation_data[0]['time'].toString();
-                                                        time =  time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time] ;
+                                                        time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
                                                         if (time.length > 1) { // If time format correct
                                                             time = time.slice(1);  // Remove full string match value
                                                             time[5] = +time[0] < 12 ? ' AM' : ' PM'; // Set AM/PM
                                                             time[0] = +time[0] % 12 || 12; // Adjust hours
                                                         }
                                                         // console.log("time1",time.join(''));
-                                                        time =  time.join('')
+                                                        time = time.join('')
                                                     }
-                                                    console.log('time 2',time)
-                                                                                                    
+                                                    console.log('time 2', time)
+
                                                     if (player.simulation_data[0].simulation_status === 'completed') {
 
                                                         let computed_time = player.simulation_data[0].computed_time ? parseFloat(player.simulation_data[0].computed_time) / (1000 * 60) : 0;
@@ -911,11 +944,11 @@ class CommanderTeamView extends React.Component {
                                                             <td style={{ 'max-width': '162px' }} className="wrap-cell" onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data[0].user_data ? player.simulation_data[0].user_data.first_name + ' ' + player.simulation_data[0].user_data.last_name : player.simulation_data[0].player['first-name'] + ' ' + player.simulation_data[0].player['last-name']}</td>
                                                         }
                                                         <td onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{player.simulation_data.length}</td>
-														
+
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >
-                                                            {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date'} </td>											
-														<td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} > {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : this.tConvert(player.simulation_data[0]['time']) ? this.converTime(player.simulation_data[0]['time']) : 'Unknown Time' } </td>
-														
+                                                            {player.simulation_data[0]['impact-date'] ? this.getDate(player.simulation_data[0]['impact-date'].replace(/:|-/g, "/")) : player.simulation_data[0]['date'] ? this.getDate(player.simulation_data[0]['date'].replace(/:|-/g, "/")) : 'Unknown Date'} </td>
+                                                        <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} > {player.simulation_data[0]['impact-time'] ? this.tConvert(impact_time) : this.converTime(player.simulation_data[0]['time']) ? this.converTime(player.simulation_data[0]['time']) : 'Unknown Time'} </td>
+
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{dateTime.split(' ')[0]}</td>
                                                         <td style={{ alignItems: "center" }} onClick={() => { this.setRedirectData(Number(index + 1).toString(), player.simulation_data[0].player_id.split('$')[0]) }} >{this.tConvert(dateTime.split(' ')[1])}</td>
                                                         {this.state.userDetails.level > 200 &&
@@ -1200,18 +1233,18 @@ class CommanderTeamView extends React.Component {
                         </div>
                     </div>
                 ) : (
-                        <React.Fragment>
-                            {this.militaryVersionOrNormal()}
-                            {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
-                            <div style={this.state.isMobile ? {
-                                position: "absolute",
-                                width: "100%",
-                                bottom: '0'
-                            } : {}}>
-                                <Footer style={{ display: "none" }} className="violent" />
-                            </div>
-                        </React.Fragment>
-                    )}
+                    <React.Fragment>
+                        {this.militaryVersionOrNormal()}
+                        {/*<DarkMode isDarkMode={this.props.isDarkModeSet} />*/}
+                        <div style={this.state.isMobile ? {
+                            position: "absolute",
+                            width: "100%",
+                            bottom: '0'
+                        } : {}}>
+                            <Footer style={{ display: "none" }} className="violent" />
+                        </div>
+                    </React.Fragment>
+                )}
             </React.Fragment>
         );
     }
