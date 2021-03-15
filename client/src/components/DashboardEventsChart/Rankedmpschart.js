@@ -22,16 +22,22 @@ const options = {
                 display: true,
                 labelString: 'Ranked MPS'
             },
+            gridLines: {
+                drawOnChartArea:false
+            },
+            ticks: {
+                suggestedMin: 0,
+            }
 
         }],
         xAxes: [{
             scaleLabel: {
                 display: true,
-                labelString: 'Element ID'
+                labelString: 'Element Count'
             },
             ticks: {
+                stepSize: 200,
                 display: false,
-                stepSize: 20
             },
 			gridLines: {
                 drawOnChartArea:false
@@ -48,6 +54,7 @@ class Rankedmpschart extends React.Component {
         let labelData = []
         var max_element_val = 10;
         for (var i = 0; i < points.length; i++) {
+            console.log('parseFloat(points[i].id)',parseFloat(points[i].id))
             pointsData.push({ y: points[i].val, x: points[i].id });
             labelData.push(points[i].id)
         }
@@ -74,7 +81,7 @@ class Rankedmpschart extends React.Component {
                 labels: label,
                 fill: false,
                 datasets: [{
-                    lineTension: 0.1,
+                    lineTension: 0,
                     label: 'MPS',
                     backgroundColor: '#88DD88',
                     borderColor: '#88DD88',
