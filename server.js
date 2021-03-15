@@ -8377,7 +8377,7 @@ app.post(`${apiPrefix}getMpsRankedData`, (req, res) => {
                             for (var i = 0; i < mpsRankedDataObj.length; i++) {
                                 let mpsval = mpsRankedDataObj[i].split(",");
                                 let val = parseFloat(mpsval[1]);
-                                if (val.toFixed(4) !== '0.0000') msp_dat_data.push({ id: mpsval[0], val: val });
+                                msp_dat_data.push({ id: mpsval[0], val: val });
                             }
                         }
 
@@ -8828,6 +8828,7 @@ app.post(`${apiPrefix}getPlayersData`, (req, res) => {
                     requested_player_list = requested_player_list.concat(u.requested_player_list);
                 }
             })
+            
             // console.log('requested_player_list', requested_player_list);
             // let player_list = data[0].player_list ? data[0].player_list : [];
             if (player_list.length == 0) {
