@@ -432,10 +432,10 @@ class ExportCustomReport extends React.Component {
                 zIndex: 4
             },
             trangle_scale1: {
-                width: '70%',
+                width: '100%',
                 zIndex: 4,
-				marginLeft:'15%',
-				marginRight:'15%',
+				marginLeft:'0',
+				marginRight:'0',
             },
             textcenteralign: {				
                 width: '100%',
@@ -506,7 +506,7 @@ class ExportCustomReport extends React.Component {
                 flex: 1,
                 width: '100%',
                 flexDirection: 'row',
-                marginTop: '47px',
+                marginTop: '60px',
                 textAlign: 'center',
             },
             tableRowHeadtitle1: {
@@ -524,7 +524,7 @@ class ExportCustomReport extends React.Component {
                 flex: 1,
                 marginLeft: '5%',
                 flexDirection: 'row',
-                marginTop: '6px'
+                marginTop: '5px'
             },
             tableColLeft: {
                 borderStyle: "solid",
@@ -848,6 +848,13 @@ class ExportCustomReport extends React.Component {
                 marginTop: '20px',
                 marginBottom: '15px'
             },
+            blueLine1: {
+                width: '100%',
+                height: '1px',
+                backgroundColor: '#2F5597',
+                marginTop: '10px',
+                marginBottom: '10px'
+            },
             tableRow: {
                 flex: 1,
                 flexDirection: 'row',
@@ -1000,6 +1007,13 @@ class ExportCustomReport extends React.Component {
                 backgroundColor: '#2F5597',
                 marginTop: '20px',
                 marginBottom: '15px'
+            },
+            blueLine1: {
+                width: '100%',
+                height: '1px',
+                backgroundColor: '#2F5597',
+                marginTop: '10px',
+                marginBottom: '10px'
             },
             tableRow: {
                 flex: 1,
@@ -1229,15 +1243,15 @@ class ExportCustomReport extends React.Component {
                         <Text style={{
                             margin: 'auto',
                             alignItems: 'center',
-                            marginTop: '3%',
+                            marginTop: '0px',
                             color: 'blue',
-                            marginBottom: '2%',
+                            marginBottom: '0px',
                             fontSize: 26,
                         }}>
                             {this.state.data['first-name'] + ' ' + this.state.data['last-name']}
                         </Text>
-
-                        <View style={styles.tableRow}>
+						{<View style={stylepage4.blueLine1}></View>}
+                        <View style={styles.tableRow}>						
                             <Text style={styles.tableColLeftfull}> Report Date Range : <Text style={{ color: '#2d549a' }}> {this.state.impact_date}</Text> - <Text style={{ color: '#2d549a' }}> {this.getDateInFormat()} </Text> </Text>
                             <Text style={styles.tableColLeft20}> DOB : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].dob?this.state.jsonData['playerdata'].dob:"N/A"}</Text></Text>
                             <Text style={styles.tableColRight}> Sensor ID : 
@@ -1259,7 +1273,8 @@ class ExportCustomReport extends React.Component {
                             <Text style={styles.tableColLeft20}> Sex : <Text style={{ color: '#2d549a' }}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"}  </Text></Text>
                             <Text style={styles.tableColRight}> Organization : <Text style={{ color: '#2d549a' }}>{this.state.data['organization']?this.state.data['organization']:this.state.data1.organization} </Text></Text>
 
-                        </View>
+                        </View>						
+						{<View style={stylepage4.blueLine1}></View>}
                         {/*-- Analysis duration --*/}
                         {/* <View style={styles.col12}>
                            <View style={styles.durationBar}>

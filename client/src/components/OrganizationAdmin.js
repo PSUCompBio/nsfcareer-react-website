@@ -7,6 +7,7 @@ import { Redirect, withRouter, Link } from 'react-router-dom';
 import Spinner from './Spinner/Spinner';
 import DeletePopup from './Popup/DeletePopup';
 import UpdatePopup from './Popup/UpdatePopup';
+import ManageAccessPopup from './Popup/manageAccessPopup';
 import SimulationCount from './PlayerDetails/SimulationCount';
 import SimulationCountForList from './PlayerDetails/SimulationCountForList';
 
@@ -59,6 +60,7 @@ class OrganizationAdmin extends React.Component {
             sensorOrgList: [],
             isDisplay: { display: 'none' },
             isDisplay2: { display: 'none' },
+            isAccessPopup: { display: 'none' },
             DelData: '',
             renameData : '',
             isEdit: false,
@@ -75,6 +77,8 @@ class OrganizationAdmin extends React.Component {
             view: 'gridView',
 			delete_id:'',
 			highlight_id: '',
+			accessPopup: false,
+			manageAccessData:'',
         };
     }
     toggleTab = (value) => {
@@ -85,7 +89,8 @@ class OrganizationAdmin extends React.Component {
     getTargetBtn = (value) => {
         this.setState({ targetBtn: value });
     };
-
+	
+	
     checkIfDarkModeActive = () => {
         if (getStatusOfDarkmode().status === true) {
             const elementsRequire = [
@@ -190,13 +195,27 @@ class OrganizationAdmin extends React.Component {
     makeVisible2 = (data) => {
         this.setState({ isDisplay2: data });
     }
-
+    makeVisible3 = (data) => {
+		 this.setState({manageAccessData:''});
+		this.setState({isAccessPopup: {display:'none'} });
+        this.setState({accessPopup: false});	
+    }
+	
+    manageAccess = (e) =>{
+		console.log('e',e)
+        this.setState({manageAccessData:e});
+		this.setState({isAccessPopup: {display:'flex'} });
+        this.setState({accessPopup: true});	
+    }
     isDeleteData = (isDelete) => {
         console.log('isDelete',isDelete)
         this.setState({ isDelete: isDelete });
 		this.setState({ highlight_id : this.state.delete_id })
         this.setState({ isDisplay:{ display: 'none' } });
     }
+	isUpdateData3 = (data) =>{
+        console.log('isUpdateData',data);
+	}
     isUpdateData = (data) =>{
         console.log('isUpdateData',data);
         if(data.data.type === "rename"){
@@ -676,17 +695,18 @@ class OrganizationAdmin extends React.Component {
     militaryVersionOrNormalVersion = () => {
        
         var level = this.state.userDetails.level;
+		var This = this;
         var staffList =  this.state.staffList.map(function (staff, index) {
             return staff;
         })
-         console.log('staffList',staffList);
+        // console.log('staffList',staffList);
         // staffList[0].map( (staff, index) =>
         //     console.log(staff)
         //  )
-        // console.log('staffList',staffList[0])
+         console.log('staffList',this.state.isAccessPopup)
         return (
             <React.Fragment>
-
+				<ManageAccessPopup isVisible={this.state.isAccessPopup}  makeVisible3={(this.props.makeVisible3)? this.props.makeVisible3 : this.makeVisible3} data={this.state.manageAccessData} isUpdateData2={(this.props.isUpdateData2)? this.props.isUpdateData2 : this.isUpdateData2}  />
                 <div ref="rosterContainer" className="container t-roster animated1 zoomIn1 bottom-margin">
 
                     {this.props.isMilitaryVersionActive ? (
@@ -791,7 +811,8 @@ class OrganizationAdmin extends React.Component {
                                                     <tr>
                                                         <th scope="col">#</th>
                                                         <th scope="col">Name</th>
-                                                        <th scope="col">Email</th>
+                                                        <th scope="col">Email</th> 
+                                                        <th scope="col">Access Status</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
@@ -799,17 +820,14 @@ class OrganizationAdmin extends React.Component {
                                                     {staffList[0] && staffList[0].map(function (staff, index) {
                                                         if(staff.data){
                                                             if(staff.data.level === 400){
-                                                                return <tr className="player-data-table-row" key={index}
-                                                                    onClick={()=>{
-                                                                        if(staff.data && level === 1000){
-                                                                        var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id);
-                                                                          win.focus();
-                                                                        }
-                                                                    }}
-                                                                >
-                                                                    <td>{staff.data ?  index + 1 : ''}</td>
-                                                                    <td>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
-                                                                    <td>{staff.data ? staff.data.email : ''} </td>
+                                                                return <tr className="player-data-table-row" key={index} >
+                                                                    <td onClick={()=>{if(staff.data && level === 1000){ var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id); win.focus();} }}>
+																	{staff.data ?  index + 1 : ''}</td>
+                                                                    <td onClick={()=>{if(staff.data && level === 1000){ var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id); win.focus();} }}>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
+                                                                    <td onClick={()=>{if(staff.data && level === 1000){ var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id); win.focus();} }}>{staff.data ? staff.data.email : ''} </td>
+                                                                    <td>
+																	   <button className="btn btn-primary" onClick={(e) => This.manageAccess({name: staff.data.first_name+' '+staff.data.last_name,cognito_id: staff.data.user_cognito_id})} >Manage Access</button>
+																	</td>
                                                                 </tr>
                                                             }
                                                         }else{
@@ -949,6 +967,8 @@ class OrganizationAdmin extends React.Component {
             <React.Fragment>
                 <DeletePopup isVisible={this.state.isDisplay}  makeVisible={(this.props.makeVisible)? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData)? this.props.isDeleteData : this.isDeleteData} />
                 <UpdatePopup isVisible2={this.state.isDisplay2}  makeVisible2={(this.props.makeVisible2)? this.props.makeVisible2 : this.makeVisible2} isUpdateData={(this.props.isUpdateData)? this.props.isUpdateData : this.isUpdateData} data={this.state.data}/>
+				
+                
                 
                 {this.props.isMilitaryVersionActive === true ? (
                     <div className="militay-view">

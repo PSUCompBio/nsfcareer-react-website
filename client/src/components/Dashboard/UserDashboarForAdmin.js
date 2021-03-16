@@ -206,6 +206,8 @@ class UserDashboarForAdmin extends React.Component {
     if (time === 0) {
       return 'Unknown Time'
     } else {
+		time = time.toString().split(' ');
+		time = time[1] ? time[1] : time;
       // Check correct time format and split into components
       time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
 

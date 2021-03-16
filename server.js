@@ -10119,7 +10119,7 @@ app.post(`${apiPrefix}api/v1/images/BrainImages/`,upload.fields([]) ,(req, res) 
 })
 
 function getLabelBrainImageLink(account_id,image_id,file){
-	var fielPath = `${account_id}/simulation/${image_id}/labledBrainImages/${file}`
+	var fielPath = `${account_id}/simulation/${image_id}/labeledBrainImages/${file}`
     console.log('fielPath ---------', fielPath)
     return new Promise((resolve, reject) => {
         if (fielPath) {
@@ -10153,7 +10153,7 @@ function getLabelBrainImageLink(account_id,image_id,file){
     })
 }
 
-app.post(`${apiPrefix}api/v1/images/LabledBrainImages/`,upload.fields([]) ,(req, res) => {
+app.post(`${apiPrefix}api/v1/images/labeledBrainImages/`,upload.fields([]) ,(req, res) => {
     // console.log('req ---------------\n',req.body);
     if (!req.body.account_id) {
         res.send('Url must contains account Id.');
