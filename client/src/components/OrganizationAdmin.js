@@ -812,7 +812,7 @@ class OrganizationAdmin extends React.Component {
                                                         <th scope="col">#</th>
                                                         <th scope="col">Name</th>
                                                         <th scope="col">Email</th> 
-                                                        <th scope="col">Access Status</th>
+														{/* <th scope="col">Access Status</th> */}
                                                     </tr>
                                                 </thead>
                                                 <tbody className="player-table">
@@ -825,9 +825,9 @@ class OrganizationAdmin extends React.Component {
 																	{staff.data ?  index + 1 : ''}</td>
                                                                     <td onClick={()=>{if(staff.data && level === 1000){ var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id); win.focus();} }}>{staff.data ? staff.data.first_name : ''} {staff.data ? staff.data.last_name : ''}</td>
                                                                     <td onClick={()=>{if(staff.data && level === 1000){ var win = window.open('/admin/view/user?id='+staff.data.user_cognito_id); win.focus();} }}>{staff.data ? staff.data.email : ''} </td>
-                                                                    <td>
+																	{ /* <td>
 																	   <button className="btn btn-primary" onClick={(e) => This.manageAccess({name: staff.data.first_name+' '+staff.data.last_name,cognito_id: staff.data.user_cognito_id})} >Manage Access</button>
-																	</td>
+																		</td>*/ }
                                                                 </tr>
                                                             }
                                                         }else{
