@@ -418,7 +418,7 @@ class LoginComponentHidden extends React.Component {
                         className="alert alert-info api-response-alert-success"
                         role="alert"
                       >
-                        <strong > Success !</strong> {this.state.IRBProcessMessage}.
+                        <strong > Success!</strong> {this.state.IRBProcessMessage}.
                       </div>
                     ) : null}
                     {this.state.message ? (

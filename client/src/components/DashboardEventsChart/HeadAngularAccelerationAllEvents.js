@@ -54,7 +54,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
                     yAxisID: 'B',
                     pointRadius: 0,
                     fill: false,
-                    data: this.props.data.angular_acceleration['xv'],
+                    data: this.props.data.angular_acceleration ? this.props.data.angular_acceleration['xv'] : [],
                 }, {
                     lineTension: 0.1,
                     label: "Y Angular Acceleration",
@@ -63,7 +63,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
                     yAxisID: 'B',
                     pointRadius: 0,
                     fill: false,
-                    data: this.props.data.angular_acceleration['yv'] ? this.props.data.angular_acceleration['yv'] : [],
+                    data: this.props.data.angular_acceleration ? this.props.data.angular_acceleration['yv'] : [],
                 }, {
                     lineTension: 0.1,
                     label: "Z Angular Acceleration",
@@ -72,7 +72,7 @@ class HeadAngularAccelerationAllEvents extends React.Component {
                     yAxisID: 'B',
                     pointRadius: 0,
                     fill: false,
-                    data: this.props.data.angular_acceleration['zv'] ? this.props.data.angular_acceleration['zv'] : [],
+                    data: this.props.data.angular_acceleration ? this.props.data.angular_acceleration['zv'] : [],
                 }]
 
             },

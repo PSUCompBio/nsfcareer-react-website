@@ -373,6 +373,17 @@ export const getUserDBDetails = (request) =>{
       });
   })
 }
+export const getUserDetailsByAccountID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/getUserDetailsByAccountID`, request,{withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
 export const getUserDataByPlayerID = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/getUserDataByPlayerID`, request,{withCredentials: true})
@@ -1504,6 +1515,18 @@ export const deleteOrgTeam3 = (request) =>{
 export const deleteOrgTeam4 = (request) =>{
   return new Promise((resolve,reject)=>{
       axios.post(`/deleteOrgTeam4`, request, {withCredentials: true})
+      .then(function (response) {
+        resolve(response);
+      })
+      .catch(function (error) {
+        reject(error)
+      });
+  })
+}
+//# deleteOrgTeam4
+export const deleteEventByImageID = (request) =>{
+  return new Promise((resolve,reject)=>{
+      axios.post(`/deleteEventByImageID`, request, {withCredentials: true})
       .then(function (response) {
         resolve(response);
       })

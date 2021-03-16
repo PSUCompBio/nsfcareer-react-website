@@ -12,6 +12,7 @@ import {
     getMLplatformfiles
 } from './../apis';
 import TeamStateScatterChart from './Charts/TeamStateScatterChart';
+import TeamStateScatterChart_v1 from './Charts/TeamStateScatterChart_v1';
 // import TeamStateScatterChartVolacity from './Charts/TeamStateScatterChartVolacity';
 import BarChart from './Charts/BarChart';
 import MLTab from './MachineLearningComponent/Tab';
@@ -37,40 +38,58 @@ class TeamStats extends React.Component {
             },
             MLcsvData: '',
             MLjsonData: '',
-            isMldataLoaded: false
+            isMldataLoaded: false,
+            colorOfTeams: ''
         };
         this.child = React.createRef();
     }
 
     componentDidMount() {
         getMLplatformfiles(JSON.stringify({}))
-        .then(res => {
-            console.log('res ----------- getMLplatformfiles\n',res);
-            if(res.data.message === 'success'){
+            .then(res => {
+                console.log('res ----------- getMLplatformfiles\n', res);
+                if (res.data.message === 'success') {
+                    this.setState({
+                        MLcsvData: res.data.MLcsvData,
+                        MLjsonData: res.data.resultFile,
+                        isMldataLoaded: true
+                    })
+                } else {
+                    this.setState({
+                        isMldataLoaded: res.data.error
+                    })
+                }
+            }).catch(err => {
+                // console.log('err --------------\n',err)
                 this.setState({
-                    MLcsvData: res.data.MLcsvData,
-                    MLjsonData: res.data.resultFile,
-                    isMldataLoaded: true
+                    isMldataLoaded: err
                 })
-            }else{
-                this.setState({
-                    isMldataLoaded: res.data.error
-                })
-            }
-        }).catch(err=>{
-            // console.log('err --------------\n',err)
-            this.setState({
-                isMldataLoaded: err
             })
-        })
         // Scrolling winddow to top when user clicks on about us page
-		var team = this.props.match.params.team;
-		if (this.props.match.params.type == "Players"){
-			var temarray = [];	
-			temarray.push(team);
-		}else{
-			var temarray = team.split(",");
-		}
+        var team = this.props.match.params.team;
+        if (this.props.match.params.type == "Players") {
+            var temarray = [];
+            temarray.push(team);
+        } else {
+            var temarray = team.split(",");
+        }
+
+        //random colors ....
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        var colorOfTeams = temarray.map((team) => {
+            return { [team]: getRandomColor() }
+        })
+
+        this.setState({ colorOfTeams: colorOfTeams })
+        console.log('colorOfTeams', colorOfTeams[0])
         window.scrollTo(0, 0);
         isAuthenticated(JSON.stringify({}))
             .then((value) => {
@@ -89,8 +108,8 @@ class TeamStats extends React.Component {
                                 MPS_95_VEL_DATA: response.data.MPS_95_VEL_DATA,
                                 PLAYERS_POSITIONS: response.data.PLAYERS_POSITIONS,
                                 PLAYERS_SPORT: response.data.PLAYERS_SPORT,
-                                BRAIN_POSITIONS: { 'principal-max-strain': response.data.P_MAX_S_POSITIONS, 'principal-min-strain': response.data.P_MIN_S_POSITIONS, 'csdm-15': response.data.P_CSDM_15},
-                                BRAIN_SPORTS: { 'principal-max-strain': response.data.S_MAX_S_POSITIONS, 'principal-min-strain': response.data.S_MIN_S_POSITIONS, 'csdm-15': response.data.S_CSDM_15}
+                                BRAIN_POSITIONS: { 'principal-max-strain': response.data.P_MAX_S_POSITIONS, 'principal-min-strain': response.data.P_MIN_S_POSITIONS, 'csdm-15': response.data.P_CSDM_15 },
+                                BRAIN_SPORTS: { 'principal-max-strain': response.data.S_MAX_S_POSITIONS, 'principal-min-strain': response.data.S_MIN_S_POSITIONS, 'csdm-15': response.data.S_CSDM_15 }
 
                             });
                         })
@@ -121,13 +140,13 @@ class TeamStats extends React.Component {
     handleRunReport = (e) => {
         e.preventDefault();
         this.setState({ isfetching: true })
-		var team = this.props.match.params.team;
-		if (this.props.match.params.type == "Players"){
-			var temarray = [];	
-			temarray.push(team);
-		}else{
-			var temarray = team.split(",");
-		}
+        var team = this.props.match.params.team;
+        if (this.props.match.params.type == "Players") {
+            var temarray = [];
+            temarray.push(team);
+        } else {
+            var temarray = team.split(",");
+        }
         getFilterdTeamSpheres({ brand: this.props.match.params.brand, organization: this.props.match.params.org, team: temarray, filter: this.state.filter, gs: this.state.gs, type: this.state['principal-max-strain'] })
             .then(response => {
                 console.log('getFilterdTeamSpheres ----------------------\n', response.data);
@@ -220,9 +239,9 @@ class TeamStats extends React.Component {
         this.setState({ brainPosition: e.target.value })
     }
 
-    handleHover =(e)=>{
+    handleHover = (e) => {
         var tooltipEl = document.getElementById('chartjs-tooltip');
-        if (tooltipEl) {  
+        if (tooltipEl) {
             tooltipEl.style.opacity = 0;
             return;
         }
@@ -231,13 +250,13 @@ class TeamStats extends React.Component {
     render() {
         //imported Modules ...
         if (!this.state.isAuthenticated && !this.state.isCheckingAuth) {
-           // return <Redirect to="/Login" />;
+            // return <Redirect to="/Login" />;
         }
         if (this.state.isLoading) return <Spinners />;
 
         //Modules end
 
-        const { PLAYERS_POSITIONS, BRAIN_POSITIONS, PLAYERS_SPORT, BRAIN_SPORTS , brainPosition } = this.state;
+        const { PLAYERS_POSITIONS, BRAIN_POSITIONS, PLAYERS_SPORT, BRAIN_SPORTS, brainPosition, colorOfTeams } = this.state;
 
         //# Counting duplicate label of player ...
         var count_positions = {};
@@ -246,7 +265,7 @@ class TeamStats extends React.Component {
         if (PLAYERS_POSITIONS) {
             PLAYERS_POSITIONS.forEach(async (i) => {
                 // console.log('position',count_positions[i]);
-                if(count_positions[i] !== null){
+                if (count_positions[i] !== null) {
                     count_positions[i] = (count_positions[i] || 0);
                 }
             });
@@ -256,13 +275,13 @@ class TeamStats extends React.Component {
         if (PLAYERS_SPORT) {
             PLAYERS_SPORT.forEach(async (i) => {
                 // console.log('position',count_sports[i]);
-                if(count_sports[i] !== null){
+                if (count_sports[i] !== null) {
                     count_sports[i] = (count_sports[i] || 0);
                 }
             });
-            
+
         }
-       
+
 
         //# Addition of player mps by positions
         var count_positions_val = {};
@@ -271,10 +290,10 @@ class TeamStats extends React.Component {
             BRAIN_POSITIONS[brainPosition].forEach(async (res) => {
                 Object.entries(res).forEach(([key, value]) => {
                     // console.log('res',key, value)
-                    if(key !== 'null'){
+                    if (key !== 'null') {
                         count_positions_val[key] = (count_positions_val[key] || 0) + value;
                         count_positions[key] = (count_positions[key] || 0) + 1;
-                    } 
+                    }
                 })
 
             });
@@ -283,9 +302,9 @@ class TeamStats extends React.Component {
         if (BRAIN_SPORTS[brainPosition]) {
             BRAIN_SPORTS[brainPosition].forEach(async (res) => {
                 Object.entries(res).forEach(([key, value]) => {
-                    if(key !== 'null') {
+                    if (key !== 'null') {
                         count_sports_val[key] = (count_sports_val[key] || 0) + value;
-                        count_sports[key] =  (count_sports[key] || 0) + 1;
+                        count_sports[key] = (count_sports[key] || 0) + 1;
                     }
                 })
 
@@ -293,7 +312,7 @@ class TeamStats extends React.Component {
         }
 
         //console.log('count_sports',count_sports);
-       // console.log('count_positions', count_positions)
+        // console.log('count_positions', count_positions)
 
         /*
         * Bar chart data for brain  positons ...
@@ -323,7 +342,7 @@ class TeamStats extends React.Component {
             }
             return separateWord.join(' ');
         }
-        
+
         // for sport ...
         if (count_sports && count_sports_val) {
             Object.entries(count_sports).forEach(([key, value], index) => {
@@ -331,7 +350,7 @@ class TeamStats extends React.Component {
                 let totalSportVal = count_sports_val[key];
                 totalSportVal = totalSportVal ? totalSportVal.toFixed(2) : 0;
                 totalSportVal = parseFloat(totalSportVal);
-               // console.log('totalsportval = ',totalSportVal,', totalImpact = ',impactLen, 'sport -', key)
+                // console.log('totalsportval = ',totalSportVal,', totalImpact = ',impactLen, 'sport -', key)
 
                 let mpsAvg = (totalSportVal) / impactLen;
                 mpsAvg = mpsAvg.toFixed(2);
@@ -342,7 +361,7 @@ class TeamStats extends React.Component {
 
         }
 
-       // console.log(labels_sports, data_sports);
+        // console.log(labels_sports, data_sports);
         // for position ...
         if (count_positions && count_positions_val) {
             Object.entries(count_positions).forEach(([key, value], index) => {
@@ -350,11 +369,11 @@ class TeamStats extends React.Component {
                 let totalPostionVal = count_positions_val[key];
                 totalPostionVal = totalPostionVal ? totalPostionVal.toFixed(2) : 0;
                 // console.log('totalPostionVal = ',totalPostionVal,', totalImpact = ',impactLen)
-                
+
                 let mpsAvg = (totalPostionVal) / impactLen;
                 //let mpsAvg = impactLen;
-				/* console.log("totalPostionVal",totalPostionVal);
-				console.log("impactLen",impactLen);*/
+                /* console.log("totalPostionVal",totalPostionVal);
+                console.log("impactLen",impactLen);*/
                 mpsAvg = mpsAvg.toFixed(2);
                 let position = key;
 
@@ -381,29 +400,25 @@ class TeamStats extends React.Component {
         };
 
         // # Brain postion graph options ...
-		var yval = data_sports.sort(function(a, b){return a - b});
-		var maxval = 0.0200
-		if (parseFloat(yval[0]) > 0.0) {
-			 var yval2 = data_sports.sort(function(a, b){return a - b});
-			 maxval = parseFloat(yval2[0]);
-			console.log("maxval",maxval);
-		}else if (parseFloat(yval[0]) < 0.0) {
-			 var yval1 = data_sports.sort(function(a, b){return a - b});
-			 maxval = parseFloat(yval1[0]);			
-			console.log("maxval1",maxval);
-		}else{		
-			maxval = 0.0200
-			console.log("maxval3",maxval);
-		}
-			console.log("final",maxval);
-		var ylabel = '';
-		if(this.state.brainPosition == 'principal-max-strain' ){
-			ylabel = 'Average Principal Strain';
-		}else if(this.state.brainPosition == 'principal-min-strain' ){
-			ylabel = 'Min Principal Strain';			
-		}else if(this.state.brainPosition == 'csdm-15' ){
-			ylabel = 'CSDM 15';			
-		}
+        var yval = data_sports.sort(function (a, b) { return a - b });
+        var maxval = 0.0200
+        if (parseFloat(yval[0]) > 0.0) {
+            var yval2 = data_sports.sort(function (a, b) { return a - b });
+            maxval = parseFloat(yval2[0]);
+        } else if (parseFloat(yval[0]) < 0.0) {
+            var yval1 = data_sports.sort(function (a, b) { return a - b });
+            maxval = parseFloat(yval1[0]);
+        } else {
+            maxval = 0.0200
+        }
+        var ylabel = '';
+        if (this.state.brainPosition == 'principal-max-strain') {
+            ylabel = 'Avg. Maximum Principal Strain';
+        } else if (this.state.brainPosition == 'principal-min-strain') {
+            ylabel = 'Avg. Minimum Principal Strain';
+        } else if (this.state.brainPosition == 'csdm-15') {
+            ylabel = 'CSDM 15';
+        }
         const BrainPositionChartoptions = {
             legend: {
                 display: false
@@ -425,17 +440,15 @@ class TeamStats extends React.Component {
                         fontWeight: 800,
                         labelString: ylabel
                     },
-					ticks: {
-						beginAtZero:true,
-						min: 0,
-						max: maxval,
-					}
-                    
+                    ticks: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: maxval,
+                    }
+
                 }],
             }
         };
-        
-
         //  Brain position chart data closed ...
         let brand = this.props.match.params.brand && this.props.match.params.brand !== undefined ? this.props.match.params.brand : ''
         return (
@@ -568,50 +581,127 @@ class TeamStats extends React.Component {
                                 </div>
                             </Card >
                         </Col>
-                        <Row className="no-padding" style={{ 'display': 'flex' }} onMouseOver ={this.handleHover}>
-                            <Col md={6} className="team-state-cart-left" style={{ marginTop: '50px', 'display': 'flex' }}>
-                                <Card style={{ 'border': '1px solid rgb(10, 84, 143)', 'width': '100%' }} >
-                                    {/*!-- MPS_95 chart start --*/}
-                                    <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
-                                        <div className="col-md-12 no-padding">
-                                            <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
-                                            {< TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_VEL_EXLARATION} MPS_95_DATA={this.state.MPS_95_VEL_DATA} teamData={this.state.teamData} chartType= 'Ang Vel' />}
-                                            <p
-                                                style={{
-                                                    'text-align': 'center',
-                                                    'font-weight': '800',
-                                                    'color': '#666666',
-                                                    'padding-bottom': '20px'
-                                                }}
-                                            >Ang Vel (rad/s)</p>
+                        <Row className="no-padding" style={{ 'display': 'flex' }} onMouseOver={this.handleHover}>
+                            <Col
+                                className="no-padding"
+                                style={{
+                                    'float': 'left',
+                                    'border': '1px solid rgb(10, 84, 143)',
+                                    'margin': 'auto',
+                                    'margin-top': '3rem',
+                                    'max-width': '97%',
+                                    'border-radius': '5px'
+                                }}
+                            >
+                                <Col md={6} className="team-state-cart-left" style={{ marginTop: '50px', 'display': 'inline-block' }}>
+                                    <Card style={{ 'width': '100%' }} >
+                                        {/*!-- MPS_95 chart start --*/}
+                                        <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
+                                            <div className="col-md-12 no-padding">
+                                                <p className="video-lebel text-center">95 Percentile MPS vs. Maximum Angular Velocity </p>
+                                                {this.state.for === "Teams" ?
+                                                    < TeamStateScatterChart
+                                                        MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_VEL_EXLARATION}
+                                                        MPS_95_DATA={this.state.MPS_95_VEL_DATA}
+                                                        teamData={this.state.teamData}
+                                                        chartType='Ang Vel'
+                                                        colorOfTeams={colorOfTeams}
+                                                    />
+                                                    : 
+                                                    < TeamStateScatterChart_v1
+                                                        MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_VEL_EXLARATION}
+                                                        MPS_95_DATA={this.state.MPS_95_VEL_DATA}
+                                                        teamData={this.state.teamData}
+                                                        chartType='Ang Vel'
+                                                    />
+
+                                                    
+                                                }
+                                                <p
+                                                    style={{
+                                                        'text-align': 'center',
+                                                        'font-weight': '800',
+                                                        'color': '#666666',
+                                                        'padding-bottom': '20px'
+                                                    }}
+                                                >Ang Vel (rad/s)</p>
+                                            </div>
+                                            <div className="col-md-6">
+                                            </div>
                                         </div>
-                                        <div className="col-md-6">
+                                        {/*!-- MPS_95 chart end --*/}
+                                    </Card>
+                                </Col>
+                                <Col md={6} className="team-state-cart-right" style={{ marginTop: '50px', 'display': 'inline-block' }} >
+                                    <Card style={{ 'height': '100%' }}>
+                                        {/*!-- MPS_95 chart start --*/}
+                                        <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
+                                            <div className="col-md-12 no-padding">
+                                                <p className="video-lebel text-center">95 Percentile MPS Maximum Angular Acceleration </p>
+                                                {this.state.for === "Teams" ?
+                                                    < TeamStateScatterChart
+                                                        MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_EXLARATION}
+                                                        MPS_95_DATA={this.state.MPS_95_DATA}
+                                                        teamData={this.state.teamData}
+                                                        chartType='Ang Acc'
+                                                        colorOfTeams={colorOfTeams}
+                                                    />
+                                                    :
+                                                    < TeamStateScatterChart_v1
+                                                        MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_EXLARATION}
+                                                        MPS_95_DATA={this.state.MPS_95_DATA}
+                                                        teamData={this.state.teamData}
+                                                        chartType='Ang Acc'
+                                                        colorOfTeams={colorOfTeams}
+                                                    />
+                                                }
+                                                <p
+                                                    style={{
+                                                        'text-align': 'center',
+                                                        'font-weight': '800',
+                                                        'color': '#666666',
+                                                        'padding-bottom': '20px'
+                                                    }}
+                                                >Ang Acc (rad/s<sup>2</sup>)</p>
+                                            </div>
+                                            <div className="col-md-6">
+                                            </div>
                                         </div>
-                                    </div>
-                                    {/*!-- MPS_95 chart end --*/}
-                                </Card>
-                            </Col>
-                            <Col md={6} className="team-state-cart-right" style={{ marginTop: '50px' }} >
-                                <Card style={{ 'border': '1px solid rgb(10, 84, 143)', 'height': '100%' }}>
-                                    {/*!-- MPS_95 chart start --*/}
-                                    <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }}>
-                                        <div className="col-md-12 no-padding">
-                                            <p className="video-lebel text-center">95 Percentile MPS Maximum Angular Acceleration </p>
-                                            < TeamStateScatterChart MAX_ANGULAR_EXLARATION={this.state.MAX_ANGULAR_EXLARATION} MPS_95_DATA={this.state.MPS_95_DATA} teamData={this.state.teamData} chartType= 'Ang Acc'/>
-                                            <p
-                                                style={{
-                                                    'text-align': 'center',
-                                                    'font-weight': '800',
-                                                    'color': '#666666',
-                                                    'padding-bottom': '20px'
-                                                }}
-                                            >Ang Acc (rad/s<sup>2</sup>)</p>
-                                        </div>
-                                        <div className="col-md-6">
-                                        </div>
-                                    </div>
-                                    {/*!-- MPS_95 chart end --*/}
-                                </Card>
+                                        {/*!-- MPS_95 chart end --*/}
+                                    </Card>
+                                </Col>
+
+                                {/* -- team labels -- */}
+                                <Col sm={8}
+                                    style={{
+                                        'margin': 'auto',
+                                        'text-align': 'center'
+                                    }}
+                                >
+                                    {colorOfTeams && this.state.for === "Teams" ?
+                                        colorOfTeams.map((team) => {
+                                            return Object.entries(team).map((key) => {
+                                                return (
+                                                    <label class="chart-label label-1"
+                                                        style={{
+                                                            'margin': '8px 30px'
+                                                        }}
+                                                    >
+                                                        <span style={{
+                                                            'width': '22px',
+                                                            'height': '22px',
+                                                            'display': 'inline-block',
+                                                            'background': key[1],
+                                                            'margin': '0px 5px -5px'
+                                                        }}>
+                                                        </span>{key[0]}
+                                                    </label>)
+                                            })
+                                        })
+                                        : null
+                                    }
+
+                                </Col>
                             </Col>
                         </Row>
 
@@ -622,17 +712,17 @@ class TeamStats extends React.Component {
                                         <div className="col-md-12 no-padding">
                                             <p className="video-lebel text-center"
                                             >Machine Learning</p>
-                                            {this.state.MLjsonData ? 
-                                                <MLTab MLcsvData={this.state.MLcsvData} MLjsonData={this.state.MLjsonData}  />
+                                            {this.state.MLjsonData ?
+                                                <MLTab MLcsvData={this.state.MLcsvData} MLjsonData={this.state.MLjsonData} />
                                                 : this.state.isMldataLoaded ? this.tate.isMldataLoaded : 'Loading...'
                                             }
-                                            
+
                                         </div>
                                     </div>
                                 </Card>
                             </Col>
                             <Col md={6} className="team-state-cart-left" style={{ marginTop: '50px', display: 'flex' }}>
-                                <Card style={{ 'border': '1px solid rgb(10, 84, 143)',width: '100%' }} >
+                                <Card style={{ 'border': '1px solid rgb(10, 84, 143)', width: '100%' }} >
                                     <div className="col-sm-12 no-padding" style={{ 'margin-top': '20px' }} >
                                         {this.state.for !== "Teams" ?
                                             <div className="col-md-12 no-padding">
@@ -646,23 +736,23 @@ class TeamStats extends React.Component {
                                                     }}
                                                 >Player positions can be set in their profile pages.</p>
                                                 <div style={{
-                                                    'padding': '8px','text-align': 'center'
+                                                    'padding': '8px', 'text-align': 'center'
                                                 }}>
-                                                    <select 
+                                                    <select
                                                         onChange={this.handlePostionMetric}
                                                     >
-                                                        <option value="principal-max-strain">Max Principal Strain</option>
-                                                        <option value="principal-min-strain">Min Principal Strain</option>
+                                                        <option value="principal-max-strain">Avg. Maximum Principal Strain</option>
+                                                        <option value="principal-min-strain">Avg. Minimum Principal Strain</option>
                                                         <option value="csdm-15">CSDM 15</option>
 
                                                     </select>
                                                 </div>
-                                                <div style={{'margin-top': '100px'}}>
+                                                <div style={{ 'margin-top': '100px' }}>
                                                     <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
                                                 </div>
                                             </div>
                                             :
-                                            <div className="col-md-12 no-padding">
+                                            <div className="col-md-12 no-padding text-center">
                                                 <p className="video-lebel text-center">Brain Loading by Sport</p>
                                                 <p className="circle-sub-title"
                                                     style={{
@@ -676,16 +766,16 @@ class TeamStats extends React.Component {
                                                     'padding': '8px'
                                                 }}>
                                                     <select style={{
-                                                        'float': 'right'
+                                                        'padding': '8px', 'text-align': 'center'
                                                     }}
                                                         onChange={this.handlePostionMetric}
                                                     >
-                                                        <option value="principal-max-strain">Max Principal Strain</option>
-                                                        <option value="principal-min-strain">Min Principal Strain</option>
+                                                        <option value="principal-max-strain">Avg. Maximum Principal Strain</option>
+                                                        <option value="principal-min-strain">Avg. Minimum Principal Strain</option>
                                                         <option value="csdm-15">CSDM 15</option>
                                                     </select>
                                                 </div>
-                                                <div style={{'margin-top': '100px'}}>
+                                                <div style={{ 'margin-top': '100px' }}>
                                                     <BarChart data={BrainPositionChartData} options={BrainPositionChartoptions} />
                                                 </div>
                                             </div>

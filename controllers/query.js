@@ -19,7 +19,7 @@ function getUserDetails(user_name, cb) {
             Key: {
                 user_cognito_id: user_name,
             },
-            ProjectionExpression: "last_name,first_name,team,sensor,organization,sensor_id_number,player_position, user_cognito_id",
+            ProjectionExpression: "account_id,last_name,first_name,team,sensor,organization,sensor_id_number,player_position, user_cognito_id",
 			};
         docClient.get(db_table, function (err, data) {
             if (err) {
@@ -1429,6 +1429,29 @@ function getBrandData(obj) {
         });
     });
 }
+function getSensorDataByPlayerID(player_id) {
+    return new Promise((resolve, reject) => {
+        let params = {
+            TableName: "sensor_details",
+            FilterExpression: "begins_with(player_id,:player_id)",
+            ExpressionAttributeValues: {
+               ":player_id": player_id
+            },
+        };
+        var item = [];
+        docClient.scan(params).eachPage((err, data, done) => {
+            if (err) {
+                reject(err);
+            }
+            if (data == null) {
+                resolve(concatArrays(item));
+            } else {
+                item.push(data.Items);
+            }
+            done();
+        });
+    });
+}
 
 function getBrandDataByorg(brand,organization) {
     return new Promise((resolve, reject) => {
@@ -1907,6 +1930,29 @@ function getUserDbData(user_name, cb) {
             cb("", data);
         }
     });
+}
+function getUserDbDataByAccountId(account_id) {
+	return new Promise((resolve, reject) => {
+        var params = {
+			TableName: 'users',
+			FilterExpression: "account_id = :account_id",
+			ExpressionAttributeValues: {
+				":account_id": account_id
+			}
+		};        
+		 var item = [];
+		 docClient.scan(params).eachPage((err, data, done) => {
+			if (err) {
+				reject(err);
+			}
+			if (data == null) {
+				resolve(concatArrays(item));
+			} else {
+				item.push(data.Items);
+			}
+			done();
+		});
+    });   
 }
 function getUserTokenDBDetails(user_name, cb) {
     var db_table = {
@@ -3458,6 +3504,7 @@ function deleteSimulation_imagesData(image_id){
                 image_id: image_id,
             },
         };
+		console.log(params);
         docClient.delete(params, function (err, data) {
             if (err) {
                 reject(err);
@@ -3467,6 +3514,7 @@ function deleteSimulation_imagesData(image_id){
         });
     });
 }
+
 
 function getModalValidationDB(image_id){
     return new Promise((resolve, reject) => {
@@ -3841,7 +3889,45 @@ function addJobslog(obj) {
         });
     });
 }
-
+function DeleteSensorDataByPlayerID(player_id,org_id){ 
+    return new Promise((resolve, reject) => {
+		console.log("org_id",org_id);
+		console.log("player_id",player_id);
+       let params = {
+            TableName: "sensor_details",
+           Key: {
+                org_id: org_id,
+                player_id: player_id, 
+            },
+        };
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+				console.log("data",data);
+                resolve(data);
+            }
+        });
+    });
+}
+function InsertNewSensorDataByPlayerID(obj) {
+    return new Promise((resolve, reject) => {
+        var dbInsert = {
+            TableName: "sensor_details",
+            Item: obj,
+        };
+		console.log("dbInsert",dbInsert);
+        docClient.put(dbInsert, function (err, data) {
+            if (err) {
+                console.log(err);
+                reject(err);
+            } else {
+		console.log("data",data);
+                resolve(data);
+            }
+        });
+    });
+}
 
 
 module.exports = {
@@ -3956,5 +4042,9 @@ module.exports = {
     getUserDetailByAccountId,
 	getOrgpTeamFromSensorDetails,
 	getOrgFromSensorDetailsr,
-    addJobslog
+    addJobslog,
+	getUserDbDataByAccountId,
+	getSensorDataByPlayerID,
+	InsertNewSensorDataByPlayerID,
+	DeleteSensorDataByPlayerID,
 };

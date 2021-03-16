@@ -12,6 +12,7 @@ import {
     uploadProfilePic,
     getUserDetails,
     getProfilePicLink,
+	getUserDetailsByAccountID,
     // getInpFileLink,
     getModelLink,
     // getSimulationFile,
@@ -359,7 +360,7 @@ class Profile extends React.Component {
             avatar_zip_file_url_details : '',
             vtk_file_url_details : ''
         }
-        getUserDetails({user_cognito_id : user_id})
+        getUserDetailsByAccountID({user_cognito_id : user_id})
         .then(response => {
             // If Selfie is uploaded
             var user_data = response.data.data;
@@ -655,7 +656,7 @@ class Profile extends React.Component {
     }
 
     getupdatedprofileData = ()=>{
-        getUserDetails({user_cognito_id : this.state.profile_to_view})
+        getUserDetailsByAccountID({user_cognito_id : this.state.profile_to_view})
         .then((response) => {
             // store.dispatch(userDetails(response.data))
             console.log('RESPONSE DATA IS -------------------\n', response.data);
@@ -1876,7 +1877,7 @@ class Profile extends React.Component {
                             .then((value) => {
                                 if (value.data.message === 'success') {
                                     this.setState({});
-                                    getUserDetails({user_cognito_id : this.state.profile_to_view})
+                                    getUserDetailsByAccountID({user_cognito_id : this.state.profile_to_view})
                                     .then((response) => {
                                         // store.dispatch(userDetails(response.data))
                                         console.log('RESPONSE DATA IS -------------------\n', response.data);

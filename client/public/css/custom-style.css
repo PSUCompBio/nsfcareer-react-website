@@ -21,9 +21,36 @@
 /* Navigation text css  end  */
 
 /* Player dashboard css  start  */
+.title-right.hide {
+    display: none !important;
+}
+.title-right.show {
+    display: block !important;
+}
+.title-right{margin:10px;}
 .player-dashboard-user-datials-header {
   border: 2px solid rgb(15, 129, 220) !important;
   border-radius: 1.8rem !important;
+}
+.branimage .carousel-control-next-icon {
+    background-image: url(https://img.icons8.com/ios-glyphs/30/000000/more-than.png) !important;
+}
+.branimage .carousel-control-prev-icon {
+    background-image: url(https://img.icons8.com/ios-glyphs/30/000000/less-than.png) !important;
+}
+.branimage .carousel-indicators {
+    display: none !important;
+}
+.branimage .carousel-caption {
+    position: relative !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 10;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #000000 !important;
+    text-align: center;
 }
 .player-dashboard-user-datials-header p {
   text-align: left !important;

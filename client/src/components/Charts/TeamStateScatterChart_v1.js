@@ -3,7 +3,7 @@ import { Scatter } from 'react-chartjs-2';
 
 
 
-class TeamStateScatterChart extends React.Component {
+class TeamStateScatterChart_v1 extends React.Component {
     // eslint-disable-next-line
     constructor(props) {
         super(props);
@@ -13,7 +13,7 @@ class TeamStateScatterChart extends React.Component {
 
     render() {
         const { team , organization, brand} = this.props.teamData;
-        const { colorOfTeams } = this.props;
+
         window.addEventListener('scroll', function(){
             var tooltipEl = document.getElementById('chartjs-tooltip');
             if (tooltipEl) {
@@ -21,19 +21,15 @@ class TeamStateScatterChart extends React.Component {
                 return;
             }
         });
-        // console.log('props', this.props);
+        console.log('props', this.props);
         let values = []
         let max_axlation = this.props.MAX_ANGULAR_EXLARATION
-        // console.log('max_axlation ------------------', max_axlation)
         let mps_95 = this.props.MPS_95_DATA
         var chartType  = this.props.chartType
         for (var i = 0; i < max_axlation.length; i++) {
             values.push({ 'x': max_axlation[i].val, 'y': mps_95[i] });
         }
-        // console.log('colorOfTeams ------------', colorOfTeams)
-        const getColor = (team)=>{
-            return colorOfTeams.filter(color => color[team] !== undefined);
-        }
+        console.log('values', values)
         const data = {
 
             datasets: [
@@ -43,21 +39,13 @@ class TeamStateScatterChart extends React.Component {
                     backgroundColor: "rgb(0 123 255 / 63%)",
                     pointRadius: 5,
                     pointHoverRadius: 10,
-                    pointBackgroundColor: function(context) {
-                        var index = context.dataIndex;
-                        var angAcc = context['dataset']['data'][index]['x'];
-                        var team = max_axlation.filter((value)=>filterPlayerId(value,angAcc));
-                        team = team[0].team;
-                        var color = getColor(team);
-                        console.log(color[0][team], team)
-                        return color[0][team] ? color[0][team] : 'green';
-                    }
                 }
             ]
         };
 
         // filter player id ...
         function filterPlayerId(values, angAcc) {
+            // console.log(values, angAcc)
           return values.val == angAcc;
         }
         
@@ -72,7 +60,13 @@ class TeamStateScatterChart extends React.Component {
                 tooltipEl.innerHTML = "<table></table>"
                 document.getElementById('root').appendChild(tooltipEl);
             }
-           
+            // Hide if no tooltip
+            // if (tooltip.opacity === 0) {
+            //     console.log('reutrn null')
+            //     tooltipEl.style.opacity = 0;
+            //     return;
+            // }
+            // Set caret Position
             tooltipEl.classList.remove('above', 'below', 'no-transform');
             if (tooltip.yAlign) {
                 tooltipEl.classList.add(tooltip.yAlign);
@@ -93,7 +87,6 @@ class TeamStateScatterChart extends React.Component {
                 });
                 innerHtml += '</thead><tbody>';
                 bodyLines.forEach(function (body, i) {
-              
                     var newbody = body[0].replace('(', '');
                     newbody = newbody.replace(')', '');
                     var colors = tooltip.labelColors[i];
@@ -179,4 +172,4 @@ class TeamStateScatterChart extends React.Component {
     }
 }
 
-export default TeamStateScatterChart;
+export default TeamStateScatterChart_v1;

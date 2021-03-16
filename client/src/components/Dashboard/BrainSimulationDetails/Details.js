@@ -133,16 +133,16 @@ class Details extends React.Component {
       simulationStatus: 'pending',
       label_resetVideo: 'Reset',
       label_TrimVideo: 'Trim',
-      showinjury: 'block',
-      showinjury1: true,
+      showinjury: 'none',
+      showinjury1: false,
       showPMS1: false,
       showMASxSR1: false,
       showCSDM1: false,
-      showMPS1: false,
+      showMPS1: true,
       showPMS: 'none',
       showMASxSR: 'none',
       showCSDM: 'none',
-      showMPS: 'none',
+      showMPS: 'block',
 	  Brainimages: '',
       isTriming: false,
       account_id: '',
@@ -974,7 +974,7 @@ class Details extends React.Component {
                     <>
                       <p>Name: {this.state.simulation_data ? this.state.simulation_data.sensor_data.player['first-name'] + ' ' + this.state.simulation_data.sensor_data.player['last-name'] : ''}</p>
                       <p >
-                        Account ID: <a target='_blank' href={'/profile?id=' + this.state.player_data.user_cognito_id}>
+                        Account ID: <a target='_blank' href={'/profile?id=' + this.state.account_id}>
                           {this.state.account_id}
                         </a>
                       </p>
@@ -1252,15 +1252,15 @@ class Details extends React.Component {
                 <div className="col-md-12">
                   <div className="metrics">
                     <div className="col-md-12">
-                      {this.state.showinjury1 ?
+                      { /*this.state.showinjury1 ?
                         <>
                           <button className="btn btn-primary" onClick={this.showinjury} >Injury Metrics</button><br />
                         </>
                         :
                         <>
                           <button className="btn gray" onClick={this.showinjury} >Injury Metrics</button><br />
-                        </>
-                      }
+                        </>*/
+                      } 
 					  {this.state.showMPS1 ?
                         <>
                           <button className="btn btn-primary" style={{ 'margin-top': '10px' }} onClick={this.showMPS} >MPS</button>
@@ -1411,9 +1411,9 @@ class Details extends React.Component {
   }
 
   componentDidMount() {	
-	var playerid = this.props.match.params.player_id.split('$')[0];
-	console.log("playerid",playerid);
-	getUserDataByPlayerID({ playerid: playerid})
+	var playerid1 = this.props.match.params.player_id.split('$')[0];
+	console.log("playerid1",playerid1+'-');
+	getUserDataByPlayerID({ playerid: playerid1+'-'})
 	.then(response1 => {
 		var imageid = this.props.match.params.image_id;
 		var accountid = response1.data.data[0].account_id;

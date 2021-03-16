@@ -193,12 +193,12 @@ class Report extends React.Component {
 					var left5 = csdm_val5 * ScaleWidth / 38;
 					var left6 = csdm_val6 * ScaleWidth / 38;
 					//**Round up the value....
-					csdmCerebellumtrangleScale = ''+left1.toFixed(0)+'px';
-					csdmFrontaltrangleScale = ''+left2.toFixed(0)+'px';
-					csdmOccipitaltrangleScale = ''+left3.toFixed(0)+'px';
-					csdmParietaltrangleScale = ''+left4.toFixed(0)+'px';
-					csdmTemporaltrangleScale = ''+left5.toFixed(0)+'px';
-					csdmMotortrangleScale = ''+left6.toFixed(0)+'px';
+					csdmCerebellumtrangleScale = ''+left1.toFixed(2)+'px';
+					csdmFrontaltrangleScale = ''+left2.toFixed(2)+'px';
+					csdmOccipitaltrangleScale = ''+left3.toFixed(2)+'px';
+					csdmParietaltrangleScale = ''+left4.toFixed(2)+'px';
+					csdmTemporaltrangleScale = ''+left5.toFixed(2)+'px';
+					csdmMotortrangleScale = ''+left6.toFixed(2)+'px';
                     csdmTrangle1 = this.getTrangle(csdm_val1);
                     csdmTrangle2 = this.getTrangle(csdm_val2);
                     csdmTrangle3 = this.getTrangle(csdm_val3);
@@ -209,26 +209,23 @@ class Report extends React.Component {
             }
             if(this.state.jsonData['principal-max-strain']){               
 			//eslint-disable-next-line
-				var num1 = this.state.jsonData['principal-max-strain'].cerebellum !== undefined ? this.state.jsonData['principal-max-strain'].cerebellum.value : "0.0000";
-                var num2 = this.state.jsonData['principal-max-strain'].frontal !== undefined ? this.state.jsonData['principal-max-strain'].frontal.value : "0.0000";
-                var num3 = this.state.jsonData['principal-max-strain'].occipital !== undefined ? this.state.jsonData['principal-max-strain'].occipital.value : "0.0000";
-                var num4 = this.state.jsonData['principal-max-strain'].parietal !== undefined ? this.state.jsonData['principal-max-strain'].parietal.value : "0.0000";
-                var num5 = this.state.jsonData['principal-max-strain'].temporal !== undefined ? this.state.jsonData['principal-max-strain'].temporal.value : "0.0000";
-                var num6 = this.state.jsonData['principal-max-strain'].msc !== undefined ? this.state.jsonData['principal-max-strain'].msc.value : "0.0000";	
-				if(num1 !== undefined){
+				var numValue = this.state.jsonData['principal-max-strain'].value !== undefined ? this.state.jsonData['principal-max-strain'].value : "0.0000";
+                var brainRegion = this.state.jsonData['principal-max-strain']['brain-region'] !== undefined ? this.state.jsonData['principal-max-strain']['brain-region'] : "";
+				if(numValue !== undefined){
 					mps =  this.state.jsonData['CSDM-15'].value ? this.state.jsonData['CSDM-15'].value.toFixed(2) : 0.00;
+					
 					var mps_val1 = "0.0000";
 					var mps_val2 = "0.0000";
 					var mps_val3 = "0.0000";
 					var mps_val4 = "0.0000";
 					var mps_val5 = "0.0000";
 					var mps_val6 = "0.0000";
-					if (num1 !== undefined) { mps_val1 = num1;}else{ mps_val1 = "0.0000";}
-					if (num2 !== undefined) { mps_val2 = num2;}else{ mps_val2 = "0.0000";}
-					if (num3 !== undefined) { mps_val3 = num3;}else{ mps_val3 = "0.0000";}
-					if (num4 !== undefined) { mps_val4 = num4;}else{ mps_val4 = "0.0000";}
-					if (num5 !== undefined) { mps_val5 = num5;}else{ mps_val5 = "0.0000";}
-					if (num6 !== undefined) { mps_val6 = num6;}else{ mps_val6 = "0.0000";}
+					if (brainRegion == 'cerebellum') { mps_val1 = numValue;}else{ mps_val1 = "0.0000";}
+					if (brainRegion == 'frontal') { mps_val2 = numValue;}else{ mps_val2 = "0.0000";}
+					if (brainRegion == 'occipital') { mps_val3 = numValue;}else{ mps_val3 = "0.0000";}
+					if (brainRegion == 'parietal') { mps_val4 = numValue;}else{ mps_val4 = "0.0000";}
+					if (brainRegion == 'temporal') { mps_val5 = numValue;}else{ mps_val5 = "0.0000";}
+					if (brainRegion == 'msc') { mps_val6 = numValue;}else{ mps_val6 = "0.0000";}
 					var left1 = mps_val1 * ScaleWidth / 38;
 					var left2 = mps_val2 * ScaleWidth / 38;
 					var left3 = mps_val3 * ScaleWidth / 38;
@@ -236,12 +233,18 @@ class Report extends React.Component {
 					var left5 = mps_val5 * ScaleWidth / 38;
 					var left6 = mps_val6 * ScaleWidth / 38;
 					//**Round up the value....
-					mpsCerebellumtrangleScale = ''+left1.toFixed(0)+'px';
-					mpsFrontaltrangleScale = ''+left2.toFixed(0)+'px';
-					mpsOccipitaltrangleScale = ''+left3.toFixed(0)+'px';
-					mpsParietaltrangleScale = ''+left4.toFixed(0)+'px';
-					mpsTemporaltrangleScale = ''+left5.toFixed(0)+'px';
-					mpsMotortrangleScale = ''+left6.toFixed(0)+'px';
+					mpsCerebellumtrangleScale = ''+left1.toFixed(2)+'px';
+					mpsFrontaltrangleScale = ''+left2.toFixed(2)+'px';
+					mpsOccipitaltrangleScale = ''+left3.toFixed(2)+'px';
+					mpsParietaltrangleScale = ''+left4.toFixed(2)+'px';
+					mpsTemporaltrangleScale = ''+left5.toFixed(2)+'px';
+					mpsMotortrangleScale = ''+left6.toFixed(2)+'px';
+					console.log("left1",mpsCerebellumtrangleScale);
+					console.log("left2",mpsFrontaltrangleScale);
+					console.log("left3",mpsOccipitaltrangleScale);
+					console.log("left4",mpsParietaltrangleScale);
+					console.log("left5",mpsTemporaltrangleScale);
+					console.log("left6",mpsMotortrangleScale);
                     mpsTrangle1 = this.getTrangle(mps_val1);
                     mpsTrangle2 = this.getTrangle(mps_val2);
                     mpsTrangle3 = this.getTrangle(mps_val3);
@@ -969,7 +972,7 @@ class Report extends React.Component {
                             <Image  style={styles.logo} src={ClinicalReportHeader} alt="head"/>
                         </View>
                         <View style={styles.tableRowHeadtitle}>
-                            <Text style={styles.title}>Cumulative</Text>
+                            <Text style={styles.title}>Single Event</Text>
                         </View>
                         <View style={styles.tableRowHeadtitle1}>
                             <Text style={styles.title}>Prediction Overview</Text>
@@ -999,8 +1002,8 @@ class Report extends React.Component {
                         <View style={styles.tableRow}>
 
                             <Text style={styles.tableColLeft}> Sex : <Text style={{color:'#2d549a'}}>{this.state.jsonData['playerdata'].gender?this.state.jsonData['playerdata'].gender:"N/A"} </Text></Text>
-                            <Text style={styles.tableColLeft}> Impact Time : <Text style={{color:'#2d549a'}}> {this.state.impact_time} </Text> </Text>
-                            <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{this.state.data['organization']?this.state.data['organization']:this.state.data1.organization}</Text></Text>
+                            <Text style={styles.tableColLeft}> Impact Time : <Text style={{color:'#2d549a'}}> {this.state.impact_time?this.state.impact_time:"N/A"} </Text> </Text>
+                            <Text style={styles.tableColRight}> Organization : <Text style={{color:'#2d549a'}}>{this.state.data['organization']?this.state.data['organization']:this.state.data1.sensor_data.organization}</Text></Text>
 
                         </View>
 
@@ -1045,7 +1048,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Frontal Lobe</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmFrontal_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle1} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle2} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1054,7 +1057,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Parietal Lobe</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmParietal_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle2} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle4} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1072,7 +1075,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Temporal Lobe</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmTemporal_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle4} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle5} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1081,7 +1084,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
                                          <View style={styles.tableColRight_scale}>
                                             <View style={styles.csdmCerebellum_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle5} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle1} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1173,7 +1176,7 @@ class Report extends React.Component {
                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsFrontal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle1} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle2} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1183,7 +1186,7 @@ class Report extends React.Component {
                                          {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsParietal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle2} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle4} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1203,7 +1206,7 @@ class Report extends React.Component {
                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsTemporal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle4} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle5} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1212,7 +1215,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsCerebelluml_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle5} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={mpsTrangle1} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1221,7 +1224,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Motor Sensory Cortex</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsMotor_point_scale}>
-                                                <Image  style={styleCsdm.trangle_scale} src={csdmTrangle6} alt="trangle"/>
+                                                <Image  style={styleCsdm.trangle_scale} src={mpsTrangle6} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1321,7 +1324,7 @@ class Report extends React.Component {
                                          {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsFrontal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle1} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle2} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1331,7 +1334,7 @@ class Report extends React.Component {
                                          {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsParietal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle2} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle4} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1351,7 +1354,7 @@ class Report extends React.Component {
                                         {/*=== 0-7.5 ===*/}
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsTemporal_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle4} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle5} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1360,7 +1363,7 @@ class Report extends React.Component {
                                         <Text style={styles.tableTd1}>Cerebellum</Text>
                                         <View style={styles.tableColRight_scale}>
                                             <View style={styles.mpsCerebelluml_point_scale}>
-                                                <Image  style={styles.trangle_scale} src={mpsTrangle5} alt="trangle"/>
+                                                <Image  style={styles.trangle_scale} src={mpsTrangle1} alt="trangle"/>
                                             </View>
                                         </View>
                                         <Text style={styles.tableColRight2_2}></Text>
@@ -1442,7 +1445,6 @@ class Report extends React.Component {
                               <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
                               <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
                               <Text style={[stylepage3.tableColLeft1]}>CSDM-15 Value</Text>
-							  <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
                             {/*-- Table head end--*/}
 
                         </View>
@@ -1455,7 +1457,6 @@ class Report extends React.Component {
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
                                 <Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
 								<Text style={[stylepage3.tableColLeft1]}>{this.state.jsonData['CSDM-15'].value.toFixed(3) }</Text>
-								<Text style={[stylepage3.tableColLeft2]}></Text>
                             </View>
 							 : null
 						 }
@@ -1465,7 +1466,6 @@ class Report extends React.Component {
                               <Text style={[stylepage3.tableColLeft1]}>Rank</Text>
                               <Text style={[stylepage3.tableColLeft1]}>Impact Date</Text>
 							  <Text style={[stylepage3.tableColLeft1]}>MPS-15 Value</Text>
-							  <Text style={[stylepage3.tableColLeft2]}>Brain Region</Text>
                             {/*-- Table head end--*/}
 
                         </View>
@@ -1476,7 +1476,6 @@ class Report extends React.Component {
                                 <Text style={[stylepage3.tableColLeft1]}>1</Text>
                                 <Text style={[stylepage3.tableColLeft1]}>{this.state.impact_date}</Text>
                                 <Text style={[stylepage3.tableColLeft1]}>{this.state.jsonData['principal-max-strain'].value.toFixed(3) }</Text>
-                                <Text style={[stylepage3.tableColLeft2]}></Text>
                             </View>
 							 : null
 						  }
