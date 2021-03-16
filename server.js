@@ -7487,6 +7487,7 @@ app.post(`${apiPrefix}getAllCumulativeAccelerationTimeRecords`, (req, res) => {
 })
 
 app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
+    console.log('AllCumulativeAccelerationTimeRecords ---------------- called !')
     getCumulativeAccelerationData(req.body)
         .then(data => {
             let acceleration_data_list = [];
@@ -7541,10 +7542,12 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                 let outputFile = '';
                 let jsonOutputFile = '';
                 let simulationImage = '';
+                console.log('acc_data ---------------------\n', acc_data.image_id)
+
                 getPlayerSimulationFile(acc_data)
                     .then(image_data => {
                         imageData = image_data;
-                        if (imageData.account_id && imageData.account_id != 'null') {
+                        if (imageData && imageData.account_id && imageData.account_id != 'null') {
                             if (file_count < 1) {
                                 file_count++;
                                 index_file = acc_index;
@@ -7560,7 +7563,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                             sensor_data: accData,
                             status: imageData ? imageData.status : '',
                             computed_time: imageData ? imageData.computed_time : '',
-                            log_stream_name: imageData.log_stream_name,
+                            log_stream_name: imageData ? imageData.log_stream_name : '',
                             date_time: accData.player_id.split('$')[1]
                         })
 
@@ -7987,6 +7990,7 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
                         cnt++;
                     })
                     .catch(err => {
+                        console.log('err ------------------- 1',err)
                         let brainRegions = {};
                         brainRegions['principal-max-strain'] = {};
                         brainRegions['principal-min-strain'] = {};
@@ -8017,6 +8021,8 @@ app.post(`${apiPrefix}AllCumulativeAccelerationTimeRecords`, (req, res) => {
 
         })
         .catch(err => {
+            console.log('err ------------------- 2',err)
+            
             let brainRegions = {};
             brainRegions['principal-max-strain'] = {};
             brainRegions['principal-min-strain'] = {};
