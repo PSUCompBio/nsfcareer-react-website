@@ -58,8 +58,8 @@ class UserDashboarForAdmin extends React.Component {
       loaded_data: [],
       log_stream_name: '',
       DelData: '',
-      isDisplay: '',	  
-      delimage_id: '',	  
+      isDisplay: '',
+      delimage_id: '',
       isDisplay: { display: 'none' },
       cognito_user_id: this.props.match.params.cognito_user_id,
       player_name: this.props.match.params.player_name ? this.props.match.params.player_name.split('?')[0] : ''
@@ -113,48 +113,48 @@ class UserDashboarForAdmin extends React.Component {
       });
     }
   }
-   isDeleteData = (isDelete) => {
-        var data = this.state.DelData;
-		console.log("player_id",data.data.playerid);
-        var player_id = data.data.playerid.split('$')[0]+'-';
-		var image_id = data.data.image_id;
-        this.setState({ isDisplay: { display: 'none' } });
-		getUserDataByPlayerID({playerid: player_id})
-		.then(response => {
-			console.log("response",response.data.data[0]);
-			if(response.data.data.length > 0){
-				var account_id = response.data.data[0].account_id;
-			}else{
-				var account_id = '';
-			}
-			 deleteEventByImageID({account_id: account_id,organization: this.state.organization ,playerid: data.data.playerid ,image_id: image_id })
-			.then(response1 => {
-				 console.log("response1",response1);
-				 this.setState({ isDelData: false })	
-				 document.getElementById(image_id).style.display = 'none';		 
-			})	
-		})	
-		
-    }
-	handledelete = (e) => {
-		console.log("e",e);
-		this.setState({ DelData: { data: e } })		
-        this.setState({ delimage_id: e.image_id });
-		this.setState({ isDelData: true })
-		if (this.state.isDisplay.display === 'none') {
-            this.setState({ isDisplay: { display: 'flex' } });
+  isDeleteData = (isDelete) => {
+    var data = this.state.DelData;
+    console.log("player_id", data.data.playerid);
+    var player_id = data.data.playerid.split('$')[0] + '-';
+    var image_id = data.data.image_id;
+    this.setState({ isDisplay: { display: 'none' } });
+    getUserDataByPlayerID({ playerid: player_id })
+      .then(response => {
+        console.log("response", response.data.data[0]);
+        if (response.data.data.length > 0) {
+          var account_id = response.data.data[0].account_id;
         } else {
-            this.setState({ isDisplay: { display: 'none' } });
+          var account_id = '';
         }
-		
-	}
-	makeVisible = (data) => {
-        console.log('data', data)
-        this.setState({ delimage_id: '' });
-        this.setState({ isDelData: false });
-		this.setState({ DelData: '' })
-		this.setState({ isDisplay: { display: 'none' } });
+        deleteEventByImageID({ account_id: account_id, organization: this.state.organization, playerid: data.data.playerid, image_id: image_id })
+          .then(response1 => {
+            console.log("response1", response1);
+            this.setState({ isDelData: false })
+            document.getElementById(image_id).style.display = 'none';
+          })
+      })
+
+  }
+  handledelete = (e) => {
+    console.log("e", e);
+    this.setState({ DelData: { data: e } })
+    this.setState({ delimage_id: e.image_id });
+    this.setState({ isDelData: true })
+    if (this.state.isDisplay.display === 'none') {
+      this.setState({ isDisplay: { display: 'flex' } });
+    } else {
+      this.setState({ isDisplay: { display: 'none' } });
     }
+
+  }
+  makeVisible = (data) => {
+    console.log('data', data)
+    this.setState({ delimage_id: '' });
+    this.setState({ isDelData: false });
+    this.setState({ DelData: '' })
+    this.setState({ isDisplay: { display: 'none' } });
+  }
   handleCollapse = (e) => {
     let col_id = e.split('$')[1]
     $("#" + col_id).toggleClass('show');
@@ -167,18 +167,18 @@ class UserDashboarForAdmin extends React.Component {
       this.setState({ open: e });
       getCumulativeAccelerationTimeRecords({ brand: this.state.brand, user_cognito_id: this.state.user_cognito_id, organization: this.state.organization, player_id: e, team: this.state.team })
         .then(res => {
-			if(res.data.data[0] !== undefined){
-			  console.log('res',res.data.data[0]);
-			  this.setState({
-				cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
-				loading: false,
-			  });
-			  $("#spin_" + res.data.data[0].sensor_data.player_id.split('$')[1]).toggleClass('spin_display');
-			}else{
-				this.setState({
-				loading: false,
-			  });
-			}
+          if (res.data.data[0] !== undefined) {
+            console.log('res', res.data.data[0]);
+            this.setState({
+              cumulativeAccelerationTimeAlldata: this.state.cumulativeAccelerationTimeAlldata.concat(res.data.data),
+              loading: false,
+            });
+            $("#spin_" + res.data.data[0].sensor_data.player_id.split('$')[1]).toggleClass('spin_display');
+          } else {
+            this.setState({
+              loading: false,
+            });
+          }
         }).catch(err => {
           console.log('err', err)
         })
@@ -202,7 +202,7 @@ class UserDashboarForAdmin extends React.Component {
   }
 
   tConvert = (time) => {
-    console.log(time,"time")
+    console.log(time, "time")
     if (time === 0) {
       return 'Unknown Time'
     } else {
@@ -230,7 +230,7 @@ class UserDashboarForAdmin extends React.Component {
     return (
 
       <React.Fragment>
-	  <DeletePopup isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible) ? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData) ? this.props.isDeleteData : this.isDeleteData} />
+        <DeletePopup isVisible={this.state.isDisplay} makeVisible={(this.props.makeVisible) ? this.props.makeVisible : this.makeVisible} DelData={this.state.DelData} isDeleteData={(this.props.isDeleteData) ? this.props.isDeleteData : this.isDeleteData} />
         <div className="center-scroll-up-mobile">
           <ScrollToTop
 
@@ -401,21 +401,21 @@ class UserDashboarForAdmin extends React.Component {
                 if (item.sensor_data.player['impact-id']) {
                   impact_id = item.sensor_data.player['impact-id'];
                 }
-				console.log("item",item);
+                console.log("item", item);
                 return <Card >
                   <Card.Header className={cls} id={item.sensor_data.image_id}>
-                    <Accordion as={Button} variant="link"  eventKey={item.sensor_data.player_id} >
+                    <Accordion as={Button} variant="link" eventKey={item.sensor_data.player_id} >
                       <span className="title-left" >Event ID: #{impact_id}</span>
                       <span className="title-left">{`${item.sensor_data && item.sensor_data['impact-date'] ? this.getDate(item.sensor_data['impact-date'].replace(/:|-/g, "/")) + ' ' + this.tConvert(impact_time) : item.sensor_data['date'] ? this.getDate(item.sensor_data['date'].replace(/:|-/g, "/")) + ' ' + this.tConvert(time) : 'Unknown Date and Time'}`}</span>
-                      <span className="btn btn-primary  title-right"  onClick={() => this.handleCollapse(item.sensor_data.player_id,)} id={item.sensor_data && 'col_icon' + item.sensor_data.player_id.split('$')[1]}>Expand</span>
-                      <span className="btn btn-primary title-right hide"  onClick={() => this.handleCollapse(item.sensor_data.player_id,)}  id={item.sensor_data && 'col_icon1' + item.sensor_data.player_id.split('$')[1]}>Close</span>
-					{ this.state.isDelData && item.sensor_data.image_id ==  this.state.delimage_id ?
-						<div className="btn btn-danger  title-right" >
-							<i class={"fa fa-spinner fa-spin"} style={{'font-size': '18px'}}></i>
-						</div>
-					:
-						<span className="btn btn-danger  title-right"  onClick={() => this.handledelete({playerid:item.sensor_data.player_id,image_id: item.sensor_data.image_id})} >Delete</span>
-					}
+                      <span className="btn btn-primary  title-right" onClick={() => this.handleCollapse(item.sensor_data.player_id,)} id={item.sensor_data && 'col_icon' + item.sensor_data.player_id.split('$')[1]}>Expand</span>
+                      <span className="btn btn-primary title-right hide" onClick={() => this.handleCollapse(item.sensor_data.player_id,)} id={item.sensor_data && 'col_icon1' + item.sensor_data.player_id.split('$')[1]}>Close</span>
+                      {this.state.isDelData && item.sensor_data.image_id == this.state.delimage_id ?
+                        <div className="btn btn-danger  title-right" >
+                          <i class={"fa fa-spinner fa-spin"} style={{ 'font-size': '18px' }}></i>
+                        </div>
+                        :
+                        <span className="btn btn-danger  title-right" onClick={() => this.handledelete({ playerid: item.sensor_data.player_id, image_id: item.sensor_data.image_id })} >Delete</span>
+                      }
                     </Accordion>
                   </Card.Header>
                   <Accordion.Collapse eventKey={item.sensor_data.player_id} id={item.sensor_data && item.sensor_data.player_id.split('$')[1]}>
@@ -501,6 +501,7 @@ class UserDashboarForAdmin extends React.Component {
             /**
             * Getting user details...
             */
+           console.log('user_cognito_id ---------------',user_cognito_id)
             getUserDetails({ user_cognito_id: user_cognito_id })
               .then(response => {
                 delete response.data.data.is_selfie_image_uploaded;
@@ -547,17 +548,17 @@ class UserDashboarForAdmin extends React.Component {
                 })
 
                 .then(response => {
-                  var playerid = this.state.player_name+'-';
+                  var playerid = this.state.player_name + '-';
                   getUserDataByPlayerID({ playerid: playerid })
                     .then(response1 => {
-                      console.log("playerdata",response1.data);
-                      console.log("playerid1",playerid);
-					  response.data.brainRegions["playerdata"] = response1.data.data[0];
-					  if(response1.data.data.length > 0){
-					  var accountid = response1.data.data[0].account_id;
-					  }else{
-					  var accountid = '';
-					  }
+                      console.log("playerdata", response1.data);
+                      console.log("playerid1", playerid);
+                      response.data.brainRegions["playerdata"] = response1.data.data[0];
+                      if (response1.data.data.length > 0) {
+                        var accountid = response1.data.data[0].account_id;
+                      } else {
+                        var accountid = '';
+                      }
                       getBrainImageByAccountID({ accountid: accountid })
                         .then(imageresponse1 => {
                           console.log('jsondata 2 ----\n', imageresponse1.data.data)
