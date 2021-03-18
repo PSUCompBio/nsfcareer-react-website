@@ -7,6 +7,25 @@ import './dash.css';
 import summary from "./summary_york_tech_35204.json";
 import SelectSearch from 'react-select-search';
 const insults = summary.Insults;
+const ENABLE_COLOR_SPHERES = true;
+const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);
+const sphereMat = new THREE.MeshStandardMaterial({
+	color: 0xff0000
+});
+const SMALL_BOUNDARY = 0.02;
+const MEDIUM_BOUNDARY = 0.05;
+const LARGE_BOUNDARY = 0.1;
+
+const SMALL_COLOR = new THREE.Color(0x00b050);
+const MEDIUM_COLOR = new THREE.Color(0xed7d31);
+const LARGE_COLOR = new THREE.Color(0xff0000);
+const X_LARGE_COLOR = new THREE.Color(0x000000);
+
+const SMALL_GEOMETRY = new THREE.SphereGeometry(0.0015, 32, 32);
+const MEDIUM_GEOMETRY = new THREE.SphereGeometry(0.002, 32, 32);
+const LARGE_GEOMETRY = new THREE.SphereGeometry(0.003, 32, 32);
+const X_LARGE_GEOMETRY = new THREE.SphereGeometry(0.004, 32, 32);
+
 // let stem_json = [];
 // let pariental_lobe_json = [];
 // let frontal_lobe_json = [];
@@ -32,7 +51,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
-						z: insult["principal-max-strain"]["location"][2]
+						z: insult["principal-max-strain"]["location"][2],
+						value: insult["principal-max-strain"]["value"],
 					},
 					...maximumPS[6]
 				];
@@ -42,7 +62,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
-						z: insult["principal-max-strain"]["location"][2]
+						z: insult["principal-max-strain"]["location"][2],
+						value: insult["principal-max-strain"]["value"],
 					},
 					...maximumPS[5]
 				];
@@ -52,7 +73,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
-						z: insult["principal-max-strain"]["location"][2]
+						z: insult["principal-max-strain"]["location"][2],
+						value: insult["principal-max-strain"]["value"],
 					},
 					...maximumPS[4]
 				];
@@ -62,7 +84,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
-						z: insult["principal-max-strain"]["location"][2]
+						z: insult["principal-max-strain"]["location"][2],
+						value: insult["principal-max-strain"]["value"],
 					},
 					...maximumPS[3]
 				];
@@ -72,7 +95,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
-						z: insult["principal-max-strain"]["location"][2]
+						z: insult["principal-max-strain"]["location"][2],
+						value: insult["principal-max-strain"]["value"],
 					},
 					...maximumPS[2]
 				];
@@ -82,7 +106,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
-						z: insult["principal-max-strain"]["location"][2]
+						z: insult["principal-max-strain"]["location"][2],
+						value: insult["principal-max-strain"]["value"],
 					},
 					...maximumPS[1]
 				];
@@ -92,7 +117,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-max-strain"]["location"][0],
 						y: insult["principal-max-strain"]["location"][1],
-						z: insult["principal-max-strain"]["location"][2]
+						z: insult["principal-max-strain"]["location"][2],
+						value: insult["principal-max-strain"]["value"],
 					},
 					...maximumPS[0]
 				];
@@ -108,7 +134,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
-						z: insult["principal-min-strain"]["location"][2]
+						z: insult["principal-min-strain"]["location"][2],
+						value: insult["principal-min-strain"]["value"],
 					},
 					...minimumPS[6]
 				];
@@ -118,7 +145,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
-						z: insult["principal-min-strain"]["location"][2]
+						z: insult["principal-min-strain"]["location"][2],
+						value: insult["principal-min-strain"]["value"],
 					},
 					...minimumPS[5]
 				];
@@ -128,7 +156,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
-						z: insult["principal-min-strain"]["location"][2]
+						z: insult["principal-min-strain"]["location"][2],
+						value: insult["principal-min-strain"]["value"],
 					},
 					...minimumPS[4]
 				];
@@ -138,7 +167,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
-						z: insult["principal-min-strain"]["location"][2]
+						z: insult["principal-min-strain"]["location"][2],
+						value: insult["principal-min-strain"]["value"],
 					},
 					...minimumPS[3]
 				];
@@ -148,7 +178,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
-						z: insult["principal-min-strain"]["location"][2]
+						z: insult["principal-min-strain"]["location"][2],
+						value: insult["principal-min-strain"]["value"],
 					},
 					...minimumPS[2]
 				];
@@ -158,7 +189,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
-						z: insult["principal-min-strain"]["location"][2]
+						z: insult["principal-min-strain"]["location"][2],
+						value: insult["principal-min-strain"]["value"],
 					},
 					...minimumPS[1]
 				];
@@ -168,7 +200,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["principal-min-strain"]["location"][0],
 						y: insult["principal-min-strain"]["location"][1],
-						z: insult["principal-min-strain"]["location"][2]
+						z: insult["principal-min-strain"]["location"][2],
+						value: insult["principal-min-strain"]["value"],
 					},
 					...minimumPS[0]
 				];
@@ -184,7 +217,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-15"]["location"][0],
 						y: insult["CSDM-15"]["location"][1],
-						z: insult["CSDM-15"]["location"][2]
+						z: insult["CSDM-15"]["location"][2],
+						value: insult["CSDM-15"]["value"],
 					},
 					...csdm_15[6]
 				];
@@ -194,7 +228,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-15"]["location"][0],
 						y: insult["CSDM-15"]["location"][1],
-						z: insult["CSDM-15"]["location"][2]
+						z: insult["CSDM-15"]["location"][2],
+						value: insult["CSDM-15"]["value"],
 					},
 					...csdm_15[5]
 				];
@@ -204,7 +239,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-15"]["location"][0],
 						y: insult["CSDM-15"]["location"][1],
-						z: insult["CSDM-15"]["location"][2]
+						z: insult["CSDM-15"]["location"][2],
+						value: insult["CSDM-15"]["value"],
 					},
 					...csdm_15[4]
 				];
@@ -214,7 +250,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-15"]["location"][0],
 						y: insult["CSDM-15"]["location"][1],
-						z: insult["CSDM-15"]["location"][2]
+						z: insult["CSDM-15"]["location"][2],
+						value: insult["CSDM-15"]["value"],
 					},
 					...csdm_15[3]
 				];
@@ -224,7 +261,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-15"]["location"][0],
 						y: insult["CSDM-15"]["location"][1],
-						z: insult["CSDM-15"]["location"][2]
+						z: insult["CSDM-15"]["location"][2],
+						value: insult["CSDM-15"]["value"],
 					},
 					...csdm_15[2]
 				];
@@ -234,7 +272,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-15"]["location"][0],
 						y: insult["CSDM-15"]["location"][1],
-						z: insult["CSDM-15"]["location"][2]
+						z: insult["CSDM-15"]["location"][2],
+						value: insult["CSDM-15"]["value"],
 					},
 					...csdm_15[1]
 				];
@@ -244,7 +283,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-15"]["location"][0],
 						y: insult["CSDM-15"]["location"][1],
-						z: insult["CSDM-15"]["location"][2]
+						z: insult["CSDM-15"]["location"][2],
+						value: insult["CSDM-15"]["value"],
 					},
 					...csdm_15[0]
 				];
@@ -260,7 +300,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-5"]["location"][0],
 						y: insult["CSDM-5"]["location"][1],
-						z: insult["CSDM-5"]["location"][2]
+						z: insult["CSDM-5"]["location"][2],
+						value: insult["CSDM-5"]["value"],
 					},
 					...csdm_5[6]
 				];
@@ -270,7 +311,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-5"]["location"][0],
 						y: insult["CSDM-5"]["location"][1],
-						z: insult["CSDM-5"]["location"][2]
+						z: insult["CSDM-5"]["location"][2],
+						value: insult["CSDM-5"]["value"],
 					},
 					...csdm_5[5]
 				];
@@ -280,7 +322,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-5"]["location"][0],
 						y: insult["CSDM-5"]["location"][1],
-						z: insult["CSDM-5"]["location"][2]
+						z: insult["CSDM-5"]["location"][2],
+						value: insult["CSDM-5"]["value"],
 					},
 					...csdm_5[4]
 				];
@@ -290,7 +333,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-5"]["location"][0],
 						y: insult["CSDM-5"]["location"][1],
-						z: insult["CSDM-5"]["location"][2]
+						z: insult["CSDM-5"]["location"][2],
+						value: insult["CSDM-5"]["value"],
 					},
 					...csdm_5[3]
 				];
@@ -300,7 +344,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-5"]["location"][0],
 						y: insult["CSDM-5"]["location"][1],
-						z: insult["CSDM-5"]["location"][2]
+						z: insult["CSDM-5"]["location"][2],
+						value: insult["CSDM-5"]["value"],
 					},
 					...csdm_5[2]
 				];
@@ -310,7 +355,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-5"]["location"][0],
 						y: insult["CSDM-5"]["location"][1],
-						z: insult["CSDM-5"]["location"][2]
+						z: insult["CSDM-5"]["location"][2],
+						value: insult["CSDM-5"]["value"],
 					},
 					...csdm_5[1]
 				];
@@ -320,7 +366,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-5"]["location"][0],
 						y: insult["CSDM-5"]["location"][1],
-						z: insult["CSDM-5"]["location"][2]
+						z: insult["CSDM-5"]["location"][2],
+						value: insult["CSDM-5"]["value"],
 					},
 					...csdm_5[0]
 				];
@@ -337,7 +384,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-10"]["location"][0],
 						y: insult["CSDM-10"]["location"][1],
-						z: insult["CSDM-10"]["location"][2]
+						z: insult["CSDM-10"]["location"][2],
+						value: insult["CSDM-10"]["value"],
 					},
 					...csdm_10[6]
 				];
@@ -347,7 +395,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-10"]["location"][0],
 						y: insult["CSDM-10"]["location"][1],
-						z: insult["CSDM-10"]["location"][2]
+						z: insult["CSDM-10"]["location"][2],
+						value: insult["CSDM-10"]["value"],
 					},
 					...csdm_10[5]
 				];
@@ -357,7 +406,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-10"]["location"][0],
 						y: insult["CSDM-10"]["location"][1],
-						z: insult["CSDM-10"]["location"][2]
+						z: insult["CSDM-10"]["location"][2],
+						value: insult["CSDM-10"]["value"],
 					},
 					...csdm_10[4]
 				];
@@ -367,7 +417,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-10"]["location"][0],
 						y: insult["CSDM-10"]["location"][1],
-						z: insult["CSDM-10"]["location"][2]
+						z: insult["CSDM-10"]["location"][2],
+						value: insult["CSDM-10"]["value"],
 					},
 					...csdm_10[3]
 				];
@@ -377,7 +428,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-10"]["location"][0],
 						y: insult["CSDM-10"]["location"][1],
-						z: insult["CSDM-10"]["location"][2]
+						z: insult["CSDM-10"]["location"][2],
+						value: insult["CSDM-10"]["value"],
 					},
 					...csdm_10[2]
 				];
@@ -387,7 +439,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-10"]["location"][0],
 						y: insult["CSDM-10"]["location"][1],
-						z: insult["CSDM-10"]["location"][2]
+						z: insult["CSDM-10"]["location"][2],
+						value: insult["CSDM-10"]["value"],
 					},
 					...csdm_10[1]
 				];
@@ -397,7 +450,8 @@ insults.forEach((insult) => {
 					{
 						x: insult["CSDM-10"]["location"][0],
 						y: insult["CSDM-10"]["location"][1],
-						z: insult["CSDM-10"]["location"][2]
+						z: insult["CSDM-10"]["location"][2],
+						value: insult["CSDM-10"]["value"],
 					},
 					...csdm_10[0]
 				];
@@ -413,7 +467,6 @@ insults.forEach((insult) => {
 
 let all_spheres_json = [];
 all_spheres_json = [...maximumPS];
-
 
 let camera, scene, renderer, canvas, raycaster, root, sphereContainer, labelSize = 10, isClicked = false;
 let brainModel;
@@ -754,43 +807,43 @@ class DashPage extends React.Component {
 			case "Frontal_Lobe_node_Frontal_Lobe":
 				all_spheres_json[0].forEach(function (object, index) {
 					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 				});
 				break;
 			case "node_Mesh_16":
 				all_spheres_json[2].forEach(function (object, index) {
 					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 				});
 				break;
 			case "Cerebral_hemispheres_R_node_Cerebral_hemispheres_R":
 				all_spheres_json[1].forEach(function (object, index) {
 					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 				});
 				break;
 			case "Brainstem_Spinal_cord_node_Brainstem_Spinal_cord":
 				all_spheres_json[5].forEach(function (object, index) {
 					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 				});
 				break;
 			case "Temporal_Lobe_node_Temporal_Lobe":
 				all_spheres_json[3].forEach(function (object, index) {
 					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 				});
 				break;
 			case "Cerebellum_node_Cerebellum":
 				all_spheres_json[4].forEach(function (object, index) {
 					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 				});
 				break;
 			case "Motor_and_Sensor_Cortex_node_Motor_and_Sensor_Cortex":
 				all_spheres_json[6].forEach(function (object, index) {
 					var i = parseInt(index + 1);
-					me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+					me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 				});
 				break;
 			default:
@@ -803,25 +856,55 @@ class DashPage extends React.Component {
 		all_spheres_json.forEach((ele) => {
 			ele.forEach(function (object, index) {
 				var i = parseInt(index + 1);
-				me.generateSphere(object.x, object.y, object.z, "pointer" + i);
+				me.generateSphere(object.x, object.y, object.z, object.value, "pointer" + i);
 			})
 		});
 	};
 
-	generateSphere = (x, y, z, sphereName) => {
+	generateSphere = (x, y, z, value, sphereName) => {
 		if (root) {
 			// Add pointer(s) to brain model as children
-			const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);
-			const sphereMat = new THREE.MeshStandardMaterial({
-				color: 0xff0000
-			});
-			const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+			// const sphereGeo = new THREE.SphereGeometry(0.003, 32, 32);
+			// const sphereMat = new THREE.MeshStandardMaterial({
+			// 	color: 0xff0000
+			// });
+		
+			var sphere_material = sphereMat;
+			var sphere_geometry = sphereGeo;
+			if(value && ENABLE_COLOR_SPHERES)
+			{
+				sphere_material = sphereMat.clone();
+				//sphere_geometry = sphereGeo.clone();
+				
+				if(value <= SMALL_BOUNDARY)
+				{
+					sphere_material.color = SMALL_COLOR;
+					sphere_geometry = SMALL_GEOMETRY;
+				}
+				else if(value <= MEDIUM_BOUNDARY)
+				{
+					sphere_material.color = MEDIUM_COLOR;
+					sphere_geometry = MEDIUM_GEOMETRY;
+				}
+				else if(value <= LARGE_BOUNDARY)
+				{
+					sphere_material.color = LARGE_COLOR;
+					sphere_geometry = LARGE_GEOMETRY;
+				}
+				else if(value > LARGE_BOUNDARY)
+				{
+					sphere_material.color = X_LARGE_COLOR;
+					sphere_geometry = X_LARGE_GEOMETRY;
+				}
+			}
+			const sphere = new THREE.Mesh(sphere_geometry, sphere_material);
 			const pointerPos = new THREE.Vector3(x, y, z);
 			// (x, y, z) --> (x, -z, y)
 			sphere.position.x += pointerPos.x;
 			sphere.position.y += pointerPos.z;
 			sphere.position.z -= pointerPos.y;
 			sphere.name = sphereName;
+			sphere.value = value;
 			sphereContainer.add(sphere);
 		}
 	};
@@ -1583,6 +1666,30 @@ class DashPage extends React.Component {
 				break;
 		}
 	}
+
+	renderStrainMetricMagnitudes() {
+		return (
+		  <div id="strain-metric-magnitudes" style={{bottom: 25, left: '50%', transform: 'translate(-50%)', width: '100%', display: 'block', zIndex: 20, position: 'relative', textAlign: 'center'}}>
+			<div className="dot-container-small">
+			  <span className="green dot" />
+			  <strong>Small</strong>
+			  <div className="small-grey-text">0-2%</div></div>
+			<div className="dot-container-small">
+			  <span className="orange dot" />
+			  <strong>Medium</strong>
+			  <div className="small-grey-text">2-5%</div></div>
+			<div className="dot-container-small">
+			  <span className="red dot" />
+			  <strong>Large</strong>
+			  <div className="small-grey-text">5-10%</div></div>
+			<div className="dot-container-small">
+			  <span className="black dot" />
+			  <strong>X-Large</strong>
+			  <div className="small-grey-text">&gt;10%</div></div>
+		  </div>
+		);
+	}
+
 	render() {
 		let me = this;
 
@@ -1808,6 +1915,11 @@ class DashPage extends React.Component {
 						<h3 className="chartXlabel">Major Functional Brain Regions</h3>
 
 					</div>
+				</div>
+				<div className="row align-items-center">
+					<div className="col-md-1"></div>
+					<div className="col-md-4 d-flex align-items-center " >{this.renderStrainMetricMagnitudes()}</div>
+						
 				</div>
 				<div className="row align-items-center">
 					<div className="col-md-1"></div>

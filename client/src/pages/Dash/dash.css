@@ -312,3 +312,52 @@ div.divider.text {
     padding-right: 10px!important;
   }
 }
+
+.dot-container-small
+{
+  width: 20%;
+  font-size: 20px;
+  display: inline-block;
+  margin-right: 5%;
+}
+.dot {
+    height: 25px;
+    width: 25px;
+    
+    border-radius: 50%;
+    display: inline-block;
+ }
+ .green
+ {
+    height: 10px;
+    width: 10px;
+    background-color: #00b050;
+ }
+ .orange
+ {
+  height: 15px;
+  width: 15px;
+  background-color: #ed7d31;
+ }
+ .red
+ {
+  height: 20px;
+  width: 20px;
+  background-color: #ff0000;
+ }
+ .black
+ {
+  height: 25px;
+  width: 25px;
+  background-color: #000000;
+ }
+
+ .small-grey-text
+ {
+   font-size: 16;
+   color: grey;
+   width: fit-content;;
+   position: relative;
+   left: 50%;
+   transform: translate(-50%);
+ }
