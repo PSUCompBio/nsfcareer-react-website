@@ -313,9 +313,19 @@ div.divider.text {
   }
 }
 
+
+.select-search__options {
+  list-style: none;
+  max-height: 90px;
+}
+
+.colored-sphere-btn
+{
+  width: 115px;
+  height: 40px;
+}
 .dot-container-small
 {
-  width: 20%;
   font-size: 20px;
   display: inline-block;
   margin-right: 5%;
@@ -326,6 +336,8 @@ div.divider.text {
     
     border-radius: 50%;
     display: inline-block;
+    vertical-align: text-bottom;
+    margin-right: 3px;
  }
  .green
  {

@@ -535,11 +535,14 @@ let defaultBarColors = [
 class DashPage extends React.Component {
 	constructor(props) {
 		super(props);
+		this.spheres_selected = "All";
 		this.state = {
 			isLoading: true,
 			barColors: defaultBarColors,
 			loadedActionButtons: false,
 			chartHovered: false,
+			spheres_selected: "All",
+			colored_spheres_clicked: "All",
 			actionButtons: [
 				{
 					id: "motor_and_sensor_cortex",
@@ -868,7 +871,7 @@ class DashPage extends React.Component {
 			// const sphereMat = new THREE.MeshStandardMaterial({
 			// 	color: 0xff0000
 			// });
-		
+			
 			var sphere_material = sphereMat;
 			var sphere_geometry = sphereGeo;
 			if(value && ENABLE_COLOR_SPHERES)
@@ -905,7 +908,27 @@ class DashPage extends React.Component {
 			sphere.position.z -= pointerPos.y;
 			sphere.name = sphereName;
 			sphere.value = value;
-			sphereContainer.add(sphere);
+
+			if(this.spheres_selected == "All")
+			{
+				sphereContainer.add(sphere);
+			}
+			else if(this.spheres_selected == "Small" && sphere.material.color == SMALL_COLOR)
+			{
+				sphereContainer.add(sphere);
+			}
+			else if(this.spheres_selected == "Medium" && sphere.material.color == MEDIUM_COLOR)
+			{
+				sphereContainer.add(sphere);
+			}
+			else if(this.spheres_selected == "Large" && sphere.material.color == LARGE_COLOR)
+			{
+				sphereContainer.add(sphere);
+			}
+			else if(this.spheres_selected == "X-Large" && sphere.material.color == X_LARGE_COLOR)
+			{
+				sphereContainer.add(sphere);
+			}
 		}
 	};
 
@@ -1322,21 +1345,6 @@ class DashPage extends React.Component {
 		camera.position.z = 3;
 	};
 
-	// download canvas image
-	// creat new canvas, set width, height, draw current content of canvas on new one
-	downImage = () => {
-		const c = document.createElement('canvas');
-		c.width = 400;
-		c.height = 300;
-		c.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 400, 300);
-		let dc = c.toDataURL();
-		var link = document.createElement("a");
-		link.download = "demo.png";
-		link.href = dc;
-		link.target = "_blank";
-		link.click();
-		return dc;
-	}
 
 	lightSetup = () => {
 		const hemLight = new THREE.HemisphereLight(0xb1e1ff, 0xb97a20, 1);
@@ -1667,24 +1675,129 @@ class DashPage extends React.Component {
 		}
 	}
 
+	colored_sphere_click = (type) =>
+	{
+		if(this.state.colored_spheres_clicked == type )
+		{
+			this.setState({spheres_selected: "All", colored_spheres_clicked: "All"});
+			this.spheres_selected = "All";
+		}
+		else
+		{
+			this.setState({spheres_selected: type, colored_spheres_clicked: type});
+			this.spheres_selected = type;
+		}
+
+		this.removeSpheres();
+		this.showAllSpheres();
+	}
+
+	colored_sphere_enter = (type) =>
+	{
+		if(this.state.colored_spheres_clicked != "All")
+		{
+			return;
+		}
+
+		this.setState({spheres_selected: type});
+		this.spheres_selected = type;
+
+		this.removeSpheres();
+		this.showAllSpheres();
+	}
+
+	colored_sphere_leave = (type) =>
+	{
+		if(this.state.colored_spheres_clicked != "All")
+		{
+			return;
+		}
+
+		this.setState({spheres_selected: "All"})
+		this.spheres_selected = "All";
+
+
+		this.removeSpheres();
+		this.showAllSpheres();
+	}
+
 	renderStrainMetricMagnitudes() {
 		return (
-		  <div id="strain-metric-magnitudes" style={{bottom: 25, left: '50%', transform: 'translate(-50%)', width: '100%', display: 'block', zIndex: 20, position: 'relative', textAlign: 'center'}}>
+		  <div id="strain-metric-magnitudes" style={{bottom: 25, left: '50%', transform: 'translate(-50%)', width: '100%', display: 'block', zIndex: 20, position: 'relative', textAlign: 'center'}}>	
 			<div className="dot-container-small">
+			<button id="small-spheres-btn" className="btn btn-primary colored-sphere-btn" style={{backgroundColor: this.state.spheres_selected == "Small" ? "#ffff66" : "#0069d9", color: this.state.spheres_selected == "Small" ? "#007bff" : "white" }}
+			 onClick = {()=> {
+				this.colored_sphere_click("Small")
+			}}
+			onMouseEnter = {()=> {
+				console.log("MouseEnter")
+				this.colored_sphere_enter("Small")
+			}}
+			onMouseLeave = {()=> {
+				console.log("MouseLeave")
+				this.colored_sphere_leave("All")
+			}}
+			>
 			  <span className="green dot" />
 			  <strong>Small</strong>
+			  </button>
 			  <div className="small-grey-text">0-2%</div></div>
-			<div className="dot-container-small">
+			
+			<div id="medium-spheres-btn" className="dot-container-small">
+			<button className="btn btn-primary colored-sphere-btn" style={{backgroundColor: this.state.spheres_selected == "Medium" ? "#ffff66" : "#0069d9", color: this.state.spheres_selected == "Medium" ? "#007bff" : "white" }}
+			 onClick = {()=> {
+				this.colored_sphere_click("Medium")
+			}}
+			onMouseEnter = {()=> {
+				console.log("MouseEnter")
+				this.colored_sphere_enter("Medium")
+			}}
+			onMouseLeave = {()=> {
+				console.log("MouseLeave")
+				this.colored_sphere_leave("All")
+			}}
+			>
 			  <span className="orange dot" />
 			  <strong>Medium</strong>
+			  </button>
 			  <div className="small-grey-text">2-5%</div></div>
+
 			<div className="dot-container-small">
+			<button id="large-spheres-btn" className="btn btn-primary colored-sphere-btn" style={{backgroundColor: this.state.spheres_selected == "Large" ? "#ffff66" : "#0069d9", color: this.state.spheres_selected == "Large" ? "#007bff" : "white" }}
+			onClick = {()=> {
+				this.colored_sphere_click("Large")
+			}}
+			onMouseEnter = {()=> {
+				console.log("MouseEnter")
+				this.colored_sphere_enter("Large")
+			}}
+			onMouseLeave = {()=> {
+				console.log("MouseLeave")
+				this.colored_sphere_leave("All")
+			}}
+			>
 			  <span className="red dot" />
 			  <strong>Large</strong>
+			  </button>
 			  <div className="small-grey-text">5-10%</div></div>
+
 			<div className="dot-container-small">
+			<button id="xlarge-spheres-btn" className="btn btn-primary colored-sphere-btn" style={{backgroundColor: this.state.spheres_selected == "X-Large" ? "#ffff66" : "#0069d9", color: this.state.spheres_selected == "X-Large" ? "#007bff" : "white" }}
+			 onClick = {()=> {
+				this.colored_sphere_click("X-Large")
+			}}
+			onMouseEnter = {()=> {
+				console.log("MouseEnter")
+				this.colored_sphere_enter("X-Large")
+			}}
+			onMouseLeave = {()=> {
+				console.log("MouseLeave")
+				this.colored_sphere_leave("All")
+			}}
+			>
 			  <span className="black dot" />
 			  <strong>X-Large</strong>
+			  </button>
 			  <div className="small-grey-text">&gt;10%</div></div>
 		  </div>
 		);
@@ -1928,7 +2041,7 @@ class DashPage extends React.Component {
 						<div style={{ display: "inline-block" }}>
 							<span className="strain_text">Strain Metric:</span>
 						</div>
-						<div style={{ display: "inline-block" }}>
+						<div style={{ display: "inline-block"}}>
 							<SelectSearch options={this.state.selectOption} value="max-ps" name="language" placeholder="Choose" onChange={(e, v) => {
 								this.strainMetric(e, v);
 							}} />
@@ -1939,9 +2052,6 @@ class DashPage extends React.Component {
 
 
 
-				</div>
-				<div>
-					<button className="btn btn-primary d-flex justify-content-center download_brainImage" onClick={this.downImage}> Download Image</button>
 				</div>
 
 
