@@ -1723,7 +1723,8 @@ class DashPage extends React.Component {
 
 	renderStrainMetricMagnitudes() {
 		return (
-		  <div id="strain-metric-magnitudes" style={{bottom: 25, left: '50%', transform: 'translate(-50%)', width: '100%', display: 'block', zIndex: 20, position: 'relative', textAlign: 'center'}}>	
+		  <div id="strain-metric-magnitudes" style={{textAlign: 'center', width: "100%"}}>
+			  <strong>Select a Strain Range</strong>
 			<div className="dot-container-small">
 			<button id="small-spheres-btn" className="btn btn-primary colored-sphere-btn" style={{backgroundColor: this.state.spheres_selected == "Small" ? "#ffff66" : "#0069d9", color: this.state.spheres_selected == "Small" ? "#007bff" : "white" }}
 			 onClick = {()=> {
@@ -2003,8 +2004,9 @@ class DashPage extends React.Component {
 					className="row text-center"
 					style={{ marginTop: '150px', marginBottom: '10px' }}
 				>
-					<div className="col-md-1"></div>
-					<div className="col-md-4 d-flex align-items-center "  >
+
+					<div className="col-2 col-md-1 order-1 order-md-1 align-self-center"  >{this.renderStrainMetricMagnitudes()}</div>
+					<div className="col-md-4 col-10 order-2 order-md-2 d-flex align-items-center "  >
 						{this.state.isLoading ? (
 							<div className="model_loader d-flex justify-content-center center-spinner">
 								<div className="spinner-border text-primary" role="status">
@@ -2016,11 +2018,11 @@ class DashPage extends React.Component {
 							style={{ width: "100%", height: "100%", display: "block" }}
 							ref={(ref) => (this.threeCanvasContainer = ref)}
 						>
-							<canvas id="c" style={{ width: "100%", height: "100%" }}></canvas>
+							<canvas id="c" style={{ width: "100%", height: "100%", zIndex: 50 }}></canvas>
 						</div>
 					</div>
-					<div className="col-md-1 interSect"></div>
-					<div id="barChart" className="col-md-5" ref={(ref) => (this.chartContainer = ref)}>
+					{/* <div className="col-md-1 order-4 order-md-3 interSect"></div> */}
+					<div id="barChart" className="col-md-5 order-5 order-md-4" ref={(ref) => (this.chartContainer = ref)}>
 						<Bar data={data} options={options} plugins={this.plugins} />
 						<div className="action-btn-container">
 							{actionButtons}
@@ -2028,30 +2030,19 @@ class DashPage extends React.Component {
 						<h3 className="chartXlabel">Major Functional Brain Regions</h3>
 
 					</div>
+
+					<div className="col-md-4 order-3 order-md-5 align-items-center strainMetric"  >
+
+				<div style={{ display: "inline-block" }}>
+					<span className="strain_text">Strain Metric:</span>
 				</div>
-				<div className="row align-items-center">
-					<div className="col-md-1"></div>
-					<div className="col-md-4 d-flex align-items-center " >{this.renderStrainMetricMagnitudes()}</div>
-						
+				<div style={{ display: "inline-block"}}>
+					<SelectSearch options={this.state.selectOption} value="max-ps" name="language" placeholder="Choose" onChange={(e, v) => {
+						this.strainMetric(e, v);
+					}} />
 				</div>
-				<div className="row align-items-center">
-					<div className="col-md-1"></div>
-					<div className="col-md-4  align-items-center strainMetric"  >
 
-						<div style={{ display: "inline-block" }}>
-							<span className="strain_text">Strain Metric:</span>
-						</div>
-						<div style={{ display: "inline-block"}}>
-							<SelectSearch options={this.state.selectOption} value="max-ps" name="language" placeholder="Choose" onChange={(e, v) => {
-								this.strainMetric(e, v);
-							}} />
-						</div>
-
-					</div>
-
-
-
-
+				</div>
 				</div>
 
 
